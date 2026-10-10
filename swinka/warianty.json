@@ -1,0 +1,70 @@
+{
+  "frame_size": [
+    64,
+    64
+  ],
+  "floor_y": 59,
+  "facing": "right",
+  "uwaga": "front_look to 5 klatek do śledzenia kursora: 0 lewo, 1 prawo, 2 góra, 3 dół, 4 środek",
+  "warianty": {
+    "dorosla": {
+      "opis": "Dorosła (ruda)",
+      "folder": "dorosla",
+      "animacji": 60,
+      "klatek": 591
+    },
+    "maluch": {
+      "opis": "Maluch",
+      "folder": "maluch",
+      "animacji": 60,
+      "klatek": 591
+    },
+    "senior": {
+      "opis": "Senior",
+      "folder": "senior",
+      "animacji": 60,
+      "klatek": 591
+    },
+    "legenda": {
+      "opis": "Legenda",
+      "folder": "legenda",
+      "animacji": 60,
+      "klatek": 591
+    },
+    "towarzysz_czarno-biala": {
+      "opis": "Towarzysz: czarno-biała",
+      "folder": "towarzysz_czarno-biala",
+      "animacji": 60,
+      "klatek": 591
+    },
+    "towarzysz_agouti": {
+      "opis": "Towarzysz: agouti",
+      "folder": "towarzysz_agouti",
+      "animacji": 60,
+      "klatek": 591
+    },
+    "towarzysz_kremowa": {
+      "opis": "Towarzysz: kremowa",
+      "folder": "towarzysz_kremowa",
+      "animacji": 60,
+      "klatek": 591
+    }
+  },
+  "ikony": [
+    "papryka",
+    "ogorek",
+    "natka",
+    "marchewka",
+    "granulat",
+    "gryzak",
+    "pilka",
+    "tunel",
+    "domek",
+    "poidlo",
+    "bobek",
+    "tort",
+    "siano",
+    "ziarenko",
+    "jarmuz"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "size": 16,
+  "ikony": {
+    "papryka": 0,
+    "ogorek": 1,
+    "natka": 2,
+    "marchewka": 3,
+    "granulat": 4,
+    "gryzak": 5,
+    "pilka": 6,
+    "tunel": 7,
+    "domek": 8,
+    "poidlo": 9,
+    "bobek": 10,
+    "tort": 11,
+    "siano": 12,
+    "ziarenko": 13,
+    "jarmuz": 14
+  }
+}

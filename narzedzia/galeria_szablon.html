@@ -1,0 +1,236 @@
+<meta charset="utf-8">
+<title>Świnka na pulpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Nunito:wght@400;600;700&display=swap">
+<style>
+/* Układ: duża scena z wybraną animacją u góry, pod nią katalog animacji pogrupowany według zachowań */
+:root{
+  --bg:#eef3e6; --surface:#ffffff; --ink:#2f2a22; --muted:#6e6a5c; --line:#d9e0cc;
+  --accent:#d9772e; --accent-ink:#ffffff; --stage-light:#cfe3f5; --stage-dark:#24283a; --task:#1f2430;
+  --display:"Pixelify Sans", ui-monospace, monospace; --body:"Nunito", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1c1f19; --surface:#262a22; --ink:#ecebe2; --muted:#a8a796; --line:#3a4034; --accent:#f0954b; --accent-ink:#1c1f19; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1f19; --surface:#262a22; --ink:#ecebe2; --muted:#a8a796; --line:#3a4034; --accent:#f0954b; --accent-ink:#1c1f19; color-scheme:dark}
+body{background:var(--bg); color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.5}
+.wrap{max-width:1080px; margin:0 auto; padding-inline:16px; padding-block:28px 56px; display:grid; gap:28px}
+h1,h2{font-family:var(--display); font-weight:700; margin:0; text-wrap:balance; letter-spacing:.01em}
+h1{font-size:clamp(28px,5vw,40px)}
+h2{font-size:20px}
+.lede{color:var(--muted); max-width:62ch; margin:6px 0 0}
+.stage-card{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:20px; align-items:stretch}
+@media (max-width:760px){.stage-card{grid-template-columns:1fr}}
+.stage{position:relative; border-radius:10px; overflow:hidden; background:var(--stage-light); min-height:300px; display:flex; align-items:flex-end; justify-content:center}
+.stage[data-bg="dark"]{background:var(--stage-dark)}
+.stage[data-bg="task"]{background:linear-gradient(#7fb3d9,#b9d8ef)}
+.stage[data-bg="task"]::after{content:""; position:absolute; left:0; right:0; bottom:0; height:22px; background:var(--task)}
+.stage canvas{image-rendering:pixelated; width:min(384px,90%); height:auto; position:relative; z-index:1}
+.stage[data-bg="task"] canvas{margin-bottom:16px}
+.info{display:grid; gap:14px; align-content:start}
+.info .name{font-family:var(--display); font-size:26px}
+.info .desc{margin:0; color:var(--ink)}
+.meta{display:flex; flex-wrap:wrap; gap:8px; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums}
+.meta span{border:1px solid var(--line); border-radius:999px; padding:2px 10px}
+.controls{display:flex; flex-wrap:wrap; gap:8px}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden}
+.seg button,.btn{font:inherit; font-size:13px; font-weight:600; background:var(--surface); color:var(--ink); border:0; padding:7px 12px; cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.btn{border:1px solid var(--line); border-radius:8px}
+button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+#groups{display:grid; gap:32px}
+.group{display:grid; gap:12px}
+.group p{margin:0; color:var(--muted); font-size:14px}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px}
+.tile{display:grid; gap:4px; justify-items:center; text-align:center; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 8px 12px; cursor:pointer; font:inherit; color:inherit}
+.tile[aria-current="true"]{border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset}
+.tile canvas{image-rendering:pixelated; width:128px; height:128px}
+.tile b{font-weight:700; font-size:14px}
+.tile small{color:var(--muted); font-size:12px; font-family:ui-monospace,monospace}
+.variants{display:flex; flex-wrap:wrap; gap:6px}
+.variants button{font:inherit; font-size:13px; font-weight:600; background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:5px 12px; cursor:pointer}
+.variants button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.duo{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px}
+.duo figure{margin:0; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px; display:grid; gap:6px; justify-items:center}
+.duo canvas{image-rendering:pixelated; width:256px; height:128px}
+.duo figcaption{font-size:13px; color:var(--muted); text-align:center}
+.icons{display:flex; flex-wrap:wrap; gap:10px}
+.icons figure{margin:0; display:grid; justify-items:center; gap:4px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 8px; width:84px}
+.icons canvas{image-rendering:pixelated; width:48px; height:48px}
+.icons figcaption{font-size:12px; color:var(--muted)}
+.note{font-size:13px; color:var(--muted); border-top:1px solid var(--line); padding-top:16px}
+@media (prefers-reduced-motion: reduce){.tile canvas{animation:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Świnka na pulpit</h1>
+    <p class="lede">Komplet 60 animacji pixel-artowej świnki morskiej w 7 wariantach: dorosła, maluch, senior, legenda i trzy umaszczenia towarzysza. Ruchy oparte na prawdziwych zachowaniach. Kliknij animację, żeby zobaczyć ją w powiększeniu.</p>
+  </header>
+
+  <section aria-label="Wariant">
+    <div class="variants" id="variants" role="group" aria-label="Wariant świnki"></div>
+  </section>
+
+  <section class="stage-card" aria-label="Podgląd">
+    <div class="stage" id="stage" data-bg="task"><canvas id="big" width="64" height="64"></canvas></div>
+    <div class="info">
+      <div class="name" id="bigName">Siedzenie</div>
+      <p class="desc" id="bigDesc"></p>
+      <div class="meta" id="bigMeta"></div>
+      <div class="controls">
+        <div class="seg" role="group" aria-label="Tło">
+          <button id="bg-task" data-bg="task" aria-pressed="true">Pasek zadań</button>
+          <button id="bg-light" data-bg="light" aria-pressed="false">Jasne</button>
+          <button id="bg-dark" data-bg="dark" aria-pressed="false">Ciemne</button>
+        </div>
+        <div class="seg" role="group" aria-label="Kierunek">
+          <button id="dir-r" data-dir="1" aria-pressed="true">W prawo</button>
+          <button id="dir-l" data-dir="-1" aria-pressed="false">W lewo</button>
+        </div>
+        <button class="btn" id="replay">Odtwórz od nowa</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="groups"></div>
+
+  <section class="group" aria-label="Para świnek">
+    <div><h2>Para świnek</h2><p>Animacje towarzysza działają w parze: druga świnka jest lustrzanym odbiciem w innym umaszczeniu.</p></div>
+    <div class="duo" id="duo"></div>
+  </section>
+
+  <section class="group" aria-label="Ikony przedmiotów">
+    <div><h2>Ikony przedmiotów</h2><p>16×16 px, do menu karmienia, sklepiku i ekwipunku.</p></div>
+    <div class="icons" id="icons"></div>
+  </section>
+
+  <p class="note">Klatki 64×64 px, świnka patrzy w prawo, podłoga na wysokości 59 px. Kierunek w lewo to lustrzane odbicie w grze. Animacje z domkiem i tunelem zawierają rekwizyt w klatce; domek i tunel stoją po prawej przy wchodzeniu i po lewej przy wychodzeniu. Skok przez przeszkodę jest w miejscu, a grę przesuwa świnka nad przeszkodą.</p>
+</div>
+
+<script>
+const SHEETS = __SHEETS__;
+const METAS = __METAS__;
+const ICONS = "__ICONS__";
+const ICON_META = __ICONMETA__;
+const VLABELS = __VLABELS__;
+const NAMES = {idle:"Siedzenie",sniff:"Węszenie",walk:"Chód",run:"Bieg (zoomies)",popcorn:"Popcorning",eat:"Jedzenie siana",eat_treat:"Chrupanie warzywka",groom:"Mycie pyszczka",lie_down:"Kładzenie się",sleep:"Sen",doze:"Drzemka",wake_up:"Pobudka",yawn:"Ziewanie",startle:"Przestrach",freeze:"Zamarcie",wheek:"Kwiczenie",dance:"Taniec",happy:"Zadowolenie",held:"Podniesiona",fall:"Spadanie",land:"Lądowanie",front_idle:"Patrzy na ciebie",front_look:"Śledzi kursor",turn:"Obrót",peek:"Zerkanie zza ekranu",front_happy:"Radość (przód)",
+drink:"Picie z poidła",chew_stick:"Gryzak",dig_hay:"Grzebanie w sianie",chin_rub:"Znaczenie brodą",eat_bowl:"Granulat z miski",eat_big:"Duży liść",beg:"Proszenie",sad:"Smutek",sick:"Choroba",poop:"Bobek",shiver:"Zimno",heat_flop:"Upał",sleep_house:"Sen w domku",purr_pet:"Mruczenie",chatter:"Irytacja",rumble:"Rumblestrut",flee:"Ucieczka",greet:"Powitanie",come_called:"Na zawołanie",spin:"Kółko (sztuczka)",hurdle:"Skok (agility)",stand_up:"Słupek (sztuczka)",house_enter:"Wejście do domku",house_exit:"Wyjście z domku",tunnel_in:"Wejście do tunelu",tunnel_wiggle:"W tunelu",tunnel_out:"Wyjście z tunelu",ball_push:"Piłeczka",nose_touch:"Nosek w nosek",groom_other:"Wylizywanie",follow:"Chodzenie za",sleep_together:"Spanie razem",party:"Urodziny",chirp:"Ćwierkanie"};
+const GROUPS = [
+  ["Codzienność","Co robi, kiedy nic się nie dzieje.",["idle","sniff","walk","run","groom","drink","chew_stick","dig_hay","chin_rub"]],
+  ["Jedzenie","Siano, warzywa, granulat i proszenie o smakołyki.",["eat","eat_treat","eat_bowl","eat_big","beg","wheek"]],
+  ["Potrzeby i zdrowie","Sygnały, że czegoś jej brakuje.",["sad","sick","poop","shiver","heat_flop","yawn"]],
+  ["Sen","Gdy długo nie ruszasz myszką albo jest późno.",["lie_down","sleep","doze","wake_up","sleep_house"]],
+  ["Radość i emocje","Reakcje na jedzenie, muzykę i głaskanie.",["popcorn","happy","purr_pet","dance","chatter","rumble","front_happy","party","chirp"]],
+  ["Strach i fizyka","Szybkie ruchy myszką, łapanie i rzucanie.",["startle","freeze","flee","held","fall","land"]],
+  ["Kontakt z tobą","Patrzenie na kursor, przybieganie i chowanie się za krawędź ekranu.",["front_idle","front_look","turn","peek","greet","come_called"]],
+  ["Sztuczki","Odblokowywane poziomem więzi.",["spin","stand_up","hurdle"]],
+  ["Zabawki i domki","Rekwizyty kupione w sklepiku.",["house_enter","house_exit","tunnel_in","tunnel_wiggle","tunnel_out","ball_push"]],
+  ["Towarzysz","Animacje jednej świnki do zachowań w parze.",["nose_touch","groom_other","follow","sleep_together"]],
+];
+const DUO = [["nose_touch","Nosek w nosek",8],["groom_other","Wylizywanie",5],["sleep_together","Spanie razem",9],["dance","Taniec we dwie",-4]];
+const ICON_NAMES = {papryka:"Papryka",ogorek:"Ogórek",natka:"Natka",marchewka:"Marchewka",granulat:"Granulat",gryzak:"Gryzak",pilka:"Piłka",tunel:"Tunel",domek:"Domek",poidlo:"Poidło",bobek:"Bobek",tort:"Tort",siano:"Siano",ziarenko:"Ziarenko",jarmuz:"Jarmuż"};
+const FS = 64;
+const imgs = {};
+let variant = "dorosla", dir = 1;
+const players = [];
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function meta(){ return METAS[variant].animations; }
+function makePlayer(canvas, name, opts={}){
+  const ctx = canvas.getContext("2d"); ctx.imageSmoothingEnabled = false;
+  const p = {canvas, ctx, name, i:0, acc:0, wait:0, opts}; players.push(p); return p;
+}
+function drawFrame(ctx, v, name, i, x, flipIt){
+  const a = METAS[v].animations[name]; if (!a) return;
+  ctx.save();
+  if (flipIt){ ctx.translate(x + FS, 0); ctx.scale(-1, 1); x = 0; }
+  ctx.drawImage(imgs[v], (i % a.frames) * FS, a.row * FS, FS, FS, x, 0, FS, FS);
+  ctx.restore();
+}
+function draw(p){
+  const ctx = p.ctx; ctx.clearRect(0, 0, p.canvas.width, p.canvas.height);
+  if (p.opts.duo){
+    drawFrame(ctx, variant, p.name, p.i, p.opts.gap, false);
+    drawFrame(ctx, "towarzysz_czarno-biala", p.name, p.i + 2, 64 - p.opts.gap, true);
+    return;
+  }
+  drawFrame(ctx, variant, p.name, p.i, 0, p.opts.big && dir < 0);
+}
+function step(p, dt){
+  const a = meta()[p.name];
+  if (p.wait > 0){ p.wait -= dt; if (p.wait <= 0){ p.i = 0; draw(p);} return; }
+  p.acc += dt;
+  const fd = p.name === "front_look" ? 700 : 1000 / a.fps;
+  while (p.acc >= fd){
+    p.acc -= fd; p.i++;
+    if (p.i >= a.frames){ if (a.loop || p.name === "front_look" || p.opts.duo){ p.i = 0; } else { p.i = a.frames - 1; p.wait = 900; p.acc = 0; break; } }
+    draw(p);
+  }
+}
+let last = performance.now();
+function loop(now){
+  const dt = Math.min(100, now - last); last = now;
+  players.forEach(p => { if (!reduce || p.opts.big) step(p, dt); });
+  requestAnimationFrame(loop);
+}
+function select(name){
+  big.name = name; big.i = 0; big.acc = 0; big.wait = 0; draw(big);
+  const a = meta()[name];
+  document.getElementById("bigName").textContent = NAMES[name] || name;
+  document.getElementById("bigDesc").textContent = a.opis;
+  document.getElementById("bigMeta").innerHTML = `<span>${name}</span><span>${a.frames} klatek</span><span>${a.fps} kl./s</span><span>${a.loop ? "pętla" : "jednorazowa"}</span>`;
+  document.querySelectorAll(".tile").forEach(t => t.setAttribute("aria-current", t.dataset.name === name ? "true" : "false"));
+}
+const big = makePlayer(document.getElementById("big"), "idle", {big:true});
+const root = document.getElementById("groups");
+GROUPS.forEach(([title, sub, list]) => {
+  const g = document.createElement("section"); g.className = "group";
+  g.innerHTML = `<div><h2>${title}</h2><p>${sub}</p></div>`;
+  const grid = document.createElement("div"); grid.className = "grid";
+  list.forEach(n => {
+    const b = document.createElement("button"); b.className = "tile"; b.dataset.name = n; b.type = "button";
+    const c = document.createElement("canvas"); c.width = FS; c.height = FS; b.appendChild(c);
+    b.insertAdjacentHTML("beforeend", `<b>${NAMES[n]||n}</b><small>${n}</small>`);
+    b.addEventListener("click", () => { select(n); document.getElementById("stage").scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"nearest"}); });
+    grid.appendChild(b); makePlayer(c, n);
+  });
+  g.appendChild(grid); root.appendChild(g);
+});
+const duoRoot = document.getElementById("duo");
+DUO.forEach(([n, label, gap]) => {
+  const f = document.createElement("figure");
+  const c = document.createElement("canvas"); c.width = 128; c.height = 64;
+  f.appendChild(c); f.insertAdjacentHTML("beforeend", `<figcaption>${label}</figcaption>`);
+  duoRoot.appendChild(f); makePlayer(c, n, {duo:true, gap: 0 + gap});
+});
+const vroot = document.getElementById("variants");
+Object.keys(SHEETS).forEach(k => {
+  const b = document.createElement("button"); b.type = "button"; b.textContent = VLABELS[k]; b.dataset.v = k;
+  b.setAttribute("aria-pressed", k === variant);
+  b.addEventListener("click", () => { variant = k; vroot.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); players.forEach(p => { p.i = 0; p.acc = 0; p.wait = 0; draw(p); }); select(big.name); });
+  vroot.appendChild(b);
+});
+document.querySelectorAll("button[data-bg]").forEach(b => b.addEventListener("click", () => {
+  document.getElementById("stage").dataset.bg = b.dataset.bg;
+  document.querySelectorAll("button[data-bg]").forEach(x => x.setAttribute("aria-pressed", x === b));
+}));
+document.querySelectorAll("[data-dir]").forEach(b => b.addEventListener("click", () => {
+  dir = +b.dataset.dir; document.querySelectorAll("[data-dir]").forEach(x => x.setAttribute("aria-pressed", x === b)); draw(big);
+}));
+document.getElementById("replay").addEventListener("click", () => { big.i = 0; big.acc = 0; big.wait = 0; draw(big); });
+const iconImg = new Image();
+iconImg.onload = () => {
+  const ir = document.getElementById("icons");
+  Object.entries(ICON_META).forEach(([n, i]) => {
+    const f = document.createElement("figure"); const c = document.createElement("canvas"); c.width = 16; c.height = 16;
+    const x = c.getContext("2d"); x.imageSmoothingEnabled = false; x.drawImage(iconImg, i * 16, 0, 16, 16, 0, 0, 16, 16);
+    f.appendChild(c); f.insertAdjacentHTML("beforeend", `<figcaption>${ICON_NAMES[n] || n}</figcaption>`); ir.appendChild(f);
+  });
+};
+iconImg.src = ICONS;
+let pending = Object.keys(SHEETS).length;
+Object.entries(SHEETS).forEach(([k, src]) => {
+  const im = new Image(); im.onload = () => { if (--pending === 0){ players.forEach(draw); select("idle"); requestAnimationFrame(loop); } };
+  im.src = src; imgs[k] = im;
+});
+</script>
