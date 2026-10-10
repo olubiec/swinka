@@ -1,0 +1,19 @@
+{
+  "opis": "7 dni, PC 9-17, siano 3x dziennie, 2 papryki, troche zabawy | weekend: PC wylaczony, bez opieki",
+  "z_opieka_min": {
+    "najedzenie": 70.7,
+    "witamina_c": 70.7,
+    "energia": 92,
+    "humor": 73.3,
+    "czystosc": 100.0,
+    "zabki": 98.0
+  },
+  "weekend_bez_opieki_min": {
+    "najedzenie": 20,
+    "witamina_c": 20,
+    "energia": 100,
+    "humor": 20,
+    "czystosc": 100.0,
+    "zabki": 77.3
+  }
+}

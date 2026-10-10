@@ -1,0 +1,14 @@
+# Zasady dla agentów
+- Projekt: Świnka na pulpit, oparta na eSheep (kod w folderze esheep/, licencja MIT). Plan i liczby: PLAN.md. Czytaj go przed każdym zadaniem.
+- Świnka na pulpicie: C# na .NET Framework 4.8, projekt esheep/src/DesktopPet.sln.
+- Mózg gry: projekt SwinkaCore jako biblioteka .NET Standard 2.0, bez żadnych odwołań do WinForms i Win32.
+- Grafika i dane: folder swinka/ (opis w swinka/CZYTAJ.md). Nie rysuj świnki od nowa; brakującą grafikę zgłoś, dorysuje ją Claude w czacie.
+- Waluta gry to koniczynki.
+- Domek: HTML + JavaScript w folderze /domek. Minigry: Phaser 3 w /domek/minigry, lokalna kopia biblioteki.
+- Stan gry: %AppData%/Swinka/save.json z polem version i kopią zapasową save.bak.
+- Nie usuwaj działających funkcji eSheep bez pytania.
+- Jedno zadanie naraz. Na końcu napisz: zmienione pliki, jak przetestować, co nie działa, propozycja opisu commita.
+- Nie zgaduj API. Gdy nie wiesz, przeczytaj kod albo dokumentację z linku w prompcie.
+- Grafika to pixel art: skalowanie tylko nearest neighbor, bez wygładzania, kolory z palety świnki.
+- Wszystkie teksty dla użytkownika po polsku.
+- Czas gry zawsze przez interfejs zegara z mnożnikiem, żeby dało się testować przyspieszony czas.

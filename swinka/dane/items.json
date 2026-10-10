@@ -1,0 +1,189 @@
+{
+  "waluta": {
+    "nazwa": "koniczynki",
+    "ikona": "koniczynka"
+  },
+  "przedmioty": [
+    {
+      "id": "siano",
+      "nazwa": "Siano",
+      "kategoria": "jedzenie",
+      "cena": 0,
+      "bez_limitu": true,
+      "ikona": "siano",
+      "animacja": "eat",
+      "efekty": {
+        "najedzenie": 10,
+        "zabki": 6
+      },
+      "opis": "Podstawa diety. Darmowe, dokładasz do paśnika (zapas 0-100)."
+    },
+    {
+      "id": "granulat",
+      "nazwa": "Granulat",
+      "kategoria": "jedzenie",
+      "cena": 5,
+      "ikona": "granulat",
+      "animacja": "eat_bowl",
+      "efekty": {
+        "najedzenie": 20,
+        "witamina_c": 5
+      },
+      "opis": "Sycący dodatek z miseczki."
+    },
+    {
+      "id": "papryka",
+      "nazwa": "Papryka",
+      "kategoria": "warzywo",
+      "cena": 12,
+      "ikona": "papryka",
+      "animacja": "eat_treat",
+      "efekty": {
+        "najedzenie": 8,
+        "witamina_c": 35,
+        "humor": 5
+      },
+      "opis": "Najlepsze źródło witaminy C."
+    },
+    {
+      "id": "natka",
+      "nazwa": "Natka pietruszki",
+      "kategoria": "warzywo",
+      "cena": 8,
+      "ikona": "natka",
+      "animacja": "eat_treat",
+      "efekty": {
+        "najedzenie": 6,
+        "witamina_c": 20
+      },
+      "opis": "Dużo witaminy C, mało kalorii."
+    },
+    {
+      "id": "jarmuz",
+      "nazwa": "Jarmuż",
+      "kategoria": "warzywo",
+      "cena": 10,
+      "ikona": "jarmuz",
+      "animacja": "eat_big",
+      "efekty": {
+        "najedzenie": 10,
+        "witamina_c": 25,
+        "zabki": 3
+      },
+      "opis": "Duży liść do szarpania."
+    },
+    {
+      "id": "ogorek",
+      "nazwa": "Ogórek",
+      "kategoria": "warzywo",
+      "cena": 5,
+      "ikona": "ogorek",
+      "animacja": "eat_treat",
+      "efekty": {
+        "najedzenie": 6,
+        "humor": 4,
+        "witamina_c": 2
+      },
+      "opis": "Orzeźwiający, prawie bez witaminy C."
+    },
+    {
+      "id": "marchewka",
+      "nazwa": "Marchewka",
+      "kategoria": "smakolyk",
+      "cena": 8,
+      "ikona": "marchewka",
+      "animacja": "eat_treat",
+      "efekty": {
+        "najedzenie": 8,
+        "humor": 10,
+        "witamina_c": 3
+      },
+      "limit_dzienny": 1,
+      "opis": "Słodka, więc tylko raz dziennie."
+    },
+    {
+      "id": "gryzak",
+      "nazwa": "Gryzak",
+      "kategoria": "gryzak",
+      "cena": 20,
+      "ikona": "gryzak",
+      "animacja": "chew_stick",
+      "uzycia": 5,
+      "efekty": {
+        "zabki": 40,
+        "humor": 5
+      },
+      "opis": "Ściera ząbki. Starcza na 5 razy."
+    },
+    {
+      "id": "pilka",
+      "nazwa": "Piłeczka",
+      "kategoria": "zabawka",
+      "cena": 60,
+      "trwale": true,
+      "ikona": "pilka",
+      "animacja": "ball_push",
+      "efekty": {
+        "humor": 15,
+        "energia": -5
+      },
+      "opis": "Odblokowuje zabawę piłeczką."
+    },
+    {
+      "id": "tunel",
+      "nazwa": "Tunel",
+      "kategoria": "zabawka",
+      "cena": 150,
+      "trwale": true,
+      "ikona": "tunel",
+      "animacja": "tunnel_in",
+      "efekty": {
+        "humor": 20,
+        "energia": -8
+      },
+      "opis": "Odblokowuje bieganie przez tunel."
+    },
+    {
+      "id": "domek",
+      "nazwa": "Domek",
+      "kategoria": "wyposazenie",
+      "cena": 250,
+      "trwale": true,
+      "ikona": "domek",
+      "animacja": "sleep_house",
+      "efekty": {
+        "energia": 10,
+        "humor": 5
+      },
+      "opis": "Sen w domku regeneruje energię 1,5x szybciej."
+    },
+    {
+      "id": "poidlo",
+      "nazwa": "Poidło",
+      "kategoria": "wyposazenie",
+      "cena": 40,
+      "trwale": true,
+      "ikona": "poidlo",
+      "animacja": "drink",
+      "efekty": {
+        "humor": 2,
+        "najedzenie": 2
+      },
+      "opis": "Odblokowuje picie; bez niego zdrowie rośnie wolniej."
+    },
+    {
+      "id": "tort",
+      "nazwa": "Tort z selera",
+      "kategoria": "specjalne",
+      "cena": null,
+      "ikona": "tort",
+      "animacja": "party",
+      "efekty": {
+        "najedzenie": 15,
+        "humor": 30,
+        "witamina_c": 10
+      },
+      "opis": "Tylko na urodziny."
+    }
+  ]
+}
