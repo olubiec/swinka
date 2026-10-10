@@ -270,8 +270,8 @@ Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do
 - [ ] Zainstaluj Git, Visual Studio 2022 Community (pakiet „.NET desktop development” z .NET Framework 4.8) i Python 3
 - [x] Załóż prywatne repo na GitHubie: [kasztan9w8w7w6/swinka](https://github.com/kasztan9w8w7w6/swinka)
 - [x] Kod [eSheep](https://github.com/Adrianotiger/desktopPet) w folderze `esheep/` (licencja MIT)
-- [x] Grafika i dane w folderze `swinka/`, pliki `PLAN.md` i `ZASADY.md` w repo
-- [ ] Scal pull request #1 na GitHubie i pobierz zmiany w Antigravity (Pull)
+- [x] Grafika i dane w folderze `swinka/`, pliki `PLAN.md` i `ZASADY.md` w repo (scalone do main)
+- [ ] Pobierz zmiany w Antigravity (Pull), żeby mieć wszystko lokalnie
 - [ ] Otwórz `esheep/src/DesktopPet.sln` w Visual Studio i uruchom (F5), żeby sprawdzić, że owca działa
 
 ### A2 · Gemini: analiza eSheep
