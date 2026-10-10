@@ -109,18 +109,20 @@ for i in range(10):
                 eye='happy' if 3 <= i <= 7 else 'open', nose=i % 2, blush=3 <= i <= 7))
 add('eat_treat', fr, 10, True, 'Chrupanie warzywka: radosne przeżuwanie')
 
-# 8. GROOM – siada na zadzie, przednie łapki pocierają pyszczek od oczu do nosa
+# 8. SCRATCH – drapanie tylną łapką za uchem (prawdziwe zachowanie świnek)
 fr = []
-def sitp(k, **kw):  # k: 0..1 jak bardzo siedzi
-    return dict(rot=-9 * k, hdy=-5 - 2 * k, hdx=13.5 - 0.5 * k, feet=[(0, 0), (0, 0), (round(-1 * k), round(-1 * k)), (round(-1 * k), 0)], **kw)
-fr.append(R(**sitp(0)))
-fr.append(R(**sitp(0.5)))
-for cyc in range(3):
-    for j, (pdx, pdy, eye) in enumerate([(-6, -3, 'closed'), (-3, -1, 'closed'), (-0.5, 1, 'half'), (-2, 3, 'open')]):
-        fr.append(R(**sitp(1, paws=[(pdx, pdy), (pdx + 1, pdy + 1)], eye=eye, whisk=1 if j == 2 else 0)))
-fr.append(R(**sitp(0.5)))
-fr.append(R(**sitp(0)))
-add('groom', fr, 10, False, 'Mycie: siada i pociera pyszczek łapkami')
+def scp(k, **kw):  # k: 0..1 jak bardzo pochylona do drapania
+    return dict(rot=-5 * k, piv=-8, hdy=-5 + 1.6 * k, hdx=13.5 - 1.0 * k, **kw)
+fr.append(R(**scp(0)))
+fr.append(R(**scp(0.5, scratch=(4, 5))))
+fr.append(R(**scp(1, scratch=(1, 2), eye='half')))
+for cyc in range(10):
+    fr.append(R(**scp(1, scratch=((cyc % 2) * 1.0, -1.5 if cyc % 2 else 0.5), eye='squeeze' if cyc % 4 < 2 else 'happy',
+                     ear=0.5 if cyc % 2 else -0.3, whisk=cyc % 2)))
+fr.append(R(**scp(0.5, scratch=(4, 5))))
+fr.append(R(**scp(0)))
+fr.append(R(ear=1))
+add('scratch', fr, 14, False, 'Drapanie tylną łapką za uchem')
 
 # 9. LIE_DOWN – kładzie się na brzuchu („naleśnik”)
 fr = []
@@ -248,10 +250,10 @@ add('turn', fr, 10, False, 'Obrót z boku do przodu')
 
 # 25. PEEK – wystaje zza krawędzi ekranu, rozgląda się, chowa się
 fr = []
-keys = [(22, (0, 0)), (16, (0, 0)), (12, (0, -1)), (11, (-2, 0)), (11, (-2, 0)), (11, (2, 0)), (11, (2, 0)),
-        (11, (0, 0)), (11, (0, 0)), (12, (0, 0)), (16, (0, 0)), (22, (0, 0))]
+keys = [(33, (0, 0)), (26, (0, 0)), (19, (0, -1)), (15, (-2, 0)), (15, (-2, 0)), (15, (2, 0)), (15, (2, 0)),
+        (15, (0, 0)), (15, (0, 0)), (19, (0, 0)), (26, (0, 0)), (33, (0, 0))]
 for i, (cy, lk) in enumerate(keys):
-    fr.append(F(cy=cy, look=lk, body=False, paws_edge=cy < 20, shadow=0, nose=1 if i == 8 else 0))
+    fr.append(F(cy=cy, look=lk, body=True, paws_edge=cy < 30, shadow=0, nose=1 if i == 8 else 0))
 add('peek', fr, 8, False, 'Zerkanie zza krawędzi ekranu i chowanie się')
 
 # 26. FRONT_HAPPY – radość z przodu

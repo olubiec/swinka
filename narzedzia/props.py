@@ -76,23 +76,22 @@ def house(x0, w=26, h=22):
     return c.finish()
 
 
-def tunnel(x0, w, open_side='left', bulge=None):
+def tunnel(x0, w, open_side='left', bulge=None, hgt=29):
     c = Canvas()
     yb = FLOOR - 0.5
-    hgt = 17
     top = yb - hgt
     body = rect(x0, top, x0 + w, yb)
     if bulge is not None:
         bmask, _, _ = E(bulge, top + 1, 6, 3)
         body |= bmask & (YY < top + 1)
     v = (YY - (top + hgt / 2)) / (hgt / 2)
-    ring = ((XX.astype(int) - x0) % 6) < 1
+    ring = ((XX.astype(int) - x0) % 7) < 1
     lv = np.where(ring, 3, shade(0 * v, v))
     c.put_mat(body, MAT['fabric'], lv)
     ox = x0 + 2 if open_side == 'left' else x0 + w - 3
-    hole, hu, hv = E(ox, top + hgt / 2, 2.6, hgt / 2 - 1.5)
+    hole, hu, hv = E(ox, top + hgt / 2, 3.4, hgt / 2 - 1.5)
     c.put_mat(hole & body, MAT['fabric'], 3)
-    inner, _, _ = E(ox + (0.6 if open_side == 'left' else -0.6), top + hgt / 2 + 1, 1.6, hgt / 2 - 3)
+    inner, _, _ = E(ox + (0.8 if open_side == 'left' else -0.8), top + hgt / 2 + 1, 2.2, hgt / 2 - 3)
     img = c.finish()
     img[inner & body] = hx('3a1d2a')
     return img

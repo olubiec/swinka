@@ -11,43 +11,43 @@
       "opis": "Dorosła (ruda)",
       "folder": "dorosla",
       "animacji": 60,
-      "klatek": 591
+      "klatek": 592
     },
     "maluch": {
       "opis": "Maluch",
       "folder": "maluch",
       "animacji": 60,
-      "klatek": 591
+      "klatek": 592
     },
     "senior": {
       "opis": "Senior",
       "folder": "senior",
       "animacji": 60,
-      "klatek": 591
+      "klatek": 592
     },
     "legenda": {
       "opis": "Legenda",
       "folder": "legenda",
       "animacji": 60,
-      "klatek": 591
+      "klatek": 592
     },
     "towarzysz_czarno-biala": {
       "opis": "Towarzysz: czarno-biała",
       "folder": "towarzysz_czarno-biala",
       "animacji": 60,
-      "klatek": 591
+      "klatek": 592
     },
     "towarzysz_agouti": {
       "opis": "Towarzysz: agouti",
       "folder": "towarzysz_agouti",
       "animacji": 60,
-      "klatek": 591
+      "klatek": 592
     },
     "towarzysz_kremowa": {
       "opis": "Towarzysz: kremowa",
       "folder": "towarzysz_kremowa",
       "animacji": 60,
-      "klatek": 591
+      "klatek": 592
     }
   },
   "ikony": [

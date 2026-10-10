@@ -57,12 +57,12 @@
       "loop": true,
       "opis": "Chrupanie warzywka: radosne przeżuwanie"
     },
-    "groom": {
+    "scratch": {
       "row": 7,
       "frames": 16,
-      "fps": 10,
+      "fps": 14,
       "loop": false,
-      "opis": "Mycie: siada i pociera pyszczek łapkami"
+      "opis": "Drapanie tylną łapką za uchem"
     },
     "lie_down": {
       "row": 8,
@@ -360,7 +360,7 @@
     },
     "tunnel_in": {
       "row": 50,
-      "frames": 14,
+      "frames": 15,
       "fps": 12,
       "loop": false,
       "opis": "Wbiega do tunelu (tunel po prawej), potem tunel się porusza"

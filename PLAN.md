@@ -145,7 +145,7 @@ Stan na 10 października: wszystkie animacje z tabeli są gotowe. Razem 60 anima
 
 | Funkcja | Już jest | Do zrobienia |
 | --- | --- | --- |
-| Codzienność | idle, sniff, walk, run, groom | `drink` (picie z poidła), `chew_stick` (gryzak), `dig_hay` (grzebanie w sianie), `chin_rub` (znaczenie terenu brodą) |
+| Codzienność | idle, sniff, walk, run, scratch (drapanie tylną łapką za uchem) | `drink` (picie z poidła), `chew_stick` (gryzak), `dig_hay` (grzebanie w sianie), `chin_rub` (znaczenie terenu brodą) |
 | Jedzenie | eat (siano), eat\_treat (warzywo) | `eat_bowl` (granulat z miski), `eat_big` (ciągnięcie dużego liścia), `beg` (staje na tylnych łapkach po smakołyk) |
 | Potrzeby i zdrowie | wheek, yawn | `sad` (głowa nisko, siedzi w kącie), `sick` (nastroszona, oczy półprzymknięte), `poop` (bobek jako efekt), `shiver` (zimno), `heat_flop` (upał, leży rozciągnięta) |
 | Sen | lie\_down, sleep, doze, wake\_up | `sleep_house` (śpi w domku, wystaje nosek) |
@@ -183,7 +183,7 @@ Etapy idą jeden po drugim, bo każdy korzysta z poprzedniego; wyróżniona bram
 1. **A1** Przygotowanie środowiska (ty)
 2. **A2** Analiza repo eSheep i opis architektury (Gemini)
 3. **A3** Podmiana owcy na świnkę: arkusz klatek i `animations.xml` (Gemini)
-4. **A4** Zachowania losowe: węszenie, mycie, popcorning, drzemka (Gemini)
+4. **A4** Zachowania losowe: węszenie, drapanie za uchem, popcorning, drzemka (Gemini)
 
 **Bramka A:** świnka chodzi po pasku i oknach, da się ją złapać i rzucić, plik .exe działa na drugim komputerze.
 
@@ -301,9 +301,9 @@ oraz swinka_animacje.json (rząd, liczba klatek, kl./s, pętla).
 ```text
 Przeczytaj PLAN.md, ZASADY.md i ARCHITEKTURA.md.
 Wzór: podział na akcje i zachowania z Shimeji-ee (https://github.com/gil/shimeji-ee, pliki actions.xml i behaviors.xml).
-Dodaj do animations.xml losowe zachowania z wagami: sniff 15%, groom 8%, eat z sianem 10%, popcorn 4%, wheek 3%,
+Dodaj do animations.xml losowe zachowania z wagami: sniff 15%, scratch 8%, eat z sianem 10%, popcorn 4%, wheek 3%,
 doze 5%, reszta to idle i chodzenie. Popcorn i wheek nie mogą wystąpić dwa razy pod rząd.
-Po upadku zawsze land, po land czasem groom (otrzepanie się).
+Po upadku zawsze land, po land czasem scratch (drapanie za uchem).
 Uruchom na 10 minut i wypisz, ile razy wystąpiło każde zachowanie.
 ```
 

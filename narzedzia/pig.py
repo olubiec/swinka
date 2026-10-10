@@ -156,7 +156,7 @@ DEF = dict(
     paws=None,                                    # uniesione przednie łapki (x,y) względem nosa
     feet_hidden=0,                                # 0..2 chowanie stóp pod tułów (leżenie)
     blush=False, shadow=1.0, whisk=0,
-    hay=None, fx=(), _head=False, piv=0.0, hat=False, fluff=False, back_out=False, arms=None,
+    hay=None, fx=(), _head=False, piv=0.0, hat=False, fluff=False, back_out=False, arms=None, scratch=None,
 )
 
 
@@ -340,17 +340,36 @@ def render_side(**kw):
             c.put_mat(arm, MAT['orange'], 1 + k)
             c.put_mat(ell(sx0 + ax + 0.4, sy0 + ay + 0.6, 1.5, 1.2), MAT['pink'], 1 + k)
 
-    if p['back_out']:
-        for k in (0, 1):
-            fx0, fy0 = bx - brx - 3 + k, FLOOR - 3 - p['lift'] + k
-            c.stamp(['.PP', 'PPP'], int(round(fx0)), int(round(fy0)), {'P': RAMP['pink'][2 - k]})
+    if p['back_out']:   # tylne łapki wyciągnięte do tyłu (upał), przyczepione do tułowia
+        for k in (1, 0):
+            hipx, hipy = bx - brx * 0.62, by + bry * 0.55 - k * 0.8
+            fx1, fy1 = bx - brx - 4.5 + k * 1.5, FLOOR - 2.0 - p['lift'] - k * 0.5
+            c.put_mat(capsule(hipx, hipy, fx1 + 1.2, fy1, 1.6), MAT['orange'], 2 if k else 1)
+            c.put_mat(ell(fx1, fy1, 1.8, 1.1), MAT['pink'], 2 if k else 1)
+    if p['scratch'] is not None:   # tylna łapka drapie za uchem
+        sdx, sdy = p['scratch']
+        hipx, hipy = bx - brx * 0.3, by + bry * 0.45
+        kx, ky = bx - brx * 0.05, by - bry * 0.05          # kolano
+        fx1, fy1 = exx - 1.0 * kh + sdx, ey + 3.2 * kh + sdy
+        thigh = ell(hipx, hipy, 5.0 * kb, 4.0 * kb)
+        shin = capsule(hipx, hipy, kx, ky, 2.0) | capsule(kx, ky, fx1 - 0.5, fy1 + 0.8, 1.6)
+        foot = ell(fx1, fy1, 2.2, 1.4, -40)
+        leg = thigh | shin | foot
+        rim = dil(leg) & ~leg & c.fill
+        c.put_mat(rim, MAT['orange'], 3)
+        tu, tv = (lx - hipx) / 5.0, (ly - hipy) / 4.0
+        c.put_mat(thigh | shin, MAT['orange'], np.where(level(-(0.42 * tu + 0.88 * tv)) == 0, 0, 1))
+        c.put_mat(foot, MAT['pink'], 1)
+        X, Y = fwd(fx1 + 1, fy1)
+        c.put_px(X, Y, RAMP['pink'][3])
     if p['hat']:
         X, Y = fwd(hxc - 0.5 * kh, hyc - hry - 6.0)
         c.stamp(['...Y...', '..YYY..', '...R...', '..RRR..', '..BBB..', '.RRRRR.', 'BBBBBBB'], X - 3, Y,
                 {'Y': hx('ffe066'), 'R': hx('ff6b8a'), 'B': hx('6aa8ff')})
 
     # bliskie stopy
-    draw_foot(1, False)
+    if p['scratch'] is None:
+        draw_foot(1, False)
     draw_foot(3, False)
 
     # siano / jedzenie w pyszczku

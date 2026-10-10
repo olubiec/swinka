@@ -136,8 +136,8 @@ fr = []
 for i in range(8):
     zz = [fx(Z_SM, 52, 22 - (i % 4)), fx(Z_BIG, 57, 12 - (i % 4))] if i >= 2 else [fx(Z_SM, 52, 22)]
     p = dict(LIE); p.update(bx=12 - (i % 4 == 1), eye='closed', whisk=0, shadow=0)
-    pigimg = hide_x(flip(R(**p)), x0=31)
-    fr.append(compose(pigimg, house(31, 30, 24), fxl(zz)))
+    pigimg = hide_x(flip(R(**p)), x0=30)
+    fr.append(compose(pigimg, house(30, 32, 31), fxl(zz)))
 add('sleep_house', fr, 4, True, 'Sen w domku: z wejścia wystaje tylko nosek')
 
 # ---------------------------------------------------------------- emocje
@@ -207,26 +207,26 @@ def walk_feet(i):
 
 fr = []
 for i in range(13):
-    tx = round(i * 3.6)
-    img = R(bx=17, tx=tx, feet=walk_feet(i), lift=0.5 * abs(sn(i / 8)), shadow=0 if i > 8 else 1)
-    fr.append(compose(hide_x(img, x0=40), house(40, 24, 22)))
+    tx = round(i * 3.1)
+    img = R(bx=16, tx=tx, feet=walk_feet(i), lift=0.5 * abs(sn(i / 8)), shadow=0 if i > 8 else 1)
+    fr.append(compose(hide_x(img, x0=36), house(36, 28, 30)))
 add('house_enter', fr, 10, False, 'Wchodzi do domku (domek po prawej, świnka znika w środku)')
 
 fr = []
 for i in range(13):
-    tx = round(i * 3.4)
-    img = R(bx=-1, tx=tx, feet=walk_feet(i), lift=0.5 * abs(sn(i / 8)), shadow=1 if i > 4 else 0)
-    fr.append(compose(hide_x(img, x1=24), house(0, 24, 22)))
+    tx = round(i * 3.7)
+    img = R(bx=-2, tx=tx, feet=walk_feet(i), lift=0.5 * abs(sn(i / 8)), shadow=1 if i > 5 else 0)
+    fr.append(compose(hide_x(img, x1=28), house(0, 28, 30)))
 add('house_exit', fr, 10, False, 'Wychodzi z domku (domek po lewej)')
 
 fr = []
-for i in range(14):
-    if i < 10:
-        tx = round(i * 4.2)
-        img = R(bx=17, tx=tx, feet=walk_feet(i), brx=17.6, hdx=14, shadow=0 if i > 6 else 1)
-        fr.append(compose(hide_x(img, x0=42), tunnel(40, 24, 'left')))
+for i in range(15):
+    if i < 11:
+        tx = round(i * 3.9)
+        img = R(bx=16, tx=tx, feet=walk_feet(i), brx=17.6, hdx=14, shadow=0 if i > 7 else 1)
+        fr.append(compose(hide_x(img, x0=39), tunnel(36, 28, 'left')))
     else:
-        fr.append(tunnel(40, 24, 'left', bulge=45 + (i - 10) * 4))
+        fr.append(tunnel(36, 28, 'left', bulge=42 + (i - 11) * 5))
 add('tunnel_in', fr, 12, False, 'Wbiega do tunelu (tunel po prawej), potem tunel się porusza')
 
 fr = [tunnel(4, 56, 'left', bulge=10 + i * 6) for i in range(8)]
@@ -234,11 +234,11 @@ add('tunnel_wiggle', fr, 10, True, 'Świnka w tunelu: wybrzuszenie przesuwa się
 
 fr = []
 for i in range(10):
-    tx = round(i * 4.4)
+    tx = round(i * 4.9)
     s = sn(i / 6)
     feet = [(round(3 * s), 0), (round(3 * s), 0), (round(-3 * s), -1 if s < 0 else 0), (round(-3 * s), -1 if s < 0 else 0)]
     img = R(bx=-2, tx=tx, feet=feet, brx=18, hdx=14.6, shadow=1 if i > 4 else 0)
-    fr.append(compose(hide_x(img, x1=24), tunnel(0, 26, 'right')))
+    fr.append(compose(hide_x(img, x1=25), tunnel(0, 28, 'right')))
 add('tunnel_out', fr, 12, False, 'Wybiega z tunelu (tunel po lewej)')
 
 fr = []
