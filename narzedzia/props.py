@@ -300,14 +300,104 @@ def icons():
         c.put_mat(m & (np.abs(XX - 8) < 0.7), MAT['red'], 2)
     I['siano'] = _icon(siano)
 
-    def ziarenko(c):
-        m, u, v = E(8, 8, 3.2, 5.2, 25)
-        c.put_mat(m, MAT['gold'], shade(u, v))
-        c.put_mat(m & (np.abs((XX - 8) * math.cos(0.44) + (YY - 8) * math.sin(0.44)) < 0.6), MAT['gold'], 3)
-    I['ziarenko'] = _icon(ziarenko)
+    def koniczynka(c):
+        allm = np.zeros((S, S), bool)
+        for cx, cy in [(5.5, 5.5), (10.5, 5.5), (5.5, 10.5), (10.5, 10.5)]:
+            m, u, v = E(cx, cy, 2.6, 2.6)
+            c.put_mat(m, MAT['leaf'], shade(u, v)); allm |= m
+        gap = allm & ((np.abs(XX - 8) < 0.6) | (np.abs(YY - 8) < 0.6))
+        c.put_mat(gap, MAT['leaf'], 3)
+        c.put_mat(E(8, 8, 1.0, 1.0)[0], MAT['leaf'], 1)
+        for i in range(4):
+            c.put_px(9 + i // 2, 11 + i, RAMP['leaf'][2])
+    I['koniczynka'] = _icon(koniczynka)
 
     def lisc(c):
         m, u, v = E(8, 8, 6, 3.6, -30)
         c.put_mat(m, MAT['leaf'], shade(u, v))
     I['jarmuz'] = _icon(lisc)
+
+    def truskawka(c):
+        m, u, v = E(8, 9.5, 4.6, 5.0)
+        tip, _, _ = E(8, 12.5, 2.6, 2.6)
+        c.put_mat(m | tip, MAT['red'], shade(u, v))
+        for px, py in [(6, 8), (9, 7), (7, 11), (10, 10), (8, 13)]:
+            c.put_px(px, py, RAMP['cream'][1])
+        c.put_mat(E(8, 4.5, 3.6, 1.3)[0], MAT['leaf'], 1)
+        c.put_px(8, 2, RAMP['leaf'][2]); c.put_px(8, 3, RAMP['leaf'][2])
+    I['truskawka'] = _icon(truskawka)
+
+    def cebula(c):
+        m, u, v = E(8, 10, 5, 4.5)
+        top, _, _ = E(8, 6, 2.2, 3)
+        c.put_mat(m | top, MAT['cream'], shade(u, v))
+        lines = (m | top) & ((np.abs(XX - 6) < 0.5) | (np.abs(XX - 10) < 0.5))
+        c.put_mat(lines, MAT['fabric'], 2)
+        c.put_px(8, 2, RAMP['leaf'][1]); c.put_px(8, 3, RAMP['leaf'][2])
+    I['cebula'] = _icon(cebula)
+
+    def czekolada(c):
+        c.put_mat(rect(3, 4, 13, 13), MAT['wood'], np.where(((XX.astype(int) - 3) % 3 == 2) | ((YY.astype(int) - 4) % 3 == 2), 3, 2))
+        c.put_mat(rect(9, 9, 14, 14), MAT['red'], 1)
+    I['czekolada'] = _icon(czekolada)
+
+    # ikony potrzeb
+    def p_najedzenie(c):
+        m, u, v = E(8, 10, 6, 3.5)
+        m &= YY > 9
+        c.put_mat(m, MAT['blue'], shade(u, v))
+        c.put_mat(rect(2, 8, 15, 10), MAT['blue'], 0)
+        c.put_mat(E(8, 7.5, 4, 2)[0] & (YY < 8.5), MAT['hay'], 1)
+    I['potrzeba_najedzenie'] = _icon(p_najedzenie)
+
+    def p_witamina(c):
+        m, u, v = E(8, 8, 5.5, 5.5)
+        c.put_mat(m, MAT['carrot'], shade(u, v))
+        c.stamp(['.WWW', 'W...', 'W...', 'W...', '.WWW'], 6, 6, {'W': RAMP['cream'][0]})
+    I['potrzeba_witamina_c'] = _icon(p_witamina)
+
+    def p_energia(c):
+        m, u, v = E(8, 8, 5.5, 5.5)
+        cut, _, _ = E(10.5, 6.5, 4.5, 4.5)
+        c.put_mat(m & ~cut, MAT['gold'], shade(u, v))
+    I['potrzeba_energia'] = _icon(p_energia)
+
+    def p_humor(c):
+        c.stamp(['..RR...RR..', '.RLRR.RRRR.', 'RLRRRRRRRRD', 'RRRRRRRRRRD', '.RRRRRRRRD.', '..RRRRRRD..',
+                 '...RRRRD...', '....RRD....', '.....D.....'], 2, 3,
+                {'R': RAMP['red'][1], 'L': RAMP['red'][0], 'D': RAMP['red'][2]})
+    I['potrzeba_humor'] = _icon(p_humor)
+
+    def p_czystosc(c):
+        m, u, v = E(7, 9.5, 4, 4)
+        tip = (YY > 3) & (YY < 8) & (np.abs(XX - 7) < (YY - 3) * 0.8)
+        c.put_mat(m | tip, MAT['blue'], shade(u, v))
+        c.stamp(['.Y.', 'YYY', '.Y.'], 11, 2, {'Y': hx('fff3a0')})
+    I['potrzeba_czystosc'] = _icon(p_czystosc)
+
+    def p_zabki(c):
+        c.put_mat(rect(4, 3, 12, 10), MAT['cream'], np.where(XX < 6, 0, 1))
+        c.put_mat(rect(4, 10, 7, 14) | rect(9, 10, 12, 14), MAT['cream'], 1)
+        c.put_mat(rect(7.6, 9, 8.4, 14), MAT['cream'], 3)
+    I['potrzeba_zabki'] = _icon(p_zabki)
+    I['glowa_swinki'] = _head_icon()
     return I
+
+
+def _head_icon():
+    import pig
+    saved = dict(pig.STYLE)
+    for k in (0.62, 0.58, 0.55, 0.52, 0.5, 0.48):
+        pig.STYLE.update(kb=k, kh=k)
+        f = pig.render_front(body=False, shadow=0)
+        f[f[:, :, 3] < 255] = 0      # bez wąsów
+        a = f[:, :, 3] > 0
+        ys, xs = np.where(a)
+        if ys.max() - ys.min() < 15 and xs.max() - xs.min() < 15:
+            break
+    pig.STYLE.clear(); pig.STYLE.update(saved)
+    out = np.zeros((16, 16, 4), np.uint8)
+    y0 = ys.max() - 14
+    x0 = (xs.min() + xs.max() + 1) // 2 - 8
+    out[:] = f[y0:y0 + 16, x0:x0 + 16]
+    return out

@@ -14,7 +14,17 @@
     "bobek": 10,
     "tort": 11,
     "siano": 12,
-    "ziarenko": 13,
-    "jarmuz": 14
+    "koniczynka": 13,
+    "jarmuz": 14,
+    "truskawka": 15,
+    "cebula": 16,
+    "czekolada": 17,
+    "potrzeba_najedzenie": 18,
+    "potrzeba_witamina_c": 19,
+    "potrzeba_energia": 20,
+    "potrzeba_humor": 21,
+    "potrzeba_czystosc": 22,
+    "potrzeba_zabki": 23,
+    "glowa_swinki": 24
   }
 }

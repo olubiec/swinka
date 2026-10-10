@@ -7,7 +7,8 @@ Wszystko wygenerowane skryptami z folderu `narzedzia/` (Python + Pillow + numpy)
 | `swinka_spritesheet.png`, `swinka_animacje.json` | Wariant domyślny (dorosła ruda) – to samo co w `dorosla/`. Z tego korzysta etap A. |
 | `dorosla/`, `maluch/`, `senior/`, `legenda/` | Etapy życia. Każdy folder: arkusz klatek + JSON z tymi samymi nazwami animacji. |
 | `towarzysz_czarno-biala/`, `towarzysz_agouti/`, `towarzysz_kremowa/` | Umaszczenia drugiej świnki. |
-| `ikony/` | 15 ikon przedmiotów 16×16 (`ikony_16.png` + `ikony.json`). |
+| `ikony/` | 25 ikon 16×16 (`ikony_16.png` + `ikony.json`): przedmioty, koniczynka = waluta, cebula i czekolada do minigry, 6 ikon potrzeb, `glowa_swinki` do zasobnika. |
+| `dane/` | `actions.json` (czynności świnki dla utility AI), `items.json` (przedmioty i ceny w koniczynkach), `symulacja.json` (test balansu). |
 | `gif/` | Podgląd każdej animacji (dorosła, powiększenie ×5). |
 | `galeria.html` | Podgląd wszystkiego w przeglądarce: warianty, pary świnek, ikony. |
 | `kontrola.png` | Wszystkie klatki na jednym arkuszu. |
@@ -25,3 +26,4 @@ Animacje z rekwizytem w klatce: `drink` (poidło), `eat_bowl` (miska), `eat_big`
 
 Zmiana / nowa animacja: edytuj `narzedzia/anims.py` lub `anims2.py`, potem
 `python narzedzia/export.py swinka` i `python narzedzia/galeria.py swinka`.
+Zmiana balansu: `narzedzia/dane.py`, potem `python narzedzia/dane.py swinka/dane`.

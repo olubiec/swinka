@@ -10,7 +10,7 @@ Pixelowa świnka morska mieszka na pulpicie Windows, chodzi po pasku zadań i ok
 
 1. Świnka sygnalizuje potrzebę: kwiczy, gdy jest głodna, ziewa, gdy zmęczona, chodzi nerwowo, gdy się nudzi.
 2. Opiekujesz się nią: karmisz, głaszczesz, sprzątasz klatkę, bawisz się.
-3. Dostajesz nagrody: ziarenka (waluta) i punkty więzi.
+3. Dostajesz nagrody: koniczynki (waluta) i punkty więzi.
 4. Wydajesz je w sklepiku: warzywa, zabawki, domki, tunele, ozdoby do klatki.
 5. Nowe przedmioty odblokowują nowe zachowania i animacje, więc świnka robi coś, czego jeszcze nie widziałaś.
 
@@ -19,7 +19,7 @@ Pixelowa świnka morska mieszka na pulpicie Windows, chodzi po pasku zadań i ok
 - **Wiek i etapy życia.** Świnka rośnie od malucha do seniora. 1 dzień w realu to 3 tygodnie życia świnki, więc średnie życie (4–5 lat) trwa ok. 2,5 miesiąca gry, a najdłuższe (8 lat) ok. 4,5 miesiąca.
 - **Poziom więzi.** Oswojona świnka podchodzi do kursora, kwiczy na powitanie i uczy się sztuczek. Prawdziwe świnki naprawdę rozpoznają opiekuna.
 - **Album zachowań.** Każda animacja zobaczona pierwszy raz trafia do albumu jak naklejka. Rzadkie zachowania, np. popcorning w nocy, są do odkrycia.
-- **Minigry.** Krótkie gry za ziarenka, żeby było co robić poza samą opieką.
+- **Minigry.** Krótkie gry za koniczynki, żeby było co robić poza samą opieką.
 - **Codzienne drobiazgi.** Warzywo dnia, dzienna nagroda za pierwsze karmienie, pamiętnik świnki z wpisami z każdego dnia.
 - **Towarzysz.** Po pierwszych urodzinach i 10. poziomie więzi odblokowuje się druga świnka. Świnki są stadne i w prawdziwym życiu nie powinny mieszkać same.
 
@@ -31,7 +31,7 @@ Projekt składa się z trzech części, które rozmawiają ze sobą przez jeden 
 
 | Część | Na czym | Skąd bierzemy |
 | --- | --- | --- |
-| Świnka na pulpicie | C# (.NET), fork eSheep | Gotowe: chodzenie po oknach, pasek zadań, spadanie, rzucanie, animacje z XML |
+| Świnka na pulpicie | C# (.NET Framework 4.8), kod eSheep w folderze esheep/ | Gotowe: chodzenie po oknach, pasek zadań, spadanie, rzucanie, animacje z XML |
 | Mózg gry (potrzeby, wiek, waluta, zapis) | Osobna biblioteka C# `SwinkaCore`, bez kodu Windows | Piszemy sami na wzorach z Pou, Tamagotchi i „utility AI” |
 | Domek: okno z potrzebami, sklepem, albumem i minigrami | HTML + JavaScript w WebView2, minigry w Phaser 3 | Gotowe szablony i przykłady Phasera, AI pisze to najlepiej |
 
@@ -59,7 +59,7 @@ Każdy podsystem ma gotowy wzór: albo kod do skopiowania lub przerobienia, albo
 
 | Podsystem | Pierwowzór | Co dokładnie bierzemy | Licencja |
 | --- | --- | --- | --- |
-| Chodzenie po pulpicie, spadanie, rzucanie | [eSheep (Desktop Pet)](https://github.com/Adrianotiger/desktopPet) | Cały kod jako bazę (fork), format arkusza klatek i `animations.xml` | brak podanej, do prywatnego prezentu wystarczy |
+| Chodzenie po pulpicie, spadanie, rzucanie | [eSheep (Desktop Pet)](https://github.com/Adrianotiger/desktopPet) | Cały kod jako bazę (w folderze esheep/), format arkusza klatek i `animations.xml` | MIT |
 | Układ zachowań w XML | [Shimeji-ee](https://github.com/gil/shimeji-ee) | Podział na `actions.xml` (co umie) i `behaviors.xml` (kiedy to robi), obowiązkowe: podążanie za myszką, spadanie, ciągnięcie, rzut | New BSD |
 | Pupil z karmieniem na pulpicie | [VPet-Simulator](https://github.com/LorisYounger/VPet) | Wzór mechanik: karmienie, interakcje, mody z jedzeniem i animacjami | Apache 2.0 (kod) |
 | Potrzeby i wybór czynności | [GMTK: The Genius AI Behind The Sims](https://gameindustrylibrary.com/documents/gmtk-the-genius-ai-behind-the-sims) | Zasada „utility AI”: każda czynność obiecuje zaspokojenie potrzeb, świnka wybiera najbardziej opłacalną | film, sam pomysł |
@@ -80,7 +80,7 @@ Minigry z Pou (łapanie spadającego jedzenia, skakanie po platformach, memory, 
 
 ## Model świnki: potrzeby, wiek, więź, waluta
 
-Świnka ma sześć potrzeb w skali 0–100, wiek liczony w realnych dniach, osobny poziom więzi z tobą i walutę „ziarenka”. Liczby poniżej to punkt startowy do testowania, nie ostateczny balans.
+Świnka ma sześć potrzeb w skali 0–100, wiek liczony w realnych dniach, osobny poziom więzi z tobą i walutę „koniczynki”. Liczby poniżej to punkt startowy do testowania, nie ostateczny balans.
 
 ### Potrzeby
 
@@ -95,7 +95,7 @@ Minigry z Pou (łapanie spadającego jedzenia, skakanie po platformach, memory, 
 
 **Zdrowie** nie jest osobną potrzebą, tylko liczy się z pozostałych. Gdy spada, świnka jest osowiała i wizyta u weterynarza w Domku ją leczy. Nigdy nie umiera.
 
-**Gdy komputer jest wyłączony** potrzeby spadają trzy razy wolniej i nie schodzą poniżej 20. Po powrocie świnka jest głodna i stęskniona, ale nie chora.
+**Gdy komputer jest wyłączony** potrzeby spadają trzy razy wolniej i nie schodzą poniżej 20. Po powrocie świnka jest głodna i stęskniona, ale nie chora. Siano leży w paśniku (zapas 0–100): świnka je z niego sama, także przy wyłączonym komputerze, a ty dokładasz siana. Symulacja tygodnia (siano 3 razy dziennie, 2 papryki) trzyma wszystkie potrzeby powyżej 70, a weekend bez opieki nie schodzi poniżej 20; szczegóły w swinka/dane/symulacja.json.
 
 **Wybór czynności (utility AI):** co kilka sekund świnka ocenia każdą dostępną czynność wzorem `zysk = Σ (pilność potrzeby × ile czynność ją zaspokaja) × losowy mnożnik 0,8–1,2` i robi tę z najwyższym wynikiem. Pilność rośnie szybciej, im niższa potrzeba. Losowość sprawia, że świnka nie jest przewidywalna.
 
@@ -128,7 +128,7 @@ Punkty więzi daje każda opieka, z dziennym limitem, żeby nie dało się „na
 | 15 | Agility: skok przez przeszkodę na pasku zadań |
 | 20 | Złota miseczka i specjalny wpis w pamiętniku |
 
-### Ziarenka (waluta)
+### Koniczynki (waluta)
 
 | Skąd | Ile |
 | --- | --- |
@@ -137,11 +137,11 @@ Punkty więzi daje każda opieka, z dziennym limitem, żeby nie dało się „na
 | Osiągnięcie | 50–200 |
 | Opieka (karmienie, sprzątanie) | 1–3 |
 
-Wydatki: warzywa 5–15, gryzaki 20, zabawki 50–150, domki i tunele 200–400, wystrój Domku 100–500.
+Walutą są koniczynki: koniczyna to przysmak świnek, a ziaren nie powinny jeść. Granulat zostaje zwykłym jedzeniem ze sklepiku. Wydatki: warzywa 5–15, gryzaki 20, zabawki 50–150, domki i tunele 200–400, wystrój Domku 100–500.
 
 ## Lista animacji
 
-Stan na 10 października: wszystkie animacje z tabeli są gotowe. Razem 60 animacji w 7 wariantach (dorosła, maluch, senior, legenda i trzy umaszczenia towarzysza) plus 15 ikon przedmiotów. Leżą w repo w folderze `swinka/`, a kolumna „Do zrobienia” pokazuje, co zostało dorobione w drugiej turze.
+Stan na 10 października: wszystkie animacje z tabeli są gotowe. Razem 60 animacji w 7 wariantach (dorosła, maluch, senior, legenda i trzy umaszczenia towarzysza) plus 25 ikon (przedmioty, potrzeby, główka do zasobnika) i dane gry w swinka/dane/. Leżą w repo w folderze `swinka/`, a kolumna „Do zrobienia” pokazuje, co zostało dorobione w drugiej turze.
 
 | Funkcja | Już jest | Do zrobienia |
 | --- | --- | --- |
@@ -164,14 +164,14 @@ Każda animacja przy pierwszym obejrzeniu trafia do Albumu zachowań, więc te l
 
 ## Etapy i fazy
 
-Sześć etapów po ok. 1–2 tygodnie po godzinach, razem ok. 10 tygodni. Już po etapie A masz działający prezent, a kolejne etapy możesz dawać jako „aktualizacje”. Każdy etap kończy bramka: konkretny test, który musi przejść, zanim ruszysz dalej.
+Stan na 10 października: grafika i dane gry są gotowe, repo przygotowane, następny krok to prompt A2. Sześć etapów po ok. 1–2 tygodnie po godzinach, razem ok. 10 tygodni. Już po etapie A masz działający prezent, a kolejne etapy możesz dawać jako „aktualizacje”. Każdy etap kończy bramka: konkretny test, który musi przejść, zanim ruszysz dalej.
 
 Mapa etapów (rysunek w dokumencie online):
 
 - A · Świnka na pulpicie (tydzień 1) → bramka: chodzi po oknach, .exe działa
 - B · Mózg gry (tygodnie 2–3) → bramka: głodnieje, śpi, pamięta stan
 - C · Domek (tygodnie 4–5) → bramka: zarabia, kupuje, przechodzi etapy
-- D · Minigry (tygodnie 6–7) → bramka: 4 gry dają ziarenka i rekordy
+- D · Minigry (tygodnie 6–7) → bramka: 4 gry dają koniczynki i rekordy
 - E · Świat i reakcje (tygodnie 8–9) → bramka: reakcje bez fałszywych alarmów
 - F · Pakowanie prezentu (tydzień 10) → bramka: 3 dni na czystym laptopie bez błędów
 - G · ESP32 (opcja, po etapie F)
@@ -202,11 +202,11 @@ Etapy idą jeden po drugim, bo każdy korzysta z poprzedniego; wyróżniona bram
 
 1. **C1** Okno Domku w WebView2 i most C# ↔ JavaScript (Claude)
 2. **C2** Ekran potrzeb i karmienia w stylu pixel art (Gemini)
-3. **C3** Ziarenka, sklepik i ekwipunek (Gemini)
+3. **C3** Koniczynki, sklepik i ekwipunek (Gemini)
 4. **C4** Wiek, etapy życia, urodziny i poziom więzi (Claude)
 5. **C5** Album zachowań i pamiętnik świnki (Gemini)
 
-**Bramka C:** da się zarobić ziarenka, kupić paprykę i nią nakarmić; w symulacji 140 dni świnka przechodzi wszystkie etapy życia.
+**Bramka C:** da się zarobić koniczynki, kupić paprykę i nią nakarmić; w symulacji 140 dni świnka przechodzi wszystkie etapy życia.
 
 ### Etap D: minigry (tygodnie 6–7)
 
@@ -216,7 +216,7 @@ Etapy idą jeden po drugim, bo każdy korzysta z poprzedniego; wyróżniona bram
 4. **D4** „Labirynt z siana”: dojdź do papryki przed czasem (Gemini)
 5. **D5** „Memory warzyw”: odkrywanie par kart (Gemini)
 
-**Bramka D:** cztery minigry, każda daje ziarenka, rekordy się zapisują, świnka po minigrze ma lepszy humor.
+**Bramka D:** cztery minigry, każda daje koniczynki, rekordy się zapisują, świnka po minigrze ma lepszy humor.
 
 ### Etap E: świat i reakcje (tygodnie 8–9)
 
@@ -249,8 +249,11 @@ Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do
 
 ```markdown
 # Zasady dla agentów
-- Projekt: Świnka na pulpit, fork eSheep. Plan i liczby: PLAN.md. Czytaj go przed każdym zadaniem.
-- Świnka na pulpicie: C# (.NET). Mózg gry: projekt SwinkaCore, bez żadnych odwołań do WinForms i Win32.
+- Projekt: Świnka na pulpit, oparta na eSheep (kod w folderze esheep/, licencja MIT). Plan i liczby: PLAN.md. Czytaj go przed każdym zadaniem.
+- Świnka na pulpicie: C# na .NET Framework 4.8, projekt esheep/src/DesktopPet.sln.
+- Mózg gry: projekt SwinkaCore jako biblioteka .NET Standard 2.0, bez żadnych odwołań do WinForms i Win32.
+- Grafika i dane: folder swinka/ (opis w swinka/CZYTAJ.md). Nie rysuj świnki od nowa; brakującą grafikę zgłoś, dorysuje ją Claude w czacie.
+- Waluta gry to koniczynki.
 - Domek: HTML + JavaScript w folderze /domek. Minigry: Phaser 3 w /domek/minigry, lokalna kopia biblioteki.
 - Stan gry: %AppData%/Swinka/save.json z polem version i kopią zapasową save.bak.
 - Nie usuwaj działających funkcji eSheep bez pytania.
@@ -263,15 +266,18 @@ Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do
 
 ### A1 · ty: przygotowanie
 
-- [ ] Zainstaluj Antigravity, Git, Visual Studio 2022 Community (pakiet „.NET desktop development”) i Python 3
-- [ ] Zrób fork [eSheep](https://github.com/Adrianotiger/desktopPet) i sklonuj go w Antigravity
-- [ ] Wrzuć do repo folder `/swinka` z paczki `swinka_animacje.zip` oraz pliki `PLAN.md` i `ZASADY.md`
-- [ ] Pierwszy commit: „Start projektu świnki”
+- [x] Zainstaluj Antigravity
+- [ ] Zainstaluj Git, Visual Studio 2022 Community (pakiet „.NET desktop development” z .NET Framework 4.8) i Python 3
+- [x] Załóż prywatne repo na GitHubie: [kasztan9w8w7w6/swinka](https://github.com/kasztan9w8w7w6/swinka)
+- [x] Kod [eSheep](https://github.com/Adrianotiger/desktopPet) w folderze `esheep/` (licencja MIT)
+- [x] Grafika i dane w folderze `swinka/`, pliki `PLAN.md` i `ZASADY.md` w repo
+- [ ] Scal pull request #1 na GitHubie i pobierz zmiany w Antigravity (Pull)
+- [ ] Otwórz `esheep/src/DesktopPet.sln` w Visual Studio i uruchom (F5), żeby sprawdzić, że owca działa
 
 ### A2 · Gemini: analiza eSheep
 
 ```text
-Przeczytaj PLAN.md, ZASADY.md i całe repozytorium. Nie zmieniaj kodu.
+Przeczytaj PLAN.md, ZASADY.md i całe repozytorium. Kod eSheep jest w folderze esheep/ (esheep/src/DesktopPet.sln, .NET Framework 4.8). Nie zmieniaj kodu.
 Napisz ARCHITEKTURA.md, który wyjaśnia:
 1. jak zbudować i uruchomić projekt w Visual Studio,
 2. strukturę folderów i najważniejsze klasy,
@@ -288,11 +294,11 @@ Na końcu zbuduj projekt bez zmian i potwierdź, że owca działa.
 Przeczytaj PLAN.md, ZASADY.md i ARCHITEKTURA.md.
 W /swinka jest swinka_spritesheet.png (klatki 64x64 px, jeden rząd = jedna animacja, świnka patrzy w prawo, podłoga na y=59)
 oraz swinka_animacje.json (rząd, liczba klatek, kl./s, pętla).
-1. Napisz skrypt narzedzia/przepakuj.py, który układa klatki w siatkę wymaganą przez eSheep, powiększa x2 metodą nearest
-   i zapisuje mapę: numer kafelka -> animacja i klatka.
+1. Arkusz to siatka 16 kolumn x 60 rzędów: tilesx=16, tilesy=60, numer kafelka = rząd*16 + klatka. Osadź PNG jako base64
+   w <png>, tak jak w esheep/Pets/esheep64/animations.xml. Jeśli eSheep nie powiększa sam, dodaj narzedzia/przepakuj.py (x2, nearest).
 2. Napisz nowy animations.xml dla świnki: idle, walk z ruchem 1-2 px na klatkę, run 4 px, fall, held przy przeciąganiu,
    land po upadku, sen jako sekwencja lie_down -> sleep -> wake_up. Kierunek w lewo przez odbicie lustrzane.
-3. Ustaw świnkę jako domyślnego zwierzaka.
+3. Ustaw świnkę jako domyślnego zwierzaka (podmień esheep/src/Resources/animations.xml, zachowaj kopię owcy).
 4. Zbuduj i uruchom. Sprawdź, że stopy stoją równo na pasku zadań i na krawędziach okien.
 ```
 
@@ -311,11 +317,11 @@ Uruchom na 10 minut i wypisz, ile razy wystąpiło każde zachowanie.
 
 ```text
 Przeczytaj PLAN.md (sekcja "Model świnki"), ZASADY.md i ARCHITEKTURA.md.
-Utwórz projekt biblioteki SwinkaCore (.NET, bez WinForms i Win32) z:
+Utwórz projekt biblioteki SwinkaCore (.NET Standard 2.0, żeby działała z eSheep na .NET Framework 4.8; bez WinForms i Win32) z:
 - IClock z mnożnikiem czasu (1x normalnie, 60x i 1440x do testów),
 - Needs: sześć potrzeb 0-100 ze spadkiem na godzinę z tabeli w PLAN.md; Zdrowie liczone z pozostałych,
 - zasady offline: gdy aplikacja była zamknięta, spadek 3x wolniejszy i nie poniżej 20,
-- GameState: imię, data urodzenia, potrzeby, poziom i punkty więzi, ziarenka, ekwipunek, album, pamiętnik, statystyki,
+- GameState: imię, data urodzenia, potrzeby, poziom i punkty więzi, koniczynki, ekwipunek, album, pamiętnik, statystyki,
 - SaveSystem: JSON w %AppData%/Swinka/save.json, pole version, zapis co 60 s i przy zamknięciu, kopia save.bak,
   odczyt z kopii, gdy plik główny jest uszkodzony,
 - zdarzenia C#: NeedLow, NeedCritical, StageChanged, Birthday, LevelUp.
@@ -336,7 +342,7 @@ Użyj sztucznego zegara. Uruchom testy i popraw tylko testy, nie logikę. Błęd
 ```text
 Przeczytaj PLAN.md (wzór "Wybór czynności"), ZASADY.md, ARCHITEKTURA.md i SwinkaCore.
 Inspiracja: utility AI z The Sims (https://gameindustrylibrary.com/documents/gmtk-the-genius-ai-behind-the-sims).
-1. W SwinkaCore dodaj Brain: lista czynności z pliku actions.json (nazwa, animacja, czas trwania, wpływ na potrzeby,
+1. W SwinkaCore dodaj Brain: lista czynności z pliku swinka/dane/actions.json (gotowy szkic; nazwa, animacja, czas trwania, wpływ na potrzeby,
    warunki: etap życia, pora dnia, wymagany przedmiot, minimalny poziom więzi, cooldown).
 2. Wybór co 5 s: zysk = suma(pilność x zaspokojenie) x losowo 0,8-1,2, pilność = (1 - potrzeba/100)^2. Bez powtarzania
    tej samej czynności więcej niż 2 razy z rzędu.
@@ -359,8 +365,8 @@ Przekaż informację o bezczynności do Brain jako warunek, nie jako twarde wymu
 
 ```text
 Przeczytaj PLAN.md i ZASADY.md.
-Co 40-90 minut gry świnka zostawia bobek (sprite 8x8 z /swinka) w miejscu, gdzie stoi na pasku zadań lub oknie.
-Maksymalnie 8 bobków naraz. Kliknięcie bobka go usuwa i daje 1 ziarenko. Potrzeba "Czystość klatki" zależy od liczby bobków.
+Co 40-90 minut gry świnka zostawia bobek (animacja poop, a sam bobek to ikona "bobek" z swinka/ikony/ikony_16.png) w miejscu, gdzie stoi na pasku zadań lub oknie.
+Maksymalnie 8 bobków naraz. Kliknięcie bobka go usuwa i daje 1 koniczynkę. Potrzeba "Czystość klatki" zależy od liczby bobków.
 Bobki znikają przy zamknięciu okna, na którym leżą, ale licznik zostaje w stanie gry. Zapisuj je w save.json.
 ```
 
@@ -368,7 +374,7 @@ Bobki znikają przy zamknięciu okna, na którym leżą, ale licznik zostaje w s
 
 ```text
 Przeczytaj PLAN.md i ZASADY.md.
-Dodaj ikonę w zasobniku obok zegara (głowa świnki 16x16 z arkusza) z menu: Nakarm (podmenu z przedmiotami z ekwipunku
+Dodaj ikonę w zasobniku obok zegara (ikona glowa_swinki z swinka/ikony/ikony_16.png) z menu: Nakarm (podmenu z przedmiotami z ekwipunku
 i liczbą sztuk), Zawołaj, Domek (na razie pusty), Ustawienia, Zamknij. Dwuklik na ikonę otwiera Domek.
 Podmenu Nakarm ma zawsze "Siano" bez limitu. Tooltip ikony: imię świnki i najniższa potrzeba.
 ```
@@ -377,7 +383,7 @@ Podmenu Nakarm ma zawsze "Siano" bez limitu. Tooltip ikony: imię świnki i najn
 
 ```text
 Przeczytaj PLAN.md, ZASADY.md, ARCHITEKTURA.md, Brain i menu z B5.
-Wybranie jedzenia z menu kładzie przedmiot (ikona 16x16 x2) na powierzchni, na której stoi świnka, 100-300 px od niej.
+Wybranie jedzenia z menu kładzie przedmiot (ikona z swinka/ikony/ikony_16.png, opis w ikony.json, powiększona x2) na powierzchni, na której stoi świnka, 100-300 px od niej.
 Przedmiot można też przeciągnąć myszką w inne miejsce. Świnka podchodzi, odtwarza eat lub eat_treat i zjada go
 w 3-6 s, potrzeby rosną według PLAN.md. Jeśli świnka jest na innym oknie, przedmiot spada na pasek zadań i ona za nim schodzi.
 Zapamiętuj, które warzywo je najchętniej (licznik w GameState); przy ulubionym czasem robi popcorn po jedzeniu.
@@ -407,15 +413,15 @@ Przyciski: Nakarm, Posprzątaj, Zawołaj, Sklepik, Minigry, Album. Czcionka Pixe
 Kolory z palety świnki. Bez bibliotek CSS. Ekran ma wyglądać jak mała gra, nie jak formularz.
 ```
 
-### C3 · Gemini: ziarenka, sklepik, ekwipunek
+### C3 · Gemini: koniczynki, sklepik, ekwipunek
 
 ```text
-Przeczytaj PLAN.md (sekcja Ziarenka), ZASADY.md, SwinkaCore i /domek.
-1. W SwinkaCore: items.json (id, nazwa, kategoria, cena, wpływ na potrzeby, ikona), zakup, ekwipunek, dzienna nagroda
+Przeczytaj PLAN.md (sekcja Koniczynki), ZASADY.md, SwinkaCore i /domek.
+1. W SwinkaCore: wczytaj swinka/dane/items.json (gotowy szkic; id, nazwa, kategoria, cena, wpływ na potrzeby, ikona), zakup, ekwipunek, dzienna nagroda
    z serią dni z rzędu.
 2. W Domku: ekran Sklepik (siatka przedmiotów z ceną, kupno przez most), ekran Ekwipunek, okienko dziennej nagrody
    przy pierwszym otwarciu w danym dniu.
-Ceny i nagrody według tabel w PLAN.md. Nie da się zejść poniżej 0 ziarenek.
+Ceny i nagrody według tabel w PLAN.md. Nie da się zejść poniżej 0 koniczynek.
 ```
 
 ### C4 · Claude: wiek, etapy życia, więź
@@ -423,8 +429,8 @@ Ceny i nagrody według tabel w PLAN.md. Nie da się zejść poniżej 0 ziarenek.
 ```text
 Przeczytaj PLAN.md (Wiek i etapy życia, Poziom więzi), ZASADY.md i SwinkaCore.
 1. Wiek: 1 dzień realny = 21 dni świnki. Etapy i progi dni z tabeli. Zdarzenie StageChanged przełącza arkusz klatek
-   (adult, baby, senior; legenda = senior + złota obwódka w Domku). Senior chodzi 20% wolniej i rzadziej robi popcorn.
-2. Urodziny co 17,4 dnia realnego: wpis w pamiętniku, animacja party, prezent 100 ziarenek.
+   z folderów swinka/maluch, swinka/dorosla, swinka/senior, swinka/legenda (nazwy animacji są wszędzie te same). Senior chodzi 20% wolniej i rzadziej robi popcorn.
+2. Urodziny co 17,4 dnia realnego: wpis w pamiętniku, animacja party, prezent 100 koniczynek.
 3. Więź: punkty za opiekę z limitem dziennym, progi 1-20, odblokowania z tabeli jako flagi w GameState.
 4. W Symulatorze przewiń 150 dni i wypisz momenty zmian etapów, urodzin i poziomów.
 Inspiracja etapów i ewolucji: https://github.com/cifertech/TamaFi
@@ -447,8 +453,8 @@ Przeczytaj PLAN.md (Lista animacji), ZASADY.md, SwinkaCore i /domek.
 Przeczytaj PLAN.md (Etap D), ZASADY.md i /domek.
 Przykłady Phasera: https://github.com/phaserjs/examples oraz https://labs.phaser.io (kod MIT, grafik z przykładów NIE używaj).
 Zrób w /domek/minigry wspólny szkielet: lokalna kopia Phaser 3 w przypiętej wersji, ekran wyboru gier, wspólne API
-start(config) -> wynik {punkty, ziarenka, rekord}, pauza przy zamknięciu Domku, wspólny ekran końca gry z nagrodą.
-Postacią jest świnka z arkusza klatek (run, popcorn, eat). Wzory: ziarenka = min(40, punkty / 10), humor +15 po grze,
+start(config) -> wynik {punkty, koniczynki, rekord}, pauza przy zamknięciu Domku, wspólny ekran końca gry z nagrodą.
+Postacią jest świnka z arkusza klatek (run, popcorn, eat). Wzory: koniczynki = min(40, punkty / 10), humor +15 po grze,
 maks. 10 nagradzanych gier dziennie. Rekordy zapisuj przez most w GameState. Dodaj jedną pustą grę-przykład.
 ```
 
@@ -477,7 +483,7 @@ Spadnięcie poniżej ekranu kończy grę. Wzór rozgrywki: Doodle Jump i "Sky Ju
 Przeczytaj PLAN.md, ZASADY.md i szkielet minigier. Użyj wspólnego API.
 Gra: labirynt z bel siana widziany z góry, generowany losowo (algorytm recursive backtracker), siatka 9x9 na początek.
 Świnka (sprite z góry: narysuj prosty 16x16 w palecie świnki) idzie strzałkami do papryki na końcu.
-Czas 60 s, każdy kolejny poziom większy o 2. Punkty = poziomy x pozostały czas. Po drodze leżą ziarenka do zebrania.
+Czas 60 s, każdy kolejny poziom większy o 2. Punkty = poziomy x pozostały czas. Po drodze leżą koniczynki do zebrania.
 ```
 
 ### D5 · Gemini: Memory warzyw
@@ -543,7 +549,7 @@ Pogoda trafia też do wpisu w pamiętniku. Bez internetu wszystko działa normal
 Przeczytaj PLAN.md (Poziom więzi), ZASADY.md, ARCHITEKTURA.md, Brain i SwinkaCore.
 1. Sztuczki: w Domku i w menu zasobnika przyciski spin, popcorn, stand_up, hurdle, dostępne od poziomów z PLAN.md.
    Sztuczka zużywa trochę energii i daje więź. Zmęczona świnka odmawia (siada i ziewa).
-2. Towarzysz: od 1. urodzin i 10. poziomu więzi adopcja w Domku (imię, wybór jednego z 3 umaszczeń).
+2. Towarzysz: od 1. urodzin i 10. poziomu więzi adopcja w Domku (imię, wybór jednego z 3 umaszczeń z folderów swinka/towarzysz_*).
    Druga instancja świnki z własnymi potrzebami i Brain. Gdy są blisko: nose_touch, follow, groom_other, sleep_together.
    Humor obu spada wolniej, gdy są razem. Zapis obu w save.json.
 ```
@@ -563,13 +569,13 @@ losowa lekka zmiana wysokości dźwięku, maks. jeden dźwięk kwiczenia na 2 mi
 ```text
 Przeczytaj PLAN.md i ZASADY.md. Ekran Ustawienia w Domku: imię świnki, głośność, godziny ciszy, reakcja na muzykę,
 miasto do pogody, wielkość świnki (x2 lub x3), monitor, autostart z Windows (klucz HKCU Run), reset gry z potwierdzeniem
-w oknie Domku. Ukryty tryb deweloperski (5 kliknięć w wersję): mnożnik czasu i dodawanie ziarenek.
+w oknie Domku. Ukryty tryb deweloperski (5 kliknięć w wersję): mnożnik czasu i dodawanie koniczynek.
 ```
 
 ### F3 · Gemini: instalator
 
 ```text
-Przeczytaj PLAN.md i ZASADY.md. Zbuduj wersję wydaniową: dotnet publish dla win-x64, self-contained, jeden plik .exe
+Przeczytaj PLAN.md i ZASADY.md. Zbuduj wersję wydaniową: kompilacja Release w Visual Studio (.NET Framework 4.8 jest wbudowany w Windows 10 i 11): plik .exe z bibliotekami dll
 plus folder /domek. Sprawdź przy starcie, czy jest WebView2 Runtime, i pokaż czytelny komunikat, gdy brak.
 Napisz skrypt Inno Setup: skrót w menu Start, opcja autostartu, odinstalowanie bez kasowania zapisu gry.
 Opisz, co zobaczy użytkownik przy ostrzeżeniu SmartScreen i jak je przejść.
@@ -594,7 +600,7 @@ Najpierw znajdź przyczynę i opisz ją w dwóch zdaniach, dopiero potem poprawi
 
 ## Prompty do tego czatu (grafika i dane)
 
-Grafikę i dane rysuję tutaj tym samym kodem co dotychczasową świnkę, więc wszystko pasuje stylem. Wklej prompt, gdy dana faza go potrzebuje. G1, G2, G4, G5 i G7 są już zrobione; zostały G3, G6, G8 i G9. Każdy wynik dostajesz jako paczkę do wrzucenia do `/swinka` w repo.
+Grafikę i dane rysuję tutaj tym samym kodem co dotychczasową świnkę, więc wszystko pasuje stylem. Wklej prompt, gdy dana faza go potrzebuje. G1–G5 i G7 są już zrobione (dane gry leżą w swinka/dane/); zostały G6, G8 i G9. Każdy wynik dostajesz jako paczkę do wrzucenia do `/swinka` w repo.
 
 | Prompt | Kiedy | Co dostajesz |
 | --- | --- | --- |
@@ -619,7 +625,7 @@ poop, shiver, heat_flop. Ruchy jak u prawdziwych świnek. Dopisz je do arkusza i
 
 ```text
 Narysuj w palecie świnki ikony 16x16: siano, granulat, papryka, ogórek, natka, marchewka, jarmuż, truskawka, gryzak,
-piłka, tunel, domek, poidło, tort z selera, cebula, czekolada, ziarenko (waluta); bobek 8x8; ikony sześciu potrzeb;
+piłka, tunel, domek, poidło, tort z selera, cebula, czekolada, koniczynka (waluta); bobek 8x8; ikony sześciu potrzeb;
 głowę świnki 16x16 do zasobnika. Oddaj jako arkusz PNG + JSON z nazwami.
 ```
 
