@@ -245,6 +245,15 @@ Etap G (opcjonalny) to port na ESP32, opisany niżej.
 
 Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do ciężkich zadań, **Gemini** do lżejszych. Zanim zaczniesz, wrzuć do repo dwa pliki: `PLAN.md` (ten dokument wyeksportowany do Markdown) i `ZASADY.md` (poniżej).
 
+### Jak pracować w Antigravity
+
+1. **Jeden prompt = jedna nowa rozmowa.** Kliknij **+ / New Conversation** w projekcie. Nowa rozmowa nie pamięta poprzednich, więc czyszczenie nie jest potrzebne. Poprawki tej samej fazy rób w tej samej rozmowie.
+2. **Wybierz model w okienku czatu** zgodnie z nagłówkiem promptu: Claude albo Gemini.
+3. **Prompty dla Claude zaczynaj od `/plan`**, potem wklej prompt. Agent pokaże plan działań; przeczytaj go i kliknij **Proceed**. Przy krótkich promptach dla Gemini `/plan` nie jest potrzebny.
+4. **W ustawieniach projektu nie włączaj „Always Proceed”.** Agent ma pytać przed komendami w terminalu i przed wykonaniem planu.
+5. **Po zakończeniu zrób test z akapitu „Sprawdź” pod promptem.** Działa: poproś agenta o commit z jego opisem. Nie działa: opisz w tej samej rozmowie, co widzisz. Po dwóch nieudanych próbach użyj szablonu „gdy agent utknie” w nowej rozmowie albo wklej błąd do czatu z Claude.
+6. **Po każdej bramce etapu zrób Push na GitHub.**
+
 ### Plik ZASADY.md
 
 ```markdown
@@ -268,11 +277,11 @@ Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do
 ### A1 · ty: przygotowanie
 
 - [x] Zainstaluj Antigravity
-- [ ] Zainstaluj Git, Visual Studio 2022 Community (pakiet „.NET desktop development” z .NET Framework 4.8) i Python 3
+- [x] Zainstaluj Git, Visual Studio 2022 Community (pakiet „.NET desktop development” z .NET Framework 4.8) i Python 3
 - [x] Załóż prywatne repo na GitHubie: [kasztan9w8w7w6/swinka](https://github.com/kasztan9w8w7w6/swinka)
 - [x] Kod [eSheep](https://github.com/Adrianotiger/desktopPet) w folderze `esheep/` (licencja MIT)
 - [x] Grafika i dane w folderze `swinka/`, pliki `PLAN.md` i `ZASADY.md` w repo (scalone do main)
-- [ ] Pobierz zmiany w Antigravity (Pull), żeby mieć wszystko lokalnie
+- [x] Pobierz zmiany w Antigravity (Pull), żeby mieć wszystko lokalnie
 - [ ] Otwórz `esheep/src/DesktopPet.sln` w Visual Studio i uruchom (F5), żeby sprawdzić, że owca działa
 
 ### A2 · Gemini: analiza eSheep
@@ -289,6 +298,8 @@ Napisz ARCHITEKTURA.md, który wyjaśnia:
 Na końcu zbuduj projekt bez zmian i potwierdź, że owca działa.
 ```
 
+**Sprawdź:** otwórz `esheep/src/DesktopPet.sln` w Visual Studio i naciśnij F5. **Powinno być:** owca chodzi po pasku zadań, da się ją złapać i rzucić; w repo jest `ARCHITEKTURA.md`, który w 6 punktach podaje konkretne nazwy plików i klas.
+
 ### A3 · Gemini: świnka zamiast owcy
 
 ```text
@@ -303,6 +314,8 @@ oraz swinka_animacje.json (rząd, liczba klatek, kl./s, pętla).
 4. Zbuduj i uruchom. Sprawdź, że stopy stoją równo na pasku zadań i na krawędziach okien.
 ```
 
+**Sprawdź:** F5 i obserwuj parę minut. **Powinno być:** zamiast owcy ruda świnka, która patrzy w stronę, w którą idzie; stopy stoją równo na pasku (nie wiszą i nie toną); złapana przebiera nóżkami, rzucona spada i ląduje; przy dłuższym bezruchu kładzie się spać.
+
 ### A4 · Gemini: losowe zachowania
 
 ```text
@@ -313,6 +326,8 @@ doze 5%, reszta to idle i chodzenie. Popcorn i wheek nie mogą wystąpić dwa ra
 Po upadku zawsze land, po land czasem scratch (drapanie za uchem).
 Uruchom na 10 minut i wypisz, ile razy wystąpiło każde zachowanie.
 ```
+
+**Sprawdź:** zostaw świnkę na 10 minut. **Powinno być:** węszy, drapie się za uchem, je siano, czasem podskakuje i kwiczy; nie zacina się na jednej animacji; w raporcie liczby zbliżone do wag z promptu.
 
 ### B1a · Claude: biblioteka SwinkaCore
 
@@ -330,6 +345,8 @@ Dodaj aplikację konsolową Symulator, która przewija N dni i wypisuje stan co 
 Nie podłączaj jeszcze do eSheep.
 ```
 
+**Sprawdź:** uruchom Symulator na 3 dni (agent poda polecenie). **Powinno być:** tabela potrzeb spadających co godzinę; po „wyłączeniu” spadek wolniejszy i nigdy poniżej 20; w `%AppData%\Swinka` pojawiają się `save.json` i `save.bak`. Świnka na pulpicie działa jak wcześniej.
+
 ### B1b · Gemini: testy SwinkaCore
 
 ```text
@@ -337,6 +354,8 @@ Przeczytaj PLAN.md i kod SwinkaCore. Napisz testy xUnit dla: spadku potrzeb w cz
 liczenia zdrowia, zapisu i odczytu, odczytu z save.bak przy uszkodzonym pliku, zdarzeń NeedLow i StageChanged.
 Użyj sztucznego zegara. Uruchom testy i popraw tylko testy, nie logikę. Błędy w logice wypisz w raporcie.
 ```
+
+**Sprawdź:** w Visual Studio menu Test → Run All Tests. **Powinno być:** wszystkie testy zielone; ewentualne błędy logiki wypisane w raporcie, a nie ukryte przez zmianę testów.
 
 ### B2 · Claude: utility AI steruje świnką
 
@@ -352,6 +371,8 @@ Inspiracja: utility AI z The Sims (https://gameindustrylibrary.com/documents/gmt
 Przetestuj przy zegarze 60x przez 10 minut i opisz, czy zachowanie wygląda naturalnie.
 ```
 
+**Sprawdź:** uruchom z zegarem 60x i naciśnij F9. **Powinno być:** nakładka z paskami potrzeb i wynikami czynności; głodna świnka częściej je i kwiczy, zmęczona kładzie się spać; złapanie myszką zawsze przerywa czynność; zachowanie nie wygląda na zapętlone.
+
 ### B3 · Gemini: sen przy bezczynności
 
 ```text
@@ -362,6 +383,8 @@ Między 23:00 a 7:00 czynności snu i drzemki mają wagę x2. Ruch myszką budzi
 Przekaż informację o bezczynności do Brain jako warunek, nie jako twarde wymuszenie.
 ```
 
+**Sprawdź:** nie ruszaj myszką przez 10 minut (poproś agenta o skrócony czas w trybie testowym). **Powinno być:** świnka się kładzie i śpi z „zzz”; po ruchu myszką powoli wstaje i ziewa; w nocy śpi wyraźnie częściej.
+
 ### B4 · Gemini: bobki i sprzątanie
 
 ```text
@@ -371,6 +394,8 @@ Maksymalnie 8 bobków naraz. Kliknięcie bobka go usuwa i daje 1 koniczynkę. Po
 Bobki znikają przy zamknięciu okna, na którym leżą, ale licznik zostaje w stanie gry. Zapisuj je w save.json.
 ```
 
+**Sprawdź:** zegar 60x przez kilka minut, potem restart aplikacji. **Powinno być:** na pasku pojawiają się bobki (najwyżej 8); kliknięcie usuwa bobek i dodaje koniczynkę; po restarcie liczba bobków się zgadza.
+
 ### B5 · Gemini: menu w zasobniku
 
 ```text
@@ -379,6 +404,8 @@ Dodaj ikonę w zasobniku obok zegara (ikona glowa_swinki z swinka/ikony/ikony_16
 i liczbą sztuk), Zawołaj, Domek (na razie pusty), Ustawienia, Zamknij. Dwuklik na ikonę otwiera Domek.
 Podmenu Nakarm ma zawsze "Siano" bez limitu. Tooltip ikony: imię świnki i najniższa potrzeba.
 ```
+
+**Sprawdź:** najedź i kliknij prawym przyciskiem ikonę obok zegara. **Powinno być:** główka świnki w zasobniku; podpowiedź z imieniem i najniższą potrzebą; menu Nakarm (Siano zawsze dostępne), Zawołaj, Domek, Ustawienia, Zamknij.
 
 ### B6 · Claude: karmienie
 
@@ -390,6 +417,8 @@ w 3-6 s, potrzeby rosną według PLAN.md. Jeśli świnka jest na innym oknie, pr
 Zapamiętuj, które warzywo je najchętniej (licznik w GameState); przy ulubionym czasem robi popcorn po jedzeniu.
 Inspiracja zapamiętywania preferencji: https://github.com/ViciousSquid/Dosidicus (tylko pomysł, nie kod).
 ```
+
+**Sprawdź:** Nakarm → Papryka, potem to samo, gdy świnka stoi na oknie. **Powinno być:** papryka pojawia się obok, świnka podchodzi i chrupie 3–6 s, w nakładce F9 rośnie witamina C; jedzenie da się przeciągnąć; z okna jedzenie spada na pasek, a świnka schodzi za nim.
 
 ### C1 · Claude: okno Domku i most C# ↔ JavaScript
 
@@ -404,6 +433,8 @@ Jedynym źródłem prawdy jest SwinkaCore. Dodaj /domek/bridge.js z trybem "mock
 podstawia przykładowy stan, żeby dało się rozwijać interfejs bez uruchamiania aplikacji.
 ```
 
+**Sprawdź:** dwuklik na ikonę w zasobniku; osobno otwórz `domek/index.html` w przeglądarce. **Powinno być:** okno Domku bez ramki przy zasobniku, można je przesuwać i zamknąć; w przeglądarce strona działa na przykładowych danych (tryb mock).
+
 ### C2 · Gemini: ekran potrzeb
 
 ```text
@@ -413,6 +444,8 @@ imię, wiek w latach i miesiącach świnki, etap życia. Pod spodem paski sześc
 Przyciski: Nakarm, Posprzątaj, Zawołaj, Sklepik, Minigry, Album. Czcionka Pixelify Sans zapisana lokalnie (licencja OFL).
 Kolory z palety świnki. Bez bibliotek CSS. Ekran ma wyglądać jak mała gra, nie jak formularz.
 ```
+
+**Sprawdź:** otwórz Domek. **Powinno być:** na górze żywa świnka z ostrymi pikselami (bez rozmycia), imię, wiek i etap; 6 pasków potrzeb z ikonami, kolor zmienia się z poziomem; przyciski reagują; całość wygląda jak mała gra, nie formularz.
 
 ### C3 · Gemini: koniczynki, sklepik, ekwipunek
 
@@ -424,6 +457,8 @@ Przeczytaj PLAN.md (sekcja Koniczynki), ZASADY.md, SwinkaCore i /domek.
    przy pierwszym otwarciu w danym dniu.
 Ceny i nagrody według tabel w PLAN.md. Nie da się zejść poniżej 0 koniczynek.
 ```
+
+**Sprawdź:** zbierz koniczynki z bobków albo dodaj je trybem deweloperskim, kup paprykę. **Powinno być:** koniczynek ubywa o cenę, papryka trafia do ekwipunku i do menu Nakarm; bez środków przycisk jest zablokowany; przy pierwszym otwarciu dnia wyskakuje dzienna nagroda.
 
 ### C4 · Claude: wiek, etapy życia, więź
 
@@ -437,6 +472,8 @@ Przeczytaj PLAN.md (Wiek i etapy życia, Poziom więzi), ZASADY.md i SwinkaCore.
 Inspiracja etapów i ewolucji: https://github.com/cifertech/TamaFi
 ```
 
+**Sprawdź:** Symulator na 150 dni, potem aplikacja z zegarem 1440x. **Powinno być:** w wypisie maluch w dniu 1, młodzik od 2, dorosła od ok. 9, senior od ok. 70, legenda od ok. 139, urodziny co ok. 17 dni; na pulpicie świnka zmienia wygląd (mniejsza jako maluch, siwy pyszczek jako senior).
+
 ### C5 · Gemini: album i pamiętnik
 
 ```text
@@ -447,6 +484,8 @@ Przeczytaj PLAN.md (Lista animacji), ZASADY.md, SwinkaCore i /domek.
    (np. "Zjadłam dziś 3 papryki i 5 razy podskoczyłam z radości"). Napisz co najmniej 40 szablonów po polsku,
    ciepłych i zabawnych, różnych dla każdego etapu życia.
 ```
+
+**Sprawdź:** zakładki Album i Pamiętnik w Domku. **Powinno być:** niezobaczone animacje jako ciemne sylwetki ze znakami zapytania, zobaczone jako mała animacja z datą; licznik zebranych; w pamiętniku wpis z dzisiaj pisany przez świnkę.
 
 ### D1 · Claude: szkielet minigier
 
@@ -459,6 +498,8 @@ Postacią jest świnka z arkusza klatek (run, popcorn, eat). Wzory: koniczynki =
 maks. 10 nagradzanych gier dziennie. Rekordy zapisuj przez most w GameState. Dodaj jedną pustą grę-przykład.
 ```
 
+**Sprawdź:** Domek → Minigry → gra przykładowa, w trakcie zamknij Domek. **Powinno być:** ekran wyboru gier, start, ekran końca z nagrodą, koniczynki dopisane do konta; zamknięcie Domku pauzuje grę.
+
 ### D2 · Gemini: Deszcz warzyw
 
 ```text
@@ -469,6 +510,8 @@ Tempo spadania rośnie co 20 s. Złapanie odtwarza eat, złapanie cebuli odtwarz
 Wzór rozgrywki: minigra "Food Drop" z Pou.
 ```
 
+**Powinno być:** świnka biega na dole i chrupie złapane warzywa; cebula i czekolada odbierają życie (podskok ze strachu); tempo rośnie; po 3 życiach ekran wyniku z koniczynkami. Zagraj 3 rundy: czy druga runda jest trudniejsza od pierwszej?
+
 ### D3 · Gemini: Popcorn
 
 ```text
@@ -477,6 +520,8 @@ Gra: świnka sama podskakuje (animacja popcorn) po belach siana układających s
 Kamera jedzie do góry, punkty = wysokość. Niektóre bele się rozpadają, liście jarmużu dają wyższy skok.
 Spadnięcie poniżej ekranu kończy grę. Wzór rozgrywki: Doodle Jump i "Sky Jump" z Pou.
 ```
+
+**Powinno być:** świnka sama podskakuje po belach, kamera jedzie w górę; niektóre bele się rozpadają, liść jarmużu wybija wyżej; spadnięcie kończy grę, wynik to wysokość.
 
 ### D4 · Gemini: Labirynt z siana
 
@@ -487,6 +532,8 @@ Gra: labirynt z bel siana widziany z góry, generowany losowo (algorytm recursiv
 Czas 60 s, każdy kolejny poziom większy o 2. Punkty = poziomy x pozostały czas. Po drodze leżą koniczynki do zebrania.
 ```
 
+**Powinno być:** za każdym razem inny labirynt z siana; świnka widziana z góry idzie strzałkami do papryki; licznik 60 s; kolejne poziomy większe; po drodze koniczynki do zebrania.
+
 ### D5 · Gemini: Memory warzyw
 
 ```text
@@ -495,6 +542,8 @@ Gra: 16 kart z ikonami warzyw i przedmiotów z /swinka, odkrywanie par. Punkty z
 Po znalezieniu wszystkich par mała świnka w rogu robi popcorn. Poziomy: 12, 16, 20 kart.
 Gra ma być spokojna: bez limitu czasu, łagodne dźwięki.
 ```
+
+**Powinno być:** karty z ikonami warzyw, odkrywanie par, po ułożeniu wszystkich mała świnka w rogu robi popcorn; poziomy 12, 16 i 20 kart; bez limitu czasu.
 
 ### E1 · Claude: taniec do muzyki
 
@@ -507,6 +556,8 @@ i czynność dance ma wysoką wagę. Oszacuj tempo z autokorelacji obwiedni i do
 Koniec po 3 s ciszy. Przełącznik w ustawieniach. Zużycie CPU poniżej 1%. Brak muzyki = DataAvailable nie przychodzi, obsłuż to.
 ```
 
+**Sprawdź:** włącz muzykę (YouTube, Spotify), potem ją wycisz; otwórz Menedżer zadań. **Powinno być:** po ok. 5 s świnka tańczy z nutkami w rytm; 3 s po ciszy przestaje; aplikacja zużywa poniżej 1–2% CPU.
+
 ### E2 · Claude: strach i chowanie się
 
 ```text
@@ -517,6 +568,8 @@ krawędź ekranu, czeka 5-20 s, wygląda (peek), a gdy jest spokojnie, wraca. Wy
 od poziomu 2 kursor przyciąga, nie straszy. Seria ponad 8 kliknięć w świnkę = chatter (zirytowana) i cooldown.
 ```
 
+**Sprawdź:** potrząśnij gwałtownie myszką obok świnki, potem powtórz w ciągu 10 s; kliknij ją szybko 10 razy. **Powinno być:** podskok z „!” i zamarcie; przy powtórce ucieka za krawędź, po chwili wystaje sama głowa i świnka wraca; seria kliknięć wywołuje zgrzytanie ząbkami; przy więzi od poziomu 2 kursor przyciąga zamiast straszyć.
+
 ### E3 · Gemini: chowanie przy grach
 
 ```text
@@ -525,6 +578,8 @@ Co 5 s sprawdzaj SHQueryUserNotificationState (https://learn.microsoft.com/en-us
 Przy QUNS_BUSY, QUNS_RUNNING_D3D_FULL_SCREEN lub QUNS_PRESENTATION_MODE świnka spokojnie odchodzi za krawędź i znika,
 dźwięki są wyciszone, potrzeby spadają jak offline. Po zakończeniu wraca z peek.
 ```
+
+**Sprawdź:** włącz film na pełnym ekranie albo pokaz slajdów, potem wyjdź. **Powinno być:** świnka spokojnie odchodzi za krawędź i jest cicho; po wyjściu z pełnego ekranu wraca, wyglądając zza krawędzi.
 
 ### E4 · Gemini: głaskanie
 
@@ -535,6 +590,8 @@ Gdy kursor nad świnką zmieni kierunek co najmniej 3 razy w 1,5 s, świnka odtw
 humor +5, więź +1 (limit 10 głaskań na godzinę z nagrodą). Głaskanie śpiącej świnki ją budzi, więc humor -2.
 ```
 
+**Sprawdź:** jeźdź kursorem tam i z powrotem nad świnką, także nad śpiącą. **Powinno być:** mruczenie z serduszkami i rosnący humor w F9; śpiąca się budzi i jest mniej zadowolona; po 10 głaskaniach w godzinę nagroda przestaje rosnąć.
+
 ### E5 · Gemini: pogoda
 
 ```text
@@ -543,6 +600,8 @@ W ustawieniach wpisuje się miasto; zamień je na współrzędne przez geocoding
 Reguły dla Brain: deszcz = częściej sleep_house, poniżej 5°C = czasem shiver, powyżej 28°C = heat_flop i więcej picia.
 Pogoda trafia też do wpisu w pamiętniku. Bez internetu wszystko działa normalnie.
 ```
+
+**Sprawdź:** wpisz miasto w ustawieniach i poproś agenta o sposób wymuszenia pogody testowej; potem odłącz internet. **Powinno być:** przy deszczu częściej śpi w domku, przy mrozie drży, w upał leży rozpłaszczona; pogoda pojawia się w pamiętniku; bez internetu wszystko działa.
 
 ### E6 · Claude: sztuczki i towarzysz
 
@@ -555,6 +614,8 @@ Przeczytaj PLAN.md (Poziom więzi), ZASADY.md, ARCHITEKTURA.md, Brain i SwinkaCo
    Humor obu spada wolniej, gdy są razem. Zapis obu w save.json.
 ```
 
+**Sprawdź:** w trybie deweloperskim ustaw więź 10 i wiek po 1. urodzinach, adoptuj towarzysza, zrestartuj aplikację. **Powinno być:** przyciski sztuczek działają, zmęczona świnka odmawia; adopcja z wyborem imienia i umaszczenia; dwie świnki robią nosek w nosek, chodzą za sobą i śpią razem; po restarcie obie są na miejscu.
+
 ### F1 · ty + Gemini: dźwięki
 
 - [ ] Ty: pobierz z freesound.org nagrania z licencją CC0: kwiczenie, mruczenie, chrupanie, pisk strachu, „pop” przy popcorningu
@@ -565,6 +626,8 @@ Dodaj SoundManager: mapowanie zdarzeń na dźwięki, głośność, godziny ciszy
 losowa lekka zmiana wysokości dźwięku, maks. jeden dźwięk kwiczenia na 2 minuty.
 ```
 
+**Powinno być:** kwiczenie przy głodzie (najwyżej raz na 2 minuty), chrupanie przy jedzeniu, mruczenie przy głaskaniu; cisza w godzinach ciszy i przy pełnym ekranie.
+
 ### F2 · Gemini: ustawienia i autostart
 
 ```text
@@ -572,6 +635,8 @@ Przeczytaj PLAN.md i ZASADY.md. Ekran Ustawienia w Domku: imię świnki, głośn
 miasto do pogody, wielkość świnki (x2 lub x3), monitor, autostart z Windows (klucz HKCU Run), reset gry z potwierdzeniem
 w oknie Domku. Ukryty tryb deweloperski (5 kliknięć w wersję): mnożnik czasu i dodawanie koniczynek.
 ```
+
+**Sprawdź:** zmień imię, włącz autostart i zrestartuj Windows. **Powinno być:** nowe imię od razu w Domku i w zasobniku; po restarcie świnka wraca sama; reset gry pyta o potwierdzenie w oknie Domku.
 
 ### F3 · Gemini: instalator
 
@@ -582,6 +647,8 @@ Napisz skrypt Inno Setup: skrót w menu Start, opcja autostartu, odinstalowanie 
 Opisz, co zobaczy użytkownik przy ostrzeżeniu SmartScreen i jak je przejść.
 ```
 
+**Sprawdź:** zainstaluj na innym komputerze albo innym koncie Windows. **Powinno być:** instalator ze skrótem w menu Start i opcją autostartu; ostrzeżenie SmartScreen przechodzisz przez „Więcej informacji → Uruchom mimo to”; po odinstalowaniu zapis gry zostaje.
+
 ### F4 · Claude: przegląd przed oddaniem
 
 ```text
@@ -590,6 +657,8 @@ Zrób przegląd: błędy logiki, wycieki pamięci, wyjątki bez obsługi, uszkod
 zużycie CPU (cel: poniżej 2% w spoczynku) i RAM. Dodaj log błędów do %AppData%/Swinka/log.txt.
 Napisz TESTY_RECZNE.md: lista 30 kroków do sprawdzenia przed prezentem. Popraw znalezione błędy, każdy osobnym commitem.
 ```
+
+**Powinno być:** plik `TESTY_RECZNE.md` z 30 krokami, log błędów w `%AppData%\Swinka\log.txt`, każda poprawka osobnym commitem. Przejdź listę sam przed wręczeniem prezentu.
 
 ### Szablon, gdy agent utknie
 
