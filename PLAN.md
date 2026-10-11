@@ -253,6 +253,7 @@ Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do
 4. **W ustawieniach projektu nie włączaj „Always Proceed”.** Agent ma pytać przed komendami w terminalu i przed wykonaniem planu.
 5. **Po zakończeniu zrób test z akapitu „Sprawdź” pod promptem.** Działa: poproś agenta o commit z jego opisem. Nie działa: opisz w tej samej rozmowie, co widzisz. Po dwóch nieudanych próbach użyj szablonu „gdy agent utknie” w nowej rozmowie albo wklej błąd do czatu z Claude.
 6. **Po każdej bramce etapu zrób Push na GitHub.**
+7. **Gdy skończy się limit Claude:** zostań w tej samej rozmowie, przełącz model na Gemini 3 Pro i napisz: „Poprzedni model przerwał w połowie z powodu limitu. Najpierw sprawdź, co już jest zrobione (git status, zmienione pliki), wypisz to w 3–5 punktach, potem dokończ zadanie według promptu wyżej. Nie zaczynaj od nowa.” Limit Claude odnawia się po kilku godzinach, więc kolejne ciężkie prompty (B2, B6, C1, C4, D1, E1, E2, E6, F4) warto zostawić na moment, gdy jest dostępny.
 
 ### Plik ZASADY.md
 
@@ -282,7 +283,7 @@ Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do
 - [x] Kod [eSheep](https://github.com/Adrianotiger/desktopPet) w folderze `esheep/` (licencja MIT)
 - [x] Grafika i dane w folderze `swinka/`, pliki `PLAN.md` i `ZASADY.md` w repo (scalone do main)
 - [x] Pobierz zmiany w Antigravity (Pull), żeby mieć wszystko lokalnie
-- [ ] Otwórz `esheep/src/DesktopPet.sln` w Visual Studio i uruchom (F5), żeby sprawdzić, że owca działa
+- [x] Otwórz `esheep/src/DesktopPet.sln` w Visual Studio i uruchom (F5), żeby sprawdzić, że owca działa
 
 ### A2 · Gemini: analiza eSheep
 
