@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
@@ -68,7 +68,7 @@ namespace DesktopPet
 			try
             {
 #if PORTABLE
-                string configFile = "DesktopPet.config";
+                string configFile = Path.Combine(Application.StartupPath, "DesktopPet.config");
 
                 if (Program.IsApplicationInstalled())
                 {
@@ -349,6 +349,25 @@ namespace DesktopPet
 		/// <returns>xml as string</returns>
 		public string GetXml()
         {
+#if PORTABLE
+            string localXml = Path.Combine(Application.StartupPath, "animations.xml");
+            if (File.Exists(localXml))
+            {
+                try
+                {
+                    string sXml = File.ReadAllText(localXml, System.Text.Encoding.UTF8);
+                    if (!string.IsNullOrEmpty(sXml))
+                    {
+                        if (AppSettings["xml"] == null || AppSettings["xml"].Value != sXml)
+                        {
+                            SetXml(sXml, "");
+                        }
+                        return sXml;
+                    }
+                }
+                catch { }
+            }
+#endif
             return AppSettings["xml"].Value;
         }
 
@@ -364,7 +383,15 @@ namespace DesktopPet
             StreamWriter writer = new StreamWriter(stream);
 
 #if PORTABLE
-            if (File.Exists(Application.StartupPath + "\\installpet.xml"))
+            string localFile = Path.Combine(Application.StartupPath, "animations.xml");
+            if (File.Exists(localFile))
+            {
+                string sXML = File.ReadAllText(localFile, System.Text.Encoding.UTF8);
+                writer.Write(sXML);
+                SetXml(sXML, "");
+                return sXML;
+            }
+            else if (File.Exists(Application.StartupPath + "\\installpet.xml"))
             {
                 string sXML = System.Text.Encoding.Default.GetString(File.ReadAllBytes(Application.StartupPath + "\\installpet.xml"));
                 File.Delete(Application.StartupPath + "\\installpet.xml");

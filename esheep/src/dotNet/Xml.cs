@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Xml;
 using System.IO;
 using System.Windows.Forms;
@@ -548,20 +548,13 @@ namespace DesktopPet
                 for (var xOffset = 0; xOffset < spriteSheet.Width; xOffset += spriteWidth / iScale)
                 {
                     var bmpImage = new Bitmap(spriteWidth, spriteHeight, spriteSheet.PixelFormat);
-                    //var destRectangle = new Rectangle(0, 0, spriteWidth, spriteHeight);
+                    var destRectangle = new Rectangle(0, 0, spriteWidth, spriteHeight);
+                    var sourceRectangle = new Rectangle(xOffset, yOffset, spriteWidth / iScale, spriteHeight / iScale);
                     using (var graphics = Graphics.FromImage(bmpImage))
                     {
-                        for(int x = 0; x < spriteWidth / iScale; x++)
-                        {
-                            for (int y = 0; y < spriteHeight / iScale; y++)
-                            {
-                                var pen = spriteSheet.GetPixel(xOffset + x, yOffset + y);
-                                graphics.FillRectangle(new SolidBrush(pen), new Rectangle(x * iScale, y * iScale, iScale, iScale));
-                            }
-                        }
-                        //graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                        //var sourceRectangle = new Rectangle(xOffset, yOffset, spriteWidth / iScale, spriteHeight / iScale);
-                        //graphics.DrawImage(spriteSheet, destRectangle, sourceRectangle, GraphicsUnit.Pixel);
+                        graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                        graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                        graphics.DrawImage(spriteSheet, destRectangle, sourceRectangle, GraphicsUnit.Pixel);
                     }
                     sprites.Add(bmpImage);
                 }

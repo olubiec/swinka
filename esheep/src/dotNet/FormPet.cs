@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -441,6 +441,7 @@ namespace DesktopPet
 				AnimationStep = -1;
                 CurrentAnimation = Animations.GetAnimation(id);
                 CurrentAnimation.UpdateValues(DisplayIndex);
+                LogBehavior(CurrentAnimation.Name, id);
 
                 // Play sound if there is one
                 Animations.StartSound(id);
@@ -484,6 +485,22 @@ namespace DesktopPet
 
                 timer1.Interval = CurrentAnimation.Start.Interval.GetValue();
             }
+        }
+
+        private static readonly object _behaviorLogLock = new object();
+        public static void LogBehavior(string name, int id)
+        {
+            try
+            {
+                string logDir = AppDomain.CurrentDomain.BaseDirectory;
+                string logFile = Path.Combine(logDir, "behavior_log.txt");
+                string line = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}|{name}|{id}\r\n";
+                lock (_behaviorLogLock)
+                {
+                    File.AppendAllText(logFile, line);
+                }
+            }
+            catch { }
         }
 
             /// <summary>

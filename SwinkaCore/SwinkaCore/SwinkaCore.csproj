@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Mózg gry Świnki. .NET Standard 2.0, żeby dało się go podpiąć do eSheep (.NET Framework 4.8).
+    Bez WinForms i bez Win32 (ZASADY.md).
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>SwinkaCore</RootNamespace>
+    <AssemblyName>SwinkaCore</AssemblyName>
+    <LangVersion>7.3</LangVersion>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Ta sama wersja co w esheep/src/packages.config, żeby nie było konfliktu DLL. -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+</Project>

@@ -1,2 +1,11 @@
 __pycache__/
 *.pyc
+bin/
+obj/
+.vs/
+.vscode/
+packages/
+*.nupkg
+nuget.exe
+*.user
+*.suo

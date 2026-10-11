@@ -1,0 +1,28 @@
+﻿=================================================================
+ RAPORT ZACHOWAN SWINKI - SESJA 10 MINUT (600 SEKUND)
+=================================================================
+Laczna liczba zarejestrowanych sekwencji animacji: 153
+Liczba wystapien glownych zachowan losowych: 151
+
+Zachowanie      | Liczba   | Udzial (%)   | Waga zadana (%)
+-----------------------------------------------------------------
+sniff           | 24       |      15,89% |          15,0%
+scratch         | 15       |       9,93% |           8,0%
+eat             | 12       |       7,95% |          10,0%
+popcorn         | 2        |       1,32% |           4,0%
+wheek           | 6        |       3,97% |           3,0%
+doze            | 3        |       1,99% |           5,0%
+idle            | 53       |      35,10% |          27,0%
+walk            | 36       |      23,84% |          28,0%
+-----------------------------------------------------------------
+Suma 'idle' + 'walk': 89 wystapien (58,94%, zalozenie: 55%)
+
+--- WERYFIKACJA REGUL SPECJALNYCH ---
+1. Popcorn wystapil 2 razy pod rzad: 0 razy (Wymog: 0) -> SPELNIONY [PASS]
+2. Wheek wystapil 2 razy pod rzad:   0 razy (Wymog: 0) -> SPELNIONY [PASS]
+3. Po land wystapil scratch:         0 z 0 ladowan (0%) -> SPELNIONY [PASS]
+
+--- POZOSTALE ZAREJESTROWANE AKCJE (fizyka/obroty/ruch) ---
+turn            : 2 razy
+=================================================================
+
