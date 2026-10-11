@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using SwinkaCore;
+using SwinkaCore.AI;
 using SwinkaCore.Save;
 using SwinkaCore.Time;
 
@@ -83,6 +84,8 @@ namespace Symulator
             // Stan potrzebny tylko do wypisania wiersza, gdy komputer jest wyłączony.
             GameState lastClosedState = session == null ? new SaveSystem(dir).Load().State : null;
 
+            Brain brain = session != null ? Brain.CreateDefault(session.Pet) : null;
+
             int totalMinutes = o.Days * 24 * 60;
             for (int minute = 1; minute <= totalMinutes; minute++)
             {
@@ -92,7 +95,16 @@ namespace Symulator
 
                 if (session != null)
                 {
-                    session.Pet.IsSleeping = IsNight(before.Hour);
+                    if (brain == null) brain = Brain.CreateDefault(session.Pet);
+                    if (brain.HayInRack < 30) brain.HayInRack = 100;
+
+                    // Mózg świnki (Utility AI): co 5 s aktualizuje czas trwania i podejmuje decyzje
+                    for (int step = 0; step < 12; step++)
+                    {
+                        brain.Update(TimeSpan.FromSeconds(5));
+                    }
+
+                    session.Pet.IsSleeping = (brain.CurrentAction != null && (brain.CurrentAction.ActionId == "sen" || brain.CurrentAction.ActionId == "sen_w_domku" || brain.CurrentAction.ActionId == "drzemka")) || IsNight(before.Hour);
                     session.Tick();
                     if (o.Care && !session.Pet.IsSleeping) Care(session.Pet, now);
                 }
@@ -115,6 +127,7 @@ namespace Symulator
                 else if (session == null && on)
                 {
                     session = OpenSession(clock, dir, balance, o);
+                    brain = Brain.CreateDefault(session.Pet);
                     Console.WriteLine("   -- {0:HH:mm} komputer włączony, wczytano z: {1}, offline {2:0.#} h",
                         now, SourceName(session.LoadResult.Source), session.Pet.LastOfflineDuration.TotalHours);
                     lastClosedState = null;
@@ -143,6 +156,22 @@ namespace Symulator
             }
             Console.WriteLine("  Zdarzenia:");
             foreach (var kv in EventCounts) Console.WriteLine("    {0}: {1}", kv.Key, kv.Value);
+
+            if (brain != null)
+            {
+                Console.WriteLine();
+                var budgetReport = brain.GetBudgetReport(o.Days);
+                Console.WriteLine(budgetReport.FormatTable());
+                if (budgetReport.IsAllWithinTolerance)
+                {
+                    Console.WriteLine(">> RAPORT BUDŻETU: Wszystkie grupy mieszczą się w tolerancji <= 5 punktów procentowych [PASS]");
+                }
+                else
+                {
+                    Console.WriteLine(">> RAPORT BUDŻETU: Niektóre grupy przekroczyły tolerancję 5 punktów procentowych [FAIL]");
+                }
+            }
+
             return 0;
         }
 

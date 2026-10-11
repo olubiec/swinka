@@ -1,0 +1,661 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using Newtonsoft.Json;
+
+namespace SwinkaCore.AI
+{
+    /// <summary>
+    /// Mózg świnki (Utility AI): podejmuje decyzje o wyborze kolejnej czynności,
+    /// zarządza czasem trwania, cooldownami, limitami dziennymi i budżetem czasu.
+    /// Zgodny z .NET Standard 2.0 (brak zależności od WinForms/Win32).
+    /// </summary>
+    public sealed class Brain
+    {
+        private readonly ActionsConfiguration _config;
+        private readonly Pet _pet;
+        private readonly Random _random;
+
+        private readonly Dictionary<string, double> _cooldownsUntilSec = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, int> _dailyCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, double> _groupAccumulatedSeconds = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, int> _rareBehaviorCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        private int _currentDay = -1;
+        private double _totalSimulatedSeconds;
+        private ActionDecision _currentAction;
+        private TimeSpan _remainingDuration;
+        private bool _isInterrupted;
+        private string _interruptedReason;
+        private string _lastActionId;
+        private int _consecutiveCount;
+
+        // Wewnętrzne wartości rezerwowe, gdy Brain używany jest bez obiektu Pet (np. w izolowanych testach jednostkowych)
+        private readonly Needs _fallbackNeeds = new Needs();
+        private LifeStage _fallbackStage = LifeStage.Adult;
+
+        public Brain(ActionsConfiguration config, Pet pet = null, Random random = null)
+        {
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _pet = pet;
+            _random = random ?? new Random();
+
+            // Inicjalizacja liczników grup budżetu
+            if (_config.DailyBudget != null && _config.DailyBudget.TargetPercentages != null)
+            {
+                foreach (var k in _config.DailyBudget.TargetPercentages.Keys)
+                {
+                    _groupAccumulatedSeconds[k] = 0.0;
+                }
+            }
+
+            // Inicjalizacja liczników rzadkich zachowań
+            if (_config.DailyBudget != null && _config.DailyBudget.RareBehaviorsPerDay != null)
+            {
+                foreach (var k in _config.DailyBudget.RareBehaviorsPerDay.Keys)
+                {
+                    _rareBehaviorCounts[k] = 0;
+                }
+            }
+        }
+
+        // ---- Właściwości stanu -----------------------------------------------
+
+        public ActionsConfiguration Config => _config;
+        public Pet Pet => _pet;
+        public ActionDecision CurrentAction => _currentAction;
+        public TimeSpan RemainingDuration => _remainingDuration;
+        public bool IsInterrupted => _isInterrupted;
+        public string InterruptedReason => _interruptedReason;
+        public string LastActionId => _lastActionId;
+        public int ConsecutiveCount => _consecutiveCount;
+        public double TotalSimulatedSeconds => _totalSimulatedSeconds;
+
+        /// <summary>Zapas siana w paśniku (0-100). Domyślnie 100.</summary>
+        public double HayInRack { get; set; } = 100.0;
+
+        /// <summary>Temperatura otoczenia w °C (null = brak wpływu temperatury).</summary>
+        public double? TemperatureC { get; set; }
+
+        /// <summary>Czy świnka ma towarzysza (odblokowuje zachowania społeczne).</summary>
+        public bool HasCompanion { get; set; }
+
+        public Needs CurrentNeeds => _pet != null ? _pet.Needs : _fallbackNeeds;
+        public LifeStage CurrentStage => _pet != null ? _pet.Stage : _fallbackStage;
+
+        public void SetFallbackStage(LifeStage stage)
+        {
+            _fallbackStage = stage;
+        }
+
+        // ---- Wczytywanie konfiguracji ----------------------------------------
+
+        public static Brain Load(string jsonContent, Pet pet = null, Random random = null)
+        {
+            if (string.IsNullOrEmpty(jsonContent)) throw new ArgumentNullException(nameof(jsonContent));
+            var config = JsonConvert.DeserializeObject<ActionsConfiguration>(jsonContent);
+            return new Brain(config, pet, random);
+        }
+
+        public static Brain Load(Stream stream, Pet pet = null, Random random = null)
+        {
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
+            using (var reader = new StreamReader(stream))
+            {
+                string json = reader.ReadToEnd();
+                return Load(json, pet, random);
+            }
+        }
+
+        public static Brain LoadFromFile(string filePath, Pet pet = null, Random random = null)
+        {
+            if (!File.Exists(filePath)) throw new FileNotFoundException("Nie znaleziono pliku konfiguracji actions.json", filePath);
+            string json = File.ReadAllText(filePath);
+            return Load(json, pet, random);
+        }
+
+        /// <summary>
+        /// Wczytuje domyślny plik actions.json (z katalogu projektu lub z wbudowanego zasobu assembly).
+        /// </summary>
+        public static Brain CreateDefault(Pet pet = null, Random random = null)
+        {
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory();
+            string[] candidatePaths = new[]
+            {
+                Path.Combine(baseDir, "swinka", "dane", "actions.json"),
+                Path.Combine(baseDir, "actions.json"),
+                Path.Combine(baseDir, "..", "swinka", "dane", "actions.json"),
+                Path.Combine(baseDir, "..", "..", "swinka", "dane", "actions.json"),
+                Path.Combine(baseDir, "..", "..", "..", "swinka", "dane", "actions.json"),
+                Path.Combine(baseDir, "..", "..", "..", "..", "swinka", "dane", "actions.json"),
+                Path.Combine(Directory.GetCurrentDirectory(), "swinka", "dane", "actions.json")
+            };
+
+            foreach (var path in candidatePaths)
+            {
+                try
+                {
+                    string fullPath = Path.GetFullPath(path);
+                    if (File.Exists(fullPath))
+                    {
+                        return LoadFromFile(fullPath, pet, random);
+                    }
+                }
+                catch { }
+            }
+
+            // Fallback: zasób wbudowany w DLL
+            var asm = typeof(Brain).GetTypeInfo().Assembly;
+            foreach (var resName in asm.GetManifestResourceNames())
+            {
+                if (resName.EndsWith("actions.json", StringComparison.OrdinalIgnoreCase))
+                {
+                    using (var stream = asm.GetManifestResourceStream(resName))
+                    {
+                        if (stream != null) return Load(stream, pet, random);
+                    }
+                }
+            }
+
+            throw new InvalidOperationException("Nie udało się odnaleźć pliku actions.json w filesystemie ani w zasobach biblioteki.");
+        }
+
+        // ---- Wybór czynności (Utility AI) ------------------------------------
+
+        /// <summary>
+        /// Wybiera najbardziej opłacalną czynność na podstawie wzoru utility AI:
+        /// zysk = suma((1 - potrzeba/100)^2 * efekt) * losowo(0.8, 1.2) + waga_bazowa,
+        /// z uwzględnieniem cooldownów, limitów dziennych, pór dnia i budżetu dnia.
+        /// </summary>
+        public ActionDecision DecideNextAction()
+        {
+            int day = (int)Math.Floor(_totalSimulatedSeconds / 86400.0);
+            if (day != _currentDay)
+            {
+                _currentDay = day;
+                _dailyCounts.Clear();
+            }
+
+            int hour = (int)Math.Floor((_totalSimulatedSeconds / 3600.0) % 24.0);
+            double totalTimeSoFar = Math.Max(1.0, GetTotalTimeAcrossGroups());
+
+            ActionDefinition bestAction = null;
+            double bestScore = double.NegativeInfinity;
+
+            foreach (var action in _config.Actions)
+            {
+                if (!IsActionAvailable(action, day))
+                    continue;
+
+                double score = CalculateScore(action, hour, totalTimeSoFar);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestAction = action;
+                }
+            }
+
+            // Bezpieczny fallback – jeśli żadna czynność nie przeszła warunków, wybieramy odpoczynek (idle)
+            if (bestAction == null)
+            {
+                bestAction = _config.Actions.Find(a => a.Id == "odpoczynek") ?? _config.Actions[0];
+                bestScore = 0.5;
+            }
+
+            // Rejestracja powtórzeń z rzędu
+            if (bestAction.Id == _lastActionId)
+            {
+                _consecutiveCount++;
+            }
+            else
+            {
+                _lastActionId = bestAction.Id;
+                _consecutiveCount = 1;
+            }
+
+            // Rejestracja licznika dziennego
+            int currentCount;
+            _dailyCounts.TryGetValue(bestAction.Id, out currentCount);
+            _dailyCounts[bestAction.Id] = currentCount + 1;
+
+            // Wylosowanie czasu trwania z zakresu czas_s
+            double durSec = SampleRange(bestAction.MinDurationSeconds, bestAction.MaxDurationSeconds);
+            TimeSpan duration = TimeSpan.FromSeconds(durSec);
+
+            // Cooldown
+            if (bestAction.CooldownSeconds.HasValue && bestAction.CooldownSeconds.Value > 0)
+            {
+                _cooldownsUntilSec[bestAction.Id] = _totalSimulatedSeconds + bestAction.CooldownSeconds.Value;
+            }
+
+            // Dystans ruchu dla spaceru / czynności ruchowych
+            int moveDist = 0;
+            if (bestAction.IsMovement)
+            {
+                moveDist = (int)Math.Round(SampleRange(bestAction.MinDistancePx, bestAction.MaxDistancePx));
+            }
+
+            // Zużycie zasobów (np. siano w paśniku)
+            if (bestAction.Consumes != null)
+            {
+                double hayCost;
+                if (bestAction.Consumes.TryGetValue("siano_w_pasniku", out hayCost))
+                {
+                    HayInRack = Math.Max(0.0, HayInRack - hayCost);
+                }
+            }
+
+            // Rzadkie zachowania
+            if (_rareBehaviorCounts.ContainsKey(bestAction.Id))
+            {
+                _rareBehaviorCounts[bestAction.Id]++;
+            }
+
+            string group = ActionDefinition.GetBudgetGroup(bestAction.Id);
+            var decision = new ActionDecision(
+                bestAction.Id,
+                bestAction.Animation,
+                duration,
+                moveDist,
+                group,
+                bestAction.Effects,
+                bestScore,
+                bestAction);
+
+            _currentAction = decision;
+            _remainingDuration = duration;
+            _isInterrupted = false;
+            _interruptedReason = null;
+
+            // Aplikacja efektów na potrzeby
+            ApplyEffects(bestAction.Effects);
+
+            return decision;
+        }
+
+        private bool IsActionAvailable(ActionDefinition action, int day)
+        {
+            // 1. Cooldown
+            double cdUntil;
+            if (_cooldownsUntilSec.TryGetValue(action.Id, out cdUntil) && _totalSimulatedSeconds < cdUntil)
+            {
+                return false;
+            }
+
+            // 2. Limit dzienny
+            int? limit = action.GetDailyLimit(CurrentStage);
+            if (limit.HasValue)
+            {
+                int count;
+                _dailyCounts.TryGetValue(action.Id, out count);
+                if (count >= limit.Value)
+                    return false;
+            }
+
+            // 3. Maksymalnie 2 razy z rzędu ta sama czynność
+            if (_consecutiveCount >= 2 && action.Id == _lastActionId)
+            {
+                return false;
+            }
+
+            // 4. Warunki środowiskowe i potrzeby
+            if (action.Conditions != null && action.Conditions.Count > 0)
+            {
+                var needs = CurrentNeeds;
+                foreach (var kv in action.Conditions)
+                {
+                    string key = kv.Key;
+                    switch (key)
+                    {
+                        case "humor_min":
+                            if (needs.Mood < (double)kv.Value) return false;
+                            break;
+                        case "humor_max":
+                            if (needs.Mood > (double)kv.Value) return false;
+                            break;
+                        case "energia_min":
+                            if (needs.Energy < (double)kv.Value) return false;
+                            break;
+                        case "energia_max":
+                            if (needs.Energy > (double)kv.Value) return false;
+                            break;
+                        case "najedzenie_min":
+                            if (needs.Satiety < (double)kv.Value) return false;
+                            break;
+                        case "najedzenie_max":
+                            if (needs.Satiety > (double)kv.Value) return false;
+                            break;
+                        case "witamina_c_min":
+                            if (needs.VitaminC < (double)kv.Value) return false;
+                            break;
+                        case "witamina_c_max":
+                            if (needs.VitaminC > (double)kv.Value) return false;
+                            break;
+                        case "zdrowie_min":
+                            if (needs.Health < (double)kv.Value) return false;
+                            break;
+                        case "zdrowie_max":
+                            if (needs.Health > (double)kv.Value) return false;
+                            break;
+                        case "siano_w_pasniku_min":
+                            if (HayInRack < (double)kv.Value) return false;
+                            break;
+                        case "przedmiot":
+                            string item = (string)kv.Value;
+                            if (_pet == null || _pet.GetItemCount(item) <= 0) return false;
+                            break;
+                        case "towarzysz":
+                            if (!HasCompanion) return false;
+                            break;
+                        case "temperatura_min":
+                            if (!TemperatureC.HasValue || TemperatureC.Value < (double)kv.Value) return false;
+                            break;
+                        case "temperatura_max":
+                            if (!TemperatureC.HasValue || TemperatureC.Value > (double)kv.Value) return false;
+                            break;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private double CalculateScore(ActionDefinition action, int hour, double totalTimeSoFar)
+        {
+            var needs = CurrentNeeds;
+
+            // Wzór podstawowy: suma((1 - potrzeba/100)^2 * efekt)
+            double satisfactionSum = 0.0;
+            if (action.Effects != null)
+            {
+                foreach (var kv in action.Effects)
+                {
+                    double needVal;
+                    if (TryGetNeedValue(kv.Key, out needVal))
+                    {
+                        double urgency = Math.Pow(1.0 - (needVal / 100.0), 2.0);
+                        satisfactionSum += urgency * kv.Value;
+                    }
+                }
+            }
+
+            // Losowy mnożnik 0.8 - 1.2
+            double randMult = 0.8 + (_random.NextDouble() * 0.4);
+            double baseZysk = (satisfactionSum * randMult) + action.BaseWeight;
+
+            // Mnożnik etapu życia
+            baseZysk *= action.GetStageMultiplier(CurrentStage);
+
+            // Mnożnik pory dnia
+            string group = ActionDefinition.GetBudgetGroup(action.Id);
+            if ((hour >= 6 && hour < 9) || (hour >= 17 && hour < 21))
+            {
+                // Aktywność x1.5 o świcie i zmierzchu
+                if (group == "chodzenie" || group == "weszenie_rozgladanie" || group == "zabawa_i_rzadkie")
+                {
+                    baseZysk *= 1.5;
+                }
+            }
+            else if (hour >= 11 && hour < 15)
+            {
+                // Drzemki x1.6 w południe
+                if (group == "odpoczynek_i_drzemki")
+                {
+                    baseZysk *= 1.6;
+                }
+            }
+            else if (hour >= 23 || hour < 6)
+            {
+                // Noc: drzemki/sen x2.0, aktywność x0.5
+                if (group == "odpoczynek_i_drzemki")
+                {
+                    baseZysk *= 2.0;
+                }
+                else if (group == "chodzenie" || group == "weszenie_rozgladanie" || group == "zabawa_i_rzadkie")
+                {
+                    baseZysk *= 0.5;
+                }
+            }
+
+            // Mnożnik pory zdefiniowany bezpośrednio w czynności (np. sen 23-7)
+            if (action.PeriodMultipliers != null && action.PeriodMultipliers.Count > 0)
+            {
+                if ((hour >= 23 || hour < 7) && action.PeriodMultipliers.ContainsKey("23-7"))
+                {
+                    baseZysk *= action.PeriodMultipliers["23-7"];
+                }
+            }
+
+            // Sprzężenie zwrotne budżetu dnia:
+            // Utrzymuje odchylenie od budzet_dnia poniżej 5 punktów procentowych.
+            if (_config.DailyBudget != null && _config.DailyBudget.TargetPercentages != null)
+            {
+                double targetPct;
+                if (_config.DailyBudget.TargetPercentages.TryGetValue(group, out targetPct))
+                {
+                    double accSec;
+                    _groupAccumulatedSeconds.TryGetValue(group, out accSec);
+                    double actualPct = (accSec / totalTimeSoFar) * 100.0;
+                    double deficit = targetPct - actualPct;
+
+                    // Specjalny impuls dla rzadkich czynności, aby wykonały się zgodnie z limitem dziennym
+                    if (action.Id == "drapanie" || action.Id == "znaczenie_broda" || action.Id == "popcorn" || action.Id == "zoomies")
+                    {
+                        baseZysk += 2.0;
+                    }
+                    else
+                    {
+                        // Sprzężenie zwrotne budżetu łagodnie narasta wraz z upływem czasu (warmup)
+                        double warmup = Math.Min(1.0, totalTimeSoFar / 1800.0);
+                        double needMul = (action.Id == "jedzenie_siana" && deficit > 0)
+                            ? Math.Max(0.0, 1.0 - (needs.Satiety / 100.0))
+                            : 1.0;
+                        baseZysk += deficit * 0.8 * warmup * needMul;
+                    }
+                }
+            }
+
+            return baseZysk;
+        }
+
+        private bool TryGetNeedValue(string needName, out double val)
+        {
+            var n = CurrentNeeds;
+            switch (needName)
+            {
+                case "najedzenie": val = n.Satiety; return true;
+                case "witamina_c": val = n.VitaminC; return true;
+                case "energia": val = n.Energy; return true;
+                case "humor": val = n.Mood; return true;
+                case "czystosc": val = n.Cleanliness; return true;
+                case "zabki": val = n.Teeth; return true;
+                case "zdrowie": val = n.Health; return true;
+                default: val = 0.0; return false;
+            }
+        }
+
+        private void ApplyEffects(IReadOnlyDictionary<string, double> effects)
+        {
+            if (effects == null || effects.Count == 0) return;
+            var n = CurrentNeeds;
+            foreach (var kv in effects)
+            {
+                switch (kv.Key)
+                {
+                    case "najedzenie": n.Satiety = ClampNeed(n.Satiety + kv.Value); break;
+                    case "witamina_c": n.VitaminC = ClampNeed(n.VitaminC + kv.Value); break;
+                    case "energia": n.Energy = ClampNeed(n.Energy + kv.Value); break;
+                    case "humor": n.Mood = ClampNeed(n.Mood + kv.Value); break;
+                    case "czystosc": n.Cleanliness = ClampNeed(n.Cleanliness + kv.Value); break;
+                    case "zabki": n.Teeth = ClampNeed(n.Teeth + kv.Value); break;
+                }
+            }
+        }
+
+        private static double ClampNeed(double val)
+        {
+            return Math.Max(0.0, Math.Min(100.0, val));
+        }
+
+        private double SampleRange(double min, double max)
+        {
+            if (max <= min) return min;
+            return min + (_random.NextDouble() * (max - min));
+        }
+
+        private double GetTotalTimeAcrossGroups()
+        {
+            double sum = 0.0;
+            foreach (var v in _groupAccumulatedSeconds.Values) sum += v;
+            return sum;
+        }
+
+        // ---- Fizyka pulpitu: przerwanie i wznowienie --------------------------
+
+        /// <summary>
+        /// Przerywa bieżącą czynność świnki z powodu zdarzenia fizyki (np. podniesienie, spadanie, rzut).
+        /// Zapamiętuje pozostały czas trwania akcji.
+        /// </summary>
+        public void Interrupt(string reason = null)
+        {
+            _isInterrupted = true;
+            _interruptedReason = reason ?? "physics";
+        }
+
+        /// <summary>
+        /// Wznawia działanie mózgu po zakończeniu interakcji fizyki.
+        /// Jeśli przerwana czynność miała jeszcze czas trwania, kontynuuje ją; w przeciwnym razie wybiera nową.
+        /// </summary>
+        public ActionDecision Resume()
+        {
+            _isInterrupted = false;
+            _interruptedReason = null;
+
+            if (_currentAction != null && _remainingDuration > TimeSpan.FromSeconds(0.5))
+            {
+                return _currentAction;
+            }
+
+            return DecideNextAction();
+        }
+
+        // ---- Aktualizacja czasu (symulacja / pętla gry) -----------------------
+
+        /// <summary>
+        /// Aktualizuje upływ czasu w mózgu świnki.
+        /// Odlicza czas trwania czynności, zlicza statystyki budżetu i wybiera kolejną czynność po zakończeniu poprzedniej.
+        /// </summary>
+        public void Update(TimeSpan elapsed)
+        {
+            if (elapsed <= TimeSpan.Zero) return;
+            double sec = elapsed.TotalSeconds;
+            _totalSimulatedSeconds += sec;
+
+            if (_isInterrupted)
+            {
+                // Świnka jest pod wpływem fizyki (np. w powietrzu lub przeciągana) – czas czynności nie płynie
+                return;
+            }
+
+            // Naturalny spadek potrzeb w trybie autonomicznym Brain (bez zewnętrznego obiektu Pet)
+            if (_pet == null && _config.DecayPerHour != null)
+            {
+                double hours = sec / 3600.0;
+                var n = _fallbackNeeds;
+                double decay;
+                if (_config.DecayPerHour.TryGetValue("najedzenie", out decay)) n.Satiety = Math.Max(0.0, n.Satiety - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("witamina_c", out decay)) n.VitaminC = Math.Max(0.0, n.VitaminC - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("energia", out decay)) n.Energy = Math.Max(0.0, n.Energy - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("humor", out decay)) n.Mood = Math.Max(0.0, n.Mood - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("czystosc", out decay)) n.Cleanliness = Math.Max(0.0, n.Cleanliness - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("zabki", out decay)) n.Teeth = Math.Max(0.0, n.Teeth - (decay * hours));
+            }
+
+            if (_currentAction == null)
+            {
+                DecideNextAction();
+                return;
+            }
+
+            // Zliczamy czas do odpowiedniej grupy budżetu
+            string group = _currentAction.Group;
+            double currentAcc;
+            _groupAccumulatedSeconds.TryGetValue(group, out currentAcc);
+            _groupAccumulatedSeconds[group] = currentAcc + sec;
+
+            _remainingDuration -= elapsed;
+            if (_remainingDuration <= TimeSpan.Zero)
+            {
+                // Bieżąca czynność dobiegła końca – wybieramy kolejną
+                DecideNextAction();
+            }
+        }
+
+        // ---- Raport budżetu dnia ---------------------------------------------
+
+        /// <summary>
+        /// Generuje raport budżetu czasu: udział procentowy każdej grupy,
+        /// odchylenie od założeń budzet_dnia oraz zliczenia rzadkich zachowań na dobę.
+        /// </summary>
+        public BudgetReport GetBudgetReport(double? daysCount = null)
+        {
+            double totalSec = GetTotalTimeAcrossGroups();
+            if (totalSec <= 0) totalSec = Math.Max(1.0, _totalSimulatedSeconds);
+
+            double days = daysCount.HasValue && daysCount.Value > 0
+                ? daysCount.Value
+                : Math.Max(1.0 / 24.0, totalSec / 86400.0);
+
+            var report = new BudgetReport
+            {
+                TotalTime = TimeSpan.FromSeconds(totalSec),
+                DaysCount = days,
+                IsAllWithinTolerance = true
+            };
+
+            if (_config.DailyBudget != null && _config.DailyBudget.TargetPercentages != null)
+            {
+                foreach (var kv in _config.DailyBudget.TargetPercentages)
+                {
+                    string grp = kv.Key;
+                    double target = kv.Value;
+
+                    double actualSec;
+                    _groupAccumulatedSeconds.TryGetValue(grp, out actualSec);
+                    double actualPct = (actualSec / totalSec) * 100.0;
+                    double diff = actualPct - target;
+                    bool withinTol = Math.Abs(diff) <= 5.0;
+
+                    if (!withinTol) report.IsAllWithinTolerance = false;
+
+                    report.Groups.Add(new GroupBudgetStats
+                    {
+                        GroupName = grp,
+                        TotalSeconds = actualSec,
+                        ActualPercentage = actualPct,
+                        TargetPercentage = target,
+                        DeviationPercentagePoints = diff,
+                        IsWithinTolerance = withinTol
+                    });
+                }
+            }
+
+            // Rzadkie zachowania na dobę
+            if (_config.DailyBudget != null && _config.DailyBudget.RareBehaviorsPerDay != null)
+            {
+                foreach (var kv in _config.DailyBudget.RareBehaviorsPerDay)
+                {
+                    string name = kv.Key;
+                    int count;
+                    _rareBehaviorCounts.TryGetValue(name, out count);
+                    double perDay = count / days;
+                    report.RareBehaviorsPerDay[name] = perDay;
+                    report.RareBehaviorTargets[name] = kv.Value;
+                }
+            }
+
+            return report;
+        }
+    }
+}

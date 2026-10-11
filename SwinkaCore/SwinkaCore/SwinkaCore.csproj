@@ -17,4 +17,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\swinka\dane\actions.json" Link="actions.json" />
+  </ItemGroup>
+
 </Project>
