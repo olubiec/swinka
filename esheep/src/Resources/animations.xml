@@ -16,6 +16,7 @@
     <transparency>Magenta</transparency>
   </image>
   <spawns>
+    <!-- Miejsca pojawiania się świnki na ekranie -->
     <spawn id="1" probability="50">
       <x>random*(screenW-imageW-50)/100+25</x>
       <y>areaH-imageH</y>
@@ -135,14 +136,13 @@
         <frame>13</frame>
         <frame>14</frame>
         <frame>15</frame>
-        <next probability="80" only="none">23</next>
-        <next probability="110" only="none">1</next>
-        <next probability="65" only="none">21</next>
-        <next probability="3" only="none">26</next>
-        <next probability="5" only="none">22</next>
+        <next probability="41" only="none">1</next>
+        <next probability="30" only="none">23</next>
+        <next probability="24" only="none">21</next>
+        <next probability="2" only="none">22</next>
+        <next probability="1" only="none">26</next>
         <next probability="1" only="none">24</next>
         <next probability="1" only="none">25</next>
-        <next probability="1" only="none">7</next>
       </sequence>
       <border>
         <next probability="100" only="vertical">2</next>
@@ -213,6 +213,7 @@
     </animation>
 
     <!-- ID 5: fall (swobodne opadanie w dół) -->
+    <!-- Reguła: Po upadku ZAWSZE lądowanie (land ID 20) -->
     <animation id="5">
       <name>fall</name>
       <start>
@@ -517,6 +518,7 @@
     </animation>
 
     <!-- ID 24: popcorn (popcorning: 1.8 s, radosny podskok, b. rzadko 1-3 na dobę) -->
+    <!-- Reguła: Popcorn nie może wystąpić dwa razy pod rząd (przejście wyłącznie do idle) -->
     <animation id="24">
       <name>popcorn</name>
       <start>
@@ -554,6 +556,7 @@
     </animation>
 
     <!-- ID 25: wheek (kwiczenie: 2.0 s, b. rzadko) -->
+    <!-- Reguła: Wheek nie może wystąpić dwa razy pod rząd (przejście wyłącznie do idle) -->
     <animation id="25">
       <name>wheek</name>
       <start>
