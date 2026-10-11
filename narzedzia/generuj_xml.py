@@ -1,63 +1,106 @@
 #!/usr/bin/env python3
-import os, sys, base64, io, json
+"""
+Generuje plik animations.xml dla świnki morskiej z osadzonym arkuszem klatek (base64)
+oraz ikoną (base64).
+
+Wersja A5: Spokojniejsza świnka według budżetu dnia z swinka/dane/actions.json:
+- ok. 50% czasu odpoczynek (idle 20-60 s) i drzemki (doze 1-10 min)
+- ok. 28% jedzenie siana (eat 20-90 s)
+- chodzenie tylko krótkimi odcinkami 20-120 px po 2-5 s, potem postój co najmniej 20 s (chodzenie < 10% czasu)
+- popcorn najwyżej 1-3 razy dziennie, drapanie ok. co 20 min, run (zoomies) bardzo rzadko
+- reguły specjalne:
+  1. Popcorn i wheek nie mogą wystąpić 2 razy pod rząd.
+  2. Po upadku zawsze land, po land czasem scratch (25%).
+  3. Po każdym spacerze (walk) natychmiastowe przejście w postój (idle min. 20s).
+"""
+
+import os
+import sys
+import base64
+import io
+import json
 from PIL import Image
 
 def generate_icon_base64():
+    """Generuje ikonę głowy świnki (ICO w base64) z arkusza ikon 16x16 (indeks 24)."""
     icons_path = "swinka/ikony/ikony_16.png"
-    if not os.path.exists(icons_path): raise FileNotFoundError(f"Brak pliku ikon: {icons_path}")
+    if not os.path.exists(icons_path):
+        raise FileNotFoundError(f"Brak pliku ikon: {icons_path}")
+
     img = Image.open(icons_path)
     head_16 = img.crop((24 * 16, 0, 25 * 16, 16))
     head_32 = head_16.resize((32, 32), Image.NEAREST)
     head_48 = head_16.resize((48, 48), Image.NEAREST)
+
     ico_io = io.BytesIO()
     head_16.save(ico_io, format='ICO', sizes=[(16, 16), (32, 32), (48, 48)], append_images=[head_32, head_48])
     return base64.b64encode(ico_io.getvalue()).decode('ascii')
 
 def generate_png_base64(png_path="swinka/swinka_spritesheet.png"):
-    if not os.path.exists(png_path): raise FileNotFoundError(f"Brak pliku arkusza: {png_path}")
-    with open(png_path, "rb") as f: return base64.b64encode(f.read()).decode('ascii')
+    """Wczytuje arkusz klatek świnki i koduje do base64."""
+    if not os.path.exists(png_path):
+        raise FileNotFoundError(f"Brak pliku arkusza: {png_path}")
+    with open(png_path, "rb") as f:
+        return base64.b64encode(f.read()).decode('ascii')
 
-# Kalibracja pod budżet dnia:
-# Chcemy:
-# - eat ~ 28%
-# - walk ~ 5-8% (<10%)
-# - sniff ~ 6-8%
-# - idle + doze ~ 50-60%
+
+# ==============================================================================
+# DEFINICJE PRZEJŚĆ I WAG (Shimeji-ee behavior tree)
+# ==============================================================================
+
+# Przejścia z IDLE (główny węzeł decyzyjny, suma wag = 100%)
+# Kalibracja pod budżet dnia A5:
+# - walk (4.0s): 41%
+# - eat (ok. 50s): 30%
+# - sniff (ok. 6.0s): 24%
+# - scratch (4.3s): 2% (występuje ok. co 20-30 min)
+# - doze (ok. 100s): 1%
+# - popcorn (1.8s): 1% (b. rzadko, 1-3/dobę)
+# - wheek (2.0s): 1% (b. rzadko)
 BEHAVIOR_WEIGHTS_FROM_IDLE = [
-    {"id": 23, "name": "eat",     "prob": 80},
-    {"id": 1,  "name": "walk",    "prob": 110},
-    {"id": 21, "name": "sniff",   "prob": 65},
-    {"id": 26, "name": "doze",    "prob": 3},
-    {"id": 22, "name": "scratch", "prob": 5},
+    {"id": 1,  "name": "walk",    "prob": 41},
+    {"id": 23, "name": "eat",     "prob": 30},
+    {"id": 21, "name": "sniff",   "prob": 24},
+    {"id": 22, "name": "scratch", "prob": 2},
+    {"id": 26, "name": "doze",    "prob": 1},
     {"id": 24, "name": "popcorn", "prob": 1},
     {"id": 25, "name": "wheek",   "prob": 1},
-    {"id": 7,  "name": "run",     "prob": 1},
 ]
 
+# Przejścia ze SNIFF (węszenie: spacer lub odpoczynek, suma = 100%)
 BEHAVIOR_WEIGHTS_FROM_SNIFF = [
     {"id": 3,  "name": "idle",  "prob": 40},
     {"id": 1,  "name": "walk",  "prob": 40},
     {"id": 21, "name": "sniff", "prob": 20},
 ]
 
+# Przejścia z EAT (jedzenie siana: odpoczynek lub drzemka, suma = 100%)
 BEHAVIOR_WEIGHTS_FROM_EAT = [
     {"id": 3,  "name": "idle", "prob": 85},
     {"id": 26, "name": "doze", "prob": 15},
 ]
 
+# Reguła: Po upadku zawsze land, po land czasem scratch (25%), reszta idle (75%, suma = 100%)
 BEHAVIOR_WEIGHTS_POST_LAND = [
     {"id": 22, "name": "scratch", "prob": 25},
     {"id": 3,  "name": "idle",    "prob": 75},
 ]
 
 def format_next_tags(transitions, indent="        "):
-    return "\n".join([f'{indent}<next probability="{t["prob"]}" only="none">{t["id"]}</next>' for t in transitions])
+    """Pomocnik generujący tagi <next> dla podanej puli przejść."""
+    lines = []
+    for t in transitions:
+        lines.append(f'{indent}<next probability="{t["prob"]}" only="none">{t["id"]}</next>')
+    return "\n".join(lines)
+
 
 def get_row_frames(row, count):
+    """Zwraca numery kafelków dla wiersza o 16 kolumnach (numer kafelka = row * 16 + i)."""
     return [row * 16 + i for i in range(count)]
 
 def format_frames(frames, indent="        "):
     return "\n".join([f"{indent}<frame>{f}</frame>" for f in frames])
+
 
 def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
     png_b64 = generate_png_base64(png_path)
@@ -68,6 +111,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
     next_from_eat = format_next_tags(BEHAVIOR_WEIGHTS_FROM_EAT)
     next_post_land = format_next_tags(BEHAVIOR_WEIGHTS_POST_LAND)
 
+    # Klatki z arkusza świnki
     frames_idle = format_frames(get_row_frames(0, 16))
     frames_sniff = format_frames(get_row_frames(1, 12))
     frames_walk = format_frames(get_row_frames(2, 8))
@@ -105,6 +149,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
     <transparency>Magenta</transparency>
   </image>
   <spawns>
+    <!-- Miejsca pojawiania się świnki na ekranie -->
     <spawn id="1" probability="50">
       <x>random*(screenW-imageW-50)/100+25</x>
       <y>areaH-imageH</y>
@@ -256,6 +301,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
     </animation>
 
     <!-- ID 5: fall (swobodne opadanie w dół) -->
+    <!-- Reguła: Po upadku ZAWSZE lądowanie (land ID 20) -->
     <animation id="5">
       <name>fall</name>
       <start>
@@ -485,6 +531,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
     </animation>
 
     <!-- ID 24: popcorn (popcorning: 1.8 s, radosny podskok, b. rzadko 1-3 na dobę) -->
+    <!-- Reguła: Popcorn nie może wystąpić dwa razy pod rząd (przejście wyłącznie do idle) -->
     <animation id="24">
       <name>popcorn</name>
       <start>
@@ -511,6 +558,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
     </animation>
 
     <!-- ID 25: wheek (kwiczenie: 2.0 s, b. rzadko) -->
+    <!-- Reguła: Wheek nie może wystąpić dwa razy pod rząd (przejście wyłącznie do idle) -->
     <animation id="25">
       <name>wheek</name>
       <start>
