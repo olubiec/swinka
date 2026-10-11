@@ -272,7 +272,18 @@
     <Compile Include="Tools\XmlToDot.cs" />
     <Compile Include="dotNet\Xml.cs" />
     <Compile Include="dotNet\SwinkaBrainController.cs" />
+    <Compile Include="dotNet\SwinkaIcons.cs" />
+    <Compile Include="dotNet\SwinkaItemCatalog.cs" />
+    <Compile Include="dotNet\FormDomek.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dotNet\FormDomek.Designer.cs">
+      <DependentUpon>FormDomek.cs</DependentUpon>
+    </Compile>
     <Compile Include="dotNet\FormBrainOverlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dotNet\FormStatusBubble.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="dotNet\FormBrainOverlay.Designer.cs">

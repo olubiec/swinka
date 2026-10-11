@@ -327,6 +327,19 @@ namespace DesktopPet
                 _session.Pet.State.Bond.Points, _session.Pet.State.Bond.Level));
         }
 
+        public void PetPig()
+        {
+            if (_session?.Pet != null)
+            {
+                _session.Pet.Needs.Mood = Math.Min(100.0, _session.Pet.Needs.Mood + 3.0);
+                _session.Pet.Count("glaskanie");
+                _session.Pet.AddBondPoints(1);
+                Log(string.Format("[Głaskanie] Pogłaskano świnkę (+3 humoru). Humor: {0:0.#}%",
+                    _session.Pet.Needs.Mood));
+            }
+            RequestAnimation("purr_pet");
+        }
+
         // ---- Wybór kolejnej animacji dla silnika eSheep ----------------------
 
         public string GetCurrentDesiredAnimation()
@@ -511,12 +524,13 @@ namespace DesktopPet
             _subStage = "exit";
         }
 
-        // ---- Telemetria i nakładka F9 (Requirement 3) -----------------------
+        // ---- Telemetria i nakładka F9 (Narzędzie testowe - w Release wyłączone) -----
 
         private FormBrainOverlay _overlayForm;
 
         public void ToggleOverlay()
         {
+#if DEBUG
             if (_overlayForm == null || _overlayForm.IsDisposed)
             {
                 _overlayForm = new FormBrainOverlay(this);
@@ -534,6 +548,7 @@ namespace DesktopPet
                     _overlayForm.BringToFront();
                 }
             }
+#endif
         }
 
         public IReadOnlyList<ActionScoreInfo> GetActionScores()

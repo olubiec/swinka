@@ -48,6 +48,7 @@ namespace DesktopPet
 
         private SwinkaBrainController _brain;
 
+#if DEBUG
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
 
@@ -55,6 +56,12 @@ namespace DesktopPet
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         private const int HOTKEY_ID_F9 = 9009;
+#endif
+
+        private FormStatusBubble _statusBubble;
+        private Timer _bubbleHoverTimer;
+        private Point _clickStartPos;
+        private DateTime _clickStartTime;
 
             /// <summary>
             /// If sheep is walking to left  (default).
@@ -153,6 +160,8 @@ namespace DesktopPet
             }
             UseSmoothMovements = Program.MyData.GetSmoothMovements();
             _brain = SwinkaBrainController.Instance;
+            HookBrainEvents();
+            InitBubbleInteraction();
 		}
 
             /// <summary>
@@ -215,6 +224,7 @@ namespace DesktopPet
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
+#if DEBUG
             if (Name.IndexOf("child") < 0)
             {
                 try
@@ -223,10 +233,12 @@ namespace DesktopPet
                 }
                 catch { }
             }
+#endif
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+#if DEBUG
             if (Name.IndexOf("child") < 0)
             {
                 try
@@ -235,11 +247,24 @@ namespace DesktopPet
                 }
                 catch { }
             }
+#endif
+            if (_brain != null)
+            {
+                _brain.AnimationRequested -= OnAnimationRequested;
+            }
+            _bubbleHoverTimer?.Stop();
+            _bubbleHoverTimer?.Dispose();
+            if (_statusBubble != null && !_statusBubble.IsDisposed)
+            {
+                _statusBubble.Close();
+                _statusBubble.Dispose();
+            }
             base.OnFormClosing(e);
         }
 
         protected override void WndProc(ref Message m)
         {
+#if DEBUG
             const int WM_HOTKEY = 0x0312;
             if (m.Msg == WM_HOTKEY && m.WParam.ToInt32() == HOTKEY_ID_F9)
             {
@@ -247,7 +272,112 @@ namespace DesktopPet
                 _brain?.ToggleOverlay();
                 return;
             }
+#endif
             base.WndProc(ref m);
+        }
+
+        private void HookBrainEvents()
+        {
+            if (_brain == null) _brain = SwinkaBrainController.Instance;
+            if (_brain != null)
+            {
+                _brain.AnimationRequested -= OnAnimationRequested;
+                _brain.AnimationRequested += OnAnimationRequested;
+            }
+        }
+
+        private void OnAnimationRequested(string animName)
+        {
+            if (this.IsDisposed) return;
+            if (this.InvokeRequired)
+            {
+                try { this.BeginInvoke(new Action<string>(OnAnimationRequested), animName); } catch { }
+                return;
+            }
+
+            if (IsDragging || IsTossing) return;
+
+            PlayAnimationByName(animName);
+        }
+
+        public void PlayAnimationByName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return;
+            if (this.IsDisposed) return;
+            if (this.InvokeRequired)
+            {
+                try { this.BeginInvoke(new Action<string>(PlayAnimationByName), name); } catch { }
+                return;
+            }
+
+            int animId = GetAnimationIdByName(name);
+            if (animId >= 0)
+            {
+                _brain?.StopWalk();
+                SetNewAnimation(animId);
+            }
+        }
+
+        public void ShowStatusBubble()
+        {
+            if (Name.IndexOf("child") >= 0) return;
+            if (this.IsDisposed) return;
+            if (this.InvokeRequired)
+            {
+                try { this.BeginInvoke(new Action(ShowStatusBubble)); } catch { }
+                return;
+            }
+
+            if (_statusBubble == null || _statusBubble.IsDisposed)
+            {
+                _statusBubble = new FormStatusBubble(this);
+            }
+            _statusBubble.ShowBubble();
+        }
+
+        public void HideStatusBubble()
+        {
+            _statusBubble?.HideBubble();
+        }
+
+        private void InitBubbleInteraction()
+        {
+            if (Name.IndexOf("child") >= 0) return;
+
+            _bubbleHoverTimer = new Timer(components) { Interval = 700 };
+            _bubbleHoverTimer.Tick += (s, e) =>
+            {
+                _bubbleHoverTimer.Stop();
+                if (!IsDragging && !IsTossing)
+                {
+                    ShowStatusBubble();
+                }
+            };
+
+            pictureBox1.MouseEnter += (s, e) =>
+            {
+                if (!IsDragging && !IsTossing && (_statusBubble == null || !_statusBubble.Visible))
+                {
+                    _bubbleHoverTimer.Stop();
+                    _bubbleHoverTimer.Start();
+                }
+            };
+
+            pictureBox1.MouseMove += (s, e) =>
+            {
+                if (!IsDragging && !IsTossing && (_statusBubble == null || !_statusBubble.Visible))
+                {
+                    if (!_bubbleHoverTimer.Enabled)
+                    {
+                        _bubbleHoverTimer.Start();
+                    }
+                }
+            };
+
+            pictureBox1.MouseLeave += (s, e) =>
+            {
+                _bubbleHoverTimer.Stop();
+            };
         }
 
         public int GetAnimationIdByName(string name)
@@ -1220,6 +1350,9 @@ namespace DesktopPet
         {
             if (e.Button == MouseButtons.Left && Name.IndexOf("child") < 0)
             {
+                _bubbleHoverTimer?.Stop();
+                _clickStartPos = Cursor.Position;
+                _clickStartTime = DateTime.UtcNow;
                 _brain?.InterruptPhysics("drag");
                 hwndWindow = (IntPtr)0;             // Remove window handles
                 TopMost = false;
@@ -1303,6 +1436,11 @@ namespace DesktopPet
             if (e.Button != MouseButtons.Left || Name.IndexOf("child") >= 0 || !IsDragging) return;
             if (e.Button == MouseButtons.Left && Name.IndexOf("child") < 0 && IsDragging)
             {
+                _bubbleHoverTimer?.Stop();
+                int dragDist = Math.Abs(Cursor.Position.X - _clickStartPos.X) + Math.Abs(Cursor.Position.Y - _clickStartPos.Y);
+                TimeSpan dragDuration = DateTime.UtcNow - _clickStartTime;
+                bool wasClick = dragDist < 8 && dragDuration.TotalMilliseconds < 500;
+
                 double now = motionClock.Elapsed.TotalMilliseconds;
                 UpdateDragPosition(Cursor.Position, now);
                 TossForce = dragVelocity.TossForce(now);
@@ -1310,8 +1448,13 @@ namespace DesktopPet
                 // Log toss force
                 StartUp.AddDebugInfo(StartUp.DEBUG_TYPE.info, "Toss force: (" + TossForce.X + ", " + TossForce.Y + ")");
 
-                // If the toss force's magnitude (length) is bigger than this value, fling that thang >:)
-                if(TossForce.Length() > 5)
+                if (wasClick)
+                {
+                    // Kliknięcie świnki bez przeciągania -> dymek stanu
+                    _brain?.ResumePhysics();
+                    ShowStatusBubble();
+                }
+                else if (TossForce.Length() > 5)
                 {
                     _brain?.InterruptPhysics("toss");
                     // If toss animation exists, set it. Otherwise, remain in the dragging animation.
@@ -1420,7 +1563,11 @@ namespace DesktopPet
 
 		private void PictureBox1_Click(object sender, EventArgs e)
 		{
-
+            if (Name.IndexOf("child") < 0 && !IsDragging && !IsTossing)
+            {
+                _bubbleHoverTimer?.Stop();
+                ShowStatusBubble();
+            }
 		}
 	}
 

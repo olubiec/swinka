@@ -1,95 +1,84 @@
 using System;
-using System.Windows.Forms;
-using DesktopPet.Properties;
 using System.Drawing;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Windows.Forms;
+using DesktopPet.Properties;
+using SwinkaCore;
 
 namespace DesktopPet
 {
-        /// <summary>
-        /// The only way to interact with the application (not the pet itself) is over the context menu.<br />
-        /// This menu is available once you press on the tray icon (near the windows clock).
-        /// </summary>
-    class ContextMenus : IDisposable
+    /// <summary>
+    /// Menu podręczne w zasobniku systemowym (obok zegara Windows).
+    /// Zgodnie z PLAN.md (B5):
+    /// - Nakarm (podmenu z przedmiotami z ekwipunku i liczbą sztuk, Siano zawsze bez limitu)
+    /// - Zawołaj
+    /// - Domek (na razie pusty)
+    /// - Ustawienia
+    /// - Zamknij
+    /// </summary>
+    public class ContextMenus : IDisposable
     {
-            /// <summary>
-            /// Sheep Menu Item: if another pet was downloaded, the icon and text of this item will change.
-            /// </summary>
-        static ToolStripMenuItem newSheepMenuItem;
-            /// <summary>
-            /// Close Menu Item: if another pet was downloaded, the text of this item will change.
-            /// </summary>
-        static ToolStripMenuItem closeSheepMenuItem;
+        static ToolStripMenuItem feedMenuItem;
+        static ToolStripMenuItem callMenuItem;
+        static ToolStripMenuItem domekMenuItem;
+        static ToolStripMenuItem optionsMenuItem;
+        static ToolStripMenuItem closeMenuItem;
 
 #if PORTABLE
-        /// <summary>
-        /// Install functions and form.
-        /// </summary>
         Install installForm;
 #endif
 
-        /// <summary>
-        /// A value to set in the About dialog: author.
-        /// </summary>
         static string author;
-            /// <summary>
-            /// A value to set in the About dialog: animation version.
-            /// </summary>
         static string version;
-            /// <summary>
-            /// A value to set in the About dialog: animation title.
-            /// </summary>
         static string title;
-            /// <summary>
-            /// A value to set in the About dialog: description and information about the animation.
-            /// </summary>
         static string info;
-        
-        LocalData MyData = new LocalData();
-        bool isAboutLoaded = false;
+
         bool isOptionLoaded = false;
 
-        /// <summary>
-        /// Creates this instance for the tray icon.
-        /// </summary>
-        /// <returns>ContextMenuStrip to add in the tray icon.</returns>
         public ContextMenuStrip Create()
         {
-                // Add the default menu options.
             ContextMenuStrip menu = new ContextMenuStrip();
-            ToolStripMenuItem item;
-            ToolStripSeparator sep;
 
-			// Item: New Sheep.
-			newSheepMenuItem = new ToolStripMenuItem
-			{
-				Text = "&Add new Sheep"
-			};
-			newSheepMenuItem.Click += new EventHandler(AddNewSheep_Click);
-            newSheepMenuItem.Image = Resources.icon.ToBitmap();
-            newSheepMenuItem.Font = new Font(newSheepMenuItem.Font, newSheepMenuItem.Font.Style | FontStyle.Bold);
-            menu.Items.Add(newSheepMenuItem);
+            // 1. Nakarm (podmenu: Siano bez limitu + przedmioty z ekwipunku)
+            feedMenuItem = new ToolStripMenuItem("Nakarm");
+            feedMenuItem.Image = SwinkaIcons.GetIconBitmap("siano");
+            feedMenuItem.Font = new Font(feedMenuItem.Font, feedMenuItem.Font.Style | FontStyle.Bold);
+            feedMenuItem.DropDownOpening += (s, e) => PopulateFeedSubmenu(feedMenuItem);
+            PopulateFeedSubmenu(feedMenuItem);
+            menu.Items.Add(feedMenuItem);
 
-			// Item: Options.
-			item = new ToolStripMenuItem
-			{
-				Text = "&Options"
-			};
-			item.Click += new EventHandler(Options_Click);
-            item.Image = Resources.option;
-            menu.Items.Add(item);
-
-            // Item: Swinka Brain Overlay (F9)
-            ToolStripMenuItem brainItem = new ToolStripMenuItem
+            // 2. Zawołaj
+            callMenuItem = new ToolStripMenuItem("Zawołaj");
+            callMenuItem.Image = SwinkaIcons.GetIconBitmap("glowa_swinki");
+            callMenuItem.Click += (s, e) =>
             {
-                Text = "Mózg świnki (F9)"
+                if (SwinkaBrainController.Instance != null)
+                {
+                    SwinkaBrainController.Instance.CallPet();
+                }
             };
+            menu.Items.Add(callMenuItem);
+
+            // 3. Domek (na razie pusty)
+            domekMenuItem = new ToolStripMenuItem("Domek");
+            domekMenuItem.Image = SwinkaIcons.GetIconBitmap("domek");
+            domekMenuItem.Click += (s, e) => OpenDomekWindow();
+            menu.Items.Add(domekMenuItem);
+
+            // 4. Ustawienia
+            optionsMenuItem = new ToolStripMenuItem("Ustawienia");
+            optionsMenuItem.Image = Resources.option;
+            optionsMenuItem.Click += new EventHandler(Options_Click);
+            menu.Items.Add(optionsMenuItem);
+
+            // Narzędzia testowe (tylko w Debug lub jako opcjonalne skróty)
+            ToolStripSeparator sep = new ToolStripSeparator();
+            menu.Items.Add(sep);
+
+            ToolStripMenuItem brainItem = new ToolStripMenuItem("Mózg świnki (F9)");
             brainItem.Click += (s, e) => FormBrainOverlay.Toggle();
             menu.Items.Add(brainItem);
 
-            // Item: Clock 60x Toggle
             ToolStripMenuItem speedItem = new ToolStripMenuItem
             {
                 Text = "Zegar 60x (Test)",
@@ -106,156 +95,96 @@ namespace DesktopPet
             };
             menu.Items.Add(speedItem);
 
-                // Item: Separator.
-            sep = new ToolStripSeparator();
-            menu.Items.Add(sep);
+            menu.Items.Add(new ToolStripSeparator());
 
 #if PORTABLE
-            // Create install class
             installForm = new Install();
-
-            // Item: Install.
-            item = new ToolStripMenuItem();
             if (!Program.IsApplicationInstalled())
-                item.Text = "&Install application...";
-            else
-                item.Text = "Repair/&Uninstall...";
-            item.Click += new EventHandler(InstallApplication);
-            item.Image = installForm.Icon.ToBitmap();
-            menu.Items.Add(item);
+            {
+                ToolStripMenuItem instItem = new ToolStripMenuItem("&Install application...");
+                instItem.Click += new EventHandler(InstallApplication);
+                instItem.Image = installForm.Icon.ToBitmap();
+                menu.Items.Add(instItem);
+                menu.Items.Add(new ToolStripSeparator());
+            }
 #endif
 
-			// Item: About.
-			item = new ToolStripMenuItem
-			{
-				Text = "A&bout"
-			};
-			item.Click += new EventHandler(About_Click);
-            item.Image = Resources.about;
-            menu.Items.Add(item);
+            // 5. Zamknij
+            closeMenuItem = new ToolStripMenuItem("Zamknij");
+            closeMenuItem.Image = Resources.exit;
+            closeMenuItem.Click += new EventHandler(Exit_Click);
+            menu.Items.Add(closeMenuItem);
 
-			// Item: Help.
-			item = new ToolStripMenuItem
-			{
-				Text = "&Help"
-			};
-			item.Click += new EventHandler(Help_Click);
-            item.Image = Resources.help;
-            menu.Items.Add(item);
-
-            // Item: Separator.
-            sep = new ToolStripSeparator();
-            menu.Items.Add(sep);
-
-			// Item: Close application.
-			closeSheepMenuItem = new ToolStripMenuItem
-			{
-				Text = "&Remove Sheep and Close"
-			};
-			closeSheepMenuItem.Click += new EventHandler(Exit_Click);
-            closeSheepMenuItem.Image = Resources.exit;
-            menu.Items.Add(closeSheepMenuItem);
-
-            if(Program.MyData.IsFirstBoot())
-            {
-                OpenOptionWindow("xamlesheep://options");
-            }
-            
             return menu;
         }
 
-        private void OpenOptionWindow(string url) { }
-
-        /// <summary>
-        /// Set a new icon in the context menu with the new pet and updated the info to show in the about dialog.<br />
-        /// This function is called every time a new pet is loaded.
-        /// </summary>
-        /// <param name="newIcon">Icon with the new image.</param>
-        /// <param name="petName">Name of the pet, to show in the context menu.</param>
-        /// <param name="aboutAuthor">Name of the author.</param>
-        /// <param name="aboutTitle">Title of the animation.</param>
-        /// <param name="aboutVersion">Version of the animation.</param>
-        /// <param name="aboutInfo">About the animation (copyright and author information)</param>
-        static public void UpdateIcon(Icon newIcon, string petName, string aboutAuthor, string aboutTitle, string aboutVersion, string aboutInfo)
+        public static void OpenDomekWindow()
         {
-            newSheepMenuItem.Text = "&Add new " + petName;
-            newSheepMenuItem.Image = newIcon.ToBitmap();
-            closeSheepMenuItem.Text = "&Remove " + petName + " and Close";
+            FormDomek.ShowDomek();
+        }
 
+        public static void PopulateFeedSubmenu(ToolStripMenuItem feedMenu)
+        {
+            feedMenu.DropDownItems.Clear();
+
+            // Zawsze "Siano" bez limitu
+            ToolStripMenuItem sianoItem = new ToolStripMenuItem("Siano (bez limitu)");
+            sianoItem.Image = SwinkaIcons.GetIconBitmap("siano");
+            sianoItem.Click += (s, e) =>
+            {
+                if (SwinkaBrainController.Instance != null)
+                {
+                    SwinkaBrainController.Instance.Feed("siano");
+                }
+            };
+            feedMenu.DropDownItems.Add(sianoItem);
+
+            // Przedmioty z ekwipunku
+            var pet = SwinkaBrainController.Instance?.Pet;
+            if (pet != null && pet.State.Inventory != null)
+            {
+                foreach (var kvp in pet.State.Inventory)
+                {
+                    string itemId = kvp.Key;
+                    int count = kvp.Value;
+                    if (count <= 0) continue;
+                    if (string.Equals(itemId, "siano", StringComparison.OrdinalIgnoreCase)) continue;
+
+                    var def = SwinkaItemCatalog.GetItem(itemId);
+                    string title = string.Format("{0} ({1})", def.Name, count);
+
+                    ToolStripMenuItem foodItem = new ToolStripMenuItem(title);
+                    foodItem.Image = SwinkaIcons.GetIconBitmap(def.IconName ?? itemId);
+                    foodItem.Click += (s, e) =>
+                    {
+                        if (SwinkaBrainController.Instance != null)
+                        {
+                            SwinkaBrainController.Instance.Feed(itemId);
+                        }
+                    };
+                    feedMenu.DropDownItems.Add(foodItem);
+                }
+            }
+        }
+
+        public static void UpdateIcon(Icon newIcon, string petName, string aboutAuthor, string aboutTitle, string aboutVersion, string aboutInfo)
+        {
             author = aboutAuthor;
             title = aboutTitle;
             version = aboutVersion;
             info = aboutInfo;
         }
 
-            /// <summary>
-            /// Handles the Click event of the Explorer control: add another pet in the desktop.
-            /// </summary>
-            /// <param name="sender">The source of the event.</param>
-            /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        void AddNewSheep_Click(object sender, EventArgs e)
-        {
-            //Process.Start("explorer", null);
-            Program.Mainthread.AddSheep();
-        }
-
-
 #if PORTABLE
-        /// <summary>
-        /// Open the window form to install this application on the computer.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         void InstallApplication(object sender, EventArgs e)
         {
             installForm.ShowInstallation();
         }
 #endif
 
-        /// <summary>
-        /// Handles the Click event of the About control. Open a dialog if no other dialog is still opened.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        void About_Click(object sender, EventArgs e)
-        {
-            if (isOptionLoaded)
-            {
-
-            }
-            else if (!isAboutLoaded)
-            {
-                isAboutLoaded = true;
-                AboutBox box = new AboutBox();
-                box.FillData(author, title, version, info);
-                box.ShowDialog();
-                isAboutLoaded = false;
-            }
-        }
-
-        /// <summary>
-        /// Handles the Click event of the Help control. Open a dialog if no other dialog is still opened.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        void Help_Click(object sender, EventArgs e)
-        {
-            FormHelp help = new FormHelp();
-            help.Show();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the Option control. Open a dialog if no other dialog is still opened.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         void Options_Click(object sender, EventArgs e)
         {
-            if (isAboutLoaded)
-            {
-
-            }
-            else if (!isOptionLoaded)
+            if (!isOptionLoaded)
             {
                 isOptionLoaded = true;
                 Program.OpenOptionDialog();
@@ -263,22 +192,16 @@ namespace DesktopPet
             }
         }
 
-            /// <summary>
-            /// Processes a menu item. Will close the application after closing all pets.
-            /// </summary>
-            /// <param name="sender">The sender.</param>
-            /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         void Exit_Click(object sender, EventArgs e)
         {
-            // Quit without further ado.
-            //Application.Exit();
+            try
+            {
+                SwinkaBrainController.Instance?.Close();
+            }
+            catch { }
             Program.Mainthread.KillSheeps(true);
         }
 
-
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources
-        /// </summary>
         public void Dispose()
         {
 #if PORTABLE

@@ -1,79 +1,118 @@
-﻿using System;
-using System.Windows.Forms;
+using System;
 using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms;
+using SwinkaCore;
 
 namespace DesktopPet
 {
-        /// <summary>
-        /// System Tray Icon. Shows an icon on the Taskbar to allow a ContextMenu.
-        /// </summary>
+    /// <summary>
+    /// Ikona w zasobniku systemowym (obok zegara Windows).
+    /// Wyświetla głowę świnki z swinka/ikony/ikony_16.png,
+    /// tooltip z imieniem świnki i najniższą potrzebą,
+    /// otwiera Domek przy dwukliku oraz menu kontekstowe.
+    /// </summary>
     public sealed class ProcessIcon : IDisposable
     {
-            /// <summary>
-            /// The NotifyIcon object.
-            /// </summary>
-        NotifyIcon ni;
+        private NotifyIcon ni;
+        private Timer _tooltipTimer;
 
-            /// <summary>
-            /// Initializes a new instance of the <see cref="ProcessIcon"/> class.
-            /// </summary>
         public ProcessIcon()
         {
-            // Instantiate the NotifyIcon object.
             ni = new NotifyIcon();
         }
 
-            /// <summary>
-            /// Displays the icon in the system tray.
-            /// </summary>
         public void Display()
         {
-            // Put the icon in the system tray and allow it react to mouse clicks.			
             ni.MouseClick += new MouseEventHandler(Ni_MouseClick);
             ni.MouseDoubleClick += new MouseEventHandler(Ni_MouseDoubleClick);
 
-            ni.Text = "eSheep Desktop Pet";
+            // Ustaw ikonę główki świnki z swinka/ikony/ikony_16.png
+            try
+            {
+                ni.Icon = SwinkaIcons.GetTrayIcon();
+            }
+            catch
+            {
+                ni.Icon = SystemIcons.Application;
+            }
+
+            UpdateTooltip();
             ni.Visible = true;
 
-            // Attach a context menu.
-            ni.ContextMenuStrip = new ContextMenus().Create();
+            // Dołącz menu kontekstowe świnki
+            var contextMenu = new ContextMenus();
+            var strip = contextMenu.Create();
+            strip.Opening += (s, e) => UpdateTooltip();
+            ni.ContextMenuStrip = strip;
+
+            // Timer aktualizujący tooltip na bieżąco
+            _tooltipTimer = new Timer();
+            _tooltipTimer.Interval = 1000;
+            _tooltipTimer.Tick += (s, e) => UpdateTooltip();
+            _tooltipTimer.Start();
         }
 
-            /// <summary>
-            /// Displays the icon in the system tray.
-            /// </summary>
-        public void SetIcon(System.IO.MemoryStream icon, string petName, string aboutAuthor, string aboutTitle, string aboutVersion, string aboutInfo)
+        /// <summary>
+        /// Aktualizuje tekst podpowiedzi ikony w zasobniku: imię świnki i najniższa potrzeba.
+        /// </summary>
+        public void UpdateTooltip()
         {
-            bool success = true;
-			try
-			{
-				ni.Icon = new Icon(icon, 32, 32);
-				ContextMenus.UpdateIcon(ni.Icon, petName, aboutAuthor, aboutTitle, aboutVersion, aboutInfo);
-				ni.Text = petName + " Desktop Pet";
-			}
-			catch(Exception)
-			{
-                success = false;
-			}
-            if(!success)
+            if (ni == null) return;
+            var brain = SwinkaBrainController.Instance;
+            if (brain != null && brain.Pet != null && brain.Needs != null)
             {
-                try
+                string petName = brain.Pet.State?.Name;
+                if (string.IsNullOrWhiteSpace(petName)) petName = "Świnka";
+
+                Need lowest = brain.Needs.Lowest();
+                string needName = NeedNames.Polish(lowest);
+                int percent = (int)Math.Round(brain.Needs[lowest]);
+
+                // Limit WinForms dla NotifyIcon.Text to 63 znaki
+                string tip = string.Format("{0} - {1}: {2}%", petName, needName, percent);
+                if (tip.Length > 63)
                 {
-                    StartUp.AddDebugInfo(StartUp.DEBUG_TYPE.error, "Animation ICON is invalid (icon converter is on the webpage)");
-                    ni.Icon = new Icon(Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location), 32, 32);
-                    ContextMenus.UpdateIcon(ni.Icon, petName, aboutAuthor, aboutTitle, aboutVersion, aboutInfo);
+                    tip = string.Format("{0} - {1}", petName, needName);
+                    if (tip.Length > 63) tip = tip.Substring(0, 63);
                 }
-                catch (Exception) { } // probably thread error.
+                ni.Text = tip;
+            }
+            else
+            {
+                ni.Text = "Świnka";
             }
         }
 
-            /// <summary>
-            /// Releases unmanaged and - optionally - managed resources
-            /// </summary>
+        public void SetIcon(System.IO.MemoryStream icon, string petName, string aboutAuthor, string aboutTitle, string aboutVersion, string aboutInfo)
+        {
+            try
+            {
+                // Upewnij się, że ikona zasobnika to głowa świnki
+                ni.Icon = SwinkaIcons.GetTrayIcon();
+                UpdateTooltip();
+                ContextMenus.UpdateIcon(ni.Icon, petName, aboutAuthor, aboutTitle, aboutVersion, aboutInfo);
+            }
+            catch (Exception)
+            {
+                try
+                {
+                    ni.Icon = new Icon(icon, 32, 32);
+                    UpdateTooltip();
+                }
+                catch { }
+            }
+        }
+
         public void Dispose()
         {
-            // When the application closes, this will remove the icon from the system tray immediately.
+            if (_tooltipTimer != null)
+            {
+                _tooltipTimer.Stop();
+                _tooltipTimer.Dispose();
+                _tooltipTimer = null;
+            }
+
             if (ni != null)
             {
                 if (ni.Icon != null)
@@ -87,34 +126,21 @@ namespace DesktopPet
             }
         }
 
-            /// <summary>
-            /// Handles the MouseClick event of the ni control.
-            /// </summary>
-            /// <param name="sender">The source of the event.</param>
-            /// <param name="e">The <see cref="System.Windows.Forms.MouseEventArgs"/> instance containing the event data.</param>
         void Ni_MouseClick(object sender, MouseEventArgs e)
         {
-            // Handle mouse button clicks.
             if (e.Button == MouseButtons.Left)
             {
-                // Start Windows Explorer.
+                // Kliknięcie lewym przyciskiem: przenieś świnkę na wierzch
                 Program.Mainthread.TopMostSheeps();
             }
         }
 
-            /// <summary>
-            /// A double click will automatically start a new pet.
-            /// </summary>
-            /// <param name="sender">Caller as object.</param>
-            /// <param name="e">Mouse event values.</param>
         void Ni_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            // Handle mouse button clicks.
             if (e.Button == MouseButtons.Left)
             {
-                // Start Windows Explorer.
-                //Process.Start("explorer", null);
-                Program.Mainthread.AddSheep();
+                // Dwuklik na ikonę otwiera Domek
+                FormDomek.ShowDomek();
             }
         }
     }
