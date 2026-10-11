@@ -390,6 +390,22 @@ Użyj sztucznego zegara. Uruchom testy i popraw tylko testy, nie logikę. Błęd
 
 **Sprawdź:** w Visual Studio menu Test → Run All Tests. **Powinno być:** wszystkie testy zielone; ewentualne błędy logiki wypisane w raporcie, a nie ukryte przez zmianę testów.
 
+### B1c · Gemini: poprawki po testach (zrób po A5)
+
+```text
+Przeczytaj PLAN.md, ZASADY.md i kod SwinkaCore. Popraw dwie rzeczy znalezione w B1b:
+1. Needs.cs: komentarz o zdrowiu. Zdrowie liczy się ze wszystkich sześciu potrzeb, razem z czystością
+   (czystość będzie spadać od bobków w B4). Zmień tylko komentarz, nie logikę.
+2. SaveSystem.Save(): nigdy nie nadpisuj save.bak uszkodzonym plikiem. Przed przeniesieniem save.json do save.bak
+   sprawdź, czy save.json da się odczytać jako poprawny stan; jeśli nie, zostaw save.bak bez zmian.
+   Zapisuj najpierw do pliku tymczasowego i dopiero potem podmieniaj save.json.
+Dopisz test: uszkodzony save.json + nowa instancja SaveSystem + Save() => save.bak dalej zawiera dobry stan.
+Sprawdź też, czy Symulator przesuwa czas krokami nie dłuższymi niż 5 minut (inaczej liczy się jak wyłączony komputer).
+Uruchom wszystkie testy.
+```
+
+**Sprawdź:** Test → Run All Tests w Visual Studio. **Powinno być:** wszystkie testy zielone, w tym nowy test kopii zapasowej; Symulator dalej pokazuje spadek potrzeb online, a nie offline.
+
 ### B2 · Claude: utility AI steruje świnką
 
 ```text
