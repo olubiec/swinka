@@ -23,7 +23,9 @@ namespace DesktopPet
         private Panel _headerPanel;
         private Label _lblTitle;
         private Label _lblStatus;
+        private Label _lblIdleInfo;
         private Button _btnToggleSpeed;
+        private Button _btnToggleIdleTest;
 
         // Zakładki
         private TabControl _tabControl;
@@ -92,7 +94,7 @@ namespace DesktopPet
             _headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 65,
+                Height = 88,
                 BackColor = Color.FromArgb(28, 32, 42),
                 Padding = new Padding(12)
             };
@@ -100,9 +102,9 @@ namespace DesktopPet
             _lblTitle = new Label
             {
                 Text = "🐹 TELEMETRIA MÓZGU ŚWINKI (F9)",
-                Font = new Font("Segoe UI", 11.5f, FontStyle.Bold),
+                Font = new Font("Segoe UI", 11f, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(12, 10),
+                Location = new Point(12, 8),
                 AutoSize = true
             };
 
@@ -111,7 +113,16 @@ namespace DesktopPet
                 Text = "● AKTYWNY (Utility AI)",
                 Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 211, 153),
-                Location = new Point(14, 36),
+                Location = new Point(14, 32),
+                AutoSize = true
+            };
+
+            _lblIdleInfo = new Label
+            {
+                Text = "💤 Bezczynność: 00:00 / 10:00 (Czuwanie)",
+                Font = new Font("Segoe UI", 8.5f),
+                ForeColor = Color.FromArgb(148, 163, 184),
+                Location = new Point(14, 56),
                 AutoSize = true
             };
 
@@ -122,8 +133,8 @@ namespace DesktopPet
                 ForeColor = Color.White,
                 BackColor = Color.FromArgb(59, 130, 246),
                 FlatStyle = FlatStyle.Flat,
-                Size = new Size(190, 34),
-                Location = new Point(Width - 225, 14),
+                Size = new Size(195, 30),
+                Location = new Point(Width - 230, 10),
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
                 Cursor = Cursors.Hand
             };
@@ -134,9 +145,30 @@ namespace DesktopPet
                 UpdateSpeedButtonText();
             };
 
+            _btnToggleIdleTest = new Button
+            {
+                Text = "💤 Próg: 10m (Test: 10s)",
+                Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(71, 85, 105),
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(195, 30),
+                Location = new Point(Width - 230, 46),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                Cursor = Cursors.Hand
+            };
+            _btnToggleIdleTest.FlatAppearance.BorderSize = 0;
+            _btnToggleIdleTest.Click += (s, e) =>
+            {
+                _controller.SetTestIdleThreshold(!_controller.IsTestIdleThresholdActive);
+                UpdateIdleButtonText();
+            };
+
             _headerPanel.Controls.Add(_lblTitle);
             _headerPanel.Controls.Add(_lblStatus);
+            _headerPanel.Controls.Add(_lblIdleInfo);
             _headerPanel.Controls.Add(_btnToggleSpeed);
+            _headerPanel.Controls.Add(_btnToggleIdleTest);
             this.Controls.Add(_headerPanel);
 
             // 2. TabControl
@@ -160,6 +192,7 @@ namespace DesktopPet
             SetupDecisionsTab();
             SetupBudgetTab();
             UpdateSpeedButtonText();
+            UpdateIdleButtonText();
         }
 
         private void SetupNeedsTab()
@@ -352,6 +385,20 @@ namespace DesktopPet
             }
         }
 
+        private void UpdateIdleButtonText()
+        {
+            if (_controller.IsTestIdleThresholdActive)
+            {
+                _btnToggleIdleTest.Text = "💤 Próg test: 10s (Kliknij: 10m)";
+                _btnToggleIdleTest.BackColor = Color.FromArgb(168, 85, 247); // Purple
+            }
+            else
+            {
+                _btnToggleIdleTest.Text = "💤 Próg: 10m (Kliknij: 10s)";
+                _btnToggleIdleTest.BackColor = Color.FromArgb(71, 85, 105); // Slate
+            }
+        }
+
         private void UpdateTelemetry()
         {
             if (!this.Visible) return;
@@ -370,6 +417,36 @@ namespace DesktopPet
                 _lblStatus.Text = "● AKTYWNY (Sterowanie Brain Utility AI)";
                 _lblStatus.ForeColor = Color.FromArgb(52, 211, 153);
             }
+
+            // 1b. Informacje o bezczynności i śnie
+            TimeSpan idle = _controller.CurrentRealIdleTime;
+            TimeSpan threshold = _controller.IdleThreshold;
+            string stateStr;
+            Color stateColor;
+            if (_controller.IsWakingUp)
+            {
+                stateStr = "Budzenie (wake_up)...";
+                stateColor = Color.FromArgb(251, 191, 36);
+            }
+            else if (pet.IsSleeping)
+            {
+                stateStr = "Śpi (sleep) 💤";
+                stateColor = Color.FromArgb(147, 197, 253);
+            }
+            else if (_controller.IsUserIdle)
+            {
+                stateStr = "Bezczynny (sen preferowany)";
+                stateColor = Color.FromArgb(167, 139, 250);
+            }
+            else
+            {
+                stateStr = "Aktywny";
+                stateColor = Color.FromArgb(148, 163, 184);
+            }
+
+            _lblIdleInfo.Text = string.Format("💤 Bezczynność: {0:mm\\:ss} / {1:mm\\:ss} (Stan: {2})",
+                idle, threshold, stateStr);
+            _lblIdleInfo.ForeColor = stateColor;
 
             // 2. Paski potrzeb
             var needs = pet.Needs;

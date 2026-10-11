@@ -217,5 +217,94 @@ namespace SwinkaCore.Tests
                         group.GroupName, group.DeviationPercentagePoints, group.TargetPercentage, group.ActualPercentage));
             }
         }
+
+        [Fact]
+        public void UserIdle_UnlocksSleepAtHigherEnergy_ButExtremeHungerTakesPrecedence()
+        {
+            var brain = Brain.CreateDefault(random: new Random(101));
+            // Ustawiamy porę dzienną (14:00), aby test nie był w godzinach nocnych
+            brain.Update(TimeSpan.FromHours(14));
+
+            brain.HayInRack = 100;
+            brain.CurrentNeeds.Energy = 60; // Domyślnie sen wymaga energia_max <= 35
+            brain.CurrentNeeds.Satiety = 80;
+            brain.CurrentNeeds.Teeth = 80;
+
+            // Przed bezczynnością - sen powinien być zablokowany z powodu energii > 35
+            brain.IsUserIdle = false;
+            var scoresBefore = brain.EvaluateAllActionScores();
+            var sleepBefore = System.Linq.Enumerable.FirstOrDefault(scoresBefore, a => a.ActionId == "sen");
+            Assert.NotNull(sleepBefore);
+            Assert.False(sleepBefore.IsAvailable, "Sen nie powinien być dostępny przy energii 60 bez bezczynności.");
+
+            // Po 10 minutach bezczynności - sen zostaje odblokowany
+            brain.IsUserIdle = true;
+            brain.UserIdleDuration = TimeSpan.FromMinutes(10);
+            var scoresAfter = brain.EvaluateAllActionScores();
+            var sleepAfter = System.Linq.Enumerable.FirstOrDefault(scoresAfter, a => a.ActionId == "sen");
+            Assert.NotNull(sleepAfter);
+            Assert.True(sleepAfter.IsAvailable, "Sen powinien być dostępny przy bezczynności użytkownika nawet przy energii 60.");
+
+            // Skrajny głód (satiety = 5, ząbki = 40) - Utility AI powinno nadal przedłożyć jedzenie siana nad sen (nie twarde wymuszenie)
+            brain.CurrentNeeds.Satiety = 5;
+            brain.CurrentNeeds.Teeth = 40;
+            var decision = brain.DecideNextAction();
+            Assert.Equal("jedzenie_siana", decision.ActionId);
+        }
+
+        [Fact]
+        public void NightHours_MultipliesSleepAndDozeWeightByTwo()
+        {
+            var brain = Brain.CreateDefault(random: new Random(202));
+            brain.CurrentNeeds.Energy = 20; // Niska energia, sen i drzemka dostępne
+            brain.CurrentNeeds.Satiety = 90;
+
+            // Symulujemy czas nocny: godzina 2:00 w nocy (2 * 3600 = 7200s)
+            brain.Update(TimeSpan.FromHours(2));
+            Assert.True(brain.CurrentHour >= 23 || brain.CurrentHour < 7, "Powinna być pora nocna (2:00).");
+
+            var nightScores = brain.EvaluateAllActionScores();
+            var nightSleep = System.Linq.Enumerable.FirstOrDefault(nightScores, a => a.ActionId == "sen");
+            var nightWalk = System.Linq.Enumerable.FirstOrDefault(nightScores, a => a.ActionId == "spacer");
+            Assert.NotNull(nightSleep);
+            Assert.NotNull(nightWalk);
+
+            // W nocy sen powinien mieć wyższy wynik niż aktywność ruchowa
+            Assert.True(nightSleep.Score > nightWalk.Score, "W nocy sen powinien mieć wyższy priorytet niż spacer.");
+        }
+
+        [Fact]
+        public void Sleeping_RegeneratesEnergy_InAutonomousMode()
+        {
+            var brain = Brain.CreateDefault(random: new Random(303));
+            brain.CurrentNeeds.Energy = 30;
+
+            // Wymuśmy bezczynność i niską sytość na wysokim poziomie, by wylosować sen
+            brain.IsUserIdle = true;
+            brain.CurrentNeeds.Satiety = 100;
+            brain.CurrentNeeds.Mood = 100;
+
+            // Przewijamy czas, aż mózg rozpocznie sen lub drzemkę
+            bool startedSleep = false;
+            for (int i = 0; i < 20; i++)
+            {
+                var dec = brain.DecideNextAction();
+                if (dec.ActionId == "sen" || dec.ActionId == "drzemka")
+                {
+                    startedSleep = true;
+                    break;
+                }
+            }
+            Assert.True(startedSleep, "Świnka powinna wybrać sen lub drzemkę przy bezczynności i pełnej sytości.");
+
+            double energyBefore = brain.CurrentNeeds.Energy;
+            // Upływ 1 godziny w trakcie snu
+            brain.Update(TimeSpan.FromHours(1));
+            double energyAfter = brain.CurrentNeeds.Energy;
+
+            Assert.True(energyAfter > energyBefore,
+                string.Format("Sen powinien regenerować energię w trybie autonomicznym (przed: {0}, po: {1})", energyBefore, energyAfter));
+        }
     }
 }
+

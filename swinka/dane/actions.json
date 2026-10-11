@@ -30,7 +30,7 @@
       "zabawa_i_rzadkie": 3
     },
     "pory": {
-      "6-9": {
+      "7-9": {
         "aktywnosc": 1.5
       },
       "17-21": {
@@ -39,7 +39,7 @@
       "11-15": {
         "drzemki": 1.6
       },
-      "23-6": {
+      "23-7": {
         "drzemki": 2.0,
         "aktywnosc": 0.5
       }
@@ -236,6 +236,9 @@
         "energia_max": 85
       },
       "waga_bazowa": 0.15,
+      "mnoznik_pory": {
+        "23-7": 2.0
+      },
       "cooldown_s": 300,
       "zaspokaja": [
         "energia"

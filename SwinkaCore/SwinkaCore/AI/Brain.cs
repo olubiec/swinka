@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
+using SwinkaCore.Time;
 
 namespace SwinkaCore.AI
 {
@@ -80,6 +81,12 @@ namespace SwinkaCore.AI
 
         /// <summary>Czy świnka ma towarzysza (odblokowuje zachowania społeczne).</summary>
         public bool HasCompanion { get; set; }
+
+        /// <summary>Czy użytkownik jest bezczynny (np. brak ruchu myszą/klawiaturą przez >= 10 minut).</summary>
+        public bool IsUserIdle { get; set; }
+
+        /// <summary>Czas bezczynności użytkownika (np. z Win32 GetLastInputInfo).</summary>
+        public TimeSpan UserIdleDuration { get; set; }
 
         public Needs CurrentNeeds => _pet != null ? _pet.Needs : _fallbackNeeds;
         public LifeStage CurrentStage => _pet != null ? _pet.Stage : _fallbackStage;
@@ -170,14 +177,14 @@ namespace SwinkaCore.AI
         /// </summary>
         public ActionDecision DecideNextAction()
         {
-            int day = (int)Math.Floor(_totalSimulatedSeconds / 86400.0);
+            int day = CurrentDay;
             if (day != _currentDay)
             {
                 _currentDay = day;
                 _dailyCounts.Clear();
             }
 
-            int hour = (int)Math.Floor((_totalSimulatedSeconds / 3600.0) % 24.0);
+            int hour = CurrentHour;
             double totalTimeSoFar = Math.Max(1.0, GetTotalTimeAcrossGroups());
 
             ActionDefinition bestAction = null;
@@ -274,8 +281,29 @@ namespace SwinkaCore.AI
             return decision;
         }
 
-        public int CurrentHour => (int)Math.Floor((_totalSimulatedSeconds / 3600.0) % 24.0);
-        public int CurrentDay => (int)Math.Floor(_totalSimulatedSeconds / 86400.0);
+        public int CurrentHour
+        {
+            get
+            {
+                if (_pet != null && _pet.Clock != null)
+                {
+                    return _pet.Clock.LocalNow().Hour;
+                }
+                return (int)Math.Floor((_totalSimulatedSeconds / 3600.0) % 24.0);
+            }
+        }
+
+        public int CurrentDay
+        {
+            get
+            {
+                if (_pet != null && _pet.Clock != null)
+                {
+                    return (int)Math.Floor((_pet.Clock.UtcNow - _pet.State.BirthDateUtc).TotalDays);
+                }
+                return (int)Math.Floor(_totalSimulatedSeconds / 86400.0);
+            }
+        }
 
         /// <summary>
         /// Zwraca listę wszystkich czynności z obliczonymi wynikami utility oraz stanem dostępności
@@ -367,7 +395,20 @@ namespace SwinkaCore.AI
                             if (needs.Energy < (double)kv.Value) { unavailableReason = string.Format("Energia < {0:0}", kv.Value); return false; }
                             break;
                         case "energia_max":
-                            if (needs.Energy > (double)kv.Value) { unavailableReason = string.Format("Energia > {0:0}", kv.Value); return false; }
+                            double maxEnergy = (double)kv.Value;
+                            // Przy bezczynności użytkownika świnka kładzie się spać, chyba że energia jest już pełna
+                            if (IsUserIdle && (action.Id == "sen" || action.Id == "sen_w_domku" || action.Id == "drzemka"))
+                            {
+                                maxEnergy = 95.0;
+                            }
+                            if (needs.Energy > maxEnergy) { unavailableReason = string.Format("Energia > {0:0}", maxEnergy); return false; }
+                            break;
+                        case "bezczynnosc":
+                            if ((bool)kv.Value && !IsUserIdle) { unavailableReason = "Wymaga bezczynności"; return false; }
+                            if (!(bool)kv.Value && IsUserIdle) { unavailableReason = "Niedostępne przy bezczynności"; return false; }
+                            break;
+                        case "bezczynnosc_min_s":
+                            if (UserIdleDuration.TotalSeconds < (double)kv.Value) { unavailableReason = string.Format("Bezczynność < {0:0}s", kv.Value); return false; }
                             break;
                         case "najedzenie_min":
                             if (needs.Satiety < (double)kv.Value) { unavailableReason = string.Format("Najedzenie < {0:0}", kv.Value); return false; }
@@ -438,7 +479,22 @@ namespace SwinkaCore.AI
 
             // Mnożnik pory dnia
             string group = ActionDefinition.GetBudgetGroup(action.Id);
-            if ((hour >= 6 && hour < 9) || (hour >= 17 && hour < 21))
+            bool isNight = (hour >= 23 || hour < 7);
+            bool isSleepOrDoze = (action.Id == "sen" || action.Id == "sen_w_domku" || action.Id == "drzemka");
+
+            if (isNight)
+            {
+                // Noc 23:00 - 7:00: czynności snu i drzemki mają wagę x2.0, aktywność x0.5
+                if (isSleepOrDoze || group == "odpoczynek_i_drzemki")
+                {
+                    baseZysk *= 2.0;
+                }
+                else if (group == "chodzenie" || group == "weszenie_rozgladanie" || group == "zabawa_i_rzadkie")
+                {
+                    baseZysk *= 0.5;
+                }
+            }
+            else if ((hour >= 7 && hour < 9) || (hour >= 17 && hour < 21))
             {
                 // Aktywność x1.5 o świcie i zmierzchu
                 if (group == "chodzenie" || group == "weszenie_rozgladanie" || group == "zabawa_i_rzadkie")
@@ -454,25 +510,44 @@ namespace SwinkaCore.AI
                     baseZysk *= 1.6;
                 }
             }
-            else if (hour >= 23 || hour < 6)
+
+            // Mnożnik pory zdefiniowany bezpośrednio w czynności (jeśli nie został jeszcze zaaplikowany przez isNight)
+            if (action.PeriodMultipliers != null && action.PeriodMultipliers.Count > 0)
             {
-                // Noc: drzemki/sen x2.0, aktywność x0.5
-                if (group == "odpoczynek_i_drzemki")
+                foreach (var pm in action.PeriodMultipliers)
                 {
-                    baseZysk *= 2.0;
-                }
-                else if (group == "chodzenie" || group == "weszenie_rozgladanie" || group == "zabawa_i_rzadkie")
-                {
-                    baseZysk *= 0.5;
+                    if (pm.Key == "23-7")
+                    {
+                        if (!isNight && (hour >= 23 || hour < 7))
+                        {
+                            baseZysk *= pm.Value;
+                        }
+                    }
+                    else if (pm.Key == "11-15" && (hour >= 11 && hour < 15) && group != "odpoczynek_i_drzemki")
+                    {
+                        baseZysk *= pm.Value;
+                    }
                 }
             }
 
-            // Mnożnik pory zdefiniowany bezpośrednio w czynności (np. sen 23-7)
-            if (action.PeriodMultipliers != null && action.PeriodMultipliers.Count > 0)
+            // Wpływ bezczynności użytkownika na wybór czynności (warunek/preferencja Utility AI, nie twarde wymuszenie)
+            if (IsUserIdle)
             {
-                if ((hour >= 23 || hour < 7) && action.PeriodMultipliers.ContainsKey("23-7"))
+                // Świnka nie kładzie się spać z nudów, gdy jest skrajnie głodna (Satiety < 15)
+                double idleSleepBonus = (needs.Satiety < 15.0) ? 0.0 : 3.5;
+                double idleDozeBonus = (needs.Satiety < 15.0) ? 0.0 : 2.0;
+
+                if (action.Id == "sen" || action.Id == "sen_w_domku")
                 {
-                    baseZysk *= action.PeriodMultipliers["23-7"];
+                    baseZysk += idleSleepBonus;
+                }
+                else if (action.Id == "drzemka")
+                {
+                    baseZysk += idleDozeBonus;
+                }
+                else if (group == "chodzenie" || action.Id == "zoomies" || action.Id == "popcorn")
+                {
+                    baseZysk *= 0.5;
                 }
             }
 
@@ -615,7 +690,16 @@ namespace SwinkaCore.AI
                 double decay;
                 if (_config.DecayPerHour.TryGetValue("najedzenie", out decay)) n.Satiety = Math.Max(0.0, n.Satiety - (decay * hours));
                 if (_config.DecayPerHour.TryGetValue("witamina_c", out decay)) n.VitaminC = Math.Max(0.0, n.VitaminC - (decay * hours));
-                if (_config.DecayPerHour.TryGetValue("energia", out decay)) n.Energy = Math.Max(0.0, n.Energy - (decay * hours));
+                bool isAutoSleeping = (_currentAction != null && (_currentAction.ActionId == "sen" || _currentAction.ActionId == "sen_w_domku" || _currentAction.ActionId == "drzemka"));
+                if (isAutoSleeping)
+                {
+                    // Sen podnosi energię
+                    n.Energy = Math.Min(100.0, n.Energy + (15.0 * hours));
+                }
+                else if (_config.DecayPerHour.TryGetValue("energia", out decay))
+                {
+                    n.Energy = Math.Max(0.0, n.Energy - (decay * hours));
+                }
                 if (_config.DecayPerHour.TryGetValue("humor", out decay)) n.Mood = Math.Max(0.0, n.Mood - (decay * hours));
                 if (_config.DecayPerHour.TryGetValue("czystosc", out decay)) n.Cleanliness = Math.Max(0.0, n.Cleanliness - (decay * hours));
                 if (_config.DecayPerHour.TryGetValue("zabki", out decay)) n.Teeth = Math.Max(0.0, n.Teeth - (decay * hours));

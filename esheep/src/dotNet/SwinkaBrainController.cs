@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using SwinkaCore;
 using SwinkaCore.AI;
 using SwinkaCore.Time;
@@ -33,10 +34,18 @@ namespace DesktopPet
         private bool _isPhysicsActive;
         private string _physicsReason;
 
+        // Stan bezczynności użytkownika (B3: sen przy bezczynności przez GetLastInputInfo)
+        private TimeSpan _idleThreshold = TimeSpan.FromMinutes(10);
+        private TimeSpan _currentRealIdleTime;
+        private bool _isUserIdle;
+        private bool _wasUserIdle;
+        private bool _isWakingUp;
+
         // Czas ostatniej aktualizacji
         private DateTime _lastRealTime;
 
         public event Action<double> MultiplierChanged;
+        public event Action<string> AnimationRequested;
 
         public SwinkaBrainController(double initialMultiplier = 1.0)
         {
@@ -89,6 +98,24 @@ namespace DesktopPet
         public int TraversedWalkDistancePx => _traversedWalkDistancePx;
         public string SubStage => _subStage;
 
+        public TimeSpan IdleThreshold
+        {
+            get => _idleThreshold;
+            set => _idleThreshold = value > TimeSpan.Zero ? value : TimeSpan.FromSeconds(5);
+        }
+
+        public TimeSpan CurrentRealIdleTime => _currentRealIdleTime;
+        public bool IsUserIdle => _isUserIdle;
+        public bool IsWakingUp => _isWakingUp;
+
+        public void SetTestIdleThreshold(bool enableTest10s)
+        {
+            _idleThreshold = enableTest10s ? TimeSpan.FromSeconds(10) : TimeSpan.FromMinutes(10);
+            Log(string.Format("[Test] Zmieniono próg bezczynności na: {0:0}s", _idleThreshold.TotalSeconds));
+        }
+
+        public bool IsTestIdleThresholdActive => _idleThreshold.TotalSeconds <= 30;
+
         // ---- Przełączanie zegara (Requirement 4) -----------------------------
 
         public void SetClockMultiplier(double multiplier)
@@ -128,19 +155,62 @@ namespace DesktopPet
 
             TimeSpan gameElapsed = TimeSpan.FromTicks((long)(realElapsed.Ticks * _clock.Multiplier));
 
+            // 1. Sprawdzenie bezczynności użytkownika przez Win32 GetLastInputInfo (B3)
+            TimeSpan realIdle = Win32Input.GetIdleTime();
+            _currentRealIdleTime = realIdle;
+
+            // Przy przyspieszonym zegarze gry (np. 60x w trybie testowym) czas bezczynności gry rośnie szybciej
+            TimeSpan effectiveIdle = TimeSpan.FromTicks((long)(realIdle.Ticks * (_clock.Multiplier > 1.0 ? _clock.Multiplier : 1.0)));
+
+            bool isIdle = (realIdle >= _idleThreshold) || (effectiveIdle >= _idleThreshold);
+            _isUserIdle = isIdle;
+
+            // Przekazanie bezczynności do Brain jako warunek (nie jako twarde wymuszenie)
+            _brain.IsUserIdle = isIdle;
+            _brain.UserIdleDuration = effectiveIdle;
+
+            // Reakcja na zmianę stanu bezczynności
+            if (isIdle && !_wasUserIdle)
+            {
+                _wasUserIdle = true;
+                Log(string.Format("[Bezczynność] Wykryto bezczynność użytkownika (realny: {0:0}s, efektywny: {1:0}s, próg: {2:0}s).",
+                    realIdle.TotalSeconds, effectiveIdle.TotalSeconds, _idleThreshold.TotalSeconds));
+
+                // Świnka nie jest w trakcie fizyki ani snu -> pozwól Brain rozważyć sen jako kolejną akcję
+                if (!_isPhysicsActive && !_isWakingUp && !IsCurrentlySleeping())
+                {
+                    var newAction = _brain.DecideNextAction();
+                    SetupActionState(newAction);
+                }
+            }
+            else if (!isIdle && _wasUserIdle)
+            {
+                _wasUserIdle = false;
+                Log(string.Format("[Aktywność] Wykryto ruch myszką lub klawiaturą po {0:0}s bezczynności.", realIdle.TotalSeconds));
+
+                // B3: Ruch myszką budzi ją przez wake_up, nie natychmiast!
+                if (IsCurrentlySleeping() && !_isWakingUp)
+                {
+                    TriggerWakeUp();
+                }
+            }
+
             // Aktualizacja Pet i AutoSaver
             _session.Tick();
 
-            // Aktualizacja Brain (tylko gdy nie ma fizyki)
+            // Aktualizacja Brain (tylko gdy nie ma fizyki i nie trwa wybudzanie)
             if (!_isPhysicsActive)
             {
                 var beforeAction = _brain.CurrentAction;
-                _brain.Update(gameElapsed);
-
-                // Sprawdź czy Brain zmienił akcję po upływie czasu
-                if (_brain.CurrentAction != null && !object.ReferenceEquals(_brain.CurrentAction, beforeAction))
+                if (!_isWakingUp)
                 {
-                    SetupActionState(_brain.CurrentAction);
+                    _brain.Update(gameElapsed);
+
+                    // Sprawdź czy Brain zmienił akcję po upływie czasu
+                    if (_brain.CurrentAction != null && !object.ReferenceEquals(_brain.CurrentAction, beforeAction))
+                    {
+                        SetupActionState(_brain.CurrentAction);
+                    }
                 }
             }
         }
@@ -192,6 +262,71 @@ namespace DesktopPet
             _isWalking = false;
         }
 
+        // ---- Interakcje z menu (Karmienie, Zawołaj) --------------------------
+
+        public void RequestAnimation(string animationName)
+        {
+            if (string.IsNullOrEmpty(animationName)) return;
+            AnimationRequested?.Invoke(animationName);
+        }
+
+        public void Feed(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return;
+
+            if (string.Equals(itemId, "siano", StringComparison.OrdinalIgnoreCase))
+            {
+                // Siano jest zawsze bez limitu
+                _session.Pet.Needs.Satiety = Math.Min(100.0, _session.Pet.Needs.Satiety + 10.0);
+                _session.Pet.Needs.Teeth = Math.Min(100.0, _session.Pet.Needs.Teeth + 6.0);
+                _session.Pet.Count("siano");
+                _session.Pet.Count("karmienia");
+                _session.Pet.AddBondPoints(1);
+                RequestAnimation("eat");
+                Log(string.Format("[Karmienie] Nakarmiono sianem. Najedzenie: {0:0.#}%, Ząbki: {1:0.#}%",
+                    _session.Pet.Needs.Satiety, _session.Pet.Needs.Teeth));
+                return;
+            }
+
+            // Przedmioty z ekwipunku
+            if (_session.Pet.TryRemoveItem(itemId, 1))
+            {
+                var itemDef = SwinkaItemCatalog.GetItem(itemId);
+                if (itemDef != null && itemDef.Effects != null)
+                {
+                    foreach (var eff in itemDef.Effects)
+                    {
+                        if (NeedNames.TryParseDataKey(eff.Key, out Need need))
+                        {
+                            _session.Pet.ChangeNeed(need, eff.Value);
+                        }
+                    }
+                }
+
+                _session.Pet.Count(itemId);
+                _session.Pet.Count("karmienia");
+                _session.Pet.AddBondPoints(1);
+
+                string anim = itemDef != null && !string.IsNullOrEmpty(itemDef.Animation) ? itemDef.Animation : "eat_treat";
+                RequestAnimation(anim);
+                Log(string.Format("[Karmienie] Zjedzono {0} ({1}). Pozostało w ekwipunku: {2}",
+                    itemDef != null ? itemDef.Name : itemId, itemId, _session.Pet.GetItemCount(itemId)));
+            }
+            else
+            {
+                Log(string.Format("[Karmienie] Brak przedmiotu {0} w ekwipunku.", itemId));
+            }
+        }
+
+        public void CallPet()
+        {
+            _session.Pet.AddBondPoints(1);
+            _session.Pet.Count("zawolania");
+            RequestAnimation("wheek");
+            Log(string.Format("[Zawołaj] Zawołano świnkę. Punkty więzi: {0} (poziom {1})",
+                _session.Pet.State.Bond.Points, _session.Pet.State.Bond.Level));
+        }
+
         // ---- Wybór kolejnej animacji dla silnika eSheep ----------------------
 
         public string GetCurrentDesiredAnimation()
@@ -215,9 +350,9 @@ namespace DesktopPet
             {
                 return action.Definition.EntryAnimation;
             }
-            if (action.Definition.ExitAnimation != null && _subStage == "exit")
+            if ((action.Definition.ExitAnimation != null || _isWakingUp) && _subStage == "exit")
             {
-                return action.Definition.ExitAnimation;
+                return action.Definition.ExitAnimation ?? "wake_up";
             }
 
             // Domyślna animacja akcji (np. idle, walk, eat, sniff, popcorn, scratch...)
@@ -246,15 +381,32 @@ namespace DesktopPet
             // Jeśli trwał etap wejściowy (np. lie_down) -> przejdź do właściwego snu (sleep)
             if (_subStage == "entrance" && currentAnimationName == action.Definition.EntryAnimation)
             {
+                if (_isWakingUp || _subStage == "exit")
+                {
+                    // Ruch myszką nastąpił w trakcie kładzenia się -> od razu wybudzanie
+                    _subStage = "exit";
+                    return action.Definition.ExitAnimation ?? "wake_up";
+                }
                 _subStage = "main";
                 return action.AnimationName;
             }
 
-            // Jeśli trwał etap wyjściowy (np. wake_up) -> akcja zakończona, wybierz nową
-            if (_subStage == "exit" && currentAnimationName == action.Definition.ExitAnimation)
+            // Jeśli trwało właściwe spanie (sleep) i nastąpił ruch myszką (_isWakingUp)
+            if (_isWakingUp && currentAnimationName == action.AnimationName)
             {
+                _subStage = "exit";
+                return action.Definition.ExitAnimation ?? "wake_up";
+            }
+
+            // Jeśli trwał etap wyjściowy (np. wake_up) -> akcja zakończona, wybierz nową
+            if ((_subStage == "exit" || _isWakingUp) && (currentAnimationName == action.Definition.ExitAnimation || currentAnimationName == "wake_up"))
+            {
+                _isWakingUp = false;
+                _session.Pet.IsSleeping = false;
                 var next = _brain.DecideNextAction();
                 SetupActionState(next);
+                Log(string.Format("[Budzenie] Zakończono animację wake_up. Świnka wstała i wybrała: {0} ({1})",
+                    next.ActionId, next.AnimationName));
                 return next.AnimationName;
             }
 
@@ -329,10 +481,34 @@ namespace DesktopPet
             }
 
             // Świnka śpi: aktualizuj flagę w Pet, by energia rosła
-            _session.Pet.IsSleeping = (action.ActionId == "sen" || action.ActionId == "sen_w_domku" || action.ActionId == "drzemka");
+            bool isSleeping = (action.ActionId == "sen" || action.ActionId == "sen_w_domku" || action.ActionId == "drzemka");
+            _session.Pet.IsSleeping = isSleeping;
+            if (!isSleeping)
+            {
+                _isWakingUp = false;
+            }
 
             Log(string.Format("[Brain] Nowa czynność: {0} ({1}), czas: {2:0.#}s, dystans: {3}px, zysk: {4:0.00}",
                 action.ActionId, action.AnimationName, action.Duration.TotalSeconds, action.MoveDistancePx, action.Score));
+        }
+
+        public bool IsCurrentlySleeping()
+        {
+            if (_session?.Pet != null && _session.Pet.IsSleeping) return true;
+            var action = _brain.CurrentAction;
+            if (action == null) return false;
+            return (action.ActionId == "sen" || action.ActionId == "sen_w_domku" || action.ActionId == "drzemka");
+        }
+
+        public void TriggerWakeUp()
+        {
+            if (_isPhysicsActive) return;
+            var action = _brain.CurrentAction;
+            if (action == null) return;
+
+            Log("[Budzenie] Rozpoczęcie procedury wybudzania świnki przez animację wake_up (nie natychmiast).");
+            _isWakingUp = true;
+            _subStage = "exit";
         }
 
         // ---- Telemetria i nakładka F9 (Requirement 3) -----------------------
@@ -398,6 +574,35 @@ namespace DesktopPet
                 }
             }
             catch { }
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct LASTINPUTINFO
+    {
+        public uint cbSize;
+        public uint dwTime;
+    }
+
+    internal static class Win32Input
+    {
+        [DllImport("user32.dll")]
+        public static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+
+        public static TimeSpan GetIdleTime()
+        {
+            var lii = new LASTINPUTINFO();
+            lii.cbSize = (uint)Marshal.SizeOf(typeof(LASTINPUTINFO));
+            if (GetLastInputInfo(ref lii))
+            {
+                uint tickCount = (uint)Environment.TickCount;
+                unchecked
+                {
+                    uint idleMs = tickCount - lii.dwTime;
+                    return TimeSpan.FromMilliseconds(idleMs);
+                }
+            }
+            return TimeSpan.Zero;
         }
     }
 }
