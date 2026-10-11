@@ -277,20 +277,21 @@ Zamiast 30 kroków po kolei jest 13 rund. W jednej rundzie prompty zmieniają r�
 | Runda | Prompty naraz | Kto zmienia co |
 | --- | --- | --- |
 | 1 | A5 ∥ B1c | animacje w `esheep/` ∥ biblioteka `SwinkaCore/` |
-| 2 | B2 | utility AI, sama (dotyka prawie wszystkiego) |
+| 2 | B2a, potem B2b ∥ C2 | mózg świnki ∥ ekran Domku w trybie mock (tylko `domek/`) |
 | 3 | B3 ∥ B5 | wykrywanie bezczynności ∥ menu w zasobniku |
-| 4 | B4 ∥ C1 | bobki na pasku ∥ nowe okno Domku |
-| 5 | B6 ∥ C2 | karmienie ∥ ekran Domku w trybie mock (tylko `domek/`) |
+| 4 | B4 ∥ C1 | bobki na pasku ∥ okno Domku i most C# ↔ JavaScript |
+| 5 | B6 ∥ D1 | karmienie ∥ szkielet minigier (`domek/minigry/`) |
+| 5½ | Prezent v1 | wersja do podarowania: mała świnka, imię, autostart |
 | 6 | C3 ∥ C4 | sklepik i ekwipunek ∥ wiek i więź |
-| 7 | C5 ∥ D1 | album i pamiętnik ∥ szkielet minigier |
+| 7 | C5 ∥ F1 | album i pamiętnik ∥ dźwięki |
 | 8 | D2 ∥ D3 ∥ D4 ∥ D5 | każda minigra w swoim folderze `domek/minigry/<gra>/` |
 | 9 | E1 ∥ E3 ∥ E5 | muzyka ∥ pełny ekran ∥ pogoda |
-| 10 | E2 ∥ F1 | strach i kursor ∥ dźwięki |
-| 11 | E4 ∥ F2 | głaskanie ∥ ustawienia |
+| 10 | E2 ∥ F2 | strach i kursor ∥ ustawienia |
+| 11 | E4 | głaskanie |
 | 12 | E6 | sztuczki i towarzysz, sam |
 | 13 | F3, potem F4 | instalator, potem przegląd całości |
 
-Bramki etapów zostają: bramka B po rundzie 5, bramka C po rundzie 7, bramka D po rundzie 8, bramka E po rundzie 12.
+Bramki etapów zostają: bramka B po rundzie 5½, bramka C po rundzie 7, bramka D po rundzie 8, bramka E po rundzie 12.
 
 **Zasady rundy:**
 
@@ -455,6 +456,40 @@ każda grupa czynności; odchylenie od budżetu najwyżej 5 punktów procentowyc
 
 **Sprawdź:** uruchom z zegarem 60x i naciśnij F9. **Powinno być:** nakładka z paskami potrzeb i wynikami czynności; głodna świnka częściej je i kwiczy, zmęczona kładzie się spać; złapanie myszką zawsze przerywa czynność; zachowanie nie wygląda na zapętlone.
 
+### B2a + B2b · Gemini: ten sam B2 w dwóch częściach (gdy nie ma Claude)
+
+```text
+/plan
+Przeczytaj PLAN.md (sekcje "Wybór czynności" i "Dzień świnki"), ZASADY.md, ARCHITEKTURA.md i SwinkaCore.
+To pierwsza część zadania B2. Rób tylko SwinkaCore i Symulator, NIE zmieniaj kodu eSheep.
+1. W SwinkaCore dodaj Brain, który wczytuje swinka/dane/actions.json (czynności, efekty, warunki, cooldown_s,
+   limit_dzienny, waga_bazowa, czas_s jako zakres) oraz budzet_dnia i pory dnia.
+2. Wybór co 5 s: zysk = suma(pilność x zaspokojenie) x losowo 0,8-1,2 + waga_bazowa,
+   pilność = (1 - potrzeba/100)^2. Ta sama czynność najwyżej 2 razy z rzędu.
+3. Brain zwraca: nazwę animacji, czas trwania, dystans ruchu (dla spaceru). Fizyka (spadanie, przeciąganie) będzie
+   miała pierwszeństwo, więc Brain musi dać się przerwać i wznowić.
+4. W Symulatorze dodaj raport: ile procent czasu zajęła każda grupa czynności z budzet_dnia, ile razy wystąpiły
+   rzadkie zachowania na dobę. Odchylenie od budżetu najwyżej 5 punktów procentowych.
+5. Dopisz testy: cooldown, limit dzienny, brak 3 razy tej samej czynności z rzędu, głodna świnka częściej je.
+Uruchom Symulator na 3 doby i testy. Wklej raport budżetu na końcu.
+```
+
+**Sprawdź B2a:** raport z Symulatora. **Powinno być:** odpoczynek i drzemki ok. 50%, jedzenie ok. 28%, chodzenie ok. 8%, popcorn 1–3 razy na dobę, testy zielone.
+
+```text
+/plan
+Przeczytaj PLAN.md, ZASADY.md, ARCHITEKTURA.md i Brain w SwinkaCore (zrobiony w B2a).
+To druga część zadania B2: podłącz Brain do eSheep.
+1. Zastąp losowy wybór zachowań z animations.xml wywołaniem Brain. Fizyka (spadanie, przeciąganie, rzut) zawsze
+   ma pierwszeństwo, po niej Brain wraca do pracy.
+2. Spacer: świnka przechodzi dystans podany przez Brain i staje.
+3. Klawisz F9: nakładka z paskami potrzeb, wynikami czynności, wybraną czynnością i procentem czasu z budżetu dnia.
+4. Opcja zegara 60x do testów (np. argument uruchomienia lub ukryty klawisz).
+Przetestuj z zegarem 60x przez 10 minut i opisz, czy zachowanie wygląda naturalnie.
+```
+
+**Sprawdź B2b:** test jak pod B2 wyżej.
+
 ### B3 · Gemini: sen przy bezczynności
 
 ```text
@@ -502,6 +537,27 @@ Inspiracja zapamiętywania preferencji: https://github.com/ViciousSquid/Dosidicu
 
 **Sprawdź:** Nakarm → Papryka, potem to samo, gdy świnka stoi na oknie. **Powinno być:** papryka pojawia się obok, świnka podchodzi i chrupie 3–6 s, w nakładce F9 rośnie witamina C; jedzenie da się przeciągnąć; z okna jedzenie spada na pasek, a świnka schodzi za nim.
 
+### Prezent v1 · Gemini (runda 5½, przed bramką B)
+
+```text
+Przeczytaj PLAN.md, ZASADY.md i ARCHITEKTURA.md. Przygotuj pierwszą wersję do podarowania:
+1. Przy pierwszym uruchomieniu (brak save.json) pokaż okienko z pytaniem o imię świnki (domyślnie "Świnka")
+   i zapisz je w GameState. Imię pojawia się w podpowiedzi przy ikonie w zasobniku i w Domku.
+2. Etap życia na stałe "maluch": używaj arkusza z swinka/maluch/. Zapisz w GameState datę adopcji,
+   ale NIE licz jeszcze wieku (wzrost włączy aktualizacja C4).
+3. W wersji Release wyłącz narzędzia testowe: F9, zegar 60x i tryb deweloperski działają tylko w Debug.
+4. Autostart z Windows (klucz HKCU\Software\Microsoft\Windows\CurrentVersion\Run), domyślnie włączony,
+   z przełącznikiem w menu zasobnika.
+5. Zbuduj Release i przygotuj folder Swinka_v1 ze wszystkim, co potrzebne na innym komputerze (exe, dll, swinka/, domek/),
+   plus CZYTAJ.txt po polsku: jak uruchomić i co kliknąć przy ostrzeżeniu SmartScreen.
+6. Przyszłe aktualizacje: nowa wersja musi czytać stary save.json bez utraty danych (pole version i migracja).
+Nie dodawaj nowych funkcji gry.
+```
+
+**Sprawdź:** skopiuj folder `Swinka_v1` na inne konto Windows albo inny komputer i uruchom; potem podmień exe na nowszą kompilację. **Powinno być:** pytanie o imię, mała świnka na pulpicie, F9 nic nie robi, po restarcie Windows świnka wraca sama; po podmianie exe imię i stan potrzeb zostają.
+
+**Aktualizacje u niej:** każdą kolejną wersję kopiujesz do tego samego folderu, nadpisując pliki. Zapis gry leży osobno w `%AppData%\Swinka`, więc nic nie ginie.
+
 ### C1 · Claude: okno Domku i most C# ↔ JavaScript
 
 ```text
@@ -521,6 +577,8 @@ podstawia przykładowy stan, żeby dało się rozwijać interfejs bez uruchamian
 
 ```text
 Przeczytaj PLAN.md, ZASADY.md i /domek/bridge.js. Pracuj w trybie mock w przeglądarce.
+Jeśli /domek/bridge.js jeszcze nie istnieje, utwórz go w trybie mock z formatem wiadomości z promptu C1
+({type:"state", ...} od aplikacji, {type:"feed"|"buy"|...} do aplikacji). C1 podłączy go później. Nie zmieniaj kodu C#.
 Zrób ekran główny Domku w stylu pixel art: na górze żywa animacja świnki z arkusza (canvas, image-rendering: pixelated),
 imię, wiek w latach i miesiącach świnki, etap życia. Pod spodem paski sześciu potrzeb z ikonami, kolor zależny od poziomu.
 Przyciski: Nakarm, Posprzątaj, Zawołaj, Sklepik, Minigry, Album. Czcionka Pixelify Sans zapisana lokalnie (licencja OFL).
@@ -546,7 +604,8 @@ Ceny i nagrody według tabel w PLAN.md. Nie da się zejść poniżej 0 koniczyne
 
 ```text
 Przeczytaj PLAN.md (Wiek i etapy życia, Poziom więzi), ZASADY.md i SwinkaCore.
-1. Wiek: 1 dzień realny = 21 dni świnki. Etapy i progi dni z tabeli. Zdarzenie StageChanged przełącza arkusz klatek
+1. Wiek: 1 dzień realny = 21 dni świnki, liczony od pierwszego uruchomienia wersji z C4 (pole start_wzrostu
+   w GameState), a nie od daty adopcji z wersji v1, żeby świnka po aktualizacji nie urosła skokowo. Etapy i progi dni z tabeli. Zdarzenie StageChanged przełącza arkusz klatek
    z folderów swinka/maluch, swinka/dorosla, swinka/senior, swinka/legenda (nazwy animacji są wszędzie te same). Senior chodzi 20% wolniej i rzadziej robi popcorn.
 2. Urodziny co 17,4 dnia realnego: wpis w pamiętniku, animacja party, prezent 100 koniczynek.
 3. Więź: punkty za opiekę z limitem dziennym, progi 1-20, odblokowania z tabeli jako flagi w GameState.
