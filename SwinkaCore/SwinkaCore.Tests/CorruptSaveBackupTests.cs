@@ -170,5 +170,43 @@ namespace SwinkaCore.Tests
             Assert.Equal("TylkoBackup", result.State.Name);
             Assert.Null(result.MainError);
         }
+
+        [Fact]
+        public void SaveSystem_Save_WhenMainCorruptAndNewInstance_PreservesGoodBackup()
+        {
+            var saveSystem1 = new SaveSystem(_testDir);
+            var nowUtc = new DateTime(2026, 10, 11, 10, 0, 0, DateTimeKind.Utc);
+
+            // 1. Zapisujemy poprawny stan początkowy (znajdzie się w save.json i save.bak)
+            var initialGoodState = GameState.CreateNew("DobraKopiaZapasowa", nowUtc);
+            initialGoodState.Clovers = 77;
+            saveSystem1.Save(initialGoodState);
+
+            // 2. Uszkadzamy plik główny save.json
+            string corruptedData = "{ niepoprawny: json, urwany plik... ";
+            File.WriteAllText(saveSystem1.SavePath, corruptedData);
+
+            // 3. Tworzymy nową instancję SaveSystem (nie wywołujemy Load(), więc _mainCorrupt jest domyślnie false)
+            var newSaveSystem = new SaveSystem(_testDir);
+
+            // 4. Zapisujemy nowy stan przez nową instancję
+            var newState = GameState.CreateNew("NowyStan", nowUtc);
+            newState.Clovers = 150;
+            newSaveSystem.Save(newState);
+
+            // 5. save.bak dalej zawiera dobry stan (nie został nadpisany uszkodzonym plikiem)
+            Assert.True(File.Exists(newSaveSystem.BackupPath), "Plik save.bak powinien istnieć.");
+            string backupJson = File.ReadAllText(newSaveSystem.BackupPath);
+            var backupState = Newtonsoft.Json.JsonConvert.DeserializeObject<GameState>(backupJson, SaveSystem.JsonSettings);
+            Assert.NotNull(backupState);
+            Assert.Equal("DobraKopiaZapasowa", backupState.Name);
+            Assert.Equal(77, backupState.Clovers);
+
+            // 6. Plik główny save.json został podmieniony na nowy poprawny stan
+            var loadResult = newSaveSystem.Load();
+            Assert.Equal(LoadSource.Main, loadResult.Source);
+            Assert.Equal("NowyStan", loadResult.State.Name);
+            Assert.Equal(150, loadResult.State.Clovers);
+        }
     }
 }

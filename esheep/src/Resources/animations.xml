@@ -5,7 +5,7 @@
     <title>Świnka na pulpit</title>
     <petname>Świnka</petname>
     <version>1.0</version>
-    <info>Świnka morska na pulpicie Windows - wzór Shimeji-ee (actions &amp; behaviors)</info>
+    <info>Świnka morska na pulpicie Windows - budżet dnia A5 (spokojny odpoczynek, jedzenie, krótkie spacery)</info>
     <application>1</application>
     <icon><![CDATA[AAABAAEAEBAAAAAAIAAgAQAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAQAAAAEAgGAAAAH/P/YQAAAOdJREFUeJxjYBgFKMBKVvw/Oh+bGDKfBVmi0UKcoZ6BAa7g6IOHYNpaQR4uBlNz7PFLRrgBVlDNclqRDI0Myxls4h1QXLZ3ejiYPrLwAFwNzBAmVE8wwDVzeHaB6Z8fnjIwWuYzfLpxhUHPXARdOQKAXPF9S95/bXEhMP7x9i4Khom/7HHCCBcwAAmCFIAAuiEwPkwO2QAmBjSgIyGMLoRXjgmZs6/UAM4+e+00w99tR8EYxIaBuUGyOC1gADkN5EeY05+c3wp2LogG4ROZ+tj9j24ITAOMjUyjqwcnBmyGYBOHJR6qAgD3dJ+4l2IhiAAAAABJRU5ErkJggg==]]></icon>
   </header>
@@ -16,7 +16,6 @@
     <transparency>Magenta</transparency>
   </image>
   <spawns>
-    <!-- Miejsca pojawiania się świnki na ekranie -->
     <spawn id="1" probability="50">
       <x>random*(screenW-imageW-50)/100+25</x>
       <y>areaH-imageH</y>
@@ -34,11 +33,7 @@
     </spawn>
   </spawns>
   <animations>
-    <!-- ============================================================== -->
-    <!-- PODSTAWOWE AKCJE FIZYCZNE I RUCHU (odpowiednik actions.xml)      -->
-    <!-- ============================================================== -->
-
-    <!-- ID 1: walk (chód: ruch w prawo 2 px/klatka, offsety 4 dla wyrównania stóp z podłogą) -->
+    <!-- ID 1: walk (chód: odcinek 48-96 px w 2.4-4.8 s, po nim ZAWSZE postój min. 20s) -->
     <animation id="1">
       <name>walk</name>
       <start>
@@ -55,7 +50,7 @@
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="5" repeatfrom="0">
+      <sequence repeat="2 + random/30" repeatfrom="0">
         <frame>32</frame>
         <frame>33</frame>
         <frame>34</frame>
@@ -64,14 +59,8 @@
         <frame>37</frame>
         <frame>38</frame>
         <frame>39</frame>
-        <next probability="15" only="none">21</next>
-        <next probability="8" only="none">22</next>
-        <next probability="10" only="none">23</next>
-        <next probability="4" only="none">24</next>
-        <next probability="3" only="none">25</next>
-        <next probability="5" only="none">26</next>
-        <next probability="27" only="none">3</next>
-        <next probability="28" only="none">1</next>
+        <!-- Wymóg: po chodzeniu ZAWSZE postój co najmniej 20 s (przejście do idle) -->
+        <next probability="100" only="none">3</next>
       </sequence>
       <border>
         <next probability="100" only="vertical">2</next>
@@ -82,7 +71,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 2: turn (obrót: zmiana kierunku przez lustrzane odbicie flip) -->
+    <!-- ID 2: turn (obrót: zmiana kierunku przez lustrzane odbicie flip, potem postój idle) -->
     <animation id="2">
       <name>turn</name>
       <start>
@@ -105,15 +94,14 @@
         <frame>370</frame>
         <frame>371</frame>
         <action>flip</action>
-        <next probability="70" only="none">1</next>
-        <next probability="30" only="none">3</next>
+        <next probability="100" only="none">3</next>
       </sequence>
       <gravity>
         <next probability="100" only="none">5</next>
       </gravity>
     </animation>
 
-    <!-- ID 3: idle (spokojne siedzenie: oddech, drgający nosek, ucho) -->
+    <!-- ID 3: idle (odpoczynek: 20-58 s, drgający nosek, oddech, rozglądanie) -->
     <animation id="3">
       <name>idle</name>
       <start>
@@ -130,7 +118,7 @@
         <opacity>1.0</opacity>
         <interval>125</interval>
       </end>
-      <sequence repeat="1" repeatfrom="0">
+      <sequence repeat="9 + random/5" repeatfrom="0">
         <frame>0</frame>
         <frame>1</frame>
         <frame>2</frame>
@@ -147,14 +135,14 @@
         <frame>13</frame>
         <frame>14</frame>
         <frame>15</frame>
-        <next probability="15" only="none">21</next>
-        <next probability="8" only="none">22</next>
-        <next probability="10" only="none">23</next>
-        <next probability="4" only="none">24</next>
-        <next probability="3" only="none">25</next>
-        <next probability="5" only="none">26</next>
-        <next probability="27" only="none">3</next>
-        <next probability="28" only="none">1</next>
+        <next probability="80" only="none">23</next>
+        <next probability="110" only="none">1</next>
+        <next probability="65" only="none">21</next>
+        <next probability="3" only="none">26</next>
+        <next probability="5" only="none">22</next>
+        <next probability="1" only="none">24</next>
+        <next probability="1" only="none">25</next>
+        <next probability="1" only="none">7</next>
       </sequence>
       <border>
         <next probability="100" only="vertical">2</next>
@@ -225,7 +213,6 @@
     </animation>
 
     <!-- ID 5: fall (swobodne opadanie w dół) -->
-    <!-- Reguła: Po upadku ZAWSZE lądowanie (land ID 20) -->
     <animation id="5">
       <name>fall</name>
       <start>
@@ -284,7 +271,6 @@
     </animation>
 
     <!-- ID 9: fall soft (miękkie lądowanie) -->
-    <!-- Reguła: Po land CZASEM drapanie za uchem (scratch: 25%) -->
     <animation id="9">
       <name>fall soft</name>
       <start>
@@ -311,13 +297,11 @@
         <frame>326</frame>
         <frame>327</frame>
         <next probability="25" only="none">22</next>
-        <next probability="45" only="none">3</next>
-        <next probability="30" only="none">1</next>
+        <next probability="75" only="none">3</next>
       </sequence>
     </animation>
 
     <!-- ID 10: fall hard (twarde lądowanie) -->
-    <!-- Reguła: Po land CZASEM drapanie za uchem (scratch: 25%) -->
     <animation id="10">
       <name>fall hard</name>
       <start>
@@ -344,13 +328,11 @@
         <frame>326</frame>
         <frame>327</frame>
         <next probability="25" only="none">22</next>
-        <next probability="45" only="none">3</next>
-        <next probability="30" only="none">1</next>
+        <next probability="75" only="none">3</next>
       </sequence>
     </animation>
 
     <!-- ID 20: land (animacja lądowania po opadnięciu na podłoże) -->
-    <!-- Reguła: Po land CZASEM drapanie za uchem (scratch: 25%) -->
     <animation id="20">
       <name>land</name>
       <start>
@@ -377,12 +359,11 @@
         <frame>326</frame>
         <frame>327</frame>
         <next probability="25" only="none">22</next>
-        <next probability="45" only="none">3</next>
-        <next probability="30" only="none">1</next>
+        <next probability="75" only="none">3</next>
       </sequence>
     </animation>
 
-    <!-- ID 7: run (szybki bieg / zoomies: 4 px/klatka) -->
+    <!-- ID 7: run (szybki bieg / zoomies: 4 px/klatka, bardzo rzadko) -->
     <animation id="7">
       <name>run</name>
       <start>
@@ -399,21 +380,14 @@
         <opacity>1.0</opacity>
         <interval>71</interval>
       </end>
-      <sequence repeat="6" repeatfrom="0">
+      <sequence repeat="7" repeatfrom="0">
         <frame>48</frame>
         <frame>49</frame>
         <frame>50</frame>
         <frame>51</frame>
         <frame>52</frame>
         <frame>53</frame>
-        <next probability="15" only="none">21</next>
-        <next probability="8" only="none">22</next>
-        <next probability="10" only="none">23</next>
-        <next probability="4" only="none">24</next>
-        <next probability="3" only="none">25</next>
-        <next probability="5" only="none">26</next>
-        <next probability="27" only="none">3</next>
-        <next probability="28" only="none">1</next>
+        <next probability="100" only="none">3</next>
       </sequence>
       <border>
         <next probability="100" only="vertical">2</next>
@@ -424,11 +398,7 @@
       </gravity>
     </animation>
 
-    <!-- ============================================================== -->
-    <!-- LOSOWE ZACHOWANIA Z WAGAMI (odpowiednik behaviors.xml)          -->
-    <!-- ============================================================== -->
-
-    <!-- ID 21: sniff (waga: 15% - węszenie: nosek i wąsy drgają) -->
+    <!-- ID 21: sniff (węszenie: 4.8 - 7.2 s, nosek i wąsy pracują) -->
     <animation id="21">
       <name>sniff</name>
       <start>
@@ -436,16 +406,16 @@
         <y>0</y>
         <offsety>4</offsety>
         <opacity>1.0</opacity>
-        <interval>83</interval>
+        <interval>100</interval>
       </start>
       <end>
         <x>0</x>
         <y>0</y>
         <offsety>4</offsety>
         <opacity>1.0</opacity>
-        <interval>83</interval>
+        <interval>100</interval>
       </end>
-      <sequence repeat="1" repeatfrom="0">
+      <sequence repeat="3 + random/35" repeatfrom="0">
         <frame>16</frame>
         <frame>17</frame>
         <frame>18</frame>
@@ -458,21 +428,16 @@
         <frame>25</frame>
         <frame>26</frame>
         <frame>27</frame>
-        <next probability="15" only="none">21</next>
-        <next probability="8" only="none">22</next>
-        <next probability="10" only="none">23</next>
-        <next probability="4" only="none">24</next>
-        <next probability="3" only="none">25</next>
-        <next probability="5" only="none">26</next>
-        <next probability="27" only="none">3</next>
-        <next probability="28" only="none">1</next>
+        <next probability="40" only="none">3</next>
+        <next probability="40" only="none">1</next>
+        <next probability="20" only="none">21</next>
       </sequence>
       <gravity>
         <next probability="100" only="none">5</next>
       </gravity>
     </animation>
 
-    <!-- ID 22: scratch (waga: 8% - drapanie tylną łapką za uchem) -->
+    <!-- ID 22: scratch (drapanie tylną łapką za uchem, ok. co 20 min) -->
     <animation id="22">
       <name>scratch</name>
       <start>
@@ -489,7 +454,7 @@
         <opacity>1.0</opacity>
         <interval>90</interval>
       </end>
-      <sequence repeat="1" repeatfrom="0">
+      <sequence repeat="2" repeatfrom="0">
         <frame>112</frame>
         <frame>113</frame>
         <frame>114</frame>
@@ -506,21 +471,14 @@
         <frame>125</frame>
         <frame>126</frame>
         <frame>127</frame>
-        <next probability="15" only="none">21</next>
-        <next probability="8" only="none">22</next>
-        <next probability="10" only="none">23</next>
-        <next probability="4" only="none">24</next>
-        <next probability="3" only="none">25</next>
-        <next probability="5" only="none">26</next>
-        <next probability="27" only="none">3</next>
-        <next probability="28" only="none">1</next>
+        <next probability="100" only="none">3</next>
       </sequence>
       <gravity>
         <next probability="100" only="none">5</next>
       </gravity>
     </animation>
 
-    <!-- ID 23: eat (waga: 10% - jedzenie siana: przeżuwanie, źdźbło w pyszczku) -->
+    <!-- ID 23: eat (jedzenie siana: 20-79 s, ok. 28% czasu) -->
     <animation id="23">
       <name>eat</name>
       <start>
@@ -537,7 +495,7 @@
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="2" repeatfrom="0">
+      <sequence repeat="16 + random/2" repeatfrom="0">
         <frame>80</frame>
         <frame>81</frame>
         <frame>82</frame>
@@ -550,22 +508,15 @@
         <frame>89</frame>
         <frame>90</frame>
         <frame>91</frame>
-        <next probability="15" only="none">21</next>
-        <next probability="8" only="none">22</next>
-        <next probability="10" only="none">23</next>
-        <next probability="4" only="none">24</next>
-        <next probability="3" only="none">25</next>
-        <next probability="5" only="none">26</next>
-        <next probability="27" only="none">3</next>
-        <next probability="28" only="none">1</next>
+        <next probability="85" only="none">3</next>
+        <next probability="15" only="none">26</next>
       </sequence>
       <gravity>
         <next probability="100" only="none">5</next>
       </gravity>
     </animation>
 
-    <!-- ID 24: popcorn (waga: 4% - popcorning: radosny podskok ze skrętem) -->
-    <!-- Reguła: Popcorn nie może wystąpić dwa razy pod rząd (w przejściach brak ID 24) -->
+    <!-- ID 24: popcorn (popcorning: 1.8 s, radosny podskok, b. rzadko 1-3 na dobę) -->
     <animation id="24">
       <name>popcorn</name>
       <start>
@@ -595,21 +546,14 @@
         <frame>73</frame>
         <frame>74</frame>
         <frame>75</frame>
-        <next probability="15" only="none">21</next>
-        <next probability="8" only="none">22</next>
-        <next probability="10" only="none">23</next>
-        <next probability="3" only="none">25</next>
-        <next probability="5" only="none">26</next>
-        <next probability="29" only="none">3</next>
-        <next probability="30" only="none">1</next>
+        <next probability="100" only="none">3</next>
       </sequence>
       <gravity>
         <next probability="100" only="none">5</next>
       </gravity>
     </animation>
 
-    <!-- ID 25: wheek (waga: 3% - kwiczenie "kwiii!" o jedzenie) -->
-    <!-- Reguła: Wheek nie może wystąpić dwa razy pod rząd (w przejściach brak ID 25) -->
+    <!-- ID 25: wheek (kwiczenie: 2.0 s, b. rzadko) -->
     <animation id="25">
       <name>wheek</name>
       <start>
@@ -637,20 +581,14 @@
         <frame>247</frame>
         <frame>248</frame>
         <frame>249</frame>
-        <next probability="15" only="none">21</next>
-        <next probability="8" only="none">22</next>
-        <next probability="10" only="none">23</next>
-        <next probability="4" only="none">24</next>
-        <next probability="5" only="none">26</next>
-        <next probability="28" only="none">3</next>
-        <next probability="30" only="none">1</next>
+        <next probability="100" only="none">3</next>
       </sequence>
       <gravity>
         <next probability="100" only="none">5</next>
       </gravity>
     </animation>
 
-    <!-- ID 26: doze (waga: 5% - krótka drzemka z półotwartymi oczami) -->
+    <!-- ID 26: doze (drzemka: 1-2.6 min, spokojne leżenie z półotwartymi oczami) -->
     <animation id="26">
       <name>doze</name>
       <start>
@@ -667,7 +605,7 @@
         <opacity>1.0</opacity>
         <interval>250</interval>
       </end>
-      <sequence repeat="1" repeatfrom="0">
+      <sequence repeat="29 + random/2" repeatfrom="0">
         <frame>160</frame>
         <frame>161</frame>
         <frame>162</frame>
@@ -676,23 +614,12 @@
         <frame>165</frame>
         <frame>166</frame>
         <frame>167</frame>
-        <next probability="15" only="none">21</next>
-        <next probability="8" only="none">22</next>
-        <next probability="10" only="none">23</next>
-        <next probability="4" only="none">24</next>
-        <next probability="3" only="none">25</next>
-        <next probability="5" only="none">26</next>
-        <next probability="27" only="none">3</next>
-        <next probability="28" only="none">1</next>
+        <next probability="100" only="none">3</next>
       </sequence>
       <gravity>
         <next probability="100" only="none">5</next>
       </gravity>
     </animation>
-
-    <!-- ============================================================== -->
-    <!-- SEKWENCJA GŁĘBOKIEGO SNU I ZARZĄDZANIA APLIKACJĄ                 -->
-    <!-- ============================================================== -->
 
     <!-- ID 12: lie_down (kładzenie się na brzuchu przed snem) -->
     <animation id="12">
@@ -742,7 +669,7 @@
         <opacity>1.0</opacity>
         <interval>200</interval>
       </end>
-      <sequence repeat="3" repeatfrom="0">
+      <sequence repeat="5" repeatfrom="0">
         <frame>144</frame>
         <frame>145</frame>
         <frame>146</frame>
@@ -797,8 +724,7 @@
         <frame>185</frame>
         <frame>186</frame>
         <frame>187</frame>
-        <next probability="70" only="none">3</next>
-        <next probability="30" only="none">1</next>
+        <next probability="100" only="none">3</next>
       </sequence>
       <gravity>
         <next probability="100" only="none">5</next>

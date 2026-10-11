@@ -1,0 +1,32 @@
+﻿================================================================================
+ RAPORT ZACHOWAN I BUDZETU CZASU SWINKI - SESJA 15 MINUT (900 SEKUND) [A5]
+================================================================================
+Czas trwania sesji pomiarowej: 900,0 sekund (15 min)
+Laczna liczba zarejestrowanych sekwencji animacji: 29
+
+Animacja     | Czas (s)   | Udzial CZASU (%) | Liczba   | Cel budzetu    
+--------------------------------------------------------------------------------
+idle         |    573,6 s |          63,73% |       13 | ok. 50% (z doze)
+doze         |      0,0 s |           0,00% |        0 | ok. 50% (z idle)
+eat          |    265,9 s |          29,54% |        5 |         ok. 28%
+walk         |     18,1 s |           2,01% |        4 |   ok. 8% (<10%)
+sniff        |     40,4 s |           4,49% |        6 |          ok. 8%
+scratch      |      0,0 s |           0,00% |        0 |        ok. 2-3%
+popcorn      |      2,0 s |           0,22% |        1 |        1-3/dobe
+wheek        |      0,0 s |           0,00% |        0 |       b. rzadko
+run          |      0,0 s |           0,00% |        0 |       b. rzadko
+--------------------------------------------------------------------------------
+PODSUMOWANIE KLUCZOWYCH GRUP BUDZETU DNIA:
+1. Odpoczynek i drzemki (idle + doze): 573,6 s (63,73%, cel: ~50%)
+2. Jedzenie siana (eat):               265,9 s (29,54%, cel: ~28%)
+3. Chodzenie (walk):                   18,1 s (2,01%, cel: ~8%, <10%)
+4. Weszenie (sniff):                   40,4 s (4,49%, cel: ~8%)
+
+--- WERYFIKACJA REGUL SPECJALNYCH ZADANIA ---
+1. Chodzenie ponizej 10% czasu:       2,01% -> SPELNIONY [PASS]
+2. Popcorn 2 razy pod rzad:           0 razy -> SPELNIONY [PASS]
+3. Wheek 2 razy pod rzad:             0 razy -> SPELNIONY [PASS]
+4. Chodzenie 2 razy pod rzad (postoj):0 razy -> SPELNIONY [PASS]
+5. Po land scratch (drapanie):        0 z 0 ladowan (0%) -> SPELNIONY [PASS]
+================================================================================
+

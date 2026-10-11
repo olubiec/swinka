@@ -47,7 +47,6 @@ namespace SwinkaCore.Save
 
         private static readonly UTF8Encoding Utf8NoBom = new UTF8Encoding(false);
         private readonly object _lock = new object();
-        private bool _mainCorrupt;
 
         public SaveSystem(string directory = null)
         {
@@ -101,11 +100,15 @@ namespace SwinkaCore.Save
                 System.IO.Directory.CreateDirectory(Directory);
                 WriteDurable(TempPath, json);
 
-                if (File.Exists(SavePath) && !_mainCorrupt)
+                // Przed przeniesieniem save.json do save.bak sprawdzamy, czy save.json da się odczytać jako poprawny stan;
+                // jeśli nie, zostawiamy save.bak bez zmian.
+                bool isMainValid = File.Exists(SavePath) && TryRead(SavePath, out _, out _);
+
+                if (isMainValid)
                 {
                     try
                     {
-                        // Atomowo: save.tmp -> save.json, stary save.json -> save.bak.
+                        // Atomowo: save.tmp -> save.json, stary (poprawny) save.json -> save.bak.
                         File.Replace(TempPath, SavePath, BackupPath, true);
                     }
                     catch (Exception ex) when (ex is IOException || ex is PlatformNotSupportedException)
@@ -118,11 +121,14 @@ namespace SwinkaCore.Save
                 }
                 else
                 {
-                    // Brak pliku głównego albo jest uszkodzony: nie robimy z niego kopii,
-                    // żeby nie nadpisać dobrego save.bak śmieciami.
-                    if (File.Exists(SavePath)) File.Delete(SavePath);
+                    // Brak pliku głównego albo jest uszkodzony: zostawiamy save.bak bez zmian,
+                    // żeby nigdy nie nadpisać dobrej kopii uszkodzonym stanem.
+                    if (File.Exists(SavePath))
+                    {
+                        TryCopy(SavePath, CorruptPath);
+                        File.Delete(SavePath);
+                    }
                     File.Move(TempPath, SavePath);
-                    _mainCorrupt = false;
                 }
 
                 // Pierwszy zapis: od razu jest też kopia, żeby uszkodzenie save.json nigdy nie kasowało gry.
@@ -146,13 +152,11 @@ namespace SwinkaCore.Save
                 {
                     if (TryRead(SavePath, out state, out error))
                     {
-                        _mainCorrupt = false;
                         result.State = state;
                         result.Source = LoadSource.Main;
                         return result;
                     }
                     result.MainError = error;
-                    _mainCorrupt = true;
                     TryCopy(SavePath, CorruptPath); // zostawiamy do obejrzenia
                 }
 

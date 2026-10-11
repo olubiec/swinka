@@ -26,9 +26,10 @@ namespace SwinkaCore
         public double Teeth { get { return _teeth; } set { _teeth = Clamp(value); } }
 
         /// <summary>
-        /// Zdrowie 0-100, liczone z pięciu pozostałych potrzeb:
+        /// Zdrowie 0-100, liczone ze wszystkich sześciu potrzeb, razem z czystością
+        /// (czystość będzie spadać od bobków w B4):
         /// połowa to średnia, połowa to najniższa potrzeba. Jedna bardzo zaniedbana potrzeba
-        /// obniża zdrowie mocno, ale samo średnio zaniedbanie nie robi świnki chorej.
+        /// obniża zdrowie mocno, ale samo średnie zaniedbanie nie robi świnki chorej.
         /// Przykład: po weekendzie offline (20/20/100/20/100/77) zdrowie ok. 38, a próg "choroba" w actions.json to 25.
         /// </summary>
         [JsonProperty]
