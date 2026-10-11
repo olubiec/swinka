@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -46,6 +46,31 @@ namespace DesktopPet
 			FormOptions2 formoptions2 = new FormOptions2("Pet List", FormOptions2.WindowType.Pets);
 			formoptions2.ShowDialog();
 		}
+
+        public static double ParseSpeedMultiplier(string[] args)
+        {
+            if (args == null) return 1.0;
+            for (int i = 0; i < args.Length; i++)
+            {
+                string arg = (args[i] ?? "").Trim().ToLowerInvariant();
+                if (arg == "60x" || arg == "-60x" || arg == "/60x" || arg == "--60x")
+                {
+                    return 60.0;
+                }
+                if (arg.StartsWith("speed="))
+                {
+                    string val = arg.Substring("speed=".Length);
+                    if (double.TryParse(val, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsed))
+                        return parsed;
+                }
+                if ((arg == "--speed" || arg == "-speed" || arg == "/speed") && i + 1 < args.Length)
+                {
+                    if (double.TryParse(args[i + 1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsed))
+                        return parsed;
+                }
+            }
+            return 1.0;
+        }
 
 #if PORTABLE
         /// <summary>
@@ -147,6 +172,10 @@ namespace DesktopPet
 				MyData.SetXml(MyData.LoadXML(), "");
 			}
 
+            double initialSpeed = ParseSpeedMultiplier(args);
+            SwinkaBrainController.Initialize(initialSpeed);
+            Application.ApplicationExit += (s, e) => { SwinkaBrainController.Instance?.Close(); };
+
             // Show the system tray icon.					
             using (ProcessIcon pi = new ProcessIcon())
             {
@@ -216,6 +245,10 @@ namespace DesktopPet
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 
             //MyData = new LocalData.LocalData(Windows.Storage.ApplicationData.Current.LocalFolder.Path, Application.ExecutablePath);
+
+            double initialSpeedNonPortable = ParseSpeedMultiplier(args);
+            SwinkaBrainController.Initialize(initialSpeedNonPortable);
+            Application.ApplicationExit += (s, e) => { SwinkaBrainController.Instance?.Close(); };
 
             // Show the system tray icon.					
             using (ProcessIcon pi = new ProcessIcon())

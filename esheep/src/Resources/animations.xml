@@ -51,7 +51,7 @@
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="2 + random/30" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
         <frame>32</frame>
         <frame>33</frame>
         <frame>34</frame>
@@ -119,7 +119,7 @@
         <opacity>1.0</opacity>
         <interval>125</interval>
       </end>
-      <sequence repeat="9 + random/5" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
         <frame>0</frame>
         <frame>1</frame>
         <frame>2</frame>
@@ -416,7 +416,7 @@
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="3 + random/35" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
         <frame>16</frame>
         <frame>17</frame>
         <frame>18</frame>
@@ -496,7 +496,7 @@
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="16 + random/2" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
         <frame>80</frame>
         <frame>81</frame>
         <frame>82</frame>
@@ -535,7 +535,7 @@
         <opacity>1.0</opacity>
         <interval>75</interval>
       </end>
-      <sequence repeat="1" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
         <frame>64</frame>
         <frame>65</frame>
         <frame>66</frame>
@@ -573,7 +573,7 @@
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="1" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
         <frame>240</frame>
         <frame>241</frame>
         <frame>242</frame>
@@ -608,7 +608,7 @@
         <opacity>1.0</opacity>
         <interval>250</interval>
       </end>
-      <sequence repeat="29 + random/2" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
         <frame>160</frame>
         <frame>161</frame>
         <frame>162</frame>
@@ -672,7 +672,7 @@
         <opacity>1.0</opacity>
         <interval>200</interval>
       </end>
-      <sequence repeat="5" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
         <frame>144</frame>
         <frame>145</frame>
         <frame>146</frame>

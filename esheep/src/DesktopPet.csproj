@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="packages\Microsoft.Windows.SDK.Contracts.10.0.28000.2705\build\Microsoft.Windows.SDK.Contracts.props" Condition="Exists('packages\Microsoft.Windows.SDK.Contracts.10.0.28000.2705\build\Microsoft.Windows.SDK.Contracts.props')" />
   <PropertyGroup>
@@ -266,6 +266,13 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Tools\XmlToDot.cs" />
     <Compile Include="dotNet\Xml.cs" />
+    <Compile Include="dotNet\SwinkaBrainController.cs" />
+    <Compile Include="dotNet\FormBrainOverlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dotNet\FormBrainOverlay.Designer.cs">
+      <DependentUpon>FormBrainOverlay.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="dotNet\FormPet.resx">
       <DependentUpon>FormPet.cs</DependentUpon>
     </EmbeddedResource>
@@ -427,5 +434,11 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SwinkaCore\SwinkaCore\SwinkaCore.csproj">
+      <Project>{b01c34a2-e67d-4c3e-8692-a162d08316df}</Project>
+      <Name>SwinkaCore</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

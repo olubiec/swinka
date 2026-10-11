@@ -184,7 +184,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="2 + random/30" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
 {frames_walk}
         <!-- Wymóg: po chodzeniu ZAWSZE postój co najmniej 20 s (przejście do idle) -->
         <next probability="100" only="none">3</next>
@@ -242,7 +242,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
         <opacity>1.0</opacity>
         <interval>125</interval>
       </end>
-      <sequence repeat="9 + random/5" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
 {frames_idle}
 {next_from_idle}
       </sequence>
@@ -469,7 +469,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="3 + random/35" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
 {frames_sniff}
 {next_from_sniff}
       </sequence>
@@ -521,7 +521,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="16 + random/2" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
 {frames_eat}
 {next_from_eat}
       </sequence>
@@ -548,7 +548,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
         <opacity>1.0</opacity>
         <interval>75</interval>
       </end>
-      <sequence repeat="1" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
 {frames_popcorn}
         <next probability="100" only="none">3</next>
       </sequence>
@@ -575,7 +575,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
         <opacity>1.0</opacity>
         <interval>100</interval>
       </end>
-      <sequence repeat="1" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
 {frames_wheek}
         <next probability="100" only="none">3</next>
       </sequence>
@@ -601,7 +601,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
         <opacity>1.0</opacity>
         <interval>250</interval>
       </end>
-      <sequence repeat="29 + random/2" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
 {frames_doze}
         <next probability="100" only="none">3</next>
       </sequence>
@@ -653,7 +653,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
         <opacity>1.0</opacity>
         <interval>200</interval>
       </end>
-      <sequence repeat="5" repeatfrom="0">
+      <sequence repeat="0" repeatfrom="0">
 {frames_sleep}
         <next probability="70" only="none">13</next>
         <next probability="30" only="none">14</next>

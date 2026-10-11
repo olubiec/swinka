@@ -274,12 +274,57 @@ namespace SwinkaCore.AI
             return decision;
         }
 
+        public int CurrentHour => (int)Math.Floor((_totalSimulatedSeconds / 3600.0) % 24.0);
+        public int CurrentDay => (int)Math.Floor(_totalSimulatedSeconds / 86400.0);
+
+        /// <summary>
+        /// Zwraca listę wszystkich czynności z obliczonymi wynikami utility oraz stanem dostępności
+        /// (wykorzystywane m.in. przez nakładkę telemetryczną F9).
+        /// </summary>
+        public IReadOnlyList<ActionScoreInfo> EvaluateAllActionScores()
+        {
+            var list = new List<ActionScoreInfo>();
+            int day = CurrentDay;
+            int hour = CurrentHour;
+            double totalTimeSoFar = Math.Max(1.0, GetTotalTimeAcrossGroups());
+
+            foreach (var action in _config.Actions)
+            {
+                string reason;
+                bool available = CheckActionAvailability(action, day, out reason);
+                double score = CalculateScore(action, hour, totalTimeSoFar);
+                bool isCurrent = _currentAction != null && _currentAction.ActionId == action.Id;
+
+                list.Add(new ActionScoreInfo
+                {
+                    ActionId = action.Id,
+                    AnimationName = action.Animation,
+                    Group = ActionDefinition.GetBudgetGroup(action.Id),
+                    Score = score,
+                    IsAvailable = available,
+                    UnavailableReason = reason,
+                    IsCurrent = isCurrent
+                });
+            }
+
+            return list;
+        }
+
         private bool IsActionAvailable(ActionDefinition action, int day)
         {
+            string reason;
+            return CheckActionAvailability(action, day, out reason);
+        }
+
+        private bool CheckActionAvailability(ActionDefinition action, int day, out string unavailableReason)
+        {
+            unavailableReason = null;
+
             // 1. Cooldown
             double cdUntil;
             if (_cooldownsUntilSec.TryGetValue(action.Id, out cdUntil) && _totalSimulatedSeconds < cdUntil)
             {
+                unavailableReason = string.Format("Cooldown ({0:0}s)", Math.Ceiling(cdUntil - _totalSimulatedSeconds));
                 return false;
             }
 
@@ -290,12 +335,16 @@ namespace SwinkaCore.AI
                 int count;
                 _dailyCounts.TryGetValue(action.Id, out count);
                 if (count >= limit.Value)
+                {
+                    unavailableReason = string.Format("Limit dzienny ({0}/{1})", count, limit.Value);
                     return false;
+                }
             }
 
             // 3. Maksymalnie 2 razy z rzędu ta sama czynność
             if (_consecutiveCount >= 2 && action.Id == _lastActionId)
             {
+                unavailableReason = "Maks. 2x z rzędu";
                 return false;
             }
 
@@ -309,50 +358,50 @@ namespace SwinkaCore.AI
                     switch (key)
                     {
                         case "humor_min":
-                            if (needs.Mood < (double)kv.Value) return false;
+                            if (needs.Mood < (double)kv.Value) { unavailableReason = string.Format("Humor < {0:0}", kv.Value); return false; }
                             break;
                         case "humor_max":
-                            if (needs.Mood > (double)kv.Value) return false;
+                            if (needs.Mood > (double)kv.Value) { unavailableReason = string.Format("Humor > {0:0}", kv.Value); return false; }
                             break;
                         case "energia_min":
-                            if (needs.Energy < (double)kv.Value) return false;
+                            if (needs.Energy < (double)kv.Value) { unavailableReason = string.Format("Energia < {0:0}", kv.Value); return false; }
                             break;
                         case "energia_max":
-                            if (needs.Energy > (double)kv.Value) return false;
+                            if (needs.Energy > (double)kv.Value) { unavailableReason = string.Format("Energia > {0:0}", kv.Value); return false; }
                             break;
                         case "najedzenie_min":
-                            if (needs.Satiety < (double)kv.Value) return false;
+                            if (needs.Satiety < (double)kv.Value) { unavailableReason = string.Format("Najedzenie < {0:0}", kv.Value); return false; }
                             break;
                         case "najedzenie_max":
-                            if (needs.Satiety > (double)kv.Value) return false;
+                            if (needs.Satiety > (double)kv.Value) { unavailableReason = string.Format("Najedzenie > {0:0}", kv.Value); return false; }
                             break;
                         case "witamina_c_min":
-                            if (needs.VitaminC < (double)kv.Value) return false;
+                            if (needs.VitaminC < (double)kv.Value) { unavailableReason = string.Format("Wit. C < {0:0}", kv.Value); return false; }
                             break;
                         case "witamina_c_max":
-                            if (needs.VitaminC > (double)kv.Value) return false;
+                            if (needs.VitaminC > (double)kv.Value) { unavailableReason = string.Format("Wit. C > {0:0}", kv.Value); return false; }
                             break;
                         case "zdrowie_min":
-                            if (needs.Health < (double)kv.Value) return false;
+                            if (needs.Health < (double)kv.Value) { unavailableReason = string.Format("Zdrowie < {0:0}", kv.Value); return false; }
                             break;
                         case "zdrowie_max":
-                            if (needs.Health > (double)kv.Value) return false;
+                            if (needs.Health > (double)kv.Value) { unavailableReason = string.Format("Zdrowie > {0:0}", kv.Value); return false; }
                             break;
                         case "siano_w_pasniku_min":
-                            if (HayInRack < (double)kv.Value) return false;
+                            if (HayInRack < (double)kv.Value) { unavailableReason = string.Format("Brak siana ({0:0} < {1:0})", HayInRack, kv.Value); return false; }
                             break;
                         case "przedmiot":
                             string item = (string)kv.Value;
-                            if (_pet == null || _pet.GetItemCount(item) <= 0) return false;
+                            if (_pet == null || _pet.GetItemCount(item) <= 0) { unavailableReason = string.Format("Brak: {0}", item); return false; }
                             break;
                         case "towarzysz":
-                            if (!HasCompanion) return false;
+                            if (!HasCompanion) { unavailableReason = "Wymaga towarzysza"; return false; }
                             break;
                         case "temperatura_min":
-                            if (!TemperatureC.HasValue || TemperatureC.Value < (double)kv.Value) return false;
+                            if (!TemperatureC.HasValue || TemperatureC.Value < (double)kv.Value) { unavailableReason = string.Format("Temp. < {0:0}°C", kv.Value); return false; }
                             break;
                         case "temperatura_max":
-                            if (!TemperatureC.HasValue || TemperatureC.Value > (double)kv.Value) return false;
+                            if (!TemperatureC.HasValue || TemperatureC.Value > (double)kv.Value) { unavailableReason = string.Format("Temp. > {0:0}°C", kv.Value); return false; }
                             break;
                     }
                 }
@@ -657,5 +706,19 @@ namespace SwinkaCore.AI
 
             return report;
         }
+    }
+
+    /// <summary>
+    /// Informacje o ocenie danej czynności przez Utility AI (dla nakładki F9).
+    /// </summary>
+    public sealed class ActionScoreInfo
+    {
+        public string ActionId { get; set; }
+        public string AnimationName { get; set; }
+        public string Group { get; set; }
+        public double Score { get; set; }
+        public bool IsAvailable { get; set; }
+        public string UnavailableReason { get; set; }
+        public bool IsCurrent { get; set; }
     }
 }

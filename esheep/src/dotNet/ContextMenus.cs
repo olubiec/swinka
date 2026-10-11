@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using DesktopPet.Properties;
 using System.Drawing;
@@ -80,6 +80,31 @@ namespace DesktopPet
 			item.Click += new EventHandler(Options_Click);
             item.Image = Resources.option;
             menu.Items.Add(item);
+
+            // Item: Swinka Brain Overlay (F9)
+            ToolStripMenuItem brainItem = new ToolStripMenuItem
+            {
+                Text = "Mózg świnki (F9)"
+            };
+            brainItem.Click += (s, e) => FormBrainOverlay.Toggle();
+            menu.Items.Add(brainItem);
+
+            // Item: Clock 60x Toggle
+            ToolStripMenuItem speedItem = new ToolStripMenuItem
+            {
+                Text = "Zegar 60x (Test)",
+                CheckOnClick = true,
+                Checked = (SwinkaBrainController.Instance != null && SwinkaBrainController.Instance.TimeMultiplier >= 50.0)
+            };
+            speedItem.Click += (s, e) =>
+            {
+                if (SwinkaBrainController.Instance != null)
+                {
+                    double newMul = speedItem.Checked ? 60.0 : 1.0;
+                    SwinkaBrainController.Instance.SetMultiplier(newMul);
+                }
+            };
+            menu.Items.Add(speedItem);
 
                 // Item: Separator.
             sep = new ToolStripSeparator();

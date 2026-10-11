@@ -46,6 +46,16 @@ namespace DesktopPet
         IntPtr hookTaskbarId = IntPtr.Zero; // not used
         NativeMethods.RECT currentWindowSize;
 
+        private SwinkaBrainController _brain;
+
+        [DllImport("user32.dll")]
+        private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+        [DllImport("user32.dll")]
+        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+        private const int HOTKEY_ID_F9 = 9009;
+
             /// <summary>
             /// If sheep is walking to left  (default).
             /// </summary>
@@ -142,6 +152,7 @@ namespace DesktopPet
                 }
             }
             UseSmoothMovements = Program.MyData.GetSmoothMovements();
+            _brain = SwinkaBrainController.Instance;
 		}
 
             /// <summary>
@@ -199,6 +210,57 @@ namespace DesktopPet
         protected override bool ShowWithoutActivation
         {
             get { return true; }
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            if (Name.IndexOf("child") < 0)
+            {
+                try
+                {
+                    RegisterHotKey(this.Handle, HOTKEY_ID_F9, 0, (uint)Keys.F9);
+                }
+                catch { }
+            }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (Name.IndexOf("child") < 0)
+            {
+                try
+                {
+                    UnregisterHotKey(this.Handle, HOTKEY_ID_F9);
+                }
+                catch { }
+            }
+            base.OnFormClosing(e);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_HOTKEY = 0x0312;
+            if (m.Msg == WM_HOTKEY && m.WParam.ToInt32() == HOTKEY_ID_F9)
+            {
+                if (_brain == null) _brain = SwinkaBrainController.Instance;
+                _brain?.ToggleOverlay();
+                return;
+            }
+            base.WndProc(ref m);
+        }
+
+        public int GetAnimationIdByName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return -1;
+            foreach (var kv in Animations.SheepAnimations)
+            {
+                if (string.Equals(kv.Value.Name, name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return kv.Key;
+                }
+            }
+            return -1;
         }
 
         /// <summary>
@@ -510,6 +572,9 @@ namespace DesktopPet
             /// </summary>
         private void NextStep()
         {
+            if (_brain == null) _brain = SwinkaBrainController.Instance;
+            _brain?.Update();
+
                 // If there is no repeat, we don't need to calculate the frame index.
             if (AnimationStep < CurrentAnimation.Sequence.Frames.Count)
             {
@@ -552,6 +617,19 @@ namespace DesktopPet
             bool bLeavingScreen = false;
                 // If the pet is "flipped", mirror the movement
             if (!IsMovingLeft) x = -x;
+
+            if (CurrentAnimation.Name == "walk")
+            {
+                _brain?.StepWalk((int)Math.Round(Math.Abs(x)));
+                if (_brain != null && !_brain.IsWalking)
+                {
+                    // Świnka przeszła zadany dystans z Brain i staje
+                    x = 0;
+                    int idleId = GetAnimationIdByName("idle");
+                    SetNewAnimation(idleId >= 0 ? idleId : 3);
+                    bNewAnimation = true;
+                }
+            }
             
             if(x < 0)   // moving left (detect left borders)
             {
@@ -710,30 +788,15 @@ namespace DesktopPet
                     IsMovingLeft = !IsMovingLeft;
                     spritesFlipped = !spritesFlipped;
                 }
-                if(hwndWindow != (IntPtr)0)
+                if (PositionX < ScreenBounds.X - Width || PositionX > ScreenBounds.X + ScreenBounds.Width)
                 {
-                    iNextAni = Animations.SetNextSequenceAnimation(CurrentAnimation.ID, TNextAnimation.TOnly.WINDOW);
+                    iNextAni = -1;
                 }
-                else
+                else if (PositionY < ScreenBounds.Y - Height || PositionY > ScreenBounds.Y + ScreenBounds.Height)
                 {
-                        // If pet is outside the borders, spawn it again.
-                    if (PositionX < ScreenBounds.X - Width || PositionX > ScreenBounds.X + ScreenBounds.Width)
-                    {
-                        iNextAni = -1;
-                    }
-                    else if (PositionY < ScreenBounds.Y - Height || PositionY > ScreenBounds.Y + ScreenBounds.Height)
-                    {
-                        iNextAni = -1;
-                    }
-                    else
-                    {
-                        iNextAni = Animations.SetNextSequenceAnimation(
-                            CurrentAnimation.ID, 
-                            PositionY + Height + y >= ScreenArea.Y + ScreenArea.Height - 2 ? TNextAnimation.TOnly.TASKBAR : TNextAnimation.TOnly.NONE
-                        );
-                    }
+                    iNextAni = -1;
                 }
-                if(CurrentAnimation.ID == Animations.AnimationKill)
+                else if(CurrentAnimation.ID == Animations.AnimationKill)
                 {
                     if (timer1.Tag == null) timer1.Tag = 1.0;
 
@@ -744,15 +807,43 @@ namespace DesktopPet
                     {
                         Close();
                     }
+                    iNextAni = -2;
                 }
-                else if (iNextAni >= 0)
+                else if (CurrentAnimation.Name == "land" || CurrentAnimation.Name == "fall soft" || CurrentAnimation.Name == "fall hard")
+                {
+                    // Lądowanie ukończone: wznowienie mózgu po fizyce
+                    _brain?.ResumePhysics();
+                    string nextAnim = _brain?.GetCurrentDesiredAnimation();
+                    iNextAni = GetAnimationIdByName(nextAnim);
+                    if (iNextAni < 0) iNextAni = 3;
+                }
+                else if (_brain != null && !_brain.IsPhysicsActive)
+                {
+                    // Decyzja z Brain (Utility AI)
+                    string nextAnim = _brain.OnAnimationSequenceFinished(CurrentAnimation.Name);
+                    iNextAni = GetAnimationIdByName(nextAnim);
+                    if (iNextAni < 0) iNextAni = 3;
+                }
+                else if(hwndWindow != (IntPtr)0)
+                {
+                    iNextAni = Animations.SetNextSequenceAnimation(CurrentAnimation.ID, TNextAnimation.TOnly.WINDOW);
+                }
+                else
+                {
+                    iNextAni = Animations.SetNextSequenceAnimation(
+                        CurrentAnimation.ID, 
+                        PositionY + Height + y >= ScreenArea.Y + ScreenArea.Height - 2 ? TNextAnimation.TOnly.TASKBAR : TNextAnimation.TOnly.NONE
+                    );
+                }
+
+                if (iNextAni >= 0)
                 {
                     SetNewAnimation(iNextAni);
                     bNewAnimation = true;
                 }
-                else
+                else if (iNextAni == -1)
                 {
-                        // Child doesn't have a spawn, they will be closed once the animation is over.
+                    // Child doesn't have a spawn, they will be closed once the animation is over.
                     if(Name.IndexOf("child")==0)
                     {
                         StartUp.AddDebugInfo(StartUp.DEBUG_TYPE.info, "removing child");
@@ -778,6 +869,7 @@ namespace DesktopPet
                         }
                         else
                         {
+                            _brain?.InterruptPhysics("gravity");
                             SetNewAnimation(Animations.SetNextGravityAnimation(CurrentAnimation.ID, TNextAnimation.TOnly.NONE));
                             bNewAnimation = true;
                         }
@@ -791,6 +883,7 @@ namespace DesktopPet
                         if (!FollowWindow())
                         {
                             hwndWindow = (IntPtr)0;
+                            _brain?.InterruptPhysics("gravity");
                             SetNewAnimation(Animations.SetNextGravityAnimation(CurrentAnimation.ID, TNextAnimation.TOnly.WINDOW));
                             bNewAnimation = true;
                         }
@@ -1127,6 +1220,7 @@ namespace DesktopPet
         {
             if (e.Button == MouseButtons.Left && Name.IndexOf("child") < 0)
             {
+                _brain?.InterruptPhysics("drag");
                 hwndWindow = (IntPtr)0;             // Remove window handles
                 TopMost = false;
                 TopMost = true;                     // Set again the topmost
@@ -1219,6 +1313,7 @@ namespace DesktopPet
                 // If the toss force's magnitude (length) is bigger than this value, fling that thang >:)
                 if(TossForce.Length() > 5)
                 {
+                    _brain?.InterruptPhysics("toss");
                     // If toss animation exists, set it. Otherwise, remain in the dragging animation.
                     if(Animations.AnimationToss != -1)
                         SetNewAnimation(Animations.AnimationToss);
@@ -1235,6 +1330,7 @@ namespace DesktopPet
                 // If toss force wasn't large enough, fall like normal
                 else
                 {
+                    _brain?.InterruptPhysics("fall");
                     SetNewAnimation(Animations.AnimationFall);
                 }
                 
