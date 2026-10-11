@@ -99,6 +99,21 @@ Minigry z Pou (łapanie spadającego jedzenia, skakanie po platformach, memory, 
 
 **Wybór czynności (utility AI):** co kilka sekund świnka ocenia każdą dostępną czynność wzorem `zysk = Σ (pilność potrzeby × ile czynność ją zaspokaja) × losowy mnożnik 0,8–1,2` i robi tę z najwyższym wynikiem. Pilność rośnie szybciej, im niższa potrzeba. Losowość sprawia, że świnka nie jest przewidywalna.
 
+### Dzień świnki (budżet czasu)
+
+Prawdziwa świnka większość dnia siedzi, je i drzemie, a chodzi niewiele. Śpi 4–6 godzin na dobę w wielu krótkich drzemkach od kilku sekund do ok. 10 minut, często z otwartymi oczami, a najaktywniejsza jest o świcie i o zmierzchu ([FurryCritter](https://www.furrycritter.com/pages/articles/cavies/sleep_patterns.htm)). Je przez całą dobę, także w nocy, ok. 40% pokarmu ([Animals, 2021](https://www.mdpi.com/2076-2615/11/6/1593)). Popcorning jest rzadki: w badaniu opiekunów tylko ok. 20% świnek robiło go kilka razy dziennie ([Animals, 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC12024334/)).
+
+| Czynność | % czasu na pulpicie | Jak to wygląda |
+| --- | --- | --- |
+| Odpoczynek i drzemki | 50 | siedzi 20–60 s, drzemki 1–10 min |
+| Jedzenie i picie | 28 | siano po 20–90 s, picie |
+| Węszenie, rozglądanie | 8 | nosek pracuje, czasem patrzy na ciebie |
+| Chodzenie | 8 | odcinki 20–120 px po 2–5 s, potem postój min. 20 s |
+| Pielęgnacja | 3 | drapanie za uchem, znaczenie brodą |
+| Zabawa i rzadkie | 3 | popcorn, zoomies, zabawki |
+
+**Pory dnia:** 6–9 i 17–21 aktywność ×1,5; 11–15 drzemki ×1,6; 23–6 drzemki ×2. **Rzadkie zachowania na dobę:** popcorn 1–3 u dorosłej (4–8 u młodzika, 0–1 u seniora), zoomies 0–2, drapanie 4–8. Liczby są w `swinka/dane/actions.json` (`budzet_dnia`), a utility AI z B2 ma się ich trzymać.
+
 ### Wiek i etapy życia
 
 1 dzień w realu to 3 tygodnie życia świnki. Urodziny wypadają co ok. 17 dni gry i dają tort z selera oraz prezent.
@@ -183,7 +198,7 @@ Etapy idą jeden po drugim, bo każdy korzysta z poprzedniego; wyróżniona bram
 1. **A1** Przygotowanie środowiska (ty)
 2. **A2** Analiza repo eSheep i opis architektury (Gemini)
 3. **A3** Podmiana owcy na świnkę: arkusz klatek i `animations.xml` (Gemini)
-4. **A4** Zachowania losowe: węszenie, drapanie za uchem, popcorning, drzemka (Gemini)
+4. **A4** Zachowania losowe: węszenie, drapanie za uchem, popcorning, drzemka (Gemini); po B1 poprawka \*\*A5\*\*: spokojniejsza świnka według budżetu dnia (Gemini)
 
 **Bramka A:** świnka chodzi po pasku i oknach, da się ją złapać i rzucić, plik .exe działa na drugim komputerze.
 
@@ -330,6 +345,23 @@ Uruchom na 10 minut i wypisz, ile razy wystąpiło każde zachowanie.
 
 **Sprawdź:** zostaw świnkę na 10 minut. **Powinno być:** węszy, drapie się za uchem, je siano, czasem podskakuje i kwiczy; nie zacina się na jednej animacji; w raporcie liczby zbliżone do wag z promptu.
 
+### A5 · Gemini: spokojniejsza świnka (poprawka, zrób zaraz po B1)
+
+```text
+Przeczytaj PLAN.md (sekcja "Dzień świnki"), ZASADY.md i ARCHITEKTURA.md.
+To poprawka do A4: świnka jest nienaturalnie aktywna i prawie cały czas chodzi.
+Zmień animations.xml tak, żeby zachowanie pasowało do budżetu dnia z swinka/dane/actions.json (budzet_dnia):
+- ok. 50% czasu odpoczynek (idle 20-60 s) i drzemki (doze 1-10 min),
+- ok. 28% jedzenie siana (eat 20-90 s),
+- chodzenie tylko krótkimi odcinkami 20-120 px po 2-5 s, potem postój co najmniej 20 s,
+- popcorn najwyżej 1-3 razy dziennie, drapanie ok. co 20 min, run (zoomies) bardzo rzadko.
+Jeśli format XML nie pozwala zapisać czasu trwania albo przerwy między zachowaniami, zrób najbliższe przybliżenie
+przez prawdopodobieństwa i powtórzenia, a ograniczenia opisz w raporcie (pełną kontrolę da B2).
+Uruchom na 15 minut i wypisz, ile procent czasu zajęła każda animacja.
+```
+
+**Sprawdź:** zostaw świnkę na 15 minut obok pracy. **Powinno być:** przez większość czasu siedzi, je albo drzemie; co jakiś czas przechodzi kawałek i znowu stoi; popcorn i drapanie widzisz rzadko (brak popcornu przez 15 minut jest w porządku); w raporcie chodzenie poniżej ok. 10%.
+
 ### B1a · Claude: biblioteka SwinkaCore
 
 ```text
@@ -370,6 +402,9 @@ Inspiracja: utility AI z The Sims (https://gameindustrylibrary.com/documents/gmt
 3. W eSheep zastąp losowy wybór zachowań wywołaniem Brain. Fizyka (spadanie, przeciąganie, rzut) ma zawsze pierwszeństwo.
 4. Klawisz F9 pokazuje nakładkę debugowania: potrzeby, wyniki czynności i wybraną czynność.
 Przetestuj przy zegarze 60x przez 10 minut i opisz, czy zachowanie wygląda naturalnie.
+Trzymaj się budżetu czasu z PLAN.md (sekcja "Dzień świnki", dane: swinka/dane/actions.json -> budzet_dnia),
+limitów dziennych (limit_dzienny) i pór dnia. Dodaj do nakładki F9 i do Symulatora raport: ile procent czasu zajęła
+każda grupa czynności; odchylenie od budżetu najwyżej 5 punktów procentowych.
 ```
 
 **Sprawdź:** uruchom z zegarem 60x i naciśnij F9. **Powinno być:** nakładka z paskami potrzeb i wynikami czynności; głodna świnka częściej je i kwiczy, zmęczona kładzie się spać; złapanie myszką zawsze przerywa czynność; zachowanie nie wygląda na zapętlone.
