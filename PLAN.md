@@ -278,7 +278,7 @@ Zamiast 30 kroków po kolei jest 13 rund. W jednej rundzie prompty zmieniają r�
 | --- | --- | --- |
 | 1 | A5 ∥ B1c | animacje w `esheep/` ∥ biblioteka `SwinkaCore/` |
 | 2 | B2a, potem B2b ∥ C2 | mózg świnki ∥ ekran Domku w trybie mock (tylko `domek/`) |
-| 3 | B3 ∥ B5 | wykrywanie bezczynności ∥ menu w zasobniku |
+| 3 | B3 ∥ B5 ∥ B2c | wykrywanie bezczynności ∥ menu w zasobniku ∥ dymek stanu nad świnką |
 | 4 | B4 ∥ C1 | bobki na pasku ∥ okno Domku i most C# ↔ JavaScript |
 | 5 | B6 ∥ D1 | karmienie ∥ szkielet minigier (`domek/minigry/`) |
 | 5½ | Prezent v1 | wersja do podarowania: mała świnka, imię, autostart |
@@ -490,6 +490,26 @@ Przetestuj z zegarem 60x przez 10 minut i opisz, czy zachowanie wygląda natural
 
 **Sprawdź B2b:** test jak pod B2 wyżej.
 
+### B2c · Gemini: dymek stanu nad świnką (runda 3)
+
+Nakładka F9 to narzędzie testowe w zwykłym oknie Windows i nie jest dla niej. Dla niej są dwa widoki w tym samym pikselowym stylu: mały dymek nad świnką (szybki rzut oka i 3 przyciski) oraz duży Domek (wszystko inne).
+
+```text
+Przeczytaj PLAN.md, ZASADY.md, ARCHITEKTURA.md oraz domek/style.css i domek/index.html (styl wizualny do naśladowania).
+Nakładka F9 z B2b zostaje tylko narzędziem testowym (w Release wyłączona). Dla użytkownika zrób "dymek stanu":
+1. Gdy kursor zatrzyma się nad świnką na 0,7 s albo po kliknięciu świnki, nad nią pojawia się mały dymek w stylu
+   pixel art: bez paska tytułu i ramki Windows, przezroczyste tło, ramka i kolory jak w domek/style.css,
+   czcionka Pixelify Sans z domek/fonts, skalowanie tylko nearest, mały "ogonek" dymka wskazujący świnkę.
+2. W dymku: imię świnki, 6 ikon potrzeb z swinka/ikony/ikony_16.png (potrzeba_*) z krótkimi paskami 0-100
+   (zielony powyżej 60, żółty 30-60, czerwony poniżej 30), pod spodem 3 małe przyciski-ikony:
+   Nakarm (siano), Pogłaszcz (na razie animacja purr_pet i +3 humoru), Domek (aktywny dopiero po C1).
+3. Rozmiar ok. 160x110 px przy skali x2. Dymek podąża za świnką i znika po 4 s bez kursora albo po kliknięciu obok.
+4. Nie zasłania świnki, nie kradnie fokusu, nie pojawia się na pasku zadań ani w Alt+Tab.
+Rysuj w GDI+/WinForms (bez WebView2), żeby był lekki.
+```
+
+**Sprawdź:** zatrzymaj kursor nad świnką, potem odsuń go; naciśnij Alt+Tab. **Powinno być:** nad świnką wyskakuje mały pikselowy dymek bez paska Windows, z imieniem, 6 ikonkami i kolorowymi paskami oraz 3 przyciskami; Nakarm daje siano, Pogłaszcz wywołuje mruczenie; dymek znika sam po chwili i nie ma go w Alt+Tab.
+
 ### B3 · Gemini: sen przy bezczynności
 
 ```text
@@ -563,7 +583,9 @@ Nie dodawaj nowych funkcji gry.
 ```text
 Przeczytaj PLAN.md (sekcja Technologia), ZASADY.md, ARCHITEKTURA.md.
 Dokumentacja: https://learn.microsoft.com/en-us/microsoft-edge/webview2/get-started/winforms
-Zrób okno Domku: WebView2, 420x640 px, bez ramki systemowej, z własnym paskiem do przesuwania, otwierane przy zasobniku.
+Zrób okno Domku: WebView2, 420x640 px, BEZ ramki i paska tytułu Windows. Przesuwanie za nagłówek "Domek świnki"
+z domek/index.html, zamykanie przyciskiem x z HTML, przezroczyste rogi i cień jak w style.css, otwierane przy zasobniku.
+Okno ma wyglądać jak część gry, a nie jak zwykłe okno Windows; nie pokazuj go na pasku zadań.
 Zawartość z lokalnego folderu /domek przez SetVirtualHostNameToFolderMapping.
 Most: C# wysyła {type:"state", ...} co 1 s i po każdej zmianie (PostWebMessageAsJson); strona wysyła komendy
 {type:"feed"|"buy"|"clean"|"call"|"play"|"settings", ...} przez window.chrome.webview.postMessage.
