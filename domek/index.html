@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Domek Świnki Morskiej</title>
+  <meta name="description" content="Domek pikselowej świnki morskiej z potrzebami, animacjami, sklepikiem i opieką w stylu retro gry.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Główna obudowa retro konsolki / okna domku (420x640 px) -->
+  <main class="game-device" id="gameDevice">
+
+    <!-- 1. Pasek górny (Tytuł, waluta koniczynki, dźwięk, dev/mock testy, zamknięcie) -->
+    <header class="game-header">
+      <div class="header-left">
+        <span class="pixel-icon icon-glowa-swinki" aria-hidden="true"></span>
+        <h1 class="app-title">DOMEK ŚWINKI</h1>
+      </div>
+      <div class="header-right">
+        <div class="currency-badge" id="cloverBadge" title="Zgromadzone koniczynki">
+          <span class="pixel-icon icon-koniczynka" aria-hidden="true"></span>
+          <span id="cloverCount">0</span>
+        </div>
+        <button class="header-btn" id="btnSound" type="button" title="Wycisz / włącz dźwięki" aria-label="Dźwięk">🔊</button>
+        <button class="header-btn" id="btnDevTest" type="button" title="Narzędzia testowe mock" aria-label="Testy">⚙️</button>
+        <button class="header-btn" id="btnClose" type="button" title="Zamknij domek" aria-label="Zamknij">✕</button>
+      </div>
+    </header>
+
+    <!-- 2. Karta profilu świnki: Imię, Wiek w latach i miesiącach, Etap życia, Więź -->
+    <section class="pet-identity-card" aria-label="Profil świnki">
+      <div class="identity-main">
+        <div class="pet-name-wrap">
+          <span class="pet-name" id="petName">Grucha</span>
+        </div>
+        <div>
+          <span class="pet-age-text" id="petAge">Wiek: 1 rok i 2 miesiące</span>
+        </div>
+      </div>
+      <div class="identity-badges">
+        <span class="stage-badge stage-dorosla" id="stageBadge">🥕 Dorosła</span>
+        <span class="bond-indicator" id="bondIndicator">❤️ Więź: Poz. 4</span>
+      </div>
+    </section>
+
+    <!-- 3. Żywa animacja świnki na canvasie (z arkusza klatek, image-rendering: pixelated) -->
+    <section class="stage-viewport" aria-label="Wybieg świnki">
+      <canvas id="pigCanvas" width="240" height="130" title="Kliknij świnkę, aby ją pogłaskać!"></canvas>
+      <div class="stage-overlay-hint">Dotknij, by pogłaskać ❤️</div>
+    </section>
+
+    <!-- 4. Paski sześciu potrzeb z ikonami i dynamicznym kolorem -->
+    <section class="needs-section" aria-label="Potrzeby świnki">
+      <div class="needs-header">
+        <span class="section-label">POTRZEBY ŚWINKI</span>
+        <span class="health-badge" id="healthBadge" title="Ogólna kondycja zdrowotna">
+          <span>Zdrowie:</span>
+          <b id="healthPercent" style="color:var(--c-leaf-dark);">80%</b>
+        </span>
+      </div>
+
+      <div class="needs-grid">
+        <!-- 1. Najedzenie -->
+        <article class="need-card" id="cardSatiety">
+          <div class="need-card-top">
+            <div class="need-title-wrap">
+              <span class="pixel-icon x1_5 icon-potrzeba-najedzenie" aria-hidden="true"></span>
+              <span class="need-name">Najedzenie</span>
+            </div>
+            <span class="need-percent" id="valSatiety">82%</span>
+          </div>
+          <div class="progress-groove">
+            <div class="progress-fill level-high" id="barSatiety" style="width: 82%;"></div>
+          </div>
+        </article>
+
+        <!-- 2. Witamina C -->
+        <article class="need-card" id="cardVitaminC">
+          <div class="need-card-top">
+            <div class="need-title-wrap">
+              <span class="pixel-icon x1_5 icon-potrzeba-witamina-c" aria-hidden="true"></span>
+              <span class="need-name">Witamina C</span>
+            </div>
+            <span class="need-percent" id="valVitaminC">75%</span>
+          </div>
+          <div class="progress-groove">
+            <div class="progress-fill level-high" id="barVitaminC" style="width: 75%;"></div>
+          </div>
+        </article>
+
+        <!-- 3. Energia -->
+        <article class="need-card" id="cardEnergy">
+          <div class="need-card-top">
+            <div class="need-title-wrap">
+              <span class="pixel-icon x1_5 icon-potrzeba-energia" aria-hidden="true"></span>
+              <span class="need-name">Energia</span>
+            </div>
+            <span class="need-percent" id="valEnergy">90%</span>
+          </div>
+          <div class="progress-groove">
+            <div class="progress-fill level-high" id="barEnergy" style="width: 90%;"></div>
+          </div>
+        </article>
+
+        <!-- 4. Humor -->
+        <article class="need-card" id="cardMood">
+          <div class="need-card-top">
+            <div class="need-title-wrap">
+              <span class="pixel-icon x1_5 icon-potrzeba-humor" aria-hidden="true"></span>
+              <span class="need-name">Humor</span>
+            </div>
+            <span class="need-percent" id="valMood">68%</span>
+          </div>
+          <div class="progress-groove">
+            <div class="progress-fill level-high" id="barMood" style="width: 68%;"></div>
+          </div>
+        </article>
+
+        <!-- 5. Czystość -->
+        <article class="need-card" id="cardCleanliness">
+          <div class="need-card-top">
+            <div class="need-title-wrap">
+              <span class="pixel-icon x1_5 icon-potrzeba-czystosc" aria-hidden="true"></span>
+              <span class="need-name">Czystość</span>
+            </div>
+            <span class="need-percent" id="valCleanliness">62%</span>
+          </div>
+          <div class="progress-groove">
+            <div class="progress-fill level-mid" id="barCleanliness" style="width: 62%;"></div>
+          </div>
+        </article>
+
+        <!-- 6. Ząbki -->
+        <article class="need-card" id="cardTeeth">
+          <div class="need-card-top">
+            <div class="need-title-wrap">
+              <span class="pixel-icon x1_5 icon-potrzeba-zabki" aria-hidden="true"></span>
+              <span class="need-name">Ząbki</span>
+            </div>
+            <span class="need-percent" id="valTeeth">84%</span>
+          </div>
+          <div class="progress-groove">
+            <div class="progress-fill level-high" id="barTeeth" style="width: 84%;"></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 5. Przyciski akcji (Retro Arcade Buttons) -->
+    <section class="actions-section" aria-label="Czynności i opieka">
+      
+      <!-- Podręczna wysuwana szuflada wyboru jedzenia po kliknięciu "Nakarm" -->
+      <div class="food-drawer" id="foodDrawer" aria-label="Wybór jedzenia">
+        <div class="food-drawer-title">
+          <span>Wybierz przysmak dla świnki:</span>
+          <span style="color:#887;">Siano jest zawsze darmowe!</span>
+        </div>
+        <div class="food-grid">
+          <button class="food-item-btn" id="feedSiano" type="button" data-food="siano">
+            <span class="pixel-icon x1_5 icon-siano" aria-hidden="true"></span>
+            <span>Siano</span>
+            <span class="food-qty">zawsze ∞</span>
+          </button>
+          <button class="food-item-btn" id="feedPapryka" type="button" data-food="papryka">
+            <span class="pixel-icon x1_5 icon-papryka" aria-hidden="true"></span>
+            <span>Papryka</span>
+            <span class="food-qty" id="foodQtyPapryka">3 szt.</span>
+          </button>
+          <button class="food-item-btn" id="feedMarchewka" type="button" data-food="marchewka">
+            <span class="pixel-icon x1_5 icon-marchewka" aria-hidden="true"></span>
+            <span>Marchew</span>
+            <span class="food-qty" id="foodQtyMarchewka">2 szt.</span>
+          </button>
+          <button class="food-item-btn" id="feedGranulat" type="button" data-food="granulat">
+            <span class="pixel-icon x1_5 icon-granulat" aria-hidden="true"></span>
+            <span>Granulat</span>
+            <span class="food-qty" id="foodQtyGranulat">5 szt.</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sześć głównych przycisków gry -->
+      <nav class="actions-grid" aria-label="Menu akcji">
+        <button class="game-btn btn-feed" id="btnFeed" type="button">
+          <span class="pixel-icon icon-papryka" aria-hidden="true"></span>
+          <span>Nakarm</span>
+        </button>
+
+        <button class="game-btn btn-clean" id="btnClean" type="button">
+          <span class="pixel-icon icon-bobek" aria-hidden="true"></span>
+          <span>Posprzątaj</span>
+        </button>
+
+        <button class="game-btn btn-call" id="btnCall" type="button">
+          <span class="pixel-icon icon-glowa-swinki" aria-hidden="true"></span>
+          <span>Zawołaj</span>
+        </button>
+
+        <button class="game-btn btn-shop" id="btnShop" type="button">
+          <span class="pixel-icon icon-koniczynka" aria-hidden="true"></span>
+          <span>Sklepik</span>
+        </button>
+
+        <button class="game-btn btn-minigames" id="btnMinigames" type="button">
+          <span class="pixel-icon icon-pilka" aria-hidden="true"></span>
+          <span>Minigry</span>
+        </button>
+
+        <button class="game-btn btn-album" id="btnAlbum" type="button">
+          <span class="pixel-icon icon-domek" aria-hidden="true"></span>
+          <span>Album</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- Modal dialogowy pixel art (Sklepik, Minigry, Album, Testy) -->
+    <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span id="modalTitle">Tytuł</span>
+          <button class="modal-close-btn" id="modalCloseBtn" type="button" aria-label="Zamknij okienko">✕</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+          <!-- Wypełniane dynamicznie przez app.js -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Skrypty logiki i silnika Domku -->
+  <script src="bridge.js"></script>
+  <script src="sound.js"></script>
+  <script src="canvas-pig.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

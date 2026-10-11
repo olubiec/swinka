@@ -1,0 +1,808 @@
+/* ==========================================================================
+   DOMEK ŚWINKI — STYLIZACJA PIXEL ART
+   Licencjonowana czcionka: Pixelify Sans (OFL) lokalnie
+   Paleta: Kolory świnki (pomarańcz, rdza, drewno, siano, liść, krem)
+   Czysty Vanilla CSS, bez bibliotek
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Pixelify Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url('fonts/PixelifySans-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Pixelify Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url('fonts/PixelifySans-Bold.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  /* Paleta świnki morskiej z pig.py i PLAN.md */
+  --c-orange-light: #f7b46e;
+  --c-orange:       #e98c42;
+  --c-orange-dark:  #c8692f;
+  --c-rust:         #dc7445;
+  --c-rust-deep:    #984721;
+  --c-white:        #fffdf8;
+  --c-cream:        #f8eddd;
+  --c-cream-dark:   #e4cfb5;
+  --c-wood-light:   #e6b073;
+  --c-wood:         #c98d50;
+  --c-wood-dark:    #9c6636;
+  --c-wood-deep:    #6e4424;
+  --c-contour:      #3a1d17;
+  --c-contour-dark: #2b1712;
+  --c-hay:          #eedb7c;
+  --c-hay-dark:     #cdb556;
+  --c-hay-shadow:   #99903d;
+  --c-leaf:         #7fbf4a;
+  --c-leaf-dark:    #4f8f35;
+  --c-red:          #e8564c;
+  --c-red-dark:     #b43a36;
+  --c-gold:         #f2c94c;
+  --c-gold-dark:    #c99a2e;
+  --c-pink:         #f5a3a2;
+  --c-blue:         #7fbaf0;
+  --c-blue-dark:    #4a84c4;
+
+  /* Typografia */
+  --font-pixel: 'Pixelify Sans', monospace, sans-serif;
+
+  /* Cienie pikselowe */
+  --pixel-shadow-sm: 0 2px 0 var(--c-contour-dark);
+  --pixel-shadow-md: 0 3px 0 var(--c-contour-dark);
+  --pixel-shadow-lg: 0 4px 0 var(--c-contour-dark);
+}
+
+/* Reset bazowy */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  background-color: #241d1a;
+  background-image: 
+    radial-gradient(#382b24 15%, transparent 16%),
+    radial-gradient(#382b24 15%, transparent 16%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  color: var(--c-contour-dark);
+  font-family: var(--font-pixel);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Główny kontener okna gry (pasujący do 420x640 px z C1) */
+.game-device {
+  width: 100%;
+  max-width: 420px;
+  min-height: 620px;
+  background: var(--c-cream);
+  border: 4px solid var(--c-contour-dark);
+  border-radius: 12px;
+  box-shadow: 
+    0 10px 0 #181210,
+    0 16px 24px rgba(0,0,0,0.4),
+    inset 3px 3px 0 var(--c-white),
+    inset -3px -3px 0 var(--c-cream-dark);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Górny pasek tytułu i stanu (Casing Bar) */
+.game-header {
+  background: var(--c-wood-dark);
+  border-bottom: 3px solid var(--c-contour-dark);
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--c-white);
+  box-shadow: inset 0 2px 0 var(--c-wood-light);
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 1px 1px 0 var(--c-contour-dark);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+.currency-badge {
+  background: var(--c-contour-dark);
+  border: 1px solid var(--c-gold);
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-gold);
+}
+
+.header-btn {
+  background: var(--c-wood);
+  border: 2px solid var(--c-contour-dark);
+  border-radius: 4px;
+  color: var(--c-white);
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  font-weight: 700;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--c-contour-dark);
+  transition: transform 0.05s;
+}
+
+.header-btn:hover {
+  background: var(--c-wood-light);
+}
+
+.header-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0;
+}
+
+/* ==========================================================================
+   KARTA PROFILU ŚWINKI (Imię, Wiek, Etap życia)
+   ========================================================================== */
+
+.pet-identity-card {
+  background: linear-gradient(180deg, var(--c-wood-light) 0%, var(--c-wood) 100%);
+  border-bottom: 3px solid var(--c-contour-dark);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.4);
+}
+
+.identity-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pet-name-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.pet-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--c-white);
+  text-shadow: 
+    -1px -1px 0 var(--c-contour-dark),
+     1px -1px 0 var(--c-contour-dark),
+    -1px  1px 0 var(--c-contour-dark),
+     1px  1px 0 var(--c-contour-dark),
+     0 2px 0 var(--c-contour-dark);
+  letter-spacing: 0.5px;
+}
+
+.pet-age-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #3b2210;
+  background: var(--c-cream);
+  border: 1px solid var(--c-contour-dark);
+  border-radius: 4px;
+  padding: 1px 6px;
+  display: inline-block;
+  box-shadow: inset 1px 1px 0 var(--c-white);
+}
+
+.identity-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.stage-badge {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 2px solid var(--c-contour-dark);
+  color: var(--c-white);
+  text-shadow: 1px 1px 0 var(--c-contour-dark);
+  box-shadow: 0 2px 0 var(--c-contour-dark);
+}
+
+.stage-maluch  { background: var(--c-leaf); }
+.stage-mlodzik { background: var(--c-orange); }
+.stage-dorosla { background: var(--c-rust); }
+.stage-senior  { background: #8c8479; }
+.stage-legenda { background: var(--c-gold); color: #493305; text-shadow: none; border-color: #5a3e05; }
+
+.bond-indicator {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-contour-dark);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--c-contour-dark);
+}
+
+/* ==========================================================================
+   SCENA ŚWINKI (CANVAS PIXEL ART)
+   ========================================================================== */
+
+.stage-viewport {
+  position: relative;
+  width: 100%;
+  background: var(--c-contour-dark);
+  border-bottom: 3px solid var(--c-contour-dark);
+  overflow: hidden;
+  line-height: 0;
+}
+
+#pigCanvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 240 / 130;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.stage-overlay-hint {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  background: rgba(43, 23, 18, 0.75);
+  color: var(--c-white);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  pointer-events: none;
+  letter-spacing: 0.3px;
+}
+
+/* ==========================================================================
+   SEKCJA SZEŚCIU POTRZEB (PIXEL ART PROGRESS BARS)
+   ========================================================================== */
+
+.needs-section {
+  padding: 10px 12px;
+  background: var(--c-cream);
+  border-bottom: 3px solid var(--c-contour-dark);
+}
+
+.needs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-wood-deep);
+  letter-spacing: 0.5px;
+}
+
+.health-badge {
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--c-white);
+  border: 1px solid var(--c-contour-dark);
+  padding: 1px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.needs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.need-card {
+  background: var(--c-white);
+  border: 2px solid var(--c-contour-dark);
+  border-radius: 6px;
+  padding: 5px 6px;
+  box-shadow: 0 2px 0 rgba(43, 23, 18, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.need-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.need-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.need-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-contour-dark);
+}
+
+.need-percent {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-contour-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pasek postępu pixel art */
+.progress-groove {
+  width: 100%;
+  height: 10px;
+  background: #2b1712;
+  border: 1px solid #1a0d0a;
+  border-radius: 2px;
+  padding: 1px;
+  box-shadow: inset 1px 1px 0 rgba(0,0,0,0.5);
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 50%;
+  border-radius: 1px;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s;
+  position: relative;
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 100%);
+}
+
+/* Kolor zależny od poziomu potrzeby:
+   - Wysoki (>65%): Soczysty zielony liść
+   - Średni (35-65%): Złote siano
+   - Niski (<35%): Ostrzegawcza paprykowa czerwień
+*/
+.progress-fill.level-high {
+  background-color: var(--c-leaf);
+  box-shadow: inset 0 -1px 0 var(--c-leaf-dark);
+}
+
+.progress-fill.level-mid {
+  background-color: var(--c-gold);
+  box-shadow: inset 0 -1px 0 var(--c-gold-dark);
+}
+
+.progress-fill.level-low {
+  background-color: var(--c-red);
+  box-shadow: inset 0 -1px 0 var(--c-red-dark);
+  animation: pulse-alert 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse-alert {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.8; filter: brightness(1.25); }
+}
+
+/* ==========================================================================
+   PRZYCISKI AKCJI (RETRO HANDHELD ARCADE BUTTONS)
+   ========================================================================== */
+
+.actions-section {
+  padding: 10px 12px 12px;
+  background: var(--c-cream-dark);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.game-btn {
+  background: var(--c-wood-light);
+  border: 3px solid var(--c-contour-dark);
+  border-radius: 8px;
+  padding: 8px 4px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--c-contour-dark);
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 
+    0 4px 0 var(--c-contour-dark),
+    inset 2px 2px 0 var(--c-white),
+    inset -2px -2px 0 var(--c-wood-dark);
+  transition: transform 0.05s, box-shadow 0.05s, background-color 0.1s;
+  text-decoration: none;
+  position: relative;
+}
+
+.game-btn:hover {
+  background: var(--c-orange-light);
+}
+
+.game-btn:active {
+  transform: translateY(3px);
+  box-shadow: 
+    0 1px 0 var(--c-contour-dark),
+    inset 2px 2px 0 var(--c-wood-dark),
+    inset -2px -2px 0 var(--c-white);
+}
+
+/* Kolorystyczne akcenty dla przycisków */
+.btn-feed {
+  background: #f8c278;
+}
+.btn-clean {
+  background: #b2dbf5;
+}
+.btn-call {
+  background: #fad26b;
+}
+.btn-shop {
+  background: #c3e696;
+}
+.btn-minigames {
+  background: #f7b2c5;
+}
+.btn-album {
+  background: #d4c2ee;
+}
+
+/* ==========================================================================
+   PODRĘCZNY PANEL KARMIENIA (WYSUWANY)
+   ========================================================================== */
+
+.food-drawer {
+  display: none;
+  background: var(--c-white);
+  border: 3px solid var(--c-contour-dark);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 0 var(--c-contour-dark);
+}
+
+.food-drawer.active {
+  display: block;
+  animation: slide-up 0.15s ease-out;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.food-drawer-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-wood-deep);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.food-item-btn {
+  background: var(--c-cream);
+  border: 2px solid var(--c-contour-dark);
+  border-radius: 6px;
+  padding: 6px 2px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 2px 0 var(--c-contour-dark);
+}
+
+.food-item-btn:hover {
+  background: var(--c-orange-light);
+}
+
+.food-item-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0;
+}
+
+.food-qty {
+  font-size: 10px;
+  color: #665;
+}
+
+/* ==========================================================================
+   IKONY PIXEL ART (Z ARKUYSZA ikony_16.png)
+   ========================================================================== */
+
+.pixel-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url('assets/ikony_16.png');
+  background-repeat: no-repeat;
+  background-size: 400px 16px; /* 25 ikon * 16px = 400px */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  vertical-align: middle;
+}
+
+.pixel-icon.x1_5 {
+  width: 24px;
+  height: 24px;
+  background-size: 600px 24px;
+}
+
+.pixel-icon.x2 {
+  width: 32px;
+  height: 32px;
+  background-size: 800px 32px;
+}
+
+/* Pozycje ikon w arkuszu (indeks * 16px w x1, indeks * 24px w x1_5, indeks * 32px w x2) */
+.icon-papryka             { background-position: calc(-0 * 16px) 0; }
+.icon-ogorek              { background-position: calc(-1 * 16px) 0; }
+.icon-natka               { background-position: calc(-2 * 16px) 0; }
+.icon-marchewka           { background-position: calc(-3 * 16px) 0; }
+.icon-granulat            { background-position: calc(-4 * 16px) 0; }
+.icon-gryzak              { background-position: calc(-5 * 16px) 0; }
+.icon-pilka               { background-position: calc(-6 * 16px) 0; }
+.icon-tunel               { background-position: calc(-7 * 16px) 0; }
+.icon-domek               { background-position: calc(-8 * 16px) 0; }
+.icon-poidlo              { background-position: calc(-9 * 16px) 0; }
+.icon-bobek               { background-position: calc(-10 * 16px) 0; }
+.icon-tort                { background-position: calc(-11 * 16px) 0; }
+.icon-siano               { background-position: calc(-12 * 16px) 0; }
+.icon-koniczynka          { background-position: calc(-13 * 16px) 0; }
+.icon-jarmuz              { background-position: calc(-14 * 16px) 0; }
+.icon-truskawka           { background-position: calc(-15 * 16px) 0; }
+.icon-cebula              { background-position: calc(-16 * 16px) 0; }
+.icon-czekolada           { background-position: calc(-17 * 16px) 0; }
+.icon-potrzeba-najedzenie { background-position: calc(-18 * 16px) 0; }
+.icon-potrzeba-witamina-c { background-position: calc(-19 * 16px) 0; }
+.icon-potrzeba-energia    { background-position: calc(-20 * 16px) 0; }
+.icon-potrzeba-humor      { background-position: calc(-21 * 16px) 0; }
+.icon-potrzeba-czystosc   { background-position: calc(-22 * 16px) 0; }
+.icon-potrzeba-zabki      { background-position: calc(-23 * 16px) 0; }
+.icon-glowa-swinki        { background-position: calc(-24 * 16px) 0; }
+
+/* Skala x1_5 dla pasków potrzeb */
+.pixel-icon.x1_5.icon-potrzeba-najedzenie { background-position: calc(-18 * 24px) 0; }
+.pixel-icon.x1_5.icon-potrzeba-witamina-c { background-position: calc(-19 * 24px) 0; }
+.pixel-icon.x1_5.icon-potrzeba-energia    { background-position: calc(-20 * 24px) 0; }
+.pixel-icon.x1_5.icon-potrzeba-humor      { background-position: calc(-21 * 24px) 0; }
+.pixel-icon.x1_5.icon-potrzeba-czystosc   { background-position: calc(-22 * 24px) 0; }
+.pixel-icon.x1_5.icon-potrzeba-zabki      { background-position: calc(-23 * 24px) 0; }
+
+/* Skala x1_5 dla jedzenia w szufladzie */
+.pixel-icon.x1_5.icon-siano     { background-position: calc(-12 * 24px) 0; }
+.pixel-icon.x1_5.icon-papryka   { background-position: calc(-0 * 24px) 0; }
+.pixel-icon.x1_5.icon-marchewka { background-position: calc(-3 * 24px) 0; }
+.pixel-icon.x1_5.icon-granulat  { background-position: calc(-4 * 24px) 0; }
+
+/* ==========================================================================
+   MODALE / DIALOGI PIXEL ART (Sklepik, Minigry, Album, Testy)
+   ========================================================================== */
+
+.modal-backdrop {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 15, 12, 0.7);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop.active {
+  display: flex;
+  animation: fade-in 0.15s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-card {
+  background: var(--c-cream);
+  border: 4px solid var(--c-contour-dark);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 380px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 
+    0 8px 0 var(--c-contour-dark),
+    inset 2px 2px 0 var(--c-white),
+    inset -2px -2px 0 var(--c-cream-dark);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  background: var(--c-wood-dark);
+  color: var(--c-white);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid var(--c-contour-dark);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.modal-close-btn {
+  background: var(--c-red);
+  border: 2px solid var(--c-contour-dark);
+  color: var(--c-white);
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  box-shadow: 0 2px 0 var(--c-contour-dark);
+}
+
+.modal-body {
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Sklepik item grid */
+.shop-grid, .album-grid, .games-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.shop-item, .game-item {
+  background: var(--c-white);
+  border: 2px solid var(--c-contour-dark);
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.shop-item-btn {
+  background: var(--c-leaf);
+  color: var(--c-white);
+  border: 2px solid var(--c-contour-dark);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--c-contour-dark);
+  margin-top: 4px;
+}
+
+.shop-item-btn:hover { background: #91d15c; }
+.shop-item-btn:active { transform: translateY(2px); box-shadow: 0 0 0; }
+
+/* Album naklejki */
+.album-card {
+  background: var(--c-white);
+  border: 2px solid var(--c-contour-dark);
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.album-locked {
+  background: #ded7cb;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+/* Pasek testowy / dev drawer */
+.test-panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.test-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.test-row label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.test-btn {
+  background: var(--c-wood);
+  color: var(--c-white);
+  border: 1px solid var(--c-contour-dark);
+  border-radius: 3px;
+  padding: 3px 6px;
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.test-btn:hover { background: var(--c-wood-light); }

@@ -1,0 +1,30 @@
+{
+  "size": 16,
+  "ikony": {
+    "papryka": 0,
+    "ogorek": 1,
+    "natka": 2,
+    "marchewka": 3,
+    "granulat": 4,
+    "gryzak": 5,
+    "pilka": 6,
+    "tunel": 7,
+    "domek": 8,
+    "poidlo": 9,
+    "bobek": 10,
+    "tort": 11,
+    "siano": 12,
+    "koniczynka": 13,
+    "jarmuz": 14,
+    "truskawka": 15,
+    "cebula": 16,
+    "czekolada": 17,
+    "potrzeba_najedzenie": 18,
+    "potrzeba_witamina_c": 19,
+    "potrzeba_energia": 20,
+    "potrzeba_humor": 21,
+    "potrzeba_czystosc": 22,
+    "potrzeba_zabki": 23,
+    "glowa_swinki": 24
+  }
+}
