@@ -1,6 +1,7 @@
 # Zasady dla agentów
 - Projekt: Świnka na pulpit, oparta na eSheep (kod w folderze esheep/, licencja MIT). Plan i liczby: PLAN.md. Czytaj go przed każdym zadaniem.
 - Prompty w PLAN.md są dla człowieka, który wkleja je po kolei. Wykonuj tylko zadanie z bieżącej wiadomości; innych faz nie rób z wyprzedzeniem, najwyżej zapisz uwagi do nich w raporcie.
+- Gdy prompt mówi, że równolegle pracuje inny agent: zmieniaj tylko pliki swojego zadania, wspólne pliki tylko minimalnie (i zgłoś to w raporcie), commit dopiero na polecenie.
 - Świnka na pulpicie: C# na .NET Framework 4.8, projekt esheep/src/DesktopPet.sln.
 - Mózg gry: projekt SwinkaCore jako biblioteka .NET Standard 2.0, bez żadnych odwołań do WinForms i Win32.
 - Grafika i dane: folder swinka/ (opis w swinka/CZYTAJ.md). Nie rysuj świnki od nowa; brakującą grafikę zgłoś, dorysuje ją Claude w czacie.

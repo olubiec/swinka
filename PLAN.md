@@ -270,12 +270,42 @@ Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do
 6. **Po każdej bramce etapu zrób Push na GitHub.**
 7. **Gdy skończy się limit Claude:** zostań w tej samej rozmowie, przełącz model na Gemini 3 Pro i napisz: „Poprzedni model przerwał w połowie z powodu limitu. Najpierw sprawdź, co już jest zrobione (git status, zmienione pliki), wypisz to w 3–5 punktach, potem dokończ zadanie według promptu wyżej. Nie zaczynaj od nowa.” Limit Claude odnawia się po kilku godzinach, więc kolejne ciężkie prompty (B2, B6, C1, C4, D1, E1, E2, E6, F4) warto zostawić na moment, gdy jest dostępny.
 
+### Szybciej: rundy równoległe
+
+Zamiast 30 kroków po kolei jest 13 rund. W jednej rundzie prompty zmieniają różne pliki, więc można je wkleić w osobnych rozmowach naraz. Następna runda zaczyna się dopiero, gdy poprzednia jest przetestowana i scommitowana.
+
+| Runda | Prompty naraz | Kto zmienia co |
+| --- | --- | --- |
+| 1 | A5 ∥ B1c | animacje w `esheep/` ∥ biblioteka `SwinkaCore/` |
+| 2 | B2 | utility AI, sama (dotyka prawie wszystkiego) |
+| 3 | B3 ∥ B5 | wykrywanie bezczynności ∥ menu w zasobniku |
+| 4 | B4 ∥ C1 | bobki na pasku ∥ nowe okno Domku |
+| 5 | B6 ∥ C2 | karmienie ∥ ekran Domku w trybie mock (tylko `domek/`) |
+| 6 | C3 ∥ C4 | sklepik i ekwipunek ∥ wiek i więź |
+| 7 | C5 ∥ D1 | album i pamiętnik ∥ szkielet minigier |
+| 8 | D2 ∥ D3 ∥ D4 ∥ D5 | każda minigra w swoim folderze `domek/minigry/<gra>/` |
+| 9 | E1 ∥ E3 ∥ E5 | muzyka ∥ pełny ekran ∥ pogoda |
+| 10 | E2 ∥ F1 | strach i kursor ∥ dźwięki |
+| 11 | E4 ∥ F2 | głaskanie ∥ ustawienia |
+| 12 | E6 | sztuczki i towarzysz, sam |
+| 13 | F3, potem F4 | instalator, potem przegląd całości |
+
+Bramki etapów zostają: bramka B po rundzie 5, bramka C po rundzie 7, bramka D po rundzie 8, bramka E po rundzie 12.
+
+**Zasady rundy:**
+
+1. Do każdego promptu w rundzie dopisz na końcu: *„Równolegle pracuje inny agent nad \[nazwa drugiego promptu\]. Zmieniaj tylko pliki swojego zadania. Jeśli musisz dotknąć wspólnego pliku (GameState, Brain, Program, bridge.js), zrób najmniejszą możliwą zmianę i napisz o tym w raporcie. Nie rób commita, dopóki ci nie powiem.”*
+2. Gdy oba agenty skończą, przetestuj oba zadania i zrób commity **po kolei**: najpierw jeden agent (tylko jego pliki), potem drugi.
+3. Na koniec rundy zbuduj całość i uruchom testy (Test → Run All Tests). Jeśli coś się gryzie, poproś drugiego agenta: „Połącz swoje zmiany z tym, co zrobił poprzedni agent, i napraw kompilację.”
+4. Jeśli limit Claude się skończył, w rundzie z promptem dla Claude rusz najpierw prompt dla Gemini, a Claude dołącz później.
+
 ### Plik ZASADY.md
 
 ```markdown
 # Zasady dla agentów
 - Projekt: Świnka na pulpit, oparta na eSheep (kod w folderze esheep/, licencja MIT). Plan i liczby: PLAN.md. Czytaj go przed każdym zadaniem.
 - Prompty w PLAN.md są dla człowieka, który wkleja je po kolei. Wykonuj tylko zadanie z bieżącej wiadomości; innych faz nie rób z wyprzedzeniem, najwyżej zapisz uwagi do nich w raporcie.
+- Gdy prompt mówi, że równolegle pracuje inny agent: zmieniaj tylko pliki swojego zadania, wspólne pliki tylko minimalnie (i zgłoś to w raporcie), commit dopiero na polecenie.
 - Świnka na pulpicie: C# na .NET Framework 4.8, projekt esheep/src/DesktopPet.sln.
 - Mózg gry: projekt SwinkaCore jako biblioteka .NET Standard 2.0, bez żadnych odwołań do WinForms i Win32.
 - Grafika i dane: folder swinka/ (opis w swinka/CZYTAJ.md). Nie rysuj świnki od nowa; brakującą grafikę zgłoś, dorysuje ją Claude w czacie.
