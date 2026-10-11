@@ -36,20 +36,20 @@ items = [
 
 A = lambda **k: k
 actions = [
- A(id='odpoczynek', animacja='idle', czas_s=6, efekty={}, waga_bazowa=0.35, opis='Spokojne siedzenie'),
- A(id='weszenie', animacja='sniff', czas_s=4, efekty={'humor': 1}, waga_bazowa=0.25),
- A(id='spacer', animacja='walk', czas_s=8, efekty={'humor': 2, 'energia': -1}, waga_bazowa=0.3, ruch=True),
- A(id='zoomies', animacja='run', czas_s=4, efekty={'humor': 3, 'energia': -4}, warunki={'humor_min': 70, 'energia_min': 40}, cooldown_s=300, ruch=True),
- A(id='popcorn', animacja='popcorn', czas_s=1, efekty={'humor': 3, 'energia': -2}, warunki={'humor_min': 75}, cooldown_s=120,
+ A(id='odpoczynek', animacja='idle', czas_s=[20, 60], efekty={}, waga_bazowa=0.6, opis='Spokojne siedzenie, rozglądanie się'),
+ A(id='weszenie', animacja='sniff', czas_s=[4, 8], efekty={'humor': 1}, waga_bazowa=0.2),
+ A(id='spacer', animacja='walk', czas_s=[2, 5], dystans_px=[20, 120], efekty={'humor': 2, 'energia': -1}, waga_bazowa=0.12, cooldown_s=20, ruch=True, opis='Krótki odcinek, potem postój'),
+ A(id='zoomies', animacja='run', czas_s=4, efekty={'humor': 3, 'energia': -4}, warunki={'humor_min': 80, 'energia_min': 50}, cooldown_s=7200, limit_dzienny=2, ruch=True),
+ A(id='popcorn', animacja='popcorn', czas_s=1, efekty={'humor': 3, 'energia': -2}, warunki={'humor_min': 75}, cooldown_s=1800, limit_dzienny={'maluch': 6, 'mlodzik': 8, 'dorosla': 3, 'senior': 1, 'legenda': 1},
    mnoznik_etapu={'mlodzik': 2.0, 'senior': 0.4, 'legenda': 0.4}),
- A(id='jedzenie_siana', animacja='eat', czas_s=8, efekty={'najedzenie': 10, 'zabki': 6}, zuzywa={'siano_w_pasniku': 10},
+ A(id='jedzenie_siana', animacja='eat', czas_s=[20, 90], waga_bazowa=0.3, efekty={'najedzenie': 10, 'zabki': 6}, zuzywa={'siano_w_pasniku': 10},
    warunki={'siano_w_pasniku_min': 10}, zaspokaja=['najedzenie', 'zabki']),
  A(id='picie', animacja='drink', czas_s=4, efekty={'humor': 1}, warunki={'przedmiot': 'poidlo'}, cooldown_s=900),
  A(id='gryzak', animacja='chew_stick', czas_s=6, efekty={'zabki': 8, 'humor': 2}, warunki={'przedmiot': 'gryzak'}, cooldown_s=600, zaspokaja=['zabki']),
- A(id='grzebanie_w_sianie', animacja='dig_hay', czas_s=2, efekty={'humor': 4}, warunki={'siano_w_pasniku_min': 30}, cooldown_s=600),
- A(id='znaczenie_broda', animacja='chin_rub', czas_s=3, efekty={'humor': 1}, cooldown_s=900, waga_bazowa=0.05),
- A(id='drapanie', animacja='scratch', czas_s=1.2, efekty={}, cooldown_s=600, waga_bazowa=0.08),
- A(id='drzemka', animacja='doze', czas_s=60, efekty={'energia': 6}, warunki={'energia_max': 70}, zaspokaja=['energia']),
+ A(id='grzebanie_w_sianie', animacja='dig_hay', czas_s=2, efekty={'humor': 4}, warunki={'siano_w_pasniku_min': 30}, cooldown_s=1800),
+ A(id='znaczenie_broda', animacja='chin_rub', czas_s=3, efekty={'humor': 1}, cooldown_s=3600, waga_bazowa=0.03, limit_dzienny=3),
+ A(id='drapanie', animacja='scratch', czas_s=1.2, efekty={}, cooldown_s=1200, waga_bazowa=0.04, limit_dzienny=8),
+ A(id='drzemka', animacja='doze', czas_s=[60, 600], efekty={'energia': 6}, warunki={'energia_max': 85}, waga_bazowa=0.15, cooldown_s=300, zaspokaja=['energia'], opis='Krótka drzemka, często z półotwartymi oczami'),
  A(id='sen', animacja='sleep', czas_s=300, wejscie='lie_down', wyjscie='wake_up', efekty={'energia': 30},
    warunki={'energia_max': 35}, mnoznik_pory={'23-7': 2.0}, zaspokaja=['energia']),
  A(id='sen_w_domku', animacja='sleep_house', czas_s=300, wejscie='house_enter', wyjscie='house_exit', efekty={'energia': 45},
@@ -80,7 +80,18 @@ events = {
  'urodziny': {'animacja': 'party', 'nagroda_koniczynki': 100},
  'sztuczki': {'spin': 5, 'stand_up': 9, 'popcorn': 12, 'hurdle': 15},
 }
-json.dump({'potrzeby': NEEDS, 'spadek_na_godzine': DECAY, 'offline': {'mnoznik': 1 / 3, 'minimum': 20},
+BUDZET = {
+    'opis': 'Docelowy podział czasu, gdy świnka jest na pulpicie (bez snu przy bezczynności). '
+            'Źródła: sen 4-6 h/dobę w drzemkach do ok. 10 min, aktywność o świcie i zmierzchu.',
+    'procent_czasu': {'odpoczynek_i_drzemki': 50, 'jedzenie_i_picie': 28, 'weszenie_rozgladanie': 8,
+                      'chodzenie': 8, 'pielegnacja': 3, 'zabawa_i_rzadkie': 3},
+    'pory': {'6-9': {'aktywnosc': 1.5}, '17-21': {'aktywnosc': 1.5},
+             '11-15': {'drzemki': 1.6}, '23-6': {'drzemki': 2.0, 'aktywnosc': 0.5}},
+    'rzadkie_na_dobe': {'popcorn': 'dorosła 1-3, młodzik 4-8, senior 0-1', 'zoomies': '0-2', 'drapanie': '4-8',
+                        'znaczenie_broda': '1-3', 'kwiczenie': 'tylko z głodu, przy powitaniu albo karmieniu'},
+    'chodzenie': 'krótkie odcinki 20-120 px po 2-5 s, potem postój co najmniej 20 s',
+}
+json.dump({'potrzeby': NEEDS, 'spadek_na_godzine': DECAY, 'offline': {'mnoznik': 1 / 3, 'minimum': 20}, 'budzet_dnia': BUDZET,
            'wybor': 'zysk = suma((1 - potrzeba/100)^2 * efekt) * losowo(0.8, 1.2) + waga_bazowa',
            'czynnosci': actions, 'zdarzenia': events}, open(os.path.join(OUT, 'actions.json'), 'w'), ensure_ascii=False, indent=2)
 json.dump({'waluta': {'nazwa': 'koniczynki', 'ikona': 'koniczynka'}, 'przedmioty': items},

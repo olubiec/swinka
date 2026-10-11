@@ -19,35 +19,84 @@
     "mnoznik": 0.3333333333333333,
     "minimum": 20
   },
+  "budzet_dnia": {
+    "opis": "Docelowy podział czasu, gdy świnka jest na pulpicie (bez snu przy bezczynności). Źródła: sen 4-6 h/dobę w drzemkach do ok. 10 min, aktywność o świcie i zmierzchu.",
+    "procent_czasu": {
+      "odpoczynek_i_drzemki": 50,
+      "jedzenie_i_picie": 28,
+      "weszenie_rozgladanie": 8,
+      "chodzenie": 8,
+      "pielegnacja": 3,
+      "zabawa_i_rzadkie": 3
+    },
+    "pory": {
+      "6-9": {
+        "aktywnosc": 1.5
+      },
+      "17-21": {
+        "aktywnosc": 1.5
+      },
+      "11-15": {
+        "drzemki": 1.6
+      },
+      "23-6": {
+        "drzemki": 2.0,
+        "aktywnosc": 0.5
+      }
+    },
+    "rzadkie_na_dobe": {
+      "popcorn": "dorosła 1-3, młodzik 4-8, senior 0-1",
+      "zoomies": "0-2",
+      "drapanie": "4-8",
+      "znaczenie_broda": "1-3",
+      "kwiczenie": "tylko z głodu, przy powitaniu albo karmieniu"
+    },
+    "chodzenie": "krótkie odcinki 20-120 px po 2-5 s, potem postój co najmniej 20 s"
+  },
   "wybor": "zysk = suma((1 - potrzeba/100)^2 * efekt) * losowo(0.8, 1.2) + waga_bazowa",
   "czynnosci": [
     {
       "id": "odpoczynek",
       "animacja": "idle",
-      "czas_s": 6,
+      "czas_s": [
+        20,
+        60
+      ],
       "efekty": {},
-      "waga_bazowa": 0.35,
-      "opis": "Spokojne siedzenie"
+      "waga_bazowa": 0.6,
+      "opis": "Spokojne siedzenie, rozglądanie się"
     },
     {
       "id": "weszenie",
       "animacja": "sniff",
-      "czas_s": 4,
+      "czas_s": [
+        4,
+        8
+      ],
       "efekty": {
         "humor": 1
       },
-      "waga_bazowa": 0.25
+      "waga_bazowa": 0.2
     },
     {
       "id": "spacer",
       "animacja": "walk",
-      "czas_s": 8,
+      "czas_s": [
+        2,
+        5
+      ],
+      "dystans_px": [
+        20,
+        120
+      ],
       "efekty": {
         "humor": 2,
         "energia": -1
       },
-      "waga_bazowa": 0.3,
-      "ruch": true
+      "waga_bazowa": 0.12,
+      "cooldown_s": 20,
+      "ruch": true,
+      "opis": "Krótki odcinek, potem postój"
     },
     {
       "id": "zoomies",
@@ -58,10 +107,11 @@
         "energia": -4
       },
       "warunki": {
-        "humor_min": 70,
-        "energia_min": 40
+        "humor_min": 80,
+        "energia_min": 50
       },
-      "cooldown_s": 300,
+      "cooldown_s": 7200,
+      "limit_dzienny": 2,
       "ruch": true
     },
     {
@@ -75,7 +125,14 @@
       "warunki": {
         "humor_min": 75
       },
-      "cooldown_s": 120,
+      "cooldown_s": 1800,
+      "limit_dzienny": {
+        "maluch": 6,
+        "mlodzik": 8,
+        "dorosla": 3,
+        "senior": 1,
+        "legenda": 1
+      },
       "mnoznik_etapu": {
         "mlodzik": 2.0,
         "senior": 0.4,
@@ -85,7 +142,11 @@
     {
       "id": "jedzenie_siana",
       "animacja": "eat",
-      "czas_s": 8,
+      "czas_s": [
+        20,
+        90
+      ],
+      "waga_bazowa": 0.3,
       "efekty": {
         "najedzenie": 10,
         "zabki": 6
@@ -139,7 +200,7 @@
       "warunki": {
         "siano_w_pasniku_min": 30
       },
-      "cooldown_s": 600
+      "cooldown_s": 1800
     },
     {
       "id": "znaczenie_broda",
@@ -148,30 +209,38 @@
       "efekty": {
         "humor": 1
       },
-      "cooldown_s": 900,
-      "waga_bazowa": 0.05
+      "cooldown_s": 3600,
+      "waga_bazowa": 0.03,
+      "limit_dzienny": 3
     },
     {
       "id": "drapanie",
       "animacja": "scratch",
       "czas_s": 1.2,
       "efekty": {},
-      "cooldown_s": 600,
-      "waga_bazowa": 0.08
+      "cooldown_s": 1200,
+      "waga_bazowa": 0.04,
+      "limit_dzienny": 8
     },
     {
       "id": "drzemka",
       "animacja": "doze",
-      "czas_s": 60,
+      "czas_s": [
+        60,
+        600
+      ],
       "efekty": {
         "energia": 6
       },
       "warunki": {
-        "energia_max": 70
+        "energia_max": 85
       },
+      "waga_bazowa": 0.15,
+      "cooldown_s": 300,
       "zaspokaja": [
         "energia"
-      ]
+      ],
+      "opis": "Krótka drzemka, często z półotwartymi oczami"
     },
     {
       "id": "sen",
