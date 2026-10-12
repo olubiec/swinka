@@ -129,6 +129,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
     frames_land = format_frames(get_row_frames(20, 8))
     frames_turn = format_frames(get_row_frames(23, 4))
     frames_purr_pet = format_frames(get_row_frames(40, 8))
+    frames_poop = format_frames(get_row_frames(36, 10))
     frames_kill = format_frames(get_row_frames(0, 8))
     frames_sync = format_frames(get_row_frames(0, 4))
 
@@ -630,6 +631,32 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
       </end>
       <sequence repeat="2" repeatfrom="0">
 {frames_purr_pet}
+        <next probability="100" only="none">3</next>
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
+
+    <!-- ID 28: poop (robienie bobka: przysiada, zostawia bobek i idzie dalej) -->
+    <animation id="28">
+      <name>poop</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>125</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>125</interval>
+      </end>
+      <sequence repeat="0" repeatfrom="0">
+{frames_poop}
         <next probability="100" only="none">3</next>
       </sequence>
       <gravity>

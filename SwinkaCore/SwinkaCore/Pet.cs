@@ -84,6 +84,7 @@ namespace SwinkaCore
                 ApplyTime(offline, offline: true);
                 State.LastActiveUtc = now;
             }
+            RecalculateCleanliness();
             CheckAll();
         }
 
@@ -223,6 +224,69 @@ namespace SwinkaCore
             if (State.Clovers < amount) return false;
             State.Clovers -= amount;
             return true;
+        }
+
+        // ---- Bobki i czystość klatki (B4) -----------------------------------
+
+        public const int MaxPoops = 8;
+
+        /// <summary>
+        /// Przelicza potrzebę czystości klatki na podstawie liczby bobków:
+        /// 0 bobków = 100%, 8 bobków = 0% (spadek o 12.5% na bobek).
+        /// </summary>
+        public void RecalculateCleanliness()
+        {
+            State.Needs.Cleanliness = Math.Max(0.0, 100.0 - (State.PoopCount * 12.5));
+            CheckNeedThresholds();
+        }
+
+        /// <summary>
+        /// Dodaje bobek (do limitu 8). Zwraca false jeśli limit został osiągnięty.
+        /// </summary>
+        public bool TryAddPoop(PoopItem poop = null)
+        {
+            if (State.PoopCount >= MaxPoops) return false;
+            State.PoopCount++;
+            if (poop != null)
+            {
+                if (poop.CreatedAtUtc == default) poop.CreatedAtUtc = Clock.UtcNow;
+                State.Poops.Add(poop);
+            }
+            RecalculateCleanliness();
+            return true;
+        }
+
+        /// <summary>
+        /// Usuwa bobek (np. po kliknięciu): zmniejsza licznik, dodaje 1 koniczynkę i przelicza czystość.
+        /// </summary>
+        public bool CleanPoop(string poopId = null)
+        {
+            if (State.PoopCount <= 0 && State.Poops.Count == 0) return false;
+
+            if (!string.IsNullOrEmpty(poopId))
+            {
+                State.Poops.RemoveAll(p => p.Id == poopId);
+            }
+            else if (State.Poops.Count > 0)
+            {
+                State.Poops.RemoveAt(0);
+            }
+
+            State.PoopCount = Math.Max(0, State.PoopCount - 1);
+            AddClovers(1);
+            Count("zebrane_bobki");
+            RecalculateCleanliness();
+            return true;
+        }
+
+        /// <summary>
+        /// Sprząta całą klatkę (np. w Domku): zeruje licznik bobków, czyści listę i przywraca czystość do 100.
+        /// </summary>
+        public void CleanAllPoops()
+        {
+            State.PoopCount = 0;
+            State.Poops.Clear();
+            RecalculateCleanliness();
         }
 
         public int GetItemCount(string itemId)

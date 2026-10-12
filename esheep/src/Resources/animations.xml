@@ -657,6 +657,41 @@
       </gravity>
     </animation>
 
+    <!-- ID 28: poop (robienie bobka: przysiada, zostawia bobek i idzie dalej) -->
+    <animation id="28">
+      <name>poop</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>125</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>125</interval>
+      </end>
+      <sequence repeat="0" repeatfrom="0">
+        <frame>576</frame>
+        <frame>577</frame>
+        <frame>578</frame>
+        <frame>579</frame>
+        <frame>580</frame>
+        <frame>581</frame>
+        <frame>582</frame>
+        <frame>583</frame>
+        <frame>584</frame>
+        <frame>585</frame>
+        <next probability="100" only="none">3</next>
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
+
     <!-- ID 12: lie_down (kładzenie się na brzuchu przed snem) -->
     <animation id="12">
       <name>lie_down</name>

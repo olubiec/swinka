@@ -46,6 +46,11 @@ namespace DesktopPet
         IntPtr hookTaskbarId = IntPtr.Zero; // not used
         NativeMethods.RECT currentWindowSize;
 
+        public static FormPet ActivePet { get; private set; }
+        public IntPtr CurrentHwndWindow => hwndWindow;
+        public bool IsFacingLeft => IsMovingLeft;
+        internal NativeMethods.RECT CurrentWindowRect => currentWindowSize;
+
         private SwinkaBrainController _brain;
 
 #if DEBUG
@@ -82,7 +87,7 @@ namespace DesktopPet
             /// <summary>
             /// If the pet is in dragging mode (user is holding the pet with the mouse)
             /// </summary>
-        bool IsDragging = false;
+        internal bool IsDragging = false;
             /// <summary>
             /// If the pet is leaving the screen
             /// </summary>
@@ -91,15 +96,15 @@ namespace DesktopPet
             /// Offset Y - Sprite size is taken and not the single image. So, over the taskbar or over the windows, the pet could be 1-2 pixels over the border if you didn't drawn it on the bottom of the sprite frame.<br />
             /// With this offset, you can re-place the pet or you can give them an offset so that it is positioned over the window (for example if you want to show a girl sitting over the taskbar, you need this function)
             /// </summary>
-        double OffsetY = 0.0;
+        internal double OffsetY = 0.0;
             /// <summary>
             /// Current X position of the form. Because an offset can be used, this is the origin of the sprite (not like Form2.Left) before an offset was interpolated with the form position.
             /// </summary>
-        double PositionX = 0.0;
+        internal double PositionX = 0.0;
             /// <summary>
             /// Current Y position of the form. Because an offset can be used, this is the origin of the sprite (not like Form2.Top) before an offset was interpolated with the form position.
             /// </summary>
-        double PositionY = 0.0;
+        internal double PositionY = 0.0;
             /// <summary>
             /// The force in which the user tossed the sheep with. Uses Vector2 for easy magnitude calculation.
             /// </summary>
@@ -107,7 +112,7 @@ namespace DesktopPet
             /// <summary>
             /// If the pet is in tossing mode (it was tossed and is now falling).
             /// </summary>
-        bool IsTossing = false;
+        internal bool IsTossing = false;
             /// <summary>
             /// The current vertical velocity while in tossing mode.
             /// </summary>
@@ -159,6 +164,7 @@ namespace DesktopPet
                 }
             }
             UseSmoothMovements = Program.MyData.GetSmoothMovements();
+            if (Name.IndexOf("child") < 0) ActivePet = this;
             _brain = SwinkaBrainController.Instance;
             HookBrainEvents();
             InitBubbleInteraction();
@@ -1558,6 +1564,7 @@ namespace DesktopPet
 
         private void Form2_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (ActivePet == this) ActivePet = null;
             if(!IsDisposed) Dispose();
         }
 
@@ -1604,6 +1611,10 @@ namespace DesktopPet
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool IsWindow(IntPtr hWnd);
 
             /// <summary>
             /// Get the text present in the window title bar.

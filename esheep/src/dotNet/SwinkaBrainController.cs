@@ -61,6 +61,10 @@ namespace DesktopPet
             // Pierwsza decyzja mózgu
             _brain.DecideNextAction();
             SetupActionState(_brain.CurrentAction);
+
+            // Menedżer bobków na pulpicie (B4)
+            SwinkaPoopManager.Initialize(this);
+            SwinkaPoopManager.Instance.RestoreSavedPoops();
         }
 
         public static void Initialize(double initialMultiplier = 1.0)
@@ -197,6 +201,9 @@ namespace DesktopPet
 
             // Aktualizacja Pet i AutoSaver
             _session.Tick();
+
+            // Aktualizacja bobków (B4: odliczanie czasu gry, aktualizacja pozycji na oknach)
+            SwinkaPoopManager.Instance?.Update(gameElapsed);
 
             // Aktualizacja Brain (tylko gdy nie ma fizyki i nie trwa wybudzanie)
             if (!_isPhysicsActive)
@@ -340,6 +347,16 @@ namespace DesktopPet
             RequestAnimation("purr_pet");
         }
 
+        public void CleanPoop(string poopId = null)
+        {
+            _session?.Pet?.CleanPoop(poopId);
+        }
+
+        public void SpawnPoopNow()
+        {
+            SwinkaPoopManager.Instance?.TrySpawnPoop(force: true);
+        }
+
         // ---- Wybór kolejnej animacji dla silnika eSheep ----------------------
 
         public string GetCurrentDesiredAnimation()
@@ -440,8 +457,8 @@ namespace DesktopPet
                 }
             }
 
-            // Akcje jednokrotne (np. popcorn, wheek, scratch)
-            if (action.ActionId == "popcorn" || action.ActionId == "kwiczenie" || action.ActionId == "drapanie")
+            // Akcje jednokrotne (np. popcorn, wheek, scratch, poop)
+            if (action.ActionId == "popcorn" || action.ActionId == "kwiczenie" || action.ActionId == "drapanie" || currentAnimationName == "poop")
             {
                 var next = _brain.DecideNextAction();
                 SetupActionState(next);
@@ -567,6 +584,7 @@ namespace DesktopPet
         {
             try
             {
+                SwinkaPoopManager.Instance?.CloseAllVisuals();
                 Log("[Sesja] Zapisywanie stanu i zamykanie gry...");
                 _session?.Close();
             }

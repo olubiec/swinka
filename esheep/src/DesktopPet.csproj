@@ -281,6 +281,10 @@
     <Compile Include="dotNet\FormStatusBubble.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="dotNet\FormBobek.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dotNet\SwinkaPoopManager.cs" />
     <Compile Include="dotNet\FormBrainOverlay.Designer.cs">
       <DependentUpon>FormBrainOverlay.cs</DependentUpon>
     </Compile>

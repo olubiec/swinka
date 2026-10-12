@@ -36,6 +36,12 @@ namespace SwinkaCore
         /// <summary>Koniczynki (waluta). Nigdy poniżej 0.</summary>
         public int Clovers { get; set; }
 
+        /// <summary>Liczba bobków świnki (wpływa na czystość klatki, max 8).</summary>
+        public int PoopCount { get; set; }
+
+        /// <summary>Lista bobków leżących na ekranie (pozycja, okno itp.).</summary>
+        public List<PoopItem> Poops { get; set; } = new List<PoopItem>();
+
         /// <summary>Ekwipunek: id przedmiotu z items.json -> liczba sztuk.</summary>
         public Dictionary<string, int> Inventory { get; set; } = new Dictionary<string, int>();
 
@@ -73,6 +79,10 @@ namespace SwinkaCore
             if (Diary == null) Diary = new List<DiaryEntry>();
             if (Stats == null) Stats = new Statistics();
             if (Stats.Counters == null) Stats.Counters = new Dictionary<string, int>();
+            if (Poops == null) Poops = new List<PoopItem>();
+            if (PoopCount < 0) PoopCount = 0;
+            if (PoopCount > 8) PoopCount = 8;
+            if (PoopCount < Poops.Count) PoopCount = Poops.Count;
             BirthDateUtc = AsUtc(BirthDateUtc);
             LastActiveUtc = AsUtc(LastActiveUtc);
             if (LastActiveUtc < BirthDateUtc) LastActiveUtc = BirthDateUtc;
@@ -123,5 +133,18 @@ namespace SwinkaCore
 
         /// <summary>Dowolne liczniki, np. "karmienia", "papryka", "popcorn".</summary>
         public Dictionary<string, int> Counters { get; set; } = new Dictionary<string, int>();
+    }
+
+    /// <summary>
+    /// Informacje o pojedynczym bobku na ekranie (zapisywane w save.json).
+    /// </summary>
+    public sealed class PoopItem
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString("N");
+        public int X { get; set; }
+        public int Y { get; set; }
+        public bool OnTaskbar { get; set; } = true;
+        public string WindowTitle { get; set; }
+        public DateTime CreatedAtUtc { get; set; }
     }
 }
