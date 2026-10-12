@@ -12,6 +12,7 @@ Valid from step V1b. Until V1b is done, ZASADY.md applies.
 - All code, comments, UI texts and docs are in English. UI strings live in `Strings.cs` and `web/home/strings.js`.
 - The clock has a speed multiplier (60x in Debug only). Dev tools (F9 overlay, Diagnostics, DevTools) exist in Debug builds only.
 - Do not guess APIs; check docs or the code. Do not remove features without being asked.
+- Before reporting a task done, run `tools/qa/run-all.ps1` once it exists and add a regression test for every bug you fix.
 - After each task: report what changed, how you tested it, and what the human should check.
 
 ## Layout
@@ -25,6 +26,7 @@ Valid from step V1b. Until V1b is done, ZASADY.md applies.
 | `tools/build_pet_xml.py` | Builds the desktop animations.xml from a sprite sheet |
 | `tools/art` | Python pixel-art generator (pig.py, anims*.py, props.py, export.py, english_assets.py) |
 | `web/home` | Home window page; `web/home/minigames` minigames |
+| `qa/`, `tools/qa/` | Test strategy, requirements matrix, bug list, reports; QA scripts (`tools/qa/run-all.ps1`) |
 | `assets/sprites/<variant>/` | `spritesheet.png` (64 px frames), `spritesheet_x2.png` (128 px), `animations.json`, `animations_x2.json` |
 | `assets/icons/` | `icons_16.png` + `icons.json`, `pig_head.ico` (tray) |
 | `assets/app-icon/` | `cuy.ico`, `icon_16/32/256.png`, `logo_256.png` |
