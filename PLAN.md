@@ -280,10 +280,11 @@ Zamiast 30 kroków po kolei jest 13 rund. W jednej rundzie prompty zmieniają r�
 | 2 | B2a, potem B2b ∥ C2 | mózg świnki ∥ ekran Domku w trybie mock (zrobione) |
 | 3 | B3 ∥ B5 ∥ B2c | bezczynność ∥ menu w zasobniku ∥ dymek stanu (zrobione) |
 | 4 | B4 | bobki na pasku (zrobione) |
-| 5 | B6 ∥ C1 | karmienie ∥ pikselowy Domek w oknie (zastępuje tymczasowe okno z B5) |
-| 5b | C3 ∥ I1 ∥ F1 | sklepik ∥ interakcje (głaskanie, patrzenie, wołanie) ∥ dźwięki |
+| 5 | B6 ∥ D1 | karmienie ∥ szkielet minigier `domek/minigry/` |
+| 5b | C1 ∥ I1 ∥ F1 | pikselowy Domek w oknie (zastępuje tymczasowe okno z B5) ∥ interakcje (głaskanie, patrzenie, wołanie) ∥ dźwięki |
+| 5c | C3 | sklepik w Domku (potrzebuje C1) |
 | 5½ | Prezent v1 | wersja do podarowania: mała świnka, imię, ikona, autostart |
-| 6 | C4 ∥ D1 | wiek i więź ∥ szkielet minigier |
+| 6 | C4 | wiek i więź |
 | 7 | C5 | album i pamiętnik |
 | 8 | D2 ∥ D3 ∥ D4 ∥ D5 | każda minigra w swoim folderze `domek/minigry/<gra>/` |
 | 9 | E1 ∥ E3 ∥ E5 | muzyka ∥ pełny ekran ∥ pogoda |
@@ -557,7 +558,7 @@ Inspiracja zapamiętywania preferencji: https://github.com/ViciousSquid/Dosidicu
 
 **Sprawdź:** Nakarm → Papryka, potem to samo, gdy świnka stoi na oknie. **Powinno być:** papryka pojawia się obok, świnka podchodzi i chrupie 3–6 s, w nakładce F9 rośnie witamina C; jedzenie da się przeciągnąć; z okna jedzenie spada na pasek, a świnka schodzi za nim.
 
-### I1 · Gemini: interakcje przed prezentem (runda 5b)
+### I1 · Gemini: interakcje przed prezentem (runda 5b, równolegle z C1 i F1)
 
 Zbiera najważniejsze kawałki E4 i E2 wcześniej, żeby już pierwsza wersja była zwierzątkiem, a nie animacją.
 
