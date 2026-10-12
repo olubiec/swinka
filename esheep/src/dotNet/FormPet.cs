@@ -59,7 +59,7 @@ namespace DesktopPet
 #endif
 
         private FormStatusBubble _statusBubble;
-        private Timer _bubbleHoverTimer;
+        private System.Windows.Forms.Timer _bubbleHoverTimer;
         private Point _clickStartPos;
         private DateTime _clickStartTime;
 
@@ -344,7 +344,7 @@ namespace DesktopPet
         {
             if (Name.IndexOf("child") >= 0) return;
 
-            _bubbleHoverTimer = new Timer(components) { Interval = 700 };
+            _bubbleHoverTimer = new System.Windows.Forms.Timer(components) { Interval = 700 };
             _bubbleHoverTimer.Tick += (s, e) =>
             {
                 _bubbleHoverTimer.Stop();

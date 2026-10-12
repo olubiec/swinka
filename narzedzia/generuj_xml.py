@@ -128,6 +128,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
     frames_fall = format_frames(get_row_frames(19, 4))
     frames_land = format_frames(get_row_frames(20, 8))
     frames_turn = format_frames(get_row_frames(23, 4))
+    frames_purr_pet = format_frames(get_row_frames(40, 8))
     frames_kill = format_frames(get_row_frames(0, 8))
     frames_sync = format_frames(get_row_frames(0, 4))
 
@@ -603,6 +604,32 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
       </end>
       <sequence repeat="0" repeatfrom="0">
 {frames_doze}
+        <next probability="100" only="none">3</next>
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
+
+    <!-- ID 27: purr_pet (mruczenie przy głaskaniu: serduszka, rozluźnienie) -->
+    <animation id="27">
+      <name>purr_pet</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </end>
+      <sequence repeat="2" repeatfrom="0">
+{frames_purr_pet}
         <next probability="100" only="none">3</next>
       </sequence>
       <gravity>

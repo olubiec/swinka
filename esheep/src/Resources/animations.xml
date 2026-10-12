@@ -624,6 +624,39 @@
       </gravity>
     </animation>
 
+    <!-- ID 27: purr_pet (mruczenie przy głaskaniu: serduszka, rozluźnienie) -->
+    <animation id="27">
+      <name>purr_pet</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </end>
+      <sequence repeat="2" repeatfrom="0">
+        <frame>640</frame>
+        <frame>641</frame>
+        <frame>642</frame>
+        <frame>643</frame>
+        <frame>644</frame>
+        <frame>645</frame>
+        <frame>646</frame>
+        <frame>647</frame>
+        <next probability="100" only="none">3</next>
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
+
     <!-- ID 12: lie_down (kładzenie się na brzuchu przed snem) -->
     <animation id="12">
       <name>lie_down</name>
