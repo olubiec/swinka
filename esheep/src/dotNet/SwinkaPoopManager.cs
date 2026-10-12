@@ -158,6 +158,7 @@ namespace DesktopPet
                     SwinkaBrainController.Log(string.Format(
                         "[Bobek] Zostawiono bobek w ({0}, {1}) na {2}. Liczba bobków: {3}/8, Czystość: {4:0.#}%",
                         bobekX, bobekY, onTaskbar ? "pasku zadań" : $"oknie \"{windowTitle}\"", _pet.State.PoopCount, _pet.Needs.Cleanliness));
+                    FormDomek.NotifyStateChanged();
                     return true;
                 }
                 catch (Exception ex)
@@ -189,6 +190,7 @@ namespace DesktopPet
             SwinkaBrainController.Log(string.Format(
                 "[Bobek] Posprzątano bobek (+1 koniczynka). Łącznie koniczynek: {0}, Pozostało bobków: {1}/8, Czystość: {2:0.#}%",
                 _pet.State.Clovers, _pet.State.PoopCount, _pet.Needs.Cleanliness));
+            FormDomek.NotifyStateChanged();
         }
 
         /// <summary>

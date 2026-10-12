@@ -165,6 +165,7 @@ namespace DesktopPet
                     SwinkaBrainController.Log(string.Format(
                         "[Głaskanie] Głaskanie śpiącej świnki ją budzi! Humor -2 (aktualny humor: {0:0.#}%).",
                         pet.Needs.Mood));
+                    FormDomek.NotifyStateChanged();
                 }
                 _petForm.PlayAnimationByName("wake_up");
             }
@@ -185,6 +186,7 @@ namespace DesktopPet
                         SwinkaBrainController.Log(string.Format(
                             "[Głaskanie] Głaskanie udane! purr_pet, humor +5 ({0:0.#}%), więź +1. Nagrodzonych w tej godzinie: {1}/10.",
                             pet.Needs.Mood, _rewardedPettingTimes.Count));
+                        FormDomek.NotifyStateChanged();
                     }
                 }
                 else

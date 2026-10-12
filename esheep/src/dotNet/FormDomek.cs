@@ -62,9 +62,43 @@ namespace DesktopPet
             InitializeComponent();
             SetupFormStyle();
             SetupRefreshTimer();
+            AttachPetEvents();
         }
 
         public static FormDomek Instance => _instance;
+
+        /// <summary>
+        /// Powiadamia otwarte okno Domku o zmianie stanu w SwinkaCore (np. po karmieniu na pulpicie lub sprzątnięciu).
+        /// </summary>
+        public static void NotifyStateChanged()
+        {
+            if (_instance != null && !_instance.IsDisposed && _instance.Visible)
+            {
+                if (_instance.InvokeRequired)
+                {
+                    _instance.BeginInvoke(new Action(() => _instance.SendStateToWebView()));
+                }
+                else
+                {
+                    _instance.SendStateToWebView();
+                }
+            }
+        }
+
+        private void AttachPetEvents()
+        {
+            try
+            {
+                var pet = SwinkaBrainController.Instance?.Pet;
+                if (pet == null) return;
+                pet.NeedLow += (s, e) => NotifyStateChanged();
+                pet.NeedCritical += (s, e) => NotifyStateChanged();
+                pet.StageChanged += (s, e) => NotifyStateChanged();
+                pet.Birthday += (s, e) => NotifyStateChanged();
+                pet.LevelUp += (s, e) => NotifyStateChanged();
+            }
+            catch { }
+        }
 
         public static void ShowDomek()
         {
@@ -88,7 +122,9 @@ namespace DesktopPet
 
         private void SetupFormStyle()
         {
+            this.AutoScaleMode = AutoScaleMode.None;
             this.Size = new Size(420, 640);
+            this.ClientSize = new Size(420, 640);
             this.MaximumSize = new Size(420, 640);
             this.MinimumSize = new Size(420, 640);
             this.FormBorderStyle = FormBorderStyle.None;
@@ -568,23 +604,21 @@ namespace DesktopPet
             {
                 _dragStartCursor = Cursor.Position;
                 _dragStartLocation = this.Location;
-                ReleaseCapture();
-                SendMessage(this.Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
             else if (action == "drag_move")
             {
-                Point cur = Cursor.Position;
-                int dx = cur.X - _dragStartCursor.X;
-                int dy = cur.Y - _dragStartCursor.Y;
-                if (dx == 0 && dy == 0)
+                int dx = obj.Value<int?>("dx") ?? 0;
+                int dy = obj.Value<int?>("dy") ?? 0;
+                if (dx != 0 || dy != 0)
                 {
-                    dx = obj.Value<int?>("dx") ?? 0;
-                    dy = obj.Value<int?>("dy") ?? 0;
                     this.Location = new Point(this.Location.X + dx, this.Location.Y + dy);
                 }
                 else
                 {
-                    this.Location = new Point(_dragStartLocation.X + dx, _dragStartLocation.Y + dy);
+                    Point cur = Cursor.Position;
+                    int diffX = cur.X - _dragStartCursor.X;
+                    int diffY = cur.Y - _dragStartCursor.Y;
+                    this.Location = new Point(_dragStartLocation.X + diffX, _dragStartLocation.Y + diffY);
                 }
             }
         }

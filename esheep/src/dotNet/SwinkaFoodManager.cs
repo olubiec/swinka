@@ -451,6 +451,9 @@ namespace DesktopPet
                 _state = FoodInteractionState.None;
                 petForm.PlayAnimationByName("idle");
             }
+
+            // Natychmiastowe powiadomienie otwartego okna Domku o zmianie stanu
+            FormDomek.NotifyStateChanged();
         }
     }
 }

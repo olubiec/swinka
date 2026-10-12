@@ -159,7 +159,7 @@
         let lastScreenX = 0;
         let lastScreenY = 0;
 
-        header.addEventListener('mousedown', (e) => {
+        const onPointerDown = (e) => {
           if (e.target.closest('button') || e.target.closest('.header-right')) return;
           if (e.button !== 0) return; // Tylko lewy przycisk myszy
 
@@ -167,10 +167,16 @@
           lastScreenX = e.screenX;
           lastScreenY = e.screenY;
 
-          this.send({ type: 'settings', action: 'drag_start' });
-        });
+          try {
+            if (header.setPointerCapture && e.pointerId !== undefined) {
+              header.setPointerCapture(e.pointerId);
+            }
+          } catch (_) {}
 
-        window.addEventListener('mousemove', (e) => {
+          this.send({ type: 'settings', action: 'drag_start' });
+        };
+
+        const onPointerMove = (e) => {
           if (!isDragging) return;
           if (e.buttons !== 1) {
             isDragging = false;
@@ -183,11 +189,23 @@
             lastScreenY = e.screenY;
             this.send({ type: 'settings', action: 'drag_move', dx, dy });
           }
-        });
+        };
 
-        window.addEventListener('mouseup', () => {
-          isDragging = false;
-        });
+        const onPointerUp = (e) => {
+          if (isDragging) {
+            isDragging = false;
+            try {
+              if (header.releasePointerCapture && e.pointerId !== undefined) {
+                header.releasePointerCapture(e.pointerId);
+              }
+            } catch (_) {}
+          }
+        };
+
+        header.addEventListener('pointerdown', onPointerDown);
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', onPointerUp);
+        window.addEventListener('pointercancel', onPointerUp);
       };
 
       if (document.readyState === 'loading') {
