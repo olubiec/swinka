@@ -283,7 +283,7 @@ Zamiast 30 kroków po kolei jest 13 rund. W jednej rundzie prompty zmieniają r�
 | 5 | B6 ∥ D1 | karmienie ∥ szkielet minigier `domek/minigry/` |
 | 5b | C1 ∥ I1 ∥ F1 | pikselowy Domek w oknie (zastępuje tymczasowe okno z B5) ∥ interakcje (głaskanie, patrzenie, wołanie) ∥ dźwięki |
 | 5c | C3 | sklepik w Domku (potrzebuje C1) |
-| 5½ | Prezent v1 | V1a naprawa świnki, V1b Cuy i porządek, V1c angielski, V1d paczka prezentowa (po kolei), potem etap Q: Q1, Q2 ∥ Q3 ∥ Q5, Q4, Q6, Q7 i ponownie V1d |
+| 5½ | Prezent v1 | V1a naprawa świnki, V1b Cuy i porządek, V1c angielski, V1d paczka prezentowa (po kolei), potem QA1, QA2 i ponownie V1d |
 | 6 | C4 | wiek i więź |
 | 7 | C5 | album i pamiętnik |
 | 8 | D2 ∥ D3 ∥ D4 ∥ D5 | każda minigra w swoim folderze `domek/minigry/<gra>/` |
@@ -756,219 +756,81 @@ Report the package size, the selftest output and anything you could not verify.
 
 **Aktualizacje u niej:** każdą kolejną wersję rozpakowujesz do tego samego folderu, nadpisując pliki. Zapis gry leży osobno w `%AppData%\Cuy`, więc nic nie ginie.
 
-### Etap Q · testy jakości przed wręczeniem (runda 5¾)
+### Etap Q · testy jakości (2 prompty, po V1d)
 
-Etap Q to kontrola jakości robiona tak jak w zespołach tworzących gry. Robisz go po V1d, a przed wręczeniem prezentu. Każdy test ma z góry ustalony próg zaliczenia, wzięty z tego planu, więc wynik jest obiektywny. Agent nie ocenia na oko, czy „wygląda dobrze”. Wszystkie testy zostają w repo jako zestaw do ponownego uruchomienia (`tools/qa/run-all.ps1`). Po każdej kolejnej aktualizacji, na przykład C4, puszczasz go jeszcze raz i od razu widzisz, co się zepsuło.
+Dwa duże prompty zamiast osobnych kroków. Pierwszy buduje i uruchamia testy automatyczne, drugi ocenia grę jak doświadczony projektant i naprawia to, co ważne. Testy zostają w repo: po każdej aktualizacji (C4 i dalej) wystarczy uruchomić `tools\qa\run-all.ps1`. Progi zaliczenia biorą się z planu, więc wynik jest obiektywny. Błędy mają skalę:
 
-**Na czym to się opiera:**
-
-- **Rodzaje testów** ze studiów QA: smoke, regresja, testy funkcjonalne, kompatybilność, wydajność i soak (długie działanie), lokalizacja, playtesty.
-- **Symulacja graczy-person:** automatyczne testy rozgrywki prowadzone przez boty, na wzór badań nad automatycznym playtestingiem z personami.
-- **Heurystyki grywalności PLAY** (Desurvire) do eksperckiej oceny wrażeń z gry.
-- **Testy eksploracyjne w sesjach z misją** (Session-Based Test Management, Bach).
-- **Porównywanie zrzutów ekranu ze wzorcem** (visual regression).
-- **Skala błędów P0–P3** do triage, czyli ustalania, co naprawić najpierw.
-- **Sterowanie oknem Domku przez Playwright** (WebView2 przez protokół CDP) i **sterowanie oknami Windows przez FlaUI**.
-- **Liczniki GDI/USER:** okna rysowane klatka po klatce typowo gubią zasoby graficzne Windows. Po około 10 000 takich obiektów aplikacja pada, więc test długiego działania pilnuje tych liczników.
-
-| Obszar | Pytanie, na które odpowiada | Krok |
-| --- | --- | --- |
-| Zgodność z planem | Czy każda funkcja z planu istnieje i działa jak opisano? Macierz wymaganie → test | Q1, Q6 |
-| Logika gry | Czy potrzeby, zapis, zegar, ekonomia nigdy nie łamią reguł (0–100, brak ujemnych koniczynek, brak NaN)? | Q2 |
-| Zachowanie i balans | Czy świnka spędza czas jak prawdziwa świnka (budżet dnia), czy ekonomia koniczynek ma sens dla różnych typów gracza? | Q3 |
-| Przyspieszone doświadczenie gracza | Jak wygląda pierwsza godzina, pierwszy dzień i tydzień z perspektywy gracza (timelapse ze zrzutów)? | Q4 |
-| Wygląd i dźwięk | Zrzuty Domku ze wzorcem, różne skale ekranu, ucięte napisy, poprawność klatek, mapowanie dźwięków | Q4 |
-| Wydajność i długie działanie | CPU, pamięć, zasoby GDI/USER przez wiele godzin, otwieranie Domku 100 razy | Q5 |
-| Odporność | Uszkodzony zapis, skoki zegara, uśpienie, restart Eksploratora, brak dźwięku, brak WebView2 | Q5 |
-| Ocena ekspercka | Grywalność (PLAY), realizm, „czy nie przeszkadza w pracy”, spójność stylu, lista luk P0–P3 | Q6 |
-| Ludzkie oko | Twoje sesje eksploracyjne i test „świeżej osoby” | ty |
-
-**Kolejność:** Q1 → (Q2 ∥ Q3 ∥ Q5 w trzech rozmowach naraz) → Q4 → Q6 → Q7 poprawki → powtórka `run-all.ps1` → V1d jeszcze raz pakuje. Wyniki lądują w `qa/reports/`.
-
-**Próg wręczenia:** 0 błędów P0 i P1, wszystkie testy automatyczne zielone, soak bez wycieków, Q6 bez otwartych luk „krytycznych dla wrażenia”.
-
-**Skala błędów:**
-
-- **P0:** crash, utrata zapisu, świnka znika na stałe.
-- **P1:** funkcja z planu nie działa albo świnka irytuje w pracy.
+- **P0:** crash, utrata zapisu, świnka znika.
+- **P1:** funkcja z planu nie działa albo świnka przeszkadza w pracy.
 - **P2:** zauważalny błąd z obejściem.
 - **P3:** kosmetyka.
 
-#### Q1 · Claude: strategia, macierz wymagań i tryb testowy
+Prezent wręczasz przy 0 błędów P0 i P1.
+
+#### QA1 · Claude z /plan: testy automatyczne i symulacja gracza
 
 ```text
-Read RULES.md, ARCHITECTURE.md and PLAN.md (Polish; it is the design document). Build the QA foundation.
+Read RULES.md, ARCHITECTURE.md and PLAN.md (Polish design document). Build and run a QA suite the way a game QA team
+would. Targets come from PLAN.md and assets/data; put every numeric target and tolerance in qa/targets.json.
+Severity scale: P0 crash/save loss/pet gone, P1 planned feature broken or pet annoying during work,
+P2 noticeable with workaround, P3 cosmetic. Do not change game code except for test hooks; log bugs instead.
 
-1. qa/TEST_STRATEGY.md: scope, test levels (unit, property, simulation, integration/E2E, visual, audio, performance/soak,
-   robustness, compatibility, expert review, exploratory), entry/exit criteria, the P0-P3 severity scale
-   (P0 crash/save loss/pet gone, P1 planned feature broken or pet annoying during work, P2 noticeable with workaround,
-   P3 cosmetic), the bug report template (steps, expected, actual, build, logs, screenshot, severity) and the release gate
-   (0 P0/P1, all automated suites green, soak without leaks).
-2. qa/requirements.csv: a traceability matrix. Go through PLAN.md section by section and list every concrete,
-   testable requirement that applies to v1 (needs and decay, day budget, times of day, rare behaviours per day,
-   feeding, hay rack, poop and cleaning, shop and prices, interactions I1, sounds F1, Home window, first run,
-   autostart, save, offline rules, Debug-only tools...). Columns: id, area, requirement (English), source section,
-   numeric target or rule, test level, test id, status. Mark requirements that belong to later versions as out of scope.
-3. QA test mode (compiled only with a QA build constant, never in Release): Cuy.exe --qa [--seed N] [--speed X]
-   - deterministic random seed and clock speed,
-   - WebView2 started with --remote-debugging-port=9222 so Playwright can drive Home,
-   - a local control channel (named pipe "cuy-qa") with JSON commands: getState, setNeed, setClovers, advanceTime,
-     triggerAction, spawnPoop, setTime, screenshotPet, quit; and an event stream (action started/ended, sound played,
-     need changed, error logged),
-   - AutomationId on every WinForms control and tray menu item, data-testid on every Home element.
-4. tools/qa/run-all.ps1: one entry point that builds the QA configuration and runs every suite that exists,
-   writing qa/reports/summary.md (suite, passed, failed, link to details). Suites added later plug into it.
-Do not change game behaviour. Report the number of requirements found per area.
+1. QA mode (QA build constant only, never in Release): Cuy.exe --qa --seed N --speed X, a named pipe "cuy-qa"
+   (getState, setNeed, setClovers, advanceTime, triggerAction, spawnPoop, quit) and WebView2 with
+   --remote-debugging-port=9222.
+2. Requirements: qa/requirements.csv lists every testable v1 requirement from PLAN.md (id, area, rule/number,
+   test id, status).
+3. Logic tests (xUnit + FsCheck): random sequences of 1000 actions, time jumps and saves keep all invariants
+   (needs 0-100 and never NaN, clovers >= 0, hay rack 0-100, daily limits and cooldowns respected, save -> load equal);
+   clock +3 days / -1 h / midnight / DST; offline rules; corrupted save falls back to save.bak; every animation, icon,
+   sound and need referenced in data exists.
+4. Player simulation (headless, Cuy.Core, 14 game days, 20 seeds) with personas Attentive, Worker 9-17, Absent,
+   Neglectful, Clicker: time split vs the day budget (50/28/8/8/3/3, +-5 points) by hour of day; rare behaviours per
+   day; wheek rules; needs with care >= 70 and weekend without care >= 20; clovers earned per day and whether an
+   attentive player can afford a vegetable a day; animation coverage (which of the 60 never play); variety (same action
+   twice in a row, longest stretch with no visible change); sounds and attention-seeking actions per work hour.
+   Charts as PNG.
+5. App tests: Playwright over CDP for Home (first run naming, feed, shop with and without clovers, clean, state in
+   Home matches the desktop within 1 s), screenshots of every Home view at scale 1, 1.5 and 2 with text overflow and
+   font checks; an accelerated playthrough at --speed 60 of the first day with a screenshot of the pet every
+   2 game minutes turned into a contact sheet.
+6. Robustness and performance: kill during save (50x), read-only save folder, missing asset, explorer.exe restart
+   (tray icon returns), second instance, no audio device; a 30-minute run at --speed 60 sampling CPU, private bytes,
+   GDI and USER objects every 30 s (idle CPU < 1 %, memory growth < 5 MB/h after warm-up, GDI/USER flat).
+   Also write tools/qa/soak-8h.ps1 for an overnight run.
+7. tools/qa/run-all.ps1 runs everything and writes qa/reports/summary.md (PASS/FAIL per target with links to
+   details). Every failure becomes an entry in qa/BUGS.md: steps, expected, actual, evidence, severity.
+Report the summary table and the top problems in plain words.
 ```
 
-**Sprawdź:** otwórz `qa/requirements.csv` w Excelu i przejrzyj kilka wierszy z działów, które znasz. Uruchom `Cuy.exe --qa`, potem `tools\qa\run-all.ps1`. **Powinno być:** co najmniej kilkadziesiąt wymagań z liczbami z planu; w trybie testowym świnka działa normalnie; w wersji Release nie ma śladu po trybie testowym; powstaje `qa/reports/summary.md`.
+**Sprawdź:** przeczytaj `qa/reports/summary.md`, obejrzyj wykres dnia świnki i zestaw zrzutów z przyspieszonego dnia. Na noc puść `tools\qa\soak-8h.ps1`. **Powinno być:** tabela PASS/FAIL dla celów z planu; lista błędów w `qa/BUGS.md` z oceną P0–P3; rano płaskie wykresy pamięci i obiektów GDI.
 
-#### Q2 · Gemini: logika gry, reguły i dane (równolegle z Q3 i Q5)
+#### QA2 · Claude z /plan: ocena eksperta, poprawki i regresja
 
 ```text
-Read RULES.md, qa/TEST_STRATEGY.md and qa/requirements.csv. Extend tests/Cuy.Core.Tests:
-1. Property-based tests with FsCheck (random sequences of 1000 actions, time jumps and saves) for invariants:
-   every need stays within 0-100 and is never NaN; clovers never negative; hay_in_rack 0-100; daily limits and
-   cooldowns are never exceeded; the Brain always picks an action that exists and whose conditions hold;
-   save -> load gives an equal state; loading never throws on any save produced by the game.
-2. Edge cases: clock jumps forward 1 h, 3 days, 30 days, backwards 1 h, DST change, midnight crossing, offline rules
-   (multiplier and minimum from actions.json), first launch, save from an older version, corrupted and empty save
-   (falls back to save.bak), read-only save folder (game keeps running and logs once).
-3. Data validation tests: every action animation exists in assets/sprites/*/animations.json for every variant;
-   every item icon exists in icons.json; every effect names a real need; every sound referenced exists in
-   assets/sounds; no duplicate ids; prices and effects are within sane ranges.
-4. Map each test to requirement ids in qa/requirements.csv (test id column) and plug the suite into run-all.ps1.
-Do not change game code unless a test reveals a real bug; list such bugs in qa/BUGS.md with severity.
+Act as a senior game designer and QA lead who did not build this game. Read PLAN.md, RULES.md, qa/requirements.csv,
+qa/reports/ (summary, simulation charts, screenshots, contact sheet, perf) and qa/BUGS.md. Run the game in QA mode
+where you need to confirm something.
+Part A, review (write qa/reports/REVIEW.md):
+1. Conformance: each requirement met / partly / missing, with evidence; planned features that silently disappeared.
+2. Playability heuristics (PLAY, adapted to a desktop pet), score 0-4 with evidence: clear care goals and rewards,
+   feedback for every action within 0.5 s, readable state, discoverable controls, the pet feels alive and notices
+   the player, variety and surprise, respect for the user's work (no blocking, no sound or attention spam,
+   full-screen and meetings).
+3. Realism against the research in PLAN.md (sleep, eating share, popcorning, wheeking) as a guinea pig owner would see it.
+4. Style consistency: pixel scale, palette, font, text tone, icons, sound mix.
+5. The gift moment: the first 5 minutes from unzipping to the first wheek for a non-technical person.
+Start REVIEW.md with the top 10 gaps by player impact, each with severity, evidence, fix and effort S/M/L, and add
+them to qa/BUGS.md.
+Part B, fix: fix every P0 and P1, then P2 with effort S, one at a time; add a regression test for each where possible;
+run tools/qa/run-all.ps1 after each fix; mark bugs fixed with the test that guards them. Do not change balance numbers
+without updating qa/targets.json and writing the reason. Stop and list anything that needs a design decision from
+the human instead of guessing.
 ```
 
-**Sprawdź:** `tools\qa\run-all.ps1`. **Powinno być:** wszystkie testy zielone albo każdy czerwony opisany w `qa/BUGS.md` z oceną P0–P3.
+**Sprawdź:** przeczytaj „top 10” w `qa/reports/REVIEW.md` i listę decyzji dla ciebie; uruchom `tools\qa\run-all.ps1`. **Powinno być:** zero otwartych P0 i P1, wszystko zielone. Potem V1d pakuje jeszcze raz i robisz listę „Sprawdź” spod V1d.
 
-#### Q3 · Claude: symulacja zachowania, balansu i ekonomii z personami (równolegle z Q2 i Q5)
-
-```text
-Read RULES.md, qa/TEST_STRATEGY.md, qa/requirements.csv, assets/data/*.json and the PLAN.md sections about the
-day budget, needs, economy and research sources. Build tools/qa/sim (console app using Cuy.Core directly, no UI,
-deterministic seeds). Simulate 14 game days, 30 seeds per persona:
-- Attentive: PC on 8-22, feeds when a need < 50, cleans poop within 10 min, pets 3x a day.
-- Worker: PC on 9-17 on weekdays, checks Home twice a day, weekends off.
-- Absent: PC on 2 h a day, rarely feeds.
-- Neglectful: never feeds or cleans (only hay rack refills it starts with).
-- Clicker: clicks and pets constantly, buys everything it can afford.
-Measure and compare with targets from PLAN.md and actions.json (put targets and tolerances in qa/sim-targets.json):
-1. Time share of rest/naps, eating, sniffing, walking, grooming, rare behaviours vs day budget (50/28/8/8/3/3,
-   tolerance +-5 points), split by time of day (dawn/dusk activity x1.5, midday and night naps).
-2. Rare behaviours per day by stage (popcorn baby/junior/adult/senior, zoomies, scratching, chin marking) within limits.
-3. Wheeking only when hungry, greeting or feeding; at most one wheek sound per 2 min; walking segments 20-120 px
-   followed by at least 20 s stop.
-4. Needs: with care all needs >= 70; weekend without care all >= 20; no persona leaves the pet at 0 for long;
-   time to recover from neglect.
-5. Economy: clovers earned per day per persona and their sources; whether an attentive player can afford at least
-   one vegetable a day without minigames; days until each shop item is affordable; clover inflation for the Clicker.
-6. Variety: share of time on the most common animation, how often the same action repeats twice in a row,
-   longest stretch with no visible change, and which of the 60 animations never play in 14 days (coverage).
-7. Annoyance budget during work hours: sounds per hour, attention-seeking actions per hour, times the pet walks
-   over the Start button or tray clock area.
-Write qa/reports/sim/ with CSV files, PNG charts (stacked time share per hour of day, needs over 14 days per persona,
-clovers over time) and qa/reports/sim/REPORT.md with PASS/FAIL per target and a short plain-language reading of what
-a player would feel. Plug it into run-all.ps1. Do not tune numbers yet; propose changes in the report.
-```
-
-**Sprawdź:** otwórz `qa/reports/sim/REPORT.md` i wykresy. **Powinno być:** tabela PASS/FAIL dla każdego celu z planu; wykres dnia, na którym widać drzemki w południe i w nocy oraz aktywność rano i wieczorem; jasna odpowiedź, czy uważnego gracza stać na warzywo dziennie i których animacji gracz nigdy nie zobaczy.
-
-#### Q4 · Claude: przyspieszony playtest, automatyzacja okien, wygląd i dźwięk
-
-```text
-Read RULES.md, qa/TEST_STRATEGY.md, qa/requirements.csv and qa/reports/sim/REPORT.md. Use the QA mode from Q1.
-1. E2E scenarios (FlaUI for WinForms and the tray, Playwright connected over CDP to http://localhost:9222 for Home):
-   first run with naming and intro; feed from tray and from Home; buy every shop item when affordable and when not;
-   clean poop; pet; call; overclick to sulking; open/close Home 20 times; desktop and Home always show the same
-   state (needs, clovers, name) within 1 s; quit and restart keeps everything.
-2. Accelerated player experience: run 3 scripted sessions at --speed 60 with a persona from Q3 (first hour,
-   first day, first week). Capture the pet area every 2 game minutes and Home every game hour; build contact sheets
-   and an animated timelapse per session in qa/reports/playthrough/, plus a timeline of events. Write
-   PLAYTHROUGH.md: what a new player sees in the first 1, 5 and 30 minutes, the first "wow" moment, dead stretches,
-   confusing moments, anything that breaks the cosy pixel style.
-3. Visual QA: Playwright screenshot baselines of every Home view (welcome, intro, main, shop, letter, minigame menu)
-   at device scale 1, 1.25, 1.5 and 2, compared with a small threshold; detect text overflow (scrollWidth >
-   clientWidth), missing glyphs (document.fonts.check), images not pixelated (image-rendering), elements outside the
-   window. Sprite checks on assets: every animation frame non-empty, nothing cut at frame edges, feet on the floor
-   line (y=59 / 118 for x2), no semi-transparent blur pixels in scaled sprites. Desktop pet screenshots on taskbar
-   bottom, top, left and auto-hide.
-4. Audio QA: every gameplay event that should make a sound plays the mapped file (from the QA event stream),
-   rate limits hold, quiet hours and mute work, nothing plays in Release when sounds are off.
-Write qa/reports/visual/, qa/reports/playthrough/ and add new bugs to qa/BUGS.md. Plug into run-all.ps1.
-```
-
-**Sprawdź:** obejrzyj timelapse'y w `qa/reports/playthrough/` i przeczytaj `PLAYTHROUGH.md`. **Powinno być:** krótkie filmiki z pierwszej godziny, dnia i tygodnia; zestawy zrzutów Domku w 4 skalach bez uciętych napisów; lista momentów nudnych albo mylących.
-
-#### Q5 · Gemini: wydajność, długie działanie i odporność (równolegle z Q2 i Q3)
-
-```text
-Read RULES.md and qa/TEST_STRATEGY.md. Build tools/qa/perf and tools/qa/chaos (PowerShell + small C# helpers).
-1. Soak: run the Release-like QA build for 8 real hours idle on the desktop and 2 hours at --speed 60, sampling every
-   30 s: CPU %, private bytes, working set, GDI objects, USER objects, handles, threads of Cuy.exe and of the WebView2
-   processes. Also open/close Home 100 times and run 50 feed/clean cycles. Targets: idle CPU average < 1 %, active
-   < 3 %; after a 10-minute warm-up memory growth < 5 MB per hour; GDI and USER objects flat (no upward trend);
-   WebView2 processes gone after Home closes (or stable if kept alive by design).
-2. Chaos: kill Cuy.exe during a save (100 times, save always loads); corrupt and truncate save.json; make the save
-   folder read-only; delete one asset file; restart explorer.exe (tray icon must come back via TaskbarCreated);
-   change display scaling and resolution while running; disconnect the default audio device; system clock
-   +3 days and -1 hour; sleep and resume (or the QA advanceTime equivalent); run a second instance; launch with
-   WebView2 missing (simulate by a QA flag). Each case: expected behaviour, actual, PASS/FAIL, log excerpt.
-3. Compatibility matrix with pairwise combinations: Windows 10 22H2 / Windows 11, scale 100/125/150/175 %,
-   one or two monitors, taskbar bottom/top/left/auto-hide. Mark which combinations were run on this PC and which
-   need Windows Sandbox or another PC; add those as manual steps to TESTING.md.
-Write qa/reports/perf/REPORT.md with charts per counter and qa/reports/chaos/REPORT.md. New bugs go to qa/BUGS.md.
-Plug the short versions (30 min soak, all chaos cases) into run-all.ps1 and keep the 8 h soak as a separate script.
-```
-
-**Sprawdź:** uruchom `tools\qa\perf\soak-8h.ps1` na noc. Rano otwórz `qa/reports/perf/REPORT.md`. **Powinno być:** płaskie wykresy pamięci i obiektów GDI; CPU poniżej progów; każdy przypadek chaosu z wynikiem PASS albo wpisem w `qa/BUGS.md`.
-
-#### Q6 · Claude: ekspercka ocena grywalności i zgodności z planem
-
-```text
-Act as a senior game designer and QA lead who did not build this game. Read PLAN.md (Polish design document),
-RULES.md, qa/requirements.csv, every report in qa/reports/ (sim, playthrough, visual, perf, chaos), the
-screenshots and timelapses, and qa/BUGS.md. Run the game in QA mode yourself where you need to confirm something.
-1. Conformance audit: for each requirement, is it met, partly met or missing? Fill the status column with evidence
-   (report, screenshot, log line). List planned features that silently disappeared and features that exist but
-   are not in the plan.
-2. Playability heuristics (PLAY by Desurvire et al., adapted to a desktop pet): game play (clear goals of care,
-   meaningful choices, rewards, pacing), usability and mechanics (feedback for every action within 0.5 s, clear
-   state, discoverable controls, easy undo, no hidden information the player needs), emotional engagement and
-   "aliveness" (does it feel like a living guinea pig, does it notice the player, variety, surprise), and
-   respect for the user's work (no blocking, no sound or attention spam, sensible behaviour during full-screen apps
-   and meetings). Score each heuristic 0-4 with evidence.
-3. Realism review against the research sources listed in PLAN.md (sleep pattern, eating share, popcorning, wheeking,
-   rumblestrut, chutting): what a guinea pig owner would find wrong.
-4. Consistency review: pixel style (scale, palette, outline, font), tone of texts, icon meaning, sound mix.
-5. First-time user experience for the gift moment: the first 5 minutes from unzipping to the first wheek. What could
-   confuse or disappoint someone who is not technical.
-Write qa/reports/REVIEW.md: executive summary, top 10 gaps ranked by player impact, then every finding as
-severity P0-P3, evidence, suggested fix and estimated effort (S/M/L). Add new bugs to qa/BUGS.md. Do not fix anything.
-```
-
-**Sprawdź:** przeczytaj podsumowanie i „top 10” w `qa/reports/REVIEW.md`. **Powinno być:** konkretne luki z dowodami (zrzut, wykres, linia logu) i propozycją poprawki; nie ogólniki.
-
-#### Q7 · Claude: poprawki i regresja
-
-```text
-Read qa/BUGS.md and qa/reports/REVIEW.md. Fix every P0 and P1, then P2 items marked effort S, one bug at a time:
-reproduce with a failing automated test first where possible, fix, run tools/qa/run-all.ps1. Mark each bug fixed with
-the commit and the test that guards it. Do not change balance numbers without updating qa/sim-targets.json and the
-reason in the bug. Stop and list anything that needs a design decision from the human.
-```
-
-**Sprawdź:** `tools\qa\run-all.ps1` i `qa/reports/summary.md`. **Powinno być:** wszystko zielone, w `qa/BUGS.md` zero otwartych P0 i P1, a decyzje projektowe zebrane w jednej liście dla ciebie. Potem jeszcze raz V1d (sama paczka) i lista „Sprawdź” spod V1d.
-
-#### Twoja część: sesje eksploracyjne i świeże oko
-
-Agenci nie zastąpią człowieka, który po prostu próbuje rzeczy. Zrób 4 sesje po 30–45 minut. Każda ma jedną misję. Notuj, co robiłeś, co zauważyłeś i co cię zdziwiło, a każdą rzecz do poprawy wpisz do `qa/BUGS.md` z oceną P0–P3.
-
-1. **Złośliwy gracz:** klikaj, przeciągaj, rzucaj świnką, zamykaj Domek w trakcie animacji, kupuj bez koniczynek, zmieniaj wielkość ekranu.
-2. **Dzień pracy:** zostaw świnkę na cały dzień normalnej pracy (spotkanie online, prezentacja, film na pełnym ekranie). Notuj każdy moment, w którym przeszkadzała albo była niewidoczna, kiedy powinna być.
-3. **Opiekun:** przez jeden dzień rób wszystko, co gracz robiłby naturalnie. Czy zawsze wiesz, czego świnka potrzebuje i jak jej to dać?
-4. **Pierwszy raz:** pokaż to osobie, która nic o projekcie nie wie (nie dziewczynie, to ma być niespodzianka). Daj tylko zip i obserwuj w milczeniu, jak go uruchamia i co robi przez 10 minut. Notuj, gdzie się zawahała.
+**Twoje 30 minut:** daj zip komuś, kto nic nie wie o projekcie (nie jej), i w milczeniu patrz przez 10 minut, gdzie się waha. Potem sam przez jeden dzień pracy zostaw świnkę włączoną i zanotuj każdy moment, w którym przeszkadzała.
 
 ### C1 · Claude: okno Domku i most C# ↔ JavaScript
 
