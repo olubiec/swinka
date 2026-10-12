@@ -718,6 +718,7 @@ namespace DesktopPet
             /// </remarks>
         private void Timer1_Tick(object sender, EventArgs e)
         {
+            if (IsDisposed) return;
             timer1.Enabled = false;
             if (AnimationStep < 0) AnimationStep = 0;
             try
@@ -733,20 +734,10 @@ namespace DesktopPet
                     timer1.Enabled = true;
                 }
             }
-            catch(Exception ex) // if form is closed timer could continue to tick (why?)
+            catch(Exception ex)
             {
-                if(MessageBox.Show("Fatal Error: " + ex.Message + "\n----------\nPress Cancel for more info", "App error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error) == DialogResult.Cancel)
-                {
-                    string seqIndex = "";
-                    foreach (var item in CurrentAnimation.Sequence.Frames) seqIndex += item + ",";
-
-                        MessageBox.Show(
-                        "Current Animation ID: " + CurrentAnimation.ID + "\n" +
-                        "Current Animation Name: " + CurrentAnimation.Name + "\n" +
-                        "Current Animation Sequence: " + seqIndex + "\n"
-                        );
-
-                }
+                if (IsDisposed) return;
+                SwinkaBrainController.Log("[FormPet] Błąd Timer1_Tick: " + ex.Message);
             }
         }
 

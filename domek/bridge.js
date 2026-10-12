@@ -124,6 +124,18 @@
     // --- Inicjalizacja WebView2 ---
     initWebView2() {
       console.info('[SwinkaBridge] Tryb WebView2 aktywny. Oczekiwanie na wiadomości z C#...');
+
+      const applyWebViewMode = () => {
+        if (document.body) {
+          document.body.classList.add('webview-mode');
+        }
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyWebViewMode);
+      } else {
+        applyWebViewMode();
+      }
+
       window.chrome.webview.addEventListener('message', (event) => {
         let msg = event.data;
         if (typeof msg === 'string') {
@@ -133,6 +145,56 @@
           this.handleStateUpdate(msg);
         }
       });
+
+      this.initDragHandler();
+    }
+
+    initDragHandler() {
+      const attach = () => {
+        const header = document.querySelector('.game-header');
+        if (!header || header.dataset.dragAttached) return;
+        header.dataset.dragAttached = 'true';
+
+        let isDragging = false;
+        let lastScreenX = 0;
+        let lastScreenY = 0;
+
+        header.addEventListener('mousedown', (e) => {
+          if (e.target.closest('button') || e.target.closest('.header-right')) return;
+          if (e.button !== 0) return; // Tylko lewy przycisk myszy
+
+          isDragging = true;
+          lastScreenX = e.screenX;
+          lastScreenY = e.screenY;
+
+          this.send({ type: 'settings', action: 'drag_start' });
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          if (e.buttons !== 1) {
+            isDragging = false;
+            return;
+          }
+          const dx = e.screenX - lastScreenX;
+          const dy = e.screenY - lastScreenY;
+          if (dx !== 0 || dy !== 0) {
+            lastScreenX = e.screenX;
+            lastScreenY = e.screenY;
+            this.send({ type: 'settings', action: 'drag_move', dx, dy });
+          }
+        });
+
+        window.addEventListener('mouseup', () => {
+          isDragging = false;
+        });
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attach);
+      } else {
+        attach();
+      }
     }
 
     // --- Inicjalizacja trybu Mock ---
@@ -226,7 +288,7 @@
     }
 
     handleStateUpdate(rawMsg) {
-      const state = rawMsg.data || rawMsg;
+      const state = (rawMsg && rawMsg.type === 'state') ? rawMsg : (rawMsg.data || rawMsg);
       this.normalizeState(state);
       this.currentState = state;
       this.broadcastState();

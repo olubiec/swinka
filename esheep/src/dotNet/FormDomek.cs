@@ -1,207 +1,593 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.WinForms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SwinkaCore;
 
 namespace DesktopPet
 {
     /// <summary>
-    /// Okno Domku świnki. Na tym etapie (B5) proste okno prezentujące stan pupila
-    /// oraz informujące o pełnym widoku Domku w etapie C.
-    /// Otwierane z menu zasobnika oraz dwuklikiem na ikonę w zasobniku.
+    /// Okno Domku świnki oparte na WebView2 (Etap C1).
+    /// - Wymiary: 420x640 px, bez ramki systemowej (FormBorderStyle.None),
+    /// - Przezroczyste zaokrąglone rogi i cień na pulpicie (DWM Composition),
+    /// - Brak na pasku zadań (ShowInTaskbar = false),
+    /// - Pozycjonowane automatycznie przy zasobniku systemowym,
+    /// - Zawartość serwowana z lokalnego folderu /domek przez SetVirtualHostNameToFolderMapping,
+    /// - Most C# ↔ JS ze SwinkaCore jako jedynym źródłem prawdy.
     /// </summary>
     public partial class FormDomek : Form
     {
         private static FormDomek _instance;
 
-        private Label _lblHeader;
-        private Label _lblSubheader;
-        private Panel _pnlInfo;
-        private Label _lblName;
-        private Label _lblStage;
-        private Label _lblBond;
-        private Label _lblClovers;
-        private Label _lblNeeds;
-        private Label _lblPlaceholderNote;
-        private Button _btnClose;
+        private WebView2 _webView;
         private Timer _refreshTimer;
+        private bool _isWebViewReady = false;
+        private Point _dragStartCursor;
+        private Point _dragStartLocation;
+
+        #region Win32 API (DWM & Window Drag)
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MARGINS
+        {
+            public int cxLeftWidth;
+            public int cxRightWidth;
+            public int cyTopHeight;
+            public int cyBottomHeight;
+        }
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmExtendFrameIntoClientArea(IntPtr hWnd, ref MARGINS pMarInset);
+
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+
+        private const int WM_NCLBUTTONDOWN = 0xA1;
+        private const int HT_CAPTION = 0x2;
+
+        #endregion
 
         public FormDomek()
         {
             InitializeComponent();
-            SetupCustomUI();
+            SetupFormStyle();
+            SetupRefreshTimer();
         }
+
+        public static FormDomek Instance => _instance;
 
         public static void ShowDomek()
         {
+            SwinkaBrainController.Log("[FormDomek] ShowDomek() wywołano.");
             if (_instance == null || _instance.IsDisposed)
             {
                 _instance = new FormDomek();
             }
 
-            _instance.RefreshData();
+            _instance.PositionNearTray();
             _instance.Show();
             _instance.WindowState = FormWindowState.Normal;
             _instance.BringToFront();
             _instance.Focus();
+
+            if (_instance._isWebViewReady)
+            {
+                _instance.SendStateToWebView();
+            }
         }
 
-        private void SetupCustomUI()
+        private void SetupFormStyle()
         {
-            this.BackColor = Color.FromArgb(254, 250, 243);
-            this.Icon = SwinkaIcons.GetTrayIcon();
-
-            _lblHeader = new Label
+            this.Size = new Size(420, 640);
+            this.MaximumSize = new Size(420, 640);
+            this.MinimumSize = new Size(420, 640);
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.ShowInTaskbar = false;
+            this.DoubleBuffered = true;
+            this.BackColor = Color.Black; // DWM przy marginesach -1 traktuje czarne tło jako przezroczysty kanał alfa
+            try
             {
-                Text = "🏠 Domek świnki",
-                Font = new Font("Segoe UI", 16F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(64, 40, 20),
-                Location = new Point(20, 20),
-                Size = new Size(380, 40),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            this.Controls.Add(_lblHeader);
+                this.Icon = SwinkaIcons.GetTrayIcon();
+            }
+            catch { }
+        }
 
-            _lblSubheader = new Label
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            EnableDwmTransparency();
+            if (_webView == null)
             {
-                Text = "(na razie pusty – pełny widok WebView2 w etapie C)",
-                Font = new Font("Segoe UI", 9F, FontStyle.Italic),
-                ForeColor = Color.FromArgb(140, 110, 80),
-                Location = new Point(20, 60),
-                Size = new Size(380, 25),
-                TextAlign = ContentAlignment.MiddleCenter
-            };
-            this.Controls.Add(_lblSubheader);
+                SetupWebViewAsync();
+            }
+        }
 
-            _pnlInfo = new Panel
+        private void EnableDwmTransparency()
+        {
+            try
             {
-                Location = new Point(20, 95),
-                Size = new Size(380, 440),
-                BackColor = Color.FromArgb(255, 255, 255),
-                BorderStyle = BorderStyle.FixedSingle
-            };
-            this.Controls.Add(_pnlInfo);
-
-            _lblName = new Label
+                MARGINS margins = new MARGINS
+                {
+                    cxLeftWidth = -1,
+                    cxRightWidth = -1,
+                    cyTopHeight = -1,
+                    cyBottomHeight = -1
+                };
+                DwmExtendFrameIntoClientArea(this.Handle, ref margins);
+            }
+            catch (Exception ex)
             {
-                Location = new Point(15, 15),
-                Size = new Size(350, 30),
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(50, 40, 30)
-            };
-            _pnlInfo.Controls.Add(_lblName);
+                SwinkaBrainController.Log("[FormDomek] Ostrzeżenie DWM: " + ex.Message);
+            }
+        }
 
-            _lblStage = new Label
+        public void PositionNearTray()
+        {
+            try
             {
-                Location = new Point(15, 50),
-                Size = new Size(350, 25),
-                Font = new Font("Segoe UI", 10F, FontStyle.Regular),
-                ForeColor = Color.FromArgb(80, 70, 60)
-            };
-            _pnlInfo.Controls.Add(_lblStage);
+                Screen screen = Screen.FromPoint(Cursor.Position) ?? Screen.PrimaryScreen;
+                Rectangle wa = screen.WorkingArea;
+                Rectangle bounds = screen.Bounds;
 
-            _lblBond = new Label
+                const int padding = 12;
+                int targetX = wa.Right - this.Width - padding;
+                int targetY = wa.Bottom - this.Height - padding;
+
+                // Sprawdź nietypowe położenie paska zadań (góra/lewo)
+                if (wa.Top > bounds.Top)
+                {
+                    targetY = wa.Top + padding;
+                }
+                else if (wa.Left > bounds.Left)
+                {
+                    targetX = wa.Left + padding;
+                }
+
+                // Ograniczenie do obszaru roboczego
+                targetX = Math.Max(wa.Left, Math.Min(targetX, wa.Right - this.Width));
+                targetY = Math.Max(wa.Top, Math.Min(targetY, wa.Bottom - this.Height));
+
+                this.Location = new Point(targetX, targetY);
+            }
+            catch
             {
-                Location = new Point(15, 80),
-                Size = new Size(350, 25),
-                Font = new Font("Segoe UI", 10F, FontStyle.Regular),
-                ForeColor = Color.FromArgb(80, 70, 60)
-            };
-            _pnlInfo.Controls.Add(_lblBond);
+                this.Location = new Point(
+                    Math.Max(0, Screen.PrimaryScreen.WorkingArea.Right - this.Width - 16),
+                    Math.Max(0, Screen.PrimaryScreen.WorkingArea.Bottom - this.Height - 16)
+                );
+            }
+        }
 
-            _lblClovers = new Label
+        private async void SetupWebViewAsync()
+        {
+            try
             {
-                Location = new Point(15, 110),
-                Size = new Size(350, 25),
-                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
-                ForeColor = Color.FromArgb(40, 140, 40)
-            };
-            _pnlInfo.Controls.Add(_lblClovers);
+                SwinkaBrainController.Log("[FormDomek] SetupWebViewAsync start.");
+                _webView = new WebView2
+                {
+                    Dock = DockStyle.Fill,
+                    DefaultBackgroundColor = Color.Transparent
+                };
+                this.Controls.Add(_webView);
 
-            _lblNeeds = new Label
+                string userDataFolder = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "Swinka",
+                    "WebView2Profile"
+                );
+                Directory.CreateDirectory(userDataFolder);
+
+                SwinkaBrainController.Log("[FormDomek] Tworzenie CoreWebView2Environment...");
+                var env = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
+                SwinkaBrainController.Log("[FormDomek] CoreWebView2Environment utworzone. Inicjalizacja kontrolki...");
+                await _webView.EnsureCoreWebView2Async(env);
+                SwinkaBrainController.Log("[FormDomek] EnsureCoreWebView2Async zakończone.");
+
+                _webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
+                _webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                _webView.CoreWebView2.Settings.AreDevToolsEnabled = true;
+
+                string domekDir = ResolveDomekPath();
+                SwinkaBrainController.Log(string.Format("[FormDomek] Mapowanie folderu /domek z: {0}", domekDir));
+
+                _webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
+                    "swinka.domek",
+                    domekDir,
+                    CoreWebView2HostResourceAccessKind.Allow
+                );
+
+                _webView.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
+                _webView.CoreWebView2.NavigationCompleted += (s, e) =>
+                {
+                    _isWebViewReady = true;
+                    SwinkaBrainController.Log("[FormDomek] Nawigacja https://swinka.domek/index.html zakończona.");
+                    SendStateToWebView();
+                };
+
+                _webView.CoreWebView2.Navigate("https://swinka.domek/index.html");
+            }
+            catch (Exception ex)
             {
-                Location = new Point(15, 145),
-                Size = new Size(350, 180),
-                Font = new Font("Consolas", 9.5F, FontStyle.Regular),
-                ForeColor = Color.FromArgb(60, 50, 40)
-            };
-            _pnlInfo.Controls.Add(_lblNeeds);
+                SwinkaBrainController.Log("[FormDomek] Błąd inicjalizacji WebView2: " + ex.ToString());
+            }
+        }
 
-            _lblPlaceholderNote = new Label
+        private static string ResolveDomekPath()
+        {
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+
+            // 1. Sprawdź folder domek obok pliku wykonywalnego
+            string p1 = Path.Combine(baseDir, "domek");
+            if (Directory.Exists(p1)) return Path.GetFullPath(p1);
+
+            // 2. Szukaj w górę drzewa katalogów (repozytorium / solucja)
+            DirectoryInfo dir = new DirectoryInfo(baseDir);
+            while (dir != null)
             {
-                Location = new Point(15, 335),
-                Size = new Size(350, 90),
-                Font = new Font("Segoe UI", 8.5F, FontStyle.Regular),
-                ForeColor = Color.FromArgb(120, 100, 80),
-                Text = "W etapie C w tym oknie znajdzie się interfejs pixel art w WebView2: interaktywny pokój, miseczka, paśnik, sklepik za koniczynki, album zachowań, pamiętnik oraz minigry!"
-            };
-            _pnlInfo.Controls.Add(_lblPlaceholderNote);
+                string candidate = Path.Combine(dir.FullName, "domek");
+                if (Directory.Exists(candidate))
+                {
+                    return Path.GetFullPath(candidate);
+                }
+                dir = dir.Parent;
+            }
 
-            _btnClose = new Button
-            {
-                Text = "Zamknij domek",
-                Location = new Point(135, 550),
-                Size = new Size(150, 35),
-                Font = new Font("Segoe UI", 9.5F, FontStyle.Regular),
-                BackColor = Color.FromArgb(245, 235, 220),
-                FlatStyle = FlatStyle.Flat
-            };
-            _btnClose.Click += (s, e) => this.Hide();
-            this.Controls.Add(_btnClose);
+            // 3. Sprawdź bieżący katalog roboczy
+            string p4 = Path.GetFullPath("domek");
+            if (Directory.Exists(p4)) return Path.GetFullPath(p4);
 
+            return p1;
+        }
+
+        private void SetupRefreshTimer()
+        {
             _refreshTimer = new Timer();
             _refreshTimer.Interval = 1000;
             _refreshTimer.Tick += (s, e) =>
             {
-                if (this.Visible) RefreshData();
+                if (this.Visible && _isWebViewReady)
+                {
+                    SendStateToWebView();
+                }
             };
             _refreshTimer.Start();
         }
 
-        public void RefreshData()
+        /// <summary>
+        /// Wysyła aktualny stan gry ze SwinkaCore do kontrolki WebView2 w formacie JSON.
+        /// </summary>
+        public void SendStateToWebView()
         {
-            var brain = SwinkaBrainController.Instance;
-            if (brain == null || brain.Pet == null)
+            if (!_isWebViewReady || _webView?.CoreWebView2 == null || this.IsDisposed) return;
+
+            try
             {
-                _lblName.Text = "Świnka morska";
-                _lblStage.Text = "Etap: wczytywanie...";
-                _lblBond.Text = "Więź: -";
-                _lblClovers.Text = "Koniczynki: 0 🍀";
-                _lblNeeds.Text = "Potrzeby: brak danych";
-                return;
+                var brain = SwinkaBrainController.Instance;
+                var pet = brain?.Pet;
+                if (pet == null) return;
+
+                var state = pet.State;
+                var needs = pet.Needs;
+                var age = pet.Age;
+                var stage = pet.Stage;
+
+                var inventoryCopy = new Dictionary<string, int>(state.Inventory ?? new Dictionary<string, int>());
+                inventoryCopy["siano"] = 999; // siano bez limitu
+
+                var highScores = state.HighScores ?? new Dictionary<string, int>();
+
+                var payload = new
+                {
+                    type = "state",
+                    name = string.IsNullOrWhiteSpace(state.Name) ? "Świnka" : state.Name,
+                    birthDateUtc = state.BirthDateUtc.ToString("o"),
+                    pigDays = Math.Round(age.PigDays, 1),
+                    stageKey = stage.ToString().ToLowerInvariant(),
+                    stageName = LifeStages.Polish(stage),
+                    needs = new
+                    {
+                        satiety = Math.Round(needs.Satiety, 1),
+                        vitaminC = Math.Round(needs.VitaminC, 1),
+                        energy = Math.Round(needs.Energy, 1),
+                        mood = Math.Round(needs.Mood, 1),
+                        cleanliness = Math.Round(needs.Cleanliness, 1),
+                        teeth = Math.Round(needs.Teeth, 1),
+                        health = Math.Round(needs.Health, 1)
+                    },
+                    clovers = state.Clovers,
+                    bond = new
+                    {
+                        level = state.Bond.Level,
+                        points = state.Bond.Points,
+                        pointsToday = state.Bond.PointsToday,
+                        maxPointsToday = pet.Balance?.BondDailyLimit ?? 30
+                    },
+                    inventory = inventoryCopy,
+                    poops = state.PoopCount,
+                    minigames = new
+                    {
+                        records = highScores,
+                        dailyRewardedDate = state.MinigamesDailyDate ?? DateTime.UtcNow.ToString("yyyy-MM-dd"),
+                        dailyRewardedCount = state.MinigamesDailyCount
+                    },
+                    currentAction = brain.CurrentAction?.AnimationName ?? "idle",
+                    isSleeping = pet.IsSleeping,
+                    lastActiveUtc = state.LastActiveUtc.ToString("o")
+                };
+
+                string json = JsonConvert.SerializeObject(payload);
+                _webView.CoreWebView2.PostWebMessageAsJson(json);
             }
-
-            var pet = brain.Pet;
-            var state = pet.State;
-            var needs = pet.Needs;
-
-            _lblName.Text = "🐹 " + (string.IsNullOrWhiteSpace(state.Name) ? "Świnka" : state.Name);
-            _lblStage.Text = string.Format("Etap życia: {0} ({1})", LifeStages.Polish(pet.Stage), pet.Age);
-            _lblBond.Text = string.Format("Poziom więzi: {0} ({1} pkt)", state.Bond.Level, state.Bond.Points);
-            _lblClovers.Text = string.Format("Koniczynki: {0} 🍀", state.Clovers);
-
-            string najnizsza = NeedNames.Polish(needs.Lowest());
-            _lblNeeds.Text = string.Format(
-                "--- POTRZEBY ŚWINKI ---\r\n" +
-                "• Najedzenie:     {0,3:0}%\r\n" +
-                "• Witamina C:     {1,3:0}%\r\n" +
-                "• Energia:        {2,3:0}%\r\n" +
-                "• Humor:          {3,3:0}%\r\n" +
-                "• Czystość:       {4,3:0}%\r\n" +
-                "• Ząbki:          {5,3:0}%\r\n" +
-                "• Zdrowie:        {6,3:0}%\r\n" +
-                "Najniższa potrzeba: {7}",
-                needs.Satiety,
-                needs.VitaminC,
-                needs.Energy,
-                needs.Mood,
-                needs.Cleanliness,
-                needs.Teeth,
-                needs.Health,
-                najnizsza
-            );
+            catch (Exception ex)
+            {
+                SwinkaBrainController.Log("[FormDomek] Błąd PostWebMessageAsJson: " + ex.Message);
+            }
         }
 
+        private void OnWebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
+        {
+            try
+            {
+                string json = e.WebMessageAsJson;
+                if (string.IsNullOrWhiteSpace(json)) return;
+
+                var obj = JObject.Parse(json);
+                string type = obj.Value<string>("type")?.ToLowerInvariant();
+
+                switch (type)
+                {
+                    case "feed":
+                        string item = obj.Value<string>("item") ?? "siano";
+                        HandleFeed(item);
+                        break;
+
+                    case "clean":
+                        HandleClean();
+                        break;
+
+                    case "call":
+                        HandleCall();
+                        break;
+
+                    case "pet":
+                        HandlePet();
+                        break;
+
+                    case "buy":
+                        string buyItem = obj.Value<string>("itemId") ?? "papryka";
+                        int price = obj.Value<int?>("price") ?? 10;
+                        HandleBuy(buyItem, price);
+                        break;
+
+                    case "play":
+                        HandlePlay();
+                        break;
+
+                    case "minigame_result":
+                        string gameId = obj.Value<string>("gameId") ?? "gra-przyklad";
+                        int score = obj.Value<int?>("score") ?? 0;
+                        HandleMinigameResult(gameId, score);
+                        break;
+
+                    case "settings":
+                        string action = obj.Value<string>("action")?.ToLowerInvariant();
+                        HandleSettings(action, obj);
+                        break;
+                }
+
+                // Natychmiastowa aktualizacja stanu po przetworzeniu akcji
+                SendStateToWebView();
+            }
+            catch (Exception ex)
+            {
+                SwinkaBrainController.Log("[FormDomek] Błąd przetwarzania wiadomości: " + ex.Message);
+            }
+        }
+
+        private void HandleFeed(string item)
+        {
+            var brain = SwinkaBrainController.Instance;
+            var pet = brain?.Pet;
+            if (pet == null) return;
+
+            if (string.Equals(item, "siano", StringComparison.OrdinalIgnoreCase))
+            {
+                pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 12.0);
+                pet.Needs.Teeth = Math.Min(100.0, pet.Needs.Teeth + 8.0);
+                pet.AddBondPoints(2);
+                pet.Count("karmienia");
+                brain.RequestAnimation("eat");
+                SwinkaBrainController.Log("[FormDomek] Nakarmiono sianem.");
+            }
+            else
+            {
+                if (pet.TryRemoveItem(item, 1))
+                {
+                    if (string.Equals(item, "papryka", StringComparison.OrdinalIgnoreCase))
+                    {
+                        pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 15.0);
+                        pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 35.0);
+                        pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 10.0);
+                    }
+                    else if (string.Equals(item, "marchewka", StringComparison.OrdinalIgnoreCase))
+                    {
+                        pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 18.0);
+                        pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 15.0);
+                        pet.Needs.Teeth = Math.Min(100.0, pet.Needs.Teeth + 10.0);
+                    }
+                    else if (string.Equals(item, "granulat", StringComparison.OrdinalIgnoreCase))
+                    {
+                        pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 25.0);
+                        pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 5.0);
+                    }
+                    pet.AddBondPoints(2);
+                    pet.Count("karmienia");
+                    pet.Count(item);
+                    brain.RequestAnimation("eat_treat");
+                    SwinkaBrainController.Log(string.Format("[FormDomek] Nakarmiono przysmakiem: {0}", item));
+                }
+                else
+                {
+                    SwinkaBrainController.Log(string.Format("[FormDomek] Brak przedmiotu w ekwipunku: {0}", item));
+                }
+            }
+        }
+
+        private void HandleClean()
+        {
+            var brain = SwinkaBrainController.Instance;
+            var pet = brain?.Pet;
+            if (pet == null) return;
+
+            int poops = pet.State.PoopCount;
+            pet.CleanAllPoops();
+            SwinkaPoopManager.Instance?.CloseAllVisuals();
+            pet.AddClovers(poops > 0 ? poops : 1);
+            pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 6.0);
+            pet.Count("sprzatania");
+            brain.RequestAnimation("happy");
+            SwinkaBrainController.Log(string.Format("[FormDomek] Posprzątano klatkę (usunięto {0} bobków, +koniczynki).", poops));
+        }
+
+        private void HandleCall()
+        {
+            var brain = SwinkaBrainController.Instance;
+            if (brain != null)
+            {
+                brain.CallPet();
+                SwinkaBrainController.Log("[FormDomek] Zawołano świnkę z Domku.");
+            }
+        }
+
+        private void HandlePet()
+        {
+            var brain = SwinkaBrainController.Instance;
+            var pet = brain?.Pet;
+            if (pet == null) return;
+
+            pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 3.0);
+            pet.AddBondPoints(1);
+            pet.Count("glaskanie");
+            brain.RequestAnimation("purr_pet");
+            SwinkaBrainController.Log("[FormDomek] Pogłaskano świnkę z Domku (+3 humoru, +1 więź).");
+        }
+
+        private void HandleBuy(string itemId, int price)
+        {
+            var brain = SwinkaBrainController.Instance;
+            var pet = brain?.Pet;
+            if (pet == null) return;
+
+            if (price < 0) price = 10;
+            if (pet.TrySpendClovers(price))
+            {
+                pet.AddItem(itemId, 1);
+                pet.Count("zakupy");
+                SwinkaBrainController.Log(string.Format("[FormDomek] Kupiono {0} za {1} koniczynek.", itemId, price));
+            }
+            else
+            {
+                SwinkaBrainController.Log(string.Format("[FormDomek] Zbyt mało koniczynek na zakup {0} (cena: {1}, stan: {2}).",
+                    itemId, price, pet.State.Clovers));
+            }
+        }
+
+        private void HandlePlay()
+        {
+            var brain = SwinkaBrainController.Instance;
+            var pet = brain?.Pet;
+            if (pet == null) return;
+
+            pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 15.0);
+            pet.Needs.Energy = Math.Max(0.0, pet.Needs.Energy - 10.0);
+            pet.AddClovers(10);
+            brain.RequestAnimation("popcorn");
+            SwinkaBrainController.Log("[FormDomek] Zabawa w Domku (+15 humoru, +10 koniczynek).");
+        }
+
+        private void HandleMinigameResult(string gameId, int score)
+        {
+            var brain = SwinkaBrainController.Instance;
+            var pet = brain?.Pet;
+            if (pet == null) return;
+
+            if (pet.State.HighScores == null)
+            {
+                pet.State.HighScores = new Dictionary<string, int>();
+            }
+
+            int prev = 0;
+            pet.State.HighScores.TryGetValue(gameId, out prev);
+            if (score > prev)
+            {
+                pet.State.HighScores[gameId] = score;
+            }
+
+            // Limit 10 nagradzanych gier dziennie
+            string today = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            if (pet.State.MinigamesDailyDate != today)
+            {
+                pet.State.MinigamesDailyDate = today;
+                pet.State.MinigamesDailyCount = 0;
+            }
+
+            int clovers = 0;
+            if (pet.State.MinigamesDailyCount < 10)
+            {
+                clovers = Math.Min(40, Math.Max(0, score / 10));
+                if (clovers > 0)
+                {
+                    pet.AddClovers(clovers);
+                }
+                pet.State.MinigamesDailyCount++;
+            }
+
+            pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 15.0);
+            brain.RequestAnimation("popcorn");
+            SwinkaBrainController.Log(string.Format("[FormDomek] Wynik minigry {0}: {1} pkt (+{2} koniczynek).", gameId, score, clovers));
+        }
+
+        private void HandleSettings(string action, JObject obj)
+        {
+            if (action == "close")
+            {
+                this.Hide();
+                SwinkaBrainController.Log("[FormDomek] Zamknięcie okna Domku przez przycisk HTML.");
+            }
+            else if (action == "drag_start")
+            {
+                _dragStartCursor = Cursor.Position;
+                _dragStartLocation = this.Location;
+                ReleaseCapture();
+                SendMessage(this.Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+            else if (action == "drag_move")
+            {
+                Point cur = Cursor.Position;
+                int dx = cur.X - _dragStartCursor.X;
+                int dy = cur.Y - _dragStartCursor.Y;
+                if (dx == 0 && dy == 0)
+                {
+                    dx = obj.Value<int?>("dx") ?? 0;
+                    dy = obj.Value<int?>("dy") ?? 0;
+                    this.Location = new Point(this.Location.X + dx, this.Location.Y + dy);
+                }
+                else
+                {
+                    this.Location = new Point(_dragStartLocation.X + dx, _dragStartLocation.Y + dy);
+                }
+            }
+        }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
@@ -211,6 +597,8 @@ namespace DesktopPet
                 this.Hide();
                 return;
             }
+            _refreshTimer?.Stop();
+            _refreshTimer?.Dispose();
             base.OnFormClosing(e);
         }
     }

@@ -283,6 +283,17 @@
     elements.modalBackdrop?.addEventListener('click', (e) => {
       if (e.target === elements.modalBackdrop) closeModal();
     });
+
+    // Klawisz Escape: zamyka otwarty modal lub zamyka okno Domku
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (elements.modalBackdrop && elements.modalBackdrop.classList.contains('active')) {
+          closeModal();
+        } else if (window.bridge && window.bridge.isWebView2) {
+          window.bridge.send({ type: 'settings', action: 'close' });
+        }
+      }
+    });
   }
 
   function updateSoundButtonUI() {

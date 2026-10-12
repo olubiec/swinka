@@ -176,12 +176,36 @@ namespace DesktopPet
             SwinkaBrainController.Initialize(initialSpeed);
             Application.ApplicationExit += (s, e) => { SwinkaBrainController.Instance?.Close(); };
 
+            SwinkaBrainController.Log("[Program] Args: " + (args != null ? string.Join(" ", args) : "null"));
+            bool autoOpenDomek = false;
+            foreach (string s in args)
+            {
+                if (s.IndexOf("domek", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    autoOpenDomek = true;
+                }
+            }
+
             // Show the system tray icon.					
             using (ProcessIcon pi = new ProcessIcon())
             {
                 pi.Display();
 
                 Mainthread = new StartUp(pi);
+
+                if (autoOpenDomek)
+                {
+                    try
+                    {
+                        SwinkaBrainController.Log("[Program] Wywołuję FormDomek.ShowDomek()...");
+                        FormDomek.ShowDomek();
+                        SwinkaBrainController.Log("[Program] FormDomek.ShowDomek() wykonano.");
+                    }
+                    catch (Exception ex)
+                    {
+                        SwinkaBrainController.Log("[Program] BŁĄD FormDomek: " + ex.ToString());
+                    }
+                }
 
                 // Make sure the application runs!
                 Application.Run();
@@ -250,12 +274,26 @@ namespace DesktopPet
             SwinkaBrainController.Initialize(initialSpeedNonPortable);
             Application.ApplicationExit += (s, e) => { SwinkaBrainController.Instance?.Close(); };
 
+            bool autoOpenDomek = false;
+            foreach (string s in args)
+            {
+                if (s.IndexOf("domek", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    autoOpenDomek = true;
+                }
+            }
+
             // Show the system tray icon.					
             using (ProcessIcon pi = new ProcessIcon())
             {
                 pi.Display();
 
                 Mainthread = new StartUp(pi);
+
+                if (autoOpenDomek)
+                {
+                    FormDomek.ShowDomek();
+                }
 
                 // Make sure the application runs!
                 Application.Run();

@@ -68,6 +68,10 @@
   -webkit-user-select: none;
 }
 
+html {
+  background: transparent;
+}
+
 body {
   background-color: #241d1a;
   background-image: 
@@ -84,6 +88,29 @@ body {
   padding: 10px;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+/* Tryb osadzony w oknie aplikacji (WebView2) — przezroczyste tło, brak marginesów przeglądarki */
+body.webview-mode {
+  background: transparent !important;
+  background-image: none !important;
+  padding: 10px;
+  margin: 0;
+  width: 420px;
+  height: 640px;
+  min-height: 640px;
+  max-height: 640px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+body.webview-mode .game-device {
+  width: 400px;
+  height: 620px;
+  max-width: 400px;
+  min-height: 620px;
+  max-height: 620px;
+  margin: 0 auto;
 }
 
 /* Główny kontener okna gry (pasujący do 420x640 px z C1) */
@@ -115,8 +142,15 @@ body {
   justify-content: space-between;
   color: var(--c-white);
   box-shadow: inset 0 2px 0 var(--c-wood-light);
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
   -webkit-app-region: drag;
   app-region: drag;
+}
+
+.game-header:active {
+  cursor: grabbing;
 }
 
 .header-left {
