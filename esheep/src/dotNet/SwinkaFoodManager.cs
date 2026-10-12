@@ -191,6 +191,7 @@ namespace DesktopPet
             _activeFood = null;
             _state = FoodInteractionState.None;
             _isDescendingFromWindow = false;
+            SoundManager.Instance?.StopEatingCrunch();
         }
 
         // ---- Obsługa przeciągania myszą --------------------------------------
@@ -379,6 +380,9 @@ namespace DesktopPet
 
             petForm.PlayAnimationByName(anim);
 
+            // Rozpoczęcie powtarzającego się chrupania z lekką zmianą wysokości (F1)
+            SoundManager.Instance?.StartEatingCrunch();
+
             SwinkaBrainController.Log(string.Format(
                 "[Karmienie] Świnka podeszła do {0} i zaczyna jeść (animacja: {1}, czas: {2:0.#}s).",
                 food.ItemDef?.Name ?? food.ItemId, anim, _eatingRemainingSeconds));
@@ -387,6 +391,7 @@ namespace DesktopPet
         private void UpdateEating(FormPet petForm, TimeSpan gameElapsed)
         {
             _eatingRemainingSeconds -= gameElapsed.TotalSeconds;
+            SoundManager.Instance?.UpdateEating(gameElapsed);
 
             if (_eatingRemainingSeconds <= 0)
             {
@@ -396,6 +401,7 @@ namespace DesktopPet
 
         private void FinishEating(FormPet petForm)
         {
+            SoundManager.Instance?.StopEatingCrunch();
             string foodId = _currentFoodId;
             var itemDef = _activeFood?.ItemDef ?? SwinkaItemCatalog.GetItem(foodId);
 

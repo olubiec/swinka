@@ -34,7 +34,7 @@ namespace DesktopPet
             /// <summary>
             /// Structure with all informations about the current animation.
             /// </summary>
-        TAnimation CurrentAnimation;
+        internal TAnimation CurrentAnimation;
             /// <summary>
             /// Handle to the current window. If this value is 0, the sheep is NOT walking on a window.
             /// </summary>
@@ -168,6 +168,7 @@ namespace DesktopPet
             _brain = SwinkaBrainController.Instance;
             HookBrainEvents();
             InitBubbleInteraction();
+            SwinkaInteractionManager.Initialize(this);
 		}
 
             /// <summary>
@@ -363,6 +364,56 @@ namespace DesktopPet
             ResetMotion();
         }
 
+        public bool IsOnTaskbar => hwndWindow == IntPtr.Zero;
+        public bool IsOnWindow => hwndWindow != IntPtr.Zero;
+
+        public void RunTowards(int targetX, int speedPx = 6)
+        {
+            if (this.IsDisposed) return;
+            if (IsDragging || IsTossing) return;
+
+            int diff = targetX - (int)PositionX;
+            if (Math.Abs(diff) <= speedPx)
+            {
+                PositionX = targetX;
+            }
+            else if (diff < 0)
+            {
+                SetFacing(true);
+                PositionX -= speedPx;
+            }
+            else
+            {
+                SetFacing(false);
+                PositionX += speedPx;
+            }
+
+            if (CurrentAnimation.Name != "run")
+            {
+                PlayAnimationByName("run");
+            }
+
+            Location = new Point((int)PositionX, (int)(PositionY + OffsetY));
+            ResetMotion();
+        }
+
+        public void ShowCustomSprite(int tileIndex)
+        {
+            if (this.IsDisposed) return;
+            if (this.InvokeRequired)
+            {
+                try { this.BeginInvoke(new Action<int>(ShowCustomSprite), tileIndex); } catch { }
+                return;
+            }
+            pictureBox1.Image = GetSprite(tileIndex);
+        }
+
+        public void ReturnFromCustomSprite()
+        {
+            if (this.IsDisposed) return;
+            PlayAnimationByName("idle");
+        }
+
         public void StepOffWindowToTaskbar(bool exitToLeft)
         {
             if (this.IsDisposed) return;
@@ -446,6 +497,7 @@ namespace DesktopPet
 
             pictureBox1.MouseMove += (s, e) =>
             {
+                SwinkaInteractionManager.Instance?.OnMouseMove(Cursor.Position);
                 if (!IsDragging && !IsTossing && (_statusBubble == null || !_statusBubble.Visible))
                 {
                     if (!_bubbleHoverTimer.Enabled)
@@ -533,7 +585,7 @@ namespace DesktopPet
             }
         }
         private Rectangle ScreenBounds { get { return CurrentScreen.Bounds; } }
-        private Rectangle ScreenArea { get { return CurrentScreen.WorkingArea; } }
+        internal Rectangle ScreenArea { get { return CurrentScreen.WorkingArea; } }
 
 		/// <summary>
 		/// Once the form was created, resized and all images was set, this is the next function to call.<br />
@@ -718,6 +770,7 @@ namespace DesktopPet
 
                 // Play sound if there is one
                 Animations.StartSound(id);
+                SoundManager.Instance?.OnAnimationStarted(CurrentAnimation.Name);
 
                 // v.1.2.6: this will steal taskbar focus and the tray menu will disappear. So this should not be used too often.
                 if (Program.MyData.GetStealTaskbarFocus() && CurrentAnimation.Start.OffsetY != 0 && CurrentAnimation.Start.X.Value != 0)
@@ -786,15 +839,18 @@ namespace DesktopPet
             if (_brain == null) _brain = SwinkaBrainController.Instance;
             _brain?.Update();
 
+            if (SwinkaInteractionManager.Instance == null || SwinkaInteractionManager.Instance.LookState != LookAtUserState.TrackingCursor)
+            {
                 // If there is no repeat, we don't need to calculate the frame index.
-            if (AnimationStep < CurrentAnimation.Sequence.Frames.Count)
-            {
-                pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[AnimationStep]);
-            }
-            else
-            {
-                int index = ((AnimationStep - CurrentAnimation.Sequence.Frames.Count + CurrentAnimation.Sequence.RepeatFrom) % (CurrentAnimation.Sequence.Frames.Count - CurrentAnimation.Sequence.RepeatFrom)) + CurrentAnimation.Sequence.RepeatFrom;
-                pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[index]);
+                if (AnimationStep < CurrentAnimation.Sequence.Frames.Count)
+                {
+                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[AnimationStep]);
+                }
+                else
+                {
+                    int index = ((AnimationStep - CurrentAnimation.Sequence.Frames.Count + CurrentAnimation.Sequence.RepeatFrom) % (CurrentAnimation.Sequence.Frames.Count - CurrentAnimation.Sequence.RepeatFrom)) + CurrentAnimation.Sequence.RepeatFrom;
+                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[index]);
+                }
             }
 
                 // Get interval (if not in tossing mode), opacity and offset interpolated from START and END values.
@@ -1531,9 +1587,13 @@ namespace DesktopPet
 
                 if (wasClick)
                 {
-                    // Kliknięcie świnki bez przeciągania -> dymek stanu
                     _brain?.ResumePhysics();
-                    ShowStatusBubble();
+                    bool irritated = SwinkaInteractionManager.Instance != null && SwinkaInteractionManager.Instance.RegisterClick();
+                    if (!irritated)
+                    {
+                        // Kliknięcie świnki bez przeciągania -> dymek stanu
+                        ShowStatusBubble();
+                    }
                 }
                 else if (TossForce.Length() > 5)
                 {

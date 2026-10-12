@@ -43,6 +43,8 @@ namespace DesktopPet
         private static readonly Color ColRed = Color.FromArgb(232, 86, 76);            // --c-red (#e8564c, czerwony)
         private static readonly Color ColBtnFeed = Color.FromArgb(248, 194, 120);      // btn-feed (#f8c278)
         private static readonly Color ColBtnPet = Color.FromArgb(247, 178, 197);       // btn-minigames (#f7b2c5)
+        private static readonly Color ColBtnCall = Color.FromArgb(178, 224, 247);      // btn-call (#b2e0f7)
+        private static readonly Color ColBtnDomek = Color.FromArgb(220, 204, 238);     // btn-domek (#dc ccee)
         private static readonly Color ColBtnDisabled = Color.FromArgb(222, 215, 203);   // zablokowany (#ded7cb)
         private static readonly Color ColBtnHover = Color.FromArgb(247, 180, 110);     // hover (#f7b46e)
         private static readonly Color ColBtnActive = Color.FromArgb(200, 105, 47);      // active (#c8692f)
@@ -62,12 +64,13 @@ namespace DesktopPet
         private Font _fontName;
         private Font _fontPercent;
 
-        // Układ przycisków
-        private readonly Rectangle _rcBtnFeed = new Rectangle(10, 86, 46, 24);
-        private readonly Rectangle _rcBtnPet = new Rectangle(61, 86, 46, 24);
-        private readonly Rectangle _rcBtnDomek = new Rectangle(112, 86, 46, 24);
+        // Układ przycisków: 4 przyciski po 35 px (szerokość dymka 168 px, 8 px marginesy)
+        private readonly Rectangle _rcBtnFeed = new Rectangle(8, 86, 35, 24);
+        private readonly Rectangle _rcBtnPet = new Rectangle(47, 86, 35, 24);
+        private readonly Rectangle _rcBtnCall = new Rectangle(86, 86, 35, 24);
+        private readonly Rectangle _rcBtnDomek = new Rectangle(125, 86, 35, 24);
 
-        private int _hoveredButton = -1; // 0=Feed, 1=Pet, 2=Domek, -1=None
+        private int _hoveredButton = -1; // 0=Feed, 1=Pet, 2=Call, 3=Domek, -1=None
         private int _pressedButton = -1;
         private string _lastHoveredTip = null;
 
@@ -493,8 +496,11 @@ namespace DesktopPet
             // Przycisk 2: Pogłaszcz (ikona: potrzeba_humor / serduszko)
             DrawPixelButton(g, _rcBtnPet, "potrzeba_humor", 1, isEnabled: true, baseColor: ColBtnPet);
 
-            // Przycisk 3: Domek (ikona: domek, aktywny po C1)
-            DrawPixelButton(g, _rcBtnDomek, "domek", 2, isEnabled: false, baseColor: ColBtnDisabled);
+            // Przycisk 3: Zawołaj (ikona: glowa_swinki)
+            DrawPixelButton(g, _rcBtnCall, "glowa_swinki", 2, isEnabled: true, baseColor: ColBtnCall);
+
+            // Przycisk 4: Domek (ikona: domek)
+            DrawPixelButton(g, _rcBtnDomek, "domek", 3, isEnabled: true, baseColor: ColBtnDomek);
         }
 
         private void DrawPixelButton(Graphics g, Rectangle r, string iconName, int btnIndex, bool isEnabled, Color baseColor)
@@ -586,13 +592,19 @@ namespace DesktopPet
             {
                 _hoveredButton = 1;
                 Cursor = Cursors.Hand;
-                SetToolTip("Pogłaszcz (+3 humoru)");
+                SetToolTip("Pogłaszcz (+5 humoru, +1 więź)");
+            }
+            else if (_rcBtnCall.Contains(e.Location))
+            {
+                _hoveredButton = 2;
+                Cursor = Cursors.Hand;
+                SetToolTip("Zawołaj (przybiega pod kursor)");
             }
             else if (_rcBtnDomek.Contains(e.Location))
             {
-                _hoveredButton = 2;
-                Cursor = Cursors.Default;
-                SetToolTip("Domek (odblokuje się po C1)");
+                _hoveredButton = 3;
+                Cursor = Cursors.Hand;
+                SetToolTip("Domek świnki");
             }
             else
             {
@@ -644,7 +656,8 @@ namespace DesktopPet
             {
                 if (_rcBtnFeed.Contains(e.Location)) _pressedButton = 0;
                 else if (_rcBtnPet.Contains(e.Location)) _pressedButton = 1;
-                else if (_rcBtnDomek.Contains(e.Location)) _pressedButton = 2;
+                else if (_rcBtnCall.Contains(e.Location)) _pressedButton = 2;
+                else if (_rcBtnDomek.Contains(e.Location)) _pressedButton = 3;
                 else _pressedButton = -1;
 
                 Invalidate();
@@ -670,7 +683,11 @@ namespace DesktopPet
                 {
                     OnBtnPetClick();
                 }
-                else if (clicked == 2 && _rcBtnDomek.Contains(e.Location))
+                else if (clicked == 2 && _rcBtnCall.Contains(e.Location))
+                {
+                    OnBtnCallClick();
+                }
+                else if (clicked == 3 && _rcBtnDomek.Contains(e.Location))
                 {
                     OnBtnDomekClick();
                 }
@@ -711,19 +728,13 @@ namespace DesktopPet
             var controller = SwinkaBrainController.Instance;
             if (controller != null)
             {
-                // Głaskanie: +3 humoru i animacja purr_pet
-                if (controller.Session?.Pet != null)
-                {
-                    controller.Session.Pet.Needs.Mood = Math.Min(100.0, controller.Session.Pet.Needs.Mood + 3.0);
-                    controller.Session.Pet.Count("glaskanie");
-                    controller.Session.Pet.AddBondPoints(1);
-                    SwinkaBrainController.Log(string.Format("[Głaskanie] Pogłaskano świnkę (+3 humoru). Humor: {0:0.#}%",
-                        controller.Session.Pet.Needs.Mood));
-                }
-                controller.RequestAnimation("purr_pet");
+                controller.PetPig();
             }
-
-            if (_petForm != null)
+            else if (SwinkaInteractionManager.Instance != null)
+            {
+                SwinkaInteractionManager.Instance.TriggerPetting();
+            }
+            else if (_petForm != null)
             {
                 _petForm.PlayAnimationByName("purr_pet");
             }
@@ -731,10 +742,24 @@ namespace DesktopPet
             Invalidate();
         }
 
+        private void OnBtnCallClick()
+        {
+            var controller = SwinkaBrainController.Instance;
+            if (controller != null)
+            {
+                controller.CallPet();
+            }
+            else if (SwinkaInteractionManager.Instance != null)
+            {
+                SwinkaInteractionManager.Instance.CallPet();
+            }
+
+            Invalidate();
+        }
+
         private void OnBtnDomekClick()
         {
-            // Aktywny dopiero po C1
-            SetToolTip("Domek będzie dostępny po etapie C1!");
+            FormDomek.ShowDomek();
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

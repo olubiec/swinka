@@ -892,6 +892,176 @@
         <next probability="100" only="none">3</next>
       </sequence>
     </animation>
+
+    <!-- ID 30: front_idle (patrzy na ciebie przodem) -->
+    <animation id="30">
+      <name>front_idle</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>125</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>125</interval>
+      </end>
+      <sequence repeat="2" repeatfrom="0">
+        <frame>336</frame>
+        <frame>337</frame>
+        <frame>338</frame>
+        <frame>339</frame>
+        <frame>340</frame>
+        <frame>341</frame>
+        <frame>342</frame>
+        <frame>343</frame>
+        <frame>344</frame>
+        <frame>345</frame>
+        <frame>346</frame>
+        <frame>347</frame>
+        <next probability="100" only="none">3</next>
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
+
+    <!-- ID 31: front_look (śledzenie kursora: 0=lewo 1=prawo 2=góra 3=dół 4=środek) -->
+    <animation id="31">
+      <name>front_look</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>1000</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>1000</interval>
+      </end>
+      <sequence repeat="0" repeatfrom="0">
+        <frame>356</frame>
+        <next probability="100" only="none">3</next>
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
+
+    <!-- ID 32: come_called (na zawołanie: uszy w górę, spojrzenie) -->
+    <animation id="32">
+      <name>come_called</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </end>
+      <sequence repeat="0" repeatfrom="0">
+        <frame>720</frame>
+        <frame>721</frame>
+        <frame>722</frame>
+        <frame>723</frame>
+        <frame>724</frame>
+        <frame>725</frame>
+        <frame>726</frame>
+        <frame>727</frame>
+        <frame>728</frame>
+        <frame>729</frame>
+        <next probability="100" only="none">7</next>
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
+
+    <!-- ID 33: greet (powitanie: radosny podskok i kwiknięcie) -->
+    <animation id="33">
+      <name>greet</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </end>
+      <sequence repeat="0" repeatfrom="0">
+        <frame>704</frame>
+        <frame>705</frame>
+        <frame>706</frame>
+        <frame>707</frame>
+        <frame>708</frame>
+        <frame>709</frame>
+        <frame>710</frame>
+        <frame>711</frame>
+        <frame>712</frame>
+        <frame>713</frame>
+        <frame>714</frame>
+        <frame>715</frame>
+        <frame>716</frame>
+        <frame>717</frame>
+        <next probability="100" only="none">3</next>
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
+
+    <!-- ID 34: chatter (irytacja: zgrzyta ząbkami, uszy do tyłu) -->
+    <animation id="34">
+      <name>chatter</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>83</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>83</interval>
+      </end>
+      <sequence repeat="2" repeatfrom="0">
+        <frame>656</frame>
+        <frame>657</frame>
+        <frame>658</frame>
+        <frame>659</frame>
+        <frame>660</frame>
+        <frame>661</frame>
+        <frame>662</frame>
+        <frame>663</frame>
+        <next probability="100" only="none">3</next>
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
   </animations>
   <childs />
 </animations>
