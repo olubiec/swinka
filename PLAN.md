@@ -276,20 +276,20 @@ Zamiast 30 kroków po kolei jest 13 rund. W jednej rundzie prompty zmieniają r�
 
 | Runda | Prompty naraz | Kto zmienia co |
 | --- | --- | --- |
-| 1 | A5 ∥ B1c | animacje w `esheep/` ∥ biblioteka `SwinkaCore/` |
-| 2 | B2a, potem B2b ∥ C2 | mózg świnki ∥ ekran Domku w trybie mock (tylko `domek/`) |
-| 3 | B3 ∥ B5 ∥ B2c | wykrywanie bezczynności ∥ menu w zasobniku ∥ dymek stanu nad świnką |
-| 4 | B4 ∥ C1 | bobki na pasku ∥ okno Domku i most C# ↔ JavaScript |
-| 5 | B6 ∥ D1 | karmienie ∥ szkielet minigier (`domek/minigry/`) |
-| 5½ | Prezent v1 | wersja do podarowania: mała świnka, imię, autostart |
-| 6 | C3 ∥ C4 | sklepik i ekwipunek ∥ wiek i więź |
-| 7 | C5 ∥ F1 | album i pamiętnik ∥ dźwięki |
+| 1 | A5 ∥ B1c | animacje w `esheep/` ∥ biblioteka `SwinkaCore/` (zrobione) |
+| 2 | B2a, potem B2b ∥ C2 | mózg świnki ∥ ekran Domku w trybie mock (zrobione) |
+| 3 | B3 ∥ B5 ∥ B2c | bezczynność ∥ menu w zasobniku ∥ dymek stanu (zrobione) |
+| 4 | B4 | bobki na pasku (zrobione) |
+| 5 | B6 ∥ C1 | karmienie ∥ pikselowy Domek w oknie (zastępuje tymczasowe okno z B5) |
+| 5b | C3 ∥ I1 ∥ F1 | sklepik ∥ interakcje (głaskanie, patrzenie, wołanie) ∥ dźwięki |
+| 5½ | Prezent v1 | wersja do podarowania: mała świnka, imię, ikona, autostart |
+| 6 | C4 ∥ D1 | wiek i więź ∥ szkielet minigier |
+| 7 | C5 | album i pamiętnik |
 | 8 | D2 ∥ D3 ∥ D4 ∥ D5 | każda minigra w swoim folderze `domek/minigry/<gra>/` |
 | 9 | E1 ∥ E3 ∥ E5 | muzyka ∥ pełny ekran ∥ pogoda |
-| 10 | E2 ∥ F2 | strach i kursor ∥ ustawienia |
-| 11 | E4 | głaskanie |
-| 12 | E6 | sztuczki i towarzysz, sam |
-| 13 | F3, potem F4 | instalator, potem przegląd całości |
+| 10 | E2 ∥ F2 | strach (bez części z kursorem, którą ma I1) ∥ ustawienia |
+| 11 | E6 | sztuczki i towarzysz, sam |
+| 12 | F3, potem F4 | instalator, potem przegląd całości |
 
 Bramki etapów zostają: bramka B po rundzie 5½, bramka C po rundzie 7, bramka D po rundzie 8, bramka E po rundzie 12.
 
@@ -557,6 +557,27 @@ Inspiracja zapamiętywania preferencji: https://github.com/ViciousSquid/Dosidicu
 
 **Sprawdź:** Nakarm → Papryka, potem to samo, gdy świnka stoi na oknie. **Powinno być:** papryka pojawia się obok, świnka podchodzi i chrupie 3–6 s, w nakładce F9 rośnie witamina C; jedzenie da się przeciągnąć; z okna jedzenie spada na pasek, a świnka schodzi za nim.
 
+### I1 · Gemini: interakcje przed prezentem (runda 5b)
+
+Zbiera najważniejsze kawałki E4 i E2 wcześniej, żeby już pierwsza wersja była zwierzątkiem, a nie animacją.
+
+```text
+Przeczytaj PLAN.md, ZASADY.md, ARCHITEKTURA.md, Brain i FormStatusBubble. Nie zmieniaj Domku ani plików domek/.
+Dodaj interakcje z kursorem:
+1. Głaskanie (wzór: https://github.com/IdreesInc/Pocket-Bird): kursor nad świnką zmienia kierunek co najmniej
+   3 razy w 1,5 s -> purr_pet, serduszka, humor +5, więź +1 (najwyżej 10 nagradzanych głaskań na godzinę).
+   Głaskanie śpiącej świnki ją budzi i obniża humor o 2.
+2. Patrzenie na ciebie: gdy odpoczywająca świnka ma kursor nieruchomo 1-3 s w promieniu 250 px, robi turn,
+   potem front_idle i śledzi kursor klatkami front_look (0 lewo, 1 prawo, 2 góra, 3 dół, 4 środek).
+   Po 5 s albo gdy kursor odjedzie, wraca bokiem. Najwyżej raz na 2 minuty.
+3. Zawołaj (menu w zasobniku i przycisk w dymku): come_called, bieg (run) do miejsca pod kursorem na pasku
+   albo oknie, na miejscu greet (kwiknięcie i mały podskok).
+4. Powitanie po uruchomieniu aplikacji: greet, jeśli więź >= 3; inaczej sniff.
+5. Ponad 8 kliknięć w świnkę w 3 s -> chatter i 30 s obrażenia (nie przychodzi na zawołanie).
+```
+
+**Sprawdź:** pogłaszcz świnkę kursorem tam i z powrotem; zatrzymaj kursor obok odpoczywającej; kliknij Zawołaj; kliknij świnkę szybko 10 razy. **Powinno być:** mruczenie z serduszkami; świnka odwraca się przodem i oczami podąża za kursorem; na zawołanie przybiega i kwiczy; po serii kliknięć zgrzyta ząbkami i chwilę się dąsa.
+
 ### Prezent v1 · Gemini (runda 5½, przed bramką B)
 
 ```text
@@ -571,6 +592,7 @@ Przeczytaj PLAN.md, ZASADY.md i ARCHITEKTURA.md. Przygotuj pierwszą wersję do 
 5. Zbuduj Release i przygotuj folder Swinka_v1 ze wszystkim, co potrzebne na innym komputerze (exe, dll, swinka/, domek/),
    plus CZYTAJ.txt po polsku: jak uruchomić i co kliknąć przy ostrzeżeniu SmartScreen.
 6. Przyszłe aktualizacje: nowa wersja musi czytać stary save.json bez utraty danych (pole version i migracja).
+7. Ikona exe, zasobnika i okien: swinka/ikona/swinka.ico (logo: swinka/ikona/logo_256.png).
 Nie dodawaj nowych funkcji gry.
 ```
 
@@ -833,7 +855,7 @@ Najpierw znajdź przyczynę i opisz ją w dwóch zdaniach, dopiero potem poprawi
 
 ## Prompty do tego czatu (grafika i dane)
 
-Grafikę i dane rysuję tutaj tym samym kodem co dotychczasową świnkę, więc wszystko pasuje stylem. Wklej prompt, gdy dana faza go potrzebuje. G1–G5 i G7 są już zrobione (dane gry leżą w swinka/dane/); zostały G6, G8 i G9. Każdy wynik dostajesz jako paczkę do wrzucenia do `/swinka` w repo.
+Grafikę i dane rysuję tutaj tym samym kodem co dotychczasową świnkę, więc wszystko pasuje stylem. Wklej prompt, gdy dana faza go potrzebuje. G1–G5, G7 i G8 są już zrobione (dane gry w swinka/dane/, ikona w swinka/ikona/); zostały G6 i G9. Każdy wynik dostajesz jako paczkę do wrzucenia do `/swinka` w repo.
 
 | Prompt | Kiedy | Co dostajesz |
 | --- | --- | --- |
