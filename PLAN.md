@@ -803,10 +803,10 @@ Przeczytaj PLAN.md (Poziom więzi), ZASADY.md, ARCHITEKTURA.md, Brain i SwinkaCo
 
 ### F1 · ty + Gemini: dźwięki
 
-- [ ] Ty: pobierz z freesound.org nagrania z licencją CC0: kwiczenie, mruczenie, chrupanie, pisk strachu, „pop” przy popcorningu
+- [x] Zrobione: 10 klipów (kwiki, mruczenie, ćwierkanie, piski, chrupanie, pop) leży w swinka/dzwieki/, opis w CZYTAJ.md
 
 ```text
-Przeczytaj PLAN.md i ZASADY.md. Pliki dźwięków są w /swinka/dzwieki.
+Przeczytaj PLAN.md i ZASADY.md. Pliki dźwięków są w /swinka/dzwieki (WAV, opis w swinka/dzwieki/CZYTAJ.md).
 Dodaj SoundManager: mapowanie zdarzeń na dźwięki, głośność, godziny ciszy, wyciszenie przy pełnym ekranie,
 losowa lekka zmiana wysokości dźwięku, maks. jeden dźwięk kwiczenia na 2 minuty.
 ```
