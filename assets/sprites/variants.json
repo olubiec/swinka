@@ -1,0 +1,53 @@
+{
+ "frame_size": [
+  64,
+  64
+ ],
+ "floor_y": 59,
+ "facing": "right",
+ "note": "front_look has 5 frames for cursor tracking: 0 left, 1 right, 2 up, 3 down, 4 centre",
+ "variants": {
+  "adult": {
+   "description": "Adult (ginger)",
+   "folder": "adult",
+   "animations": 60,
+   "frames": 592
+  },
+  "baby": {
+   "description": "Baby",
+   "folder": "baby",
+   "animations": 60,
+   "frames": 592
+  },
+  "senior": {
+   "description": "Senior",
+   "folder": "senior",
+   "animations": 60,
+   "frames": 592
+  },
+  "legend": {
+   "description": "Legend",
+   "folder": "legend",
+   "animations": 60,
+   "frames": 592
+  },
+  "companion_black_white": {
+   "description": "Companion: black and white",
+   "folder": "companion_black_white",
+   "animations": 60,
+   "frames": 592
+  },
+  "companion_agouti": {
+   "description": "Companion: agouti",
+   "folder": "companion_agouti",
+   "animations": 60,
+   "frames": 592
+  },
+  "companion_cream": {
+   "description": "Companion: cream",
+   "folder": "companion_cream",
+   "animations": 60,
+   "frames": 592
+  }
+ }
+}

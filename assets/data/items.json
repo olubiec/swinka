@@ -1,0 +1,189 @@
+{
+ "currency": {
+  "name": "clovers",
+  "icon": "clover"
+ },
+ "items": [
+  {
+   "id": "hay",
+   "name": "Hay",
+   "category": "food",
+   "price": 0,
+   "unlimited": true,
+   "icon": "hay",
+   "animation": "eat",
+   "effects": {
+    "fullness": 10,
+    "teeth": 6
+   },
+   "description": "The basis of the diet. Free; you top up the hay rack (0-100)."
+  },
+  {
+   "id": "pellets",
+   "name": "Pellets",
+   "category": "food",
+   "price": 5,
+   "icon": "pellets",
+   "animation": "eat_bowl",
+   "effects": {
+    "fullness": 20,
+    "vitamin_c": 5
+   },
+   "description": "A filling extra from the bowl."
+  },
+  {
+   "id": "bell_pepper",
+   "name": "Bell pepper",
+   "category": "vegetable",
+   "price": 12,
+   "icon": "bell_pepper",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 8,
+    "vitamin_c": 35,
+    "mood": 5
+   },
+   "description": "The best source of vitamin C."
+  },
+  {
+   "id": "parsley",
+   "name": "Parsley",
+   "category": "vegetable",
+   "price": 8,
+   "icon": "parsley",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 6,
+    "vitamin_c": 20
+   },
+   "description": "Lots of vitamin C, few calories."
+  },
+  {
+   "id": "kale",
+   "name": "Kale",
+   "category": "vegetable",
+   "price": 10,
+   "icon": "kale",
+   "animation": "eat_big",
+   "effects": {
+    "fullness": 10,
+    "vitamin_c": 25,
+    "teeth": 3
+   },
+   "description": "A big leaf to tug at."
+  },
+  {
+   "id": "cucumber",
+   "name": "Cucumber",
+   "category": "vegetable",
+   "price": 5,
+   "icon": "cucumber",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 6,
+    "mood": 4,
+    "vitamin_c": 2
+   },
+   "description": "Refreshing, almost no vitamin C."
+  },
+  {
+   "id": "carrot",
+   "name": "Carrot",
+   "category": "treat",
+   "price": 8,
+   "icon": "carrot",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 8,
+    "mood": 10,
+    "vitamin_c": 3
+   },
+   "daily_limit": 1,
+   "description": "Sweet, so only once a day."
+  },
+  {
+   "id": "chew_stick",
+   "name": "Chew stick",
+   "category": "chew_stick",
+   "price": 20,
+   "icon": "chew_stick",
+   "animation": "chew_stick",
+   "uses": 5,
+   "effects": {
+    "teeth": 40,
+    "mood": 5
+   },
+   "description": "Wears down the teeth. Lasts 5 uses."
+  },
+  {
+   "id": "ball",
+   "name": "Ball",
+   "category": "toy",
+   "price": 60,
+   "permanent": true,
+   "icon": "ball",
+   "animation": "ball_push",
+   "effects": {
+    "mood": 15,
+    "energy": -5
+   },
+   "description": "Unlocks playing with the ball."
+  },
+  {
+   "id": "tunnel",
+   "name": "Tunnel",
+   "category": "toy",
+   "price": 150,
+   "permanent": true,
+   "icon": "tunnel",
+   "animation": "tunnel_in",
+   "effects": {
+    "mood": 20,
+    "energy": -8
+   },
+   "description": "Unlocks running through the tunnel."
+  },
+  {
+   "id": "house",
+   "name": "House",
+   "category": "equipment",
+   "price": 250,
+   "permanent": true,
+   "icon": "house",
+   "animation": "sleep_house",
+   "effects": {
+    "energy": 10,
+    "mood": 5
+   },
+   "description": "Sleeping in the house restores energy 1.5x faster."
+  },
+  {
+   "id": "water_bottle",
+   "name": "Water bottle",
+   "category": "equipment",
+   "price": 40,
+   "permanent": true,
+   "icon": "water_bottle",
+   "animation": "drink",
+   "effects": {
+    "mood": 2,
+    "fullness": 2
+   },
+   "description": "Unlocks drinking; without it health recovers more slowly."
+  },
+  {
+   "id": "cake",
+   "name": "Celery cake",
+   "category": "special",
+   "price": null,
+   "icon": "cake",
+   "animation": "party",
+   "effects": {
+    "fullness": 15,
+    "mood": 30,
+    "vitamin_c": 10
+   },
+   "description": "Birthdays only."
+  }
+ ]
+}

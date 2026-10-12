@@ -1,0 +1,19 @@
+{
+ "description": "7 days, PC on 9-17, hay 3x a day, 2 bell peppers, some play | weekend: PC off, no care",
+ "with_care_min": {
+  "fullness": 70.7,
+  "vitamin_c": 70.7,
+  "energy": 92,
+  "mood": 73.3,
+  "cleanliness": 100.0,
+  "teeth": 98.0
+ },
+ "weekend_no_care_min": {
+  "fullness": 20,
+  "vitamin_c": 20,
+  "energy": 100,
+  "mood": 20,
+  "cleanliness": 100.0,
+  "teeth": 77.3
+ }
+}
