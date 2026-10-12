@@ -324,6 +324,81 @@ namespace DesktopPet
             }
         }
 
+        public void SetFacing(bool faceLeft)
+        {
+            if (IsMovingLeft != faceLeft)
+            {
+                IsMovingLeft = faceLeft;
+                spritesFlipped = faceLeft;
+            }
+        }
+
+        public void StepTowards(int targetX, int speedPx = 2)
+        {
+            if (this.IsDisposed) return;
+            if (IsDragging || IsTossing) return;
+
+            int diff = targetX - (int)PositionX;
+            if (Math.Abs(diff) <= speedPx)
+            {
+                PositionX = targetX;
+            }
+            else if (diff < 0)
+            {
+                SetFacing(true);
+                PositionX -= speedPx;
+            }
+            else
+            {
+                SetFacing(false);
+                PositionX += speedPx;
+            }
+
+            if (CurrentAnimation.Name != "walk")
+            {
+                PlayAnimationByName("walk");
+            }
+
+            Location = new Point((int)PositionX, (int)(PositionY + OffsetY));
+            ResetMotion();
+        }
+
+        public void StepOffWindowToTaskbar(bool exitToLeft)
+        {
+            if (this.IsDisposed) return;
+            if (hwndWindow == IntPtr.Zero) return;
+
+            SetFacing(exitToLeft);
+            if (exitToLeft)
+            {
+                PositionX -= 3;
+            }
+            else
+            {
+                PositionX += 3;
+            }
+
+            if (NativeMethods.GetWindowRect(new HandleRef(this, hwndWindow), out var rct))
+            {
+                bool steppedOff = exitToLeft ? (PositionX < rct.Left - Width / 4) : (PositionX + Width > rct.Right + Width / 4);
+                if (steppedOff)
+                {
+                    hwndWindow = IntPtr.Zero;
+                    _brain?.InterruptPhysics("food_descend");
+                    SetNewAnimation(Animations.AnimationFall);
+                }
+            }
+            else
+            {
+                hwndWindow = IntPtr.Zero;
+                _brain?.InterruptPhysics("food_descend");
+                SetNewAnimation(Animations.AnimationFall);
+            }
+
+            Location = new Point((int)PositionX, (int)(PositionY + OffsetY));
+            ResetMotion();
+        }
+
         public void ShowStatusBubble()
         {
             if (Name.IndexOf("child") >= 0) return;

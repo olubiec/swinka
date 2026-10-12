@@ -65,6 +65,9 @@ namespace DesktopPet
             // Menedżer bobków na pulpicie (B4)
             SwinkaPoopManager.Initialize(this);
             SwinkaPoopManager.Instance.RestoreSavedPoops();
+
+            // Menedżer karmienia i kładzenia jedzenia (B6)
+            SwinkaFoodManager.Initialize(this);
         }
 
         public static void Initialize(double initialMultiplier = 1.0)
@@ -205,8 +208,13 @@ namespace DesktopPet
             // Aktualizacja bobków (B4: odliczanie czasu gry, aktualizacja pozycji na oknach)
             SwinkaPoopManager.Instance?.Update(gameElapsed);
 
-            // Aktualizacja Brain (tylko gdy nie ma fizyki i nie trwa wybudzanie)
-            if (!_isPhysicsActive)
+            // Aktualizacja mechaniki karmienia (B6)
+            SwinkaFoodManager.Instance?.Update(gameElapsed);
+
+            bool isFoodActive = SwinkaFoodManager.Instance != null && SwinkaFoodManager.Instance.State != FoodInteractionState.None;
+
+            // Aktualizacja Brain (tylko gdy nie ma fizyki, nie trwa wybudzanie i nie trwa interakcja z jedzeniem)
+            if (!_isPhysicsActive && !isFoodActive)
             {
                 var beforeAction = _brain.CurrentAction;
                 if (!_isWakingUp)
@@ -283,41 +291,21 @@ namespace DesktopPet
 
             if (string.Equals(itemId, "siano", StringComparison.OrdinalIgnoreCase))
             {
-                // Siano jest zawsze bez limitu
-                _session.Pet.Needs.Satiety = Math.Min(100.0, _session.Pet.Needs.Satiety + 10.0);
-                _session.Pet.Needs.Teeth = Math.Min(100.0, _session.Pet.Needs.Teeth + 6.0);
-                _session.Pet.Count("siano");
-                _session.Pet.Count("karmienia");
-                _session.Pet.AddBondPoints(1);
-                RequestAnimation("eat");
-                Log(string.Format("[Karmienie] Nakarmiono sianem. Najedzenie: {0:0.#}%, Ząbki: {1:0.#}%",
-                    _session.Pet.Needs.Satiety, _session.Pet.Needs.Teeth));
+                // Siano jest zawsze bez limitu - kładziemy na pulpicie (B6)
+                if (SwinkaFoodManager.Instance != null)
+                {
+                    SwinkaFoodManager.Instance.SpawnFood("siano");
+                }
                 return;
             }
 
             // Przedmioty z ekwipunku
             if (_session.Pet.TryRemoveItem(itemId, 1))
             {
-                var itemDef = SwinkaItemCatalog.GetItem(itemId);
-                if (itemDef != null && itemDef.Effects != null)
+                if (SwinkaFoodManager.Instance != null)
                 {
-                    foreach (var eff in itemDef.Effects)
-                    {
-                        if (NeedNames.TryParseDataKey(eff.Key, out Need need))
-                        {
-                            _session.Pet.ChangeNeed(need, eff.Value);
-                        }
-                    }
+                    SwinkaFoodManager.Instance.SpawnFood(itemId);
                 }
-
-                _session.Pet.Count(itemId);
-                _session.Pet.Count("karmienia");
-                _session.Pet.AddBondPoints(1);
-
-                string anim = itemDef != null && !string.IsNullOrEmpty(itemDef.Animation) ? itemDef.Animation : "eat_treat";
-                RequestAnimation(anim);
-                Log(string.Format("[Karmienie] Zjedzono {0} ({1}). Pozostało w ekwipunku: {2}",
-                    itemDef != null ? itemDef.Name : itemId, itemId, _session.Pet.GetItemCount(itemId)));
             }
             else
             {
@@ -361,9 +349,9 @@ namespace DesktopPet
 
         public string GetCurrentDesiredAnimation()
         {
-            if (_isPhysicsActive)
+            if (_isPhysicsActive || (SwinkaFoodManager.Instance != null && SwinkaFoodManager.Instance.State != FoodInteractionState.None))
             {
-                // Gdy fizyka jest aktywna, eSheep steruje animacjami drag/toss/fall/land bezpośrednio
+                // Gdy fizyka lub karmienie jest aktywne, eSheep/FoodManager steruje animacjami bezpośrednio
                 return null;
             }
 
@@ -395,7 +383,7 @@ namespace DesktopPet
         /// </summary>
         public string OnAnimationSequenceFinished(string currentAnimationName)
         {
-            if (_isPhysicsActive)
+            if (_isPhysicsActive || (SwinkaFoodManager.Instance != null && SwinkaFoodManager.Instance.State != FoodInteractionState.None))
             {
                 return null;
             }
@@ -584,6 +572,7 @@ namespace DesktopPet
         {
             try
             {
+                SwinkaFoodManager.Instance?.CancelActiveFood();
                 SwinkaPoopManager.Instance?.CloseAllVisuals();
                 Log("[Sesja] Zapisywanie stanu i zamykanie gry...");
                 _session?.Close();

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using SwinkaCore.Time;
 
@@ -337,6 +338,64 @@ namespace SwinkaCore
             n += by;
             State.Stats.Counters[counter] = n;
             return n;
+        }
+
+
+        private static readonly string[] DefaultVegetableIds = new[]
+        {
+            "papryka", "ogorek", "natka", "marchewka", "jarmuz"
+        };
+
+        /// <summary>
+        /// Rejestruje zjedzenie przedmiotu: zwiększa łączny licznik karmień,
+        /// licznik danego przedmiotu oraz dedykowany licznik spożycia "eaten_<id>".
+        /// </summary>
+        public void RecordFoodEaten(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return;
+            Count("karmienia");
+            Count(itemId);
+            Count("eaten_" + itemId.ToLowerInvariant());
+        }
+
+        /// <summary>
+        /// Zwraca identyfikator warzywa/przysmaku, które świnka je najchętniej
+        /// (ma najwyższy licznik spożycia > 0). Zwraca null, jeśli żadne warzywo nie zostało jeszcze zjedzone.
+        /// </summary>
+        public string GetFavoriteVegetable(System.Collections.Generic.IEnumerable<string> candidateVegetableIds = null)
+        {
+            var candidates = candidateVegetableIds ?? DefaultVegetableIds;
+            string bestId = null;
+            int maxCount = 0;
+
+            foreach (var id in candidates)
+            {
+                if (string.IsNullOrEmpty(id)) continue;
+                string key = "eaten_" + id.ToLowerInvariant();
+                int count;
+                if (!State.Stats.Counters.TryGetValue(key, out count))
+                {
+                    State.Stats.Counters.TryGetValue(id, out count);
+                }
+
+                if (count > maxCount)
+                {
+                    maxCount = count;
+                    bestId = id;
+                }
+            }
+
+            return bestId;
+        }
+
+        /// <summary>
+        /// Sprawdza, czy podany przedmiot jest aktualnie ulubionym warzywem świnki.
+        /// </summary>
+        public bool IsFavoriteVegetable(string itemId, System.Collections.Generic.IEnumerable<string> candidateVegetableIds = null)
+        {
+            if (string.IsNullOrEmpty(itemId)) return false;
+            string fav = GetFavoriteVegetable(candidateVegetableIds);
+            return !string.IsNullOrEmpty(fav) && string.Equals(fav, itemId, StringComparison.OrdinalIgnoreCase);
         }
 
         private void Raise<T>(EventHandler<T> handler, T args) where T : EventArgs

@@ -118,6 +118,7 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
     frames_run = format_frames(get_row_frames(3, 6))
     frames_popcorn = format_frames(get_row_frames(4, 12))
     frames_eat = format_frames(get_row_frames(5, 12))
+    frames_eat_treat = format_frames(get_row_frames(6, 10))
     frames_scratch = format_frames(get_row_frames(7, 16))
     frames_lie_down = format_frames(get_row_frames(8, 6))
     frames_sleep = format_frames(get_row_frames(9, 16))
@@ -526,6 +527,32 @@ def build_animations_xml(png_path="swinka/swinka_spritesheet.png"):
       <sequence repeat="0" repeatfrom="0">
 {frames_eat}
 {next_from_eat}
+      </sequence>
+      <gravity>
+        <next probability="100" only="none">5</next>
+      </gravity>
+    </animation>
+
+    <!-- ID 29: eat_treat (chrupanie warzywka / smakołyku: 10 klatek, 10 FPS, rząd 6) -->
+    <animation id="29">
+      <name>eat_treat</name>
+      <start>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </start>
+      <end>
+        <x>0</x>
+        <y>0</y>
+        <offsety>4</offsety>
+        <opacity>1.0</opacity>
+        <interval>100</interval>
+      </end>
+      <sequence repeat="0" repeatfrom="0">
+{frames_eat_treat}
+        <next probability="100" only="none">3</next>
       </sequence>
       <gravity>
         <next probability="100" only="none">5</next>
