@@ -268,6 +268,9 @@
     // Zamknięcie okna (w WebView2 lub ukrycie)
     elements.btnClose?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
+      if (window.Minigry && window.Minigry.activeGame) {
+        window.Minigry.pause();
+      }
       if (window.bridge && window.bridge.isWebView2) {
         window.bridge.send({ type: 'settings', action: 'close' });
       } else {
@@ -299,6 +302,9 @@
 
   function closeModal() {
     if (!elements.modalBackdrop) return;
+    if (window.Minigry && window.Minigry.activeGame && !window.Minigry.isPaused) {
+      window.Minigry.pause();
+    }
     elements.modalBackdrop.classList.remove('active');
   }
 
@@ -359,46 +365,10 @@
 
   // Modal Minigier
   function openMinigamesModal() {
-    const games = [
-      { id: 'deszcz', name: 'Deszcz Warzyw', icon: 'icon-papryka', desc: 'Łap smakołyki, unikaj cebuli!' },
-      { id: 'popcorn', name: 'Popcorn Jump', icon: 'icon-koniczynka', desc: 'Skacz w górę po belach siana!' },
-      { id: 'labirynt', name: 'Labirynt z Siana', icon: 'icon-siano', desc: 'Znajdź drogę do przysmaku przed czasem!' },
-      { id: 'memory', name: 'Memory Warzyw', icon: 'icon-marchewka', desc: 'Odkrywaj pasujące pary kart!' }
-    ];
-
-    let html = `
-      <p style="color:#6e6a5c; margin-bottom:4px;">Graj w minigry, aby zdobywać koniczynki i poprawiać humor śwince!</p>
-      <div class="games-grid">
-    `;
-
-    games.forEach(g => {
-      html += `
-        <div class="game-item">
-          <div class="pixel-icon x1_5 ${g.icon}"></div>
-          <b>${g.name}</b>
-          <small style="color:#6e6a5c;">${g.desc}</small>
-          <button class="shop-item-btn" data-game="${g.id}">Zagraj</button>
-        </div>
-      `;
-    });
-
-    html += `</div>`;
-    openModal('🎮 Minigry Ze Świnką', html);
-
-    elements.modalBody.querySelectorAll('button[data-game]').forEach(b => {
-      b.addEventListener('click', () => {
-        const gameId = b.dataset.game;
-        if (window.Sound) window.Sound.fanfare();
-        if (canvasPig) {
-          canvasPig.playAnim('popcorn', 3000);
-          canvasPig.showBubble('Świnka gra wesoło! +10 🍀', 2500);
-        }
-        if (window.bridge) {
-          window.bridge.send({ type: 'play', game: gameId });
-        }
-        closeModal();
-      });
-    });
+    openModal('🎮 Minigry Ze Świnką', '');
+    if (window.Minigry && elements.modalBody) {
+      window.Minigry.renderSelectScreen(elements.modalBody);
+    }
   }
 
   // Modal Albumu Naklejek

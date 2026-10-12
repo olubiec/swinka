@@ -45,6 +45,15 @@ namespace SwinkaCore
         /// <summary>Ekwipunek: id przedmiotu z items.json -> liczba sztuk.</summary>
         public Dictionary<string, int> Inventory { get; set; } = new Dictionary<string, int>();
 
+        /// <summary>Rekordy minigier: id gry -> najwyższy wynik.</summary>
+        public Dictionary<string, int> HighScores { get; set; } = new Dictionary<string, int>();
+
+        /// <summary>Lokalna data dnia gier z nagrodą (format yyyy-MM-dd) do limitu dziennego (max 10).</summary>
+        public string MinigamesDailyDate { get; set; }
+
+        /// <summary>Liczba nagrodzonych gier rozegranych w dniu MinigamesDailyDate (maks. 10).</summary>
+        public int MinigamesDailyCount { get; set; }
+
         /// <summary>Album zachowań: nazwa animacji -> kiedy zobaczona pierwszy raz (czas gry, UTC).</summary>
         public Dictionary<string, DateTime> Album { get; set; } = new Dictionary<string, DateTime>();
 
@@ -75,6 +84,7 @@ namespace SwinkaCore
             if (Bond.Points < 0) Bond.Points = 0;
             if (Clovers < 0) Clovers = 0;
             if (Inventory == null) Inventory = new Dictionary<string, int>();
+            if (HighScores == null) HighScores = new Dictionary<string, int>();
             if (Album == null) Album = new Dictionary<string, DateTime>();
             if (Diary == null) Diary = new List<DiaryEntry>();
             if (Stats == null) Stats = new Statistics();

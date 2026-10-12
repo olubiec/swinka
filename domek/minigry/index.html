@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Minigry Świnki — Centrum Gier</title>
+  <meta name="description" content="Szkielet minigier w Phaser 3 dla Domku Świnki Morskiej.">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="minigry.css">
+  <style>
+    body {
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #241d1a;
+    }
+    .minigry-standalone-device {
+      width: 100%;
+      max-width: 420px;
+      background: var(--c-cream);
+      border: 4px solid var(--c-contour-dark);
+      border-radius: 12px;
+      box-shadow: 
+        0 10px 0 #181210,
+        0 16px 24px rgba(0,0,0,0.4),
+        inset 3px 3px 0 var(--c-white),
+        inset -3px -3px 0 var(--c-cream-dark);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .standalone-header {
+      background: var(--c-wood-dark);
+      border-bottom: 3px solid var(--c-contour-dark);
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--c-white);
+    }
+    .standalone-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .standalone-body {
+      padding: 12px;
+      min-height: 400px;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="minigry-standalone-device">
+    <header class="standalone-header">
+      <span class="standalone-title">🎮 MINIGRY ZE ŚWINKĄ</span>
+      <a href="../index.html" style="color:#eedb7c; text-decoration:none; font-weight:700; font-size:12px;">🏠 Domek</a>
+    </header>
+
+    <div class="standalone-body" id="minigryContainer">
+      <!-- Wybór gier lub aktywna gra -->
+    </div>
+  </main>
+
+  <!-- Skrypty mostu i dźwięków z Domku -->
+  <script src="../bridge.js"></script>
+  <script src="../sound.js"></script>
+
+  <!-- Pinned Phaser 3.80.1 -->
+  <script src="lib/phaser.min.js"></script>
+
+  <!-- Wspólne API i szkielet minigier -->
+  <script src="minigry-api.js"></script>
+
+  <!-- Gra przykładowa (D1) -->
+  <script src="gra-przyklad/gra-przyklad.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('minigryContainer');
+      if (window.Minigry && container) {
+        window.Minigry.renderSelectScreen(container);
+      }
+    });
+  </script>
+</body>
+</html>

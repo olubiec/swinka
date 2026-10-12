@@ -341,6 +341,52 @@ namespace SwinkaCore
         }
 
 
+        /// <summary>
+        /// Zapisuje wynik minigry, nalicza nagrodę (koniczynki = min(40, punkty / 10), humor +15)
+        /// z uwzględnieniem limitu maks. 10 nagradzanych gier dziennie oraz aktualizuje rekordy w GameState.
+        /// </summary>
+        public bool RecordMinigameResult(string gameId, int score, out int cloversAwarded, out bool isNewRecord)
+        {
+            if (string.IsNullOrEmpty(gameId)) gameId = "unknown";
+            if (State.HighScores == null) State.HighScores = new System.Collections.Generic.Dictionary<string, int>();
+
+            int currentRecord = 0;
+            State.HighScores.TryGetValue(gameId, out currentRecord);
+            isNewRecord = score > currentRecord;
+            if (isNewRecord)
+            {
+                State.HighScores[gameId] = score;
+            }
+
+            // Dzienny limit 10 nagradzanych gier
+            string today = Clock.LocalNow().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            if (State.MinigamesDailyDate != today)
+            {
+                State.MinigamesDailyDate = today;
+                State.MinigamesDailyCount = 0;
+            }
+
+            cloversAwarded = 0;
+            if (State.MinigamesDailyCount < 10)
+            {
+                // koniczynki = min(40, punkty / 10)
+                cloversAwarded = Math.Min(40, Math.Max(0, score / 10));
+                if (cloversAwarded > 0)
+                {
+                    AddClovers(cloversAwarded);
+                }
+                State.MinigamesDailyCount++;
+            }
+
+            // humor +15 po grze
+            ChangeNeed(Need.Mood, 15.0);
+
+            Count("minigry_rozegrane");
+            Count("minigra_" + gameId);
+
+            return isNewRecord;
+        }
+
         private static readonly string[] DefaultVegetableIds = new[]
         {
             "papryka", "ogorek", "natka", "marchewka", "jarmuz"

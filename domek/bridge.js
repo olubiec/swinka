@@ -90,6 +90,17 @@
       granulat: 5
     },
     poops: 2,             // Bobki na wybiegu
+    minigames: {
+      records: {
+        'gra-przyklad': 0,
+        'deszcz': 0,
+        'popcorn': 0,
+        'labirynt': 0,
+        'memory': 0
+      },
+      dailyRewardedDate: new Date().toISOString().slice(0, 10),
+      dailyRewardedCount: 0
+    },
     currentAction: 'idle',
     isSleeping: false,
     lastActiveUtc: new Date().toISOString()
@@ -161,6 +172,17 @@
       state.stageKey = stageInfo.key;
       state.stageName = stageInfo.name;
 
+      // Minigry i rekordy
+      if (!state.minigames) {
+        state.minigames = {
+          records: {},
+          dailyRewardedDate: new Date().toISOString().slice(0, 10),
+          dailyRewardedCount: 0
+        };
+      }
+      if (!state.minigames.records) state.minigames.records = {};
+      if (typeof state.minigames.dailyRewardedCount !== 'number') state.minigames.dailyRewardedCount = 0;
+
       // Zdrowie liczone zgodnie z SwinkaCore.Needs.Health: 0.5 * avg + 0.5 * min
       const vals = [
         state.needs.satiety,
@@ -216,7 +238,9 @@
       this.listeners.forEach((fn) => {
         try { fn(copy); } catch (e) { console.error('Błąd w listenerze bridge:', e); }
       });
-      window.dispatchEvent(new CustomEvent('swinka:state', { detail: copy }));
+      if (typeof window !== 'undefined' && window.dispatchEvent && typeof CustomEvent !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('swinka:state', { detail: copy }));
+      }
     }
 
     // --- API publiczne ---
@@ -247,6 +271,49 @@
      */
     getState() {
       return this.currentState ? JSON.parse(JSON.stringify(this.currentState)) : null;
+    }
+
+    /**
+     * Zwraca najlepszy wynik dla podanej minigry (rekord)
+     */
+    getMinigameRecord(gameId) {
+      if (!this.currentState || !this.currentState.minigames || !this.currentState.minigames.records) return 0;
+      return this.currentState.minigames.records[gameId] || 0;
+    }
+
+    /**
+     * Zwraca liczbę nagrodzonych gier rozegranych dzisiaj (0-10)
+     */
+    getDailyGamesCount() {
+      if (!this.currentState || !this.currentState.minigames) return 0;
+      const today = new Date().toISOString().slice(0, 10);
+      if (this.currentState.minigames.dailyRewardedDate !== today) return 0;
+      return this.currentState.minigames.dailyRewardedCount || 0;
+    }
+
+    /**
+     * Zgłasza wynik minigry przez most i zwraca szczegóły nagrody
+     */
+    submitMinigameResult(gameId, score) {
+      const prevRecord = this.getMinigameRecord(gameId);
+      const isRecord = score > prevRecord;
+      const dailyCount = this.getDailyGamesCount();
+      const clovers = dailyCount < 10 ? Math.min(40, Math.max(0, Math.floor(score / 10))) : 0;
+      
+      this.send({
+        type: 'minigame_result',
+        gameId,
+        score,
+        clovers,
+        isRecord
+      });
+
+      return {
+        punkty: score,
+        koniczynki: clovers,
+        rekord: Math.max(prevRecord, score),
+        nowyRekord: isRecord
+      };
     }
 
     /**
@@ -345,6 +412,44 @@
           n.mood = Math.min(100, n.mood + 15);
           n.energy = Math.max(0, n.energy - 10);
           s.clovers += 10;
+          s.currentAction = 'popcorn';
+          break;
+        }
+
+        case 'minigame_result': {
+          const gameId = action.gameId || 'gra-przyklad';
+          const score = typeof action.score === 'number' ? action.score : (action.punkty || 0);
+          
+          if (!s.minigames) {
+            s.minigames = { records: {}, dailyRewardedDate: '', dailyRewardedCount: 0 };
+          }
+          if (!s.minigames.records) s.minigames.records = {};
+
+          const prevRecord = s.minigames.records[gameId] || 0;
+          const isRecord = score > prevRecord;
+          if (isRecord) {
+            s.minigames.records[gameId] = score;
+          }
+
+          // Limit 10 nagradzanych gier dziennie
+          const today = new Date().toISOString().slice(0, 10);
+          if (s.minigames.dailyRewardedDate !== today) {
+            s.minigames.dailyRewardedDate = today;
+            s.minigames.dailyRewardedCount = 0;
+          }
+
+          let cloversAwarded = 0;
+          if (s.minigames.dailyRewardedCount < 10) {
+            // koniczynki = min(40, punkty / 10)
+            cloversAwarded = Math.min(40, Math.max(0, Math.floor(score / 10)));
+            if (cloversAwarded > 0) {
+              s.clovers = (s.clovers || 0) + cloversAwarded;
+            }
+            s.minigames.dailyRewardedCount++;
+          }
+
+          // Humor +15 po grze
+          n.mood = Math.min(100, Math.round(((n.mood || 0) + 15) * 10) / 10);
           s.currentAction = 'popcorn';
           break;
         }

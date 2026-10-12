@@ -1,0 +1,483 @@
+/* ==========================================================================
+   MINIGRY ZE ŚWINKĄ — WSPÓLNA STYLIZACJA PIXEL ART
+   Zgodna z paletą Domku (domek/style.css) i wytycznymi PLAN.md (Etap D)
+   ========================================================================== */
+
+.minigry-root {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  font-family: var(--font-pixel, 'Pixelify Sans', monospace);
+  color: var(--c-contour-dark, #2b1712);
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+/* --- 1. Ekran wyboru gier --- */
+.minigry-select-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.minigry-status-bar {
+  background: var(--c-contour-dark, #2b1712);
+  color: var(--c-hay, #eedb7c);
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.1);
+}
+
+.minigry-status-clovers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  color: var(--c-gold, #f2c94c);
+}
+
+.minigry-daily-limit {
+  font-size: 11px;
+  color: #d8c29d;
+  background: rgba(0,0,0,0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.minigry-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.minigry-card {
+  background: var(--c-white, #fffdf8);
+  border: 3px solid var(--c-contour-dark, #2b1712);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  box-shadow: 0 3px 0 var(--c-contour-dark, #2b1712);
+  transition: transform 0.1s;
+}
+
+.minigry-card:hover {
+  transform: translateY(-1px);
+}
+
+.minigry-card-disabled {
+  opacity: 0.65;
+  filter: grayscale(0.6);
+  background: #f1ebd9;
+}
+
+.minigry-card-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--c-cream-dark, #e4cfb5);
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  box-shadow: inset 2px 2px 0 var(--c-white, #fffdf8);
+}
+
+.minigry-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.minigry-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-contour-dark, #2b1712);
+}
+
+.minigry-card-desc {
+  font-size: 11px;
+  color: #6e6a5c;
+  line-height: 1.25;
+}
+
+.minigry-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.minigry-record-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-orange-dark, #c8692f);
+  background: #faeedb;
+  border: 1px solid var(--c-orange-light, #f7b46e);
+  padding: 1px 5px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.minigry-btn-play {
+  background: var(--c-leaf, #7fbf4a);
+  color: #fff;
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--c-contour-dark, #2b1712);
+  white-space: nowrap;
+}
+
+.minigry-btn-play:hover {
+  background: #91d15c;
+}
+
+.minigry-btn-play:active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0;
+}
+
+.minigry-btn-locked {
+  background: #999;
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  color: #eee;
+  cursor: not-allowed;
+  font-size: 11px;
+  padding: 5px 8px;
+}
+
+/* --- 2. Kontener aktywnej rozgrywki (Canvas & HUD) --- */
+.minigry-play-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  width: 100%;
+}
+
+.minigry-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--c-wood-dark, #9c6636);
+  color: var(--c-white, #fffdf8);
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 6px;
+  padding: 4px 8px;
+  box-shadow: 0 2px 0 var(--c-contour-dark, #2b1712);
+}
+
+.minigry-hud-title {
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.minigry-hud-score {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-gold, #f2c94c);
+  background: var(--c-contour-dark, #2b1712);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--c-gold-dark, #c99a2e);
+}
+
+.minigry-hud-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.minigry-hud-btn {
+  background: var(--c-cream, #f8eddd);
+  color: var(--c-contour-dark, #2b1712);
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--c-contour-dark, #2b1712);
+}
+
+.minigry-hud-btn:hover { background: var(--c-white, #fffdf8); }
+.minigry-hud-btn:active { transform: translateY(1px); box-shadow: 0 0 0; }
+
+.minigry-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 290px;
+  background: #241d1a;
+  border: 3px solid var(--c-contour-dark, #2b1712);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 0 var(--c-contour-dark, #2b1712),
+    inset 0 0 10px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.minigry-canvas-wrapper canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* --- 3. Nakładka Pauzy --- */
+.minigry-pause-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 15, 12, 0.85);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 50;
+  backdrop-filter: blur(2px);
+  padding: 16px;
+  text-align: center;
+}
+
+.minigry-pause-overlay.active {
+  display: flex;
+  animation: fade-in 0.12s ease-out;
+}
+
+.minigry-pause-card {
+  background: var(--c-cream, #f8eddd);
+  border: 3px solid var(--c-contour-dark, #2b1712);
+  border-radius: 8px;
+  padding: 14px 18px;
+  box-shadow: 0 6px 0 var(--c-contour-dark, #2b1712);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 280px;
+  width: 100%;
+}
+
+.minigry-pause-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-contour-dark, #2b1712);
+}
+
+.minigry-pause-sub {
+  font-size: 12px;
+  color: #6e6a5c;
+}
+
+.minigry-pause-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* --- 4. Wspólny ekran końca gry z nagrodą --- */
+.minigry-gameover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 15, 12, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  backdrop-filter: blur(2px);
+  padding: 12px;
+}
+
+.minigry-gameover-overlay.active {
+  display: flex;
+  animation: pop-in 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes pop-in {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.minigry-gameover-card {
+  background: var(--c-cream, #f8eddd);
+  border: 4px solid var(--c-contour-dark, #2b1712);
+  border-radius: 10px;
+  box-shadow: 
+    0 8px 0 var(--c-contour-dark, #2b1712),
+    inset 2px 2px 0 var(--c-white, #fffdf8);
+  padding: 14px;
+  width: 100%;
+  max-width: 330px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.minigry-gameover-header {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-contour-dark, #2b1712);
+  letter-spacing: 0.5px;
+}
+
+.minigry-score-box {
+  background: var(--c-contour-dark, #2b1712);
+  color: var(--c-gold, #f2c94c);
+  border: 2px solid var(--c-gold-dark, #c99a2e);
+  border-radius: 6px;
+  padding: 6px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.minigry-score-label {
+  font-size: 11px;
+  color: #eedb7c;
+  text-transform: uppercase;
+}
+
+.minigry-score-val {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.minigry-record-banner {
+  background: #fdf3cf;
+  color: #b56a15;
+  border: 2px dashed #f2c94c;
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  width: 100%;
+  animation: pulse-glow 1s infinite alternate;
+}
+
+@keyframes pulse-glow {
+  from { transform: scale(0.98); }
+  to { transform: scale(1.02); }
+}
+
+.minigry-rewards-container {
+  background: var(--c-white, #fffdf8);
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 6px;
+  padding: 8px 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+}
+
+.minigry-reward-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.minigry-reward-pill {
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.pill-clovers {
+  background: #e8f5d8;
+  color: var(--c-leaf-dark, #4f8f35);
+  border: 1px solid var(--c-leaf, #7fbf4a);
+}
+
+.pill-mood {
+  background: #fee7ec;
+  color: #b83354;
+  border: 1px solid #f5a3a2;
+}
+
+.minigry-daily-note {
+  font-size: 10px;
+  color: #887a6c;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.minigry-gameover-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.minigry-btn-replay {
+  flex: 1;
+  background: var(--c-orange, #e98c42);
+  color: #fff;
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 5px;
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--c-contour-dark, #2b1712);
+}
+
+.minigry-btn-replay:hover { background: var(--c-orange-light, #f7b46e); }
+.minigry-btn-replay:active { transform: translateY(2px); box-shadow: 0 0 0; }
+
+.minigry-btn-menu {
+  flex: 1;
+  background: var(--c-wood, #c98d50);
+  color: #fff;
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 5px;
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--c-contour-dark, #2b1712);
+}
+
+.minigry-btn-menu:hover { background: var(--c-wood-light, #e6b073); }
+.minigry-btn-menu:active { transform: translateY(2px); box-shadow: 0 0 0; }
