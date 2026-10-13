@@ -110,24 +110,29 @@ namespace Cuy
 
         private void LoadSounds()
         {
-            string[] soundFiles = new string[]
+            var soundPairs = new[]
             {
-                "chrupanie_1.wav",
-                "chrupanie_2.wav",
-                "cwierkanie.wav",
-                "kwik_1.wav",
-                "kwik_2.wav",
-                "kwik_3.wav",
-                "mruczenie.wav",
-                "pisk_strachu.wav",
-                "pisk_zlosci.wav",
-                "pop.wav"
+                new { En = "crunch_1.wav", Pl = "chrupanie_1.wav" },
+                new { En = "crunch_2.wav", Pl = "chrupanie_2.wav" },
+                new { En = "chirp.wav", Pl = "cwierkanie.wav" },
+                new { En = "wheek_1.wav", Pl = "kwik_1.wav" },
+                new { En = "wheek_2.wav", Pl = "kwik_2.wav" },
+                new { En = "wheek_3.wav", Pl = "kwik_3.wav" },
+                new { En = "purr.wav", Pl = "mruczenie.wav" },
+                new { En = "fear_squeal.wav", Pl = "pisk_strachu.wav" },
+                new { En = "angry_squeal.wav", Pl = "pisk_zlosci.wav" },
+                new { En = "pop.wav", Pl = "pop.wav" }
             };
 
             int loadedCount = 0;
-            foreach (var fileName in soundFiles)
+            foreach (var pair in soundPairs)
             {
-                string path = FindSoundFile(fileName);
+                string path = FindSoundFile(pair.En);
+                if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                {
+                    path = FindSoundFile(pair.Pl);
+                }
+
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 {
                     try
@@ -138,21 +143,26 @@ namespace Cuy
                         {
                             byte[] pcm = new byte[reader.Length];
                             int read = reader.Read(pcm, 0, pcm.Length);
-                            string key = Path.GetFileNameWithoutExtension(fileName).ToLowerInvariant();
-                            _cachedPcm[key] = pcm;
-                            _cachedFormats[key] = reader.WaveFormat;
+                            string enKey = Path.GetFileNameWithoutExtension(pair.En).ToLowerInvariant();
+                            string plKey = Path.GetFileNameWithoutExtension(pair.Pl).ToLowerInvariant();
+
+                            _cachedPcm[enKey] = pcm;
+                            _cachedFormats[enKey] = reader.WaveFormat;
+                            _cachedPcm[plKey] = pcm;
+                            _cachedFormats[plKey] = reader.WaveFormat;
+
                             loadedCount++;
                         }
                     }
                     catch (Exception ex)
                     {
-                        BrainController.Log(string.Format("[Dźwięk] Błąd ładowania {0}: {1}", fileName, ex.Message));
+                        BrainController.Log(string.Format("[Dźwięk] Błąd ładowania {0}: {1}", pair.En, ex.Message));
                     }
                 }
             }
 
             BrainController.Log(string.Format("[Dźwięk] Zainicjalizowano SoundManager. Załadowano {0}/{1} klipów audio.",
-                loadedCount, soundFiles.Length));
+                loadedCount, soundPairs.Length));
         }
 
         private static string FindSoundFile(string fileName)

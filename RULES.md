@@ -1,118 +1,83 @@
-# Cuy — Rules for Agents & Architecture Reference
+# Rules for agents (Cuy)
 
-This project is **Cuy** (a desktop pet guinea pig based on the eSheep engine, MIT license).
-Please consult `PLAN.md` and `ARCHITECTURE.md` before making architectural decisions.
+Valid from step V1b. Until V1b is done, ZASADY.md applies.
 
----
+- Cuy is a pixel-art guinea pig desktop pet for Windows, built on eSheep (MIT). Read PLAN.md for the plan; prompts in PLAN.md are for the human, do only the current task.
+- PLAN.md is written in Polish and older prompts use old Polish names. Map them with the table below.
+- Parallel work: change only your task's files; keep shared files (GameState, Brain, Program, bridge.js) changes minimal and list them in the report; commit only when told.
+- App: C# WinForms, .NET Framework 4.8, `src/Cuy` (Cuy.sln at the root). Game logic: `src/Cuy.Core`, .NET Standard 2.0, no WinForms or Win32. Tests: `tests/Cuy.Core.Tests`.
+- Home window: HTML/JS in `web/home` inside WebView2 (virtual host https://cuy.home/). Minigames: Phaser 3 in `web/home/minigames/<game>/`.
+- Art, sounds and data live in `assets/`. Do not draw new art; report what is missing. Pixel art is scaled with nearest neighbour only.
+- Currency: clovers. Save: `%AppData%\Cuy\save.json` + `save.bak`, with a version field and migrations. Logs: `%LocalAppData%\Cuy\logs`.
+- All code, comments, UI texts and docs are in English. UI strings live in `Strings.cs` and `web/home/strings.js`.
+- The clock has a speed multiplier (60x in Debug only). Dev tools (F9 overlay, Diagnostics, DevTools) exist in Debug builds only.
+- Do not guess APIs; check docs or the code. Do not remove features without being asked.
+- Before reporting a task done, run `tools/qa/run-all.ps1` once it exists and add a regression test for every bug you fix.
+- After each task: report what changed, how you tested it, and what the human should check.
 
-## 1. Core Principles
+## Layout
 
-1. **One task at a time:** Implement only the task requested in the current message. Keep builds and tests passing at every step.
-2. **Platform & Stack:**
-   - **Desktop Pet (`src/Cuy`):** C# on .NET Framework 4.8 WinForms (`Cuy.exe`).
-   - **Game Core (`src/Cuy.Core`):** .NET Standard 2.0 library without WinForms/Win32 references.
-   - **Unit Tests (`tests/Cuy.Core.Tests`):** .NET 9.0 xUnit test suite.
-   - **Simulator (`tools/Cuy.Simulator`):** .NET Framework 4.8 console simulation harness.
-   - **Home UI (`web/home`):** HTML5, Vanilla CSS, JavaScript running inside WebView2 (transparency via DWM blur/accent).
-   - **Minigames (`web/home/minigames`):** Phaser 3 (`lib/phaser.min.js`), local copy.
-3. **Currency & Save State:**
-   - Currency: **Clovers** (`koniczynki`).
-   - Save path: `%AppData%\Cuy\save.json` with version field and automatic backup `%AppData%\Cuy\save.bak`.
-   - Legacy migration: On first start, migrate an existing `%AppData%\Swinka` save to `%AppData%\Cuy`.
-4. **Logs & Runtime Environment:**
-   - WebView2 user data: `%LocalAppData%\Cuy\WebView2`.
-   - Application log: `%LocalAppData%\Cuy\logs\cuy.log` (rotate at 1 MB, retain 3 historical copies).
-   - Virtual Host: `https://cuy.home/` mapped to `web/home`.
-   - Mutex: `"Cuy.SingleInstance"`.
-5. **Pixel Art Aesthetics:**
-   - Nearest-neighbor scaling, no blur or bilinear filtering.
-   - 16x16 icon atlas, 64x64 sprite frames.
-
----
-
-## 2. Directory Layout & Name Map
-
-### Solutions & Projects
-| Old Path | New Path | Project / Assembly / Namespace |
-| --- | --- | --- |
-| `esheep/src/` | `src/Cuy/` | `Cuy.csproj` -> `Cuy.exe`, namespace `Cuy` |
-| `SwinkaCore/SwinkaCore/` | `src/Cuy.Core/` | `Cuy.Core.csproj` -> `Cuy.Core.dll`, namespace `Cuy.Core` |
-| `SwinkaCore/SwinkaCore.Tests/` | `tests/Cuy.Core.Tests/` | `Cuy.Core.Tests.csproj`, namespace `Cuy.Core.Tests` |
-| `SwinkaCore/Symulator/` | `tools/Cuy.Simulator/` | `Cuy.Simulator.csproj`, namespace `Cuy.Simulator` |
-| `domek/` | `web/home/` | Home window HTML/JS/CSS |
-| `domek/minigry/` | `web/home/minigames/` | Phaser 3 minigames |
-| `narzedzia/` (art) | `tools/art/` | Python art generation tools (do not edit art code) |
-| `narzedzia/generuj_xml.py` | `tools/build_pet_xml.py` | Builds desktop `src/Cuy/Resources/animations.xml` from `assets/` |
-| `ZASADY.md` | `RULES.md` | Project rules and mappings |
-| `ARCHITEKTURA.md` | `ARCHITECTURE.md` | Technical engine architecture |
-| `DesktopPet.sln` / `SwinkaCore.sln` | `Cuy.sln` | Unified solution at repo root containing all 4 projects |
-
----
-
-## 3. Asset & Data Mapping
-
-### Assets Directory Structure (`assets/`)
-- `assets/sprites/<variant>/`:
-  - `adult/`: Adult guinea pig frames + `spritesheet.png`
-  - `baby/`: Baby guinea pig frames + `spritesheet.png`
-  - `senior/`: Senior guinea pig frames + `spritesheet.png`
-  - `legend/`: Legend guinea pig frames + `spritesheet.png`
-  - `companion_black_white/`, `companion_agouti/`, `companion_cream/`
-- `assets/icons/`:
-  - `icons_16.png` / `ikony_16.png` (25 icons, 400x16)
-  - `icons.json` / `ikony.json`
-  - `pet_head.ico`
-- `assets/app-icon/`:
-  - `icon.ico`, `icon_16.png`, `icon_32.png`, `icon_256.png`
-- `assets/sounds/`:
-  - 10 WAV sound clips (Pixabay license)
-- `assets/data/`:
-  - `actions.json` (English keys & actions)
-  - `items.json` (English keys & item IDs)
-  - `simulation.json`
-
-### Need Names Key Map
-| Polish (UI/Display) | English Data Key (`actions.json`, `items.json`, C# Enum) |
+| Path | Contents |
 | --- | --- |
-| Najedzenie | `satiety` |
-| Witamina C | `vitamin_c` |
-| Energia | `energy` |
-| Humor | `mood` |
-| Czystość klatki | `cleanliness` |
-| Ząbki | `teeth` |
-| Zdrowie | `health` (derived) |
+| `src/Cuy` | Desktop app (pet window, tray, Home window host, managers) |
+| `src/Cuy.Core` | Needs, Brain (utility AI), GameState, SaveSystem, clock |
+| `tests/Cuy.Core.Tests` | xUnit tests |
+| `tools/Cuy.Simulator` | Console simulation of many days |
+| `tools/build_pet_xml.py` | Builds the desktop animations.xml from a sprite sheet |
+| `tools/art` | Python pixel-art generator (pig.py, anims*.py, props.py, export.py, english_assets.py) |
+| `web/home` | Home window page; `web/home/minigames` minigames |
+| `qa/`, `tools/qa/` | Test strategy, requirements matrix, bug list, reports; QA scripts (`tools/qa/run-all.ps1`) |
+| `assets/sprites/<variant>/` | `spritesheet.png` (64 px frames), `spritesheet_x2.png` (128 px), `animations.json`, `animations_x2.json` |
+| `assets/icons/` | `icons_16.png` + `icons.json`, `pig_head.ico` (tray) |
+| `assets/app-icon/` | `cuy.ico`, `icon_16/32/256.png`, `logo_256.png` |
+| `assets/sounds/` | `wheek_1-3`, `purr`, `chirp`, `fear_squeal`, `angry_squeal`, `crunch_1-2`, `pop` (.wav) |
+| `assets/data/` | `actions.json`, `items.json`, `simulation.json` |
 
-### Item IDs Map
-| Old Polish ID | New English ID | Name | Category |
+## Old Polish names → new names
+
+| Old | New |
+| --- | --- |
+| Świnka (app), DesktopPet, SwinkaCore | Cuy, Cuy.Core |
+| swinka/ | assets/ |
+| swinka/dorosla, maluch, senior, legenda | assets/sprites/adult, baby, senior, legend |
+| towarzysz_czarno-biala, towarzysz_agouti, towarzysz_kremowa | companion_black_white, companion_agouti, companion_cream |
+| swinka_spritesheet.png, swinka_animacje.json | spritesheet.png, animations.json |
+| swinka/ikony/ikony_16.png, ikony.json, glowa_swinki.ico | assets/icons/icons_16.png, icons.json, pig_head.ico |
+| swinka/ikona/swinka.ico | assets/app-icon/cuy.ico |
+| swinka/dzwieki/kwik_N, mruczenie, cwierkanie, pisk_strachu, pisk_zlosci, chrupanie_N | assets/sounds/wheek_N, purr, chirp, fear_squeal, angry_squeal, crunch_N |
+| swinka/dane/symulacja.json | assets/data/simulation.json |
+| domek/, minigry/ | web/home/, web/home/minigames/ |
+| narzedzia/ | tools/art/ |
+| Domek, sklepik, album, pamiętnik | Home, shop, album, diary |
+| koniczynki, bobek, więź, paśnik | clovers, poop, bond, hay rack |
+| maluch, młodzik, dorosła, senior, legenda | baby, junior, adult, senior, legend |
+| najedzenie, witamina_c, energia, humor, czystosc, zabki | fullness, vitamin_c, energy, mood, cleanliness, teeth |
+
+## Data keys (assets/data)
+
+| Old key | New key | Old key | New key |
 | --- | --- | --- | --- |
-| `siano` | `hay` | Siano | `food` |
-| `granulat` | `pellets` | Granulat | `food` |
-| `papryka` | `bell_pepper` | Papryka | `vegetable` |
-| `natka` | `parsley` | Natka pietruszki | `vegetable` |
-| `jarmuz` | `kale` | Jarmuż | `vegetable` |
-| `ogorek` | `cucumber` | Ogórek | `vegetable` |
-| `marchewka` | `carrot` | Marchewka | `treat` |
-| `gryzak` | `chew_toy` | Gryzak | `chew` |
-| `pilka` | `ball` | Piłeczka | `toy` |
-| `tunel` | `tunnel` | Tunel | `toy` |
-| `domek` | `house` | Domek | `furniture` |
-| `poidlo` | `water_bottle` | Poidło | `furniture` |
-| `tort` | `cake` | Tort z selera | `special` |
+| potrzeby | needs | spadek_na_godzine | decay_per_hour |
+| czynnosci | actions | zdarzenia | events |
+| animacja | animation | czas_s | duration_s |
+| efekty | effects | warunki / warunek | conditions / condition |
+| waga_bazowa | base_weight | limit_dzienny | daily_limit |
+| limit_na_godzine | hourly_limit | mnoznik_etapu | stage_multiplier |
+| mnoznik_pory | time_multiplier | mnoznik | multiplier |
+| zaspokaja | satisfies | zuzywa | consumes |
+| siano_w_pasniku(_min) | hay_in_rack(_min) | przedmiot / przedmioty | item / items |
+| wejscie / wyjscie | enter / exit | ruch | moves |
+| sygnal | signal | dystans_px | distance_px |
+| budzet_dnia | day_budget | procent_czasu | time_share_percent |
+| pory | times_of_day | aktywnosc / drzemki | activity / naps |
+| rzadkie_na_dobe | rare_per_day | wybor | selection |
+| waluta | currency | nazwa / opis | name / description |
+| cena | price | kategoria | category |
+| ikona | icon | bez_limitu | unlimited |
+| uzycia | uses | trwale | permanent |
+| nagroda_koniczynki | reward_clovers | etap_min | stage_min |
+| co_minut | every_minutes | potem | then |
+| <need>_min / <need>_max | e.g. mood_min, energy_max | zdrowie_max | health_max |
+| temperatura_min/max | temperature_min/max | wiez | bond |
 
-### Code Class & Concept Names
-| Old Polish Name | New English Name |
-| --- | --- |
-| `SwinkaBrainController` | `BrainController` |
-| `SwinkaFoodManager` | `FoodManager` |
-| `SwinkaPoopManager` | `PoopManager` |
-| `SwinkaInteractionManager` | `InteractionManager` |
-| `SwinkaIcons` | `PetIcons` |
-| `SwinkaItemCatalog` | `ItemCatalogLoader` / `ItemCatalog` |
-| `FormDomek` | `HomeWindow` |
-| `FormBobek` | `PoopForm` |
-| `FormStatusBubble` | `StatusBubble` |
-| `FormBrainOverlay` | `DebugOverlay` |
-| `FormFoodItem` | `FoodItemForm` |
-| `koniczynki` | `clovers` |
-| `bobek` | `poop` |
-| `wiez` | `bond` |
+Ids follow the same rule (papryka → bell_pepper, natka → parsley, ogorek → cucumber, granulat → pellets, gryzak → chew_stick, pilka → ball, tunel → tunnel, domek → house, poidlo → water_bottle, tort → cake, jarmuz → kale, siano → hay; actions: odpoczynek → rest, weszenie → sniffing, spacer → walk, jedzenie_siana → eat_hay, picie → drink, drzemka → nap, sen → sleep, sen_w_domku → sleep_in_house, kwiczenie → wheeking, proszenie → begging). The full list is in tools/art/english_assets.py.

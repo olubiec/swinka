@@ -109,8 +109,10 @@ namespace Cuy
         private static void LoadTrayIcon()
         {
             // 1. Sprawdź czy plik pet_head.ico lub glowa_swinki.ico istnieje na dysku
-            string icoPath = FindFile(Path.Combine("assets", "icons", "pet_head.ico"))
+            string icoPath = FindFile(Path.Combine("assets", "icons", "pig_head.ico"))
+                          ?? FindFile(Path.Combine("assets", "icons", "pet_head.ico"))
                           ?? FindFile(Path.Combine("assets", "icons", "glowa_swinki.ico"))
+                          ?? FindFile(Path.Combine("assets", "app-icon", "cuy.ico"))
                           ?? FindFile(Path.Combine("assets", "app-icon", "icon.ico"));
 
             if (!string.IsNullOrEmpty(icoPath))

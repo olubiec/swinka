@@ -283,7 +283,7 @@ Zamiast 30 kroków po kolei jest 13 rund. W jednej rundzie prompty zmieniają r�
 | 5 | B6 ∥ D1 | karmienie ∥ szkielet minigier `domek/minigry/` |
 | 5b | C1 ∥ I1 ∥ F1 | pikselowy Domek w oknie (zastępuje tymczasowe okno z B5) ∥ interakcje (głaskanie, patrzenie, wołanie) ∥ dźwięki |
 | 5c | C3 | sklepik w Domku (potrzebuje C1) |
-| 5½ | Prezent v1 | wersja do podarowania: mała świnka, imię, ikona, autostart |
+| 5½ | Prezent v1 | V1a naprawa świnki, V1b Cuy i porządek, V1c angielski, V1d paczka prezentowa (po kolei), potem QA1, QA2 i ponownie V1d |
 | 6 | C4 | wiek i więź |
 | 7 | C5 | album i pamiętnik |
 | 8 | D2 ∥ D3 ∥ D4 ∥ D5 | każda minigra w swoim folderze `domek/minigry/<gra>/` |
@@ -302,6 +302,8 @@ Bramki etapów zostają: bramka B po rundzie 5½, bramka C po rundzie 7, bramka 
 4. Jeśli limit Claude się skończył, w rundzie z promptem dla Claude rusz najpierw prompt dla Gemini, a Claude dołącz później.
 
 ### Plik ZASADY.md
+
+Od kroku V1b zamiast tego pliku obowiązuje `RULES.md` w repo, po angielsku: nowy układ folderów, nazwa Cuy i tabela, która tłumaczy stare polskie nazwy ze starszych promptów na nowe.
 
 ```markdown
 # Zasady dla agentów
@@ -579,27 +581,256 @@ Dodaj interakcje z kursorem:
 
 **Sprawdź:** pogłaszcz świnkę kursorem tam i z powrotem; zatrzymaj kursor obok odpoczywającej; kliknij Zawołaj; kliknij świnkę szybko 10 razy. **Powinno być:** mruczenie z serduszkami; świnka odwraca się przodem i oczami podąża za kursorem; na zawołanie przybiega i kwiczy; po serii kliknięć zgrzyta ząbkami i chwilę się dąsa.
 
-### Prezent v1 · Gemini (runda 5½, przed bramką B)
+### Prezent v1 · cztery kroki po kolei (runda 5½)
+
+Prezent robisz w czterech osobnych rozmowach, jedna po drugiej, nie równolegle: każdy krok zmienia pliki całego projektu. Po każdym kroku test z akapitu „Sprawdź”, potem commit, pull i push. Prompty są po angielsku, bo od kroku V1b cały projekt jest po angielsku i nazywa się **Cuy**.
+
+| Krok | Model | Co robi |
+| --- | --- | --- |
+| V1a | Claude z /plan (albo Gemini) | Znajduje i naprawia niewidoczną świnkę na pulpicie i w Domku |
+| V1b | Claude z /plan | Zmienia nazwę na Cuy, porządkuje foldery, usuwa resztki eSheep i prototypów |
+| V1c | Gemini | Tłumaczy wszystkie teksty i komentarze na angielski |
+| V1d | Claude z /plan (albo Gemini) | Wersja prezentowa: imię, maluch, autostart, zabezpieczenia, paczka `Cuy_v1.zip` |
+
+Folder `assets/` z angielskimi nazwami (grafika, ikony, dźwięki, dane) jest już w repo, a `RULES.md` opisuje zasady po zmianie nazwy. Stary folder `swinka/` usuwa krok V1b.
+
+#### V1a · Claude: niewidoczna świnka
 
 ```text
-Przeczytaj PLAN.md, ZASADY.md i ARCHITEKTURA.md. Przygotuj pierwszą wersję do podarowania:
-1. Przy pierwszym uruchomieniu (brak save.json) pokaż okienko z pytaniem o imię świnki (domyślnie "Świnka")
-   i zapisz je w GameState. Imię pojawia się w podpowiedzi przy ikonie w zasobniku i w Domku.
-2. Etap życia na stałe "maluch": używaj arkusza z swinka/maluch/. Zapisz w GameState datę adopcji,
-   ale NIE licz jeszcze wieku (wzrost włączy aktualizacja C4).
-3. W wersji Release wyłącz narzędzia testowe: F9, zegar 60x i tryb deweloperski działają tylko w Debug.
-4. Autostart z Windows (klucz HKCU\Software\Microsoft\Windows\CurrentVersion\Run), domyślnie włączony,
-   z przełącznikiem w menu zasobnika.
-5. Zbuduj Release i przygotuj folder Swinka_v1 ze wszystkim, co potrzebne na innym komputerze (exe, dll, swinka/, domek/),
-   plus CZYTAJ.txt po polsku: jak uruchomić i co kliknąć przy ostrzeżeniu SmartScreen.
-6. Przyszłe aktualizacje: nowa wersja musi czytać stary save.json bez utraty danych (pole version i migracja).
-7. Ikona exe, zasobnika i okien: swinka/ikona/swinka.ico (logo: swinka/ikona/logo_256.png).
-Nie dodawaj nowych funkcji gry.
+Read PLAN.md (section "Prezent v1"), ZASADY.md and ARCHITEKTURA.md. Do not rename or translate anything yet.
+
+Bug after rounds 5-5c (B6, D1, C1, I1, F1, C3):
+A) The Domek window opens, but the guinea pig is not drawn in it (the canvas is empty).
+B) With Domek closed the guinea pig is not visible on the desktop. We do not know whether the pet form
+   does not exist, is off-screen, is fully transparent, or the app crashed silently.
+
+Diagnose first, then fix the root causes. Do not hide symptoms.
+1. Startup safety: wrap Program.Main, pet creation, Brain start, WebView2 init, SoundManager,
+   InteractionManager, FoodManager and PoopManager start in try/catch that logs the full exception.
+   Find empty catch blocks in files changed by B6, D1, C1, I1, F1 and C3 and make them log.
+2. Add a Debug-only diagnostics dump (tray item "Diagnostics" in Debug builds and the --diag command line flag)
+   that writes to the log: number of pet forms, Visible, Opacity, Bounds, TopMost, every screen's WorkingArea,
+   current animation and frame, whether the frame image is non-null, the last 20 Brain decisions,
+   the I1 state (petting, watching, sulking, called) and all exceptions caught since start.
+3. Desktop pet: confirm the guinea pig animations.xml is loaded (not animations_owca.xml), the spawn point is inside
+   a working area, Opacity reaches 1 after the first frame, and no state leaves the pet off-screen or invisible
+   (flee, peek, house, tunnel, sulking, sleep from B3, feeding walk from B6, call from I1, Domek open or closed).
+   If the pet ever ends up outside every screen, bring it back to the taskbar and log it.
+4. Domek pet: enable WebView2 DevTools in Debug (F12) and forward console errors to the log. Check that every file
+   the page loads (sprite sheets, animation json, icons, sounds) returns 200 from the virtual host and exists in the
+   build output folder. Check that canvas-pig gets the stage/variant from the state message and maps it to an existing
+   sheet and row, and that C3 CSS did not hide the canvas or give it zero size.
+5. Run the Debug build for 10 minutes with the 60x clock and the Release build for 5 minutes. Both must show the pet
+   the whole time.
+Report: each root cause, what you changed, and how you verified it.
 ```
 
-**Sprawdź:** skopiuj folder `Swinka_v1` na inne konto Windows albo inny komputer i uruchom; potem podmień exe na nowszą kompilację. **Powinno być:** pytanie o imię, mała świnka na pulpicie, F9 nic nie robi, po restarcie Windows świnka wraca sama; po podmianie exe imię i stan potrzeb zostają.
+**Sprawdź:** uruchom wersję Debug, potem zamknij i uruchom wersję z `bin\Release`. Otwórz i zamknij Domek 5 razy, nakarm, zawołaj, pogłaszcz, kliknij świnkę 10 razy szybko, zostaw na 10 minut. W menu zasobnika (Debug) kliknij Diagnostics i zajrzyj do logu. **Powinno być:** świnka na pasku najpóźniej 5 s po starcie i cały czas widoczna; w Domku żywa animowana świnka; w logu Visible = True, Opacity = 1 i brak wyjątków.
 
-**Aktualizacje u niej:** każdą kolejną wersję kopiujesz do tego samego folderu, nadpisując pliki. Zapis gry leży osobno w `%AppData%\Swinka`, więc nic nie ginie.
+#### V1b · Claude: Cuy, porządek i usuwanie resztek
+
+```text
+Read RULES.md (the target layout and name map), PLAN.md and ARCHITEKTURA.md. Make sure git status is clean first.
+Rename the project to Cuy and clean the repository. Use git mv so history is kept. Keep the app working at every step:
+build and run after each part.
+
+1. Layout (details and full name map in RULES.md):
+   esheep/src -> src/Cuy (Cuy.csproj, root namespace Cuy, assembly and exe Cuy.exe)
+   SwinkaCore/SwinkaCore -> src/Cuy.Core (namespace Cuy.Core)
+   SwinkaCore/SwinkaCore.Tests -> tests/Cuy.Core.Tests
+   SwinkaCore/Symulator -> tools/Cuy.Simulator
+   domek -> web/home, domek/minigry -> web/home/minigames
+   tools/art (Python art tools, already moved; do not change their code). tools/build_pet_xml.py (was generuj_xml.py,
+   builds the desktop animations.xml): update its paths to assets/ and src/Cuy.
+   one solution Cuy.sln at the repo root with all projects; ZASADY.md is replaced by RULES.md,
+   ARCHITEKTURA.md becomes ARCHITECTURE.md.
+2. Assets: switch every path to the English assets/ folder that already exists (sprites/<variant>/,
+   icons/, app-icon/, sounds/, data/). Data JSON keys and ids are now English (see the key map in RULES.md):
+   update every loader and model so the game reads assets/data/actions.json and items.json with the new keys.
+   The build copies assets/ and web/ next to Cuy.exe. The Domek page loads sprites from the copied assets
+   (a second virtual host mapping or a build copy), so delete the duplicated sheets in domek/assets.
+   Then delete the old swinka/ folder.
+3. Names in code: Swinka prefix goes away (SwinkaBrainController -> BrainController, SwinkaFoodManager -> FoodManager,
+   and so on), Polish class, method, property, variable and file names become English (FormDomek -> HomeWindow,
+   FormBobek -> PoopForm, FormStatusBubble -> StatusBubble, FormBrainOverlay -> DebugOverlay, Domek -> Home,
+   koniczynki -> clovers, bobek -> poop, wiez -> bond).
+4. Delete leftovers: esheep/Tools (PetEditor, PetTester), esheep/tests, esheep/Pets, the sheep animations_owca.xml,
+   sheep images, the Installer .wapproj, Portable projects and folders, the .shfbproj docs project, eSheep's
+   Changelog/Readme, the "download pets from the internet" and "add another pet" features, the example minigame
+   (minigames/gra-przyklad) and any other prototype, mock or sample file not used by Cuy. Keep the bridge mock only
+   for opening web/home/index.html in a normal browser during development. Delete a file only after checking with
+   a search that nothing references it, and rebuild after each deletion.
+5. Licence: eSheep is MIT. Create THIRD_PARTY_NOTICES.md with the eSheep copyright and MIT text (from ZRODLO.md
+   and the original licence), plus Phaser (MIT), Newtonsoft.Json (MIT), WebView2 SDK, Pixelify Sans (OFL) and the
+   Pixabay sound sources listed in assets/sounds. Then delete esheep/ZRODLO.md.
+6. Runtime names: %AppData%\Cuy for save.json and save.bak (on first start, move an existing %AppData%\Swinka save
+   there), %LocalAppData%\Cuy\WebView2, %LocalAppData%\Cuy\logs\cuy.log (rotate at 1 MB, keep 3),
+   virtual host https://cuy.home/, mutex "Cuy.SingleInstance".
+7. Add .gitignore for bin, obj, dist, *.user, .vs. Run all tests; they must pass.
+Do not translate UI texts or comments yet (step V1c) and do not add features. Report the final tree (2 levels),
+what you deleted and why it was safe.
+```
+
+**Sprawdź:** `git pull`, zbuduj `Cuy.sln`, uruchom. Zajrzyj do folderów repo. **Powinno być:** w repo tylko `src/`, `tests/`, `tools/`, `web/`, `assets/` i pliki .md; ikona na pasku to głowa świnki; świnka i Domek działają jak po V1a; zapis gry (imię, potrzeby, koniczynki) przeszedł do `%AppData%\Cuy`; testy zielone.
+
+#### V1c · Gemini: wszystko po angielsku
+
+```text
+Read RULES.md and ARCHITECTURE.md. Translate the whole project into natural English:
+1. Every user-visible text: tray menu, tooltips, status bubble, Home window, shop, minigame screens, dialogs,
+   error messages, README files. Short, friendly, cosy wording for a pet game ("Feed", "Call", "Home", "Clovers",
+   "Fullness", "Vitamin C", "Energy", "Mood", "Cleanliness", "Teeth", "Bond").
+   Put all C# UI strings in one Strings.cs and all web strings in one web/home/strings.js so a later
+   language switch is possible. Do not add the switch itself.
+2. All code comments, XML docs, log messages, test names and commit-facing docs (ARCHITECTURE.md, README.md).
+3. Check the pixel font renders every character you use (no Polish letters left in the UI).
+4. Search the repo for Polish words and letters (ą ć ę ł ń ó ś ź ż and words like swinka, domek, koniczyn, bobek,
+   potrzeb, wiez) and fix every hit outside PLAN.md, tools/art and git history.
+Do not change behaviour, numbers or layout. Build, run the tests, and report what you translated and any text
+you were unsure about.
+```
+
+**Sprawdź:** przejdź po całej aplikacji: menu zasobnika, dymek, Domek, sklepik, minigry, okno imienia. **Powinno być:** wszystko po angielsku, bez ucinanych napisów i bez kwadracików zamiast liter; wyszukiwanie „ś” w `src/` i `web/` nic nie znajduje.
+
+#### V1d · Claude: wersja prezentowa Cuy v1
+
+```text
+Read RULES.md, ARCHITECTURE.md and PLAN.md. Prepare Cuy 1.0.0, the first version given as a gift.
+Do not add game features beyond this list.
+
+First run and pet
+1. No save.json: the Home window opens in a pixel "Welcome" view. The user names the guinea pig (1-16 characters,
+   letters, digits, spaces; Enter confirms). Show a short 3-step intro: the pet lives on the taskbar, click it for
+   the status bubble, the tray head icon opens Home. The name appears in the tray tooltip, bubble and Home.
+2. If gift/note.txt exists next to Cuy.exe, show its text once after naming in a pixel letter view with a
+   "Close" button, then mark it as read in the save.
+3. Stage fixed to baby (assets/sprites/baby) on the desktop, in Home and in minigames. For the desktop pet, rebuild
+   animations.xml from the baby sheet with tools/build_pet_xml.py or pick the variant at runtime, whichever is
+   cleaner. Save adoption_date and growth_start, but do not age the pet (update C4 turns growth on and counts
+   from growth_start).
+
+Release build
+4. Debug-only: F9 overlay, 60x clock, Diagnostics, DevTools, reset save. Release logs warnings and errors only.
+5. Single instance: a second start brings the running Home window to the front and exits.
+6. Autostart in HKCU\Software\Microsoft\Windows\CurrentVersion\Run pointing at the current exe path, on by default,
+   with a tray toggle "Start with Windows". If the folder moves, the next start fixes the path.
+7. Tray menu: Home, Feed, Call, Sounds on/off, Start with Windows, About Cuy (version 1.0.0), Quit.
+   Sounds default to 60 % volume, quiet hours 22:00-08:00, muted in full-screen apps.
+8. Robustness: global handlers for UI-thread and background exceptions log the error, show one friendly
+   message ("Cuy hit a snag and will restart") and restart once; a second crash within 1 minute just quits.
+   Missing WebView2 Runtime: show a message with the download link and keep the desktop pet running without Home.
+   Per-monitor DPI awareness. Taskbar on any edge or auto-hide, several monitors, monitor unplugged:
+   the pet always stays reachable. After sleep, hibernation or a clock jump, apply the offline rules once
+   (no needs below the offline minimum, no burst of events).
+9. Save: write via a temp file and replace, keep save.bak, version field = 1. A corrupted save loads save.bak.
+   Older saves load without losing name, needs, clovers or items.
+10. Icons: assets/app-icon/cuy.ico for Cuy.exe, the tray and every window.
+
+Package
+11. tools/package.ps1 builds Release and creates dist/Cuy_v1/ with Cuy.exe, its dlls, assets/, web/,
+    gift/ (empty, with a placeholder note.txt.example), README.txt and THIRD_PARTY_NOTICES.md, then
+    dist/Cuy_v1.zip. README.txt (English, short): unzip to a folder such as Documents\Cuy, run Cuy.exe,
+    what to do on the SmartScreen "Windows protected your PC" screen (More info -> Run anyway), how to turn
+    off autostart, how to uninstall (untick Start with Windows, quit, delete the folder and %AppData%\Cuy).
+12. Add Cuy.exe --selftest: checks that all assets load, every animation row exists in the sheets, data JSON
+    parses, WebView2 version, save folder writable; prints PASS/FAIL per check and exits with code 0 or 1.
+    package.ps1 runs it on the packaged folder and stops on FAIL.
+13. Write TESTING.md: a manual checklist for a clean Windows (Windows Sandbox works) covering every point above.
+Report the package size, the selftest output and anything you could not verify.
+```
+
+**Sprawdź (najlepiej w Piaskownicy Windows albo na drugim koncie):** rozpakuj `dist\Cuy_v1.zip` w nowym miejscu i przejdź listę:
+
+1. **Pierwsze uruchomienie:** SmartScreen → Więcej informacji → Uruchom mimo to; okno powitania, wpisz imię, krótki samouczek. Jeśli wrzuciłeś `gift\note.txt`, pokazuje się liścik.
+2. **Świnka:** mała świnka na pasku do 5 s, imię w podpowiedzi ikony, w Domku ta sama mała świnka.
+3. **Opieka:** karmienie z menu i z Domku, zakup w sklepiku, sprzątanie bobka za koniczynkę, paski potrzeb się zmieniają.
+4. **Interakcje:** głaskanie, patrzenie na kursor, Zawołaj, obrażanie po 10 kliknięciach, dźwięki i ich wyłączanie w menu.
+5. **Odporność:** drugie uruchomienie `Cuy.exe` tylko pokazuje Domek; F9 nic nie robi; przesunięcie paska zadań na górę i bok; odłączenie drugiego monitora; uśpienie komputera na 30 min.
+6. **Zapis:** zamknij przez Quit, uruchom ponownie (imię, koniczynki, potrzeby zostają); restart Windows (świnka wraca sama, bo autostart); odznacz „Start with Windows” i zrestartuj (nie startuje).
+7. **Aktualizacja:** podmień pliki nowszą paczką; stan zostaje.
+8. **Na koniec:** `Cuy.exe --selftest` w wierszu poleceń wypisuje same PASS.
+
+**Powinno być:** wszystko z listy działa, brak okienek z błędami, w `%LocalAppData%\Cuy\logs` brak błędów.
+
+**Liścik:** przed spakowaniem zip-a możesz wrzucić do `dist\Cuy_v1\gift\` plik `note.txt` z tekstem dla niej. Pokaże się raz, zaraz po nadaniu imienia.
+
+**Aktualizacje u niej:** każdą kolejną wersję rozpakowujesz do tego samego folderu, nadpisując pliki. Zapis gry leży osobno w `%AppData%\Cuy`, więc nic nie ginie.
+
+### Etap Q · testy jakości (2 prompty, po V1d)
+
+Dwa duże prompty zamiast osobnych kroków. Pierwszy buduje i uruchamia testy automatyczne, drugi ocenia grę jak doświadczony projektant i naprawia to, co ważne. Testy zostają w repo: po każdej aktualizacji (C4 i dalej) wystarczy uruchomić `tools\qa\run-all.ps1`. Progi zaliczenia biorą się z planu, więc wynik jest obiektywny. Błędy mają skalę:
+
+- **P0:** crash, utrata zapisu, świnka znika.
+- **P1:** funkcja z planu nie działa albo świnka przeszkadza w pracy.
+- **P2:** zauważalny błąd z obejściem.
+- **P3:** kosmetyka.
+
+Prezent wręczasz przy 0 błędów P0 i P1.
+
+#### QA1 · Claude z /plan: testy automatyczne i symulacja gracza
+
+```text
+Read RULES.md, ARCHITECTURE.md and PLAN.md (Polish design document). Build and run a QA suite the way a game QA team
+would. Targets come from PLAN.md and assets/data; put every numeric target and tolerance in qa/targets.json.
+Severity scale: P0 crash/save loss/pet gone, P1 planned feature broken or pet annoying during work,
+P2 noticeable with workaround, P3 cosmetic. Do not change game code except for test hooks; log bugs instead.
+
+1. QA mode (QA build constant only, never in Release): Cuy.exe --qa --seed N --speed X, a named pipe "cuy-qa"
+   (getState, setNeed, setClovers, advanceTime, triggerAction, spawnPoop, quit) and WebView2 with
+   --remote-debugging-port=9222.
+2. Requirements: qa/requirements.csv lists every testable v1 requirement from PLAN.md (id, area, rule/number,
+   test id, status).
+3. Logic tests (xUnit + FsCheck): random sequences of 1000 actions, time jumps and saves keep all invariants
+   (needs 0-100 and never NaN, clovers >= 0, hay rack 0-100, daily limits and cooldowns respected, save -> load equal);
+   clock +3 days / -1 h / midnight / DST; offline rules; corrupted save falls back to save.bak; every animation, icon,
+   sound and need referenced in data exists.
+4. Player simulation (headless, Cuy.Core, 14 game days, 20 seeds) with personas Attentive, Worker 9-17, Absent,
+   Neglectful, Clicker: time split vs the day budget (50/28/8/8/3/3, +-5 points) by hour of day; rare behaviours per
+   day; wheek rules; needs with care >= 70 and weekend without care >= 20; clovers earned per day and whether an
+   attentive player can afford a vegetable a day; animation coverage (which of the 60 never play); variety (same action
+   twice in a row, longest stretch with no visible change); sounds and attention-seeking actions per work hour.
+   Charts as PNG.
+5. App tests: Playwright over CDP for Home (first run naming, feed, shop with and without clovers, clean, state in
+   Home matches the desktop within 1 s), screenshots of every Home view at scale 1, 1.5 and 2 with text overflow and
+   font checks; an accelerated playthrough at --speed 60 of the first day with a screenshot of the pet every
+   2 game minutes turned into a contact sheet.
+6. Robustness and performance: kill during save (50x), read-only save folder, missing asset, explorer.exe restart
+   (tray icon returns), second instance, no audio device; a 30-minute run at --speed 60 sampling CPU, private bytes,
+   GDI and USER objects every 30 s (idle CPU < 1 %, memory growth < 5 MB/h after warm-up, GDI/USER flat).
+   Also write tools/qa/soak-8h.ps1 for an overnight run.
+7. tools/qa/run-all.ps1 runs everything and writes qa/reports/summary.md (PASS/FAIL per target with links to
+   details). Every failure becomes an entry in qa/BUGS.md: steps, expected, actual, evidence, severity.
+Report the summary table and the top problems in plain words.
+```
+
+**Sprawdź:** przeczytaj `qa/reports/summary.md`, obejrzyj wykres dnia świnki i zestaw zrzutów z przyspieszonego dnia. Na noc puść `tools\qa\soak-8h.ps1`. **Powinno być:** tabela PASS/FAIL dla celów z planu; lista błędów w `qa/BUGS.md` z oceną P0–P3; rano płaskie wykresy pamięci i obiektów GDI.
+
+#### QA2 · Claude z /plan: ocena eksperta, poprawki i regresja
+
+```text
+Act as a senior game designer and QA lead who did not build this game. Read PLAN.md, RULES.md, qa/requirements.csv,
+qa/reports/ (summary, simulation charts, screenshots, contact sheet, perf) and qa/BUGS.md. Run the game in QA mode
+where you need to confirm something.
+Part A, review (write qa/reports/REVIEW.md):
+1. Conformance: each requirement met / partly / missing, with evidence; planned features that silently disappeared.
+2. Playability heuristics (PLAY, adapted to a desktop pet), score 0-4 with evidence: clear care goals and rewards,
+   feedback for every action within 0.5 s, readable state, discoverable controls, the pet feels alive and notices
+   the player, variety and surprise, respect for the user's work (no blocking, no sound or attention spam,
+   full-screen and meetings).
+3. Realism against the research in PLAN.md (sleep, eating share, popcorning, wheeking) as a guinea pig owner would see it.
+4. Style consistency: pixel scale, palette, font, text tone, icons, sound mix.
+5. The gift moment: the first 5 minutes from unzipping to the first wheek for a non-technical person.
+Start REVIEW.md with the top 10 gaps by player impact, each with severity, evidence, fix and effort S/M/L, and add
+them to qa/BUGS.md.
+Part B, fix: fix every P0 and P1, then P2 with effort S, one at a time; add a regression test for each where possible;
+run tools/qa/run-all.ps1 after each fix; mark bugs fixed with the test that guards them. Do not change balance numbers
+without updating qa/targets.json and writing the reason. Stop and list anything that needs a design decision from
+the human instead of guessing.
+```
+
+**Sprawdź:** przeczytaj „top 10” w `qa/reports/REVIEW.md` i listę decyzji dla ciebie; uruchom `tools\qa\run-all.ps1`. **Powinno być:** zero otwartych P0 i P1, wszystko zielone. Potem V1d pakuje jeszcze raz i robisz listę „Sprawdź” spod V1d.
+
+**Twoje 30 minut:** daj zip komuś, kto nic nie wie o projekcie (nie jej), i w milczeniu patrz przez 10 minut, gdzie się waha. Potem sam przez jeden dzień pracy zostaw świnkę włączoną i zanotuj każdy moment, w którym przeszkadzała.
 
 ### C1 · Claude: okno Domku i most C# ↔ JavaScript
 
@@ -807,7 +1038,7 @@ Przeczytaj PLAN.md (Poziom więzi), ZASADY.md, ARCHITEKTURA.md, Brain i SwinkaCo
 - [x] Zrobione: 10 klipów (kwiki, mruczenie, ćwierkanie, piski, chrupanie, pop) leży w swinka/dzwieki/, opis w CZYTAJ.md
 
 ```text
-Przeczytaj PLAN.md i ZASADY.md. Pliki dźwięków są w /swinka/dzwieki (WAV, opis w swinka/dzwieki/CZYTAJ.md).
+Przeczytaj PLAN.md i ZASADY.md. Pliki dźwięków są w /swinka/dzwieki.
 Dodaj SoundManager: mapowanie zdarzeń na dźwięki, głośność, godziny ciszy, wyciszenie przy pełnym ekranie,
 losowa lekka zmiana wysokości dźwięku, maks. jeden dźwięk kwiczenia na 2 minuty.
 ```

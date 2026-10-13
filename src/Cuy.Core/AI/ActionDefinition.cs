@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Newtonsoft.Json;
@@ -25,6 +25,9 @@ namespace Cuy.Core.AI
 
         [JsonProperty("daily_budget")]
         public DailyBudget DailyBudget { get; set; } = new DailyBudget();
+
+        [JsonProperty("day_budget")]
+        private DailyBudget DayBudgetEn { set { if (value != null) DailyBudget = value; } }
 
         [JsonProperty("budzet_dnia")]
         private DailyBudget DailyBudgetPl { set { if (value != null) DailyBudget = value; } }
@@ -63,11 +66,17 @@ namespace Cuy.Core.AI
         [JsonProperty("time_percentages")]
         public Dictionary<string, double> TargetPercentages { get; set; } = new Dictionary<string, double>();
 
+        [JsonProperty("time_share_percent")]
+        private Dictionary<string, double> TargetPercentagesEn { set { if (value != null && value.Count > 0) TargetPercentages = value; } }
+
         [JsonProperty("procent_czasu")]
         private Dictionary<string, double> TargetPercentagesPl { set { if (value != null && value.Count > 0) TargetPercentages = value; } }
 
         [JsonProperty("periods")]
         public Dictionary<string, JObject> TimePeriods { get; set; } = new Dictionary<string, JObject>();
+
+        [JsonProperty("times_of_day")]
+        private Dictionary<string, JObject> TimePeriodsEn { set { if (value != null && value.Count > 0) TimePeriods = value; } }
 
         [JsonProperty("pory")]
         private Dictionary<string, JObject> TimePeriodsPl { set { if (value != null && value.Count > 0) TimePeriods = value; } }
@@ -317,10 +326,12 @@ namespace Cuy.Core.AI
                 case "rest":
                 case "odpoczynek":
                 case "doze":
+                case "nap":
                 case "drzemka":
                 case "sleep":
                 case "sen":
                 case "sleep_house":
+                case "sleep_in_house":
                 case "sen_w_domku":
                 case "heat":
                 case "upal":
@@ -333,20 +344,28 @@ namespace Cuy.Core.AI
                 case "drink":
                 case "picie":
                 case "beg":
+                case "begging":
                 case "proszenie":
                     return "eating_and_drinking";
 
                 case "sniff":
+                case "sniffing":
                 case "weszenie":
-                    return "sniffing_looking";
+                case "look":
+                case "looking":
+                case "front_look":
+                case "peek":
+                    return "sniffing_and_looking";
 
                 case "walk":
                 case "spacer":
                     return "walking";
 
                 case "scratch":
+                case "scratching":
                 case "drapanie":
                 case "chin_rub":
+                case "chin_marking":
                 case "znaczenie_broda":
                 case "groom_other":
                 case "wylizywanie":
@@ -363,6 +382,7 @@ namespace Cuy.Core.AI
             {
                 case "rest_and_naps": return "odpoczynek_i_drzemki";
                 case "eating_and_drinking": return "jedzenie_i_picie";
+                case "sniffing_and_looking":
                 case "sniffing_looking": return "weszenie_rozgladanie";
                 case "walking": return "chodzenie";
                 case "grooming": return "pielegnacja";

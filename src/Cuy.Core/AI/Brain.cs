@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -420,10 +420,12 @@ namespace Cuy.Core.AI
                             if (UserIdleDuration.TotalSeconds < (double)kv.Value) { unavailableReason = string.Format("Bezczynność < {0:0}s", kv.Value); return false; }
                             break;
                         case "satiety_min":
+                        case "fullness_min":
                         case "najedzenie_min":
                             if (needs.Satiety < (double)kv.Value) { unavailableReason = string.Format("Najedzenie < {0:0}", kv.Value); return false; }
                             break;
                         case "satiety_max":
+                        case "fullness_max":
                         case "najedzenie_max":
                             if (needs.Satiety > (double)kv.Value) { unavailableReason = string.Format("Najedzenie > {0:0}", kv.Value); return false; }
                             break;
@@ -557,11 +559,11 @@ namespace Cuy.Core.AI
                 double idleSleepBonus = (needs.Satiety < 15.0) ? 0.0 : 3.5;
                 double idleDozeBonus = (needs.Satiety < 15.0) ? 0.0 : 2.0;
 
-                if (action.Id == "sleep" || action.Id == "sen" || action.Id == "sleep_house" || action.Id == "sen_w_domku")
+                if (action.Id == "sleep" || action.Id == "sen" || action.Id == "sleep_house" || action.Id == "sleep_in_house" || action.Id == "sen_w_domku")
                 {
                     baseZysk += idleSleepBonus;
                 }
-                else if (action.Id == "doze" || action.Id == "drzemka")
+                else if (action.Id == "doze" || action.Id == "nap" || action.Id == "drzemka")
                 {
                     baseZysk += idleDozeBonus;
                 }
@@ -584,7 +586,7 @@ namespace Cuy.Core.AI
                     double deficit = targetPct - actualPct;
 
                     // Specjalny impuls dla rzadkich czynności, aby wykonały się zgodnie z limitem dziennym
-                    if (action.Id == "scratch" || action.Id == "drapanie" || action.Id == "chin_rub" || action.Id == "znaczenie_broda" || action.Id == "popcorn" || action.Id == "zoomies")
+                    if (action.Id == "scratch" || action.Id == "scratching" || action.Id == "drapanie" || action.Id == "chin_rub" || action.Id == "chin_marking" || action.Id == "znaczenie_broda" || action.Id == "popcorn" || action.Id == "zoomies")
                     {
                         baseZysk += 2.0;
                     }
@@ -609,6 +611,7 @@ namespace Cuy.Core.AI
             switch (needName.ToLowerInvariant())
             {
                 case "satiety":
+                case "fullness":
                 case "najedzenie": val = n.Satiety; return true;
                 case "vitamin_c":
                 case "witamina_c": val = n.VitaminC; return true;
@@ -635,6 +638,7 @@ namespace Cuy.Core.AI
                 switch (kv.Key.ToLowerInvariant())
                 {
                     case "satiety":
+                    case "fullness":
                     case "najedzenie": n.Satiety = ClampNeed(n.Satiety + kv.Value); break;
                     case "vitamin_c":
                     case "witamina_c": n.VitaminC = ClampNeed(n.VitaminC + kv.Value); break;
@@ -721,9 +725,9 @@ namespace Cuy.Core.AI
                 double hours = sec / 3600.0;
                 var n = _fallbackNeeds;
                 double decay;
-                if (_config.DecayPerHour.TryGetValue("satiety", out decay) || _config.DecayPerHour.TryGetValue("najedzenie", out decay)) n.Satiety = Math.Max(0.0, n.Satiety - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("satiety", out decay) || _config.DecayPerHour.TryGetValue("fullness", out decay) || _config.DecayPerHour.TryGetValue("najedzenie", out decay)) n.Satiety = Math.Max(0.0, n.Satiety - (decay * hours));
                 if (_config.DecayPerHour.TryGetValue("vitamin_c", out decay) || _config.DecayPerHour.TryGetValue("witamina_c", out decay)) n.VitaminC = Math.Max(0.0, n.VitaminC - (decay * hours));
-                bool isAutoSleeping = (_currentAction != null && (_currentAction.ActionId == "sleep" || _currentAction.ActionId == "sen" || _currentAction.ActionId == "sleep_house" || _currentAction.ActionId == "sen_w_domku" || _currentAction.ActionId == "doze" || _currentAction.ActionId == "drzemka"));
+                bool isAutoSleeping = (_currentAction != null && (_currentAction.ActionId == "sleep" || _currentAction.ActionId == "sen" || _currentAction.ActionId == "sleep_house" || _currentAction.ActionId == "sleep_in_house" || _currentAction.ActionId == "sen_w_domku" || _currentAction.ActionId == "doze" || _currentAction.ActionId == "nap" || _currentAction.ActionId == "drzemka"));
                 if (isAutoSleeping)
                 {
                     // Sen podnosi energię
