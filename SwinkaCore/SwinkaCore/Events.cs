@@ -48,4 +48,16 @@ namespace SwinkaCore
         public int OldLevel { get; }
         public int NewLevel { get; }
     }
+
+    public sealed class DailyRewardEventArgs : EventArgs
+    {
+        public DailyRewardEventArgs(int clovers, int streak)
+        {
+            Clovers = clovers;
+            Streak = streak;
+        }
+
+        public int Clovers { get; }
+        public int Streak { get; }
+    }
 }

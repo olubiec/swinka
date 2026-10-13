@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="..\..\swinka\dane\actions.json" Link="actions.json" />
+    <EmbeddedResource Include="..\..\swinka\dane\items.json" Link="items.json" />
   </ItemGroup>
 
 </Project>
