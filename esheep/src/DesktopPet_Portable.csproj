@@ -132,7 +132,7 @@
     </Reference>
     <Reference Include="NAudio, Version=1.8.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Portable\NAudio.dll</HintPath>
+      <HintPath>packages\NAudio.1.8.4\lib\net35\NAudio.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -205,50 +205,8 @@
     <Compile Include="dotNet\ContextMenus.cs" />
     <Compile Include="dotNet\EmbeddedAssembly.cs" />
     <Compile Include="dotNet\ProcessIcon.cs" />
-    <Compile Include="LocalData\AnimationXML.cs" />
-    <Compile Include="Portable\AboutBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Portable\AboutBox.designer.cs">
-      <DependentUpon>AboutBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Portable\FormHelp.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Portable\FormHelp.designer.cs">
-      <DependentUpon>FormHelp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Portable\FormOptions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Portable\FormOptions.designer.cs">
-      <DependentUpon>FormOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Portable\FormOptions2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Portable\FormOptions2.Designer.cs">
-      <DependentUpon>FormOptions2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Portable\FormOptions2.SurfacePets.cs">
-      <DependentUpon>FormOptions2.cs</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Portable\FormOptions2.SurfaceOptions.cs">
-      <DependentUpon>FormOptions2.cs</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Portable\FormOptions2.SurfaceMenu.cs">
-      <DependentUpon>FormOptions2.cs</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Portable\Install.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Portable\Install.designer.cs">
-      <DependentUpon>Install.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Portable\LocalData.cs" />
+    <Compile Include="dotNet\AnimationXML.cs" />
+    <Compile Include="dotNet\LocalData.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -311,22 +269,6 @@
     <EmbeddedResource Include="dotNet\FormDebug.resx">
       <DependentUpon>FormDebug.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Portable\AboutBox.resx">
-      <DependentUpon>AboutBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Portable\FormHelp.resx">
-      <DependentUpon>FormHelp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Portable\FormOptions.resx">
-      <DependentUpon>FormOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Portable\FormOptions2.resx">
-      <DependentUpon>FormOptions2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Portable\Install.resx">
-      <DependentUpon>Install.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -364,12 +306,6 @@
     <Content Include="Images\ico_smooth.png" />
     <Content Include="Images\ico_sound.png" />
     <Content Include="Images\wvleft.jpg" />
-    <EmbeddedResource Include="Portable\Newtonsoft.Json.dll" />
-    <EmbeddedResource Include="Portable\NAudio.dll" />
-    <None Include="Images\install.png" />
-    <None Include="Images\option.png" />
-    <Content Include="Images\about.png" />
-    <Content Include="Images\esheep.png" />
     <None Include="Resources\animations.xml">
       <SubType>Designer</SubType>
     </None>

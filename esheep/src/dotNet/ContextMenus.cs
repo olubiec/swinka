@@ -21,19 +21,12 @@ namespace DesktopPet
         static ToolStripMenuItem feedMenuItem;
         static ToolStripMenuItem callMenuItem;
         static ToolStripMenuItem domekMenuItem;
-        static ToolStripMenuItem optionsMenuItem;
         static ToolStripMenuItem closeMenuItem;
-
-#if PORTABLE
-        Install installForm;
-#endif
 
         static string author;
         static string version;
         static string title;
         static string info;
-
-        bool isOptionLoaded = false;
 
         public ContextMenuStrip Create()
         {
@@ -65,12 +58,6 @@ namespace DesktopPet
             domekMenuItem.Click += (s, e) => OpenDomekWindow();
             menu.Items.Add(domekMenuItem);
 
-            // 4. Ustawienia
-            optionsMenuItem = new ToolStripMenuItem("Ustawienia");
-            optionsMenuItem.Image = Resources.option;
-            optionsMenuItem.Click += new EventHandler(Options_Click);
-            menu.Items.Add(optionsMenuItem);
-
             // Narzędzia testowe (tylko w Debug lub jako opcjonalne skróty)
             ToolStripSeparator sep = new ToolStripSeparator();
             menu.Items.Add(sep);
@@ -96,18 +83,6 @@ namespace DesktopPet
             menu.Items.Add(speedItem);
 
             menu.Items.Add(new ToolStripSeparator());
-
-#if PORTABLE
-            installForm = new Install();
-            if (!Program.IsApplicationInstalled())
-            {
-                ToolStripMenuItem instItem = new ToolStripMenuItem("&Install application...");
-                instItem.Click += new EventHandler(InstallApplication);
-                instItem.Image = installForm.Icon.ToBitmap();
-                menu.Items.Add(instItem);
-                menu.Items.Add(new ToolStripSeparator());
-            }
-#endif
 
             // 5. Zamknij
             closeMenuItem = new ToolStripMenuItem("Zamknij");
@@ -175,23 +150,6 @@ namespace DesktopPet
             info = aboutInfo;
         }
 
-#if PORTABLE
-        void InstallApplication(object sender, EventArgs e)
-        {
-            installForm.ShowInstallation();
-        }
-#endif
-
-        void Options_Click(object sender, EventArgs e)
-        {
-            if (!isOptionLoaded)
-            {
-                isOptionLoaded = true;
-                Program.OpenOptionDialog();
-                isOptionLoaded = false;
-            }
-        }
-
         void Exit_Click(object sender, EventArgs e)
         {
             try
@@ -204,9 +162,6 @@ namespace DesktopPet
 
         public void Dispose()
         {
-#if PORTABLE
-            installForm?.Dispose();
-#endif
         }
     }
 }

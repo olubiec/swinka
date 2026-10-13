@@ -38,14 +38,7 @@ namespace DesktopPet
 
 		public static LocalData MyData = new LocalData();
 
-		/// <summary>
-		/// Open the option dialog, to show some options like reset XML animation or load animation from the webpage.
-		/// </summary>
-		public static void OpenOptionDialog()
-		{
-			FormOptions2 formoptions2 = new FormOptions2("Pet List", FormOptions2.WindowType.Pets);
-			formoptions2.ShowDialog();
-		}
+
 
         public static double ParseSpeedMultiplier(string[] args)
         {
