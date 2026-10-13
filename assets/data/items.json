@@ -1,0 +1,189 @@
+{
+  "currency": {
+    "name": "clovers",
+    "icon": "clover"
+  },
+  "items": [
+    {
+      "id": "hay",
+      "name": "Siano",
+      "category": "food",
+      "price": 0,
+      "icon": "hay",
+      "animation": "eat",
+      "effects": {
+        "satiety": 10,
+        "teeth": 6
+      },
+      "description": "Podstawa diety. Darmowe, dokładasz do paśnika (zapas 0-100).",
+      "unlimited": true
+    },
+    {
+      "id": "pellets",
+      "name": "Granulat",
+      "category": "food",
+      "price": 5,
+      "icon": "pellets",
+      "animation": "eat_bowl",
+      "effects": {
+        "satiety": 20,
+        "vitamin_c": 5
+      },
+      "description": "Sycący dodatek z miseczki."
+    },
+    {
+      "id": "bell_pepper",
+      "name": "Papryka",
+      "category": "vegetable",
+      "price": 12,
+      "icon": "bell_pepper",
+      "animation": "eat_treat",
+      "effects": {
+        "satiety": 8,
+        "vitamin_c": 35,
+        "mood": 5
+      },
+      "description": "Najlepsze źródło witaminy C."
+    },
+    {
+      "id": "parsley",
+      "name": "Natka pietruszki",
+      "category": "vegetable",
+      "price": 8,
+      "icon": "parsley",
+      "animation": "eat_treat",
+      "effects": {
+        "satiety": 6,
+        "vitamin_c": 20
+      },
+      "description": "Dużo witaminy C, mało kalorii."
+    },
+    {
+      "id": "kale",
+      "name": "Jarmuż",
+      "category": "vegetable",
+      "price": 10,
+      "icon": "kale",
+      "animation": "eat_big",
+      "effects": {
+        "satiety": 10,
+        "vitamin_c": 25,
+        "teeth": 3
+      },
+      "description": "Duży liść do szarpania."
+    },
+    {
+      "id": "cucumber",
+      "name": "Ogórek",
+      "category": "vegetable",
+      "price": 5,
+      "icon": "cucumber",
+      "animation": "eat_treat",
+      "effects": {
+        "satiety": 6,
+        "mood": 4,
+        "vitamin_c": 2
+      },
+      "description": "Orzeźwiający, prawie bez witaminy C."
+    },
+    {
+      "id": "carrot",
+      "name": "Marchewka",
+      "category": "treat",
+      "price": 8,
+      "icon": "carrot",
+      "animation": "eat_treat",
+      "effects": {
+        "satiety": 8,
+        "mood": 10,
+        "vitamin_c": 3
+      },
+      "description": "Słodka, więc tylko raz dziennie.",
+      "daily_limit": 1
+    },
+    {
+      "id": "chew_toy",
+      "name": "Gryzak",
+      "category": "chew",
+      "price": 20,
+      "icon": "chew_toy",
+      "animation": "chew_stick",
+      "effects": {
+        "teeth": 40,
+        "mood": 5
+      },
+      "description": "Ściera ząbki. Starcza na 5 razy.",
+      "uses": 5
+    },
+    {
+      "id": "ball",
+      "name": "Piłeczka",
+      "category": "toy",
+      "price": 60,
+      "icon": "ball",
+      "animation": "ball_push",
+      "effects": {
+        "mood": 15,
+        "energy": -5
+      },
+      "description": "Odblokowuje zabawę piłeczką.",
+      "durable": true
+    },
+    {
+      "id": "tunnel",
+      "name": "Tunel",
+      "category": "toy",
+      "price": 150,
+      "icon": "tunnel",
+      "animation": "tunnel_in",
+      "effects": {
+        "mood": 20,
+        "energy": -8
+      },
+      "description": "Odblokowuje bieganie przez tunel.",
+      "durable": true
+    },
+    {
+      "id": "house",
+      "name": "Domek",
+      "category": "furniture",
+      "price": 250,
+      "icon": "house",
+      "animation": "sleep_house",
+      "effects": {
+        "energy": 10,
+        "mood": 5
+      },
+      "description": "Sen w domku regeneruje energię 1,5x szybciej.",
+      "durable": true
+    },
+    {
+      "id": "water_bottle",
+      "name": "Poidło",
+      "category": "furniture",
+      "price": 40,
+      "icon": "water_bottle",
+      "animation": "drink",
+      "effects": {
+        "mood": 2,
+        "satiety": 2
+      },
+      "description": "Odblokowuje picie; bez niego zdrowie rośnie wolniej.",
+      "durable": true
+    },
+    {
+      "id": "cake",
+      "name": "Tort z selera",
+      "category": "special",
+      "price": null,
+      "icon": "cake",
+      "animation": "party",
+      "effects": {
+        "satiety": 15,
+        "mood": 30,
+        "vitamin_c": 10
+      },
+      "description": "Tylko na urodziny."
+    }
+  ]
+}

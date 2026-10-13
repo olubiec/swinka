@@ -1,0 +1,532 @@
+{
+  "needs": [
+    "satiety",
+    "vitamin_c",
+    "energy",
+    "mood",
+    "cleanliness",
+    "teeth"
+  ],
+  "decay_per_hour": {
+    "satiety": 8,
+    "vitamin_c": 4,
+    "energy": 6,
+    "mood": 5,
+    "cleanliness": 0,
+    "teeth": 2
+  },
+  "offline": {
+    "multiplier": 0.3333333333333333,
+    "floor": 20
+  },
+  "daily_budget": {
+    "description": "Docelowy podział czasu, gdy świnka jest na pulpicie (bez snu przy bezczynności). Źródła: sen 4-6 h/dobę w drzemkach do ok. 10 min, aktywność o świcie i zmierzchu.",
+    "time_percentages": {
+      "rest_and_naps": 50,
+      "eating_and_drinking": 28,
+      "sniffing_looking": 8,
+      "walking": 8,
+      "grooming": 3,
+      "play_and_rare": 3
+    },
+    "periods": {
+      "7-9": {
+        "aktywnosc": 1.5
+      },
+      "17-21": {
+        "aktywnosc": 1.5
+      },
+      "11-15": {
+        "drzemki": 1.6
+      },
+      "23-7": {
+        "drzemki": 2.0,
+        "aktywnosc": 0.5
+      }
+    },
+    "rare_per_day": {
+      "popcorn": "dorosła 1-3, młodzik 4-8, senior 0-1",
+      "zoomies": "0-2",
+      "drapanie": "4-8",
+      "znaczenie_broda": "1-3",
+      "kwiczenie": "tylko z głodu, przy powitaniu albo karmieniu"
+    },
+    "walking": "krótkie odcinki 20-120 px po 2-5 s, potem postój co najmniej 20 s"
+  },
+  "selection": "zysk = suma((1 - potrzeba/100)^2 * efekt) * losowo(0.8, 1.2) + waga_bazowa",
+  "actions": [
+    {
+      "id": "rest",
+      "animation": "idle",
+      "duration_s": [
+        20,
+        60
+      ],
+      "base_weight": 0.6,
+      "effects": {},
+      "description": "Spokojne siedzenie, rozglądanie się"
+    },
+    {
+      "id": "sniff",
+      "animation": "sniff",
+      "duration_s": [
+        4,
+        8
+      ],
+      "base_weight": 0.2,
+      "effects": {
+        "mood": 1
+      },
+      "description": ""
+    },
+    {
+      "id": "walk",
+      "animation": "walk",
+      "duration_s": [
+        2,
+        5
+      ],
+      "base_weight": 0.12,
+      "effects": {
+        "mood": 2,
+        "energy": -1
+      },
+      "description": "Krótki odcinek, potem postój",
+      "distance_px": [
+        20,
+        120
+      ],
+      "cooldown_s": 20,
+      "movement": true
+    },
+    {
+      "id": "zoomies",
+      "animation": "run",
+      "duration_s": 4,
+      "base_weight": null,
+      "effects": {
+        "mood": 3,
+        "energy": -4
+      },
+      "description": "",
+      "cooldown_s": 7200,
+      "daily_limit": 2,
+      "conditions": {
+        "humor_min": 80,
+        "energia_min": 50
+      },
+      "movement": true
+    },
+    {
+      "id": "popcorn",
+      "animation": "popcorn",
+      "duration_s": 1,
+      "base_weight": null,
+      "effects": {
+        "mood": 3,
+        "energy": -2
+      },
+      "description": "",
+      "cooldown_s": 1800,
+      "daily_limit": {
+        "maluch": 6,
+        "mlodzik": 8,
+        "dorosla": 3,
+        "senior": 1,
+        "legenda": 1
+      },
+      "conditions": {
+        "humor_min": 75
+      },
+      "stage_multipliers": {
+        "mlodzik": 2.0,
+        "senior": 0.4,
+        "legend": 0.4
+      }
+    },
+    {
+      "id": "eat_hay",
+      "animation": "eat",
+      "duration_s": [
+        20,
+        90
+      ],
+      "base_weight": 0.3,
+      "effects": {
+        "satiety": 10,
+        "teeth": 6
+      },
+      "description": "",
+      "conditions": {
+        "siano_w_pasniku_min": 10
+      },
+      "consumes": {
+        "siano_w_pasniku": 10
+      },
+      "satisfies": [
+        "satiety",
+        "teeth"
+      ]
+    },
+    {
+      "id": "drink",
+      "animation": "drink",
+      "duration_s": 4,
+      "base_weight": null,
+      "effects": {
+        "mood": 1
+      },
+      "description": "",
+      "cooldown_s": 900,
+      "conditions": {
+        "przedmiot": "poidlo"
+      }
+    },
+    {
+      "id": "chew_toy",
+      "animation": "chew_stick",
+      "duration_s": 6,
+      "base_weight": null,
+      "effects": {
+        "teeth": 8,
+        "mood": 2
+      },
+      "description": "",
+      "cooldown_s": 600,
+      "conditions": {
+        "przedmiot": "gryzak"
+      },
+      "satisfies": [
+        "teeth"
+      ]
+    },
+    {
+      "id": "dig_hay",
+      "animation": "dig_hay",
+      "duration_s": 2,
+      "base_weight": null,
+      "effects": {
+        "mood": 4
+      },
+      "description": "",
+      "cooldown_s": 1800,
+      "conditions": {
+        "siano_w_pasniku_min": 30
+      }
+    },
+    {
+      "id": "chin_rub",
+      "animation": "chin_rub",
+      "duration_s": 3,
+      "base_weight": 0.03,
+      "effects": {
+        "mood": 1
+      },
+      "description": "",
+      "cooldown_s": 3600,
+      "daily_limit": 3
+    },
+    {
+      "id": "scratch",
+      "animation": "scratch",
+      "duration_s": 1.2,
+      "base_weight": 0.04,
+      "effects": {},
+      "description": "",
+      "cooldown_s": 1200,
+      "daily_limit": 8
+    },
+    {
+      "id": "doze",
+      "animation": "doze",
+      "duration_s": [
+        60,
+        600
+      ],
+      "base_weight": 0.15,
+      "effects": {
+        "energy": 6
+      },
+      "description": "Krótka drzemka, często z półotwartymi oczami",
+      "cooldown_s": 300,
+      "conditions": {
+        "energia_max": 85
+      },
+      "satisfies": [
+        "energy"
+      ],
+      "period_multipliers": {
+        "23-7": 2.0
+      }
+    },
+    {
+      "id": "sleep",
+      "animation": "sleep",
+      "duration_s": 300,
+      "base_weight": null,
+      "effects": {
+        "energy": 30
+      },
+      "description": "",
+      "conditions": {
+        "energia_max": 35
+      },
+      "satisfies": [
+        "energy"
+      ],
+      "entry": "lie_down",
+      "exit": "wake_up",
+      "period_multipliers": {
+        "23-7": 2.0
+      }
+    },
+    {
+      "id": "sleep_house",
+      "animation": "sleep_house",
+      "duration_s": 300,
+      "base_weight": null,
+      "effects": {
+        "energy": 45
+      },
+      "description": "",
+      "conditions": {
+        "energia_max": 40,
+        "przedmiot": "domek"
+      },
+      "satisfies": [
+        "energy"
+      ],
+      "entry": "house_enter",
+      "exit": "house_exit",
+      "period_multipliers": {
+        "23-7": 2.0
+      }
+    },
+    {
+      "id": "wheek",
+      "animation": "wheek",
+      "duration_s": 1,
+      "base_weight": null,
+      "effects": {},
+      "description": "",
+      "cooldown_s": 120,
+      "conditions": {
+        "najedzenie_max": 35
+      },
+      "signal": true
+    },
+    {
+      "id": "beg",
+      "animation": "beg",
+      "duration_s": 1.4,
+      "base_weight": null,
+      "effects": {},
+      "description": "",
+      "cooldown_s": 300,
+      "conditions": {
+        "witamina_c_max": 35
+      },
+      "signal": true
+    },
+    {
+      "id": "sad",
+      "animation": "sad",
+      "duration_s": 12,
+      "base_weight": null,
+      "effects": {},
+      "description": "",
+      "cooldown_s": 180,
+      "conditions": {
+        "humor_max": 20
+      },
+      "signal": true
+    },
+    {
+      "id": "sick",
+      "animation": "sick",
+      "duration_s": 10,
+      "base_weight": null,
+      "effects": {},
+      "description": "",
+      "cooldown_s": 120,
+      "conditions": {
+        "zdrowie_max": 25
+      },
+      "signal": true
+    },
+    {
+      "id": "ball_play",
+      "animation": "ball_push",
+      "duration_s": 1.2,
+      "base_weight": null,
+      "effects": {
+        "mood": 15,
+        "energy": -5
+      },
+      "description": "",
+      "cooldown_s": 900,
+      "conditions": {
+        "przedmiot": "pilka",
+        "energia_min": 30
+      },
+      "satisfies": [
+        "mood"
+      ]
+    },
+    {
+      "id": "tunnel",
+      "animation": "tunnel_in",
+      "duration_s": 4,
+      "base_weight": null,
+      "effects": {
+        "mood": 20,
+        "energy": -8
+      },
+      "description": "",
+      "cooldown_s": 1200,
+      "conditions": {
+        "przedmiot": "tunel",
+        "energia_min": 30
+      },
+      "satisfies": [
+        "mood"
+      ],
+      "exit": "tunnel_out"
+    },
+    {
+      "id": "rumble",
+      "animation": "rumble",
+      "duration_s": 3,
+      "base_weight": null,
+      "effects": {
+        "mood": 2
+      },
+      "description": "",
+      "cooldown_s": 1800,
+      "conditions": {
+        "etap_min": "dorosla",
+        "towarzysz": true
+      }
+    },
+    {
+      "id": "nose_touch",
+      "animation": "nose_touch",
+      "duration_s": 2,
+      "base_weight": null,
+      "effects": {
+        "mood": 8
+      },
+      "description": "",
+      "cooldown_s": 600,
+      "conditions": {
+        "towarzysz": true
+      },
+      "satisfies": [
+        "mood"
+      ]
+    },
+    {
+      "id": "groom_other",
+      "animation": "groom_other",
+      "duration_s": 4,
+      "base_weight": null,
+      "effects": {
+        "mood": 6
+      },
+      "description": "",
+      "cooldown_s": 900,
+      "conditions": {
+        "towarzysz": true
+      },
+      "satisfies": [
+        "mood"
+      ]
+    },
+    {
+      "id": "cold",
+      "animation": "shiver",
+      "duration_s": 3,
+      "base_weight": null,
+      "effects": {},
+      "description": "",
+      "cooldown_s": 600,
+      "conditions": {
+        "temperatura_max": 5
+      }
+    },
+    {
+      "id": "heat",
+      "animation": "heat_flop",
+      "duration_s": 40,
+      "base_weight": null,
+      "effects": {
+        "energy": 3
+      },
+      "description": "",
+      "cooldown_s": 600,
+      "conditions": {
+        "temperatura_min": 28
+      }
+    }
+  ],
+  "events": {
+    "bobek": {
+      "animacja": "poop",
+      "co_minut": [
+        40,
+        90
+      ]
+    },
+    "powitanie_po_starcie": {
+      "animacja": "greet",
+      "warunek": "wiez >= 3"
+    },
+    "zawolanie": {
+      "animacja": "come_called",
+      "potem": "run",
+      "warunek": "wiez >= 7"
+    },
+    "glaskanie": {
+      "animacja": "purr_pet",
+      "efekty": {
+        "humor": 5
+      },
+      "wiez": 1,
+      "limit_na_godzine": 10
+    },
+    "za_duzo_klikniec": {
+      "animacja": "chatter"
+    },
+    "przestrach": {
+      "animacja": "startle",
+      "potem": "freeze"
+    },
+    "ucieczka": {
+      "animacja": "flee",
+      "potem": "peek"
+    },
+    "podniesienie": {
+      "animacja": "held"
+    },
+    "spadanie": {
+      "animacja": "fall",
+      "potem": "land"
+    },
+    "muzyka": {
+      "animacja": "dance"
+    },
+    "sledzenie_kursora": {
+      "animacja": "front_look"
+    },
+    "urodziny": {
+      "animacja": "party",
+      "nagroda_koniczynki": 100
+    },
+    "sztuczki": {
+      "spin": 5,
+      "stand_up": 9,
+      "popcorn": 12,
+      "hurdle": 15
+    }
+  }
+}

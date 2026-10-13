@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Symulator mózgu gry. Celowo na .NET Framework 4.8 (tym samym co eSheep),
+    żeby od razu było widać, że SwinkaCore działa na tym środowisku.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <RootNamespace>Cuy.Simulator</RootNamespace>
+    <AssemblyName>Cuy.Simulator</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Cuy.Core\Cuy.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Pakiety referencyjne .NET Framework, żeby dało się budować samym dotnet SDK. -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
