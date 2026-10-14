@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using Microsoft.Win32;
 using Cuy.Core;
 
 namespace Cuy
@@ -31,6 +32,7 @@ namespace Cuy
 
         public static LocalData MyData = new LocalData();
 
+#if DEBUG
         public static double ParseSpeedMultiplier(string[] args)
         {
             if (args == null) return 1.0;
@@ -55,8 +57,90 @@ namespace Cuy
             }
             return 1.0;
         }
+#endif
 
         public static string ArgumentLocalXML = "";
+
+        /// <summary>Tray icon, so Home can refresh the tooltip after naming the pig.</summary>
+        public static ProcessIcon Tray;
+
+        private const string ShowHomeEventName = "Cuy.ShowHome";
+        private static Control _uiInvoker;
+        private static bool _crashHandling;
+
+        private static string CrashFile
+        {
+            get
+            {
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Cuy", "lastcrash.txt");
+            }
+        }
+
+        /// <summary>Seconds since the last recorded crash, or a large number when there is none.</summary>
+        private static double SecondsSinceLastCrash()
+        {
+            try
+            {
+                if (File.Exists(CrashFile)
+                    && DateTime.TryParse(File.ReadAllText(CrashFile).Trim(), null,
+                        System.Globalization.DateTimeStyles.RoundtripKind, out DateTime last))
+                {
+                    return (DateTime.UtcNow - last.ToUniversalTime()).TotalSeconds;
+                }
+            }
+            catch (Exception) { }
+            return double.MaxValue;
+        }
+
+        /// <summary>Logs the crash, tells the user once and restarts, unless the previous crash was less than 60 s ago.</summary>
+        private static void HandleCrash(Exception ex)
+        {
+            if (_crashHandling) return;
+            _crashHandling = true;
+            try
+            {
+                BrainController.Log("[ERROR] Crash: " + ex);
+                bool tooSoon = SecondsSinceLastCrash() < 60;
+                try
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(CrashFile));
+                    File.WriteAllText(CrashFile, DateTime.UtcNow.ToString("o"));
+                }
+                catch (Exception) { }
+
+                if (tooSoon)
+                {
+                    BrainController.Log("[ERROR] Second crash within 60 s. Not restarting.");
+                    Environment.Exit(1);
+                    return;
+                }
+
+                try { BrainController.Instance?.Close(); } catch (Exception) { }
+                MessageBox.Show("Cuy hit a snag and will restart.", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Application.Restart();
+            }
+            catch (Exception inner)
+            {
+                BrainController.Log("[ERROR] HandleCrash: " + inner.Message);
+            }
+            Environment.Exit(1);
+        }
+
+        /// <summary>
+        /// Takes the single-instance mutex. Right after a crash the old process may still be shutting down, so wait for it.
+        /// </summary>
+        private static bool AcquireSingleInstance()
+        {
+            TimeSpan wait = SecondsSinceLastCrash() < 30 ? TimeSpan.FromSeconds(10) : TimeSpan.Zero;
+            try
+            {
+                return mutex.WaitOne(wait, false);
+            }
+            catch (AbandonedMutexException)
+            {
+                return true; // the previous instance died; we own the mutex now
+            }
+        }
 
         /// <summary>
         /// The main entry point for the application.
@@ -68,17 +152,24 @@ namespace Cuy
 
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 
+            if (Array.Exists(args, x => string.Equals(x, "--selftest", StringComparison.OrdinalIgnoreCase)))
+            {
+                Environment.Exit(SelfTest.Run());
+                return;
+            }
+
+            EventWaitHandle showHomeEvent = new EventWaitHandle(false, EventResetMode.AutoReset, ShowHomeEventName);
             try
             {
-                if (!mutex.WaitOne(TimeSpan.FromSeconds(1), false))
+                if (!AcquireSingleInstance())
                 {
-                    MessageBox.Show("Cuy is already running. Only one copy can run at a time.", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    showHomeEvent.Set(); // ask the running Cuy to open Home, then leave quietly
                     return;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Cuy could not start: " + ex.Message);
+                BrainController.Log("[ERROR] Single instance check failed: " + ex.Message);
                 return;
             }
 
@@ -104,13 +195,18 @@ namespace Cuy
             }
 
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.ThreadException += (s, e) => BrainController.Log("[ERROR] " + e.Exception);
-            AppDomain.CurrentDomain.UnhandledException += (s, e) => BrainController.Log("[ERROR] " + e.ExceptionObject);
+            Application.ThreadException += (s, e) => HandleCrash(e.Exception);
+            AppDomain.CurrentDomain.UnhandledException += (s, e) => HandleCrash(e.ExceptionObject as Exception);
 
             try
             {
+#if DEBUG
                 double initialSpeed = ParseSpeedMultiplier(args);
+#else
+                double initialSpeed = 1.0;
+#endif
                 BrainController.Initialize(initialSpeed);
+                bool isNewGame = BrainController.Instance.Session.IsNewGame;
                 ItemCatalog.ErrorLogger = message => BrainController.Log("[ERROR] " + message);
                 Application.ApplicationExit += (s, e) => { BrainController.Instance?.Close(); };
 
@@ -124,14 +220,42 @@ namespace Cuy
                     }
                 }
 
+                if (isNewGame) AutoStart.Enable();
+                AutoStart.RefreshPath();
+
+                // Helper control: lets background threads run code on the UI thread.
+                _uiInvoker = new Control();
+                IntPtr invokerHandle = _uiInvoker.Handle;
+
+                // A second start of Cuy signals this one to open Home.
+                var showHomeThread = new Thread(() =>
+                {
+                    while (true)
+                    {
+                        showHomeEvent.WaitOne();
+                        RunOnUiThread(HomeWindow.ShowHome);
+                    }
+                }) { IsBackground = true, Name = "Cuy.ShowHomeWaiter" };
+                showHomeThread.Start();
+
+                // After sleep or hibernation apply the offline rules once for the time that passed.
+                SystemEvents.PowerModeChanged += (s, e) =>
+                {
+                    if (e.Mode == PowerModes.Resume)
+                    {
+                        RunOnUiThread(() => BrainController.Instance?.OnResume());
+                    }
+                };
+
                 // Show the system tray icon.
                 using (ProcessIcon pi = new ProcessIcon())
                 {
+                    Tray = pi;
                     pi.Display();
 
                     Mainthread = new StartUp(pi);
 
-                    if (autoOpenHome)
+                    if (autoOpenHome || BrainController.Instance.Pet.State.NeedsNaming)
                     {
                         try
                         {
@@ -171,6 +295,18 @@ namespace Cuy
                 mutex.ReleaseMutex();
             }
             catch (Exception ex) { BrainController.Log("[WARN] Program.Main: " + ex.Message); }
+        }
+
+        private static void RunOnUiThread(Action action)
+        {
+            try
+            {
+                if (_uiInvoker != null && _uiInvoker.IsHandleCreated)
+                {
+                    _uiInvoker.BeginInvoke(action);
+                }
+            }
+            catch (Exception ex) { BrainController.Log("[WARN] Program.RunOnUiThread: " + ex.Message); }
         }
 
         public static void RestartApp()

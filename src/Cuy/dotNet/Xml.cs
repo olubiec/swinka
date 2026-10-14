@@ -526,12 +526,50 @@ namespace Cuy
             var image = new Bitmap(imageStream);
             // no longer need stream
             imageStream.Close();
+            image = UseExternalSheet(image);
             while (image.Width * iScale / AnimationXML.Image.TilesX > 255) iScale--; // be sure to not exceed this value! As this will cause a crash in the imagelist component.
             spriteWidth = image.Width * iScale / AnimationXML.Image.TilesX;
             spriteHeight = image.Height * iScale / AnimationXML.Image.TilesY;
             sprites = BuildSprites(image);
             // have sprites no longer need source sheet
             image.Dispose();
+        }
+
+        /// <summary>
+        /// Uses assets/sprites/&lt;stage&gt;/spritesheet.png next to the exe instead of the embedded sheet
+        /// when it exists and has the same size (same grid of 64 px frames).
+        /// </summary>
+        private Bitmap UseExternalSheet(Bitmap embedded)
+        {
+            try
+            {
+                string stage = Cuy.Core.LifeStages.DataKey(
+                    BrainController.Instance != null ? BrainController.Instance.Pet.Stage : Cuy.Core.LifeStage.Baby);
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "sprites", stage, "spritesheet.png");
+                if (!File.Exists(path)) return embedded;
+
+                Bitmap external;
+                using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var loaded = new Bitmap(fs))
+                {
+                    external = new Bitmap(loaded); // detached from the file stream
+                }
+                if (external.Width != embedded.Width || external.Height != embedded.Height)
+                {
+                    BrainController.Log("[WARN] " + path + " is " + external.Width + "x" + external.Height
+                        + ", expected " + embedded.Width + "x" + embedded.Height + ". Using the embedded sheet.");
+                    external.Dispose();
+                    return embedded;
+                }
+                embedded.Dispose();
+                BrainController.Log("[Sprites] Using " + path);
+                return external;
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] Xml.UseExternalSheet: " + ex.Message);
+                return embedded;
+            }
         }
 
         /// <summary>

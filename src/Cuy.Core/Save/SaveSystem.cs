@@ -34,7 +34,7 @@ namespace Cuy.Core.Save
     /// Game state saved as JSON: %AppData%/Cuy/save.json with a version field and a save.bak backup.
     /// </summary>
     /// <remarks>
-    /// Saving is safe against sudden power loss: save.tmp is written first, then
+    /// Saving is safe against sudden power loss: save.json.tmp is written first, then
     /// File.Replace swaps in save.json and the previous version becomes save.bak.
     /// At any moment there is at least one valid file on disk.
     /// </remarks>
@@ -42,7 +42,7 @@ namespace Cuy.Core.Save
     {
         public const string FileName = "save.json";
         public const string BackupFileName = "save.bak";
-        public const string TempFileName = "save.tmp";
+        public const string TempFileName = "save.json.tmp";
         public const string CorruptFileName = "save.corrupt.json";
 
         private static readonly UTF8Encoding Utf8NoBom = new UTF8Encoding(false);
@@ -151,7 +151,7 @@ namespace Cuy.Core.Save
                 {
                     try
                     {
-                // Atomic: save.tmp -> save.json, old (valid) save.json -> save.bak.
+                // Atomic: save.json.tmp -> save.json, old (valid) save.json -> save.bak.
                         File.Replace(TempPath, SavePath, BackupPath, true);
                     }
                     catch (Exception ex) when (ex is IOException || ex is PlatformNotSupportedException)

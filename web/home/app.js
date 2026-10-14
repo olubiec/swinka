@@ -73,12 +73,89 @@
     }
 
     bindButtons();
+    bindOnboarding();
     updateSoundButtonUI();
+  }
+
+  // ---- First run: welcome -> intro -> gift letter ----
+  const onboard = { introActive: false, introStep: 0, letterClosed: false, nameSent: false };
+
+  function showOnly(id) {
+    ['welcome', 'intro', 'letter'].forEach((v) => {
+      const el = document.getElementById(v);
+      if (el) el.hidden = (v !== id);
+    });
+  }
+
+  function updateOnboarding(state) {
+    if (state.needsNaming && !onboard.nameSent) {
+      if (document.getElementById('welcome')?.hidden) {
+        showOnly('welcome');
+        document.getElementById('nameInput')?.focus();
+      }
+    } else if (onboard.introActive) {
+      showOnly('intro');
+    } else if (state.giftNote && !onboard.letterClosed) {
+      const text = document.getElementById('letterText');
+      if (text && text.textContent !== state.giftNote) text.textContent = state.giftNote;
+      showOnly('letter');
+    } else {
+      showOnly(null);
+    }
+  }
+
+  function submitName() {
+    const input = document.getElementById('nameInput');
+    const error = document.getElementById('nameError');
+    const name = (input.value || '').trim().replace(/\s+/g, ' ');
+    if (!name || !/^[\p{L}\p{N} ]+$/u.test(name)) {
+      error.hidden = false;
+      return;
+    }
+    error.hidden = true;
+    onboard.nameSent = true;
+    onboard.introActive = true;
+    onboard.introStep = 0;
+    showIntroStep();
+    window.bridge.send({ type: 'setName', name: name });
+  }
+
+  function showIntroStep() {
+    for (let i = 0; i < 3; i++) {
+      const card = document.getElementById('introCard' + i);
+      if (card) card.hidden = (i !== onboard.introStep);
+    }
+    const btn = document.getElementById('btnIntroNext');
+    if (btn) btn.textContent = onboard.introStep === 2 ? 'Start' : 'Next';
+    showOnly('intro');
+  }
+
+  function bindOnboarding() {
+    document.getElementById('btnNameGo')?.addEventListener('click', submitName);
+    document.getElementById('nameInput')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submitName();
+    });
+    document.getElementById('btnIntroNext')?.addEventListener('click', () => {
+      if (onboard.introStep < 2) {
+        onboard.introStep++;
+        showIntroStep();
+      } else {
+        onboard.introActive = false;
+        const state = window.bridge.currentState;
+        if (state) updateOnboarding(state); else showOnly(null);
+      }
+    });
+    document.getElementById('btnLetterClose')?.addEventListener('click', () => {
+      onboard.letterClosed = true;
+      showOnly(null);
+      window.bridge.send({ type: 'giftNoteShown' });
+    });
   }
 
     // Update the UI on every game state change
   function updateStateUI(state) {
     if (!state) return;
+    updateOnboarding(state);
 
     // Pig profile
     if (elements.petName) elements.petName.textContent = state.name || 'Cuy';

@@ -14,7 +14,7 @@ namespace Cuy
     /// - Loads and caches the 10 WAV clips from assets/sounds
     /// - Maps game events and animations to sounds
     /// - Volume control and mute
-    /// - Quiet hours check (default 22:00 - 07:00)
+    /// - Quiet hours check (default 22:00 - 08:00)
     /// - Muted during games and full-screen apps (SHQueryUserNotificationState)
     /// - Slight random pitch variation (+/-6%)
     /// - Strict wheek rate limit (max 1 wheek per 2 minutes)
@@ -29,7 +29,7 @@ namespace Cuy
         private readonly Dictionary<string, WaveFormat> _cachedFormats = new Dictionary<string, WaveFormat>(StringComparer.OrdinalIgnoreCase);
 
         // Audio policy rules
-        private readonly QuietHoursConfig _quietHours = new QuietHoursConfig(new TimeSpan(22, 0, 0), new TimeSpan(7, 0, 0), enabled: true);
+        private readonly QuietHoursConfig _quietHours = new QuietHoursConfig(new TimeSpan(22, 0, 0), new TimeSpan(8, 0, 0), enabled: true);
         private readonly WheekRateLimiter _wheekLimiter = new WheekRateLimiter(TimeSpan.FromMinutes(2));
         private readonly Random _random = new Random();
         private readonly object _lock = new object();
@@ -52,6 +52,18 @@ namespace Cuy
 
         // Configuration flags
         public bool IsMuted { get; set; } = false;
+
+        /// <summary>The tray menu "Sounds" switch, saved in the settings.</summary>
+        public bool SoundsEnabled
+        {
+            get { return !IsMuted; }
+            set
+            {
+                IsMuted = !value;
+                try { Program.MyData?.SetSoundsEnabled(value); }
+                catch (Exception ex) { BrainController.Log("[WARN] SoundManager.SoundsEnabled: " + ex.Message); }
+            }
+        }
         public bool MuteOnFullScreen { get; set; } = true;
         public double MaxPitchVariation { get; set; } = PitchCalculator.DefaultVariation;
 
@@ -94,6 +106,8 @@ namespace Cuy
         public SoundManager()
         {
             _instance = this;
+            try { IsMuted = !Program.MyData.GetSoundsEnabled(); }
+            catch (Exception ex) { BrainController.Log("[WARN] SoundManager: " + ex.Message); }
             LoadSounds();
         }
 

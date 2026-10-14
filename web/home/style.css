@@ -843,3 +843,107 @@ body.webview-mode .game-device {
 }
 
 .test-btn:hover { background: var(--c-wood-light); }
+
+/* ==========================================================================
+   FIRST RUN: welcome, intro, gift letter
+   ========================================================================== */
+
+.onboard-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--c-hay);
+}
+
+.onboard-view[hidden],
+.intro-card[hidden],
+.onboard-error[hidden] {
+  display: none;
+}
+
+.onboard-card {
+  background: var(--c-cream);
+  border: 4px solid var(--c-contour-dark);
+  border-radius: 10px;
+  width: 100%;
+  max-height: 100%;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: var(--c-contour-dark);
+  font-family: var(--font-pixel);
+  text-align: center;
+  box-shadow:
+    0 8px 0 var(--c-contour-dark),
+    inset 2px 2px 0 var(--c-white),
+    inset -2px -2px 0 var(--c-cream-dark);
+}
+
+.onboard-card h2 {
+  margin: 0;
+  font-size: 26px;
+  color: var(--c-rust-deep);
+}
+
+.onboard-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.onboard-input {
+  font-family: var(--font-pixel);
+  font-size: 18px;
+  text-align: center;
+  padding: 8px;
+  color: var(--c-contour-dark);
+  background: var(--c-white);
+  border: 3px solid var(--c-contour-dark);
+  border-radius: 6px;
+  outline: none;
+}
+
+.onboard-input:focus {
+  border-color: var(--c-orange-dark);
+}
+
+.onboard-error {
+  color: var(--c-red-dark);
+  font-size: 13px;
+}
+
+.onboard-btn {
+  flex-direction: row;
+  font-size: 16px;
+  padding: 10px 8px;
+}
+
+.intro-card {
+  font-size: 18px;
+  line-height: 1.4;
+  padding: 24px 8px;
+  background: var(--c-white);
+  border: 3px solid var(--c-contour-dark);
+  border-radius: 8px;
+}
+
+.letter-text {
+  max-height: 440px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 10px;
+  background: var(--c-white);
+  border: 3px solid var(--c-contour-dark);
+  border-radius: 8px;
+}

@@ -9,12 +9,8 @@ namespace Cuy
 {
     /// <summary>
     /// Context menu of the tray icon (next to the Windows clock).
-    /// - Feed (submenu with inventory items and counts; hay is always unlimited)
-    /// - Call
-    /// - Home
-    /// - Pig brain (F9)
-    /// - Clock 60x (test)
-    /// - Quit
+    /// Home | Feed (submenu with inventory items; hay is unlimited) | Call | Sounds |
+    /// Start with Windows | About Cuy | (Debug: dev tools) | Quit
     /// </summary>
     public class ContextMenus : IDisposable
     {
@@ -32,15 +28,21 @@ namespace Cuy
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            // 1. Feed (submenu: unlimited hay + items from the inventory)
+            // 1. Home
+            homeMenuItem = new ToolStripMenuItem("Home");
+            homeMenuItem.Image = PetIcons.GetIconBitmap("house");
+            homeMenuItem.Enabled = !HomeWindow.WebView2Missing;
+            homeMenuItem.Click += (s, e) => OpenHomeWindow();
+            menu.Items.Add(homeMenuItem);
+
+            // 2. Feed (submenu: unlimited hay + items from the inventory)
             feedMenuItem = new ToolStripMenuItem("Feed");
             feedMenuItem.Image = PetIcons.GetIconBitmap("hay");
-            feedMenuItem.Font = new Font(feedMenuItem.Font, feedMenuItem.Font.Style | FontStyle.Bold);
             feedMenuItem.DropDownOpening += (s, e) => PopulateFeedSubmenu(feedMenuItem);
             PopulateFeedSubmenu(feedMenuItem);
             menu.Items.Add(feedMenuItem);
 
-            // 2. Call
+            // 3. Call
             callMenuItem = new ToolStripMenuItem("Call");
             callMenuItem.Image = PetIcons.GetIconBitmap("pig_head");
             callMenuItem.Click += (s, e) =>
@@ -52,16 +54,40 @@ namespace Cuy
             };
             menu.Items.Add(callMenuItem);
 
-            // 3. Home
-            homeMenuItem = new ToolStripMenuItem("Home");
-            homeMenuItem.Image = PetIcons.GetIconBitmap("house");
-            homeMenuItem.Click += (s, e) => OpenHomeWindow();
-            menu.Items.Add(homeMenuItem);
+            menu.Items.Add(new ToolStripSeparator());
+
+            // 4. Sounds (checked = on, saved in the settings)
+            var soundsItem = new ToolStripMenuItem("Sounds") { CheckOnClick = true };
+            soundsItem.Click += (s, e) =>
+            {
+                if (SoundManager.Instance != null) SoundManager.Instance.SoundsEnabled = soundsItem.Checked;
+            };
+            menu.Items.Add(soundsItem);
+
+            // 5. Start with Windows (checked = on)
+            var autoStartItem = new ToolStripMenuItem("Start with Windows") { CheckOnClick = true };
+            autoStartItem.Click += (s, e) =>
+            {
+                if (autoStartItem.Checked) AutoStart.Enable(); else AutoStart.Disable();
+            };
+            menu.Items.Add(autoStartItem);
+
+            menu.Opening += (s, e) =>
+            {
+                soundsItem.Checked = SoundManager.Instance == null || SoundManager.Instance.SoundsEnabled;
+                autoStartItem.Checked = AutoStart.IsEnabled;
+                homeMenuItem.Enabled = !HomeWindow.WebView2Missing;
+            };
+
+            // 6. About
+            var aboutItem = new ToolStripMenuItem("About Cuy");
+            aboutItem.Click += (s, e) =>
+                MessageBox.Show("Cuy 1.0.0 - made with love", "About Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            menu.Items.Add(aboutItem);
 
 #if DEBUG
             // Dev tools (Debug builds only)
-            ToolStripSeparator sep = new ToolStripSeparator();
-            menu.Items.Add(sep);
+            menu.Items.Add(new ToolStripSeparator());
 
             ToolStripMenuItem brainItem = new ToolStripMenuItem("Pig brain (F9)");
             brainItem.Click += (s, e) => DebugOverlay.Toggle();
@@ -90,7 +116,7 @@ namespace Cuy
 
             menu.Items.Add(new ToolStripSeparator());
 
-            // 5. Quit
+            // 7. Quit
             closeMenuItem = new ToolStripMenuItem("Quit");
             closeMenuItem.Image = Resources.exit;
             closeMenuItem.Click += new EventHandler(Exit_Click);

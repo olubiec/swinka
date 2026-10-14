@@ -123,6 +123,7 @@ namespace Cuy.Core.Tests
             var clock = new ManualClock(birthUtc);
             var state = GameState.CreateNew("Pip", birthUtc);
             var balance = Balance.CreateDefault(); // 21 pig days per real day. JuniorFromPigDays = 21 (exactly 1 real day)
+            balance.GrowthActive = true;
             var pet = new Pet(state, clock, balance);
             pet.Start();
 
@@ -153,7 +154,7 @@ namespace Cuy.Core.Tests
             var birthUtc = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
             var clock = new ManualClock(birthUtc);
             var state = GameState.CreateNew("Cuy", birthUtc);
-            var pet = new Pet(state, clock);
+            var pet = new Pet(state, clock, new Balance { GrowthActive = true });
             pet.Start();
 
             int eventCount = 0;
@@ -180,7 +181,7 @@ namespace Cuy.Core.Tests
             var birthUtc = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
             var clock = new ManualClock(birthUtc);
             var state = GameState.CreateNew("Cuy", birthUtc);
-            var pet = new Pet(state, clock);
+            var pet = new Pet(state, clock, new Balance { GrowthActive = true });
             pet.Start();
 
             // Adult from 6 pig months = 182.625 pig days = 8.696 real days
@@ -213,7 +214,7 @@ namespace Cuy.Core.Tests
             // Start after 15 real days (15 * 21 = 315 pig days -> Adult)
             var startUtc = birthUtc.AddDays(15);
             var clock = new ManualClock(startUtc);
-            var pet = new Pet(state, clock);
+            var pet = new Pet(state, clock, new Balance { GrowthActive = true });
 
             StageChangedEventArgs? stageEvent = null;
             pet.StageChanged += (s, e) => stageEvent = e;

@@ -244,8 +244,9 @@
       const stageInfo = getStageFromPigDays(state.pigDays);
 
       state.age = ageInfo;
-      state.stageKey = stageInfo.key;
-      state.stageName = stageInfo.name;
+      // The app decides the stage (it stays Baby in 1.0.0); only the browser mock derives it from age.
+      if (!state.stageKey) state.stageKey = stageInfo.key;
+      if (!state.stageName) state.stageName = stageInfo.name;
 
       // Minigames and records
       if (!state.minigames) {

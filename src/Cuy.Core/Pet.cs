@@ -127,7 +127,7 @@ namespace Cuy.Core
 
         private void CheckStage()
         {
-            var newStage = Age.Stage;
+            var newStage = Balance.GrowthActive ? Age.Stage : LifeStage.Baby;
             if (newStage == State.Stage) return;
             var old = State.Stage;
             State.Stage = newStage;

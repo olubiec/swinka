@@ -229,6 +229,33 @@
       </div>
     </div>
 
+    <!-- First run: name the pig, short intro, optional gift note -->
+    <section class="onboard-view" id="welcome" hidden aria-labelledby="welcomeTitle">
+      <div class="onboard-card">
+        <h2 id="welcomeTitle">Welcome!</h2>
+        <p>Your guinea pig has arrived. What will you call it?</p>
+        <input class="onboard-input" id="nameInput" type="text" maxlength="16" autocomplete="off" spellcheck="false" aria-label="Pig name">
+        <p class="onboard-error" id="nameError" hidden>Use letters, digits and spaces.</p>
+        <button class="game-btn onboard-btn" id="btnNameGo" type="button">Let's go</button>
+      </div>
+    </section>
+
+    <section class="onboard-view" id="intro" hidden aria-label="Introduction">
+      <div class="onboard-card">
+        <div class="intro-card" id="introCard0">I live on your taskbar.</div>
+        <div class="intro-card" id="introCard1" hidden>Click me to see how I feel.</div>
+        <div class="intro-card" id="introCard2" hidden>The little head by the clock opens my Home.</div>
+        <button class="game-btn onboard-btn" id="btnIntroNext" type="button">Next</button>
+      </div>
+    </section>
+
+    <section class="onboard-view" id="letter" hidden aria-label="Letter">
+      <div class="onboard-card">
+        <div class="letter-text" id="letterText"></div>
+        <button class="game-btn onboard-btn" id="btnLetterClose" type="button">Close</button>
+      </div>
+    </section>
+
   </main>
 
   <!-- Home logic and engine scripts -->

@@ -67,6 +67,33 @@ namespace Cuy
 
         public static HomeWindow Instance => _instance;
 
+        /// <summary>True when the Microsoft Edge WebView2 runtime is not installed: Home cannot open.</summary>
+        public static bool WebView2Missing { get; private set; }
+
+        private const string WebView2MissingMessage =
+            "Cuy's Home needs Microsoft Edge WebView2. Get it at https://go.microsoft.com/fwlink/p/?LinkId=2124703";
+
+        private static string GiftNotePath
+        {
+            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "gift", "note.txt"); }
+        }
+
+        /// <summary>Text of gift\note.txt next to the exe while the letter has not been shown yet; otherwise null.</summary>
+        private static string ReadGiftNote(GameState state)
+        {
+            try
+            {
+                if (state.GiftNoteShown || !File.Exists(GiftNotePath)) return null;
+                string text = File.ReadAllText(GiftNotePath);
+                return string.IsNullOrWhiteSpace(text) ? null : text;
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] HomeWindow.ReadGiftNote: " + ex.Message);
+                return null;
+            }
+        }
+
         /// <summary>
         /// Tells an open Home window about a state change in Cuy.Core (e.g. after feeding on the desktop or cleaning).
         /// </summary>
@@ -103,6 +130,7 @@ namespace Cuy
         public static void ShowHome()
         {
             BrainController.Log("[HomeWindow] ShowHome() called.");
+            if (WebView2Missing) return;
             if (_instance == null || _instance.IsDisposed)
             {
                 _instance = new HomeWindow();
@@ -224,7 +252,19 @@ namespace Cuy
                 Directory.CreateDirectory(userDataFolder);
 
                 BrainController.Log("[HomeWindow] Creating CoreWebView2Environment...");
-                var env = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
+                CoreWebView2Environment env;
+                try
+                {
+                    env = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
+                }
+                catch (WebView2RuntimeNotFoundException)
+                {
+                    WebView2Missing = true;
+                    BrainController.Log("[ERROR] Home: the WebView2 runtime is not installed.");
+                    this.Hide();
+                    MessageBox.Show(WebView2MissingMessage, "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
                 BrainController.Log("[HomeWindow] CoreWebView2Environment created. Initialising the control...");
                 await _webView.EnsureCoreWebView2Async(env);
                 BrainController.Log("[HomeWindow] EnsureCoreWebView2Async done.");
@@ -409,6 +449,8 @@ namespace Cuy
                 {
                     type = "state",
                     name = string.IsNullOrWhiteSpace(state.Name) ? "Cuy" : state.Name,
+                    needsNaming = state.NeedsNaming,
+                    giftNote = ReadGiftNote(state),
                     birthDateUtc = state.BirthDateUtc.ToString("o"),
                     pigDays = Math.Round(age.PigDays, 1),
                     stageKey = stage.ToString().ToLowerInvariant(),
@@ -468,6 +510,14 @@ namespace Cuy
                     case "feed":
                         string item = obj.Value<string>("item") ?? "hay";
                         HandleFeed(item);
+                        break;
+
+                    case "setname":
+                        HandleSetName(obj.Value<string>("name"));
+                        break;
+
+                    case "giftnoteshown":
+                        HandleGiftNoteShown();
                         break;
 
                     case "clean":
@@ -564,6 +614,34 @@ namespace Cuy
                     BrainController.Log(string.Format("[HomeWindow] Item not in inventory: {0}", item));
                 }
             }
+        }
+
+        private void HandleSetName(string rawName)
+        {
+            var pet = BrainController.Instance?.Pet;
+            if (pet == null) return;
+
+            string name = System.Text.RegularExpressions.Regex.Replace((rawName ?? "").Trim(), @"\s+", " ");
+            if (name.Length == 0 || name.Length > 16 || !System.Text.RegularExpressions.Regex.IsMatch(name, @"^[\p{L}\p{N} ]+$"))
+            {
+                BrainController.Log("[HomeWindow] Rejected pet name.");
+                return;
+            }
+
+            pet.State.Name = name;
+            pet.State.NeedsNaming = false;
+            BrainController.Instance.Session.AutoSaver.SaveNow();
+            Program.Tray?.UpdateTooltip();
+            NotifyStateChanged();
+            BrainController.Log("[HomeWindow] Pet named: " + name);
+        }
+
+        private void HandleGiftNoteShown()
+        {
+            var pet = BrainController.Instance?.Pet;
+            if (pet == null) return;
+            pet.State.GiftNoteShown = true;
+            BrainController.Instance.Session.AutoSaver.SaveNow();
         }
 
         private void HandleClean()

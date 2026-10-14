@@ -9,6 +9,12 @@ namespace Cuy.Core
     /// </summary>
     public sealed class Balance
     {
+        /// <summary>Version 1.0.0: the pig stays a baby. Set to true to let it grow through the life stages.</summary>
+        public const bool GrowthEnabled = false;
+
+        /// <summary>Whether this Balance lets the pig grow. Starts as <see cref="GrowthEnabled"/>; tests of the life stages switch it on.</summary>
+        public bool GrowthActive { get; set; } = GrowthEnabled;
+
         /// <summary>Need decay per game hour with the computer on (needs table in PLAN.md).</summary>
         public Dictionary<Need, double> DecayPerHour { get; set; } = new Dictionary<Need, double>
         {

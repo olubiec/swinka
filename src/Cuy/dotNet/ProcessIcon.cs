@@ -9,13 +9,12 @@ namespace Cuy
     /// <summary>
     /// Icon in the system tray (next to the Windows clock).
     /// Shows the guinea pig head from assets/icons/icons_16.png,
-    /// a tooltip with the pig's name and its lowest need,
+    /// a tooltip with the pig's name,
     /// opens Home on double-click, and the context menu.
     /// </summary>
     public class ProcessIcon : IDisposable
     {
         private NotifyIcon ni;
-        private Timer _tooltipTimer;
 
         public ProcessIcon()
         {
@@ -43,45 +42,18 @@ namespace Cuy
             // Attach the pig's context menu
             var contextMenu = new ContextMenus();
             var strip = contextMenu.Create();
-            strip.Opening += (s, e) => UpdateTooltip();
             ni.ContextMenuStrip = strip;
-
-            // Timer that keeps the tooltip up to date
-            _tooltipTimer = new Timer();
-            _tooltipTimer.Interval = 1000;
-            _tooltipTimer.Tick += (s, e) => UpdateTooltip();
-            _tooltipTimer.Start();
         }
 
         /// <summary>
-        /// Updates the tray icon tooltip: the pig's name and its lowest need.
+        /// Updates the tray icon tooltip: the pig's name (WinForms limit for NotifyIcon.Text is 63 characters).
         /// </summary>
         public void UpdateTooltip()
         {
             if (ni == null) return;
-            var brain = BrainController.Instance;
-            if (brain != null && brain.Pet != null && brain.Needs != null)
-            {
-                string petName = brain.Pet.State?.Name;
-                if (string.IsNullOrWhiteSpace(petName)) petName = "Cuy";
-
-                Need lowest = brain.Needs.Lowest();
-                string needName = NeedNames.DisplayName(lowest);
-                int percent = (int)Math.Round(brain.Needs[lowest]);
-
-                // WinForms limit for NotifyIcon.Text is 63 characters
-                string tip = string.Format("{0} - {1}: {2}%", petName, needName, percent);
-                if (tip.Length > 63)
-                {
-                    tip = string.Format("{0} - {1}", petName, needName);
-                    if (tip.Length > 63) tip = tip.Substring(0, 63);
-                }
-                ni.Text = tip;
-            }
-            else
-            {
-                ni.Text = "Cuy";
-            }
+            string petName = BrainController.Instance?.Pet?.State?.Name;
+            if (string.IsNullOrWhiteSpace(petName)) petName = "Cuy";
+            ni.Text = petName.Length > 63 ? petName.Substring(0, 63) : petName;
         }
 
         public void SetIcon(System.IO.MemoryStream icon, string petName, string aboutAuthor, string aboutTitle, string aboutVersion, string aboutInfo)
@@ -106,13 +78,6 @@ namespace Cuy
 
         public void Dispose()
         {
-            if (_tooltipTimer != null)
-            {
-                _tooltipTimer.Stop();
-                _tooltipTimer.Dispose();
-                _tooltipTimer = null;
-            }
-
             if (ni != null)
             {
                 if (ni.Icon != null)

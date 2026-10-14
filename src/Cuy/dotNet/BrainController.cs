@@ -54,6 +54,10 @@ namespace Cuy
 
             _clock = new ScaledClock(initialMultiplier > 0 ? initialMultiplier : 1.0);
             _session = GameSession.Open(_clock, newPetName: "Cuy");
+            if (_session.LoadResult.Source == Cuy.Core.Save.LoadSource.Backup)
+            {
+                Log("[WARN] save.json was damaged or missing. Loaded save.bak instead. " + _session.LoadResult.MainError);
+            }
             _session.Start();
 
             _brain = Brain.CreateDefault(_session.Pet);
@@ -610,6 +614,14 @@ namespace Cuy
         public BudgetReport GetBudgetReport()
         {
             return _brain.GetBudgetReport();
+        }
+
+        /// <summary>After sleep or hibernation: counts the time that passed once with the offline rules.</summary>
+        public void OnResume()
+        {
+            _lastRealTime = DateTime.UtcNow;
+            _session.Pet.Update();
+            Log("[Power] Resumed from sleep. Offline rules applied.");
         }
 
         // ---- Closing the session ---------------------------------------------

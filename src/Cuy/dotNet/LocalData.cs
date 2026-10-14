@@ -58,6 +58,10 @@ namespace Cuy
             /// Smooth animations-Key
             /// </summary>
 			public const string SmoothMovements = "Smooth";
+            /// <summary>
+            /// Sounds on/off-Key
+            /// </summary>
+			public const string SoundsEnabled = "SoundsEnabled";
 		};
 
 		/// <summary>
@@ -120,8 +124,30 @@ namespace Cuy
 		/// <returns>Value from 0 for no sound to 1.0 for full sound</returns>
 		public float GetVolume()
         {
-			int.TryParse(AppSettings[SettingName.Volume].Value, out int iVolume);
-			return (float)(iVolume / 100.0);
+            string raw = AppSettings[SettingName.Volume].Value;
+            if (int.TryParse(raw, out int iVolume)) return (float)(iVolume / 100.0);
+            // The default value is a fraction such as "0.6"
+            if (float.TryParse(raw, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float fraction))
+                return Math.Max(0f, Math.Min(1f, fraction));
+            return 0.6f;
+        }
+
+        /// <summary>
+        /// Sounds on/off (the tray menu item "Sounds"). Default: on.
+        /// </summary>
+        public bool GetSoundsEnabled()
+        {
+            return !bool.TryParse(AppSettings[SettingName.SoundsEnabled].Value, out bool on) || on;
+        }
+
+        public void SetSoundsEnabled(bool on)
+        {
+            if (on.ToString() != AppSettings[SettingName.SoundsEnabled].Value)
+            {
+                Properties.Settings.Default.SoundsEnabled = on;
+                AppSettings[SettingName.SoundsEnabled].Value = on.ToString();
+                Save();
+            }
         }
 
 		/// <summary>

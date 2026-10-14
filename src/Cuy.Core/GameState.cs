@@ -68,11 +68,22 @@ namespace Cuy.Core
 
         public Statistics Stats { get; set; } = new Statistics();
 
+        /// <summary>True until the player has named the pig (first run). Missing in old saves, so false there.</summary>
+        public bool NeedsNaming { get; set; }
+
+        /// <summary>True once the gift note letter has been shown.</summary>
+        public bool GiftNoteShown { get; set; }
+
+        /// <summary>When growth started counting (first start, UTC).</summary>
+        public DateTime? GrowthStartUtc { get; set; }
+
         public static GameState CreateNew(string name, DateTime nowUtc)
         {
             return new GameState
             {
                 Name = string.IsNullOrWhiteSpace(name) ? "Cuy" : name,
+                NeedsNaming = true,
+                GrowthStartUtc = nowUtc,
                 BirthDateUtc = nowUtc,
                 LastActiveUtc = nowUtc,
                 Stats = new Statistics { FirstStartUtc = nowUtc },
@@ -85,6 +96,7 @@ namespace Cuy.Core
             if (Version <= 0) Version = CurrentVersion;
             if (string.IsNullOrWhiteSpace(Name)) Name = "Cuy";
             if (Needs == null) Needs = new Needs();
+            if (GrowthStartUtc == null) GrowthStartUtc = DateTime.UtcNow;
             if (Bond == null) Bond = new Bond();
             if (Bond.Level < 1) Bond.Level = 1;
             if (Bond.Points < 0) Bond.Points = 0;

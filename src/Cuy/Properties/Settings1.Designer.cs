@@ -61,7 +61,7 @@ namespace Cuy.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.6")]
         public float Volume {
             get {
                 return ((float)(this["Volume"]));
@@ -140,6 +140,18 @@ namespace Cuy.Properties {
             }
             set {
                 this["Smooth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SoundsEnabled {
+            get {
+                return ((bool)(this["SoundsEnabled"]));
+            }
+            set {
+                this["SoundsEnabled"] = value;
             }
         }
     }
