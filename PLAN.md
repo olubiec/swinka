@@ -283,7 +283,7 @@ Zamiast 30 kroków po kolei jest 13 rund. W jednej rundzie prompty zmieniają r�
 | 5 | B6 ∥ D1 | karmienie ∥ szkielet minigier `domek/minigry/` |
 | 5b | C1 ∥ I1 ∥ F1 | pikselowy Domek w oknie (zastępuje tymczasowe okno z B5) ∥ interakcje (głaskanie, patrzenie, wołanie) ∥ dźwięki |
 | 5c | C3 | sklepik w Domku (potrzebuje C1) |
-| 5½ | Prezent v1 | V1a naprawa świnki, V1b Cuy i porządek, V1c angielski, V1d paczka prezentowa (po kolei), potem QA1, QA2 i ponownie V1d |
+| 5½ | Prezent v1 | V1b i V1b2 Cuy i porządek, V1a naprawa świnki, V1c angielski, V1d paczka prezentowa (po kolei), potem QA1, QA2 i ponownie V1d |
 | 6 | C4 | wiek i więź |
 | 7 | C5 | album i pamiętnik |
 | 8 | D2 ∥ D3 ∥ D4 ∥ D5 | każda minigra w swoim folderze `domek/minigry/<gra>/` |
@@ -672,6 +672,79 @@ what you deleted and why it was safe.
 ```
 
 **Sprawdź:** `git pull`, zbuduj `Cuy.sln`, uruchom. Zajrzyj do folderów repo. **Powinno być:** w repo tylko `src/`, `tests/`, `tools/`, `web/`, `assets/` i pliki .md; ikona na pasku to głowa świnki; świnka i Domek działają jak po V1a; zapis gry (imię, potrzeby, koniczynki) przeszedł do `%AppData%\Cuy`; testy zielone.
+
+#### V1b2 · Claude: dokończenie V1b (przerwane)
+
+Stan po przerwanym V1b (sprawdzone w repo 14.10):
+
+- **Gotowe:** nowe foldery (`src/Cuy`, `src/Cuy.Core`, `tests/`, `tools/Cuy.Simulator`, `web/home`), `Cuy.sln`, przejście na `assets/`, kopiowanie `assets/` i `web/` przy budowaniu, `RULES.md` i `ARCHITECTURE.md`, `THIRD_PARTY_NOTICES.md`, `.gitignore`, mutex, logi i zapis w folderach Cuy z przeniesieniem starego zapisu, usunięte resztki eSheep (Tools, tests, Pets, instalator, Portable, owca, przykładowa minigra jako plik).
+- **Niedokończone:**
+  - plik-zaślepka `Compatibility.cs` ze starymi nazwami;
+  - około 90 starych nazw w kodzie (`SwinkaBridge`, `SwinkaInteractionManager`…);
+  - polskie id w środku gry (`papryka`, `domek`, `najedzenie`) z tłumaczeniem w obie strony;
+  - podwójne klucze JSON;
+  - zdublowane ikony w `web/home/assets`;
+  - kilka resztek eSheep.
+
+```text
+Read RULES.md and ARCHITECTURE.md. V1b was interrupted; finish it. Make sure git status is clean, build after each part.
+1. Remove src/Cuy/dotNet/Compatibility.cs (namespace DesktopPet shims). Update every caller to the new names
+   instead. No old names may remain: SwinkaBrainController, SwinkaIcons, SwinkaInteractionManager, SwinkaFoodManager,
+   SwinkaPoopManager, SwinkaItemCatalog, SwinkaItemDef, SwinkaBridge (web), SwinkaSymulator, FormDomek, KillSheeps,
+   MAX_SHEEPS. Namespaces: Symulator -> Cuy.Simulator, XmlData -> Cuy.Data.
+2. English ids everywhere inside the game: item ids, icon names, need names, stage names (baby, junior, adult, senior,
+   legend), currency "clovers", exactly as in assets/data and RULES.md. Replace the Polish fallback catalog in
+   ItemCatalog.cs with the English one (or load only from assets/data), switch Brain need names (fullness, vitamin_c,
+   energy, mood, cleanliness, teeth), StatusBubble/HomeWindow "domek", PoopForm "bobek", PetIcons "papryka",
+   web/home/app.js stage names, the Simulator and the tests. Delete the Polish <-> English id maps and the Polish
+   duplicate JsonProperty keys. Keep exactly one place that understands Polish: a save migration in SaveSystem that
+   converts old Polish ids and keys found in an existing save.json to English once (tested with an old-style save).
+3. Web: rename minigry-api.js -> minigames-api.js, minigry.css -> minigames.css, remove the 'gra-przyklad' entries
+   from bridge.js and the minigames list (show "More games soon" instead). Delete web/home/assets (duplicated icons and
+   animation json) and the build step that copies assets into web/home/assets; load icons and sprites from
+   https://cuy.assets/ (assets/icons/icons_16.png, icons.json) in WebView2 and ../../assets/ in a normal browser.
+   PetIcons and build_pet_xml.py use only assets/icons/icons_16.png.
+4. Leftovers: delete src/Cuy/Tools/XmlToDot.cs, unused Images (microsoftstore.png, optional.png and any other image no
+   code references), esheep.png.ico; set ApplicationIcon to assets/app-icon/cuy.ico (copy into the project if MSBuild
+   needs it). Remove eSheep's install logic (install= argument, installpet.xml, IsApplicationInstalled) and multi-pet
+   spawning: Cuy always runs exactly one pet. Merge behavior_log.txt into the single %LocalAppData%\Cuy\logs\cuy.log
+   (1 MB rotation, keep 3).
+5. Fix factual path references in comments and docs (%AppData%/Swinka -> %AppData%\Cuy, swinka/, esheep/, domek/ in
+   ARCHITECTURE.md and README.md). Do not translate other comments or UI texts (that is V1c).
+6. Final check: search src, tests, tools (except tools/art) and web for Swinka, swinka, Domek, domek, Bobek, bobek,
+   koniczyn, najedzenie, papryka, DesktopPet, sheep, owca. Only UI texts and comments may still match (V1c).
+   Build Debug and Release, run all tests, run the app: pet on the taskbar, Home opens with the pet drawn,
+   feeding and the shop work, an old save loads with name, needs, clovers and items.
+Report the final tree (2 levels), what you deleted, and the search results of step 6.
+```
+
+**Sprawdź:** zbuduj `Cuy.sln` (Debug i Release), uruchom, nakarm, otwórz Domek i sklepik. **Powinno być:** brak pliku `Compatibility.cs` i folderu `web/home/assets`; testy zielone; imię, koniczynki i przedmioty z dotychczasowego zapisu zostały.
+
+**Uwaga:** V1a (niewidoczna świnka) nie zostało zrobione, w repo nie ma po nim śladu. Zrób je zaraz po V1b2 promptem V1a niżej, z nowymi nazwami. Jeśli świnka jest już widoczna i w Domku też, V1a i tak warto puścić, bo dodaje diagnostykę i zabezpieczenia startu.
+
+#### V1a (nowe nazwy) · Claude: niewidoczna świnka
+
+```text
+Read RULES.md and ARCHITECTURE.md. Bug report from before the rename: the Home window opened without the guinea pig
+drawn in it, and with Home closed the pet was not visible on the desktop (unknown whether missing, off-screen,
+transparent or crashed silently). Check whether it still happens, find the root causes and fix them.
+1. Startup safety: wrap Program.Main, pet creation, BrainController start, WebView2 init, SoundManager,
+   InteractionManager, FoodManager and PoopManager in try/catch that logs the full exception; replace empty catch
+   blocks with logging.
+2. Debug-only Diagnostics (tray item in Debug builds and the --diag flag) that logs: pet form count, Visible, Opacity,
+   Bounds, TopMost, every screen's WorkingArea, current animation and frame, frame image non-null, the last 20 Brain
+   decisions, interaction state (petting, watching, sulking, called) and exceptions since start.
+3. Desktop pet: the guinea pig animations.xml is the one loaded, spawn point inside a working area, Opacity reaches 1,
+   no state leaves the pet off-screen or invisible (flee, peek, house, tunnel, sulking, sleep, feeding walk, call,
+   Home open or closed). If the pet ends up outside every screen, bring it back to the taskbar and log it.
+4. Home: DevTools in Debug (F12), console errors forwarded to the log; every file the page loads returns 200 from
+   https://cuy.home/ or https://cuy.assets/ and exists in the build output; canvas-pig maps the stage to an existing
+   sheet; CSS does not hide the canvas or give it zero size.
+5. Run Debug 10 min with the 60x clock and Release 5 min; the pet must be visible the whole time.
+Report each root cause, what changed and how you verified it.
+```
+
+**Sprawdź:** uruchom wersję Debug, potem tę z `bin\Release`; otwórz i zamknij Domek 5 razy, nakarm, zawołaj, pogłaszcz, kliknij świnkę 10 razy szybko, zostaw na 10 minut; w menu zasobnika (Debug) kliknij Diagnostics. **Powinno być:** świnka na pasku najpóźniej 5 s po starcie i cały czas widoczna; w Domku animowana świnka; w logu Visible = True, Opacity = 1, brak wyjątków.
 
 #### V1c · Gemini: wszystko po angielsku
 
