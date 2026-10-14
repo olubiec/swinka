@@ -7,12 +7,12 @@ using System.Windows.Forms;
 namespace Cuy
 {
     /// <summary>
-    /// Okno przedmiotu jedzenia na pulpicie (położone na pasku zadań lub ramce okna):
-    /// - Rozmiar 32x32 px (ikona 16x16 z assets/icons/icons_16.png powiększona x2 Nearest-Neighbor)
-    /// - Przezroczyste tło (Magenta), bez ramki, zawsze na wierzchu (TopMost)
-    /// - Przeciągalne myszką (Drag & Drop)
-    /// - Potrafi płynnie spadać z grawitacją na pasek zadań
-    /// - Podąża za oknem, jeśli na nim leży.
+    /// A food item window on the desktop (lying on the taskbar or a window frame):
+    /// - 32x32 px (16x16 icon from assets/icons/icons_16.png scaled x2 nearest neighbour)
+    /// - Transparent background (magenta), no border, always on top (TopMost)
+    /// - Can be dragged with the mouse
+    /// - Falls smoothly with gravity onto the taskbar
+    /// - Follows the window it lies on.
     /// </summary>
     public sealed class FoodItemForm : Form
     {
@@ -57,9 +57,9 @@ namespace Cuy
             _toolTip = new ToolTip();
             string desc = ItemDef != null && !string.IsNullOrEmpty(ItemDef.Description)
                 ? ItemDef.Description
-                : "Pyszne jedzenie dla świnki";
+                : "Tasty food for your guinea pig";
             string title = ItemDef != null ? ItemDef.Name : itemId;
-            _toolTip.SetToolTip(this, string.Format("{0}\n{1}\n(Przeciągnij myszką, aby przenieść)", title, desc));
+            _toolTip.SetToolTip(this, string.Format("{0}\n{1}\n(Drag with the mouse to move it)", title, desc));
 
             _fallTimer = new Timer();
             _fallTimer.Interval = 15;
@@ -128,7 +128,7 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Rozpoczyna płynny grawitacyjny spadek jedzenia na pasek zadań.
+        /// Starts the smooth gravity fall of the food onto the taskbar.
         /// </summary>
         public void StartFallToTaskbar()
         {
@@ -136,7 +136,7 @@ namespace Cuy
             _isFalling = true;
             _fallVy = 1.0;
             _fallTimer.Start();
-            BrainController.Log(string.Format("[Jedzenie] Przedmiot {0} spada na pasek zadań.", ItemDef?.Name ?? ItemId));
+            BrainController.Log(string.Format("[Food] Item {0} falls onto the taskbar.", ItemDef?.Name ?? ItemId));
         }
 
         private void FallTimer_Tick(object sender, EventArgs e)
@@ -174,7 +174,7 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Śledzenie ruchu okna, jeśli jedzenie leży na nim.
+        /// Tracks the window the food lies on.
         /// </summary>
         public void UpdateTracking()
         {
@@ -183,7 +183,7 @@ namespace Cuy
 
             if (!NativeMethods.IsWindow(WindowHwnd) || !NativeMethods.IsWindowVisible(WindowHwnd))
             {
-                // Okno zniknęło/zamknięte -> jedzenie spada na pasek zadań
+                // Window gone/closed -> the food falls onto the taskbar
                 WindowHwnd = IntPtr.Zero;
                 StartFallToTaskbar();
                 return;

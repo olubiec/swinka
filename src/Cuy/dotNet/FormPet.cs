@@ -746,7 +746,7 @@ namespace Cuy
             catch(Exception ex)
             {
                 if (IsDisposed) return;
-                BrainController.Log("[FormPet] Błąd Timer1_Tick: " + ex.Message);
+                BrainController.Log("[FormPet] Error in Timer1_Tick: " + ex.Message);
             }
         }
 
@@ -960,7 +960,7 @@ namespace Cuy
                 _brain?.StepWalk((int)Math.Round(Math.Abs(x)));
                 if (_brain != null && !_brain.IsWalking)
                 {
-                    // Świnka przeszła zadany dystans z Brain i staje
+                    // The pig has walked the distance from Brain and stops
                     x = 0;
                     int idleId = GetAnimationIdByName("idle");
                     SetNewAnimation(idleId >= 0 ? idleId : 3);
@@ -1148,7 +1148,7 @@ namespace Cuy
                 }
                 else if (CurrentAnimation.Name == "land" || CurrentAnimation.Name == "fall soft" || CurrentAnimation.Name == "fall hard")
                 {
-                    // Lądowanie ukończone: wznowienie mózgu po fizyce
+                    // Landing finished: resume the brain after physics
                     _brain?.ResumePhysics();
                     string nextAnim = _brain?.GetCurrentDesiredAnimation();
                     iNextAni = GetAnimationIdByName(nextAnim);
@@ -1156,7 +1156,7 @@ namespace Cuy
                 }
                 else if (_brain != null && !_brain.IsPhysicsActive)
                 {
-                    // Decyzja z Brain (Utility AI)
+                    // Decision from Brain (Utility AI)
                     string nextAnim = _brain.OnAnimationSequenceFinished(CurrentAnimation.Name);
                     iNextAni = GetAnimationIdByName(nextAnim);
                     if (iNextAni < 0) iNextAni = 3;
@@ -1661,7 +1661,7 @@ namespace Cuy
                     bool irritated = InteractionManager.Instance != null && InteractionManager.Instance.RegisterClick();
                     if (!irritated)
                     {
-                        // Kliknięcie świnki bez przeciągania -> dymek stanu
+                        // Click on the pig without dragging -> status bubble
                         ShowStatusBubble();
                     }
                 }

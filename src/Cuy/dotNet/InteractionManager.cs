@@ -22,26 +22,26 @@ namespace Cuy
     }
 
     /// <summary>
-    /// Menedżer interakcji świnki z kursorem (Zadanie I1):
-    /// 1. Głaskanie (Pocket-Bird): 3 zwroty kursora w 1,5s -> purr_pet + serduszka, humor +5, więź +1 (max 10/h).
-    ///    Głaskanie śpiącej świnki budzi ją i obniża humor o 2.
-    /// 2. Patrzenie na ciebie: kursor nieruchomo 1-3s w 250px -> turn, front_idle i śledzenie klatkami front_look.
-    ///    Po 5s lub oddaleniu powrót bokiem. Cooldown 2 minuty.
-    /// 3. Zawołaj: come_called, bieg do miejsca pod kursorem na pasku/oknie, greet (kwiknięcie i podskok).
-    /// 4. Powitanie po starcie: greet jeśli więź >= 3, inaczej sniff.
-    /// 5. Ponad 8 kliknięć w 3s -> chatter i 30s obrażenia (nie przychodzi na zawołanie).
+    /// Manages the pig's interactions with the cursor:
+    /// 1. Petting (as in Pocket-Bird): 3 cursor turns within 1.5 s -> purr_pet + hearts, mood +5, bond +1 (max 10/h).
+    ///    Petting a sleeping pig wakes it and lowers mood by 2.
+    /// 2. Looking at you: cursor still for 1-3 s within 250 px -> turn, front_idle and tracking with front_look frames.
+    ///    After 5 s or when the cursor moves away it turns back sideways. Cooldown 2 minutes.
+    /// 3. Call: come_called, runs to the spot under the cursor on the taskbar/window, greet (wheek and hop).
+    /// 4. Greeting after start: greet if bond >= 3, otherwise sniff.
+    /// 5. More than 8 clicks in 3 s -> chatter and 30 s of sulking (does not come when called).
     /// </summary>
     public class InteractionManager
     {
         private readonly FormPet _petForm;
 
-        // Głaskanie
+        // Petting
         private readonly List<DateTime> _reversalTimes = new List<DateTime>();
         private readonly List<DateTime> _rewardedPettingTimes = new List<DateTime>();
         private int _lastPetX = -1;
         private int _lastPetDir = 0;
 
-        // Patrzenie na ciebie
+        // Looking at you
         private LookAtUserState _lookState = LookAtUserState.None;
         private DateTime _lastLookAtUserTime = DateTime.MinValue;
         private Point _lastStationaryPos = Point.Empty;
@@ -49,16 +49,16 @@ namespace Cuy
         private double _lookStateTimer = 0.0;
         private double _trackingTotalSeconds = 0.0;
 
-        // Zawołaj
+        // Call
         private CallPetState _callState = CallPetState.None;
         private int _callTargetX = 0;
         private double _callTimer = 0.0;
 
-        // Irytacja (za dużo kliknięć)
+        // Annoyance (too many clicks)
         private readonly List<DateTime> _clickTimes = new List<DateTime>();
         private DateTime _offendedUntil = DateTime.MinValue;
 
-        // Powitanie startowe
+        // Startup greeting
         private bool _hasGreetedOnStartup = false;
 
         public InteractionManager(FormPet petForm)
@@ -85,7 +85,7 @@ namespace Cuy
 
         public IReadOnlyList<DateTime> RewardedPettingTimes => _rewardedPettingTimes;
 
-        // ---- Głaskanie --------------------------------------------------------
+        // ---- Petting ---------------------------------------------------------
 
         public void OnMouseMove(Point screenPos)
         {
@@ -101,7 +101,7 @@ namespace Cuy
                 if (_lastPetX >= 0)
                 {
                     int dx = curX - _lastPetX;
-                    if (Math.Abs(dx) >= 6) // Próg przesunięcia, aby odsiać mikro-drgania myszy
+                    if (Math.Abs(dx) >= 6) // Movement threshold to filter out tiny mouse jitter
                     {
                         int dir = Math.Sign(dx);
                         if (_lastPetDir != 0 && dir != _lastPetDir)
@@ -121,7 +121,7 @@ namespace Cuy
                     _lastPetX = curX;
                 }
 
-                // Sprawdzamy okno 1,5 s
+                // Check the 1.5 s window
                 _reversalTimes.RemoveAll(t => (now - t).TotalSeconds > 1.5);
 
                 if (_reversalTimes.Count >= 3)
@@ -147,7 +147,7 @@ namespace Cuy
             var controller = BrainController.Instance;
             var pet = controller?.Pet;
 
-            // Sprawdzamy czy świnka śpi
+            // Check whether the pig is asleep
             TAnimation currentAnim = _petForm.CurrentAnimation;
             string curAnimName = currentAnim.Name;
             bool isSleeping = (curAnimName == "sleep" ||
@@ -163,7 +163,7 @@ namespace Cuy
                     pet.IsSleeping = false;
                     pet.Needs.Mood = Math.Max(0.0, pet.Needs.Mood - 2.0);
                     BrainController.Log(string.Format(
-                        "[Głaskanie] Głaskanie śpiącej świnki ją budzi! Humor -2 (aktualny humor: {0:0.#}%).",
+                        "[Petting] Petting the sleeping pig wakes it! Mood -2 (mood now: {0:0.#}%).",
                         pet.Needs.Mood));
                     HomeWindow.NotifyStateChanged();
                 }
@@ -171,7 +171,7 @@ namespace Cuy
             }
             else
             {
-                // Obudzona świnka: mruczenie purr_pet + serduszka (wbudowane w animację)
+                // Awake pig: purr_pet + hearts (part of the animation)
                 DateTime now = DateTime.UtcNow;
                 _rewardedPettingTimes.RemoveAll(t => (now - t).TotalSeconds > 3600.0);
 
@@ -182,9 +182,9 @@ namespace Cuy
                     {
                         pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 5.0);
                         pet.AddBondPoints(1);
-                        pet.Count("glaskanie");
+                        pet.Count("pets");
                         BrainController.Log(string.Format(
-                            "[Głaskanie] Głaskanie udane! purr_pet, humor +5 ({0:0.#}%), więź +1. Nagrodzonych w tej godzinie: {1}/10.",
+                            "[Petting] Petting worked! purr_pet, mood +5 ({0:0.#}%), bond +1. Rewarded this hour: {1}/10.",
                             pet.Needs.Mood, _rewardedPettingTimes.Count));
                         HomeWindow.NotifyStateChanged();
                     }
@@ -192,14 +192,14 @@ namespace Cuy
                 else
                 {
                     BrainController.Log(
-                        "[Głaskanie] Osiągnięto limit 10 nagradzanych głaskań na godzinę. Świnka tylko mruczy (purr_pet).");
+                        "[Petting] Limit of 10 rewarded pets per hour reached. The pig only purrs (purr_pet).");
                 }
 
                 _petForm.PlayAnimationByName("purr_pet");
             }
         }
 
-        // ---- Kliknięcia i irytacja -------------------------------------------
+        // ---- Clicks and annoyance ---------------------------------------------
 
         public bool RegisterClick()
         {
@@ -212,7 +212,7 @@ namespace Cuy
                 _clickTimes.Clear();
                 _offendedUntil = now.AddSeconds(30.0);
 
-                // Przerwanie bieżących interakcji
+                // Interrupt current interactions
                 _lookState = LookAtUserState.None;
                 _callState = CallPetState.None;
 
@@ -220,14 +220,14 @@ namespace Cuy
                 _petForm.PlayAnimationByName("chatter");
 
                 BrainController.Log(
-                    "[Irytacja] Ponad 8 kliknięć w świnkę w 3 s! Świnka zgrzyta ząbkami (chatter) i jest obrażona przez 30 sekund.");
+                    "[Annoyance] More than 8 clicks on the pig in 3 s! The pig chatters its teeth and sulks for 30 seconds.");
                 return true;
             }
 
             return false;
         }
 
-        // ---- Zawołaj ---------------------------------------------------------
+        // ---- Call ------------------------------------------------------------
 
         public bool CallPet()
         {
@@ -236,7 +236,7 @@ namespace Cuy
             if (IsOffended)
             {
                 BrainController.Log(string.Format(
-                    "[Zawołaj] Świnka jest obrażona (pozostało {0:0.#}s) i nie przychodzi na zawołanie!",
+                    "[Call] The pig is sulking ({0:0.#}s left) and does not come when called!",
                     OffendedRemainingSeconds));
                 _petForm.PlayAnimationByName("chatter");
                 return false;
@@ -244,13 +244,13 @@ namespace Cuy
 
             if (_petForm.IsDragging || _petForm.IsTossing) return false;
 
-            // Jeśli trwało patrzenie na ciebie, przerywamy je na rzecz zawołania
+            // If looking at you was running, stop it in favour of the call
             _lookState = LookAtUserState.None;
 
             Point mousePos = Cursor.Position;
             int targetX = mousePos.X - (_petForm.Width / 2);
 
-            // Ograniczenie pozycji X do bieżącej powierzchni
+            // Limit the X position to the current surface
             if (_petForm.CurrentHwndWindow != IntPtr.Zero)
             {
                 if (NativeMethods.GetWindowRect(new System.Runtime.InteropServices.HandleRef(_petForm, _petForm.CurrentHwndWindow), out NativeMethods.RECT rct))
@@ -266,19 +266,19 @@ namespace Cuy
 
             _callTargetX = targetX;
             _callState = CallPetState.ComeCalled;
-            _callTimer = 1.0; // 10 klatek @ 100 ms = 1.0 s
+            _callTimer = 1.0; // 10 frames @ 100 ms = 1.0 s
 
-            // Ustawienie zwrotu w stronę celu
+            // Face the target
             _petForm.SetFacing(_callTargetX < _petForm.PositionX);
             _petForm.PlayAnimationByName("come_called");
 
             BrainController.Log(string.Format(
-                "[Zawołaj] Zawołano świnkę! Animacja come_called, cel X={0}.", _callTargetX));
+                "[Call] Pig called! come_called animation, target X={0}.", _callTargetX));
 
             return true;
         }
 
-        // ---- Powitanie po uruchomieniu ---------------------------------------
+        // ---- Greeting after start --------------------------------------------
 
         public void CheckStartupGreeting()
         {
@@ -293,19 +293,19 @@ namespace Cuy
             {
                 _petForm.PlayAnimationByName("greet");
                 BrainController.Log(string.Format(
-                    "[Powitanie] Powitanie po starcie: poziom więzi {0} >= 3 -> powitanie greet (kwiknięcie i podskok)!",
+                    "[Greeting] Startup greeting: bond level {0} >= 3 -> greet (wheek and hop)!",
                     bondLevel));
             }
             else
             {
                 _petForm.PlayAnimationByName("sniff");
                 BrainController.Log(string.Format(
-                    "[Powitanie] Powitanie po starcie: poziom więzi {0} < 3 -> węszenie sniff.",
+                    "[Greeting] Startup greeting: bond level {0} < 3 -> sniff.",
                     bondLevel));
             }
         }
 
-        // ---- Pętla aktualizacji (wywoływana w każdym kroku FormPet) ------------
+        // ---- Update loop (called on every FormPet step) ----------------------
 
         public void Update(TimeSpan elapsed)
         {
@@ -317,20 +317,20 @@ namespace Cuy
                 return;
             }
 
-            // 1. Sprawdzanie powitania startowego po pierwszym lądowaniu
+            // 1. Check the startup greeting after the first landing
             if (!_hasGreetedOnStartup && (_petForm.IsOnTaskbar || _petForm.IsOnWindow))
             {
                 CheckStartupGreeting();
             }
 
-            // 2. Aktualizacja stanu Zawołania
+            // 2. Update the call state
             if (_callState != CallPetState.None)
             {
                 UpdateCallState(elapsed);
-                return; // Zawołanie ma pierwszeństwo przed patrzeniem
+                return; // The call takes priority over looking
             }
 
-            // 3. Aktualizacja stanu Patrzenia na ciebie
+            // 3. Update the looking-at-you state
             UpdateLookAtUserState(elapsed);
         }
 
@@ -351,21 +351,21 @@ namespace Cuy
                     int diff = _callTargetX - (int)_petForm.PositionX;
                     if (Math.Abs(diff) <= 8)
                     {
-                        // Dotarła na miejsce: kwiknięcie i podskok (greet)
+                        // Arrived: wheek and hop (greet)
                         _petForm.PositionX = _callTargetX;
                         _petForm.Location = new Point((int)_petForm.PositionX, (int)(_petForm.PositionY + _petForm.OffsetY));
 
                         _callState = CallPetState.Greeting;
-                        _callTimer = 1.4; // 14 klatek @ 100 ms = 1.4 s
+                        _callTimer = 1.4; // 14 frames @ 100 ms = 1.4 s
                         _petForm.PlayAnimationByName("greet");
 
                         var pet = BrainController.Instance?.Pet;
                         if (pet != null)
                         {
                             pet.AddBondPoints(1);
-                            pet.Count("zawolania");
+                            pet.Count("calls");
                         }
-                        BrainController.Log("[Zawołaj] Świnka dotarła pod kursor i wykonała powitanie (greet)!");
+                        BrainController.Log("[Call] The pig reached the cursor and greeted (greet)!");
                     }
                     else
                     {
@@ -394,12 +394,12 @@ namespace Cuy
             switch (_lookState)
             {
                 case LookAtUserState.None:
-                    // Warunki startu:
-                    // - odpoczywająca świnka (animacja idle)
-                    // - nie jest obrażona
-                    // - cooldown 2 minuty
-                    // - kursor w promieniu 250 px
-                    // - kursor nieruchomo 1-3 s
+                    // Start conditions:
+                    // - a resting pig (idle animation)
+                    // - not sulking
+                    // - 2 minute cooldown
+                    // - cursor within 250 px
+                    // - cursor still for 1-3 s
                     TAnimation restingAnim = _petForm.CurrentAnimation;
                     bool isResting = restingAnim.Name == "idle";
                     if (!isResting || IsOffended)
@@ -429,14 +429,14 @@ namespace Cuy
                             _lastStationaryPos = cursorPos;
                         }
 
-                        if (_stationarySeconds >= 1.5) // W zakresie 1-3 s
+                        if (_stationarySeconds >= 1.5) // within 1-3 s
                         {
                             _stationarySeconds = 0.0;
                             _lookState = LookAtUserState.TurningToFront;
-                            _lookStateTimer = 0.4; // turn: 4 klatki @ 100 ms = 0.4 s
+                            _lookStateTimer = 0.4; // turn: 4 frames @ 100 ms = 0.4 s
                             _petForm.PlayAnimationByName("turn");
                             BrainController.Log(
-                                "[Patrzenie] Kursor nieruchomy w promieniu 250 px. Świnka odwraca się przodem (turn).");
+                                "[Looking] Cursor still within 250 px. The pig turns to face you (turn).");
                         }
                     }
                     else
@@ -458,7 +458,7 @@ namespace Cuy
                 case LookAtUserState.TrackingCursor:
                     _trackingTotalSeconds += elapsed.TotalSeconds;
 
-                    // Warunek końca: minęło 5 s lub kursor odjechał poza 250 px
+                    // End condition: 5 s passed or the cursor moved beyond 250 px
                     if (dist > 250.0 || _trackingTotalSeconds >= 5.0)
                     {
                         _lookState = LookAtUserState.TurningToSide;
@@ -466,27 +466,27 @@ namespace Cuy
                         _lastLookAtUserTime = now;
                         _petForm.PlayAnimationByName("turn");
                         BrainController.Log(
-                            "[Patrzenie] Kursor odjechał lub minęło 5 s. Świnka wraca bokiem do spoczynku.");
+                            "[Looking] Cursor moved away or 5 s passed. The pig turns back sideways to rest.");
                         return;
                     }
 
-                    // Śledzenie kursora klatkami front_look (wiersz 22: klatki 352-356)
-                    // 0 lewo (352), 1 prawo (353), 2 góra (354), 3 dół (355), 4 środek (356)
+                    // Track the cursor with front_look frames (row 22: frames 352-356)
+                    // 0 left (352), 1 right (353), 2 up (354), 3 down (355), 4 centre (356)
                     int dx = cursorPos.X - petCenter.X;
                     int dy = cursorPos.Y - petCenter.Y;
 
                     int frameIdx;
                     if (dist < 35.0)
                     {
-                        frameIdx = 356; // 4: środek
+                        frameIdx = 356; // 4: centre
                     }
                     else if (Math.Abs(dx) >= Math.Abs(dy))
                     {
-                        frameIdx = dx < 0 ? 352 : 353; // 0: lewo, 1: prawo
+                        frameIdx = dx < 0 ? 352 : 353; // 0: left, 1: right
                     }
                     else
                     {
-                        frameIdx = dy < 0 ? 354 : 355; // 2: góra, 3: dół
+                        frameIdx = dy < 0 ? 354 : 355; // 2: up, 3: down
                     }
 
                     _petForm.ShowCustomSprite(frameIdx);

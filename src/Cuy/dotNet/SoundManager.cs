@@ -9,48 +9,48 @@ using Cuy.Core.Audio;
 namespace Cuy
 {
     /// <summary>
-    /// Główny menedżer dźwięków świnki na pulpit (Zadanie F1).
-    /// Odpowiada za:
-    /// - Wczytanie i buforowanie 10 klipów WAV z assets/sounds
-    /// - Mapowanie zdarzeń gry i animacji na dźwięki
-    /// - Kontrolę głośności i wyciszenie (Mute)
-    /// - Sprawdzanie godzin ciszy (domyślnie 22:00 - 07:00)
-    /// - Wyciszenie przy grach i aplikacjach na pełnym ekranie (SHQueryUserNotificationState)
-    /// - Losową lekką zmianę wysokości dźwięku (pitch variation +/-6%)
-    /// - Ścisły limit częstotliwości kwiczenia (maks. 1 kwiknięcie na 2 minuty)
+    /// Main sound manager of the desktop guinea pig:
+    /// Responsible for:
+    /// - Loads and caches the 10 WAV clips from assets/sounds
+    /// - Maps game events and animations to sounds
+    /// - Volume control and mute
+    /// - Quiet hours check (default 22:00 - 07:00)
+    /// - Muted during games and full-screen apps (SHQueryUserNotificationState)
+    /// - Slight random pitch variation (+/-6%)
+    /// - Strict wheek rate limit (max 1 wheek per 2 minutes)
     /// </summary>
     public sealed class SoundManager : IDisposable
     {
         private static SoundManager _instance;
         public static SoundManager Instance => _instance;
 
-        // Bufor surowych danych PCM i formatów dla każdego klipu
+        // Raw PCM data and formats for each clip
         private readonly Dictionary<string, byte[]> _cachedPcm = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, WaveFormat> _cachedFormats = new Dictionary<string, WaveFormat>(StringComparer.OrdinalIgnoreCase);
 
-        // Reguły polityki audio
+        // Audio policy rules
         private readonly QuietHoursConfig _quietHours = new QuietHoursConfig(new TimeSpan(22, 0, 0), new TimeSpan(7, 0, 0), enabled: true);
         private readonly WheekRateLimiter _wheekLimiter = new WheekRateLimiter(TimeSpan.FromMinutes(2));
         private readonly Random _random = new Random();
         private readonly object _lock = new object();
 
-        // Aktywne instancje odtwarzaczy do prawidłowego zwalniania zasobów
+        // Active player instances, so resources are released properly
         private readonly List<WaveOutEvent> _activePlayers = new List<WaveOutEvent>();
 
-        // Stan mruczenia (głaskanie może się zapętlać)
+        // Purr state (petting can loop)
         private bool _isPurring;
         private WaveOutEvent _purrPlayer;
 
-        // Stan chrupania (jedzenie: powtarzaj co 0.3-0.6s)
+        // Crunch state (eating: repeat every 0.3-0.6 s)
         private bool _isEating;
         private TimeSpan _eatingCrunchTimer = TimeSpan.Zero;
 
-        // Cache detekcji pełnego ekranu (by nie odpytywać Win32 przy każdym dźwięku)
+        // Full-screen detection cache (so Win32 is not queried for every sound)
         private DateTime _lastFullScreenCheckUtc = DateTime.MinValue;
         private bool _lastFullScreenResult;
         private const int FullScreenCacheTtlMs = 1500;
 
-        // Flagi konfiguracyjne
+        // Configuration flags
         public bool IsMuted { get; set; } = false;
         public bool MuteOnFullScreen { get; set; } = true;
         public double MaxPitchVariation { get; set; } = PitchCalculator.DefaultVariation;
@@ -59,7 +59,7 @@ namespace Cuy
         public WheekRateLimiter WheekLimiter => _wheekLimiter;
 
         /// <summary>
-        /// Głośność w skali 0.0 - 1.0. Zsynchronizowana z Program.MyData.
+        /// Volume on a 0.0 - 1.0 scale. Synced with Program.MyData.
         /// </summary>
         public float Volume
         {
@@ -106,33 +106,20 @@ namespace Cuy
             return _instance;
         }
 
-        // ---- Wczytywanie klipów z assets/sounds -----------------------------
+        // ---- Loading clips from assets/sounds ---------------------------------
 
         private void LoadSounds()
         {
-            var soundPairs = new[]
+            string[] soundNames =
             {
-                new { En = "crunch_1.wav", Pl = "chrupanie_1.wav" },
-                new { En = "crunch_2.wav", Pl = "chrupanie_2.wav" },
-                new { En = "chirp.wav", Pl = "cwierkanie.wav" },
-                new { En = "wheek_1.wav", Pl = "kwik_1.wav" },
-                new { En = "wheek_2.wav", Pl = "kwik_2.wav" },
-                new { En = "wheek_3.wav", Pl = "kwik_3.wav" },
-                new { En = "purr.wav", Pl = "mruczenie.wav" },
-                new { En = "fear_squeal.wav", Pl = "pisk_strachu.wav" },
-                new { En = "angry_squeal.wav", Pl = "pisk_zlosci.wav" },
-                new { En = "pop.wav", Pl = "pop.wav" }
+                "crunch_1", "crunch_2", "chirp", "wheek_1", "wheek_2", "wheek_3",
+                "purr", "fear_squeal", "angry_squeal", "pop"
             };
 
             int loadedCount = 0;
-            foreach (var pair in soundPairs)
+            foreach (string name in soundNames)
             {
-                string path = FindSoundFile(pair.En);
-                if (string.IsNullOrEmpty(path) || !File.Exists(path))
-                {
-                    path = FindSoundFile(pair.Pl);
-                }
-
+                string path = FindSoundFile(name + ".wav");
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 {
                     try
@@ -143,26 +130,24 @@ namespace Cuy
                         {
                             byte[] pcm = new byte[reader.Length];
                             int read = reader.Read(pcm, 0, pcm.Length);
-                            string enKey = Path.GetFileNameWithoutExtension(pair.En).ToLowerInvariant();
-                            string plKey = Path.GetFileNameWithoutExtension(pair.Pl).ToLowerInvariant();
-
-                            _cachedPcm[enKey] = pcm;
-                            _cachedFormats[enKey] = reader.WaveFormat;
-                            _cachedPcm[plKey] = pcm;
-                            _cachedFormats[plKey] = reader.WaveFormat;
-
+                            _cachedPcm[name] = pcm;
+                            _cachedFormats[name] = reader.WaveFormat;
                             loadedCount++;
                         }
                     }
                     catch (Exception ex)
                     {
-                        BrainController.Log(string.Format("[Dźwięk] Błąd ładowania {0}: {1}", pair.En, ex.Message));
+                        BrainController.Log(string.Format("[Sound] Failed to load {0}: {1}", name, ex.Message));
                     }
+                }
+                else
+                {
+                    BrainController.Log("[WARN] Sound file missing: " + name + ".wav");
                 }
             }
 
-            BrainController.Log(string.Format("[Dźwięk] Zainicjalizowano SoundManager. Załadowano {0}/{1} klipów audio.",
-                loadedCount, soundPairs.Length));
+            BrainController.Log(string.Format("[Sound] SoundManager ready. Loaded {0}/{1} clips.",
+                loadedCount, soundNames.Length));
         }
 
         private static string FindSoundFile(string fileName)
@@ -199,7 +184,7 @@ namespace Cuy
             return null;
         }
 
-        // ---- Wykrywanie pełnego ekranu (Win32 API) ---------------------------
+        // ---- Full-screen detection (Win32 API) -------------------------------
 
         private enum QUERY_USER_NOTIFICATION_STATE
         {
@@ -244,7 +229,7 @@ namespace Cuy
 
             try
             {
-                // 1. Sprawdzenie stanu powiadomień użytkownika w Windows Shell
+                // 1. Check the user notification state in the Windows shell
                 int hr = SHQueryUserNotificationState(out var state);
                 if (hr == 0) // S_OK
                 {
@@ -256,7 +241,7 @@ namespace Cuy
                     }
                 }
 
-                // 2. Fallback: sprawdzenie czy aktywne okno na wierzchu pokrywa cały ekran
+                // 2. Fallback: check whether the foreground window covers the whole screen
                 if (!isFs)
                 {
                     IntPtr fgHwnd = GetForegroundWindow();
@@ -272,7 +257,7 @@ namespace Cuy
                                 if (w >= primary.Bounds.Width && h >= primary.Bounds.Height &&
                                     rct.Left <= primary.Bounds.Left && rct.Top <= primary.Bounds.Top)
                                 {
-                                    // Sprawdź czy to nie jest okno naszej świnki
+                                    // Make sure it is not our own pig window
                                     var activePet = FormPet.ActivePet;
                                     if (activePet == null || fgHwnd != activePet.Handle)
                                     {
@@ -290,11 +275,11 @@ namespace Cuy
             return isFs;
         }
 
-        // ---- Sprawdzanie wyciszenia dźwięków ---------------------------------
+        // ---- Mute checks ------------------------------------------------------
 
         /// <summary>
-        /// Zwraca true jeśli odtwarzanie dźwięków powinno być w tej chwili wstrzymane
-        /// (wyciszenie, głośność 0, godziny ciszy lub pełny ekran).
+        /// Returns true if sounds should be held back right now
+        /// (muted, volume 0, quiet hours or full screen).
         /// </summary>
         public bool IsSoundSuppressed(out string reason)
         {
@@ -306,19 +291,19 @@ namespace Cuy
 
             if (Volume <= 0.001f)
             {
-                reason = "Głośność 0%";
+                reason = "Volume 0%";
                 return true;
             }
 
             if (_quietHours.IsInQuietHours(DateTime.Now))
             {
-                reason = "Godziny ciszy";
+                reason = "Quiet hours";
                 return true;
             }
 
             if (MuteOnFullScreen && IsFullScreenOrBusy())
             {
-                reason = "Pełny ekran";
+                reason = "Full screen";
                 return true;
             }
 
@@ -326,10 +311,10 @@ namespace Cuy
             return false;
         }
 
-        // ---- Rdzeń odtwarzania NAudio z wariacją tonu ------------------------
+        // ---- NAudio playback core with pitch variation ------------------------
 
         /// <summary>
-        /// Odtwarza pojedynczy klip audio z losową lekką zmianą wysokości dźwięku (pitch variation).
+        /// Plays a single audio clip with a slight random pitch variation.
         /// </summary>
         public bool PlayClip(string clipKey, float volumeFactor = 1.0f)
         {
@@ -344,13 +329,13 @@ namespace Cuy
 
             if (IsSoundSuppressed(out string suppressReason))
             {
-                BrainController.Log(string.Format("[Dźwięk] Zablokowano odtworzenie {0} ({1}).", clipKey, suppressReason));
+                BrainController.Log(string.Format("[Sound] Blocked playing {0} ({1}).", clipKey, suppressReason));
                 return false;
             }
 
             try
             {
-                // Obliczenie losowej wariacji tonu
+            // Compute the random pitch variation
                 double pitchFactor = PitchCalculator.CalculateFactor(_random.NextDouble(), MaxPitchVariation);
                 int pitchedSampleRate = (int)Math.Round(baseFormat.SampleRate * pitchFactor);
                 var pitchedFormat = new WaveFormat(pitchedSampleRate, baseFormat.BitsPerSample, baseFormat.Channels);
@@ -388,40 +373,40 @@ namespace Cuy
             }
             catch (Exception ex)
             {
-                BrainController.Log(string.Format("[Dźwięk] Błąd odtwarzania {0}: {1}", clipKey, ex.Message));
+                BrainController.Log(string.Format("[Sound] Playback error {0}: {1}", clipKey, ex.Message));
                 return false;
             }
         }
 
-        // ---- Obsługa specyficznych zachowań i reguł gry -----------------------
+        // ---- Specific behaviours and game rules -------------------------------
 
         /// <summary>
-        /// Odtwarza dźwięk kwiczenia z losowaniem z puli kwik_1, kwik_2, kwik_3.
-        /// Wymóg: maks. jeden dźwięk kwiczenia na 2 minuty.
+        /// Plays a wheek picked at random from wheek_1, wheek_2, wheek_3.
+        /// Rule: at most one wheek sound per 2 minutes.
         /// </summary>
-        public bool PlayWheek(string reason = "głód")
+        public bool PlayWheek(string reason = "hunger")
         {
             DateTime nowUtc = DateTime.UtcNow;
             if (!_wheekLimiter.TryWheek(nowUtc))
             {
                 _wheekLimiter.CanWheek(nowUtc, out TimeSpan rem);
-                BrainController.Log(string.Format("[Dźwięk] Pominięto kwik ({0}) - cooldown aktywny jeszcze przez {1:0}s.",
+                BrainController.Log(string.Format("[Sound] Wheek skipped ({0}) - cooldown active for another {1:0}s.",
                     reason, rem.TotalSeconds));
                 return false;
             }
 
-            string[] wheeks = new string[] { "kwik_1", "kwik_2", "kwik_3" };
+            string[] wheeks = new string[] { "wheek_1", "wheek_2", "wheek_3" };
             string chosen = wheeks[_random.Next(wheeks.Length)];
             bool played = PlayClip(chosen);
             if (played)
             {
-                BrainController.Log(string.Format("[Dźwięk] Odtworzono kwik ({0}, plik: {1}).", reason, chosen));
+                BrainController.Log(string.Format("[Sound] Wheek played ({0}, file: {1}).", reason, chosen));
             }
             return played;
         }
 
         /// <summary>
-        /// Odtwarza mruczenie. Przy głaskaniu mruczenie może się zapętlać.
+        /// Plays the purr. While petting the purr can loop.
         /// </summary>
         public void StartPurrLoop()
         {
@@ -440,8 +425,8 @@ namespace Cuy
                 return;
             }
 
-            if (!_cachedPcm.TryGetValue("mruczenie", out byte[] pcmData) ||
-                !_cachedFormats.TryGetValue("mruczenie", out WaveFormat baseFormat))
+            if (!_cachedPcm.TryGetValue("purr", out byte[] pcmData) ||
+                !_cachedFormats.TryGetValue("purr", out WaveFormat baseFormat))
             {
                 _isPurring = false;
                 return;
@@ -497,15 +482,15 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Odtwarza pojedyncze mruczenie (np. po pogłaskaniu).
+        /// Plays a single purr (e.g. after a pet).
         /// </summary>
         public void PlayPurr()
         {
-            PlayClip("mruczenie");
+            PlayClip("purr");
         }
 
         /// <summary>
-        /// Odtwarza podskok z radości (popcorning).
+        /// Plays the jump for joy (popcorning).
         /// </summary>
         public void PlayPopcorn()
         {
@@ -513,35 +498,35 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Odtwarza ćwierkanie zadowolenia lub malucha.
+        /// Plays the contented or baby chirp.
         /// </summary>
         public void PlayChirp()
         {
-            PlayClip("cwierkanie");
+            PlayClip("chirp");
         }
 
         /// <summary>
-        /// Odtwarza pisk strachu (flee, startle).
+        /// Plays the fear squeal (flee, startle).
         /// </summary>
         public void PlayFear()
         {
-            PlayClip("pisk_strachu");
+            PlayClip("fear_squeal");
         }
 
         /// <summary>
-        /// Odtwarza pisk złości / irytacji (chatter, zgrzytanie zębami).
+        /// Plays the angry squeal (chatter, teeth grinding).
         /// </summary>
         public void PlayAnger()
         {
-            PlayClip("pisk_zlosci");
+            PlayClip("angry_squeal");
         }
 
-        // ---- Obsługa chrupania podczas jedzenia -------------------------------
+        // ---- Crunching while eating -------------------------------------------
 
         public void StartEatingCrunch()
         {
             _isEating = true;
-            _eatingCrunchTimer = TimeSpan.Zero; // pierwsze chrupnięcie natychmiast
+            _eatingCrunchTimer = TimeSpan.Zero; // first crunch right away
         }
 
         public void StopEatingCrunch()
@@ -550,8 +535,8 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Wywoływane co krok aktualizacji gry (np. w BrainController.Update lub FoodManager.Update).
-        /// Powtarza chrupanie co 0.3 - 0.6 sekundy z lekką zmianą tonu.
+        /// Called on every game update step (e.g. in BrainController.Update or FoodManager.Update).
+        /// Repeats the crunch every 0.3 - 0.6 seconds with a slight pitch change.
         /// </summary>
         public void UpdateEating(TimeSpan gameElapsed)
         {
@@ -560,20 +545,20 @@ namespace Cuy
             _eatingCrunchTimer -= gameElapsed;
             if (_eatingCrunchTimer <= TimeSpan.Zero)
             {
-                string[] crunches = new string[] { "chrupanie_1", "chrupanie_2" };
+                string[] crunches = new string[] { "crunch_1", "crunch_2" };
                 string chosen = crunches[_random.Next(crunches.Length)];
                 PlayClip(chosen);
 
-                // Następne chrupnięcie za 300 - 600 ms
+                // Next crunch in 300 - 600 ms
                 int nextMs = _random.Next(300, 601);
                 _eatingCrunchTimer = TimeSpan.FromMilliseconds(nextMs);
             }
         }
 
-        // ---- Reakcja na animacje (SoundEventMapper) ---------------------------
+        // ---- Reacting to animations (SoundEventMapper) ------------------------
 
         /// <summary>
-        /// Wywoływane gdy w FormPet lub Brain uruchamia się animacja.
+        /// Called when FormPet or Brain starts an animation.
         /// </summary>
         public void OnAnimationStarted(string animName)
         {
@@ -583,7 +568,7 @@ namespace Cuy
             switch (soundEvent)
             {
                 case SoundEvent.Wheek:
-                    PlayWheek("animacja_" + animName);
+                    PlayWheek("animation_" + animName);
                     break;
                 case SoundEvent.Purr:
                     PlayPurr();
@@ -601,11 +586,11 @@ namespace Cuy
                     PlayAnger();
                     break;
                 case SoundEvent.Crunch:
-                    // Jedzenie: uruchom chrupanie
+                    // Eating: start crunching
                     StartEatingCrunch();
                     break;
                 default:
-                    // Jeśli to inna animacja niż jedzenie, upewnij się że chrupanie nie trwa w nieskończoność
+                    // For any other animation make sure crunching does not run forever
                     if (_isEating && animName != "eat" && animName != "eat_treat" && animName != "eat_bowl" && animName != "eat_big")
                     {
                         StopEatingCrunch();

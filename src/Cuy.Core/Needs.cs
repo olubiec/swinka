@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Sześć potrzeb świnki w skali 0-100 i Zdrowie liczone z pozostałych.
+    /// The guinea pig's six needs on a 0-100 scale, and Health computed from them.
     /// </summary>
     public sealed class Needs
     {
@@ -26,11 +26,11 @@ namespace Cuy.Core
         public double Teeth { get { return _teeth; } set { _teeth = Clamp(value); } }
 
         /// <summary>
-        /// Zdrowie 0-100, liczone ze wszystkich sześciu potrzeb, razem z czystością
-        /// (czystość będzie spadać od bobków w B4):
-        /// połowa to średnia, połowa to najniższa potrzeba. Jedna bardzo zaniedbana potrzeba
-        /// obniża zdrowie mocno, ale samo średnie zaniedbanie nie robi świnki chorej.
-        /// Przykład: po weekendzie offline (20/20/100/20/100/77) zdrowie ok. 38, a próg "choroba" w actions.json to 25.
+        /// Health 0-100, computed from all six needs including cleanliness
+        /// (cleanliness drops because of poops):
+        /// half is the average, half is the lowest need. One badly neglected need
+        /// lowers health a lot, but mild neglect on average does not make the pig sick.
+        /// Example: after an offline weekend (20/20/100/20/100/77) health is about 38; the "sickness" threshold in actions.json is 25.
         /// </summary>
         [JsonProperty]
         public double Health
@@ -80,7 +80,7 @@ namespace Cuy.Core
             }
         }
 
-        /// <summary>Najniższa potrzeba (do dymka w zasobniku, pilności itd.).</summary>
+        /// <summary>Lowest need (for the tray bubble, urgency and so on).</summary>
         public Need Lowest()
         {
             Need lowest = Need.Satiety;
@@ -90,11 +90,11 @@ namespace Cuy.Core
         }
 
         /// <summary>
-        /// Upływ czasu dla potrzeb.
+        /// Passage of time for the needs.
         /// </summary>
-        /// <param name="span">Czas gry.</param>
-        /// <param name="offline">Aplikacja była zamknięta: spadek 3x wolniejszy i nie poniżej 20.</param>
-        /// <param name="sleeping">Świnka śpi: energia rośnie zamiast spadać.</param>
+        /// <param name="span">Game time.</param>
+        /// <param name="offline">The app was closed: decay is 3x slower and never below 20.</param>
+        /// <param name="sleeping">The pig is asleep: energy rises instead of falling.</param>
         public void ApplyTime(TimeSpan span, bool offline, bool sleeping, Balance balance)
         {
             if (balance == null) throw new ArgumentNullException(nameof(balance));
@@ -116,7 +116,7 @@ namespace Cuy.Core
                 if (offline)
                 {
                     rate *= balance.OfflineDecayFactor;
-                    // Nie schodzi poniżej progu; jeśli już była niżej, zostaje tam, gdzie była.
+                    // Does not go below the threshold; if it was already lower, it stays where it was.
                     double floor = Math.Min(value, balance.OfflineFloor);
                     this[need] = Math.Max(value - rate * hours, floor);
                 }

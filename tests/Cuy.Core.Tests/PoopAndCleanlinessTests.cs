@@ -13,20 +13,20 @@ namespace Cuy.Core.Tests
         public void Cleanliness_DependsDirectlyOnPoopCount()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 10, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             var pet = new Pet(state, clock);
             pet.Start();
 
-            // 0 bobków => 100%
+            // 0 poops => 100%
             Assert.Equal(0, pet.State.PoopCount);
             Assert.Equal(100.0, pet.Needs.Cleanliness);
 
-            // Dodanie 1 bobka => 87.5%
+            // Adding 1 poop => 87.5%
             Assert.True(pet.TryAddPoop(new PoopItem { X = 100, Y = 200, OnTaskbar = true }));
             Assert.Equal(1, pet.State.PoopCount);
             Assert.Equal(87.5, pet.Needs.Cleanliness);
 
-            // Dodanie kolejnych do 8 bobków => 0%
+            // Adding more up to 8 poops => 0%
             for (int i = 2; i <= 8; i++)
             {
                 Assert.True(pet.TryAddPoop(new PoopItem { X = 100 + i, Y = 200, OnTaskbar = true }));
@@ -34,7 +34,7 @@ namespace Cuy.Core.Tests
             Assert.Equal(8, pet.State.PoopCount);
             Assert.Equal(0.0, pet.Needs.Cleanliness);
 
-            // 9. bobek nie może zostać dodany (maksymalnie 8 bobków naraz)
+            // A 9th poop cannot be added (at most 8 poops at once)
             Assert.False(pet.TryAddPoop(new PoopItem { X = 999, Y = 999 }));
             Assert.Equal(8, pet.State.PoopCount);
             Assert.Equal(0.0, pet.Needs.Cleanliness);
@@ -44,7 +44,7 @@ namespace Cuy.Core.Tests
         public void CleanPoop_RemovesPoop_AddsOneClover_AndImprovesCleanliness()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 10, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             state.Clovers = 10;
             var pet = new Pet(state, clock);
             pet.Start();
@@ -57,21 +57,21 @@ namespace Cuy.Core.Tests
             Assert.Equal(87.5, pet.Needs.Cleanliness);
             Assert.Equal(10, pet.State.Clovers);
 
-            // Kliknięcie bobka
+            // Clicking a poop
             bool cleaned = pet.CleanPoop("test-poop-1");
             Assert.True(cleaned);
             Assert.Equal(0, pet.State.PoopCount);
             Assert.Empty(pet.State.Poops);
             Assert.Equal(100.0, pet.Needs.Cleanliness);
-            Assert.Equal(11, pet.State.Clovers); // +1 koniczynka
-            Assert.Equal(1, pet.State.Stats.Counters["zebrane_bobki"]);
+            Assert.Equal(11, pet.State.Clovers); // +1 clover
+            Assert.Equal(1, pet.State.Stats.Counters["poops_collected"]);
         }
 
         [Fact]
         public void ClosedWindow_RemovesVisualPoop_ButPoopCounterStaysInGameState()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 10, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             var pet = new Pet(state, clock);
             pet.Start();
 
@@ -85,15 +85,15 @@ namespace Cuy.Core.Tests
             Assert.Equal(2, pet.State.Poops.Count);
             Assert.Equal(75.0, pet.Needs.Cleanliness);
 
-            // Okno z bobkiem zostaje zamknięte: bobek znika z listy widocznych bobków,
-            // ale licznik PoopCount zostaje w stanie gry nienaruszony!
+            // The window with a poop closes: the poop leaves the list of visible poops,
+            // but PoopCount stays untouched in the game state!
             pet.State.Poops.RemoveAll(p => p.Id == "window-1");
             pet.RecalculateCleanliness();
 
             Assert.Single(pet.State.Poops);
             Assert.Equal("taskbar-1", pet.State.Poops[0].Id);
-            Assert.Equal(2, pet.State.PoopCount); // Licznik zostaje w stanie gry
-            Assert.Equal(75.0, pet.Needs.Cleanliness); // Czystość klatki dalej zależy od liczby bobków
+            Assert.Equal(2, pet.State.PoopCount); // The counter stays in the game state
+            Assert.Equal(75.0, pet.Needs.Cleanliness); // Cage cleanliness still depends on the poop count
         }
 
         [Fact]
@@ -105,12 +105,12 @@ namespace Cuy.Core.Tests
             {
                 var savePath = Path.Combine(tempDir, "save.json");
                 var clock = new ManualClock(new DateTime(2026, 10, 10, 12, 0, 0, DateTimeKind.Utc));
-                var state = GameState.CreateNew("Kropek", clock.UtcNow);
+                var state = GameState.CreateNew("Dot", clock.UtcNow);
                 var pet = new Pet(state, clock);
                 pet.Start();
 
                 pet.TryAddPoop(new PoopItem { Id = "p1", X = 120, Y = 1040, OnTaskbar = true });
-                pet.TryAddPoop(new PoopItem { Id = "p2", X = 450, Y = 500, OnTaskbar = false, WindowTitle = "Kalkulator" });
+                pet.TryAddPoop(new PoopItem { Id = "p2", X = 450, Y = 500, OnTaskbar = false, WindowTitle = "Calculator" });
 
                 Assert.Equal(2, pet.State.PoopCount);
                 Assert.Equal(75.0, pet.Needs.Cleanliness);
@@ -118,7 +118,7 @@ namespace Cuy.Core.Tests
                 var saveSystem = new SaveSystem(tempDir);
                 saveSystem.Save(pet.State);
 
-                // Odczyt ze świeżo zapisanego pliku
+                // Read from the freshly saved file
                 var loadResult = saveSystem.Load();
                 Assert.NotNull(loadResult.State);
                 var loadedState = loadResult.State;
@@ -126,7 +126,7 @@ namespace Cuy.Core.Tests
                 Assert.Equal(2, loadedState.Poops.Count);
                 Assert.Equal("p1", loadedState.Poops[0].Id);
                 Assert.Equal("p2", loadedState.Poops[1].Id);
-                Assert.Equal("Kalkulator", loadedState.Poops[1].WindowTitle);
+                Assert.Equal("Calculator", loadedState.Poops[1].WindowTitle);
 
                 var loadedPet = new Pet(loadedState, clock);
                 loadedPet.Start();

@@ -8,13 +8,13 @@ using Cuy.Core;
 namespace Cuy
 {
     /// <summary>
-    /// Okno pojedynczego bobka na pulpicie (na pasku zadań lub na oknie aplikacji):
-    /// - Rozmiar 32x32 px (ikona 16x16 z assets/icons/icons_16.png przeskalowana x2 metodą Nearest Neighbor)
-    /// - Bez ramki, przezroczyste tło (Magenta), zawsze na wierzchu (TopMost)
-    /// - Nie kradnie fokusu (WS_EX_NOACTIVATE)
-    /// - Kliknięcie usuwa bobek i dodaje 1 koniczynkę (+ podnosi czystość klatki)
-    /// - Podąża za oknem, na którym leży; gdy okno zostanie zamknięte, bobek znika z ekranu,
-    ///   ale licznik zostaje w stanie gry.
+    /// A single poop window on the desktop (on the taskbar or on an app window):
+    /// - 32x32 px (16x16 icon from assets/icons/icons_16.png scaled x2 nearest neighbour)
+    /// - No border, transparent background (magenta), always on top (TopMost)
+    /// - Does not steal focus (WS_EX_NOACTIVATE)
+    /// - A click removes the poop and adds 1 clover (and raises cage cleanliness)
+    /// - Follows the window it lies on; when that window closes the poop leaves the screen,
+    ///   but the counter stays in the game state.
     /// </summary>
     public sealed class PoopForm : Form
     {
@@ -48,7 +48,7 @@ namespace Cuy
             Cursor = Cursors.Hand;
 
             _toolTip = new ToolTip();
-            _toolTip.SetToolTip(this, "Bobek świnki (kliknij, aby posprzątać: +1 koniczynka)");
+            _toolTip.SetToolTip(this, "Poop (click to clean up: +1 clover)");
         }
 
         protected override bool ShowWithoutActivation => true;
@@ -87,15 +87,15 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Aktualizuje śledzenie okna: przesuwa bobek wraz z oknem,
-        /// a w przypadku zamknięcia okna powiadamia menedżera, by usunąć bobek z ekranu.
+        /// Updates window tracking: moves the poop with the window,
+        /// and if the window closes tells the manager to remove the poop from the screen.
         /// </summary>
         public void UpdateTracking()
         {
             if (IsDisposed) return;
             if (IsOnTaskbar || WindowHwnd == IntPtr.Zero) return;
 
-            // Sprawdzenie czy okno jeszcze istnieje i jest widoczne
+            // Check whether the window still exists and is visible
             if (!NativeMethods.IsWindow(WindowHwnd) || !NativeMethods.IsWindowVisible(WindowHwnd))
             {
                 PoopManager.Instance?.OnWindowClosed(this);

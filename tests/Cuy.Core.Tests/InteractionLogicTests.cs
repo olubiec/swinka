@@ -12,13 +12,13 @@ namespace Cuy.Core.Tests
         public void Petting_AwakePig_IncreasesMoodAndBondPoints_UpToHourlyLimit()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 1, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             state.Needs.Mood = 50.0;
             var pet = new Pet(state, clock);
 
             var rewardedTimes = new List<DateTime>();
 
-            // Wykonaj 10 nagradzanych głaskań
+            // Do 10 rewarded pets
             for (int i = 0; i < 10; i++)
             {
                 var now = clock.UtcNow;
@@ -29,16 +29,16 @@ namespace Cuy.Core.Tests
                     rewardedTimes.Add(now);
                     pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 5.0);
                     pet.AddBondPoints(1);
-                    pet.Count("glaskanie");
+                    pet.Count("pets");
                 }
             }
 
             Assert.Equal(10, rewardedTimes.Count);
             Assert.Equal(100.0, pet.Needs.Mood); // 50 + 10*5 = 100
             Assert.Equal(10, pet.State.Bond.Points);
-            Assert.Equal(10, pet.State.Stats.Counters["glaskanie"]);
+            Assert.Equal(10, pet.State.Stats.Counters["pets"]);
 
-            // 11. głaskanie w tej samej godzinie nie powinno dodać nagrody
+            // The 11th pet in the same hour should not add a reward
             var now11 = clock.UtcNow;
             rewardedTimes.RemoveAll(t => (now11 - t).TotalSeconds > 3600.0);
             bool rewardGiven = false;
@@ -48,43 +48,43 @@ namespace Cuy.Core.Tests
                 rewardedTimes.Add(now11);
                 pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 5.0);
                 pet.AddBondPoints(1);
-                pet.Count("glaskanie");
+                pet.Count("pets");
             }
 
             Assert.False(rewardGiven);
             Assert.Equal(10, pet.State.Bond.Points);
-            Assert.Equal(10, pet.State.Stats.Counters["glaskanie"]);
+            Assert.Equal(10, pet.State.Stats.Counters["pets"]);
 
-            // Przewijamy zegar o 61 minut -> limit się odnawia
+            // Move the clock 61 minutes -> the limit renews
             clock.Advance(TimeSpan.FromMinutes(61));
             var nowAfterHour = clock.UtcNow;
             rewardedTimes.RemoveAll(t => (nowAfterHour - t).TotalSeconds > 3600.0);
             Assert.Empty(rewardedTimes);
 
-            // Kolejne głaskanie jest nagrodzone
+            // The next pet is rewarded
             if (rewardedTimes.Count < 10)
             {
                 rewardedTimes.Add(nowAfterHour);
                 pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 5.0);
                 pet.AddBondPoints(1);
-                pet.Count("glaskanie");
+                pet.Count("pets");
             }
 
             Assert.Single(rewardedTimes);
             Assert.Equal(11, pet.State.Bond.Points);
-            Assert.Equal(11, pet.State.Stats.Counters["glaskanie"]);
+            Assert.Equal(11, pet.State.Stats.Counters["pets"]);
         }
 
         [Fact]
         public void Petting_SleepingPig_WakesItUpAndReducesMoodBy2()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 1, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             state.Needs.Mood = 50.0;
             var pet = new Pet(state, clock);
             pet.IsSleeping = true;
 
-            // Głaskanie śpiącej świnki
+            // Petting a sleeping pig
             Assert.True(pet.IsSleeping);
             pet.IsSleeping = false;
             pet.Needs.Mood = Math.Max(0.0, pet.Needs.Mood - 2.0);
@@ -97,15 +97,15 @@ namespace Cuy.Core.Tests
         public void StartupGreeting_ConditionDependsOnBondLevel()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 1, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             var pet = new Pet(state, clock);
 
-            // Początkowy poziom więzi = 1 (< 3) -> sniff
+            // Initial bond level = 1 (< 3) -> sniff
             Assert.True(pet.State.Bond.Level < 3);
             string greetingAnimLowBond = pet.State.Bond.Level >= 3 ? "greet" : "sniff";
             Assert.Equal("sniff", greetingAnimLowBond);
 
-            // Zwiększamy więź do poziomu 3 (próg = 45 pkt, limit dzienny = 30 pkt)
+            // Raise the bond to level 3 (threshold = 45 pts, daily limit = 30 pts)
             pet.AddBondPoints(30);
             clock.Advance(TimeSpan.FromDays(1));
             pet.AddBondPoints(20);
@@ -121,15 +121,15 @@ namespace Cuy.Core.Tests
             var clock = new ManualClock(new DateTime(2026, 10, 1, 12, 0, 0, DateTimeKind.Utc));
             DateTime offendedUntil = clock.UtcNow.AddSeconds(30);
 
-            // W czasie obrażenia
+            // While sulking
             bool isOffendedNow = clock.UtcNow < offendedUntil;
             Assert.True(isOffendedNow);
 
-            // Przewijamy o 15 s -> nadal obrażona
+            // Move 15 s -> still sulking
             clock.Advance(TimeSpan.FromSeconds(15));
             Assert.True(clock.UtcNow < offendedUntil);
 
-            // Przewijamy o kolejne 16 s (łącznie 31 s) -> już nie jest obrażona
+            // Move another 16 s (31 s in total) -> no longer sulking
             clock.Advance(TimeSpan.FromSeconds(16));
             Assert.False(clock.UtcNow < offendedUntil);
         }
@@ -138,15 +138,15 @@ namespace Cuy.Core.Tests
         public void CallPet_IncreasesBondAndCounts()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 1, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             var pet = new Pet(state, clock);
 
             int initialBond = pet.State.Bond.Points;
             pet.AddBondPoints(1);
-            pet.Count("zawolania");
+            pet.Count("calls");
 
             Assert.Equal(initialBond + 1, pet.State.Bond.Points);
-            Assert.Equal(1, pet.State.Stats.Counters["zawolania"]);
+            Assert.Equal(1, pet.State.Stats.Counters["calls"]);
         }
     }
 }

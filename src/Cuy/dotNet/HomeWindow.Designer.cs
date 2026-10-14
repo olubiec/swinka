@@ -29,7 +29,7 @@ namespace Cuy
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Domek świnki";
+            this.Text = "Cuy Home";
             this.ResumeLayout(false);
         }
     }

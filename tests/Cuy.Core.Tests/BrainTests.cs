@@ -24,20 +24,20 @@ namespace Cuy.Core.Tests
             var brain = Brain.CreateDefault(random: new Random(42));
             
             // Spacer ma cooldown 20s
-            var walkAction = brain.Config.Actions.Find(a => a.Id == "walk" || a.Id == "spacer");
+            var walkAction = brain.Config.Actions.Find(a => a.Id == "walk" || a.Id == "walk");
             Assert.NotNull(walkAction);
             Assert.Equal(20, walkAction.CooldownSeconds);
 
-            // Wykonujemy spacer ręcznie lub doprowadzamy do jego wyboru
-            // Zasymulujmy wykonanie spaceru o t = 100s
+            // Run the walk by hand or steer the brain into choosing it
+            // Simulate a walk at t = 100s
             brain.Update(TimeSpan.FromSeconds(100));
-            // Wymuśmy wybór akcji
+            // Force an action choice
             var decision = brain.DecideNextAction();
 
-            // Teraz zasymulujmy, że decyzją był spacer i sprawdźmy, że zaraz potem kolejny wybór NIE może być spacerem
-            // Ustawmy cooldown dla "spacer" na t + 20s
+            // Now pretend the decision was a walk and check that the very next choice can NOT be a walk
+            // Set the cooldown for "walk" to t + 20s
             var brain2 = Brain.CreateDefault(random: new Random(42));
-            // Zmodyfikujmy potrzeby tak, aby humor był niski (sprzyja spacerowi)
+            // Lower mood so a walk is attractive
             brain2.CurrentNeeds.Mood = 10;
             brain2.CurrentNeeds.Energy = 90;
 
@@ -45,16 +45,16 @@ namespace Cuy.Core.Tests
             for (int i = 0; i < 50; i++)
             {
                 var dec = brain2.DecideNextAction();
-                if (dec.ActionId == "walk" || dec.ActionId == "spacer")
+                if (dec.ActionId == "walk" || dec.ActionId == "walk")
                 {
                     spacerChosen = true;
-                    // Następna decyzja natychmiast (przed upływem 20s) nie może być spacerem!
+                    // The next decision right away (before 20s pass) must not be a walk!
                     var immediateNext = brain2.DecideNextAction();
-                    Assert.False(immediateNext.ActionId == "walk" || immediateNext.ActionId == "spacer");
+                    Assert.False(immediateNext.ActionId == "walk" || immediateNext.ActionId == "walk");
                     break;
                 }
             }
-            Assert.True(spacerChosen, "Spacer powinien zostać wylosowany przy wysokiej energii i potrzebie humoru.");
+            Assert.True(spacerChosen, "A walk should be picked with high energy and a need for mood.");
         }
 
         [Fact]
@@ -65,12 +65,12 @@ namespace Cuy.Core.Tests
             Assert.NotNull(zoomiesAction);
             Assert.Equal(2, zoomiesAction.GetDailyLimit(LifeStage.Adult));
 
-            // Ustawmy wysoki humor i energię pod zoomies
+            // High mood and energy for zoomies
             brain.CurrentNeeds.Mood = 95;
             brain.CurrentNeeds.Energy = 95;
 
             int zoomiesCountDay0 = 0;
-            // Przewińmy 1 dzień (86400 sekund) krokami
+            // Fast-forward 1 day (86400 seconds) in steps
             for (int i = 0; i < 2000; i++)
             {
                 brain.Update(TimeSpan.FromSeconds(30));
@@ -81,10 +81,10 @@ namespace Cuy.Core.Tests
                 if (brain.TotalSimulatedSeconds >= 86400) break;
             }
 
-            // Limit dzienny dla zoomies to 2
+            // Daily limit for zoomies is 2
             Assert.InRange(zoomiesCountDay0, 1, 2);
 
-            // Następnego dnia limit powinien się zresetować i zoomies znowu może wystąpić
+            // The next day the limit resets and zoomies can happen again
             int zoomiesCountDay1 = 0;
             for (int i = 0; i < 2000; i++)
             {
@@ -105,7 +105,7 @@ namespace Cuy.Core.Tests
             string lastAction = string.Empty;
             int consecutive = 0;
 
-            // Wykonujemy 500 kolejnych decyzji
+            // Make 500 decisions in a row
             for (int i = 0; i < 500; i++)
             {
                 var dec = brain.DecideNextAction();
@@ -120,14 +120,14 @@ namespace Cuy.Core.Tests
                 }
 
                 Assert.True(consecutive <= 2,
-                    string.Format("Czynność '{0}' została wybrana {1} razy z rzędu! (Maksymalnie dozwolone: 2)", dec.ActionId, consecutive));
+                    string.Format("Action '{0}' was picked {1} times in a row! (Max allowed: 2)", dec.ActionId, consecutive));
             }
         }
 
         [Fact]
         public void HungryPig_EatsSignificantlyMoreOftenThanWellFedPig()
         {
-            // Świnka najedzona (najedzenie = 95, ząbki = 95) vs świnka głodna (najedzenie = 15, ząbki = 95)
+            // Well-fed pig (fullness = 95, teeth = 95) vs hungry pig (fullness = 15, teeth = 95)
             var wellFedBrain = Brain.CreateDefault(random: new Random(100));
             var hungryBrain = Brain.CreateDefault(random: new Random(100));
 
@@ -136,7 +136,7 @@ namespace Cuy.Core.Tests
 
             for (int i = 0; i < 50; i++)
             {
-                // Zapewniamy stały dostęp do siana w paśniku oraz badane poziomy sytości
+                // Keep hay in the rack available and set the tested fullness levels
                 wellFedBrain.HayInRack = 100;
                 wellFedBrain.CurrentNeeds.Satiety = 95;
                 wellFedBrain.CurrentNeeds.Teeth = 95;
@@ -148,12 +148,12 @@ namespace Cuy.Core.Tests
                 var decWellFed = wellFedBrain.DecideNextAction();
                 var decHungry = hungryBrain.DecideNextAction();
 
-                if (decWellFed.ActionId == "eat_hay" || decWellFed.ActionId == "jedzenie_siana") wellFedEatCount++;
-                if (decHungry.ActionId == "eat_hay" || decHungry.ActionId == "jedzenie_siana") hungryEatCount++;
+                if (decWellFed.ActionId == "eat_hay" || decWellFed.ActionId == "eat_hay") wellFedEatCount++;
+                if (decHungry.ActionId == "eat_hay" || decHungry.ActionId == "eat_hay") hungryEatCount++;
             }
 
             Assert.True(hungryEatCount > wellFedEatCount * 2,
-                string.Format("Głodna świnka powinna jeść znacznie częściej (głodna: {0}, najedzona: {1})", hungryEatCount, wellFedEatCount));
+                string.Format("A hungry pig should eat much more often (hungry: {0}, well fed: {1})", hungryEatCount, wellFedEatCount));
         }
 
         [Fact]
@@ -167,21 +167,21 @@ namespace Cuy.Core.Tests
             var initialRemaining = brain.RemainingDuration;
             Assert.True(initialRemaining > TimeSpan.Zero);
 
-            // Zasymulujmy upływ 1 sekundy
+            // Simulate 1 second passing
             brain.Update(TimeSpan.FromSeconds(1));
             var remainingBeforeInterrupt = brain.RemainingDuration;
             Assert.True(remainingBeforeInterrupt < initialRemaining);
 
-            // Zdarzenie fizyki (gracz podnosi świnkę myszką)
+            // Physics event (the player picks the pig up with the mouse)
             brain.Interrupt("held_by_mouse");
             Assert.True(brain.IsInterrupted);
             Assert.Equal("held_by_mouse", brain.InterruptedReason);
 
-            // W trakcie trwania fizyki czas czynności NIE ubywa
+            // While physics is active the action time does NOT run down
             brain.Update(TimeSpan.FromSeconds(5));
             Assert.Equal(remainingBeforeInterrupt, brain.RemainingDuration);
 
-            // Gracz odkłada świnkę – wznowienie działania mózgu
+            // The player puts the pig down: the brain resumes
             var resumedDecision = brain.Resume();
             Assert.False(brain.IsInterrupted);
             Assert.Null(brain.InterruptedReason);
@@ -193,27 +193,27 @@ namespace Cuy.Core.Tests
         {
             var brain = Brain.CreateDefault(random: new Random(555));
             
-            // Symulacja 3 dni (72 godziny = 259200 sekund)
+            // Simulate 3 days (72 hours = 259200 seconds)
             TimeSpan step = TimeSpan.FromSeconds(5);
             int totalSteps = (72 * 3600) / (int)step.TotalSeconds;
 
             for (int i = 0; i < totalSteps; i++)
             {
                 brain.Update(step);
-                // Uzupełniajmy siano w paśniku, żeby świnka miała stały dostęp do siana
+                // Keep the hay rack filled so the pig always has hay
                 if (brain.HayInRack < 30) brain.HayInRack = 100;
             }
 
             var report = brain.GetBudgetReport(3.0);
             Assert.NotNull(report);
             Assert.True(report.IsAllWithinTolerance,
-                "Wszystkie grupy budżetu dnia muszą mieć odchylenie <= 5 punktów procentowych!\n" + report.FormatTable());
+                "Every day budget group must deviate by <= 5 percentage points!\n" + report.FormatTable());
 
-            // Sprawdźmy każdą grupę z osobna
+            // Check each group separately
             foreach (var group in report.Groups)
             {
                 Assert.True(group.IsWithinTolerance,
-                    string.Format("Grupa '{0}' przekroczyła tolerancję: odchylenie {1:0.00} p.p. (cel: {2}%, aktualnie: {3:0.00}%)",
+                    string.Format("Group '{0}' is out of tolerance: deviation {1:0.00} pts (target: {2}%, actual: {3:0.00}%)",
                         group.GroupName, group.DeviationPercentagePoints, group.TargetPercentage, group.ActualPercentage));
             }
         }
@@ -222,55 +222,55 @@ namespace Cuy.Core.Tests
         public void UserIdle_UnlocksSleepAtHigherEnergy_ButExtremeHungerTakesPrecedence()
         {
             var brain = Brain.CreateDefault(random: new Random(101));
-            // Ustawiamy porę dzienną (14:00), aby test nie był w godzinach nocnych
+            // Set a daytime hour (14:00) so the test is not in night hours
             brain.Update(TimeSpan.FromHours(14));
 
             brain.HayInRack = 100;
-            brain.CurrentNeeds.Energy = 60; // Domyślnie sen wymaga energia_max <= 35
+            brain.CurrentNeeds.Energy = 60; // By default sleep needs energy_max <= 35
             brain.CurrentNeeds.Satiety = 80;
             brain.CurrentNeeds.Teeth = 80;
 
-            // Przed bezczynnością - sen powinien być zablokowany z powodu energii > 35
+            // Before idleness: sleep is blocked because energy > 35
             brain.IsUserIdle = false;
             var scoresBefore = brain.EvaluateAllActionScores();
-            var sleepBefore = System.Linq.Enumerable.FirstOrDefault(scoresBefore, a => a.ActionId == "sleep" || a.ActionId == "sen");
+            var sleepBefore = System.Linq.Enumerable.FirstOrDefault(scoresBefore, a => a.ActionId == "sleep" || a.ActionId == "sleep");
             Assert.NotNull(sleepBefore);
-            Assert.False(sleepBefore.IsAvailable, "Sen nie powinien być dostępny przy energii 60 bez bezczynności.");
+            Assert.False(sleepBefore.IsAvailable, "Sleep should not be available at energy 60 without idleness.");
 
-            // Po 10 minutach bezczynności - sen zostaje odblokowany
+            // After 10 minutes of idleness: sleep is unlocked
             brain.IsUserIdle = true;
             brain.UserIdleDuration = TimeSpan.FromMinutes(10);
             var scoresAfter = brain.EvaluateAllActionScores();
-            var sleepAfter = System.Linq.Enumerable.FirstOrDefault(scoresAfter, a => a.ActionId == "sleep" || a.ActionId == "sen");
+            var sleepAfter = System.Linq.Enumerable.FirstOrDefault(scoresAfter, a => a.ActionId == "sleep" || a.ActionId == "sleep");
             Assert.NotNull(sleepAfter);
-            Assert.True(sleepAfter.IsAvailable, "Sen powinien być dostępny przy bezczynności użytkownika nawet przy energii 60.");
+            Assert.True(sleepAfter.IsAvailable, "Sleep should be available when the user is idle, even at energy 60.");
 
-            // Skrajny głód (satiety = 5, ząbki = 40) - Utility AI powinno nadal przedłożyć jedzenie siana nad sen (nie twarde wymuszenie)
+            // Extreme hunger (satiety = 5, teeth = 40): the Utility AI should still prefer eating hay over sleep (a preference, not a hard override)
             brain.CurrentNeeds.Satiety = 5;
             brain.CurrentNeeds.Teeth = 40;
             var decision = brain.DecideNextAction();
-            Assert.True(decision.ActionId == "eat_hay" || decision.ActionId == "jedzenie_siana");
+            Assert.True(decision.ActionId == "eat_hay" || decision.ActionId == "eat_hay");
         }
 
         [Fact]
         public void NightHours_MultipliesSleepAndDozeWeightByTwo()
         {
             var brain = Brain.CreateDefault(random: new Random(202));
-            brain.CurrentNeeds.Energy = 20; // Niska energia, sen i drzemka dostępne
+            brain.CurrentNeeds.Energy = 20; // Low energy: sleep and nap available
             brain.CurrentNeeds.Satiety = 90;
 
-            // Symulujemy czas nocny: godzina 2:00 w nocy (2 * 3600 = 7200s)
+            // Simulate night: 2:00 (2 * 3600 = 7200s)
             brain.Update(TimeSpan.FromHours(2));
-            Assert.True(brain.CurrentHour >= 23 || brain.CurrentHour < 7, "Powinna być pora nocna (2:00).");
+            Assert.True(brain.CurrentHour >= 23 || brain.CurrentHour < 7, "It should be night time (2:00).");
 
             var nightScores = brain.EvaluateAllActionScores();
-            var nightSleep = System.Linq.Enumerable.FirstOrDefault(nightScores, a => a.ActionId == "sleep" || a.ActionId == "sen");
-            var nightWalk = System.Linq.Enumerable.FirstOrDefault(nightScores, a => a.ActionId == "walk" || a.ActionId == "spacer");
+            var nightSleep = System.Linq.Enumerable.FirstOrDefault(nightScores, a => a.ActionId == "sleep" || a.ActionId == "sleep");
+            var nightWalk = System.Linq.Enumerable.FirstOrDefault(nightScores, a => a.ActionId == "walk" || a.ActionId == "walk");
             Assert.NotNull(nightSleep);
             Assert.NotNull(nightWalk);
 
-            // W nocy sen powinien mieć wyższy wynik niż aktywność ruchowa
-            Assert.True(nightSleep.Score > nightWalk.Score, "W nocy sen powinien mieć wyższy priorytet niż spacer.");
+            // At night sleep should score higher than moving around
+            Assert.True(nightSleep.Score > nightWalk.Score, "At night sleep should have a higher priority than a walk.");
         }
 
         [Fact]
@@ -279,31 +279,31 @@ namespace Cuy.Core.Tests
             var brain = Brain.CreateDefault(random: new Random(303));
             brain.CurrentNeeds.Energy = 30;
 
-            // Wymuśmy bezczynność i niską sytość na wysokim poziomie, by wylosować sen
+            // Force idleness and high fullness so sleep gets picked
             brain.IsUserIdle = true;
             brain.CurrentNeeds.Satiety = 100;
             brain.CurrentNeeds.Mood = 100;
 
-            // Przewijamy czas, aż mózg rozpocznie sen lub drzemkę
+            // Fast-forward until the brain starts sleeping or napping
             bool startedSleep = false;
             for (int i = 0; i < 20; i++)
             {
                 var dec = brain.DecideNextAction();
-                if (dec.ActionId == "sleep" || dec.ActionId == "sen" || dec.ActionId == "doze" || dec.ActionId == "drzemka")
+                if (dec.ActionId == "sleep" || dec.ActionId == "sleep" || dec.ActionId == "doze" || dec.ActionId == "nap")
                 {
                     startedSleep = true;
                     break;
                 }
             }
-            Assert.True(startedSleep, "Świnka powinna wybrać sen lub drzemkę przy bezczynności i pełnej sytości.");
+            Assert.True(startedSleep, "The pig should choose sleep or a nap when the user is idle and it is full.");
 
             double energyBefore = brain.CurrentNeeds.Energy;
-            // Upływ 1 godziny w trakcie snu
+            // 1 hour passes while asleep
             brain.Update(TimeSpan.FromHours(1));
             double energyAfter = brain.CurrentNeeds.Energy;
 
             Assert.True(energyAfter > energyBefore,
-                string.Format("Sen powinien regenerować energię w trybie autonomicznym (przed: {0}, po: {1})", energyBefore, energyAfter));
+                string.Format("Sleep should restore energy in autonomous mode (before: {0}, after: {1})", energyBefore, energyAfter));
         }
     }
 }

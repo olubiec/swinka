@@ -3,7 +3,7 @@
 namespace Cuy.Core.Time
 {
     /// <summary>
-    /// Sztuczny zegar przesuwany ręcznie. Do Symulatora i testów.
+    /// Artificial clock moved by hand. For the Simulator and tests.
     /// </summary>
     public sealed class ManualClock : IClock
     {
@@ -22,18 +22,18 @@ namespace Cuy.Core.Time
         }
 
         /// <summary>
-        /// Używany tylko przez <see cref="AdvanceReal"/> i przez Pet do wykrywania przerw
-        /// (uśpiony komputer), bo przerwa jest liczona w czasie realnym.
+        /// Used only by <see cref="AdvanceReal"/> and by Pet to detect breaks
+        /// (computer asleep), because a break is measured in real time.
         /// </summary>
         public double Multiplier { get; set; }
 
-        /// <summary>Przesuwa czas gry o podany odcinek.</summary>
+        /// <summary>Moves game time forward by the given span.</summary>
         public void Advance(TimeSpan gameTime)
         {
             _utcNow = _utcNow.Add(gameTime);
         }
 
-        /// <summary>Przesuwa czas gry tak, jakby minął podany czas realny (z mnożnikiem).</summary>
+        /// <summary>Moves game time as if the given real time had passed (with the multiplier).</summary>
         public void AdvanceReal(TimeSpan realTime)
         {
             _utcNow = _utcNow.AddTicks((long)(realTime.Ticks * Multiplier));

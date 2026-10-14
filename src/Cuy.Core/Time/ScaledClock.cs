@@ -3,13 +3,13 @@
 namespace Cuy.Core.Time
 {
     /// <summary>
-    /// Zegar oparty na zegarze systemowym, z mnożnikiem. Przy zmianie mnożnika czas gry
-    /// nie skacze: zegar zapamiętuje punkt zaczepienia i dalej liczy od niego.
+    /// Clock based on the system clock, with a multiplier. When the multiplier changes, game time
+    /// does not jump: the clock remembers an anchor point and keeps counting from it.
     /// </summary>
     /// <remarks>
-    /// Przy mnożniku większym niż 1 czas gry ucieka do przodu względem realnego.
-    /// Po powrocie do 1x podaj <c>startUtc</c> = ostatni czas z zapisu, inaczej świnka
-    /// "cofnie się w czasie" (Pet ignoruje ujemny upływ czasu, więc po prostu stanie).
+    /// With a multiplier above 1, game time runs ahead of real time.
+    /// After going back to 1x pass <c>startUtc</c> = the last time from the save, otherwise the pig
+    /// "goes back in time" (Pet ignores negative elapsed time, so it simply stops).
     /// </remarks>
     public sealed class ScaledClock : IClock
     {
@@ -19,9 +19,9 @@ namespace Cuy.Core.Time
         private DateTime _anchorGame;
         private double _multiplier;
 
-        /// <param name="multiplier">Mnożnik czasu (1, 60, 1440...).</param>
-        /// <param name="startUtc">Czas gry na starcie; domyślnie teraz.</param>
-        /// <param name="realUtcSource">Źródło czasu realnego; domyślnie DateTime.UtcNow.</param>
+        /// <param name="multiplier">Time multiplier (1, 60, 1440...).</param>
+        /// <param name="startUtc">Game time at start; defaults to now.</param>
+        /// <param name="realUtcSource">Real time source; defaults to DateTime.UtcNow.</param>
         public ScaledClock(double multiplier = TimeMultipliers.Normal, DateTime? startUtc = null,
             Func<DateTime> realUtcSource = null)
         {

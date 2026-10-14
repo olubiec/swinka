@@ -16,13 +16,13 @@ namespace Cuy
     }
 
     /// <summary>
-    /// Koordynator mechaniki karmienia (Zadanie B6):
-    /// - Kładzie jedzenie na pulpicie (100-300 px od świnki)
-    /// - Śledzi przeciąganie jedzenia myszką
-    /// - Obsługuje spadek jedzenia na pasek zadań i zejście świnki z okna
-    /// - Steruje podchodzeniem świnki i odtworzeniem eat / eat_treat (3-6 s)
-    /// - Zwiększa potrzeby i punkty więzi
-    /// - Pamięta ulubione warzywo i wyzwala radosny popcorn po jedzeniu.
+    /// Coordinates the feeding mechanics:
+    /// - Puts food on the desktop (100-300 px from the pig)
+    /// - Tracks food dragged with the mouse
+    /// - Handles food falling onto the taskbar and the pig climbing down from a window
+    /// - Drives the pig's approach and plays eat / eat_treat (3-6 s)
+    /// - Raises needs and bond points
+    /// - Remembers the favourite vegetable and triggers a happy popcorn after eating.
     /// </summary>
     public sealed class FoodManager
     {
@@ -56,7 +56,7 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Kładzie jedzenie na powierzchni, na której stoi świnka (100-300 px od niej).
+        /// Puts food on the surface the pig stands on (100-300 px from it).
         /// </summary>
         public bool SpawnFood(string itemId)
         {
@@ -65,12 +65,12 @@ namespace Cuy
             var petForm = FormPet.ActivePet;
             if (petForm == null || petForm.IsDisposed) return false;
 
-            // Anulowanie poprzedniego niezjedzonego jedzenia jeśli istniało
+            // Cancel previous uneaten food if any
             CancelActiveFood();
 
             _currentFoodId = itemId;
 
-            // Odczytujemy stan podłoża świnki
+            // Read the surface the pig stands on
             IntPtr hwnd = petForm.CurrentHwndWindow;
             bool onTaskbar = (hwnd == IntPtr.Zero);
             Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
@@ -91,13 +91,13 @@ namespace Cuy
             {
                 targetY = workingArea.Bottom - 32;
 
-                // Próba postawienia przed noskiem świnki
+                // Try to place it in front of the pig's nose
                 if (faceLeft)
                 {
                     targetX = pigX - distance;
                     if (targetX < workingArea.Left + 10)
                     {
-                        // Za mało miejsca z lewej -> postaw z prawej
+                        // Not enough room on the left -> place on the right
                         targetX = pigX + pigW + distance;
                         if (targetX > workingArea.Right - 42)
                         {
@@ -110,7 +110,7 @@ namespace Cuy
                     targetX = pigX + pigW + distance;
                     if (targetX > workingArea.Right - 42)
                     {
-                        // Za mało miejsca z prawej -> postaw z lewej
+                        // Not enough room on the right -> place on the left
                         targetX = pigX - distance;
                         if (targetX < workingArea.Left + 10)
                         {
@@ -121,7 +121,7 @@ namespace Cuy
             }
             else
             {
-                // Jedzenie na oknie
+                // Food on a window
                 if (NativeMethods.GetWindowRect(new HandleRef(petForm, hwnd), out var rct) && (rct.Right - rct.Left > 0))
                 {
                     targetY = rct.Top - 32;
@@ -149,7 +149,7 @@ namespace Cuy
                 }
                 else
                 {
-                    // Fallback na pasek zadań
+                    // Fallback to the taskbar
                     hwnd = IntPtr.Zero;
                     targetY = workingArea.Bottom - 32;
                     targetX = Math.Max(workingArea.Left + 10, Math.Min(workingArea.Right - 42, pigX + (faceLeft ? -distance : distance)));
@@ -167,21 +167,21 @@ namespace Cuy
                 _state = FoodInteractionState.Approaching;
                 _isDescendingFromWindow = false;
 
-                // Odwrócenie świnki w stronę jedzenia i rozpoczęcie chodu
+                // Turn the pig towards the food and start walking
                 int foodCenterX = targetX + 16;
                 int petCenterX = (int)(petForm.PositionX + petForm.Width / 2);
                 petForm.SetFacing(foodCenterX < petCenterX);
                 petForm.PlayAnimationByName("walk");
 
                 BrainController.Log(string.Format(
-                    "[Karmienie] Położono {0} w ({1}, {2}). Rozpoczęto podchodzenie.",
+                    "[Feeding] Put {0} at ({1}, {2}). Approach started.",
                     itemId, targetX, targetY));
 
                 return true;
             }
             catch (Exception ex)
             {
-                BrainController.Log("[Błąd] Nie udało się stworzyć jedzenia: " + ex.Message);
+                BrainController.Log("[ERROR] Could not create food: " + ex.Message);
                 _state = FoodInteractionState.None;
                 return false;
             }
@@ -206,13 +206,13 @@ namespace Cuy
             }
         }
 
-        // ---- Zdarzenia przeciągania myszką -----------------------------------
+        // ---- Mouse drag events ------------------------------------------------
 
         public void OnFoodDragStart(FoodItemForm food)
         {
             if (food == null || food != _activeFood) return;
 
-            // Gdy użytkownik podnosi jedzenie, świnka zatrzymuje się i patrzy za nim
+            // When the user picks the food up, the pig stops and watches it
             if (_state == FoodInteractionState.Approaching)
             {
                 var petForm = FormPet.ActivePet;
@@ -221,7 +221,7 @@ namespace Cuy
                     petForm.PlayAnimationByName("idle");
                 }
             }
-            BrainController.Log(string.Format("[Karmienie] Użytkownik podniósł {0} myszką.", food.ItemId));
+            BrainController.Log(string.Format("[Feeding] User picked up {0} with the mouse.", food.ItemId));
         }
 
         public void OnFoodDragging(FoodItemForm food)
@@ -231,7 +231,7 @@ namespace Cuy
             var petForm = FormPet.ActivePet;
             if (petForm != null && !petForm.IsDisposed)
             {
-                // Obróć świnkę w stronę przeciąganego jedzenia
+                // Turn the pig towards the dragged food
                 int foodCenterX = food.Location.X + food.Width / 2;
                 int petCenterX = (int)(petForm.PositionX + petForm.Width / 2);
                 petForm.SetFacing(foodCenterX < petCenterX);
@@ -242,7 +242,7 @@ namespace Cuy
         {
             if (food == null || food != _activeFood) return;
 
-            // Sprawdź czy jedzenie upuszczono w powietrzu -> jeśli tak, niech spada na pasek
+            // Check whether the food was dropped in mid-air -> if so, let it fall onto the taskbar
             IntPtr underHwnd = FindWindowUnderFood(food);
             if (underHwnd == IntPtr.Zero)
             {
@@ -277,7 +277,7 @@ namespace Cuy
                 }
             }
 
-            BrainController.Log(string.Format("[Karmienie] Upuszczono {0} w ({1}, {2}).", food.ItemId, food.Location.X, food.Location.Y));
+            BrainController.Log(string.Format("[Feeding] Dropped {0} at ({1}, {2}).", food.ItemId, food.Location.X, food.Location.Y));
         }
 
         public void OnFoodLandedOnTaskbar(FoodItemForm food)
@@ -290,15 +290,15 @@ namespace Cuy
             IntPtr petHwnd = petForm.CurrentHwndWindow;
             if (petHwnd != IntPtr.Zero)
             {
-                // Świnka jest na oknie, a jedzenie spadło na pasek zadań -> świnka schodzi z okna
+                // The pig is on a window and the food fell onto the taskbar -> the pig climbs down
                 _isDescendingFromWindow = true;
                 _state = FoodInteractionState.Approaching;
                 petForm.TriggerFallFromWindow();
-                BrainController.Log("[Karmienie] Jedzenie spadło na pasek zadań - świnka schodzi z okna!");
+                BrainController.Log("[Feeding] Food fell onto the taskbar - the pig climbs down from the window!");
             }
             else
             {
-                // Obie są na pasku zadań -> normalne podchodzenie
+                // Both on the taskbar -> normal approach
                 _state = FoodInteractionState.Approaching;
                 petForm.PlayAnimationByName("walk");
             }
@@ -318,7 +318,7 @@ namespace Cuy
                 {
                     if (rct.Right - rct.Left > 100 && rct.Bottom - rct.Top > 100)
                     {
-                        // Sprawdź czy punkt pod spodem leży na górnej krawędzi okna (+/- 20 px)
+                        // Check whether the point below lies on a window's top edge (+/- 20 px)
                         if (cx >= rct.Left && cx <= rct.Right && Math.Abs(cy - rct.Top) <= 24)
                         {
                             found = hWnd;
@@ -332,7 +332,7 @@ namespace Cuy
             return found;
         }
 
-        // ---- Pętla gry (Update) ----------------------------------------------
+        // ---- Game loop (Update) ----------------------------------------------
 
         public void Update(TimeSpan gameElapsed)
         {
@@ -355,7 +355,7 @@ namespace Cuy
                     break;
 
                 case FoodInteractionState.Popcorning:
-                    // Czekamy na koniec animacji popcorn
+                // Wait for the popcorn animation to end
                     if (petForm.CurrentAnimationName != "popcorn")
                     {
                         _state = FoodInteractionState.None;
@@ -375,11 +375,11 @@ namespace Cuy
 
             if (_activeFood.IsDragging || _activeFood.IsFalling)
             {
-                // Podczas przeciągania/spadania świnka czeka
+                // While the food is dragged or falling, the pig waits
                 return;
             }
 
-            // Sprawdzamy czy świnka jest w trakcie fizyki (spadek, rzucenie)
+            // Check whether the pig is under physics (falling, thrown)
             if (petForm.IsDragging || petForm.IsTossing)
             {
                 return;
@@ -388,18 +388,18 @@ namespace Cuy
             IntPtr petHwnd = petForm.CurrentHwndWindow;
             IntPtr foodHwnd = _activeFood.WindowHwnd;
 
-            // Sprawdzenie czy są na tej samej powierzchni
+            // Check whether both are on the same surface
             if (petHwnd != foodHwnd)
             {
-                // Jeśli świnka jest na oknie, a jedzenie na pasku zadań -> wymuś zejście
+                // If the pig is on a window and the food on the taskbar -> force climbing down
                 if (petHwnd != IntPtr.Zero && foodHwnd == IntPtr.Zero && !_isDescendingFromWindow)
                 {
                     _isDescendingFromWindow = true;
                     petForm.TriggerFallFromWindow();
                     return;
                 }
-                // Jeśli jedzenie jest na oknie, a świnka na pasku -> świnka nie może wejść na okno bez rampy,
-                // więc podchodzi pod okno i czeka (beg / sniff)
+                // If the food is on a window and the pig on the taskbar -> the pig cannot climb onto the window without a ramp,
+                // so it walks under the window and waits (beg / sniff)
                 if (petHwnd == IntPtr.Zero && foodHwnd != IntPtr.Zero)
                 {
                     int foodX = _activeFood.Location.X;
@@ -418,19 +418,19 @@ namespace Cuy
                 }
             }
 
-            // Obie są na tej samej powierzchni
+            // Both on the same surface
             _isDescendingFromWindow = false;
 
             int foodCenterX = _activeFood.Location.X + _activeFood.Width / 2;
             int petWidth = petForm.Width;
             bool faceLeft = petForm.IsFacingLeft;
 
-            // Nosek świnki: gdy patrzy w lewo -> lewa krawędź; gdy w prawo -> prawa krawędź
+            // The pig's nose: facing left -> left edge; facing right -> right edge
             int noseX = faceLeft ? (int)petForm.PositionX : (int)(petForm.PositionX + petWidth);
 
             int dx = foodCenterX - noseX;
 
-            // Ustawienie kierunku
+            // Set the direction
             if (Math.Abs(dx) > 10)
             {
                 bool shouldFaceLeft = (foodCenterX < (petForm.PositionX + petWidth / 2));
@@ -440,15 +440,15 @@ namespace Cuy
                 }
             }
 
-            // Sprawdzamy czy świnka dotarła do jedzenia (odległość pyszczka <= 18 px)
+            // Check whether the pig reached the food (mouth distance <= 18 px)
             if (Math.Abs(dx) <= 18)
             {
                 StartEating(petForm, _activeFood);
             }
             else
             {
-                // Krok w stronę jedzenia
-                // Obliczamy cel dla PositionX tak, by pyszczek znalazł się przy jedzeniu
+                // Step towards the food
+                // Compute the PositionX target so the mouth ends up at the food
                 int targetX = (dx < 0) ? (foodCenterX - 12) : (foodCenterX - petWidth + 12);
                 petForm.StepTowards(targetX, 2);
             }
@@ -459,24 +459,24 @@ namespace Cuy
             _state = FoodInteractionState.Eating;
             _isDescendingFromWindow = false;
 
-            // Czas jedzenia: 3 - 6 sekund (PLAN.md B6)
+            // Eating time: 3 - 6 seconds (PLAN.md B6)
             _eatingRemainingSeconds = 3.0 + (_random.NextDouble() * 3.0);
 
-            // Ustawienie zwrotu ku jedzeniu
+            // Turn towards the food
             petForm.SetFacing(food.Location.X < petForm.PositionX);
 
-            // Animacja: "eat" dla siana, "eat_treat" dla warzyw/smakołyków
+            // Animation: "eat" for hay, "eat_treat" for vegetables and treats
             string anim = (string.Equals(food.ItemId, "hay", StringComparison.OrdinalIgnoreCase))
                 ? "eat"
                 : (food.ItemDef?.Animation ?? "eat_treat");
 
             petForm.PlayAnimationByName(anim);
 
-            // Rozpoczęcie powtarzającego się chrupania z lekką zmianą wysokości (F1)
+            // Start the repeating crunch with a slight pitch change
             SoundManager.Instance?.StartEatingCrunch();
 
             BrainController.Log(string.Format(
-                "[Karmienie] Świnka podeszła do {0} i zaczyna jeść (animacja: {1}, czas: {2:0.#}s).",
+                "[Feeding] The pig reached {0} and starts eating (animation: {1}, time: {2:0.#}s).",
                 food.ItemDef?.Name ?? food.ItemId, anim, _eatingRemainingSeconds));
         }
 
@@ -497,10 +497,10 @@ namespace Cuy
             string foodId = _currentFoodId;
             var itemDef = _activeFood?.ItemDef ?? ItemCatalogLoader.GetItem(foodId);
 
-            // Przedmiot znika po zjedzeniu
+            // The item disappears after eating
             CancelActiveFood();
 
-            // Zastosowanie efektów na potrzeby z PLAN.md / items.json
+            // Apply the effects on needs from items.json
             if (itemDef != null && itemDef.Effects != null)
             {
                 foreach (var eff in itemDef.Effects)
@@ -512,30 +512,30 @@ namespace Cuy
                 }
             }
 
-            // Więź (+1 punkt) oraz statystyki
+            // Bond (+1 point) and statistics
             _controller.Pet.AddBondPoints(1);
             _controller.Pet.RecordFoodEaten(foodId);
 
             BrainController.Log(string.Format(
-                "[Karmienie] Zjedzono {0}. Najedzenie: {1:0.#}%, Wit. C: {2:0.#}%, Humor: {3:0.#}%. Łącznie karmień: {4}.",
+                "[Feeding] Ate {0}. Fullness: {1:0.#}%, Vit. C: {2:0.#}%, Mood: {3:0.#}%. Total feedings: {4}.",
                 itemDef?.Name ?? foodId,
                 _controller.Pet.Needs.Satiety,
                 _controller.Pet.Needs.VitaminC,
                 _controller.Pet.Needs.Mood,
-                _controller.Pet.State.Stats.Counters["karmienia"]));
+                _controller.Pet.State.Stats.Counters["feedings"]));
 
-            // Sprawdzenie czy to ulubione warzywo (wzór: Dosidicus)
-            // Przy ulubionym warzywie czasem robi popcorn po jedzeniu (PLAN.md B6)
+            // Check whether this is the favourite vegetable (pattern: Dosidicus)
+            // With the favourite vegetable it sometimes popcorns after eating (PLAN.md B6)
             bool isFavorite = _controller.Pet.IsFavoriteVegetable(foodId);
-            if (isFavorite && _random.Next(100) < 50) // 50% szans
+            if (isFavorite && _random.Next(100) < 50) // 50% chance
             {
                 _state = FoodInteractionState.Popcorning;
-                _controller.Pet.Count("popcorn_po_jedzeniu");
+                _controller.Pet.Count("popcorn_after_food");
                 _controller.Pet.Needs.Mood = Math.Min(100.0, _controller.Pet.Needs.Mood + 10.0);
                 petForm.PlayAnimationByName("popcorn");
 
                 BrainController.Log(string.Format(
-                    "[Karmienie] {0} to ulubione warzywo świnki! Świnka robi radosny popcorning (+10 humoru)!",
+                    "[Feeding] {0} is the pig's favourite vegetable! The pig popcorns with joy (+10 mood)!",
                     itemDef?.Name ?? foodId));
             }
             else
@@ -544,7 +544,7 @@ namespace Cuy
                 petForm.PlayAnimationByName("idle");
             }
 
-            // Natychmiastowe powiadomienie otwartego okna Domku o zmianie stanu
+            // Notify an open Home window about the state change right away
             HomeWindow.NotifyStateChanged();
         }
     }

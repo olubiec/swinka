@@ -9,9 +9,9 @@ using Cuy.Core.Time;
 namespace Cuy
 {
     /// <summary>
-    /// Koordynator integracji Cuy.Core z eSheep:
-    /// zarządza sesją gry (GameSession), zegarem (ScaledClock), mózgiem AI (Brain),
-    /// priorytetami fizyki oraz dystansem spaceru świnki.
+    /// Coordinates Cuy.Core with the eSheep engine:
+    /// manages the game session (GameSession), the clock (ScaledClock), the AI brain (Brain),
+    /// physics priority and the pig's walking distance.
     /// </summary>
     public sealed class BrainController
     {
@@ -22,26 +22,26 @@ namespace Cuy
         private readonly GameSession _session;
         private readonly Brain _brain;
 
-        // Stan spaceru (Requirement 2: świnka przechodzi dystans i staje)
+        // Walk state (the pig walks the distance and stops)
         private int _targetWalkDistancePx;
         private int _traversedWalkDistancePx;
         private bool _isWalking;
 
-        // Stan sekwencji wieloetapowych (np. sen: lie_down -> sleep -> wake_up)
+        // State of multi-stage sequences (e.g. sleep: lie_down -> sleep -> wake_up)
         private string _subStage; // "entrance", "main", "exit"
 
-        // Stan fizyki (Requirement 1: fizyka ma zawsze pierwszeństwo)
+        // Physics state (physics always has priority)
         private bool _isPhysicsActive;
         private string _physicsReason;
 
-        // Stan bezczynności użytkownika (B3: sen przy bezczynności przez GetLastInputInfo)
+        // User idle state (sleep when the user is idle, via GetLastInputInfo)
         private TimeSpan _idleThreshold = TimeSpan.FromMinutes(10);
         private TimeSpan _currentRealIdleTime;
         private bool _isUserIdle;
         private bool _wasUserIdle;
         private bool _isWakingUp;
 
-        // Czas ostatniej aktualizacji
+        // Time of the last update
         private DateTime _lastRealTime;
 
         public event Action<double> MultiplierChanged;
@@ -58,31 +58,31 @@ namespace Cuy
 
             _brain = Brain.CreateDefault(_session.Pet);
 
-            // Pierwsza decyzja mózgu
+            // The brain's first decision
             _brain.DecideNextAction();
             SetupActionState(_brain.CurrentAction);
 
-            // Menedżer bobków na pulpicie (B4)
+            // Desktop poop manager
             PoopManager.Initialize(this);
             PoopManager.Instance.RestoreSavedPoops();
 
-            // Menedżer karmienia i kładzenia jedzenia (B6)
+            // Feeding and food placement manager
             FoodManager.Initialize(this);
 
-            // Menedżer dźwięków (F1)
+            // Sound manager
             SoundManager.Initialize();
             _session.Pet.NeedLow += (s, e) =>
             {
                 if (e.Need == Need.Satiety)
                 {
-                    SoundManager.Instance?.PlayWheek("głód");
+                    SoundManager.Instance?.PlayWheek("hunger");
                 }
             };
             _session.Pet.NeedCritical += (s, e) =>
             {
                 if (e.Need == Need.Satiety)
                 {
-                    SoundManager.Instance?.PlayWheek("krytyczny_głód");
+                    SoundManager.Instance?.PlayWheek("critical_hunger");
                 }
             };
         }
@@ -99,7 +99,7 @@ namespace Cuy
             }
         }
 
-        // ---- Właściwości -----------------------------------------------------
+        // ---- Properties ------------------------------------------------------
 
         public ScaledClock Clock => _clock;
         public GameSession Session => _session;
@@ -135,19 +135,19 @@ namespace Cuy
         public void SetTestIdleThreshold(bool enableTest10s)
         {
             _idleThreshold = enableTest10s ? TimeSpan.FromSeconds(10) : TimeSpan.FromMinutes(10);
-            Log(string.Format("[Test] Zmieniono próg bezczynności na: {0:0}s", _idleThreshold.TotalSeconds));
+            Log(string.Format("[Test] Idle threshold changed to: {0:0}s", _idleThreshold.TotalSeconds));
         }
 
         public bool IsTestIdleThresholdActive => _idleThreshold.TotalSeconds <= 30;
 
-        // ---- Przełączanie zegara (Requirement 4) -----------------------------
+        // ---- Clock switching --------------------------------------------------
 
         public void SetClockMultiplier(double multiplier)
         {
             if (multiplier <= 0) return;
             _clock.Multiplier = multiplier;
             MultiplierChanged?.Invoke(multiplier);
-            Log(string.Format("[Zegar] Zmieniono mnożnik czasu na: {0:0.#}x", multiplier));
+            Log(string.Format("[Clock] Time multiplier changed to: {0:0.#}x", multiplier));
         }
 
         public void ToggleSpeed60x()
@@ -162,7 +162,7 @@ namespace Cuy
             }
         }
 
-        // ---- Pętla czasu -----------------------------------------------------
+        // ---- Time loop -------------------------------------------------------
 
         public void Update()
         {
@@ -171,7 +171,7 @@ namespace Cuy
             if (realElapsed <= TimeSpan.Zero) return;
             _lastRealTime = nowReal;
 
-            // Ograniczenie kroku czasu do 1s realnej, aby uniknąć skoków przy pauzach okna
+            // Limit the time step to 1 real second to avoid jumps when the window pauses
             if (realElapsed > TimeSpan.FromSeconds(1.0))
             {
                 realElapsed = TimeSpan.FromSeconds(1.0);
@@ -179,28 +179,28 @@ namespace Cuy
 
             TimeSpan gameElapsed = TimeSpan.FromTicks((long)(realElapsed.Ticks * _clock.Multiplier));
 
-            // 1. Sprawdzenie bezczynności użytkownika przez Win32 GetLastInputInfo (B3)
+            // 1. Check user idleness via Win32 GetLastInputInfo
             TimeSpan realIdle = Win32Input.GetIdleTime();
             _currentRealIdleTime = realIdle;
 
-            // Przy przyspieszonym zegarze gry (np. 60x w trybie testowym) czas bezczynności gry rośnie szybciej
+            // With an accelerated game clock (e.g. 60x in test mode) game idle time grows faster
             TimeSpan effectiveIdle = TimeSpan.FromTicks((long)(realIdle.Ticks * (_clock.Multiplier > 1.0 ? _clock.Multiplier : 1.0)));
 
             bool isIdle = (realIdle >= _idleThreshold) || (effectiveIdle >= _idleThreshold);
             _isUserIdle = isIdle;
 
-            // Przekazanie bezczynności do Brain jako warunek (nie jako twarde wymuszenie)
+            // Pass idleness to Brain as a condition (not a hard override)
             _brain.IsUserIdle = isIdle;
             _brain.UserIdleDuration = effectiveIdle;
 
-            // Reakcja na zmianę stanu bezczynności
+            // React to idle state changes
             if (isIdle && !_wasUserIdle)
             {
                 _wasUserIdle = true;
-                Log(string.Format("[Bezczynność] Wykryto bezczynność użytkownika (realny: {0:0}s, efektywny: {1:0}s, próg: {2:0}s).",
+                Log(string.Format("[Idle] User idle detected (real: {0:0}s, effective: {1:0}s, threshold: {2:0}s).",
                     realIdle.TotalSeconds, effectiveIdle.TotalSeconds, _idleThreshold.TotalSeconds));
 
-                // Świnka nie jest w trakcie fizyki ani snu -> pozwól Brain rozważyć sen jako kolejną akcję
+                // The pig is not in physics or asleep -> let Brain consider sleep as the next action
                 if (!_isPhysicsActive && !_isWakingUp && !IsCurrentlySleeping())
                 {
                     var newAction = _brain.DecideNextAction();
@@ -210,34 +210,34 @@ namespace Cuy
             else if (!isIdle && _wasUserIdle)
             {
                 _wasUserIdle = false;
-                Log(string.Format("[Aktywność] Wykryto ruch myszką lub klawiaturą po {0:0}s bezczynności.", realIdle.TotalSeconds));
+                Log(string.Format("[Activity] Mouse or keyboard input after {0:0}s of idleness.", realIdle.TotalSeconds));
 
-                // B3: Ruch myszką budzi ją przez wake_up, nie natychmiast!
+                // Mouse movement wakes it through wake_up, not instantly!
                 if (IsCurrentlySleeping() && !_isWakingUp)
                 {
                     TriggerWakeUp();
                 }
             }
 
-            // Aktualizacja Pet i AutoSaver
+            // Update Pet and AutoSaver
             _session.Tick();
 
-            // Aktualizacja bobków (B4: odliczanie czasu gry, aktualizacja pozycji na oknach)
+            // Update poops (count down game time, update positions on windows)
             PoopManager.Instance?.Update(gameElapsed);
 
-            // Aktualizacja mechaniki karmienia (B6)
+            // Update the feeding mechanics
             FoodManager.Instance?.Update(gameElapsed);
 
-            // Aktualizacja chrupania dźwiękowego podczas jedzenia (F1)
+            // Update crunching sounds while eating
             SoundManager.Instance?.UpdateEating(gameElapsed);
 
-            // Aktualizacja interakcji z kursorem (I1)
+            // Update cursor interactions
             InteractionManager.Instance?.Update(gameElapsed);
 
             bool isFoodActive = FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None;
             bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
 
-            // Aktualizacja Brain (tylko gdy nie ma fizyki, nie trwa wybudzanie, nie trwa interakcja z jedzeniem ani kursorem)
+            // Update Brain (only without physics, wake-up, food interaction or cursor interaction)
             if (!_isPhysicsActive && !isFoodActive && !isInteractionActive)
             {
                 var beforeAction = _brain.CurrentAction;
@@ -245,7 +245,7 @@ namespace Cuy
                 {
                     _brain.Update(gameElapsed);
 
-                    // Sprawdź czy Brain zmienił akcję po upływie czasu
+                    // Check whether Brain changed the action after time passed
                     if (_brain.CurrentAction != null && !object.ReferenceEquals(_brain.CurrentAction, beforeAction))
                     {
                         SetupActionState(_brain.CurrentAction);
@@ -254,7 +254,7 @@ namespace Cuy
             }
         }
 
-        // ---- Obsługa fizyki (Requirement 1: Priorytet fizyki) ----------------
+        // ---- Physics handling (physics has priority) -------------------------
 
         public void InterruptPhysics(string reason)
         {
@@ -263,7 +263,7 @@ namespace Cuy
                 _isPhysicsActive = true;
                 _physicsReason = reason ?? "physics";
                 _brain.Interrupt(_physicsReason);
-                Log(string.Format("[Fizyka] Akcja przerwana przez fizykę: {0}", _physicsReason));
+                Log(string.Format("[Physics] Action interrupted by physics: {0}", _physicsReason));
             }
         }
 
@@ -275,12 +275,12 @@ namespace Cuy
                 _physicsReason = null;
                 var resumed = _brain.Resume();
                 SetupActionState(resumed);
-                Log(string.Format("[Fizyka] Wznowienie Brain po fizyce. Akcja: {0} ({1})",
+                Log(string.Format("[Physics] Brain resumed after physics. Action: {0} ({1})",
                     resumed.ActionId, resumed.AnimationName));
             }
         }
 
-        // ---- Obsługa spaceru (Requirement 2) --------------------------------
+        // ---- Walk handling ---------------------------------------------------
 
         public void StepWalk(int deltaPx)
         {
@@ -289,9 +289,9 @@ namespace Cuy
 
             if (_traversedWalkDistancePx >= _targetWalkDistancePx)
             {
-                // Świnka przeszła zadany dystans i staje
+                // The pig has walked the distance and stops
                 _isWalking = false;
-                Log(string.Format("[Spacer] Osiągnięto dystans {0}/{1} px - świnka staje.",
+                Log(string.Format("[Walk] Reached distance {0}/{1} px - the pig stops.",
                     _traversedWalkDistancePx, _targetWalkDistancePx));
             }
         }
@@ -301,7 +301,7 @@ namespace Cuy
             _isWalking = false;
         }
 
-        // ---- Interakcje z menu (Karmienie, Zawołaj) --------------------------
+        // ---- Menu interactions (Feed, Call) ----------------------------------
 
         public void RequestAnimation(string animationName)
         {
@@ -315,7 +315,7 @@ namespace Cuy
 
             if (string.Equals(itemId, "hay", StringComparison.OrdinalIgnoreCase))
             {
-                // Siano jest zawsze bez limitu - kładziemy na pulpicie (B6)
+                // Hay is always unlimited - put it on the desktop
                 if (FoodManager.Instance != null)
                 {
                     FoodManager.Instance.SpawnFood("hay");
@@ -323,7 +323,7 @@ namespace Cuy
                 return;
             }
 
-            // Przedmioty z ekwipunku
+            // Items from the inventory
             if (_session.Pet.TryRemoveItem(itemId, 1))
             {
                 if (FoodManager.Instance != null)
@@ -333,7 +333,7 @@ namespace Cuy
             }
             else
             {
-                Log(string.Format("[Karmienie] Brak przedmiotu {0} w ekwipunku.", itemId));
+                Log(string.Format("[Feeding] Item {0} is not in the inventory.", itemId));
             }
         }
 
@@ -346,9 +346,9 @@ namespace Cuy
             }
 
             _session.Pet.AddBondPoints(1);
-            _session.Pet.Count("zawolania");
+            _session.Pet.Count("calls");
             RequestAnimation("wheek");
-            Log(string.Format("[Zawołaj] Zawołano świnkę. Punkty więzi: {0} (poziom {1})",
+            Log(string.Format("[Call] Pig called. Bond points: {0} (level {1})",
                 _session.Pet.State.Bond.Points, _session.Pet.State.Bond.Level));
         }
 
@@ -363,9 +363,9 @@ namespace Cuy
             if (_session?.Pet != null)
             {
                 _session.Pet.Needs.Mood = Math.Min(100.0, _session.Pet.Needs.Mood + 3.0);
-                _session.Pet.Count("glaskanie");
+                _session.Pet.Count("pets");
                 _session.Pet.AddBondPoints(1);
-                Log(string.Format("[Głaskanie] Pogłaskano świnkę (+3 humoru). Humor: {0:0.#}%",
+                Log(string.Format("[Petting] Pig petted (+3 mood). Mood: {0:0.#}%",
                     _session.Pet.Needs.Mood));
             }
             RequestAnimation("purr_pet");
@@ -381,14 +381,14 @@ namespace Cuy
             PoopManager.Instance?.TrySpawnPoop(force: true);
         }
 
-        // ---- Wybór kolejnej animacji dla silnika eSheep ----------------------
+        // ---- Picking the next animation for the eSheep engine ----------------
 
         public string GetCurrentDesiredAnimation()
         {
             bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
             if (_isPhysicsActive || (FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None) || isInteractionActive)
             {
-                // Gdy fizyka, karmienie lub interakcja z kursorem jest aktywna, steruje animacjami bezpośrednio
+                // While physics, feeding or cursor interaction is active, it drives the animations directly
                 return null;
             }
 
@@ -400,7 +400,7 @@ namespace Cuy
                 action = newAction;
             }
 
-            // Sekwencje z wejściem (np. sen: lie_down -> sleep -> wake_up)
+            // Sequences with an entry (e.g. sleep: lie_down -> sleep -> wake_up)
             if (action.Definition.EntryAnimation != null && _subStage == "entrance")
             {
                 return action.Definition.EntryAnimation;
@@ -410,13 +410,13 @@ namespace Cuy
                 return action.Definition.ExitAnimation ?? "wake_up";
             }
 
-            // Domyślna animacja akcji (np. idle, walk, eat, sniff, popcorn, scratch...)
+            // Default animation of the action (e.g. idle, walk, eat, sniff, popcorn, scratch...)
             return action.AnimationName;
         }
 
         /// <summary>
-        /// Wywoływane przez FormPet gdy sekwencja animacji dobiegła końca (AnimationStep >= TotalSteps).
-        /// Zwraca nazwę następnej animacji lub decyduje o kolejnym kroku.
+        /// Called by FormPet when an animation sequence ends (AnimationStep >= TotalSteps).
+        /// Returns the next animation name or decides the next step.
         /// </summary>
         public string OnAnimationSequenceFinished(string currentAnimationName)
         {
@@ -434,12 +434,12 @@ namespace Cuy
                 return action.AnimationName;
             }
 
-            // Jeśli trwał etap wejściowy (np. lie_down) -> przejdź do właściwego snu (sleep)
+            // If the entry stage was running (e.g. lie_down) -> go to the actual sleep
             if (_subStage == "entrance" && currentAnimationName == action.Definition.EntryAnimation)
             {
                 if (_isWakingUp || _subStage == "exit")
                 {
-                    // Ruch myszką nastąpił w trakcie kładzenia się -> od razu wybudzanie
+                    // Mouse moved while lying down -> wake up right away
                     _subStage = "exit";
                     return action.Definition.ExitAnimation ?? "wake_up";
                 }
@@ -447,52 +447,52 @@ namespace Cuy
                 return action.AnimationName;
             }
 
-            // Jeśli trwało właściwe spanie (sleep) i nastąpił ruch myszką (_isWakingUp)
+            // If the actual sleep was running and the mouse moved (_isWakingUp)
             if (_isWakingUp && currentAnimationName == action.AnimationName)
             {
                 _subStage = "exit";
                 return action.Definition.ExitAnimation ?? "wake_up";
             }
 
-            // Jeśli trwał etap wyjściowy (np. wake_up) -> akcja zakończona, wybierz nową
+            // If the exit stage was running (e.g. wake_up) -> action done, pick a new one
             if ((_subStage == "exit" || _isWakingUp) && (currentAnimationName == action.Definition.ExitAnimation || currentAnimationName == "wake_up"))
             {
                 _isWakingUp = false;
                 _session.Pet.IsSleeping = false;
                 var next = _brain.DecideNextAction();
                 SetupActionState(next);
-                Log(string.Format("[Budzenie] Zakończono animację wake_up. Świnka wstała i wybrała: {0} ({1})",
+                Log(string.Format("[WakeUp] wake_up animation finished. The pig got up and chose: {0} ({1})",
                     next.ActionId, next.AnimationName));
                 return next.AnimationName;
             }
 
-            // Jeśli to był spacer i dystans został ukończony -> koniec spaceru
+            // If it was a walk and the distance is done -> end of the walk
             if (action.Definition.IsMovement)
             {
                 if (!_isWalking)
                 {
-                    // Dystans przebyty: przechodzimy do kolejnej akcji Brain lub odpoczynku
+                    // Distance covered: move on to the next Brain action or rest
                     var next = _brain.DecideNextAction();
                     SetupActionState(next);
                     return next.AnimationName;
                 }
                 else
                 {
-                    // Dystans jeszcze nieprzebyty: kontynuuj walk
+                    // Distance not covered yet: keep walking
                     return action.AnimationName;
                 }
             }
 
-            // Akcje jednokrotne (np. popcorn, wheek, scratch, poop)
-            if (action.ActionId == "popcorn" || action.ActionId == "kwiczenie" || action.ActionId == "drapanie" || currentAnimationName == "poop")
+            // One-shot actions (e.g. popcorn, wheek, scratch, poop)
+            if (action.ActionId == "popcorn" || action.ActionId == "wheeking" || action.ActionId == "scratching" || currentAnimationName == "poop")
             {
                 var next = _brain.DecideNextAction();
                 SetupActionState(next);
                 return next.AnimationName;
             }
 
-            // Czynności trwające dłużej (idle, eat, doze, sleep):
-            // Jeśli czas akcji w Brain dobiegł końca -> sprawdź czy jest wyjście (exit animation)
+            // Longer actions (idle, eat, doze, sleep):
+            // if the Brain action time is over -> check for an exit animation
             if (_brain.RemainingDuration <= TimeSpan.Zero)
             {
                 if (action.Definition.ExitAnimation != null && _subStage != "exit")
@@ -506,7 +506,7 @@ namespace Cuy
                 return next.AnimationName;
             }
 
-            // Jeśli czas jeszcze trwa -> zapętl bieżącą animację
+            // If time is still running -> loop the current animation
             return action.AnimationName;
         }
 
@@ -536,15 +536,15 @@ namespace Cuy
                 _traversedWalkDistancePx = 0;
             }
 
-            // Świnka śpi: aktualizuj flagę w Pet, by energia rosła
-            bool isSleeping = (action.ActionId == "sen" || action.ActionId == "sen_w_domku" || action.ActionId == "drzemka");
+            // The pig is asleep: update the flag in Pet so energy rises
+            bool isSleeping = (action.ActionId == "sleep" || action.ActionId == "sleep_in_house" || action.ActionId == "nap");
             _session.Pet.IsSleeping = isSleeping;
             if (!isSleeping)
             {
                 _isWakingUp = false;
             }
 
-            Log(string.Format("[Brain] Nowa czynność: {0} ({1}), czas: {2:0.#}s, dystans: {3}px, zysk: {4:0.00}",
+            Log(string.Format("[Brain] New action: {0} ({1}), time: {2:0.#}s, distance: {3}px, score: {4:0.00}",
                 action.ActionId, action.AnimationName, action.Duration.TotalSeconds, action.MoveDistancePx, action.Score));
 #if DEBUG
             lock (_recentDecisions)
@@ -561,7 +561,7 @@ namespace Cuy
             if (_session?.Pet != null && _session.Pet.IsSleeping) return true;
             var action = _brain.CurrentAction;
             if (action == null) return false;
-            return (action.ActionId == "sen" || action.ActionId == "sen_w_domku" || action.ActionId == "drzemka");
+            return (action.ActionId == "sleep" || action.ActionId == "sleep_in_house" || action.ActionId == "nap");
         }
 
         public void TriggerWakeUp()
@@ -570,12 +570,12 @@ namespace Cuy
             var action = _brain.CurrentAction;
             if (action == null) return;
 
-            Log("[Budzenie] Rozpoczęcie procedury wybudzania świnki przez animację wake_up (nie natychmiast).");
+            Log("[WakeUp] Starting to wake the pig through the wake_up animation (not instantly).");
             _isWakingUp = true;
             _subStage = "exit";
         }
 
-        // ---- Telemetria i nakładka F9 (Narzędzie testowe - w Release wyłączone) -----
+        // ---- Telemetry and the F9 overlay (test tool, disabled in Release) -----
 
         private DebugOverlay _overlayForm;
 
@@ -612,7 +612,7 @@ namespace Cuy
             return _brain.GetBudgetReport();
         }
 
-        // ---- Zamykanie sesji -------------------------------------------------
+        // ---- Closing the session ---------------------------------------------
 
         public void Close()
         {
@@ -621,12 +621,12 @@ namespace Cuy
                 FoodManager.Instance?.CancelActiveFood();
                 PoopManager.Instance?.CloseAllVisuals();
                 SoundManager.Instance?.Dispose();
-                Log("[Sesja] Zapisywanie stanu i zamykanie gry...");
+                Log("[Session] Saving the state and closing the game...");
                 _session?.Close();
             }
             catch (Exception ex)
             {
-                Log("[Błąd] Zapisywanie nie powiodło się: " + ex.Message);
+                Log("[ERROR] Saving failed: " + ex.Message);
             }
         }
 

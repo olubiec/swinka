@@ -5,14 +5,14 @@ using Cuy.Core.Time;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Spina wszystko dla aplikacji: wczytanie (z kopią zapasową), Pet, zapis co 60 s i przy zamknięciu.
+    /// Ties everything together for the app: loading (with backup), Pet, saving every 60 s and on close.
     /// </summary>
     /// <example>
     /// var session = GameSession.Open(new ScaledClock());
-    /// session.Pet.NeedLow += ...;   // najpierw zdarzenia
-    /// session.Start();              // nalicza czas offline i zgłasza zaległe zdarzenia
-    /// // w pętli gry, np. co 1 s:  session.Tick();
-    /// // przy zamknięciu:          session.Close();
+    /// session.Pet.NeedLow += ...;   // events first
+    /// session.Start();              // adds offline time and raises pending events
+    /// // in the game loop, e.g. every 1 s:  session.Tick();
+    /// // on close:                  session.Close();
     /// </example>
     public sealed class GameSession : IDisposable
     {
@@ -31,15 +31,15 @@ namespace Cuy.Core
         public AutoSaver AutoSaver { get; }
         public LoadResult LoadResult { get; }
 
-        /// <summary>True, jeśli nie było zapisu i powstała nowa świnka.</summary>
+        /// <summary>True if there was no save and a new pig was created.</summary>
         public bool IsNewGame { get { return LoadResult.Source == LoadSource.None; } }
 
-        /// <param name="clock">Zegar gry.</param>
-        /// <param name="saveDirectory">Folder zapisu; domyślnie %AppData%/Cuy.</param>
-        /// <param name="balance">Balans; domyślnie z PLAN.md.</param>
-        /// <param name="newPetName">Imię, jeśli powstaje nowa świnka.</param>
+        /// <param name="clock">Game clock.</param>
+        /// <param name="saveDirectory">Save folder; defaults to %AppData%/Cuy.</param>
+        /// <param name="balance">Balance; defaults from PLAN.md.</param>
+        /// <param name="newPetName">Name for a newly created pig.</param>
         public static GameSession Open(IClock clock, string saveDirectory = null, Balance balance = null,
-            string newPetName = "Świnka")
+            string newPetName = "Cuy")
         {
             if (clock == null) throw new ArgumentNullException(nameof(clock));
             var saveSystem = new SaveSystem(saveDirectory);
@@ -53,14 +53,14 @@ namespace Cuy.Core
             Pet.Start();
         }
 
-        /// <summary>Wywołuj regularnie z pętli gry.</summary>
+        /// <summary>Call regularly from the game loop.</summary>
         public void Tick()
         {
             Pet.Update();
             AutoSaver.Tick();
         }
 
-        /// <summary>Nalicza ostatni kawałek czasu i zapisuje. Wywołaj przy zamykaniu aplikacji.</summary>
+        /// <summary>Adds the last slice of time and saves. Call when the app closes.</summary>
         public bool Close()
         {
             if (_closed) return true;

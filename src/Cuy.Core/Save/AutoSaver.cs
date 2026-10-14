@@ -5,12 +5,12 @@ using System.IO;
 namespace Cuy.Core.Save
 {
     /// <summary>
-    /// Zapis co 60 s. Nie ma własnego wątku: wywołuj <see cref="Tick"/> z pętli gry,
-    /// dzięki temu stan nie jest serializowany w trakcie zmiany.
+    /// Saves every 60 s. Has no thread of its own: call <see cref="Tick"/> from the game loop,
+    /// so the state is never serialized in the middle of a change.
     /// </summary>
     /// <remarks>
-    /// Odstęp liczony jest w czasie REALNYM (Stopwatch), nie w czasie gry: przy mnożniku 1440x
-    /// zapis co 60 s gry oznaczałby zapis 24 razy na sekundę.
+    /// The interval is measured in REAL time (Stopwatch), not game time: at a 1440x multiplier
+    /// saving every 60 game seconds would mean 24 saves per second.
     /// </remarks>
     public sealed class AutoSaver
     {
@@ -31,17 +31,17 @@ namespace Cuy.Core.Save
 
         public TimeSpan Interval { get; set; }
 
-        /// <summary>Błąd zapisu (np. pełny dysk). Gra działa dalej, kolejna próba przy następnym ticku po odstępie.</summary>
+        /// <summary>Save error (e.g. disk full). The game keeps running; the next attempt is on the next tick after the interval.</summary>
         public event EventHandler<Exception> SaveFailed;
 
-        /// <summary>Zapisuje, jeśli od ostatniego zapisu minął odstęp. Zwraca true, gdy zapisano.</summary>
+        /// <summary>Saves if the interval has passed since the last save. Returns true when saved.</summary>
         public bool Tick()
         {
             if (_sinceLastSave.Elapsed < Interval) return false;
             return SaveNow();
         }
 
-        /// <summary>Zapis natychmiast (np. przy zamknięciu aplikacji).</summary>
+        /// <summary>Saves immediately (e.g. when the app closes).</summary>
         public bool SaveNow()
         {
             _sinceLastSave.Restart();

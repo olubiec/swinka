@@ -2,18 +2,18 @@
 
 namespace Cuy.Core
 {
-    /// <summary>Etapy życia z PLAN.md ("Wiek i etapy życia").</summary>
+    /// <summary>Life stages from PLAN.md (section about age and life stages).</summary>
     public enum LifeStage
     {
-        /// <summary>Maluch: 0-3 tygodnie (1. dzień gry).</summary>
+        /// <summary>Baby: 0-3 weeks (game day 1).</summary>
         Baby,
-        /// <summary>Młodzik: 3 tygodnie - 6 miesięcy (dni 2-9).</summary>
+        /// <summary>Junior: 3 weeks - 6 months (days 2-9).</summary>
         Junior,
-        /// <summary>Dorosła: 6 miesięcy - 4 lata (dni 9-70).</summary>
+        /// <summary>Adult: 6 months - 4 years (days 9-70).</summary>
         Adult,
-        /// <summary>Senior: 4-8 lat (dni 70-139).</summary>
+        /// <summary>Senior: 4-8 years (days 70-139).</summary>
         Senior,
-        /// <summary>Legenda: ponad 8 lat (139+), gra trwa dalej bez końca.</summary>
+        /// <summary>Legend: over 8 years (139+); the game goes on forever.</summary>
         Legend
     }
 
@@ -21,9 +21,9 @@ namespace Cuy.Core
     {
         public const double DaysPerYear = 365.25;
 
-        /// <summary>Progi w dniach życia świnki.</summary>
-        public const double JuniorFromPigDays = 21;                 // 3 tygodnie
-        public const double AdultFromPigDays = DaysPerYear / 2;     // 6 miesięcy
+        /// <summary>Thresholds in the pig's days of life.</summary>
+        public const double JuniorFromPigDays = 21;                 // 3 weeks
+        public const double AdultFromPigDays = DaysPerYear / 2;     // 6 months
         public const double SeniorFromPigDays = DaysPerYear * 4;    // 4 lata
         public const double LegendFromPigDays = DaysPerYear * 8;    // 8 lat
 
@@ -36,20 +36,20 @@ namespace Cuy.Core
             return LifeStage.Baby;
         }
 
-        public static string Polish(LifeStage stage)
+        public static string DisplayName(LifeStage stage)
         {
             switch (stage)
             {
-                case LifeStage.Baby: return "Maluch";
-                case LifeStage.Junior: return "Młodzik";
-                case LifeStage.Adult: return "Dorosła";
+                case LifeStage.Baby: return "Baby";
+                case LifeStage.Junior: return "Junior";
+                case LifeStage.Adult: return "Adult";
                 case LifeStage.Senior: return "Senior";
-                case LifeStage.Legend: return "Legenda";
+                case LifeStage.Legend: return "Legend";
                 default: throw new ArgumentOutOfRangeException(nameof(stage));
             }
         }
 
-        /// <summary>Klucz z plików danych i nazw folderów w assets/ (np. "adult").</summary>
+        /// <summary>Key used in data files and asset folder names (e.g. "adult").</summary>
         public static string DataKey(LifeStage stage)
         {
             switch (stage)
@@ -64,7 +64,7 @@ namespace Cuy.Core
         }
     }
 
-    /// <summary>Wiek świnki w jej "świnkowym" czasie (1 dzień realny = 21 dni świnki).</summary>
+    /// <summary>The pig's age in its own "pig time" (1 real day = 21 pig days).</summary>
     public struct PigAge
     {
         public PigAge(double pigDays)
@@ -76,7 +76,7 @@ namespace Cuy.Core
 
         public int Years { get { return (int)Math.Floor(PigDays / LifeStages.DaysPerYear); } }
 
-        /// <summary>Pełne miesiące ponad pełne lata.</summary>
+        /// <summary>Full months on top of full years.</summary>
         public int Months
         {
             get
@@ -93,40 +93,42 @@ namespace Cuy.Core
             return new PigAge((nowUtc - birthUtc).TotalDays * pigDaysPerRealDay);
         }
 
-        /// <summary>Np. "5 dni", "2 tygodnie", "4 miesiące", "1 rok i 3 miesiące".</summary>
-        public string ToPolishString()
+        /// <summary>E.g. "5 days", "2 weeks", "4 months", "1 year and 3 months".</summary>
+        public string ToDisplayString()
         {
             if (PigDays < 7)
             {
                 int d = (int)Math.Floor(PigDays);
-                return d == 1 ? "1 dzień" : d + " dni";
+                return Plural.Format(d, "day", "days");
             }
             if (PigDays < LifeStages.DaysPerYear / 12)
             {
                 int w = (int)Math.Floor(PigDays / 7);
-                return w + " " + PolishPlural.Choose(w, "tydzień", "tygodnie", "tygodni");
+                return Plural.Format(w, "week", "weeks");
             }
-            string months = Months + " " + PolishPlural.Choose(Months, "miesiąc", "miesiące", "miesięcy");
+            string months = Plural.Format(Months, "month", "months");
             if (Years == 0) return months;
-            string years = Years + " " + PolishPlural.Choose(Years, "rok", "lata", "lat");
-            return Months == 0 ? years : years + " i " + months;
+            string years = Plural.Format(Years, "year", "years");
+            return Months == 0 ? years : years + " and " + months;
         }
 
         public override string ToString()
         {
-            return ToPolishString();
+            return ToDisplayString();
         }
     }
 
-    /// <summary>Polska odmiana liczebników: 1 rok, 2 lata, 5 lat.</summary>
-    public static class PolishPlural
+    /// <summary>English plural helper: "1 day", "2 days".</summary>
+    public static class Plural
     {
-        public static string Choose(int n, string one, string few, string many)
+        public static string Choose(int n, string one, string many)
         {
-            if (n == 1) return one;
-            int mod10 = n % 10, mod100 = n % 100;
-            if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
-            return many;
+            return n == 1 ? one : many;
+        }
+
+        public static string Format(int n, string one, string many)
+        {
+            return n + " " + Choose(n, one, many);
         }
     }
 }

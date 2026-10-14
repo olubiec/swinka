@@ -11,14 +11,14 @@ namespace Cuy.Core.Tests
         {
             var config = new QuietHoursConfig(new TimeSpan(22, 0, 0), new TimeSpan(7, 0, 0));
 
-            // W nocy (godziny ciszy)
+            // At night (quiet hours)
             Assert.True(config.IsInQuietHours(new TimeSpan(22, 0, 0)));
             Assert.True(config.IsInQuietHours(new TimeSpan(23, 30, 0)));
             Assert.True(config.IsInQuietHours(new TimeSpan(0, 0, 0)));
             Assert.True(config.IsInQuietHours(new TimeSpan(3, 15, 0)));
             Assert.True(config.IsInQuietHours(new TimeSpan(6, 59, 59)));
 
-            // W dzień (poza godzinami ciszy)
+            // In the daytime (outside quiet hours)
             Assert.False(config.IsInQuietHours(new TimeSpan(7, 0, 0)));
             Assert.False(config.IsInQuietHours(new TimeSpan(7, 0, 1)));
             Assert.False(config.IsInQuietHours(new TimeSpan(12, 0, 0)));
@@ -54,30 +54,30 @@ namespace Cuy.Core.Tests
             var limiter = new WheekRateLimiter(TimeSpan.FromMinutes(2));
             var t0 = new DateTime(2026, 10, 12, 12, 0, 0, DateTimeKind.Utc);
 
-            // 1. Pierwsze kwiknięcie - dozwolone
+            // 1. First wheek - allowed
             Assert.True(limiter.CanWheek(t0, out var rem1));
             Assert.Equal(TimeSpan.Zero, rem1);
             Assert.True(limiter.TryWheek(t0));
 
-            // 2. Kwiknięcie po 30 sekundach - odrzucone
+            // 2. Wheek after 30 seconds - rejected
             var t1 = t0.AddSeconds(30);
             Assert.False(limiter.CanWheek(t1, out var rem2));
             Assert.Equal(TimeSpan.FromSeconds(90), rem2);
             Assert.False(limiter.TryWheek(t1));
 
-            // 3. Kwiknięcie po 119 sekundach - odrzucone
+            // 3. Wheek after 119 seconds - rejected
             var t2 = t0.AddSeconds(119);
             Assert.False(limiter.CanWheek(t2, out var rem3));
             Assert.Equal(TimeSpan.FromSeconds(1), rem3);
             Assert.False(limiter.TryWheek(t2));
 
-            // 4. Kwiknięcie po 120 sekundach (dokładnie 2 minuty) - dozwolone!
+            // 4. Wheek after 120 seconds (exactly 2 minutes) - allowed!
             var t3 = t0.AddSeconds(120);
             Assert.True(limiter.CanWheek(t3, out var rem4));
             Assert.Equal(TimeSpan.Zero, rem4);
             Assert.True(limiter.TryWheek(t3));
 
-            // 5. Kolejne po kolejnych 10 sekundach - znów odrzucone
+            // 5. Another one 10 seconds later - rejected again
             var t4 = t3.AddSeconds(10);
             Assert.False(limiter.TryWheek(t4));
         }

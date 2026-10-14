@@ -9,12 +9,12 @@ using System.Runtime.InteropServices;
 namespace Cuy
 {
     /// <summary>
-    /// Zarządza ikonami pixel art projektu Cuy (z arkusza assets/icons/icons_16.png).
-    /// Udostępnia m.in. ikonę główki świnki do zasobnika (pig_head) oraz ikony przedmiotów do menu.
+    /// Manages the Cuy pixel art icons (from the assets/icons/icons_16.png sheet).
+    /// Provides the pig head icon for the tray (pig_head) and the item icons for menus, among others.
     /// </summary>
     public static class PetIcons
     {
-        // Indeksy ikon w arkuszu icons_16.png (400x16 px, 25 ikon w rzędzie, każda 16x16 px)
+        // Icon indexes in icons_16.png (400x16 px, 25 icons in a row, each 16x16 px)
         // Hardcoded fallback; replaced by assets/icons/icons.json when it can be read.
         private static Dictionary<string, int> IconIndices = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
         {
@@ -46,7 +46,7 @@ namespace Cuy
             { "pig_head", 24 }
         };
 
-        // Zapasowy base64 dla ikony pig_head (z animations.xml), gwarantujący poprawne działanie zawsze
+        // Fallback base64 for the pig_head icon (from animations.xml), so it always works
         private const string FallbackGlowaSwinkiBase64 =
             "AAABAAEAEBAAAAAAIAAgAQAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAQAAAAEAgGAAAAH/P/YQAAAOdJREFUeJxjYBgFKMBKVvw/Oh+bGDKfBVmi0UKcoZ6BAa7g6IOHYNpaQR4uBlNz7PFLRrgBVlDNclqRDI0Myxls4h1QXLZ3ejiYPrLwAFwNzBAmVE8wwDVzeHaB6Z8fnjIwWuYzfLpxhUHPXARdOQKAXPF9S95/bXEhMP7x9i4Khom/7HHCCBcwAAmCFIAAuiEwPkwO2QAmBjSgIyGMLoRXjgmZs6/UAM4+e+00w99tR8EYxIaBuUGyOC1gADkN5EeY05+c3wp2LogG4ROZ+tj9j24ITAOMjUyjqwcnBmyGYBOHJR6qAgD3dJ+4l2IhiAAAAABJRU5ErkJggg==";
 
@@ -56,7 +56,7 @@ namespace Cuy
         private static readonly Dictionary<string, Bitmap> _cachedBitmaps = new Dictionary<string, Bitmap>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Zwraca obiekt Icon reprezentujący ikonę 'pig_head' z assets/icons/pig_head.ico (lub icons_16.png).
+        /// Returns an Icon for 'pig_head' from assets/icons/pig_head.ico (or icons_16.png).
         /// </summary>
         public static Icon GetTrayIcon()
         {
@@ -82,7 +82,7 @@ namespace Cuy
 
         private static void LoadTrayIcon()
         {
-            // 1. Sprawdź czy plik pig_head.ico istnieje na dysku
+            // 1. Check whether pig_head.ico exists on disk
             string icoPath = FindFile(Path.Combine("assets", "icons", "pig_head.ico"))
                                                     ?? FindFile(Path.Combine("assets", "app-icon", "cuy.ico"));
 
@@ -99,7 +99,7 @@ namespace Cuy
                 catch (Exception ex) { BrainController.Log("[WARN] PetIcons.LoadTrayIcon: " + ex.Message); }
             }
 
-            // 2. Wytnij ikonę nr 24 (pig_head) z arkusza icons_16.png
+            // 2. Cut icon no. 24 (pig_head) out of the icons_16.png sheet
             Bitmap headBmp = GetIconBitmap("pig_head");
             if (headBmp != null)
             {
@@ -116,7 +116,7 @@ namespace Cuy
                 catch (Exception ex) { BrainController.Log("[WARN] PetIcons.LoadTrayIcon: " + ex.Message); }
             }
 
-            // 3. Ostateczny fallback: wbudowany strumień ICO base64
+            // 3. Last fallback: embedded base64 ICO stream
             try
             {
                 byte[] icoBytes = Convert.FromBase64String(FallbackGlowaSwinkiBase64);
@@ -133,7 +133,7 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Zwraca kafelek 16x16 px dla podanej nazwy ikony (np. "hay", "house", "bell_pepper").
+        /// Returns the 16x16 px tile for the given icon name (e.g. "hay", "house", "bell_pepper").
         /// </summary>
         public static Bitmap GetIconBitmap(string iconName)
         {

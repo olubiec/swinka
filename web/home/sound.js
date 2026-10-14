@@ -1,6 +1,6 @@
 /**
- * sound.js — Lekki syntezator retro dźwięków 8-bit Web Audio API.
- * Działa bez zewnętrznych plików audio, natychmiastowe reakcje na kliknięcia.
+ * sound.js — Lightweight 8-bit retro sound synthesiser using the Web Audio API.
+ * Works without audio files, reacts instantly to clicks.
  */
 
 (function (root) {
@@ -26,16 +26,16 @@
     },
     set isMuted(val) {
       isMuted = Boolean(val);
-      try { localStorage.setItem('swinka_muted', isMuted ? '1' : '0'); } catch (e) {}
+      try { localStorage.setItem('cuy_muted', isMuted ? '1' : '0'); } catch (e) {}
     },
 
     init() {
       try {
-        isMuted = localStorage.getItem('swinka_muted') === '1';
+        isMuted = localStorage.getItem('cuy_muted') === '1';
       } catch (e) {}
     },
 
-    // Krótkie kliknięcie przycisku (retro bleep)
+    // Short button click (retro bleep)
     click() {
       if (isMuted) return;
       const ctx = getAudioContext();
@@ -55,7 +55,7 @@
       osc.stop(ctx.currentTime + 0.05);
     },
 
-    // Radosne kwiczenie świnki („KWIII!”)
+    // Happy pig wheek ("WHEEE!")
     wheek() {
       if (isMuted) return;
       const ctx = getAudioContext();
@@ -79,14 +79,14 @@
       osc.stop(t + 0.25);
     },
 
-    // Chrupanie warzywa / siana
+    // Crunching a vegetable / hay
     crunch() {
       if (isMuted) return;
       const ctx = getAudioContext();
       if (!ctx) return;
       const t = ctx.currentTime;
 
-      // 3 szybkie mini chrupnięcia
+      // 3 quick mini crunches
       [0, 0.07, 0.14].forEach((offset) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -104,7 +104,7 @@
       });
     },
 
-    // Zamiatanie / czyszczenie
+    // Sweeping / cleaning
     sweep() {
       if (isMuted) return;
       const ctx = getAudioContext();
@@ -126,7 +126,7 @@
       osc.stop(t + 0.15);
     },
 
-    // Sukces / zdobycie koniczynki
+    // Success / earning clovers
     fanfare() {
       if (isMuted) return;
       const ctx = getAudioContext();

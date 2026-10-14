@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Cuy.Core.AI
 {
     /// <summary>
-    /// Decyzja podjęta przez Brain (Utility AI) – wskazuje animację, czas trwania i dystans ruchu.
+    /// A decision made by the Brain (Utility AI): animation, duration and movement distance.
     /// </summary>
     public sealed class ActionDecision
     {
@@ -28,33 +28,33 @@ namespace Cuy.Core.AI
             Definition = definition;
         }
 
-        /// <summary>Identyfikator czynności z actions.json (np. "spacer", "jedzenie_siana").</summary>
+        /// <summary>Action id from actions.json (e.g. "walk", "eat_hay").</summary>
         public string ActionId { get; }
 
-        /// <summary>Nazwa animacji dla silnika graficznego (np. "walk", "idle", "eat").</summary>
+        /// <summary>Animation name for the renderer (e.g. "walk", "idle", "eat").</summary>
         public string AnimationName { get; }
 
-        /// <summary>Wylosowany czas trwania czynności (z zakresu czas_s).</summary>
+        /// <summary>Random duration of the action (from the duration_s range).</summary>
         public TimeSpan Duration { get; }
 
-        /// <summary>Dystans ruchu w pikselach (dla spaceru z dystans_px, dla czynności stacjonarnych 0).</summary>
+        /// <summary>Movement distance in pixels (from distance_px for a walk, 0 for stationary actions).</summary>
         public int MoveDistancePx { get; }
 
-        /// <summary>Grupa budżetu dnia (np. "chodzenie", "jedzenie_i_picie").</summary>
+        /// <summary>Day budget group (e.g. "walking", "eating_and_drinking").</summary>
         public string Group { get; }
 
-        /// <summary>Wpływ na potrzeby po wykonaniu.</summary>
+        /// <summary>Effect on needs after the action.</summary>
         public IReadOnlyDictionary<string, double> Effects { get; }
 
-        /// <summary>Wartość zysku (utility) wyliczona przez wzór AI.</summary>
+        /// <summary>Utility score computed by the AI formula.</summary>
         public double Score { get; }
 
-        /// <summary>Pełna definicja czynności.</summary>
+        /// <summary>Full action definition.</summary>
         public ActionDefinition Definition { get; }
 
         public override string ToString()
         {
-            return string.Format("{0} ({1}, {2:0.#}s, {3}px, zysk: {4:0.00})",
+            return string.Format("{0} ({1}, {2:0.#}s, {3}px, score: {4:0.00})",
                 ActionId, AnimationName, Duration.TotalSeconds, MoveDistancePx, Score);
         }
     }

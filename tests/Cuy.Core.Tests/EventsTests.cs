@@ -13,7 +13,7 @@ namespace Cuy.Core.Tests
         {
             var nowUtc = new DateTime(2026, 10, 11, 12, 0, 0, DateTimeKind.Utc);
             var clock = new ManualClock(nowUtc);
-            var state = GameState.CreateNew("Świnka", nowUtc);
+            var state = GameState.CreateNew("Cuy", nowUtc);
             var balance = Balance.CreateDefault(); // LowThreshold = 35
             var pet = new Pet(state, clock, balance);
             pet.Start();
@@ -21,12 +21,12 @@ namespace Cuy.Core.Tests
             var receivedEvents = new List<NeedEventArgs>();
             pet.NeedLow += (s, e) => receivedEvents.Add(e);
 
-            // Najedzenie spada z 100 do 36 (jeszcze powyżej progu 35)
+            // Fullness drops from 100 to 36 (still above the 35 threshold)
             pet.ChangeNeed(Need.Satiety, -64);
             Assert.Equal(36.0, pet.Needs.Satiety);
             Assert.Empty(receivedEvents);
 
-            // Spada do 34 (poniżej progu 35)
+            // Drops to 34 (below the 35 threshold)
             pet.ChangeNeed(Need.Satiety, -2);
             Assert.Equal(34.0, pet.Needs.Satiety);
             Assert.Single(receivedEvents);
@@ -39,18 +39,18 @@ namespace Cuy.Core.Tests
         {
             var nowUtc = new DateTime(2026, 10, 11, 12, 0, 0, DateTimeKind.Utc);
             var clock = new ManualClock(nowUtc);
-            var state = GameState.CreateNew("Świnka", nowUtc);
+            var state = GameState.CreateNew("Cuy", nowUtc);
             var pet = new Pet(state, clock);
             pet.Start();
 
             int eventCount = 0;
             pet.NeedLow += (s, e) => eventCount++;
 
-            // Spadek do 30 -> wywołuje pierwsze powiadomienie
+            // Drop to 30 -> raises the first notification
             pet.ChangeNeed(Need.Satiety, -70);
             Assert.Equal(1, eventCount);
 
-            // Dalszy spadek do 25 i 20 -> nie generuje kolejnych NeedLow dopóki nie zresetuje się histereza
+            // Further drops to 25 and 20 -> no more NeedLow until the hysteresis resets
             pet.ChangeNeed(Need.Satiety, -5);
             pet.ChangeNeed(Need.Satiety, -5);
             Assert.Equal(1, eventCount);
@@ -61,32 +61,32 @@ namespace Cuy.Core.Tests
         {
             var nowUtc = new DateTime(2026, 10, 11, 12, 0, 0, DateTimeKind.Utc);
             var clock = new ManualClock(nowUtc);
-            var state = GameState.CreateNew("Świnka", nowUtc);
-            var balance = Balance.CreateDefault(); // LowThreshold = 35, Hysteresis = 5 -> Reset przy >= 40
+            var state = GameState.CreateNew("Cuy", nowUtc);
+            var balance = Balance.CreateDefault(); // LowThreshold = 35, Hysteresis = 5 -> reset at >= 40
             var pet = new Pet(state, clock, balance);
             pet.Start();
 
             int eventCount = 0;
             pet.NeedLow += (s, e) => eventCount++;
 
-            // 1. Spadek do 30 -> pierwsze zdarzenie
+            // 1. Drop to 30 -> first event
             pet.ChangeNeed(Need.Satiety, -70);
             Assert.Equal(1, eventCount);
 
-            // 2. Podnosimy do 38 (powyżej 35, ale MNIEJ niż 35 + 5 = 40)
+            // 2. Raise to 38 (above 35, but LESS than 35 + 5 = 40)
             pet.ChangeNeed(Need.Satiety, +8);
             Assert.Equal(38.0, pet.Needs.Satiety);
 
-            // 3. Spadek ponownie do 32 -> zdarzenie NIE powinno przyjść, bo histereza nie została zresetowana!
+            // 3. Drop again to 32 -> the event should NOT fire, the hysteresis was not reset!
             pet.ChangeNeed(Need.Satiety, -6);
             Assert.Equal(32.0, pet.Needs.Satiety);
             Assert.Equal(1, eventCount);
 
-            // 4. Podnosimy powyżej 40 (np. do 42) -> reset flagi _lowNotified
+            // 4. Raise above 40 (e.g. to 42) -> resets the _lowNotified flag
             pet.ChangeNeed(Need.Satiety, +10);
             Assert.Equal(42.0, pet.Needs.Satiety);
 
-            // 5. Ponowny spadek poniżej 35 (do 33) -> teraz drugie zdarzenie!
+            // 5. Drop below 35 again (to 33) -> now the second event!
             pet.ChangeNeed(Need.Satiety, -9);
             Assert.Equal(33.0, pet.Needs.Satiety);
             Assert.Equal(2, eventCount);
@@ -97,8 +97,8 @@ namespace Cuy.Core.Tests
         {
             var nowUtc = new DateTime(2026, 10, 11, 12, 0, 0, DateTimeKind.Utc);
             var clock = new ManualClock(nowUtc);
-            var state = GameState.CreateNew("Głodomorek", nowUtc);
-            // Stan wczytany z zapisu ma już niskie potrzeby
+            var state = GameState.CreateNew("Nibbles", nowUtc);
+            // A state loaded from a save already has low needs
             state.Needs.Mood = 22.0;
 
             var pet = new Pet(state, clock);
@@ -108,7 +108,7 @@ namespace Cuy.Core.Tests
                 if (e.Need == Need.Mood) received = e;
             };
 
-            // Start zgłasza zaległe zdarzenia
+            // Start raises the pending events
             pet.Start();
 
             Assert.NotNull(received);
@@ -121,8 +121,8 @@ namespace Cuy.Core.Tests
         {
             var birthUtc = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
             var clock = new ManualClock(birthUtc);
-            var state = GameState.CreateNew("Maluch", birthUtc);
-            var balance = Balance.CreateDefault(); // 21 pig days per real day. JuniorFromPigDays = 21 (czyli dokładnie 1 dzień realny)
+            var state = GameState.CreateNew("Pip", birthUtc);
+            var balance = Balance.CreateDefault(); // 21 pig days per real day. JuniorFromPigDays = 21 (exactly 1 real day)
             var pet = new Pet(state, clock, balance);
             pet.Start();
 
@@ -131,13 +131,13 @@ namespace Cuy.Core.Tests
             StageChangedEventArgs? stageEvent = null;
             pet.StageChanged += (s, e) => stageEvent = e;
 
-            // Przesuwamy o 23 godziny gry (jeszcze Maluch: 23/24 * 21 = 20.125 dni świnki < 21)
+            // Move 23 game hours (still Baby: 23/24 * 21 = 20.125 pig days < 21)
             clock.Advance(TimeSpan.FromHours(23));
             pet.Update();
             Assert.Null(stageEvent);
             Assert.Equal(LifeStage.Baby, pet.Stage);
 
-            // Przesuwamy o kolejne 2 godziny (łącznie 25 godzin > 24 godziny realne = 21.875 dni świnki >= 21)
+            // Move another 2 hours (25 hours in total > 24 real hours = 21.875 pig days >= 21)
             clock.Advance(TimeSpan.FromHours(2));
             pet.Update();
 
@@ -152,19 +152,19 @@ namespace Cuy.Core.Tests
         {
             var birthUtc = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
             var clock = new ManualClock(birthUtc);
-            var state = GameState.CreateNew("Świnka", birthUtc);
+            var state = GameState.CreateNew("Cuy", birthUtc);
             var pet = new Pet(state, clock);
             pet.Start();
 
             int eventCount = 0;
             pet.StageChanged += (s, e) => eventCount++;
 
-            // Przeskok do Młodzika (2 dni)
+            // Jump to Junior (2 days)
             clock.Advance(TimeSpan.FromDays(2));
             pet.Update();
             Assert.Equal(1, eventCount);
 
-            // Kolejne aktualizacje w ramach etapu Młodzik (np. dzień 3, 4, 5)
+            // Further updates within the Junior stage (e.g. day 3, 4, 5)
             clock.Advance(TimeSpan.FromDays(1));
             pet.Update();
             clock.Advance(TimeSpan.FromDays(1));
@@ -179,12 +179,12 @@ namespace Cuy.Core.Tests
         {
             var birthUtc = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
             var clock = new ManualClock(birthUtc);
-            var state = GameState.CreateNew("Świnka", birthUtc);
+            var state = GameState.CreateNew("Cuy", birthUtc);
             var pet = new Pet(state, clock);
             pet.Start();
 
-            // Dorosła od 6 miesięcy świnki = 182.625 dni świnki = 8.696 dni realnych
-            // Przesuwamy najpierw do Juniora (2 dni)
+            // Adult from 6 pig months = 182.625 pig days = 8.696 real days
+            // First move to Junior (2 days)
             clock.Advance(TimeSpan.FromDays(2));
             pet.Update();
             Assert.Equal(LifeStage.Junior, pet.Stage);
@@ -192,7 +192,7 @@ namespace Cuy.Core.Tests
             StageChangedEventArgs? toAdultEvent = null;
             pet.StageChanged += (s, e) => toAdultEvent = e;
 
-            // Przesuwamy do 9 dni realnych (9 * 21 = 189 dni świnki > 182.625)
+            // Move to 9 real days (9 * 21 = 189 pig days > 182.625)
             clock.Advance(TimeSpan.FromDays(7));
             pet.Update();
 
@@ -206,11 +206,11 @@ namespace Cuy.Core.Tests
         public void StageChanged_CanSkipStagesAfterLongOffline_OnStart()
         {
             var birthUtc = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
-            var state = GameState.CreateNew("Świnka", birthUtc);
+            var state = GameState.CreateNew("Cuy", birthUtc);
             state.Stage = LifeStage.Baby;
             state.LastActiveUtc = birthUtc;
 
-            // Uruchomienie po 15 dniach realnych (15 * 21 = 315 dni świnki -> Dorosła)
+            // Start after 15 real days (15 * 21 = 315 pig days -> Adult)
             var startUtc = birthUtc.AddDays(15);
             var clock = new ManualClock(startUtc);
             var pet = new Pet(state, clock);

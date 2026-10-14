@@ -1,36 +1,36 @@
 /**
- * canvas-pig.js — Żywa animacja pixel-artowej świnki morskiej na canvasie.
- * Obsługuje:
- * - Arkusz klatek 64x64 px (image-rendering: pixelated)
- * - Dynamiczną zmianę wariantów etapu życia (baby, junior, adult, senior, legend)
- * - Płynne animacje (idle, sniff, eat, popcorn, greet, purr_pet, sleep, yawn itp.)
- * - Reaktywne zachowania, dymki myśli/nastroju, głaskanie kursorem, unoszące się serduszka
- * - Pixel-artowe tło wybiegu / klatki (sianko, drewniane ścianki, paśnik, poidło)
+ * canvas-pig.js — Live pixel art guinea pig animation on a canvas.
+ * Handles:
+ * - A 64x64 px sprite sheet (image-rendering: pixelated)
+ * - Switching life stage variants (baby, junior, adult, senior, legend)
+ * - Smooth animations (idle, sniff, eat, popcorn, greet, purr_pet, sleep, yawn and more)
+ * - Reactive behaviour, thought/mood bubbles, petting with the cursor, floating hearts
+ * - A pixel art run/cage background (hay, wooden walls, hay rack, water bottle)
  */
 
 (function (root) {
   'use strict';
 
-  // Definicje animacji (z animations.json)
+  // Animation definitions (from animations.json)
   const ANIM_DEFS = {
-    idle:        { row: 0,  frames: 16, fps: 8,  loop: true,  opis: "Siedzenie" },
-    sniff:       { row: 1,  frames: 12, fps: 12, loop: true,  opis: "Węszenie" },
-    walk:        { row: 2,  frames: 8,  fps: 10, loop: true,  opis: "Chód" },
-    run:         { row: 3,  frames: 6,  fps: 14, loop: true,  opis: "Bieg" },
-    popcorn:     { row: 4,  frames: 12, fps: 14, loop: false, opis: "Popcorning!" },
-    eat:         { row: 5,  frames: 12, fps: 10, loop: true,  opis: "Jedzenie siana" },
-    eat_treat:   { row: 6,  frames: 10, fps: 10, loop: true,  opis: "Chrupanie smakołyku" },
-    scratch:     { row: 7,  frames: 16, fps: 14, loop: false, opis: "Drapanie za uchem" },
-    lie_down:    { row: 8,  frames: 6,  fps: 8,  loop: false, opis: "Kładzenie się" },
-    sleep:       { row: 9,  frames: 16, fps: 5,  loop: true,  opis: "Sen" },
-    doze:        { row: 10, frames: 8,  fps: 4,  loop: true,  opis: "Drzemka" },
-    wake_up:     { row: 11, frames: 12, fps: 8,  loop: false, opis: "Pobudka" },
-    yawn:        { row: 12, frames: 8,  fps: 8,  loop: false, opis: "Ziewanie" },
-    happy:       { row: 17, frames: 8,  fps: 10, loop: true,  opis: "Zadowolenie" },
-    poop:        { row: 36, frames: 10, fps: 8,  loop: false, opis: "Bobek" },
-    purr_pet:    { row: 40, frames: 8,  fps: 10, loop: true,  opis: "Mruczenie przy głaskaniu" },
-    greet:       { row: 44, frames: 14, fps: 10, loop: false, opis: "Powitanie" },
-    come_called: { row: 45, frames: 10, fps: 10, loop: false, opis: "Na zawołanie" }
+    idle:        { row: 0,  frames: 16, fps: 8,  loop: true,  description: "Sitting" },
+    sniff:       { row: 1,  frames: 12, fps: 12, loop: true,  description: "Sniffing" },
+    walk:        { row: 2,  frames: 8,  fps: 10, loop: true,  description: "Walking" },
+    run:         { row: 3,  frames: 6,  fps: 14, loop: true,  description: "Running" },
+    popcorn:     { row: 4,  frames: 12, fps: 14, loop: false, description: "Popcorning!" },
+    eat:         { row: 5,  frames: 12, fps: 10, loop: true,  description: "Eating hay" },
+    eat_treat:   { row: 6,  frames: 10, fps: 10, loop: true,  description: "Munching a treat" },
+    scratch:     { row: 7,  frames: 16, fps: 14, loop: false, description: "Scratching behind the ear" },
+    lie_down:    { row: 8,  frames: 6,  fps: 8,  loop: false, description: "Lying down" },
+    sleep:       { row: 9,  frames: 16, fps: 5,  loop: true,  description: "Sleeping" },
+    doze:        { row: 10, frames: 8,  fps: 4,  loop: true,  description: "Dozing" },
+    wake_up:     { row: 11, frames: 12, fps: 8,  loop: false, description: "Waking up" },
+    yawn:        { row: 12, frames: 8,  fps: 8,  loop: false, description: "Yawning" },
+    happy:       { row: 17, frames: 8,  fps: 10, loop: true,  description: "Content" },
+    poop:        { row: 36, frames: 10, fps: 8,  loop: false, description: "Poop" },
+    purr_pet:    { row: 40, frames: 8,  fps: 10, loop: true,  description: "Purring while petted" },
+    greet:       { row: 44, frames: 14, fps: 10, loop: false, description: "Greeting" },
+    come_called: { row: 45, frames: 10, fps: 10, loop: false, description: "Coming when called" }
   };
 
   const FRAME_SIZE = 64;
@@ -41,41 +41,41 @@
       this.ctx = this.canvas.getContext('2d');
       this.ctx.imageSmoothingEnabled = false;
 
-      // Rozmiar wirtualnej sceny pixel-art (szeroki kadr pokoiku świnki)
+      // Virtual pixel art scene size (a wide shot of the pig's room)
       this.sceneWidth = 240;
       this.sceneHeight = 130;
       this.canvas.width = this.sceneWidth;
       this.canvas.height = this.sceneHeight;
 
-      // Stan animacji
+      // Animation state
       this.currentAnim = 'idle';
       this.currentFrame = 0;
       this.frameAcc = 0;
       this.animTimer = 0;
-      this.facing = 1; // 1 = w prawo, -1 = w lewo
+      this.facing = 1; // 1 = right, -1 = left
       this.stageKey = 'adult';
 
-      // Pozycja świnki w scenie
+      // Pig position in the scene
       this.pigX = 90;
-      this.pigY = 60; // podłoga na ~119px
+      this.pigY = 60; // floor at ~119px
 
-      // Dymek / powiadomienie
+      // Bubble / notification
       this.bubbleText = 'Kwi-kwi!';
       this.bubbleTimer = 2500;
       this.bubbleVisible = true;
 
-      // Cząsteczki (serduszka, okruszki)
+      // Particles (hearts, crumbs)
       this.particles = [];
 
-      // Arkusze grafik dla wariantów
+      // Sprite sheets for the variants
       this.sheets = {};
       this.iconsImg = null;
       this.isLoaded = false;
 
-      // Licznik bobków
+      // Poop counter
       this.poopCount = 0;
 
-      // Losowe zachowania w bezruchu
+      // Random idle behaviours
       this.idleBehaviorTimer = 4000;
 
       this.initAssets();
@@ -99,7 +99,7 @@
       const onDone = () => {
         pending--;
         if (pending <= 0) {
-          this.showBubble('Jestem gotowa!', 2000);
+          this.showBubble('Ready!', 2000);
         }
       };
       const loadImage = (src) => {
@@ -125,12 +125,12 @@
     }
 
     bindEvents() {
-      // Głaskanie lub klikanie świnki
+      // Petting or clicking the pig
       this.canvas.addEventListener('click', (e) => {
         this.handleCanvasClick(e);
       });
 
-      // Zmiana kursora nad świnką
+      // Change the cursor over the pig
       this.canvas.addEventListener('mousemove', (e) => {
         const rect = this.canvas.getBoundingClientRect();
         const scaleX = this.sceneWidth / rect.width;
@@ -153,23 +153,23 @@
       const x = (e.clientX - rect.left) * scaleX;
       const y = (e.clientY - rect.top) * scaleY;
 
-      // Jeśli kliknięto w bobka, posprzątaj go!
+      // If a poop was clicked, clean it up!
       if (y >= 105 && this.poopCount > 0 && Math.abs(x - (this.pigX - 25)) < 20) {
         if (root.bridge) root.bridge.send({ type: 'clean' });
         if (root.Sound) root.Sound.sweep();
-        this.showBubble('Czysto!', 2000);
+        this.showBubble('Clean!', 2000);
         this.spawnHeart(x, y);
         return;
       }
 
-      // Kliknięcie świnki = głaskanie!
+      // Clicking the pig = petting!
       if (x >= this.pigX - 10 && x <= this.pigX + 74 && y >= this.pigY && y <= this.pigY + 64) {
         this.pet();
       } else {
-        // Kliknięcie obok = świnka odwraca się zaciekawiona
+        // Clicking next to it = the pig turns around, curious
         this.facing = x > this.pigX + 32 ? 1 : -1;
         this.playAnim('sniff', 1800);
-        this.showBubble('Wącham...', 1500);
+        this.showBubble('Sniff sniff...', 1500);
         if (root.Sound) root.Sound.click();
       }
     }
@@ -179,7 +179,7 @@
       this.showBubble('Mruuu... ❤️', 2500);
       if (root.Sound) root.Sound.wheek();
       
-      // Emituj serduszka
+      // Emit hearts
       for (let i = 0; i < 4; i++) {
         setTimeout(() => {
           this.spawnHeart(this.pigX + 20 + Math.random() * 24, this.pigY + 16 + Math.random() * 10);
@@ -244,7 +244,7 @@
         this.poopCount = state.poops;
       }
 
-      // Reakcja na akcję ze stanu
+      // React to an action from the state
       if (state.currentAction && state.currentAction !== this.currentAnim && this.animTimer <= 0) {
         this.playAnim(state.currentAction, 3000);
       }
@@ -261,7 +261,7 @@
     }
 
     update(dt) {
-      // Aktualizacja klatki animacji
+      // Update the animation frame
       const def = ANIM_DEFS[this.currentAnim] || ANIM_DEFS.idle;
       const frameDuration = 1000 / def.fps;
       this.frameAcc += dt;
@@ -274,7 +274,7 @@
           if (def.loop) {
             this.currentFrame = 0;
           } else {
-            // Animacja jednorazowa zakończona
+            // One-shot animation finished
             this.currentFrame = def.frames - 1;
             if (this.animTimer <= 0) {
               this.currentAnim = 'idle';
@@ -284,7 +284,7 @@
         }
       }
 
-      // Timer bieżącej wymuszonej animacji
+      // Timer of the current forced animation
       if (this.animTimer > 0) {
         this.animTimer -= dt;
         if (this.animTimer <= 0 && !def.loop) {
@@ -293,7 +293,7 @@
         }
       }
 
-      // Autonomiczne zachowania w bezruchu (idle behaviors)
+      // Autonomous idle behaviours
       if (this.currentAnim === 'idle') {
         this.idleBehaviorTimer -= dt;
         if (this.idleBehaviorTimer <= 0) {
@@ -306,7 +306,7 @@
             this.showBubble('Drapu-drap...', 1800);
           } else if (r < 0.70) {
             this.playAnim('yawn', 2000);
-            this.showBubble('*ziewa*', 1800);
+            this.showBubble('*yawn*', 1800);
           } else if (r < 0.85) {
             this.facing = this.facing * -1;
             this.playAnim('idle', 1000);
@@ -318,7 +318,7 @@
         }
       }
 
-      // Timer dymka
+      // Bubble timer
       if (this.bubbleTimer > 0) {
         this.bubbleTimer -= dt;
         if (this.bubbleTimer <= 0) {
@@ -326,7 +326,7 @@
         }
       }
 
-      // Aktualizacja cząsteczek
+      // Update particles
       for (let i = this.particles.length - 1; i >= 0; i--) {
         const p = this.particles[i];
         p.x += p.vx;
@@ -342,29 +342,29 @@
       const ctx = this.ctx;
       ctx.clearRect(0, 0, this.sceneWidth, this.sceneHeight);
 
-      // --- 1. TŁO WYBIEGU / POKOIKU ŚWINKI (Pixel Art Habitat) ---
+      // --- 1. RUN / ROOM BACKGROUND (pixel art habitat) ---
       this.drawHabitat(ctx);
 
-      // --- 2. BOBKI NA WYBIEGU (jeśli są) ---
+      // --- 2. POOPS IN THE RUN (if any) ---
       this.drawPoops(ctx);
 
-      // --- 3. AKCESORIA / PAŚNIK / POIDŁO ---
+      // --- 3. ACCESSORIES / HAY RACK / WATER BOTTLE ---
       this.drawProps(ctx);
 
-      // --- 4. ŚWINKA MORSKA (z arkusza) ---
+      // --- 4. THE GUINEA PIG (from the sprite sheet) ---
       this.drawPig(ctx);
 
-      // --- 5. CZĄSTECZKI (serduszka, okruszki) ---
+      // --- 5. PARTICLES (hearts, crumbs) ---
       this.drawParticles(ctx);
 
-      // --- 6. DYMEK MYŚLI / NASTROJU ---
+      // --- 6. THOUGHT / MOOD BUBBLE ---
       if (this.bubbleVisible) {
         this.drawSpeechBubble(ctx);
       }
     }
 
     drawHabitat(ctx) {
-      // Drewniana ściana z desek (panele)
+      // Wooden plank wall (panels)
       const woodDark = '#6e4424';
       const woodMid = '#9c6636';
       const woodLight = '#c98d50';
@@ -373,27 +373,27 @@
       ctx.fillStyle = woodMid;
       ctx.fillRect(0, 0, this.sceneWidth, 96);
 
-      // Pionowe deski na ścianie
+      // Vertical planks on the wall
       ctx.fillStyle = woodDark;
       for (let x = 0; x < this.sceneWidth; x += 30) {
         ctx.fillRect(x, 0, 2, 96);
       }
-      // Pozioma listwa ścienna
+      // Horizontal wall trim
       ctx.fillStyle = woodLight;
       ctx.fillRect(0, 36, this.sceneWidth, 4);
       ctx.fillStyle = woodDark;
       ctx.fillRect(0, 40, this.sceneWidth, 1);
 
-      // Podłoga ze słomą i siankiem (główna przestrzeń życiowa)
+      // Floor with straw and hay (the main living space)
       const floorY = 96;
-      ctx.fillStyle = '#eedb7c'; // jasne sianko
+      ctx.fillStyle = '#eedb7c'; // light hay
       ctx.fillRect(0, floorY, this.sceneWidth, this.sceneHeight - floorY);
 
-      // Cień pod listwą
+      // Shadow under the trim
       ctx.fillStyle = '#cdb556';
       ctx.fillRect(0, floorY, this.sceneWidth, 4);
 
-      // Pixelowe źdźbła siana na podłodze
+      // Pixel hay strands on the floor
       ctx.fillStyle = '#cdb556';
       const haySpots = [
         [15, 102], [35, 115], [75, 106], [120, 118], [150, 105],
@@ -410,53 +410,53 @@
     }
 
     drawProps(ctx) {
-      // Drewniany paśnik po lewej stronie z zielonym i żółtym siankiem
+      // Wooden hay rack on the left with green and yellow hay
       ctx.fillStyle = '#6e4424';
       ctx.fillRect(8, 48, 28, 52);
       ctx.fillStyle = '#9c6636';
       ctx.fillRect(10, 50, 24, 48);
 
-      // Siano w paśniku
+      // Hay in the rack
       ctx.fillStyle = '#cdb556';
       ctx.fillRect(12, 54, 20, 38);
       ctx.fillStyle = '#eedb7c';
       ctx.fillRect(14, 56, 16, 20);
-      ctx.fillStyle = '#7fbf4a'; // zielone listki
+      ctx.fillStyle = '#7fbf4a'; // green leaves
       ctx.fillRect(16, 60, 6, 6);
       ctx.fillRect(20, 70, 8, 4);
 
-      // Drewniane szczebelki paśnika
+      // Wooden bars of the hay rack
       ctx.fillStyle = '#3a1d17';
       for (let y = 56; y <= 88; y += 8) {
         ctx.fillRect(8, y, 28, 2);
       }
 
-      // Poidło po prawej stronie (butelka z wodą)
+      // Water bottle on the right
       const bx = this.sceneWidth - 24;
       ctx.fillStyle = '#2c5490';
       ctx.fillRect(bx, 28, 14, 40);
-      ctx.fillStyle = '#7fbaf0'; // woda
+      ctx.fillStyle = '#7fbaf0'; // water
       ctx.fillRect(bx + 2, 34, 10, 32);
-      ctx.fillStyle = '#c4e6ff'; // refleks światła
+      ctx.fillStyle = '#c4e6ff'; // light reflection
       ctx.fillRect(bx + 3, 36, 2, 26);
 
-      // Rurka poidła
+      // Bottle spout
       ctx.fillStyle = '#8c8479';
       ctx.fillRect(bx - 4, 70, 6, 3);
       ctx.fillStyle = '#dcd6cd';
       ctx.fillRect(bx - 6, 73, 4, 4);
-      // Kropelka wody
+      // Water drop
       ctx.fillStyle = '#7fbaf0';
       ctx.fillRect(bx - 5, 80, 2, 3);
 
-      // Metalowy uchwyt
+      // Metal holder
       ctx.fillStyle = '#3a1d17';
       ctx.fillRect(bx - 2, 44, 18, 3);
     }
 
     drawPoops(ctx) {
       if (this.poopCount <= 0 || !this.iconsImg || !this.iconsImg.naturalWidth) return;
-      // Rysuj małe bobki z ikony bobek (#10) na podłodze
+      // Draw small poops from the poop icon (#10) on the floor
       const count = Math.min(8, this.poopCount);
       const startX = this.pigX - 35;
       for (let i = 0; i < count; i++) {
@@ -482,7 +482,7 @@
     drawPig(ctx) {
       const sheet = this.usableSheet();
       if (!sheet) {
-        // Fallback placeholder dopóki się ładuje
+        // Placeholder while loading
         ctx.fillStyle = '#e98c42';
         ctx.fillRect(this.pigX + 10, this.pigY + 30, 44, 28);
         return;
@@ -494,13 +494,13 @@
 
       ctx.save();
 
-      // Cień pod świnką
+      // Shadow under the pig
       ctx.fillStyle = 'rgba(70, 45, 30, 0.45)';
       ctx.beginPath();
       ctx.ellipse(this.pigX + 32, this.pigY + 59, 22, 6, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Rysowanie klatki świnki z ewentualnym lustrzanym odbiciem
+      // Draw the pig frame, mirrored if needed
       if (this.facing < 0) {
         ctx.translate(this.pigX + FRAME_SIZE, this.pigY);
         ctx.scale(-1, 1);
@@ -515,7 +515,7 @@
     drawParticles(ctx) {
       this.particles.forEach((p) => {
         if (p.type === 'heart') {
-          // Pixel-artowe serduszko
+          // Pixel art heart
           ctx.fillStyle = `rgba(232, 86, 76, ${p.life})`;
           const x = Math.round(p.x);
           const y = Math.round(p.y);
@@ -541,23 +541,23 @@
       const bw = Math.max(60, textWidth + 14);
       const bh = 22;
 
-      // Cień dymka
+      // Bubble shadow
       ctx.fillStyle = '#2b1712';
       ctx.fillRect(bx + 1, by + 1, bw, bh);
 
-      // Obwódka i wnętrze w stylu retro RPG
+      // Outline and fill in a retro RPG style
       ctx.fillStyle = '#fffdf8';
       ctx.fillRect(bx, by, bw, bh);
       ctx.fillStyle = '#3a1d17';
       ctx.strokeRect(bx + 0.5, by + 0.5, bw - 1, bh - 1);
 
-      // Dzióbek dymka
+      // Bubble tail
       ctx.fillStyle = '#fffdf8';
       ctx.fillRect(bx + 20, by + bh - 1, 6, 4);
       ctx.fillStyle = '#3a1d17';
       ctx.fillRect(bx + 19, by + bh + 3, 2, 2);
 
-      // Tekst dymka
+      // Bubble text
       ctx.fillStyle = '#2b1712';
       ctx.fillText(text, bx + 7, by + 15);
     }

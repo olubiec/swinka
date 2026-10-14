@@ -2,10 +2,10 @@
 <animations xmlns="https://esheep.petrucci.ch/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://esheep.petrucci.ch/ https://raw.githubusercontent.com/Adrianotiger/desktopPet/master/Resources/animations.xsd">
   <header>
     <author>Mateusz</author>
-    <title>Świnka na pulpit</title>
-    <petname>Świnka</petname>
+    <title>Cuy</title>
+    <petname>Cuy</petname>
     <version>1.0</version>
-    <info>Świnka morska na pulpicie Windows - budżet dnia A5 (spokojny odpoczynek, jedzenie, krótkie spacery)</info>
+    <info>A guinea pig on the Windows desktop - A5 day budget (calm rest, eating, short walks)</info>
     <application>1</application>
     <icon><![CDATA[AAABAAEAEBAAAAAAIAAgAQAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAQAAAAEAgGAAAAH/P/YQAAAOdJREFUeJxjYBgFKMBKVvw/Oh+bGDKfBVmi0UKcoZ6BAa7g6IOHYNpaQR4uBlNz7PFLRrgBVlDNclqRDI0Myxls4h1QXLZ3ejiYPrLwAFwNzBAmVE8wwDVzeHaB6Z8fnjIwWuYzfLpxhUHPXARdOQKAXPF9S95/bXEhMP7x9i4Khom/7HHCCBcwAAmCFIAAuiEwPkwO2QAmBjSgIyGMLoRXjgmZs6/UAM4+e+00w99tR8EYxIaBuUGyOC1gADkN5EeY05+c3wp2LogG4ROZ+tj9j24ITAOMjUyjqwcnBmyGYBOHJR6qAgD3dJ+4l2IhiAAAAABJRU5ErkJggg==]]></icon>
   </header>
@@ -16,7 +16,7 @@
     <transparency>Magenta</transparency>
   </image>
   <spawns>
-    <!-- Miejsca pojawiania się świnki na ekranie -->
+    <!-- Where the pig appears on screen -->
     <spawn id="1" probability="50">
       <x>random*(screenW-imageW-50)/100+25</x>
       <y>areaH-imageH</y>
@@ -34,7 +34,7 @@
     </spawn>
   </spawns>
   <animations>
-    <!-- ID 1: walk (chód: odcinek 48-96 px w 2.4-4.8 s, po nim ZAWSZE postój min. 20s) -->
+    <!-- ID 1: walk (walking: 48-96 px over 2.4-4.8 s, ALWAYS followed by a stop of at least 20 s) -->
     <animation id="1">
       <name>walk</name>
       <start>
@@ -60,7 +60,7 @@
         <frame>37</frame>
         <frame>38</frame>
         <frame>39</frame>
-        <!-- Wymóg: po chodzeniu ZAWSZE postój co najmniej 20 s (przejście do idle) -->
+        <!-- Rule: after walking ALWAYS stop for at least 20 s (go to idle) -->
         <next probability="100" only="none">3</next>
       </sequence>
       <border>
@@ -72,7 +72,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 2: turn (obrót: zmiana kierunku przez lustrzane odbicie flip, potem postój idle) -->
+    <!-- ID 2: turn (turn: change direction with a mirror flip, then idle) -->
     <animation id="2">
       <name>turn</name>
       <start>
@@ -102,7 +102,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 3: idle (odpoczynek: 20-58 s, drgający nosek, oddech, rozglądanie) -->
+    <!-- ID 3: idle (rest: 20-58 s, twitching nose, breathing, looking around) -->
     <animation id="3">
       <name>idle</name>
       <start>
@@ -152,7 +152,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 4: drag (trzymanie myszką podczas przeciągania) -->
+    <!-- ID 4: drag (held by the mouse while dragging) -->
     <animation id="4">
       <name>drag</name>
       <start>
@@ -182,7 +182,7 @@
       </sequence>
     </animation>
 
-    <!-- ID 18: held (alias nazwy dla przeciągania) -->
+    <!-- ID 18: held (name alias for dragging) -->
     <animation id="18">
       <name>held</name>
       <start>
@@ -212,8 +212,8 @@
       </sequence>
     </animation>
 
-    <!-- ID 5: fall (swobodne opadanie w dół) -->
-    <!-- Reguła: Po upadku ZAWSZE lądowanie (land ID 20) -->
+    <!-- ID 5: fall (free fall downwards) -->
+    <!-- Rule: a fall is ALWAYS followed by a landing (land ID 20) -->
     <animation id="5">
       <name>fall</name>
       <start>
@@ -242,7 +242,7 @@
       </border>
     </animation>
 
-    <!-- ID 8: toss (lot po dynamicznym rzucie myszką) -->
+    <!-- ID 8: toss (flying after a fast mouse throw) -->
     <animation id="8">
       <name>toss</name>
       <start>
@@ -271,7 +271,7 @@
       </border>
     </animation>
 
-    <!-- ID 9: fall soft (miękkie lądowanie) -->
+    <!-- ID 9: fall soft (soft landing) -->
     <animation id="9">
       <name>fall soft</name>
       <start>
@@ -302,7 +302,7 @@
       </sequence>
     </animation>
 
-    <!-- ID 10: fall hard (twarde lądowanie) -->
+    <!-- ID 10: fall hard (hard landing) -->
     <animation id="10">
       <name>fall hard</name>
       <start>
@@ -333,7 +333,7 @@
       </sequence>
     </animation>
 
-    <!-- ID 20: land (animacja lądowania po opadnięciu na podłoże) -->
+    <!-- ID 20: land (landing animation after reaching the ground) -->
     <animation id="20">
       <name>land</name>
       <start>
@@ -364,7 +364,7 @@
       </sequence>
     </animation>
 
-    <!-- ID 7: run (szybki bieg / zoomies: 4 px/klatka, bardzo rzadko) -->
+    <!-- ID 7: run (fast run / zoomies: 4 px per frame, very rare) -->
     <animation id="7">
       <name>run</name>
       <start>
@@ -399,7 +399,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 21: sniff (węszenie: 4.8 - 7.2 s, nosek i wąsy pracują) -->
+    <!-- ID 21: sniff (sniffing: 4.8 - 7.2 s, nose and whiskers working) -->
     <animation id="21">
       <name>sniff</name>
       <start>
@@ -438,7 +438,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 22: scratch (drapanie tylną łapką za uchem, ok. co 20 min) -->
+    <!-- ID 22: scratch (scratching behind the ear with a hind paw, about every 20 min) -->
     <animation id="22">
       <name>scratch</name>
       <start>
@@ -479,7 +479,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 23: eat (jedzenie siana: 20-79 s, ok. 28% czasu) -->
+    <!-- ID 23: eat (eating hay: 20-79 s, about 28% of the time) -->
     <animation id="23">
       <name>eat</name>
       <start>
@@ -517,7 +517,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 29: eat_treat (chrupanie warzywka / smakołyku: 10 klatek, 10 FPS, rząd 6) -->
+    <!-- ID 29: eat_treat (munching a vegetable / treat: 10 frames, 10 FPS, row 6) -->
     <animation id="29">
       <name>eat_treat</name>
       <start>
@@ -552,8 +552,8 @@
       </gravity>
     </animation>
 
-    <!-- ID 24: popcorn (popcorning: 1.8 s, radosny podskok, b. rzadko 1-3 na dobę) -->
-    <!-- Reguła: Popcorn nie może wystąpić dwa razy pod rząd (przejście wyłącznie do idle) -->
+    <!-- ID 24: popcorn (popcorning: 1.8 s, happy jump, rare: 1-3 a day) -->
+    <!-- Rule: popcorn never twice in a row (goes to idle only) -->
     <animation id="24">
       <name>popcorn</name>
       <start>
@@ -590,8 +590,8 @@
       </gravity>
     </animation>
 
-    <!-- ID 25: wheek (kwiczenie: 2.0 s, b. rzadko) -->
-    <!-- Reguła: Wheek nie może wystąpić dwa razy pod rząd (przejście wyłącznie do idle) -->
+    <!-- ID 25: wheek (wheeking: 2.0 s, rare) -->
+    <!-- Rule: wheek never twice in a row (goes to idle only) -->
     <animation id="25">
       <name>wheek</name>
       <start>
@@ -626,7 +626,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 26: doze (drzemka: 1-2.6 min, spokojne leżenie z półotwartymi oczami) -->
+    <!-- ID 26: doze (doze: 1-2.6 min, lying calmly with half-open eyes) -->
     <animation id="26">
       <name>doze</name>
       <start>
@@ -659,7 +659,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 27: purr_pet (mruczenie przy głaskaniu: serduszka, rozluźnienie) -->
+    <!-- ID 27: purr_pet (purring while petted: hearts, relaxed) -->
     <animation id="27">
       <name>purr_pet</name>
       <start>
@@ -692,7 +692,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 28: poop (robienie bobka: przysiada, zostawia bobek i idzie dalej) -->
+    <!-- ID 28: poop (pooping: squats, leaves a poop and walks on) -->
     <animation id="28">
       <name>poop</name>
       <start>
@@ -727,7 +727,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 12: lie_down (kładzenie się na brzuchu przed snem) -->
+    <!-- ID 12: lie_down (lying down on the belly before sleep) -->
     <animation id="12">
       <name>lie_down</name>
       <start>
@@ -758,7 +758,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 13: sleep (głęboki sen: powolny oddech, zzz) -->
+    <!-- ID 13: sleep (deep sleep: slow breathing, zzz) -->
     <animation id="13">
       <name>sleep</name>
       <start>
@@ -800,7 +800,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 14: wake_up (wybudzanie: przeciąganie, ziewnięcie z ząbkami) -->
+    <!-- ID 14: wake_up (waking up: stretch, yawn showing teeth) -->
     <animation id="14">
       <name>wake_up</name>
       <start>
@@ -837,7 +837,7 @@
       </gravity>
     </animation>
 
-    <!-- ID 15: kill (zamykanie programu z płynnym zanikaniem) -->
+    <!-- ID 15: kill (closing the program with a smooth fade) -->
     <animation id="15">
       <name>kill</name>
       <start>
@@ -867,7 +867,7 @@
       </sequence>
     </animation>
 
-    <!-- ID 16: sync (synchronizacja / reset) -->
+    <!-- ID 16: sync (sync / reset) -->
     <animation id="16">
       <name>sync</name>
       <start>

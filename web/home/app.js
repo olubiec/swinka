@@ -1,13 +1,13 @@
 /**
- * app.js — Główny kontroler interfejsu Domku Świnki.
- * Łączy most (bridge.js), animację canvas (canvas-pig.js), dźwięki (sound.js)
- * oraz dynamiczny ekran potrzeb, paski, przyciski i okienka.
+ * app.js — Main controller of the Cuy Home interface.
+ * Ties together the bridge (bridge.js), the canvas animation (canvas-pig.js), sounds (sound.js)
+ * and the dynamic needs screen, bars, buttons and dialogs.
  */
 
 (function () {
   'use strict';
 
-  // Referencje do elementów DOM
+  // DOM element references
   let canvasPig = null;
   const elements = {
     petName: document.getElementById('petName'),
@@ -17,7 +17,7 @@
     cloverCount: document.getElementById('cloverCount'),
     healthPercent: document.getElementById('healthPercent'),
     
-    // Paski potrzeb
+    // Need bars
     bars: {
       fullness:    { fill: document.getElementById('barFullness'),    val: document.getElementById('valFullness') },
       vitaminC:    { fill: document.getElementById('barVitaminC'),    val: document.getElementById('valVitaminC') },
@@ -27,7 +27,7 @@
       teeth:       { fill: document.getElementById('barTeeth'),       val: document.getElementById('valTeeth') }
     },
 
-    // Przyciski akcji
+    // Action buttons
     btnFeed: document.getElementById('btnFeed'),
     btnClean: document.getElementById('btnClean'),
     btnCall: document.getElementById('btnCall'),
@@ -35,14 +35,14 @@
     btnMinigames: document.getElementById('btnMinigames'),
     btnAlbum: document.getElementById('btnAlbum'),
 
-    // Szuflada jedzenia
+    // Food drawer
     foodDrawer: document.getElementById('foodDrawer'),
     foodBtns: document.querySelectorAll('.food-item-btn'),
     foodQtyBellPepper: document.getElementById('foodQtyBellPepper'),
     foodQtyCarrot: document.getElementById('foodQtyCarrot'),
     foodQtyPellets: document.getElementById('foodQtyPellets'),
 
-    // Górne kontrolki
+    // Top controls
     btnSound: document.getElementById('btnSound'),
     btnDevTest: document.getElementById('btnDevTest'),
     btnClose: document.getElementById('btnClose'),
@@ -54,20 +54,20 @@
     modalCloseBtn: document.getElementById('modalCloseBtn')
   };
 
-  // Inicjalizacja aplikacji
+  // App initialisation
   function init() {
-    // Ustawienie arkusza ikon z assets w zależności od WebView2 / zwykłej przeglądarki
+    // Set the icon sheet from assets depending on WebView2 / a normal browser
     const isWebView = !!(window.chrome && window.chrome.webview);
     const iconsUrl = isWebView ? 'https://cuy.assets/icons/icons_16.png' : '../../assets/icons/icons_16.png';
     document.documentElement.style.setProperty('--icons-sheet', `url('${iconsUrl}')`);
 
-    // Inicjalizacja canvasu ze świnką
+    // Initialise the pig canvas
     const canvasEl = document.getElementById('pigCanvas');
     if (canvasEl && window.PigCanvas) {
       canvasPig = new window.PigCanvas(canvasEl);
     }
 
-    // Podpięcie nasłuchiwania mostu (działa zarówno w WebView2 jak i w Mocku)
+    // Hook up the bridge listener (works both in WebView2 and in the mock)
     if (window.bridge) {
       window.bridge.onState(updateStateUI);
     }
@@ -76,40 +76,40 @@
     updateSoundButtonUI();
   }
 
-  // Aktualizacja interfejsu przy każdej zmianie stanu gry
+    // Update the UI on every game state change
   function updateStateUI(state) {
     if (!state) return;
 
-    // Profil świnki
-    if (elements.petName) elements.petName.textContent = state.name || 'Świnka';
+    // Pig profile
+    if (elements.petName) elements.petName.textContent = state.name || 'Cuy';
     if (elements.petAge) {
-      elements.petAge.textContent = state.age?.text ? `Wiek: ${state.age.text}` : 'Wiek: 1 rok';
+      elements.petAge.textContent = state.age?.text ? `Age: ${state.age.text}` : 'Age: 1 day';
     }
 
-    // Etap życia
+    // Life stage
     if (elements.stageBadge) {
-      const stageName = state.stageName || 'Dorosła';
+      const stageName = state.stageName || 'Baby';
       const stageKey = state.stageKey || 'adult';
       elements.stageBadge.textContent = getStageIcon(stageKey) + ' ' + stageName;
       elements.stageBadge.className = `stage-badge stage-${stageKey}`;
     }
 
-    // Więź
+    // Bond
     if (elements.bondIndicator && state.bond) {
-      elements.bondIndicator.textContent = `❤️ Więź: Poz. ${state.bond.level}`;
+      elements.bondIndicator.textContent = `❤️ Bond: Lv. ${state.bond.level}`;
     }
 
-    // Koniczynki (waluta)
+    // Clovers (currency)
     if (elements.cloverCount) {
       elements.cloverCount.textContent = state.clovers ?? 0;
     }
 
-    // Zdrowie ogólne
+    // Overall health
     if (elements.healthPercent && state.needs?.health !== undefined) {
       elements.healthPercent.textContent = `${Math.round(state.needs.health)}%`;
     }
 
-    // Paski 6 potrzeb z dynamicznymi kolorami zależnymi od poziomu
+    // The 6 need bars with level-dependent colours
     if (state.needs) {
       updateNeedBar('fullness', state.needs.fullness);
       updateNeedBar('vitaminC', state.needs.vitaminC);
@@ -119,14 +119,14 @@
       updateNeedBar('teeth', state.needs.teeth);
     }
 
-    // Ekwipunek w szufladzie karmienia
+    // Inventory in the food drawer
     if (state.inventory) {
-      if (elements.foodQtyBellPepper) elements.foodQtyBellPepper.textContent = `${state.inventory.bell_pepper || 0} szt.`;
-      if (elements.foodQtyCarrot) elements.foodQtyCarrot.textContent = `${state.inventory.carrot || 0} szt.`;
-      if (elements.foodQtyPellets) elements.foodQtyPellets.textContent = `${state.inventory.pellets || 0} szt.`;
+      if (elements.foodQtyBellPepper) elements.foodQtyBellPepper.textContent = `x${state.inventory.bell_pepper || 0}`;
+      if (elements.foodQtyCarrot) elements.foodQtyCarrot.textContent = `x${state.inventory.carrot || 0}`;
+      if (elements.foodQtyPellets) elements.foodQtyPellets.textContent = `x${state.inventory.pellets || 0}`;
     }
 
-    // Aktualizacja canvasu
+    // Update the canvas
     if (canvasPig) {
       canvasPig.updateState(state);
     }
@@ -143,8 +143,8 @@
     }
   }
 
-  // Aktualizacja pojedynczego paska potrzeby:
-  // Kolor zależny od poziomu: >65% zielony, 35-65% żółty, <35% czerwony (ostrzegawczy)
+  // Update a single need bar:
+  // Colour by level: >65% green, 35-65% yellow, <35% red (warning)
   function updateNeedBar(key, rawValue) {
     const bar = elements.bars[key];
     if (!bar || !bar.fill) return;
@@ -163,19 +163,19 @@
     }
   }
 
-  // Obsługa przycisków interfejsu
+  // UI button handlers
   function bindButtons() {
-    // 1. NAKARM — wysuwa podręczną szufladę z jedzeniem
+    // 1. FEED — opens the slide-out food drawer
     elements.btnFeed?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
       const isActive = elements.foodDrawer.classList.toggle('active');
       if (isActive && canvasPig) {
         canvasPig.playAnim('beg', 2000);
-        canvasPig.showBubble('Daj paprykę! Kwii!', 2000);
+        canvasPig.showBubble('Bell pepper please! Wheee!', 2000);
       }
     });
 
-    // Kliknięcie konkretnego jedzenia w szufladzie
+    // Clicking a food item in the drawer
     elements.foodBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const food = btn.dataset.food;
@@ -183,14 +183,14 @@
 
         if (food !== 'hay' && state?.inventory && (state.inventory[food] || 0) <= 0) {
           if (window.Sound) window.Sound.click();
-          if (canvasPig) canvasPig.showBubble(`Brak ${food}! Kup w sklepiku!`, 2200);
+          if (canvasPig) canvasPig.showBubble(`No ${food} left! Buy some in the shop!`, 2200);
           return;
         }
 
         if (window.Sound) window.Sound.crunch();
         if (canvasPig) {
           canvasPig.playAnim(food === 'hay' ? 'eat' : 'eat_treat', 3500);
-          canvasPig.showBubble('Mniam! Chrup-chrup!', 2500);
+          canvasPig.showBubble('Yum! Crunch crunch!', 2500);
           canvasPig.spawnCrunch(canvasPig.pigX + 40, canvasPig.pigY + 50);
         }
 
@@ -202,12 +202,12 @@
       });
     });
 
-    // 2. POSPRZĄTAJ — czyści klatkę i bobki, +1 koniczynka
+    // 2. CLEAN — cleans the cage and poops, +1 clover
     elements.btnClean?.addEventListener('click', () => {
       if (window.Sound) window.Sound.sweep();
       if (canvasPig) {
         canvasPig.playAnim('happy', 2500);
-        canvasPig.showBubble('Czysto i pachnąco! ✨', 2500);
+        canvasPig.showBubble('All clean and fresh! ✨', 2500);
         canvasPig.spawnHeart(canvasPig.pigX + 32, canvasPig.pigY + 20);
       }
 
@@ -216,12 +216,12 @@
       }
     });
 
-    // 3. ZAWOŁAJ — świnka reaguje radosnym kwikiem i podbiega
+    // 3. CALL — the pig answers with a happy wheek and runs over
     elements.btnCall?.addEventListener('click', () => {
       if (window.Sound) window.Sound.wheek();
       if (canvasPig) {
         canvasPig.playAnim('greet', 3000);
-        canvasPig.showBubble('KWIIII! Jestem! ❤️', 2800);
+        canvasPig.showBubble('WHEEEE! I\'m here! ❤️', 2800);
         for (let i = 0; i < 3; i++) {
           setTimeout(() => {
             canvasPig.spawnHeart(canvasPig.pigX + 20 + Math.random() * 25, canvasPig.pigY + 15);
@@ -234,28 +234,28 @@
       }
     });
 
-    // 4. SKLEPIK — otwiera retro modal sklepiku
+    // 4. SHOP — opens the retro shop dialog
     elements.btnShop?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
       if (window.bridge) window.bridge.send({ type: 'buy' });
       openShopModal();
     });
 
-    // 5. MINIGRY — otwiera retro modal minigier
+    // 5. GAMES — opens the retro minigames dialog
     elements.btnMinigames?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
       if (window.bridge) window.bridge.send({ type: 'play' });
       openMinigamesModal();
     });
 
-    // 6. ALBUM — otwiera retro modal naklejek zachowań
+    // 6. ALBUM — opens the retro behaviour sticker dialog
     elements.btnAlbum?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
       if (window.bridge) window.bridge.send({ type: 'album' });
       openAlbumModal();
     });
 
-    // Dźwięk włącz/wyłącz
+    // Sound on/off
     elements.btnSound?.addEventListener('click', () => {
       if (window.Sound) {
         window.Sound.isMuted = !window.Sound.isMuted;
@@ -264,13 +264,13 @@
       }
     });
 
-    // Panel testowy (Mock / Dev)
+    // Test panel (mock / dev)
     elements.btnDevTest?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
       openDevTestModal();
     });
 
-    // Zamknięcie okna (w WebView2 lub ukrycie)
+    // Close the window (in WebView2) or hide it
     elements.btnClose?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
       if (window.Minigry && window.Minigry.activeGame) {
@@ -279,17 +279,17 @@
       if (window.bridge && window.bridge.isWebView2) {
         window.bridge.send({ type: 'settings', action: 'close' });
       } else {
-        if (canvasPig) canvasPig.showBubble('Do zobaczenia! Pa-pa!', 2000);
+        if (canvasPig) canvasPig.showBubble('See you soon! Bye!', 2000);
       }
     });
 
-    // Zamknięcie modala
+    // Close the dialog
     elements.modalCloseBtn?.addEventListener('click', closeModal);
     elements.modalBackdrop?.addEventListener('click', (e) => {
       if (e.target === elements.modalBackdrop) closeModal();
     });
 
-    // Klawisz Escape: zamyka otwarty modal lub zamyka okno Domku
+    // Escape: closes an open dialog or the Home window
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         if (elements.modalBackdrop && elements.modalBackdrop.classList.contains('active')) {
@@ -304,7 +304,7 @@
   function updateSoundButtonUI() {
     if (!elements.btnSound || !window.Sound) return;
     elements.btnSound.textContent = window.Sound.isMuted ? '🔇' : '🔊';
-    elements.btnSound.title = window.Sound.isMuted ? 'Włącz dźwięki' : 'Wycisz dźwięki';
+    elements.btnSound.title = window.Sound.isMuted ? 'Turn sounds on' : 'Mute sounds';
   }
 
   // --- MODALE ---
@@ -324,23 +324,23 @@
     elements.modalBackdrop.classList.remove('active');
   }
 
-  // Modal Sklepiku
+  // Shop dialog
   function openShopModal() {
     const state = window.bridge ? window.bridge.getState() : null;
     const clovers = state?.clovers || 0;
 
     const items = [
-      { id: 'bell_pepper', name: 'Papryka',          price: 12, icon: 'icon-bell-pepper',   desc: 'Dużo witaminy C' },
-      { id: 'carrot',      name: 'Marchewka',        price: 10, icon: 'icon-carrot', desc: 'Chrupanie i ząbki' },
-      { id: 'pellets',   name: 'Granulat',         price: 5,  icon: 'icon-pellets',  desc: 'Sycący posiłek' },
-      { id: 'chew_stick', name: 'Gryzak z gałązki', price: 20, icon: 'icon-chew-stick',    desc: 'Ściera ząbki świnki' },
-      { id: 'house',      name: 'Ciepły domek',     price: 250,icon: 'icon-house',     desc: 'Wygodne schronienie' },
-      { id: 'tunnel',     name: 'Miękki tunel',     price: 200,icon: 'icon-tunnel',     desc: 'Zabawa i bieganie' }
+      { id: 'bell_pepper', name: 'Bell pepper',      price: 12, icon: 'icon-bell-pepper',   desc: 'Lots of vitamin C' },
+      { id: 'carrot',      name: 'Carrot',           price: 10, icon: 'icon-carrot', desc: 'Crunchy, good for teeth' },
+      { id: 'pellets',   name: 'Pellets',          price: 5,  icon: 'icon-pellets',  desc: 'A filling meal' },
+      { id: 'chew_stick', name: 'Chew stick',      price: 20, icon: 'icon-chew-stick',    desc: 'Wears down the teeth' },
+      { id: 'house',      name: 'Cosy house',       price: 250,icon: 'icon-house',     desc: 'A comfy hideout' },
+      { id: 'tunnel',     name: 'Soft tunnel',      price: 200,icon: 'icon-tunnel',     desc: 'For play and zoomies' }
     ];
 
     let html = `
       <div style="display:flex; justify-content:space-between; align-items:center; background:#2b1712; color:#eedb7c; padding:6px 10px; border-radius:4px;">
-        <span>Twoje koniczynki:</span>
+        <span>Your clovers:</span>
         <b style="font-size:15px;"><span class="pixel-icon icon-clover"></span> ${clovers} 🍀</b>
       </div>
       <div class="shop-grid">
@@ -362,9 +362,9 @@
     });
 
     html += `</div>`;
-    openModal('🏪 Sklepik U Świnki', html);
+    openModal('🏪 Pig Shop', html);
 
-    // Obsługa zakupu
+    // Handle a purchase
     elements.modalBody.querySelectorAll('button[data-buy]').forEach(b => {
       b.addEventListener('click', (e) => {
         const id = b.dataset.buy;
@@ -373,42 +373,42 @@
           window.bridge.send({ type: 'buy', itemId: id, price });
         }
         if (window.Sound) window.Sound.fanfare();
-        if (canvasPig) canvasPig.showBubble(`Kupiono: ${id}!`, 2000);
-        openShopModal(); // odśwież widok
+        if (canvasPig) canvasPig.showBubble(`Bought: ${id}!`, 2000);
+        openShopModal(); // refresh the view
       });
     });
   }
 
   // Modal Minigier
   function openMinigamesModal() {
-    openModal('🎮 Minigry Ze Świnką', '');
+    openModal('🎮 Games', '');
     if (window.Minigry && elements.modalBody) {
       window.Minigry.renderSelectScreen(elements.modalBody);
     }
   }
 
-  // Modal Albumu Naklejek
+  // Sticker album dialog
   function openAlbumModal() {
     const stickers = [
-      { name: 'Siedzenie', id: 'idle', unlocked: true },
-      { name: 'Węszenie', id: 'sniff', unlocked: true },
+      { name: 'Sitting', id: 'idle', unlocked: true },
+      { name: 'Sniffing', id: 'sniff', unlocked: true },
       { name: 'Popcorning', id: 'popcorn', unlocked: true },
-      { name: 'Jedzenie siana', id: 'eat', unlocked: true },
-      { name: 'Chrupanie', id: 'eat_treat', unlocked: true },
-      { name: 'Mruczenie', id: 'purr_pet', unlocked: true },
-      { name: 'Kwiczenie', id: 'wheek', unlocked: true },
-      { name: 'Sen', id: 'sleep', unlocked: true },
-      { name: 'Taniec', id: 'dance', unlocked: false },
-      { name: 'Ucieczka', id: 'flee', unlocked: false },
+      { name: 'Eating hay', id: 'eat', unlocked: true },
+      { name: 'Crunching', id: 'eat_treat', unlocked: true },
+      { name: 'Purring', id: 'purr_pet', unlocked: true },
+      { name: 'Wheeking', id: 'wheek', unlocked: true },
+      { name: 'Sleeping', id: 'sleep', unlocked: true },
+      { name: 'Dancing', id: 'dance', unlocked: false },
+      { name: 'Running away', id: 'flee', unlocked: false },
       { name: 'Agility', id: 'hurdle', unlocked: false },
-      { name: 'Urodziny', id: 'party', unlocked: false }
+      { name: 'Birthday', id: 'party', unlocked: false }
     ];
 
     const unlockedCount = stickers.filter(s => s.unlocked).length;
 
     let html = `
       <div style="background:#2b1712; color:#fffdf8; padding:5px 8px; border-radius:4px; font-weight:700;">
-        Kolekcja naklejek: ${unlockedCount} / ${stickers.length}
+        Sticker collection: ${unlockedCount} / ${stickers.length}
       </div>
       <div class="album-grid">
     `;
@@ -418,57 +418,57 @@
         <div class="album-card ${st.unlocked ? '' : 'album-locked'}">
           <span style="font-size:20px;">${st.unlocked ? '🐹' : '❓'}</span>
           <b>${st.unlocked ? st.name : '???'}</b>
-          <small style="color:#6e6a5c;">${st.unlocked ? 'Odkryta!' : 'Do zobaczenia'}</small>
+          <small style="color:#6e6a5c;">${st.unlocked ? 'Found!' : 'Not yet'}</small>
         </div>
       `;
     });
 
     html += `</div>`;
-    openModal('📖 Album Zachowań', html);
+    openModal('📖 Behaviour Album', html);
   }
 
-  // Modal testowy dewelopera / Mock Tester
+  // Developer test dialog / mock tester
   function openDevTestModal() {
     let html = `
       <div class="test-panel-content">
-        <p style="color:#6e6a5c; font-size:12px;">Narzędzia testowe do weryfikacji etapu, wieku i kolorów pasków:</p>
+        <p style="color:#6e6a5c; font-size:12px;">Test tools for checking the stage, age and bar colours:</p>
         
         <div class="test-row">
-          <label>Wszystkie potrzeby na:</label>
+          <label>Set all needs to:</label>
           <div style="display:flex; gap:4px;">
-            <button class="test-btn" id="testLow">20% (Czerwone)</button>
-            <button class="test-btn" id="testMid">50% (Żółte)</button>
-            <button class="test-btn" id="testHigh">90% (Zielone)</button>
+            <button class="test-btn" id="testLow">20% (red)</button>
+            <button class="test-btn" id="testMid">50% (yellow)</button>
+            <button class="test-btn" id="testHigh">90% (green)</button>
           </div>
         </div>
 
         <div class="test-row">
-          <label>Zmień etap życia:</label>
+          <label>Change life stage:</label>
           <div style="display:flex; gap:4px; flex-wrap:wrap;">
-            <button class="test-btn" data-stage="baby">Maluch</button>
-            <button class="test-btn" data-stage="junior">Młodzik</button>
-            <button class="test-btn" data-stage="adult">Dorosła</button>
+            <button class="test-btn" data-stage="baby">Baby</button>
+            <button class="test-btn" data-stage="junior">Junior</button>
+            <button class="test-btn" data-stage="adult">Adult</button>
             <button class="test-btn" data-stage="senior">Senior</button>
-            <button class="test-btn" data-stage="legend">Legenda</button>
+            <button class="test-btn" data-stage="legend">Legend</button>
           </div>
         </div>
 
         <div class="test-row">
-          <label>Koniczynki:</label>
+          <label>Clovers:</label>
           <div style="display:flex; gap:4px;">
             <button class="test-btn" id="testAddClovers">+50 🍀</button>
           </div>
         </div>
 
         <div class="test-row" style="margin-top:8px;">
-          <button class="test-btn" id="testReset" style="background:#e8564c; width:100%;">Resetuj stan do domyślnego</button>
+          <button class="test-btn" id="testReset" style="background:#e8564c; width:100%;">Reset to defaults</button>
         </div>
       </div>
     `;
 
-    openModal('⚙️ Panel Testowy (Mock)', html);
+    openModal('⚙️ Test Panel (mock)', html);
 
-    // Obsługa kliknięć w testy
+    // Test click handlers
     document.getElementById('testLow')?.addEventListener('click', () => {
       ['fullness', 'vitaminC', 'energy', 'mood', 'cleanliness', 'teeth'].forEach(k => {
         window.bridge.mockSetNeed(k, 20);
@@ -522,7 +522,7 @@
     });
   }
 
-  // Start aplikacji po załadowaniu DOM
+  // Start the app once the DOM is loaded
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

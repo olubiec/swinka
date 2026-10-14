@@ -4,66 +4,66 @@ using System.Collections.Generic;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Cały stan gry zapisywany do %AppData%/Cuy/save.json.
-    /// Zwykła klasa danych: logika jest w <see cref="Pet"/>.
+    /// The whole game state, saved to %AppData%/Cuy/save.json.
+    /// A plain data class: the logic lives in <see cref="Pet"/>.
     /// </summary>
     public sealed class GameState
     {
-        /// <summary>Aktualna wersja formatu zapisu. Podbij przy zmianie formatu i dodaj migrację w SaveSystem.</summary>
+        /// <summary>Current save format version. Bump it when the format changes and add a migration in SaveSystem.</summary>
         public const int CurrentVersion = 2;
 
         public int Version { get; set; } = CurrentVersion;
 
-        /// <summary>Imię świnki.</summary>
+        /// <summary>The pig's name.</summary>
         public string Name { get; set; } = "Cuy";
 
-        /// <summary>Data urodzenia (czas gry, UTC). Wiek liczy się od niej.</summary>
+        /// <summary>Birth date (game time, UTC). Age is counted from it.</summary>
         public DateTime BirthDateUtc { get; set; }
 
-        /// <summary>Ostatni moment, w którym gra działała (czas gry, UTC). Od niego liczy się czas offline.</summary>
+        /// <summary>Last moment the game was running (game time, UTC). Offline time is counted from it.</summary>
         public DateTime LastActiveUtc { get; set; }
 
         public Needs Needs { get; set; } = new Needs();
 
-        /// <summary>Ostatni znany etap życia (do wykrywania zmiany, także po powrocie z offline).</summary>
+        /// <summary>Last known life stage (to detect changes, also after coming back from offline).</summary>
         public LifeStage Stage { get; set; } = LifeStage.Baby;
 
-        /// <summary>Ile urodzin już obchodziła (lata świnki).</summary>
+        /// <summary>How many birthdays have been celebrated (pig years).</summary>
         public int BirthdaysCelebrated { get; set; }
 
         public Bond Bond { get; set; } = new Bond();
 
-        /// <summary>Koniczynki (waluta). Nigdy poniżej 0.</summary>
+        /// <summary>Clovers (currency). Never below 0.</summary>
         public int Clovers { get; set; }
 
-        /// <summary>Liczba bobków świnki (wpływa na czystość klatki, max 8).</summary>
+        /// <summary>Number of poops (affects cage cleanliness, max 8).</summary>
         public int PoopCount { get; set; }
 
-        /// <summary>Lista bobków leżących na ekranie (pozycja, okno itp.).</summary>
+        /// <summary>Poops lying on the screen (position, window and so on).</summary>
         public List<PoopItem> Poops { get; set; } = new List<PoopItem>();
 
-        /// <summary>Ekwipunek: id przedmiotu z items.json -> liczba sztuk.</summary>
+        /// <summary>Inventory: item id from items.json -> count.</summary>
         public Dictionary<string, int> Inventory { get; set; } = new Dictionary<string, int>();
 
-        /// <summary>Rekordy minigier: id gry -> najwyższy wynik.</summary>
+        /// <summary>Minigame records: game id -> best score.</summary>
         public Dictionary<string, int> HighScores { get; set; } = new Dictionary<string, int>();
 
-        /// <summary>Lokalna data dnia gier z nagrodą (format yyyy-MM-dd) do limitu dziennego (max 10).</summary>
+        /// <summary>Local date of the rewarded games day (yyyy-MM-dd) for the daily limit (max 10).</summary>
         public string MinigamesDailyDate { get; set; }
 
-        /// <summary>Liczba nagrodzonych gier rozegranych w dniu MinigamesDailyDate (maks. 10).</summary>
+        /// <summary>Number of rewarded games played on MinigamesDailyDate (max 10).</summary>
         public int MinigamesDailyCount { get; set; }
 
-        /// <summary>Lokalna data ostatniego odebrania dziennej nagrody (format yyyy-MM-dd).</summary>
+        /// <summary>Local date of the last collected daily reward (yyyy-MM-dd).</summary>
         public string DailyRewardLastDate { get; set; }
 
-        /// <summary>Liczba kolejnych dni z rzędu z odebraną nagrodą (seria streak).</summary>
+        /// <summary>Number of consecutive days with a collected reward (streak).</summary>
         public int DailyRewardStreak { get; set; }
 
-        /// <summary>Album zachowań: nazwa animacji -> kiedy zobaczona pierwszy raz (czas gry, UTC).</summary>
+        /// <summary>Behaviour album: animation name -> when first seen (game time, UTC).</summary>
         public Dictionary<string, DateTime> Album { get; set; } = new Dictionary<string, DateTime>();
 
-        /// <summary>Pamiętnik świnki.</summary>
+        /// <summary>The pig's diary.</summary>
         public List<DiaryEntry> Diary { get; set; } = new List<DiaryEntry>();
 
         public Statistics Stats { get; set; } = new Statistics();
@@ -79,7 +79,7 @@ namespace Cuy.Core
             };
         }
 
-        /// <summary>Uzupełnia braki po wczytaniu (np. starszy plik bez jakiegoś pola).</summary>
+        /// <summary>Fills gaps after loading (e.g. an older file without some field).</summary>
         public void Normalize()
         {
             if (Version <= 0) Version = CurrentVersion;
@@ -112,48 +112,48 @@ namespace Cuy.Core
         }
     }
 
-    /// <summary>Poziom i punkty więzi (1-20).</summary>
+    /// <summary>Bond level and points (1-20).</summary>
     public sealed class Bond
     {
         public int Level { get; set; } = 1;
 
-        /// <summary>Łączna liczba zdobytych punktów.</summary>
+        /// <summary>Total points earned.</summary>
         public int Points { get; set; }
 
-        /// <summary>Punkty zdobyte w dniu <see cref="PointsTodayDate"/> (do dziennego limitu).</summary>
+        /// <summary>Points earned on <see cref="PointsTodayDate"/> (for the daily limit).</summary>
         public int PointsToday { get; set; }
 
-        /// <summary>Lokalna data dnia, którego dotyczy PointsToday, w formacie yyyy-MM-dd.</summary>
+        /// <summary>Local date that PointsToday refers to, yyyy-MM-dd.</summary>
         public string PointsTodayDate { get; set; }
     }
 
     public sealed class DiaryEntry
     {
-        /// <summary>Czas gry (UTC).</summary>
+        /// <summary>Game time (UTC).</summary>
         public DateTime DateUtc { get; set; }
         public string Text { get; set; }
     }
 
     public sealed class Statistics
     {
-        /// <summary>Pierwsze uruchomienie (czas gry, UTC).</summary>
+        /// <summary>First start (game time, UTC).</summary>
         public DateTime FirstStartUtc { get; set; }
 
-        /// <summary>Liczba uruchomień gry.</summary>
+        /// <summary>Number of game starts.</summary>
         public int Sessions { get; set; }
 
-        /// <summary>Godziny gry przy włączonej aplikacji.</summary>
+        /// <summary>Game hours with the app running.</summary>
         public double OnlineHours { get; set; }
 
-        /// <summary>Godziny gry przy zamkniętej aplikacji.</summary>
+        /// <summary>Game hours with the app closed.</summary>
         public double OfflineHours { get; set; }
 
-        /// <summary>Dowolne liczniki, np. "karmienia", "bell_pepper", "popcorn".</summary>
+        /// <summary>Free-form counters, e.g. "feedings", "bell_pepper", "popcorn".</summary>
         public Dictionary<string, int> Counters { get; set; } = new Dictionary<string, int>();
     }
 
     /// <summary>
-    /// Informacje o pojedynczym bobku na ekranie (zapisywane w save.json).
+    /// A single poop on the screen (stored in save.json).
     /// </summary>
     public sealed class PoopItem
     {

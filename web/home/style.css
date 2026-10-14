@@ -1,8 +1,8 @@
 /* ==========================================================================
-   DOMEK ŚWINKI — STYLIZACJA PIXEL ART
-   Licencjonowana czcionka: Pixelify Sans (OFL) lokalnie
-   Paleta: Kolory świnki (pomarańcz, rdza, drewno, siano, liść, krem)
-   Czysty Vanilla CSS, bez bibliotek
+   CUY'S HOME — PIXEL ART STYLES
+   Licensed font: Pixelify Sans (OFL), local
+   Palette: guinea pig colours (orange, rust, wood, hay, leaf, cream)
+   Plain vanilla CSS, no libraries
    ========================================================================== */
 
 @font-face {
@@ -22,7 +22,7 @@
 }
 
 :root {
-  /* Paleta świnki morskiej z pig.py i PLAN.md */
+  /* Guinea pig palette from pig.py and PLAN.md */
   --c-orange-light: #f7b46e;
   --c-orange:       #e98c42;
   --c-orange-dark:  #c8692f;
@@ -39,7 +39,7 @@
   --c-contour-dark: #2b1712;
   --c-hay:          #eedb7c;
 
-  /* Arkusz ikon 16x16 z assets */
+  /* 16x16 icon sheet from assets */
   --icons-sheet: url('../../assets/icons/icons_16.png');
   --c-hay-dark:     #cdb556;
   --c-hay-shadow:   #99903d;
@@ -53,16 +53,16 @@
   --c-blue:         #7fbaf0;
   --c-blue-dark:    #4a84c4;
 
-  /* Typografia */
+  /* Typography */
   --font-pixel: 'Pixelify Sans', monospace, sans-serif;
 
-  /* Cienie pikselowe */
+  /* Pixel shadows */
   --pixel-shadow-sm: 0 2px 0 var(--c-contour-dark);
   --pixel-shadow-md: 0 3px 0 var(--c-contour-dark);
   --pixel-shadow-lg: 0 4px 0 var(--c-contour-dark);
 }
 
-/* Reset bazowy */
+/* Base reset */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -93,7 +93,7 @@ body {
   image-rendering: crisp-edges;
 }
 
-/* Tryb osadzony w oknie aplikacji (WebView2) — przezroczyste tło, brak marginesów przeglądarki */
+/* Embedded in the app window (WebView2): transparent background, no browser margins */
 body.webview-mode {
   background: transparent !important;
   background-image: none !important;
@@ -116,7 +116,7 @@ body.webview-mode .game-device {
   margin: 0 auto;
 }
 
-/* Główny kontener okna gry (pasujący do 420x640 px z C1) */
+/* Main game window container (420x640 px, see C1) */
 .game-device {
   width: 100%;
   max-width: 420px;
@@ -135,7 +135,7 @@ body.webview-mode .game-device {
   position: relative;
 }
 
-/* Górny pasek tytułu i stanu (Casing Bar) */
+/* Top title and status bar (casing bar) */
 .game-header {
   background: var(--c-wood-dark);
   border-bottom: 3px solid var(--c-contour-dark);
@@ -218,7 +218,7 @@ body.webview-mode .game-device {
 }
 
 /* ==========================================================================
-   KARTA PROFILU ŚWINKI (Imię, Wiek, Etap życia)
+   PIG PROFILE CARD (name, age, life stage)
    ========================================================================== */
 
 .pet-identity-card {
@@ -303,7 +303,7 @@ body.webview-mode .game-device {
 }
 
 /* ==========================================================================
-   SCENA ŚWINKI (CANVAS PIXEL ART)
+   PIG SCENE (CANVAS PIXEL ART)
    ========================================================================== */
 
 .stage-viewport {
@@ -338,7 +338,7 @@ body.webview-mode .game-device {
 }
 
 /* ==========================================================================
-   SEKCJA SZEŚCIU POTRZEB (PIXEL ART PROGRESS BARS)
+   SIX NEEDS SECTION (PIXEL ART PROGRESS BARS)
    ========================================================================== */
 
 .needs-section {
@@ -415,7 +415,7 @@ body.webview-mode .game-device {
   font-variant-numeric: tabular-nums;
 }
 
-/* Pasek postępu pixel art */
+/* Pixel art progress bar */
 .progress-groove {
   width: 100%;
   height: 10px;
@@ -437,10 +437,10 @@ body.webview-mode .game-device {
   background-image: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 100%);
 }
 
-/* Kolor zależny od poziomu potrzeby:
-   - Wysoki (>65%): Soczysty zielony liść
-   - Średni (35-65%): Złote siano
-   - Niski (<35%): Ostrzegawcza paprykowa czerwień
+/* Colour depends on the need level:
+   - High (>65%): juicy green leaf
+   - Medium (35-65%): golden hay
+   - Low (<35%): warning bell pepper red
 */
 .progress-fill.level-high {
   background-color: var(--c-leaf);
@@ -464,7 +464,7 @@ body.webview-mode .game-device {
 }
 
 /* ==========================================================================
-   PRZYCISKI AKCJI (RETRO HANDHELD ARCADE BUTTONS)
+   ACTION BUTTONS (RETRO HANDHELD ARCADE BUTTONS)
    ========================================================================== */
 
 .actions-section {
@@ -518,7 +518,7 @@ body.webview-mode .game-device {
     inset -2px -2px 0 var(--c-white);
 }
 
-/* Kolorystyczne akcenty dla przycisków */
+/* Colour accents for the buttons */
 .btn-feed {
   background: #f8c278;
 }
@@ -539,7 +539,7 @@ body.webview-mode .game-device {
 }
 
 /* ==========================================================================
-   PODRĘCZNY PANEL KARMIENIA (WYSUWANY)
+   SLIDE-OUT FEEDING PANEL
    ========================================================================== */
 
 .food-drawer {
@@ -608,7 +608,7 @@ body.webview-mode .game-device {
 }
 
 /* ==========================================================================
-   IKONY PIXEL ART (Z ARKUYSZA ikony_16.png)
+   PIXEL ART ICONS (FROM THE icons_16.png SHEET)
    ========================================================================== */
 
 .pixel-icon {
@@ -635,7 +635,7 @@ body.webview-mode .game-device {
   background-size: 800px 32px;
 }
 
-/* Pozycje ikon w arkuszu (indeks * 16px w x1, indeks * 24px w x1_5, indeks * 32px w x2) */
+/* Icon positions in the sheet (index * 16px at x1, index * 24px at x1_5, index * 32px at x2) */
 .icon-bell-pepper             { background-position: calc(-0 * 16px) 0; }
 .icon-cucumber              { background-position: calc(-1 * 16px) 0; }
 .icon-parsley               { background-position: calc(-2 * 16px) 0; }
@@ -662,7 +662,7 @@ body.webview-mode .game-device {
 .icon-need-teeth      { background-position: calc(-23 * 16px) 0; }
 .icon-pig-head        { background-position: calc(-24 * 16px) 0; }
 
-/* Skala x1_5 dla pasków potrzeb */
+/* x1_5 scale for the need bars */
 .pixel-icon.x1_5.icon-need-fullness { background-position: calc(-18 * 24px) 0; }
 .pixel-icon.x1_5.icon-need-vitamin-c { background-position: calc(-19 * 24px) 0; }
 .pixel-icon.x1_5.icon-need-energy    { background-position: calc(-20 * 24px) 0; }
@@ -670,14 +670,14 @@ body.webview-mode .game-device {
 .pixel-icon.x1_5.icon-need-cleanliness   { background-position: calc(-22 * 24px) 0; }
 .pixel-icon.x1_5.icon-need-teeth      { background-position: calc(-23 * 24px) 0; }
 
-/* Skala x1_5 dla jedzenia w szufladzie */
+/* x1_5 scale for food in the drawer */
 .pixel-icon.x1_5.icon-hay     { background-position: calc(-12 * 24px) 0; }
 .pixel-icon.x1_5.icon-bell-pepper   { background-position: calc(-0 * 24px) 0; }
 .pixel-icon.x1_5.icon-carrot { background-position: calc(-3 * 24px) 0; }
 .pixel-icon.x1_5.icon-pellets  { background-position: calc(-4 * 24px) 0; }
 
 /* ==========================================================================
-   MODALE / DIALOGI PIXEL ART (Sklepik, Minigry, Album, Testy)
+   PIXEL ART MODALS / DIALOGS (shop, games, album, tests)
    ========================================================================== */
 
 .modal-backdrop {
@@ -758,7 +758,7 @@ body.webview-mode .game-device {
   gap: 10px;
 }
 
-/* Sklepik item grid */
+/* Shop item grid */
 .shop-grid, .album-grid, .games-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -794,7 +794,7 @@ body.webview-mode .game-device {
 .shop-item-btn:hover { background: #91d15c; }
 .shop-item-btn:active { transform: translateY(2px); box-shadow: 0 0 0; }
 
-/* Album naklejki */
+/* Album stickers */
 .album-card {
   background: var(--c-white);
   border: 2px solid var(--c-contour-dark);
@@ -812,7 +812,7 @@ body.webview-mode .game-device {
   opacity: 0.6;
 }
 
-/* Pasek testowy / dev drawer */
+/* Test / dev drawer bar */
 .test-panel-content {
   display: flex;
   flex-direction: column;

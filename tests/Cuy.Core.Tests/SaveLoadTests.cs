@@ -28,7 +28,7 @@ namespace Cuy.Core.Tests
             }
             catch
             {
-                // Ignorujemy błędy usuwania katalogu tymczasowego po teście
+                // Ignore errors deleting the temp folder after the test
             }
         }
 
@@ -38,12 +38,12 @@ namespace Cuy.Core.Tests
             var saveSystem = new SaveSystem(_testDir);
             var nowUtc = new DateTime(2026, 10, 11, 14, 0, 0, DateTimeKind.Utc);
 
-            var state = GameState.CreateNew("Puszek", nowUtc);
+            var state = GameState.CreateNew("Fluffy", nowUtc);
             state.Clovers = 150;
             state.Inventory["bell_pepper"] = 5;
             state.Inventory["hay"] = 12;
             state.Album["popcorn"] = nowUtc;
-            state.Diary.Add(new DiaryEntry { DateUtc = nowUtc, Text = "Pamiętnik świnki - wpis testowy" });
+            state.Diary.Add(new DiaryEntry { DateUtc = nowUtc, Text = "Pig diary - test entry" });
             state.Needs.Satiety = 75.5;
             state.Needs.VitaminC = 82.0;
             state.Needs.Energy = 60.0;
@@ -61,8 +61,8 @@ namespace Cuy.Core.Tests
 
             saveSystem.Save(state);
 
-            Assert.True(File.Exists(saveSystem.SavePath), "Plik save.json powinien istnieć.");
-            Assert.True(File.Exists(saveSystem.BackupPath), "Plik save.bak powinien powstać już przy pierwszym zapisie.");
+            Assert.True(File.Exists(saveSystem.SavePath), "save.json should exist.");
+            Assert.True(File.Exists(saveSystem.BackupPath), "save.bak should be created on the first save.");
 
             var loadResult = saveSystem.Load();
 
@@ -72,13 +72,13 @@ namespace Cuy.Core.Tests
 
             var loaded = loadResult.State;
             Assert.Equal(GameState.CurrentVersion, loaded.Version);
-            Assert.Equal("Puszek", loaded.Name);
+            Assert.Equal("Fluffy", loaded.Name);
             Assert.Equal(150, loaded.Clovers);
             Assert.Equal(5, loaded.Inventory["bell_pepper"]);
             Assert.Equal(12, loaded.Inventory["hay"]);
             Assert.True(loaded.Album.ContainsKey("popcorn"));
             Assert.Single(loaded.Diary);
-            Assert.Equal("Pamiętnik świnki - wpis testowy", loaded.Diary[0].Text);
+            Assert.Equal("Pig diary - test entry", loaded.Diary[0].Text);
 
             Assert.Equal(75.5, loaded.Needs.Satiety, precision: 3);
             Assert.Equal(82.0, loaded.Needs.VitaminC, precision: 3);
@@ -104,25 +104,25 @@ namespace Cuy.Core.Tests
             var saveSystem = new SaveSystem(_testDir);
             var nowUtc = new DateTime(2026, 10, 11, 10, 0, 0, DateTimeKind.Utc);
 
-            var state1 = GameState.CreateNew("Pierwsza", nowUtc);
+            var state1 = GameState.CreateNew("First", nowUtc);
             state1.Clovers = 10;
             saveSystem.Save(state1);
 
-            var state2 = GameState.CreateNew("Druga", nowUtc);
+            var state2 = GameState.CreateNew("Second", nowUtc);
             state2.Clovers = 25;
             saveSystem.Save(state2);
 
-            // save.json powinno mieć najnowszy stan ("Druga", 25 koniczynek)
+            // save.json should hold the newest state ("Second", 25 clovers)
             var mainResult = saveSystem.Load();
             Assert.Equal(LoadSource.Main, mainResult.Source);
-            Assert.Equal("Druga", mainResult.State.Name);
+            Assert.Equal("Second", mainResult.State.Name);
             Assert.Equal(25, mainResult.State.Clovers);
 
-            // save.bak powinno zawierać poprzedni stan ("Pierwsza", 10 koniczynek)
+            // save.bak should hold the previous state ("First", 10 clovers)
             string backupJson = File.ReadAllText(saveSystem.BackupPath);
             var backupState = Newtonsoft.Json.JsonConvert.DeserializeObject<GameState>(backupJson, SaveSystem.JsonSettings);
             Assert.NotNull(backupState);
-            Assert.Equal("Pierwsza", backupState.Name);
+            Assert.Equal("First", backupState.Name);
             Assert.Equal(10, backupState.Clovers);
         }
 
@@ -144,7 +144,7 @@ namespace Cuy.Core.Tests
         {
             var clock = new ManualClock(new DateTime(2026, 10, 11, 12, 0, 0, DateTimeKind.Utc));
 
-            using (var session1 = GameSession.Open(clock, _testDir, newPetName: "Kropka"))
+            using (var session1 = GameSession.Open(clock, _testDir, newPetName: "Dottie"))
             {
                 Assert.True(session1.IsNewGame);
                 session1.Start();
@@ -157,7 +157,7 @@ namespace Cuy.Core.Tests
             {
                 Assert.False(session2.IsNewGame);
                 Assert.Equal(LoadSource.Main, session2.LoadResult.Source);
-                Assert.Equal("Kropka", session2.Pet.State.Name);
+                Assert.Equal("Dottie", session2.Pet.State.Name);
                 Assert.Equal(42, session2.Pet.State.Clovers);
                 Assert.Equal(80.0, session2.Pet.Needs.Satiety, precision: 3);
             }
@@ -170,7 +170,7 @@ namespace Cuy.Core.Tests
             string targetDir = Path.Combine(_testDir, "TargetCuy");
             Directory.CreateDirectory(legacyDir);
             string legacySave = Path.Combine(legacyDir, SaveSystem.FileName);
-            File.WriteAllText(legacySave, "{\"Version\":1,\"Name\":\"Puszek\"}");
+            File.WriteAllText(legacySave, "{\"Version\":1,\"Name\":\"Fluffy\"}");
 
             SaveSystem.MigrateLegacyDirectory(legacyDir, targetDir);
 

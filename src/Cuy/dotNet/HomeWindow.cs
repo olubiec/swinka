@@ -14,13 +14,13 @@ using Cuy.Core;
 namespace Cuy
 {
     /// <summary>
-    /// Okno Domku świnki oparte na WebView2:
-    /// - Wymiary: 420x640 px, bez ramki systemowej (FormBorderStyle.None),
-    /// - Przezroczyste zaokrąglone rogi i cień na pulpicie (DWM Composition),
-    /// - Brak na pasku zadań (ShowInTaskbar = false),
-    /// - Pozycjonowane automatycznie przy zasobniku systemowym,
-    /// - Zawartość serwowana z lokalnego folderu web/home przez https://cuy.home/ oraz assets/ przez https://cuy.assets/,
-    /// - Most C# ↔ JS z Cuy.Core jako jedynym źródłem prawdy.
+    /// The guinea pig's Home window, based on WebView2:
+    /// - Size: 420x640 px, no system frame (FormBorderStyle.None),
+    /// - Transparent rounded corners and a desktop shadow (DWM composition),
+    /// - Not on the taskbar (ShowInTaskbar = false),
+    /// - Positioned automatically next to the system tray,
+    /// - Content served from the local web/home folder at https://cuy.home/ and assets/ at https://cuy.assets/,
+    /// - C# <-> JS bridge with Cuy.Core as the single source of truth.
     /// </summary>
     public partial class HomeWindow : Form
     {
@@ -68,7 +68,7 @@ namespace Cuy
         public static HomeWindow Instance => _instance;
 
         /// <summary>
-        /// Powiadamia otwarte okno Domku o zmianie stanu w Cuy.Core (np. po karmieniu na pulpicie lub sprzątnięciu).
+        /// Tells an open Home window about a state change in Cuy.Core (e.g. after feeding on the desktop or cleaning).
         /// </summary>
         public static void NotifyStateChanged()
         {
@@ -102,7 +102,7 @@ namespace Cuy
 
         public static void ShowHome()
         {
-            BrainController.Log("[HomeWindow] ShowHome() wywołano.");
+            BrainController.Log("[HomeWindow] ShowHome() called.");
             if (_instance == null || _instance.IsDisposed)
             {
                 _instance = new HomeWindow();
@@ -120,8 +120,6 @@ namespace Cuy
             }
         }
 
-        public static void ShowDomek() => ShowHome();
-
         private void SetupFormStyle()
         {
             this.AutoScaleMode = AutoScaleMode.None;
@@ -132,7 +130,7 @@ namespace Cuy
             this.FormBorderStyle = FormBorderStyle.None;
             this.ShowInTaskbar = false;
             this.DoubleBuffered = true;
-            this.BackColor = Color.Black; // DWM przy marginesach -1 traktuje czarne tło jako przezroczysty kanał alfa
+            this.BackColor = Color.Black; // with -1 margins DWM treats a black background as the transparent alpha channel
             try
             {
                 this.Icon = PetIcons.GetTrayIcon();
@@ -165,7 +163,7 @@ namespace Cuy
             }
             catch (Exception ex)
             {
-                BrainController.Log("[HomeWindow] Ostrzeżenie DWM: " + ex.Message);
+                BrainController.Log("[HomeWindow] DWM warning: " + ex.Message);
             }
         }
 
@@ -181,7 +179,7 @@ namespace Cuy
                 int targetX = wa.Right - this.Width - padding;
                 int targetY = wa.Bottom - this.Height - padding;
 
-                // Sprawdź nietypowe położenie paska zadań (góra/lewo)
+                // Check for an unusual taskbar position (top/left)
                 if (wa.Top > bounds.Top)
                 {
                     targetY = wa.Top + padding;
@@ -191,7 +189,7 @@ namespace Cuy
                     targetX = wa.Left + padding;
                 }
 
-                // Ograniczenie do obszaru roboczego
+                // Keep it within the working area
                 targetX = Math.Max(wa.Left, Math.Min(targetX, wa.Right - this.Width));
                 targetY = Math.Max(wa.Top, Math.Min(targetY, wa.Bottom - this.Height));
 
@@ -225,11 +223,11 @@ namespace Cuy
                 );
                 Directory.CreateDirectory(userDataFolder);
 
-                BrainController.Log("[HomeWindow] Tworzenie CoreWebView2Environment...");
+                BrainController.Log("[HomeWindow] Creating CoreWebView2Environment...");
                 var env = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
-                BrainController.Log("[HomeWindow] CoreWebView2Environment utworzone. Inicjalizacja kontrolki...");
+                BrainController.Log("[HomeWindow] CoreWebView2Environment created. Initialising the control...");
                 await _webView.EnsureCoreWebView2Async(env);
-                BrainController.Log("[HomeWindow] EnsureCoreWebView2Async zakończone.");
+                BrainController.Log("[HomeWindow] EnsureCoreWebView2Async done.");
 
                 _webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 _webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
@@ -241,7 +239,7 @@ namespace Cuy
 
                 string homeDir = ResolveHomePath();
                 string assetsDir = ResolveAssetsPath();
-                BrainController.Log(string.Format("[HomeWindow] Mapowanie folderu home z: {0}, assets z: {1}", homeDir, assetsDir));
+                BrainController.Log(string.Format("[HomeWindow] Mapping home folder: {0}, assets: {1}", homeDir, assetsDir));
 
                 _webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
                     "cuy.home",
@@ -282,7 +280,7 @@ namespace Cuy
                 _webView.CoreWebView2.NavigationCompleted += (s, e) =>
                 {
                     _isWebViewReady = true;
-                    BrainController.Log("[HomeWindow] Nawigacja https://cuy.home/index.html zakończona.");
+                    BrainController.Log("[HomeWindow] Navigation to https://cuy.home/index.html done.");
                     SendStateToWebView();
                 };
 
@@ -290,7 +288,7 @@ namespace Cuy
             }
             catch (Exception ex)
             {
-                BrainController.Log("[HomeWindow] Błąd inicjalizacji WebView2: " + ex.ToString());
+                BrainController.Log("[HomeWindow] WebView2 init error: " + ex.ToString());
             }
         }
 
@@ -298,11 +296,11 @@ namespace Cuy
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
-            // 1. Sprawdź folder web/home obok pliku wykonywalnego
+            // 1. Check the web/home folder next to the executable
             string p1 = Path.Combine(baseDir, "web", "home");
             if (Directory.Exists(p1)) return Path.GetFullPath(p1);
 
-            // 2. Szukaj w górę drzewa katalogów (repozytorium / solucja)
+            // 2. Search up the folder tree (repository / solution)
             DirectoryInfo dir = new DirectoryInfo(baseDir);
             while (dir != null)
             {
@@ -314,7 +312,7 @@ namespace Cuy
                 dir = dir.Parent;
             }
 
-            // 3. Sprawdź bieżący katalog roboczy
+            // 3. Check the current working directory
             string p4 = Path.GetFullPath(Path.Combine("web", "home"));
             if (Directory.Exists(p4)) return Path.GetFullPath(p4);
 
@@ -385,7 +383,7 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Wysyła aktualny stan gry z Cuy.Core do kontrolki WebView2 w formacie JSON.
+        /// Sends the current game state from Cuy.Core to the WebView2 control as JSON.
         /// </summary>
         public void SendStateToWebView()
         {
@@ -414,7 +412,7 @@ namespace Cuy
                     birthDateUtc = state.BirthDateUtc.ToString("o"),
                     pigDays = Math.Round(age.PigDays, 1),
                     stageKey = stage.ToString().ToLowerInvariant(),
-                    stageName = LifeStages.Polish(stage),
+                    stageName = LifeStages.DisplayName(stage),
                     needs = new
                     {
                         fullness = Math.Round(needs.Satiety, 1),
@@ -451,7 +449,7 @@ namespace Cuy
             }
             catch (Exception ex)
             {
-                BrainController.Log("[HomeWindow] Błąd PostWebMessageAsJson: " + ex.Message);
+                BrainController.Log("[HomeWindow] PostWebMessageAsJson error: " + ex.Message);
             }
         }
 
@@ -510,12 +508,12 @@ namespace Cuy
                         break;
                 }
 
-                // Natychmiastowa aktualizacja stanu po przetworzeniu akcji
+                // Update the state right after handling the action
                 SendStateToWebView();
             }
             catch (Exception ex)
             {
-                BrainController.Log("[HomeWindow] Błąd przetwarzania wiadomości: " + ex.Message);
+                BrainController.Log("[HomeWindow] Message handling error: " + ex.Message);
             }
         }
 
@@ -530,9 +528,9 @@ namespace Cuy
                 pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 12.0);
                 pet.Needs.Teeth = Math.Min(100.0, pet.Needs.Teeth + 8.0);
                 pet.AddBondPoints(2);
-                pet.Count("karmienia");
+                pet.Count("feedings");
                 brain.RequestAnimation("eat");
-                BrainController.Log("[HomeWindow] Nakarmiono sianem.");
+                BrainController.Log("[HomeWindow] Fed hay.");
             }
             else
             {
@@ -556,14 +554,14 @@ namespace Cuy
                         pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 5.0);
                     }
                     pet.AddBondPoints(2);
-                    pet.Count("karmienia");
+                    pet.Count("feedings");
                     pet.Count(item);
                     brain.RequestAnimation("eat_treat");
-                    BrainController.Log(string.Format("[HomeWindow] Nakarmiono przysmakiem: {0}", item));
+                    BrainController.Log(string.Format("[HomeWindow] Fed treat: {0}", item));
                 }
                 else
                 {
-                    BrainController.Log(string.Format("[HomeWindow] Brak przedmiotu w ekwipunku: {0}", item));
+                    BrainController.Log(string.Format("[HomeWindow] Item not in inventory: {0}", item));
                 }
             }
         }
@@ -579,9 +577,9 @@ namespace Cuy
             PoopManager.Instance?.CloseAllVisuals();
             pet.AddClovers(poops > 0 ? poops : 1);
             pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 6.0);
-            pet.Count("sprzatania");
+            pet.Count("cleanings");
             brain.RequestAnimation("happy");
-            BrainController.Log(string.Format("[HomeWindow] Posprzątano klatkę (usunięto {0} bobków, +koniczynki).", poops));
+            BrainController.Log(string.Format("[HomeWindow] Cage cleaned ({0} poops removed, +clovers).", poops));
         }
 
         private void HandleCall()
@@ -590,7 +588,7 @@ namespace Cuy
             if (brain != null)
             {
                 brain.CallPet();
-                BrainController.Log("[HomeWindow] Zawołano świnkę z Domku.");
+                BrainController.Log("[HomeWindow] Pig called from Home.");
             }
         }
 
@@ -602,9 +600,9 @@ namespace Cuy
 
             pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 3.0);
             pet.AddBondPoints(1);
-            pet.Count("glaskanie");
+            pet.Count("pets");
             brain.RequestAnimation("purr_pet");
-            BrainController.Log("[HomeWindow] Pogłaskano świnkę z Domku (+3 humoru, +1 więź).");
+            BrainController.Log("[HomeWindow] Pig petted from Home (+3 mood, +1 bond).");
         }
 
         private void HandleBuy(string itemId, int price)
@@ -617,12 +615,12 @@ namespace Cuy
             if (pet.TrySpendClovers(price))
             {
                 pet.AddItem(itemId, 1);
-                pet.Count("zakupy");
-                BrainController.Log(string.Format("[HomeWindow] Kupiono {0} za {1} koniczynek.", itemId, price));
+                pet.Count("purchases");
+                BrainController.Log(string.Format("[HomeWindow] Bought {0} for {1} clovers.", itemId, price));
             }
             else
             {
-                BrainController.Log(string.Format("[HomeWindow] Zbyt mało koniczynek na zakup {0} (cena: {1}, stan: {2}).",
+                BrainController.Log(string.Format("[HomeWindow] Not enough clovers for {0} (price: {1}, balance: {2}).",
                     itemId, price, pet.State.Clovers));
             }
         }
@@ -637,7 +635,7 @@ namespace Cuy
             pet.Needs.Energy = Math.Max(0.0, pet.Needs.Energy - 10.0);
             pet.AddClovers(10);
             brain.RequestAnimation("popcorn");
-            BrainController.Log("[HomeWindow] Zabawa w Domku (+15 humoru, +10 koniczynek).");
+            BrainController.Log("[HomeWindow] Play in Home (+15 mood, +10 clovers).");
         }
 
         private void HandleMinigameResult(string gameId, int score)
@@ -658,7 +656,7 @@ namespace Cuy
                 pet.State.HighScores[gameId] = score;
             }
 
-            // Limit 10 nagradzanych gier dziennie
+            // Limit of 10 rewarded games per day
             string today = DateTime.UtcNow.ToString("yyyy-MM-dd");
             if (pet.State.MinigamesDailyDate != today)
             {
@@ -679,7 +677,7 @@ namespace Cuy
 
             pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 15.0);
             brain.RequestAnimation("popcorn");
-            BrainController.Log(string.Format("[HomeWindow] Wynik minigry {0}: {1} pkt (+{2} koniczynek).", gameId, score, clovers));
+            BrainController.Log(string.Format("[HomeWindow] Minigame score {0}: {1} pts (+{2} clovers).", gameId, score, clovers));
         }
 
         private void HandleSettings(string action, JObject obj)
@@ -687,7 +685,7 @@ namespace Cuy
             if (action == "close")
             {
                 this.Hide();
-                BrainController.Log("[HomeWindow] Zamknięcie okna Domku przez przycisk HTML.");
+                BrainController.Log("[HomeWindow] Home window closed by the HTML button.");
             }
             else if (action == "drag_start")
             {

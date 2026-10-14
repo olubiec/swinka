@@ -12,7 +12,7 @@ namespace Cuy.Core.Tests
         public void NoFoodEaten_FavoriteVegetableIsNull()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 1, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             var pet = new Pet(state, clock);
 
             Assert.Null(pet.GetFavoriteVegetable());
@@ -23,7 +23,7 @@ namespace Cuy.Core.Tests
         public void FoodEaten_TracksCountersAndUpdatesFavorite()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 1, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             var pet = new Pet(state, clock);
 
             pet.RecordFoodEaten("bell_pepper");
@@ -31,7 +31,7 @@ namespace Cuy.Core.Tests
             Assert.True(pet.IsFavoriteVegetable("bell_pepper"));
             Assert.False(pet.IsFavoriteVegetable("cucumber"));
 
-            // Nakarm ogórkiem 2 razy -> ogórek staje się ulubionym
+            // Feed cucumber twice -> cucumber becomes the favourite
             pet.RecordFoodEaten("cucumber");
             pet.RecordFoodEaten("cucumber");
 
@@ -39,8 +39,8 @@ namespace Cuy.Core.Tests
             Assert.True(pet.IsFavoriteVegetable("cucumber"));
             Assert.False(pet.IsFavoriteVegetable("bell_pepper"));
 
-            // Sprawdzenie liczników w State
-            Assert.Equal(3, pet.State.Stats.Counters["karmienia"]);
+            // Check the counters in State
+            Assert.Equal(3, pet.State.Stats.Counters["feedings"]);
             Assert.Equal(1, pet.State.Stats.Counters["eaten_bell_pepper"]);
             Assert.Equal(2, pet.State.Stats.Counters["eaten_cucumber"]);
         }
@@ -49,17 +49,17 @@ namespace Cuy.Core.Tests
         public void CustomCandidateList_EvaluatesOnlyCandidates()
         {
             var clock = new ManualClock(new DateTime(2026, 10, 1, 12, 0, 0, DateTimeKind.Utc));
-            var state = GameState.CreateNew("Świnka", clock.UtcNow);
+            var state = GameState.CreateNew("Cuy", clock.UtcNow);
             var pet = new Pet(state, clock);
 
             pet.RecordFoodEaten("hay");
             pet.RecordFoodEaten("hay");
             pet.RecordFoodEaten("carrot");
 
-            // Siano nie jest w domyślnych warzywach
+            // Hay is not in the default vegetables
             Assert.Equal("carrot", pet.GetFavoriteVegetable());
 
-            // Z niestandardową listą uwzględniającą siano
+            // With a custom list that includes hay
             var customList = new[] { "hay", "carrot" };
             Assert.Equal("hay", pet.GetFavoriteVegetable(customList));
         }

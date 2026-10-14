@@ -7,14 +7,14 @@ using Newtonsoft.Json.Serialization;
 
 namespace Cuy.Core.Save
 {
-    /// <summary>Skąd wczytano stan gry.</summary>
+    /// <summary>Where the game state was loaded from.</summary>
     public enum LoadSource
     {
-        /// <summary>Brak zapisu (albo oba pliki uszkodzone): nowa gra.</summary>
+        /// <summary>No save (or both files damaged): new game.</summary>
         None,
         /// <summary>save.json.</summary>
         Main,
-        /// <summary>save.bak, bo save.json był uszkodzony albo go brakowało.</summary>
+        /// <summary>save.bak, because save.json was damaged or missing.</summary>
         Backup
     }
 
@@ -23,27 +23,27 @@ namespace Cuy.Core.Save
         public GameState State { get; internal set; }
         public LoadSource Source { get; internal set; }
 
-        /// <summary>Opis problemu z plikiem głównym (jeśli był), do logu.</summary>
+        /// <summary>Description of the problem with the main file (if any), for the log.</summary>
         public string MainError { get; internal set; }
 
-        /// <summary>Opis problemu z kopią (jeśli był), do logu.</summary>
+        /// <summary>Description of the problem with the backup (if any), for the log.</summary>
         public string BackupError { get; internal set; }
     }
 
     /// <summary>
-    /// Zapis stanu gry w JSON: %AppData%/Cuy/save.json z polem version i kopią save.bak.
+    /// Game state saved as JSON: %AppData%/Cuy/save.json with a version field and a save.bak backup.
     /// </summary>
     /// <remarks>
-    /// Zapis jest bezpieczny przy nagłym wyłączeniu: najpierw powstaje save.tmp, potem
-    /// File.Replace podmienia save.json, a poprzednia wersja staje się save.bak.
-    /// W każdej chwili na dysku jest co najmniej jeden poprawny plik.
+    /// Saving is safe against sudden power loss: save.tmp is written first, then
+    /// File.Replace swaps in save.json and the previous version becomes save.bak.
+    /// At any moment there is at least one valid file on disk.
     /// </remarks>
     public sealed class SaveSystem
     {
         public const string FileName = "save.json";
         public const string BackupFileName = "save.bak";
         public const string TempFileName = "save.tmp";
-        public const string CorruptFileName = "save.uszkodzony.json";
+        public const string CorruptFileName = "save.corrupt.json";
 
         private static readonly UTF8Encoding Utf8NoBom = new UTF8Encoding(false);
         private readonly object _lock = new object();
@@ -101,7 +101,7 @@ namespace Cuy.Core.Save
             }
             catch
             {
-                // Ignoruj ewentualne błędy odczytu/zapisu podczas migracji legacy
+                // Ignore read/write errors during the legacy migration
             }
         }
 
@@ -115,7 +115,7 @@ namespace Cuy.Core.Save
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver
             {
-                // Klucze słowników (id przedmiotów, nazwy animacji) zostają bez zmian.
+                // Dictionary keys (item ids, animation names) stay unchanged.
                 NamingStrategy = new CamelCaseNamingStrategy { ProcessDictionaryKeys = false }
             },
             Converters = { new StringEnumConverter(new CamelCaseNamingStrategy()) },
@@ -131,7 +131,7 @@ namespace Cuy.Core.Save
             return JsonConvert.SerializeObject(state, JsonSettings);
         }
 
-        /// <summary>Zapisuje stan. Rzuca IOException/UnauthorizedAccessException przy błędzie dysku.</summary>
+        /// <summary>Saves the state. Throws IOException/UnauthorizedAccessException on disk errors.</summary>
         public void Save(GameState state)
         {
             if (state == null) throw new ArgumentNullException(nameof(state));
@@ -143,20 +143,20 @@ namespace Cuy.Core.Save
                 System.IO.Directory.CreateDirectory(Directory);
                 WriteDurable(TempPath, json);
 
-                // Przed przeniesieniem save.json do save.bak sprawdzamy, czy save.json da się odczytać jako poprawny stan;
-                // jeśli nie, zostawiamy save.bak bez zmian.
+                // Before moving save.json to save.bak we check that save.json reads as a valid state;
+                // if not, save.bak is left unchanged.
                 bool isMainValid = File.Exists(SavePath) && TryRead(SavePath, out _, out _);
 
                 if (isMainValid)
                 {
                     try
                     {
-                        // Atomowo: save.tmp -> save.json, stary (poprawny) save.json -> save.bak.
+                // Atomic: save.tmp -> save.json, old (valid) save.json -> save.bak.
                         File.Replace(TempPath, SavePath, BackupPath, true);
                     }
                     catch (Exception ex) when (ex is IOException || ex is PlatformNotSupportedException)
                     {
-                        // Np. dysk sieciowy bez obsługi Replace.
+                        // E.g. a network drive without Replace support.
                         File.Copy(SavePath, BackupPath, true);
                         File.Copy(TempPath, SavePath, true);
                         File.Delete(TempPath);
@@ -164,8 +164,8 @@ namespace Cuy.Core.Save
                 }
                 else
                 {
-                    // Brak pliku głównego albo jest uszkodzony: zostawiamy save.bak bez zmian,
-                    // żeby nigdy nie nadpisać dobrej kopii uszkodzonym stanem.
+                    // Main file missing or damaged: keep save.bak unchanged,
+                    // so a good backup is never overwritten by a damaged state.
                     if (File.Exists(SavePath))
                     {
                         TryCopy(SavePath, CorruptPath);
@@ -174,14 +174,14 @@ namespace Cuy.Core.Save
                     File.Move(TempPath, SavePath);
                 }
 
-                // Pierwszy zapis: od razu jest też kopia, żeby uszkodzenie save.json nigdy nie kasowało gry.
+                // First save: create the backup right away, so a damaged save.json can never wipe the game.
                 if (!File.Exists(BackupPath)) File.Copy(SavePath, BackupPath);
             }
         }
 
         /// <summary>
-        /// Wczytuje stan: najpierw save.json, a gdy jest uszkodzony lub go brak, save.bak.
-        /// Nigdy nie rzuca wyjątku z powodu złego pliku; przy braku zapisu zwraca State = null.
+        /// Loads the state: save.json first, then save.bak if it is damaged or missing.
+        /// Never throws because of a bad file; returns State = null when there is no save.
         /// </summary>
         public LoadResult Load()
         {
@@ -200,7 +200,7 @@ namespace Cuy.Core.Save
                         return result;
                     }
                     result.MainError = error;
-                    TryCopy(SavePath, CorruptPath); // zostawiamy do obejrzenia
+                    TryCopy(SavePath, CorruptPath); // keep it for inspection
                 }
 
                 if (File.Exists(BackupPath))
@@ -228,14 +228,14 @@ namespace Cuy.Core.Save
                 string json = File.ReadAllText(path, Encoding.UTF8);
                 if (string.IsNullOrWhiteSpace(json))
                 {
-                    error = "Plik jest pusty.";
+                    error = "The file is empty.";
                     return false;
                 }
 
                 state = JsonConvert.DeserializeObject<GameState>(json, JsonSettings);
                 if (state == null || state.Needs == null)
                 {
-                    error = "Plik nie zawiera stanu gry.";
+                    error = "The file contains no game state.";
                     state = null;
                     return false;
                 }
@@ -254,8 +254,8 @@ namespace Cuy.Core.Save
         }
 
         /// <summary>
-        /// Migracje starszych wersji zapisu (1 -> 2: polskie id przedmiotów na angielskie).
-        /// Plik z nowszej wersji jest wczytywany "jak się da" (nieznane pola są pomijane).
+        /// Migrations of older save versions (1 -> 2: Polish item ids and counters to English).
+        /// A file from a newer version is loaded as well as possible (unknown fields are skipped).
         /// </summary>
         private static void Migrate(GameState state)
         {
@@ -289,7 +289,15 @@ namespace Cuy.Core.Save
             { "tunel", "tunnel" },
             { "domek", "house" },
             { "poidlo", "water_bottle" },
-            { "tort", "cake" }
+            { "tort", "cake" },
+            { "karmienia", "feedings" },
+            { "zawolania", "calls" },
+            { "glaskanie", "pets" },
+            { "sprzatania", "cleanings" },
+            { "zakupy", "purchases" },
+            { "zebrane_bobki", "poops_collected" },
+            { "minigry_rozegrane", "minigames_played" },
+            { "popcorn_po_jedzeniu", "popcorn_after_food" }
         };
 
         /// <summary>Renames dictionary keys "[prefix]old" to "[prefix]new"; counts are summed on collision.</summary>
@@ -315,7 +323,7 @@ namespace Cuy.Core.Save
             using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 fs.Write(bytes, 0, bytes.Length);
-                fs.Flush(true); // na dysk, nie tylko do bufora systemu
+                fs.Flush(true); // to disk, not just the OS buffer
             }
         }
 

@@ -30,7 +30,7 @@ namespace Cuy
             this.MinimumSize = new System.Drawing.Size(520, 680);
             this.Name = "DebugOverlay";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Mózg Świnki – Cuy.Core Brain Telemetry (F9)";
+            this.Text = "Cuy Brain Telemetry (F9)";
             this.ResumeLayout(false);
         }
     }

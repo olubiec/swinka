@@ -14,19 +14,19 @@ namespace Cuy.Core.Tests
             state.Clovers = 10;
             var pet = new Pet(state, clock);
 
-            // 150 punktów -> 15 koniczynek
-            bool isRecord = pet.RecordMinigameResult("deszcz", 150, out int clovers, out bool isNewRecord);
+            // 150 points -> 15 clovers
+            bool isRecord = pet.RecordMinigameResult("veggie_rain", 150, out int clovers, out bool isNewRecord);
             Assert.True(isNewRecord);
             Assert.Equal(15, clovers);
             Assert.Equal(25, state.Clovers);
-            Assert.Equal(150, state.HighScores["deszcz"]);
+            Assert.Equal(150, state.HighScores["veggie_rain"]);
 
-            // 600 punktów -> max 40 koniczynek
-            pet.RecordMinigameResult("deszcz", 600, out int cloversMax, out bool isNewRecord2);
+            // 600 points -> max 40 clovers
+            pet.RecordMinigameResult("veggie_rain", 600, out int cloversMax, out bool isNewRecord2);
             Assert.True(isNewRecord2);
             Assert.Equal(40, cloversMax);
             Assert.Equal(65, state.Clovers);
-            Assert.Equal(600, state.HighScores["deszcz"]);
+            Assert.Equal(600, state.HighScores["veggie_rain"]);
         }
 
         [Fact]
@@ -37,11 +37,11 @@ namespace Cuy.Core.Tests
             state.Needs.Mood = 50.0;
             var pet = new Pet(state, clock);
 
-            pet.RecordMinigameResult("gra-przyklad", 100, out _, out _);
+            pet.RecordMinigameResult("test_game", 100, out _, out _);
             Assert.Equal(65.0, state.Needs.Mood);
 
             state.Needs.Mood = 95.0;
-            pet.RecordMinigameResult("gra-przyklad", 100, out _, out _);
+            pet.RecordMinigameResult("test_game", 100, out _, out _);
             Assert.Equal(100.0, state.Needs.Mood);
         }
 
@@ -52,7 +52,7 @@ namespace Cuy.Core.Tests
             var state = GameState.CreateNew("Tester", clock.UtcNow);
             var pet = new Pet(state, clock);
 
-            // 10 nagradzanych gier
+            // 10 rewarded games
             for (int i = 1; i <= 10; i++)
             {
                 pet.RecordMinigameResult("popcorn", 100, out int clovers, out _);
@@ -61,7 +61,7 @@ namespace Cuy.Core.Tests
             Assert.Equal(100, state.Clovers);
             Assert.Equal(10, state.MinigamesDailyCount);
 
-            // 11. gra w tym samym dniu -> 0 koniczynek, ale punkty i humor działają
+            // 11th game on the same day -> 0 clovers, but score and mood still work
             state.Needs.Mood = 40.0;
             pet.RecordMinigameResult("popcorn", 120, out int clovers11, out bool isRecord);
             Assert.Equal(0, clovers11);
@@ -70,7 +70,7 @@ namespace Cuy.Core.Tests
             Assert.True(isRecord);
             Assert.Equal(120, state.HighScores["popcorn"]);
 
-            // Następny dzień -> limit zresetowany
+            // Next day -> limit reset
             clock.Advance(TimeSpan.FromDays(1));
             pet.RecordMinigameResult("popcorn", 100, out int cloversNextDay, out _);
             Assert.Equal(10, cloversNextDay);

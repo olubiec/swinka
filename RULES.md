@@ -9,7 +9,7 @@ Valid from step V1b. Until V1b is done, ZASADY.md applies.
 - Home window: HTML/JS in `web/home` inside WebView2 (virtual host https://cuy.home/). Minigames: Phaser 3 in `web/home/minigames/<game>/`.
 - Art, sounds and data live in `assets/`. Do not draw new art; report what is missing. Pixel art is scaled with nearest neighbour only.
 - Currency: clovers. Save: `%AppData%\Cuy\save.json` + `save.bak`, with a version field and migrations. Logs: `%LocalAppData%\Cuy\logs`.
-- All code, comments, UI texts and docs are in English. UI strings live in `Strings.cs` and `web/home/strings.js`.
+- All code, comments, UI texts and docs are in English.
 - The clock has a speed multiplier (60x in Debug only). Dev tools (F9 overlay, Diagnostics, DevTools) exist in Debug builds only.
 - Do not guess APIs; check docs or the code. Do not remove features without being asked.
 - Before reporting a task done, run `tools/qa/run-all.ps1` once it exists and add a regression test for every bug you fix.

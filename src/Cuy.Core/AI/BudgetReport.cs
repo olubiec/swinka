@@ -28,13 +28,13 @@ namespace Cuy.Core.AI
         {
             var sb = new StringBuilder();
             sb.AppendLine("==========================================================================================");
-            sb.AppendLine(" RAPORT BUDŻETU CZASU ŚWINKI (budzet_dnia z actions.json)");
+            sb.AppendLine(" GUINEA PIG DAY BUDGET REPORT (day_budget from actions.json)");
             sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                " Czas symulacji: {0:0.#} h ({1:0.0} dni) | Łączny czas aktywności: {2:0.#} s",
+                " Simulated time: {0:0.#} h ({1:0.0} days) | Total activity time: {2:0.#} s",
                 TotalTime.TotalHours, DaysCount, TotalTime.TotalSeconds));
             sb.AppendLine("==========================================================================================");
             sb.AppendLine(string.Format("{0,-24} | {1,-10} | {2,-11} | {3,-10} | {4,-11} | {5}",
-                "Grupa czynności", "Czas (s)", "Udział (%)", "Cel (%)", "Odchylenie", "Status (<= 5 p.p.)"));
+                "Action group", "Time (s)", "Share (%)", "Target (%)", "Deviation", "Status (<= 5 pts)"));
             sb.AppendLine(new string('-', 90));
 
             foreach (var g in Groups)
@@ -46,14 +46,14 @@ namespace Cuy.Core.AI
             }
 
             sb.AppendLine(new string('-', 90));
-            sb.AppendLine("RZADKIE ZACHOWANIA NA DOBĘ:");
+            sb.AppendLine("RARE BEHAVIOURS PER DAY:");
             foreach (var kv in RareBehaviorsPerDay)
             {
                 string target;
                 RareBehaviorTargets.TryGetValue(kv.Key, out target);
                 target = target ?? "-";
                 sb.AppendLine(string.Format(CultureInfo.InvariantCulture,
-                    "  - {0,-18}: {1,5:0.00} / dobę (cel wg actions.json: {2})",
+                    "  - {0,-18}: {1,5:0.00} / day (target from actions.json: {2})",
                     kv.Key, kv.Value, target));
             }
             sb.AppendLine("==========================================================================================");

@@ -4,45 +4,45 @@ using System.Collections.Generic;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Sześć potrzeb świnki z PLAN.md (sekcja "Model świnki").
-    /// Kolejność jak w assets/data/actions.json.
+    /// The guinea pig's six needs from PLAN.md (pig model section).
+    /// Order as in assets/data/actions.json.
     /// </summary>
     public enum Need
     {
-        /// <summary>Najedzenie.</summary>
+        /// <summary>Fullness.</summary>
         Satiety,
-        /// <summary>Witamina C.</summary>
+        /// <summary>Vitamin C.</summary>
         VitaminC,
         /// <summary>Energia.</summary>
         Energy,
-        /// <summary>Humor.</summary>
+        /// <summary>Mood.</summary>
         Mood,
-        /// <summary>Czystość klatki.</summary>
+        /// <summary>Cage cleanliness.</summary>
         Cleanliness,
-        /// <summary>Ząbki.</summary>
+        /// <summary>Teeth.</summary>
         Teeth
     }
 
-    /// <summary>Nazwy potrzeb: polskie (dla użytkownika) i klucze z plików w assets/data/.</summary>
+    /// <summary>Need names: display names for the player and keys from the files in assets/data/.</summary>
     public static class NeedNames
     {
         public static readonly IReadOnlyList<Need> All = (Need[])Enum.GetValues(typeof(Need));
 
-        public static string Polish(Need need)
+        public static string DisplayName(Need need)
         {
             switch (need)
             {
-                case Need.Satiety: return "Najedzenie";
-                case Need.VitaminC: return "Witamina C";
-                case Need.Energy: return "Energia";
-                case Need.Mood: return "Humor";
-                case Need.Cleanliness: return "Czystość klatki";
-                case Need.Teeth: return "Ząbki";
+                case Need.Satiety: return "Fullness";
+                case Need.VitaminC: return "Vitamin C";
+                case Need.Energy: return "Energy";
+                case Need.Mood: return "Mood";
+                case Need.Cleanliness: return "Cleanliness";
+                case Need.Teeth: return "Teeth";
                 default: throw new ArgumentOutOfRangeException(nameof(need));
             }
         }
 
-        /// <summary>Klucz używany w actions.json i items.json, np. "vitamin_c".</summary>
+        /// <summary>Key used in actions.json and items.json, e.g. "vitamin_c".</summary>
         public static string DataKey(Need need)
         {
             switch (need)

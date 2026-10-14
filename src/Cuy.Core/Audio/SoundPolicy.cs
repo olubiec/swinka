@@ -3,30 +3,30 @@
 namespace Cuy.Core.Audio
 {
     /// <summary>
-    /// Rodzaje zdarzeń dźwiękowych świnki.
+    /// Kinds of guinea pig sound events.
     /// </summary>
     public enum SoundEvent
     {
         None = 0,
-        /// <summary>Kwiczenie: głód, wołanie, powitanie (kwik_1/2/3.wav, losuj jeden, max 1/2min).</summary>
+        /// <summary>Wheek: hunger, call, greeting (wheek_1/2/3.wav, pick one, max 1 per 2 min).</summary>
         Wheek,
-        /// <summary>Mruczenie przy głaskaniu (mruczenie.wav, zapętla się podczas głaskania).</summary>
+        /// <summary>Purr while petted (purr.wav, loops while petting).</summary>
         Purr,
-        /// <summary>Ćwierkanie: maluch, zadowolenie (cwierkanie.wav).</summary>
+        /// <summary>Chirp: baby, contentment (chirp.wav).</summary>
         Chirp,
-        /// <summary>Pisk strachu: gwałtowny ruch myszką, ucieczka (pisk_strachu.wav).</summary>
+        /// <summary>Fear squeal: sudden mouse movement, fleeing (fear_squeal.wav).</summary>
         Fear,
-        /// <summary>Pisk złości / irytacji: zgrzytanie ząbkami, seria kliknięć (pisk_zlosci.wav).</summary>
+        /// <summary>Angry squeal: teeth chattering, too many clicks (angry_squeal.wav).</summary>
         Anger,
-        /// <summary>Chrupanie przy jedzeniu (chrupanie_1/2.wav, co 0.3-0.6s z lekką zmianą tonu).</summary>
+        /// <summary>Crunching while eating (crunch_1/2.wav, every 0.3-0.6 s with a slight pitch change).</summary>
         Crunch,
-        /// <summary>Podskok z radości / popcorning (pop.wav).</summary>
+        /// <summary>Jump for joy / popcorning (pop.wav).</summary>
         Pop
     }
 
     /// <summary>
-    /// Konfiguracja i logika sprawdzania godzin ciszy.
-    /// Domyślnie 22:00 - 07:00 (godziny nocne).
+    /// Quiet hours configuration and check.
+    /// Default 22:00 - 07:00 (night).
     /// </summary>
     public sealed class QuietHoursConfig
     {
@@ -44,7 +44,7 @@ namespace Cuy.Core.Audio
         }
 
         /// <summary>
-        /// Zwraca true jeśli podany czas doby mieści się w godzinach ciszy.
+        /// Returns true if the given time of day falls within quiet hours.
         /// </summary>
         public bool IsInQuietHours(TimeSpan timeOfDay)
         {
@@ -57,12 +57,12 @@ namespace Cuy.Core.Audio
 
             if (Start < End)
             {
-                // Przedział w ciągu jednego dnia, np. 13:00 - 15:00
+                // Range within one day, e.g. 13:00 - 15:00
                 return timeOfDay >= Start && timeOfDay < End;
             }
             else
             {
-                // Przedział przechodzący przez północ, np. 22:00 - 07:00
+                // Range across midnight, e.g. 22:00 - 07:00
                 return timeOfDay >= Start || timeOfDay < End;
             }
         }
@@ -74,11 +74,11 @@ namespace Cuy.Core.Audio
     }
 
     /// <summary>
-    /// Ogranicznik częstotliwości kwiczenia (PLAN.md F1: maks. jeden dźwięk kwiczenia na 2 minuty).
+    /// Wheek rate limiter (PLAN.md F1: at most one wheek sound per 2 minutes).
     /// </summary>
     public sealed class WheekRateLimiter
     {
-        public TimeSpan Cooldown { get; set; } = TimeSpan.FromMinutes(2); // 120 sekund
+        public TimeSpan Cooldown { get; set; } = TimeSpan.FromMinutes(2); // 120 seconds
 
         public DateTime LastWheekUtc { get; private set; } = DateTime.MinValue;
 
@@ -90,7 +90,7 @@ namespace Cuy.Core.Audio
         }
 
         /// <summary>
-        /// Sprawdza czy można w danej chwili odegrać kwiknięcie.
+        /// Checks whether a wheek may be played right now.
         /// </summary>
         public bool CanWheek(DateTime nowUtc, out TimeSpan remaining)
         {
@@ -100,7 +100,7 @@ namespace Cuy.Core.Audio
                 return true;
             }
 
-            // Ochrona przed cofnięciem zegara
+            // Guard against the clock going backwards
             if (nowUtc < LastWheekUtc)
             {
                 LastWheekUtc = nowUtc;
@@ -120,7 +120,7 @@ namespace Cuy.Core.Audio
         }
 
         /// <summary>
-        /// Próbuje zarejestrować kwiknięcie. Jeśli cooldown minął, aktualizuje czas i zwraca true.
+        /// Tries to register a wheek. If the cooldown has passed, updates the time and returns true.
         /// </summary>
         public bool TryWheek(DateTime nowUtc)
         {
@@ -139,17 +139,17 @@ namespace Cuy.Core.Audio
     }
 
     /// <summary>
-    /// Kalkulator lekkiej losowej wariacji wysokości dźwięku (pitch variation).
+    /// Small random pitch variation calculator.
     /// </summary>
     public static class PitchCalculator
     {
-        /// <summary>Domyślna maksymalna wariacja (np. 0.06 = +/-6% częstotliwości próbkowania).</summary>
+        /// <summary>Default maximum variation (e.g. 0.06 = +/-6% of the sample rate).</summary>
         public const double DefaultVariation = 0.06;
 
         public static double CalculateFactor(double randomUnit, double maxVariation = DefaultVariation)
         {
             if (maxVariation <= 0) return 1.0;
-            // randomUnit w zakresie [0.0, 1.0] -> mapowanie do [-maxVariation, +maxVariation]
+            // randomUnit in [0.0, 1.0] -> mapped to [-maxVariation, +maxVariation]
             double norm = Math.Max(0.0, Math.Min(1.0, randomUnit));
             double delta = (norm * 2.0 - 1.0) * maxVariation;
             return 1.0 + delta;
@@ -157,7 +157,7 @@ namespace Cuy.Core.Audio
     }
 
     /// <summary>
-    /// Mapowanie nazw animacji oraz zdarzeń gry na dźwięki.
+    /// Mapping of animation names and game events to sounds.
     /// </summary>
     public static class SoundEventMapper
     {

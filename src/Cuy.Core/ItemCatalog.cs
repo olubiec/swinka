@@ -7,8 +7,8 @@ using Newtonsoft.Json.Linq;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Katalog przedmiotów wczytywany z assets/data/items.json.
-    /// Zgodny z .NET Standard 2.0 (brak zależności od WinForms/Win32).
+    /// Item catalog loaded from assets/data/items.json.
+    /// .NET Standard 2.0 compatible (no WinForms/Win32 dependencies).
     /// </summary>
     public sealed class ItemCatalog
     {
@@ -143,14 +143,14 @@ namespace Cuy.Core
         public static ItemCatalog LoadFromFile(string filePath)
         {
             if (!File.Exists(filePath))
-                throw new FileNotFoundException("Nie odnaleziono pliku items.json", filePath);
+                throw new FileNotFoundException("items.json not found", filePath);
             string json = File.ReadAllText(filePath);
             return LoadJson(json);
         }
 
         public static ItemCatalog LoadDefault()
         {
-            // 1. Sprawdź system plików
+            // 1. Check the file system
             string baseDir = AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory();
             string[] candidatePaths = new[]
             {
@@ -176,7 +176,7 @@ namespace Cuy.Core
                 catch { }
             }
 
-            // 2. Sprawdź zasoby osadzone (Embedded Resource)
+            // 2. Check embedded resources
             var asm = typeof(ItemCatalog).GetTypeInfo().Assembly;
             foreach (var resName in asm.GetManifestResourceNames())
             {

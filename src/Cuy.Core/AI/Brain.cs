@@ -8,9 +8,9 @@ using Cuy.Core.Time;
 namespace Cuy.Core.AI
 {
     /// <summary>
-    /// Mózg świnki (Utility AI): podejmuje decyzje o wyborze kolejnej czynności,
-    /// zarządza czasem trwania, cooldownami, limitami dziennymi i budżetem czasu.
-    /// Zgodny z .NET Standard 2.0 (brak zależności od WinForms/Win32).
+    /// The pig's brain (Utility AI): picks the next action,
+    /// manages durations, cooldowns, daily limits and the time budget.
+    /// .NET Standard 2.0 compatible (no WinForms/Win32 dependencies).
     /// </summary>
     public sealed class Brain
     {
@@ -32,7 +32,7 @@ namespace Cuy.Core.AI
         private string _lastActionId;
         private int _consecutiveCount;
 
-        // Wewnętrzne wartości rezerwowe, gdy Brain używany jest bez obiektu Pet (np. w izolowanych testach jednostkowych)
+        // Internal fallback values when Brain runs without a Pet object (e.g. isolated unit tests)
         private readonly Needs _fallbackNeeds = new Needs();
         private LifeStage _fallbackStage = LifeStage.Adult;
 
@@ -42,7 +42,7 @@ namespace Cuy.Core.AI
             _pet = pet;
             _random = random ?? new Random();
 
-            // Inicjalizacja liczników grup budżetu
+            // Initialise the budget group counters
             if (_config.DailyBudget != null && _config.DailyBudget.TargetPercentages != null)
             {
                 foreach (var k in _config.DailyBudget.TargetPercentages.Keys)
@@ -51,7 +51,7 @@ namespace Cuy.Core.AI
                 }
             }
 
-            // Inicjalizacja liczników rzadkich zachowań
+            // Initialise the rare behaviour counters
             if (_config.DailyBudget != null && _config.DailyBudget.RareBehaviorsPerDay != null)
             {
                 foreach (var k in _config.DailyBudget.RareBehaviorsPerDay.Keys)
@@ -61,7 +61,7 @@ namespace Cuy.Core.AI
             }
         }
 
-        // ---- Właściwości stanu -----------------------------------------------
+        // ---- State properties ------------------------------------------------
 
         public ActionsConfiguration Config => _config;
         public Pet Pet => _pet;
@@ -73,19 +73,19 @@ namespace Cuy.Core.AI
         public int ConsecutiveCount => _consecutiveCount;
         public double TotalSimulatedSeconds => _totalSimulatedSeconds;
 
-        /// <summary>Zapas siana w paśniku (0-100). Domyślnie 100.</summary>
+        /// <summary>Hay in the rack (0-100). Default 100.</summary>
         public double HayInRack { get; set; } = 100.0;
 
-        /// <summary>Temperatura otoczenia w °C (null = brak wpływu temperatury).</summary>
+        /// <summary>Ambient temperature in °C (null = no temperature effect).</summary>
         public double? TemperatureC { get; set; }
 
-        /// <summary>Czy świnka ma towarzysza (odblokowuje zachowania społeczne).</summary>
+        /// <summary>Whether the pig has a companion (unlocks social behaviours).</summary>
         public bool HasCompanion { get; set; }
 
-        /// <summary>Czy użytkownik jest bezczynny (np. brak ruchu myszą/klawiaturą przez >= 10 minut).</summary>
+        /// <summary>Whether the user is idle (e.g. no mouse/keyboard input for >= 10 minutes).</summary>
         public bool IsUserIdle { get; set; }
 
-        /// <summary>Czas bezczynności użytkownika (np. z Win32 GetLastInputInfo).</summary>
+        /// <summary>How long the user has been idle (e.g. from Win32 GetLastInputInfo).</summary>
         public TimeSpan UserIdleDuration { get; set; }
 
         public Needs CurrentNeeds => _pet != null ? _pet.Needs : _fallbackNeeds;
@@ -96,7 +96,7 @@ namespace Cuy.Core.AI
             _fallbackStage = stage;
         }
 
-        // ---- Wczytywanie konfiguracji ----------------------------------------
+        // ---- Loading the configuration ---------------------------------------
 
         public static Brain Load(string jsonContent, Pet pet = null, Random random = null)
         {
@@ -117,13 +117,13 @@ namespace Cuy.Core.AI
 
         public static Brain LoadFromFile(string filePath, Pet pet = null, Random random = null)
         {
-            if (!File.Exists(filePath)) throw new FileNotFoundException("Nie znaleziono pliku konfiguracji actions.json", filePath);
+            if (!File.Exists(filePath)) throw new FileNotFoundException("actions.json configuration file not found", filePath);
             string json = File.ReadAllText(filePath);
             return Load(json, pet, random);
         }
 
         /// <summary>
-        /// Wczytuje domyślny plik actions.json (z katalogu projektu lub z wbudowanego zasobu assembly).
+        /// Loads the default actions.json (from the project folder or the embedded assembly resource).
         /// </summary>
         public static Brain CreateDefault(Pet pet = null, Random random = null)
         {
@@ -137,9 +137,6 @@ namespace Cuy.Core.AI
                 Path.Combine(baseDir, "..", "..", "..", "assets", "data", "actions.json"),
                 Path.Combine(baseDir, "..", "..", "..", "..", "assets", "data", "actions.json"),
                 Path.Combine(Directory.GetCurrentDirectory(), "assets", "data", "actions.json"),
-                Path.Combine(baseDir, "swinka", "dane", "actions.json"),
-                Path.Combine(baseDir, "..", "swinka", "dane", "actions.json"),
-                Path.Combine(baseDir, "..", "..", "swinka", "dane", "actions.json")
             };
 
             foreach (var path in candidatePaths)
@@ -155,7 +152,7 @@ namespace Cuy.Core.AI
                 catch { }
             }
 
-            // Fallback: zasób wbudowany w DLL
+            // Fallback: resource embedded in the DLL
             var asm = typeof(Brain).GetTypeInfo().Assembly;
             foreach (var resName in asm.GetManifestResourceNames())
             {
@@ -168,15 +165,15 @@ namespace Cuy.Core.AI
                 }
             }
 
-            throw new InvalidOperationException("Nie udało się odnaleźć pliku actions.json w filesystemie ani w zasobach biblioteki.");
+            throw new InvalidOperationException("actions.json was not found on disk or in the library resources.");
         }
 
-        // ---- Wybór czynności (Utility AI) ------------------------------------
+        // ---- Action selection (Utility AI) -----------------------------------
 
         /// <summary>
-        /// Wybiera najbardziej opłacalną czynność na podstawie wzoru utility AI:
-        /// zysk = suma((1 - potrzeba/100)^2 * efekt) * losowo(0.8, 1.2) + waga_bazowa,
-        /// z uwzględnieniem cooldownów, limitów dziennych, pór dnia i budżetu dnia.
+        /// Picks the most worthwhile action using the utility AI formula:
+        /// score = sum((1 - need/100)^2 * effect) * random(0.8, 1.2) + base_weight,
+        /// taking cooldowns, daily limits, times of day and the day budget into account.
         /// </summary>
         public ActionDecision DecideNextAction()
         {
@@ -206,14 +203,14 @@ namespace Cuy.Core.AI
                 }
             }
 
-            // Bezpieczny fallback – jeśli żadna czynność nie przeszła warunków, wybieramy odpoczynek (idle)
+            // Safe fallback: if no action passed its conditions, pick rest (idle)
             if (bestAction == null)
             {
-                bestAction = _config.Actions.Find(a => a.Id == "rest" || a.Id == "odpoczynek") ?? (_config.Actions.Count > 0 ? _config.Actions[0] : null);
+                bestAction = _config.Actions.Find(a => a.Id == "rest") ?? (_config.Actions.Count > 0 ? _config.Actions[0] : null);
                 bestScore = 0.5;
             }
 
-            // Rejestracja powtórzeń z rzędu
+            // Track repeats in a row
             if (bestAction.Id == _lastActionId)
             {
                 _consecutiveCount++;
@@ -224,12 +221,12 @@ namespace Cuy.Core.AI
                 _consecutiveCount = 1;
             }
 
-            // Rejestracja licznika dziennego
+            // Track the daily count
             int currentCount;
             _dailyCounts.TryGetValue(bestAction.Id, out currentCount);
             _dailyCounts[bestAction.Id] = currentCount + 1;
 
-            // Wylosowanie czasu trwania z zakresu czas_s
+            // Pick a duration from the duration_s range
             double durSec = SampleRange(bestAction.MinDurationSeconds, bestAction.MaxDurationSeconds);
             TimeSpan duration = TimeSpan.FromSeconds(durSec);
 
@@ -239,24 +236,24 @@ namespace Cuy.Core.AI
                 _cooldownsUntilSec[bestAction.Id] = _totalSimulatedSeconds + bestAction.CooldownSeconds.Value;
             }
 
-            // Dystans ruchu dla spaceru / czynności ruchowych
+            // Movement distance for walks and other moving actions
             int moveDist = 0;
             if (bestAction.IsMovement)
             {
                 moveDist = (int)Math.Round(SampleRange(bestAction.MinDistancePx, bestAction.MaxDistancePx));
             }
 
-            // Zużycie zasobów (np. siano w paśniku)
+            // Resource use (e.g. hay in the rack)
             if (bestAction.Consumes != null)
             {
                 double hayCost;
-                if (bestAction.Consumes.TryGetValue("siano_w_pasniku", out hayCost))
+                if (bestAction.Consumes.TryGetValue("hay_in_rack", out hayCost))
                 {
                     HayInRack = Math.Max(0.0, HayInRack - hayCost);
                 }
             }
 
-            // Rzadkie zachowania
+            // Rare behaviours
             if (_rareBehaviorCounts.ContainsKey(bestAction.Id))
             {
                 _rareBehaviorCounts[bestAction.Id]++;
@@ -278,7 +275,7 @@ namespace Cuy.Core.AI
             _isInterrupted = false;
             _interruptedReason = null;
 
-            // Aplikacja efektów na potrzeby
+            // Apply effects to the needs
             ApplyEffects(bestAction.Effects);
 
             return decision;
@@ -309,8 +306,8 @@ namespace Cuy.Core.AI
         }
 
         /// <summary>
-        /// Zwraca listę wszystkich czynności z obliczonymi wynikami utility oraz stanem dostępności
-        /// (wykorzystywane m.in. przez nakładkę telemetryczną F9).
+        /// Returns all actions with their computed utility scores and availability
+        /// (used by the F9 telemetry overlay, among others).
         /// </summary>
         public IReadOnlyList<ActionScoreInfo> EvaluateAllActionScores()
         {
@@ -359,7 +356,7 @@ namespace Cuy.Core.AI
                 return false;
             }
 
-            // 2. Limit dzienny
+            // 2. Daily limit
             int? limit = action.GetDailyLimit(CurrentStage);
             if (limit.HasValue)
             {
@@ -367,19 +364,19 @@ namespace Cuy.Core.AI
                 _dailyCounts.TryGetValue(action.Id, out count);
                 if (count >= limit.Value)
                 {
-                    unavailableReason = string.Format("Limit dzienny ({0}/{1})", count, limit.Value);
+                    unavailableReason = string.Format("Daily limit ({0}/{1})", count, limit.Value);
                     return false;
                 }
             }
 
-            // 3. Maksymalnie 2 razy z rzędu ta sama czynność
+            // 3. At most 2 times in a row for the same action
             if (_consecutiveCount >= 2 && action.Id == _lastActionId)
             {
-                unavailableReason = "Maks. 2x z rzędu";
+                unavailableReason = "Max 2x in a row";
                 return false;
             }
 
-            // 4. Warunki środowiskowe i potrzeby
+            // 4. Environment and need conditions
             if (action.Conditions != null && action.Conditions.Count > 0)
             {
                 var needs = CurrentNeeds;
@@ -389,81 +386,64 @@ namespace Cuy.Core.AI
                     switch (key.ToLowerInvariant())
                     {
                         case "mood_min":
-                        case "humor_min":
-                            if (needs.Mood < (double)kv.Value) { unavailableReason = string.Format("Humor < {0:0}", kv.Value); return false; }
+                            if (needs.Mood < (double)kv.Value) { unavailableReason = string.Format("Mood < {0:0}", kv.Value); return false; }
                             break;
                         case "mood_max":
-                        case "humor_max":
-                            if (needs.Mood > (double)kv.Value) { unavailableReason = string.Format("Humor > {0:0}", kv.Value); return false; }
+                            if (needs.Mood > (double)kv.Value) { unavailableReason = string.Format("Mood > {0:0}", kv.Value); return false; }
                             break;
                         case "energy_min":
-                        case "energia_min":
-                            if (needs.Energy < (double)kv.Value) { unavailableReason = string.Format("Energia < {0:0}", kv.Value); return false; }
+                            if (needs.Energy < (double)kv.Value) { unavailableReason = string.Format("Energy < {0:0}", kv.Value); return false; }
                             break;
                         case "energy_max":
-                        case "energia_max":
                             double maxEnergy = (double)kv.Value;
-                            // Przy bezczynności użytkownika świnka kładzie się spać, chyba że energia jest już pełna
-                            if (IsUserIdle && (action.Id == "sleep" || action.Id == "sleep_house" || action.Id == "doze"))
+                            // When the user is idle the pig goes to sleep, unless energy is already full
+                            if (IsUserIdle && (action.Id == "sleep" || action.Id == "sleep_in_house" || action.Id == "nap"))
                             {
                                 maxEnergy = 95.0;
                             }
-                            if (needs.Energy > maxEnergy) { unavailableReason = string.Format("Energia > {0:0}", maxEnergy); return false; }
+                            if (needs.Energy > maxEnergy) { unavailableReason = string.Format("Energy > {0:0}", maxEnergy); return false; }
                             break;
                         case "idle":
-                        case "bezczynnosc":
-                            if ((bool)kv.Value && !IsUserIdle) { unavailableReason = "Wymaga bezczynności"; return false; }
-                            if (!(bool)kv.Value && IsUserIdle) { unavailableReason = "Niedostępne przy bezczynności"; return false; }
+                            if ((bool)kv.Value && !IsUserIdle) { unavailableReason = "Needs user idle"; return false; }
+                            if (!(bool)kv.Value && IsUserIdle) { unavailableReason = "Not while user idle"; return false; }
                             break;
                         case "idle_min_s":
-                        case "bezczynnosc_min_s":
-                            if (UserIdleDuration.TotalSeconds < (double)kv.Value) { unavailableReason = string.Format("Bezczynność < {0:0}s", kv.Value); return false; }
+                            if (UserIdleDuration.TotalSeconds < (double)kv.Value) { unavailableReason = string.Format("Idle < {0:0}s", kv.Value); return false; }
                             break;
                         case "satiety_min":
                         case "fullness_min":
-                        case "najedzenie_min":
-                            if (needs.Satiety < (double)kv.Value) { unavailableReason = string.Format("Najedzenie < {0:0}", kv.Value); return false; }
+                            if (needs.Satiety < (double)kv.Value) { unavailableReason = string.Format("Fullness < {0:0}", kv.Value); return false; }
                             break;
                         case "satiety_max":
                         case "fullness_max":
-                        case "najedzenie_max":
-                            if (needs.Satiety > (double)kv.Value) { unavailableReason = string.Format("Najedzenie > {0:0}", kv.Value); return false; }
+                            if (needs.Satiety > (double)kv.Value) { unavailableReason = string.Format("Fullness > {0:0}", kv.Value); return false; }
                             break;
                         case "vitamin_c_min":
-                        case "witamina_c_min":
                             if (needs.VitaminC < (double)kv.Value) { unavailableReason = string.Format("Wit. C < {0:0}", kv.Value); return false; }
                             break;
                         case "vitamin_c_max":
-                        case "witamina_c_max":
                             if (needs.VitaminC > (double)kv.Value) { unavailableReason = string.Format("Wit. C > {0:0}", kv.Value); return false; }
                             break;
                         case "health_min":
-                        case "zdrowie_min":
-                            if (needs.Health < (double)kv.Value) { unavailableReason = string.Format("Zdrowie < {0:0}", kv.Value); return false; }
+                            if (needs.Health < (double)kv.Value) { unavailableReason = string.Format("Health < {0:0}", kv.Value); return false; }
                             break;
                         case "health_max":
-                        case "zdrowie_max":
-                            if (needs.Health > (double)kv.Value) { unavailableReason = string.Format("Zdrowie > {0:0}", kv.Value); return false; }
+                            if (needs.Health > (double)kv.Value) { unavailableReason = string.Format("Health > {0:0}", kv.Value); return false; }
                             break;
                         case "hay_in_rack_min":
-                        case "siano_w_pasniku_min":
-                            if (HayInRack < (double)kv.Value) { unavailableReason = string.Format("Brak siana ({0:0} < {1:0})", HayInRack, kv.Value); return false; }
+                            if (HayInRack < (double)kv.Value) { unavailableReason = string.Format("No hay ({0:0} < {1:0})", HayInRack, kv.Value); return false; }
                             break;
                         case "item":
-                        case "przedmiot":
                             string item = (string)kv.Value;
-                            if (_pet == null || (_pet.GetItemCount(item) <= 0)) { unavailableReason = string.Format("Brak: {0}", item); return false; }
+                            if (_pet == null || (_pet.GetItemCount(item) <= 0)) { unavailableReason = string.Format("Missing: {0}", item); return false; }
                             break;
                         case "companion":
-                        case "towarzysz":
-                            if (!HasCompanion) { unavailableReason = "Wymaga towarzysza"; return false; }
+                            if (!HasCompanion) { unavailableReason = "Needs a companion"; return false; }
                             break;
                         case "temperature_min":
-                        case "temperatura_min":
                             if (!TemperatureC.HasValue || TemperatureC.Value < (double)kv.Value) { unavailableReason = string.Format("Temp. < {0:0}°C", kv.Value); return false; }
                             break;
                         case "temperature_max":
-                        case "temperatura_max":
                             if (!TemperatureC.HasValue || TemperatureC.Value > (double)kv.Value) { unavailableReason = string.Format("Temp. > {0:0}°C", kv.Value); return false; }
                             break;
                     }
@@ -477,7 +457,7 @@ namespace Cuy.Core.AI
         {
             var needs = CurrentNeeds;
 
-            // Wzór podstawowy: suma((1 - potrzeba/100)^2 * efekt)
+            // Base formula: sum((1 - need/100)^2 * effect)
             double satisfactionSum = 0.0;
             if (action.Effects != null)
             {
@@ -492,48 +472,48 @@ namespace Cuy.Core.AI
                 }
             }
 
-            // Losowy mnożnik 0.8 - 1.2
+            // Random multiplier 0.8 - 1.2
             double randMult = 0.8 + (_random.NextDouble() * 0.4);
             double baseZysk = (satisfactionSum * randMult) + (action.BaseWeight ?? 0.0);
 
-            // Mnożnik etapu życia
+            // Life stage multiplier
             baseZysk *= action.GetStageMultiplier(CurrentStage);
 
-            // Mnożnik pory dnia
+            // Time of day multiplier
             string group = ActionDefinition.GetBudgetGroup(action.Id, _config?.DailyBudget);
             bool isNight = (hour >= 23 || hour < 7);
-            bool isSleepOrDoze = (action.Id == "sleep" || action.Id == "sleep_house" || action.Id == "doze");
+            bool isSleepOrDoze = (action.Id == "sleep" || action.Id == "sleep_in_house" || action.Id == "nap");
 
             if (isNight)
             {
-                // Noc 23:00 - 7:00: czynności snu i drzemki mają wagę x2.0, aktywność x0.5
-                if (isSleepOrDoze || group == "rest_and_naps" || group == "odpoczynek_i_drzemki")
+                // Night 23:00 - 7:00: sleep and nap actions weigh x2.0, activity x0.5
+                if (isSleepOrDoze || group == "rest_and_naps")
                 {
                     baseZysk *= 2.0;
                 }
-                else if (group == "walking" || group == "chodzenie" || group == "sniffing_looking" || group == "weszenie_rozgladanie" || group == "play_and_rare" || group == "zabawa_i_rzadkie")
+                else if (group == "walking" || group == "sniffing_and_looking" || group == "play_and_rare")
                 {
                     baseZysk *= 0.5;
                 }
             }
             else if ((hour >= 7 && hour < 9) || (hour >= 17 && hour < 21))
             {
-                // Aktywność x1.5 o świcie i zmierzchu
-                if (group == "walking" || group == "chodzenie" || group == "sniffing_looking" || group == "weszenie_rozgladanie" || group == "play_and_rare" || group == "zabawa_i_rzadkie")
+                // Activity x1.5 at dawn and dusk
+                if (group == "walking" || group == "sniffing_and_looking" || group == "play_and_rare")
                 {
                     baseZysk *= 1.5;
                 }
             }
             else if (hour >= 11 && hour < 15)
             {
-                // Drzemki x1.6 w południe
-                if (group == "rest_and_naps" || group == "odpoczynek_i_drzemki")
+                // Naps x1.6 at midday
+                if (group == "rest_and_naps")
                 {
                     baseZysk *= 1.6;
                 }
             }
 
-            // Mnożnik pory zdefiniowany bezpośrednio w czynności (jeśli nie został jeszcze zaaplikowany przez isNight)
+            // Time multiplier defined on the action itself (if not already applied by isNight)
             if (action.PeriodMultipliers != null && action.PeriodMultipliers.Count > 0)
             {
                 foreach (var pm in action.PeriodMultipliers)
@@ -545,17 +525,17 @@ namespace Cuy.Core.AI
                             baseZysk *= pm.Value;
                         }
                     }
-                    else if (pm.Key == "11-15" && (hour >= 11 && hour < 15) && group != "rest_and_naps" && group != "odpoczynek_i_drzemki")
+                    else if (pm.Key == "11-15" && (hour >= 11 && hour < 15) && group != "rest_and_naps" )
                     {
                         baseZysk *= pm.Value;
                     }
                 }
             }
 
-            // Wpływ bezczynności użytkownika na wybór czynności (warunek/preferencja Utility AI, nie twarde wymuszenie)
+            // User idleness affects the choice (a utility preference, not a hard override)
             if (IsUserIdle)
             {
-                // Świnka nie kładzie się spać z nudów, gdy jest skrajnie głodna (Satiety < 15)
+                // The pig does not fall asleep out of boredom when it is very hungry (Satiety < 15)
                 double idleSleepBonus = (needs.Satiety < 15.0) ? 0.0 : 3.5;
                 double idleDozeBonus = (needs.Satiety < 15.0) ? 0.0 : 2.0;
 
@@ -567,14 +547,14 @@ namespace Cuy.Core.AI
                 {
                     baseZysk += idleDozeBonus;
                 }
-                else if (group == "walking" || group == "chodzenie" || action.Id == "zoomies" || action.Id == "popcorn")
+                else if (group == "walking" || action.Id == "zoomies" || action.Id == "popcorn")
                 {
                     baseZysk *= 0.5;
                 }
             }
 
-            // Sprzężenie zwrotne budżetu dnia:
-            // Utrzymuje odchylenie od budzet_dnia poniżej 5 punktów procentowych.
+            // Day budget feedback:
+            // keeps the deviation from day_budget below 5 percentage points.
             if (_config.DailyBudget != null && _config.DailyBudget.TargetPercentages != null)
             {
                 double targetPct;
@@ -585,16 +565,16 @@ namespace Cuy.Core.AI
                     double actualPct = (accSec / totalTimeSoFar) * 100.0;
                     double deficit = targetPct - actualPct;
 
-                    // Specjalny impuls dla rzadkich czynności, aby wykonały się zgodnie z limitem dziennym
-                    if (action.Id == "scratch" || action.Id == "scratching" || action.Id == "drapanie" || action.Id == "chin_rub" || action.Id == "chin_marking" || action.Id == "znaczenie_broda" || action.Id == "popcorn" || action.Id == "zoomies")
+                    // Special boost for rare actions so they happen within their daily limit
+                    if (action.Id == "scratch" || action.Id == "scratching" || action.Id == "chin_rub" || action.Id == "chin_marking" || action.Id == "popcorn" || action.Id == "zoomies")
                     {
                         baseZysk += 2.0;
                     }
                     else
                     {
-                        // Sprzężenie zwrotne budżetu łagodnie narasta wraz z upływem czasu (warmup)
+                        // Budget feedback ramps up gently over time (warm-up)
                         double warmup = Math.Min(1.0, totalTimeSoFar / 1800.0);
-                        double needMul = ((action.Id == "eat_hay" || action.Id == "jedzenie_siana") && deficit > 0)
+                        double needMul = ((action.Id == "eat_hay") && deficit > 0)
                             ? Math.Max(0.0, 1.0 - (needs.Satiety / 100.0))
                             : 1.0;
                         baseZysk += deficit * 0.8 * warmup * needMul;
@@ -657,11 +637,11 @@ namespace Cuy.Core.AI
             return sum;
         }
 
-        // ---- Fizyka pulpitu: przerwanie i wznowienie --------------------------
+        // ---- Desktop physics: interrupt and resume ---------------------------
 
         /// <summary>
-        /// Przerywa bieżącą czynność świnki z powodu zdarzenia fizyki (np. podniesienie, spadanie, rzut).
-        /// Zapamiętuje pozostały czas trwania akcji.
+        /// Interrupts the current action because of a physics event (e.g. picked up, falling, thrown).
+        /// Remembers the remaining duration of the action.
         /// </summary>
         public void Interrupt(string reason = null)
         {
@@ -670,8 +650,8 @@ namespace Cuy.Core.AI
         }
 
         /// <summary>
-        /// Wznawia działanie mózgu po zakończeniu interakcji fizyki.
-        /// Jeśli przerwana czynność miała jeszcze czas trwania, kontynuuje ją; w przeciwnym razie wybiera nową.
+        /// Resumes the brain after the physics interaction ends.
+        /// If the interrupted action still had time left, it continues; otherwise a new one is picked.
         /// </summary>
         public ActionDecision Resume()
         {
@@ -686,11 +666,11 @@ namespace Cuy.Core.AI
             return DecideNextAction();
         }
 
-        // ---- Aktualizacja czasu (symulacja / pętla gry) -----------------------
+        // ---- Time update (simulation / game loop) ----------------------------
 
         /// <summary>
-        /// Aktualizuje upływ czasu w mózgu świnki.
-        /// Odlicza czas trwania czynności, zlicza statystyki budżetu i wybiera kolejną czynność po zakończeniu poprzedniej.
+        /// Advances time in the pig's brain.
+        /// Counts down the action duration, records budget statistics and picks the next action when one ends.
         /// </summary>
         public void Update(TimeSpan elapsed)
         {
@@ -700,11 +680,11 @@ namespace Cuy.Core.AI
 
             if (_isInterrupted)
             {
-                // Świnka jest pod wpływem fizyki (np. w powietrzu lub przeciągana) – czas czynności nie płynie
+                // The pig is under physics (in the air or being dragged): action time does not pass
                 return;
             }
 
-            // Naturalny spadek potrzeb w trybie autonomicznym Brain (bez zewnętrznego obiektu Pet)
+            // Natural need decay in autonomous Brain mode (without an external Pet object)
             if (_pet == null && _config.DecayPerHour != null)
             {
                 double hours = sec / 3600.0;
@@ -715,7 +695,7 @@ namespace Cuy.Core.AI
                 bool isAutoSleeping = (_currentAction != null && (_currentAction.ActionId == "sleep" || _currentAction.ActionId == "sleep_house" || _currentAction.ActionId == "sleep_in_house" || _currentAction.ActionId == "doze" || _currentAction.ActionId == "nap"));
                 if (isAutoSleeping)
                 {
-                    // Sen podnosi energię
+                    // Sleep raises energy
                     n.Energy = Math.Min(100.0, n.Energy + (15.0 * hours));
                 }
                 else if (_config.DecayPerHour.TryGetValue("energy", out decay))
@@ -733,7 +713,7 @@ namespace Cuy.Core.AI
                 return;
             }
 
-            // Zliczamy czas do odpowiedniej grupy budżetu
+            // Add the time to the matching budget group
             string group = _currentAction.Group;
             double currentAcc;
             _groupAccumulatedSeconds.TryGetValue(group, out currentAcc);
@@ -742,16 +722,16 @@ namespace Cuy.Core.AI
             _remainingDuration -= elapsed;
             if (_remainingDuration <= TimeSpan.Zero)
             {
-                // Bieżąca czynność dobiegła końca – wybieramy kolejną
+                // The current action has ended: pick the next one
                 DecideNextAction();
             }
         }
 
-        // ---- Raport budżetu dnia ---------------------------------------------
+        // ---- Day budget report -----------------------------------------------
 
         /// <summary>
-        /// Generuje raport budżetu czasu: udział procentowy każdej grupy,
-        /// odchylenie od założeń budzet_dnia oraz zliczenia rzadkich zachowań na dobę.
+        /// Builds the time budget report: the share of each group,
+        /// the deviation from day_budget and rare behaviour counts per day.
         /// </summary>
         public BudgetReport GetBudgetReport(double? daysCount = null)
         {
@@ -779,12 +759,8 @@ namespace Cuy.Core.AI
                     double actualSec;
                     if (!_groupAccumulatedSeconds.TryGetValue(grp, out actualSec))
                     {
-                        string plGrp = ActionDefinition.ToPolishBudgetGroup(grp);
-                        if (!_groupAccumulatedSeconds.TryGetValue(plGrp, out actualSec))
-                        {
-                            string enGrp = ActionDefinition.GetBudgetGroupEnglish(grp);
-                            _groupAccumulatedSeconds.TryGetValue(enGrp, out actualSec);
-                        }
+                        string enGrp = ActionDefinition.GetBudgetGroupEnglish(grp);
+                        _groupAccumulatedSeconds.TryGetValue(enGrp, out actualSec);
                     }
                     double actualPct = (actualSec / totalSec) * 100.0;
                     double diff = actualPct - target;
@@ -804,7 +780,7 @@ namespace Cuy.Core.AI
                 }
             }
 
-            // Rzadkie zachowania na dobę
+            // Rare behaviours per day
             if (_config.DailyBudget != null && _config.DailyBudget.RareBehaviorsPerDay != null)
             {
                 foreach (var kv in _config.DailyBudget.RareBehaviorsPerDay)
@@ -823,7 +799,7 @@ namespace Cuy.Core.AI
     }
 
     /// <summary>
-    /// Informacje o ocenie danej czynności przez Utility AI (dla nakładki F9).
+    /// Information about how the Utility AI scored an action (for the F9 overlay).
     /// </summary>
     public sealed class ActionScoreInfo
     {

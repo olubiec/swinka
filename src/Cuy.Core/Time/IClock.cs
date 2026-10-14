@@ -3,22 +3,22 @@
 namespace Cuy.Core.Time
 {
     /// <summary>
-    /// Zegar gry. Cały czas gry przechodzi przez ten interfejs (ZASADY.md),
-    /// żeby dało się testować przyspieszony czas.
+    /// Game clock. All game time goes through this interface (RULES.md),
+    /// so that accelerated time can be tested.
     /// </summary>
     public interface IClock
     {
-        /// <summary>Aktualny czas gry (UTC).</summary>
+        /// <summary>Current game time (UTC).</summary>
         DateTime UtcNow { get; }
 
         /// <summary>
-        /// Ile sekund gry mija w jednej sekundzie realnej.
-        /// 1 = normalnie, 60 = godzina w minutę, 1440 = doba w minutę.
+        /// How many game seconds pass in one real second.
+        /// 1 = normal, 60 = an hour per minute, 1440 = a day per minute.
         /// </summary>
         double Multiplier { get; set; }
     }
 
-    /// <summary>Typowe mnożniki czasu.</summary>
+    /// <summary>Common time multipliers.</summary>
     public static class TimeMultipliers
     {
         public const double Normal = 1.0;
@@ -28,7 +28,7 @@ namespace Cuy.Core.Time
 
     public static class ClockExtensions
     {
-        /// <summary>Czas gry w strefie lokalnej (pora dnia, data dzienna).</summary>
+        /// <summary>Game time in the local time zone (time of day, calendar date).</summary>
         public static DateTime LocalNow(this IClock clock)
         {
             return clock.UtcNow.ToLocalTime();

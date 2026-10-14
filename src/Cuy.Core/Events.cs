@@ -33,7 +33,7 @@ namespace Cuy.Core
             Years = years;
         }
 
-        /// <summary>Które to urodziny (lata świnki).</summary>
+        /// <summary>Which birthday this is (the pig's years).</summary>
         public int Years { get; }
     }
 

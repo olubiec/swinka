@@ -20,7 +20,7 @@ namespace Cuy
         private readonly BrainController _controller;
         private readonly Timer _refreshTimer;
 
-        // Kontrolki nagłówka
+        // Header controls
         private Panel _headerPanel;
         private Label _lblTitle;
         private Label _lblStatus;
@@ -28,13 +28,13 @@ namespace Cuy
         private Button _btnToggleSpeed;
         private Button _btnToggleIdleTest;
 
-        // Zakładki
+        // Tabs
         private TabControl _tabControl;
         private TabPage _tabNeeds;
         private TabPage _tabDecisions;
         private TabPage _tabBudget;
 
-        // Kontrolki zakładki Potrzeb
+        // Needs tab controls
         private TableLayoutPanel _needsLayout;
         private readonly List<NeedBarControl> _needBars = new List<NeedBarControl>();
         private GroupBox _grpCurrentAction;
@@ -45,10 +45,10 @@ namespace Cuy
         private Label _lblActionScore;
         private ProgressBar _pbActionProgress;
 
-        // Kontrolki zakładki Decyzji
+        // Decisions tab controls
         private ListView _lvDecisions;
 
-        // Kontrolki zakładki Budżetu
+        // Budget tab controls
         private ListView _lvBudget;
         private Label _lblBudgetSummary;
         private Label _lblRareBehaviors;
@@ -60,7 +60,7 @@ namespace Cuy
             InitializeComponent();
             SetupCustomUi();
 
-            // Pozycjonowanie w prawym górnym rogu ekranu
+            // Position in the top right corner of the screen
             Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
             Location = new Point(workingArea.Right - Width - 30, workingArea.Top + 40);
 
@@ -91,7 +91,7 @@ namespace Cuy
         {
             this.DoubleBuffered = true;
 
-            // 1. Nagłówek
+            // 1. Header
             _headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
@@ -102,7 +102,7 @@ namespace Cuy
 
             _lblTitle = new Label
             {
-                Text = "🐹 TELEMETRIA MÓZGU ŚWINKI (F9)",
+                Text = "🐹 PIG BRAIN TELEMETRY (F9)",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
                 ForeColor = Color.White,
                 Location = new Point(12, 8),
@@ -111,7 +111,7 @@ namespace Cuy
 
             _lblStatus = new Label
             {
-                Text = "● AKTYWNY (Utility AI)",
+                Text = "● ACTIVE (Utility AI)",
                 Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(52, 211, 153),
                 Location = new Point(14, 32),
@@ -120,7 +120,7 @@ namespace Cuy
 
             _lblIdleInfo = new Label
             {
-                Text = "💤 Bezczynność: 00:00 / 10:00 (Czuwanie)",
+                Text = "💤 Idle: 00:00 / 10:00 (awake)",
                 Font = new Font("Segoe UI", 8.5f),
                 ForeColor = Color.FromArgb(148, 163, 184),
                 Location = new Point(14, 56),
@@ -129,7 +129,7 @@ namespace Cuy
 
             _btnToggleSpeed = new Button
             {
-                Text = "⚡ Zegar: 1x (Zmień na 60x)",
+                Text = "⚡ Clock: 1x (switch to 60x)",
                 Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.FromArgb(59, 130, 246),
@@ -148,7 +148,7 @@ namespace Cuy
 
             _btnToggleIdleTest = new Button
             {
-                Text = "💤 Próg: 10m (Test: 10s)",
+                Text = "💤 Threshold: 10m (test: 10s)",
                 Font = new Font("Segoe UI", 8.5f, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.FromArgb(71, 85, 105),
@@ -180,9 +180,9 @@ namespace Cuy
                 Padding = new Point(12, 8)
             };
 
-            _tabNeeds = new TabPage("🐹 Potrzeby i Bieżąca Akcja") { BackColor = Color.FromArgb(20, 22, 28) };
-            _tabDecisions = new TabPage("🧠 Oceny AI (Utility Scores)") { BackColor = Color.FromArgb(20, 22, 28) };
-            _tabBudget = new TabPage("📊 Budżet Dnia i Statystyki") { BackColor = Color.FromArgb(20, 22, 28) };
+            _tabNeeds = new TabPage("🐹 Needs and current action") { BackColor = Color.FromArgb(20, 22, 28) };
+            _tabDecisions = new TabPage("🧠 AI scores") { BackColor = Color.FromArgb(20, 22, 28) };
+            _tabBudget = new TabPage("📊 Day budget and stats") { BackColor = Color.FromArgb(20, 22, 28) };
 
             _tabControl.TabPages.Add(_tabNeeds);
             _tabControl.TabPages.Add(_tabDecisions);
@@ -207,7 +207,7 @@ namespace Cuy
                 Padding = new Padding(12, 8, 12, 4)
             };
 
-            string[] needNames = { "Najedzenie", "Witamina C", "Energia", "Humor", "Czystość", "Ząbki", "Zdrowie" };
+            string[] needNames = { "Fullness", "Vitamin C", "Energy", "Mood", "Cleanliness", "Teeth", "Health" };
             Color[] needColors =
             {
                 Color.FromArgb(16, 185, 129),  // Emerald
@@ -227,10 +227,10 @@ namespace Cuy
             }
             _tabNeeds.Controls.Add(_needsLayout);
 
-            // Karta bieżącej akcji
+            // Current action card
             _grpCurrentAction = new GroupBox
             {
-                Text = "Bieżąca czynność świnki",
+                Text = "Current pig action",
                 Dock = DockStyle.Fill,
                 ForeColor = Color.FromArgb(148, 163, 184),
                 Font = new Font("Segoe UI", 9f, FontStyle.Bold),
@@ -240,7 +240,7 @@ namespace Cuy
 
             _lblActionName = new Label
             {
-                Text = "Czynność: ...",
+                Text = "Action: ...",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
                 ForeColor = Color.White,
                 Location = new Point(14, 25),
@@ -249,7 +249,7 @@ namespace Cuy
 
             _lblActionGroup = new Label
             {
-                Text = "Grupa budżetu: ...",
+                Text = "Budget group: ...",
                 Font = new Font("Segoe UI", 9f),
                 ForeColor = Color.FromArgb(203, 213, 225),
                 Location = new Point(14, 52),
@@ -258,7 +258,7 @@ namespace Cuy
 
             _lblActionScore = new Label
             {
-                Text = "Zysk AI: ...",
+                Text = "AI score: ...",
                 Font = new Font("Segoe UI", 9f),
                 ForeColor = Color.FromArgb(203, 213, 225),
                 Location = new Point(280, 52),
@@ -267,7 +267,7 @@ namespace Cuy
 
             _lblActionDuration = new Label
             {
-                Text = "Pozostało: ...",
+                Text = "Remaining: ...",
                 Font = new Font("Segoe UI", 9f),
                 ForeColor = Color.FromArgb(203, 213, 225),
                 Location = new Point(14, 76),
@@ -276,7 +276,7 @@ namespace Cuy
 
             _lblActionWalk = new Label
             {
-                Text = "Dystans: ...",
+                Text = "Distance: ...",
                 Font = new Font("Segoe UI", 9f),
                 ForeColor = Color.FromArgb(203, 213, 225),
                 Location = new Point(280, 76),
@@ -317,11 +317,11 @@ namespace Cuy
                 HeaderStyle = ColumnHeaderStyle.Nonclickable
             };
 
-            _lvDecisions.Columns.Add("Czynność", 120);
-            _lvDecisions.Columns.Add("Animacja", 80);
-            _lvDecisions.Columns.Add("Grupa", 120);
-            _lvDecisions.Columns.Add("Zysk AI (Score)", 100);
-            _lvDecisions.Columns.Add("Stan / Warunek", 110);
+            _lvDecisions.Columns.Add("Action", 120);
+            _lvDecisions.Columns.Add("Animation", 80);
+            _lvDecisions.Columns.Add("Group", 120);
+            _lvDecisions.Columns.Add("AI score", 100);
+            _lvDecisions.Columns.Add("State / condition", 110);
 
             _tabDecisions.Controls.Add(_lvDecisions);
         }
@@ -331,7 +331,7 @@ namespace Cuy
             var topPanel = new Panel { Dock = DockStyle.Top, Height = 60, Padding = new Padding(12) };
             _lblBudgetSummary = new Label
             {
-                Text = "Raport budżetu dnia świnki (wymóg PLAN.md: odchylenie ≤ 5 p.p.)",
+                Text = "Pig day budget report (PLAN.md rule: deviation ≤ 5 pts)",
                 Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
                 ForeColor = Color.White,
                 Dock = DockStyle.Fill
@@ -351,10 +351,10 @@ namespace Cuy
                 HeaderStyle = ColumnHeaderStyle.Nonclickable
             };
 
-            _lvBudget.Columns.Add("Grupa budżetowa", 160);
-            _lvBudget.Columns.Add("Cel %", 70);
-            _lvBudget.Columns.Add("Aktualnie %", 85);
-            _lvBudget.Columns.Add("Odchylenie", 90);
+            _lvBudget.Columns.Add("Budget group", 160);
+            _lvBudget.Columns.Add("Target %", 70);
+            _lvBudget.Columns.Add("Actual %", 85);
+            _lvBudget.Columns.Add("Deviation", 90);
             _lvBudget.Columns.Add("Status (≤ 5 pp)", 110);
 
             _tabBudget.Controls.Add(_lvBudget);
@@ -362,7 +362,7 @@ namespace Cuy
             var bottomPanel = new Panel { Dock = DockStyle.Bottom, Height = 75, Padding = new Padding(12) };
             _lblRareBehaviors = new Label
             {
-                Text = "Rzadkie zachowania na dobę:\r\nPopcorn: 0 | Zoomies: 0 | Drapanie: 0",
+                Text = "Rare behaviours per day:\r\nPopcorn: 0 | Zoomies: 0 | Scratching: 0",
                 Font = new Font("Segoe UI", 9f),
                 ForeColor = Color.FromArgb(203, 213, 225),
                 Dock = DockStyle.Fill
@@ -376,12 +376,12 @@ namespace Cuy
             double mul = _controller.ClockMultiplier;
             if (Math.Abs(mul - 60.0) < 0.1)
             {
-                _btnToggleSpeed.Text = "⚡ Zegar: 60x (Kliknij na 1x)";
+                _btnToggleSpeed.Text = "⚡ Clock: 60x (click for 1x)";
                 _btnToggleSpeed.BackColor = Color.FromArgb(239, 68, 68); // Red / active fast
             }
             else
             {
-                _btnToggleSpeed.Text = "⏱️ Zegar: 1x (Kliknij na 60x)";
+                _btnToggleSpeed.Text = "⏱️ Clock: 1x (click for 60x)";
                 _btnToggleSpeed.BackColor = Color.FromArgb(59, 130, 246); // Blue
             }
         }
@@ -390,12 +390,12 @@ namespace Cuy
         {
             if (_controller.IsTestIdleThresholdActive)
             {
-                _btnToggleIdleTest.Text = "💤 Próg test: 10s (Kliknij: 10m)";
+                _btnToggleIdleTest.Text = "💤 Test threshold: 10s (click: 10m)";
                 _btnToggleIdleTest.BackColor = Color.FromArgb(168, 85, 247); // Purple
             }
             else
             {
-                _btnToggleIdleTest.Text = "💤 Próg: 10m (Kliknij: 10s)";
+                _btnToggleIdleTest.Text = "💤 Threshold: 10m (click: 10s)";
                 _btnToggleIdleTest.BackColor = Color.FromArgb(71, 85, 105); // Slate
             }
         }
@@ -407,93 +407,93 @@ namespace Cuy
             Pet pet = _controller.Pet;
             if (pet == null) return;
 
-            // 1. Status fizyki vs AI
+            // 1. Physics vs AI status
             if (_controller.IsPhysicsActive)
             {
-                _lblStatus.Text = string.Format("● PRZERWANY (Fizyka: {0})", _controller.PhysicsReason);
+                _lblStatus.Text = string.Format("● PAUSED (physics: {0})", _controller.PhysicsReason);
                 _lblStatus.ForeColor = Color.FromArgb(245, 158, 11);
             }
             else
             {
-                _lblStatus.Text = "● AKTYWNY (Sterowanie Brain Utility AI)";
+                _lblStatus.Text = "● ACTIVE (Brain Utility AI in control)";
                 _lblStatus.ForeColor = Color.FromArgb(52, 211, 153);
             }
 
-            // 1b. Informacje o bezczynności i śnie
+            // 1b. Idle and sleep info
             TimeSpan idle = _controller.CurrentRealIdleTime;
             TimeSpan threshold = _controller.IdleThreshold;
             string stateStr;
             Color stateColor;
             if (_controller.IsWakingUp)
             {
-                stateStr = "Budzenie (wake_up)...";
+                stateStr = "Waking up (wake_up)...";
                 stateColor = Color.FromArgb(251, 191, 36);
             }
             else if (pet.IsSleeping)
             {
-                stateStr = "Śpi (sleep) 💤";
+                stateStr = "Asleep (sleep) 💤";
                 stateColor = Color.FromArgb(147, 197, 253);
             }
             else if (_controller.IsUserIdle)
             {
-                stateStr = "Bezczynny (sen preferowany)";
+                stateStr = "User idle (sleep preferred)";
                 stateColor = Color.FromArgb(167, 139, 250);
             }
             else
             {
-                stateStr = "Aktywny";
+                stateStr = "Active";
                 stateColor = Color.FromArgb(148, 163, 184);
             }
 
-            _lblIdleInfo.Text = string.Format("💤 Bezczynność: {0:mm\\:ss} / {1:mm\\:ss} (Stan: {2})",
+            _lblIdleInfo.Text = string.Format("💤 Idle: {0:mm\\:ss} / {1:mm\\:ss} (state: {2})",
                 idle, threshold, stateStr);
             _lblIdleInfo.ForeColor = stateColor;
 
-            // 2. Paski potrzeb
+            // 2. Need bars
             var needs = pet.Needs;
             _needBars[0].SetValue(needs.Satiety, "-8.0/h");
             _needBars[1].SetValue(needs.VitaminC, "-4.0/h");
-            _needBars[2].SetValue(needs.Energy, pet.IsSleeping ? "+wzrasta" : "-6.0/h");
+            _needBars[2].SetValue(needs.Energy, pet.IsSleeping ? "+rising" : "-6.0/h");
             _needBars[3].SetValue(needs.Mood, "-5.0/h");
             _needBars[4].SetValue(needs.Cleanliness, "");
             _needBars[5].SetValue(needs.Teeth, "-2.0/h");
             _needBars[6].SetValue(needs.Health, "");
 
-            // 3. Karta bieżącej akcji
+            // 3. Current action card
             var action = _controller.CurrentAction;
             if (action != null)
             {
-                _lblActionName.Text = string.Format("Czynność: {0} (animacja: {1})", action.ActionId, action.AnimationName);
-                _lblActionGroup.Text = string.Format("Grupa: {0}", action.Group);
-                _lblActionScore.Text = string.Format("Zysk AI: {0:0.00}", action.Score);
+                _lblActionName.Text = string.Format("Action: {0} (animation: {1})", action.ActionId, action.AnimationName);
+                _lblActionGroup.Text = string.Format("Group: {0}", action.Group);
+                _lblActionScore.Text = string.Format("AI score: {0:0.00}", action.Score);
 
                 double remaining = Math.Max(0.0, _controller.RemainingDuration.TotalSeconds);
                 double total = Math.Max(0.1, action.Duration.TotalSeconds);
-                _lblActionDuration.Text = string.Format("Pozostało: {0:0.#}s / {1:0.#}s", remaining, total);
+                _lblActionDuration.Text = string.Format("Remaining: {0:0.#}s / {1:0.#}s", remaining, total);
 
                 int pct = (int)Math.Max(0, Math.Min(100, ((total - remaining) / total) * 100));
                 _pbActionProgress.Value = pct;
 
                 if (action.Definition.IsMovement)
                 {
-                    _lblActionWalk.Text = string.Format("Spacer: {0} / {1} px ({2})",
+                    _lblActionWalk.Text = string.Format("Walk: {0} / {1} px ({2})",
                         _controller.TraversedWalkDistancePx,
                         _controller.TargetWalkDistancePx,
-                        _controller.IsWalking ? "w ruchu" : "staje");
+                        _controller.IsWalking ? "moving" : "stopping");
                 }
                 else
                 {
-                    _lblActionWalk.Text = "Ruch: stacjonarna";
+                    _lblActionWalk.Text = "Movement: stationary";
                 }
             }
 
-            // 4. Zakładka Decyzji AI (odświeżanie przy aktywności)
+            // 4. AI decisions tab (refreshed while active)
             if (_tabControl.SelectedTab == _tabDecisions)
             {
                 UpdateDecisionsList();
             }
 
-            // 5. Zakładka Budżetu
+            // 5. Budget tab
             if (_tabControl.SelectedTab == _tabBudget)
             {
                 UpdateBudgetList();
@@ -510,7 +510,7 @@ namespace Cuy
             _lvDecisions.BeginUpdate();
             _lvDecisions.Items.Clear();
 
-            // Sortuj malejąco po wyniku AI
+            // Sort by AI score, descending
             var sorted = new List<ActionScoreInfo>(scores);
             sorted.Sort((a, b) => b.Score.CompareTo(a.Score));
 
@@ -523,18 +523,18 @@ namespace Cuy
 
                 if (s.IsCurrent)
                 {
-                    item.SubItems.Add("▶ WYBRANA");
+                    item.SubItems.Add("▶ CHOSEN");
                     item.BackColor = Color.FromArgb(30, 58, 138); // Blue highlight
                     item.ForeColor = Color.White;
                 }
                 else if (s.IsAvailable)
                 {
-                    item.SubItems.Add("Dostępna");
+                    item.SubItems.Add("Available");
                     item.ForeColor = Color.FromArgb(203, 213, 225);
                 }
                 else
                 {
-                    item.SubItems.Add(s.UnavailableReason ?? "Zablokowana");
+                    item.SubItems.Add(s.UnavailableReason ?? "Blocked");
                     item.ForeColor = Color.FromArgb(148, 163, 184);
                 }
 
@@ -549,9 +549,9 @@ namespace Cuy
             if (report == null) return;
 
             _lblBudgetSummary.Text = string.Format(
-                "Raport budżetu dnia (czas: {0:0.#}h, tolerancja ≤ 5 pp: {1})",
+                "Day budget report (time: {0:0.#}h, tolerance ≤ 5 pts: {1})",
                 report.TotalTime.TotalHours,
-                report.IsAllWithinTolerance ? "✓ ZACHOWANA" : "⚠️ POZA TOLERANCJĄ");
+                report.IsAllWithinTolerance ? "✓ WITHIN" : "⚠️ OUT OF TOLERANCE");
 
             _lvBudget.BeginUpdate();
             _lvBudget.Items.Clear();
@@ -565,12 +565,12 @@ namespace Cuy
 
                 if (g.IsWithinTolerance)
                 {
-                    item.SubItems.Add("✓ W normie");
+                    item.SubItems.Add("✓ OK");
                     item.ForeColor = Color.FromArgb(52, 211, 153); // Green
                 }
                 else
                 {
-                    item.SubItems.Add("⚠️ Odchylenie");
+                    item.SubItems.Add("⚠️ Deviation");
                     item.ForeColor = Color.FromArgb(245, 158, 11); // Amber
                 }
 
@@ -578,18 +578,18 @@ namespace Cuy
             }
             _lvBudget.EndUpdate();
 
-            string rareText = "Rzadkie zachowania (na dobę):\r\n";
+            string rareText = "Rare behaviours (per day):\r\n";
             foreach (var kv in report.RareBehaviorsPerDay)
             {
                 string target = report.RareBehaviorTargets.ContainsKey(kv.Key) ? report.RareBehaviorTargets[kv.Key] : "-";
-                rareText += string.Format("{0}: {1:0.0}/dobę (cel: {2})  |  ", kv.Key, kv.Value, target);
+                rareText += string.Format("{0}: {1:0.0}/day (target: {2})  |  ", kv.Key, kv.Value, target);
             }
             _lblRareBehaviors.Text = rareText.TrimEnd(' ', '|');
         }
     }
 
     /// <summary>
-    /// Estetyczny pasek pojedynczej potrzeby z nazwą, wartością procentową i kolorowaniem.
+    /// A single need bar with name, percentage and colouring.
     /// </summary>
     internal sealed class NeedBarControl : UserControl
     {
@@ -620,7 +620,7 @@ namespace Cuy
             var g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            // Tekst etykiety
+            // Label text
             string title = string.Format("{0}: {1:0.#}% {2}", _name, _value, _rateInfo);
             using (var brush = new SolidBrush(Color.FromArgb(226, 232, 240)))
             using (var font = new Font("Segoe UI", 8.5f, FontStyle.Bold))
@@ -628,7 +628,7 @@ namespace Cuy
                 g.DrawString(title, font, brush, new PointF(0, 0));
             }
 
-            // Tło paska
+            // Bar background
             int barY = 18;
             int barH = 12;
             int barW = Width - 4;
@@ -639,14 +639,14 @@ namespace Cuy
                 g.FillRectangle(bgBrush, bgRect);
             }
 
-            // Wypełnienie paska
+            // Bar fill
             int fillW = (int)((_value / 100.0) * barW);
             if (fillW > 0)
             {
                 var fillRect = new Rectangle(0, barY, fillW, barH);
                 Color barColor = _color;
 
-                // Czerwony gdy krytycznie niska potrzeba
+                // Red when the need is critically low
                 if (_value < 20.0) barColor = Color.FromArgb(239, 68, 68);
                 else if (_value < 40.0) barColor = Color.FromArgb(245, 158, 11);
 
@@ -656,7 +656,7 @@ namespace Cuy
                 }
             }
 
-            // Ramka paska
+            // Bar frame
             using (var borderPen = new Pen(Color.FromArgb(51, 65, 85), 1))
             {
                 g.DrawRectangle(borderPen, bgRect);
@@ -664,7 +664,7 @@ namespace Cuy
         }
     }
 
-    /// <summary>Alias dla kompatybilności wstecznej.</summary>
+    /// <summary>Alias for backward compatibility.</summary>
     public static class FormBrainOverlay
     {
         public static void Toggle() => DebugOverlay.Toggle();

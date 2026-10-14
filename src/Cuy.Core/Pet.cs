@@ -6,10 +6,10 @@ using Cuy.Core.Time;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Mózg świnki: upływ czasu, potrzeby, wiek, więź, waluta i zdarzenia.
-    /// Jedyne źródło prawdy o stanie gry. Wywołuj <see cref="Update"/> regularnie (np. co sekundę) z wątku gry.
+    /// The pig's core: passage of time, needs, age, bond, currency and events.
+    /// The single source of truth about the game state. Call <see cref="Update"/> regularly (e.g. every second) from the game thread.
     /// </summary>
-    /// <remarks>Klasa nie jest bezpieczna wątkowo: używaj jej z jednego wątku.</remarks>
+    /// <remarks>Not thread-safe: use it from one thread.</remarks>
     public sealed class Pet
     {
         private readonly bool[] _lowNotified = new bool[NeedNames.All.Count];
@@ -25,21 +25,21 @@ namespace Cuy.Core
             Balance = balance ?? Balance.CreateDefault();
         }
 
-        // ---- Zdarzenia -------------------------------------------------------
+        // ---- Events ----------------------------------------------------------
 
-        /// <summary>Potrzeba spadła poniżej progu "niska" (domyślnie 35).</summary>
+        /// <summary>A need dropped below the "low" threshold (default 35).</summary>
         public event EventHandler<NeedEventArgs> NeedLow;
 
-        /// <summary>Potrzeba spadła poniżej progu "krytyczna" (domyślnie 15).</summary>
+        /// <summary>A need dropped below the "critical" threshold (default 15).</summary>
         public event EventHandler<NeedEventArgs> NeedCritical;
 
-        /// <summary>Zmiana etapu życia (np. Maluch -> Młodzik). Przy długim offline może przeskoczyć kilka etapów naraz.</summary>
+        /// <summary>Life stage changed (e.g. Baby -> Junior). After a long offline period several stages can pass at once.</summary>
         public event EventHandler<StageChangedEventArgs> StageChanged;
 
-        /// <summary>Urodziny (co 17,4 dnia realnego). Po długim offline przychodzi osobno dla każdych zaległych urodzin.</summary>
+        /// <summary>Birthday (every 17.4 real days). After a long offline period it fires once per missed birthday.</summary>
         public event EventHandler<BirthdayEventArgs> Birthday;
 
-        /// <summary>Nowy poziom więzi. Przy skoku o kilka poziomów przychodzi dla każdego poziomu.</summary>
+        /// <summary>New bond level. On a jump of several levels it fires for each level.</summary>
         public event EventHandler<LevelUpEventArgs> LevelUp;
 
         // ---- Stan ------------------------------------------------------------
@@ -50,12 +50,12 @@ namespace Cuy.Core
 
         public Needs Needs { get { return State.Needs; } }
 
-        /// <summary>Świnka śpi: energia rośnie zamiast spadać. Ustawia to warstwa zachowań (B2/B3).</summary>
+        /// <summary>The pig is asleep: energy rises instead of falling. Set by the behaviour layer.</summary>
         public bool IsSleeping { get; set; }
 
         public bool IsStarted { get; private set; }
 
-        /// <summary>Ile czasu gry upłynęło offline przy ostatnim <see cref="Start"/>.</summary>
+        /// <summary>Game time that passed offline at the last <see cref="Start"/>.</summary>
         public TimeSpan LastOfflineDuration { get; private set; }
 
         public PigAge Age
@@ -65,11 +65,11 @@ namespace Cuy.Core
 
         public LifeStage Stage { get { return State.Stage; } }
 
-        // ---- Upływ czasu -----------------------------------------------------
+        // ---- Passage of time -------------------------------------------------
 
         /// <summary>
-        /// Wywołaj raz po wczytaniu stanu (po podpięciu zdarzeń). Nalicza czas, gdy aplikacja była zamknięta,
-        /// według zasad offline, i od razu zgłasza zaległe zdarzenia.
+        /// Call once after loading the state (after hooking up the events). Adds the time the app was closed
+        /// using the offline rules and raises pending events right away.
         /// </summary>
         public void Start()
         {
@@ -90,8 +90,8 @@ namespace Cuy.Core
         }
 
         /// <summary>
-        /// Nalicza czas od ostatniego wywołania. Przerwa dłuższa niż <see cref="Cuy.Core.Balance.MaxOnlineGap"/>
-        /// czasu realnego (uśpiony komputer) liczy się jak offline.
+        /// Adds the time since the last call. A gap longer than <see cref="Cuy.Core.Balance.MaxOnlineGap"/>
+        /// of real time (computer asleep) counts as offline.
         /// </summary>
         public void Update()
         {
@@ -99,7 +99,7 @@ namespace Cuy.Core
 
             var now = Clock.UtcNow;
             var elapsed = now - State.LastActiveUtc;
-            // Zegar cofnięty (zmiana godziny w systemie, powrót z 60x do 1x): nie cofamy świnki w czasie.
+            // Clock went backwards (system time change, back from 60x to 1x): do not move the pig back in time.
             if (elapsed <= TimeSpan.Zero) return;
 
             double multiplier = Clock.Multiplier > 0 ? Clock.Multiplier : 1;
@@ -173,9 +173,9 @@ namespace Cuy.Core
             }
         }
 
-        // ---- Opieka i nagrody ------------------------------------------------
+        // ---- Care and rewards ------------------------------------------------
 
-        /// <summary>Zmienia potrzebę o podaną wartość (karmienie, zabawa...). Wynik obcinany do 0-100.</summary>
+        /// <summary>Changes a need by the given amount (feeding, play...). Result clamped to 0-100.</summary>
         public void ChangeNeed(Need need, double delta)
         {
             State.Needs[need] = State.Needs[need] + delta;
@@ -183,7 +183,7 @@ namespace Cuy.Core
         }
 
         /// <summary>
-        /// Dodaje punkty więzi z uwzględnieniem dziennego limitu. Zwraca, ile faktycznie dodano.
+        /// Adds bond points within the daily limit. Returns how many were actually added.
         /// </summary>
         public int AddBondPoints(int points)
         {
@@ -214,11 +214,11 @@ namespace Cuy.Core
 
         public void AddClovers(int amount)
         {
-            if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount), "Użyj TrySpendClovers do wydawania.");
+            if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount), "Use TrySpendClovers to spend.");
             State.Clovers += amount;
         }
 
-        /// <summary>Wydaje koniczynki, jeśli wystarczy. Stan nigdy nie schodzi poniżej 0.</summary>
+        /// <summary>Spends clovers if there are enough. The balance never drops below 0.</summary>
         public bool TrySpendClovers(int amount)
         {
             if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount));
@@ -227,13 +227,13 @@ namespace Cuy.Core
             return true;
         }
 
-        // ---- Bobki i czystość klatki (B4) -----------------------------------
+        // ---- Poops and cage cleanliness ---------------------------------------
 
         public const int MaxPoops = 8;
 
         /// <summary>
-        /// Przelicza potrzebę czystości klatki na podstawie liczby bobków:
-        /// 0 bobków = 100%, 8 bobków = 0% (spadek o 12.5% na bobek).
+        /// Recomputes cage cleanliness from the number of poops:
+        /// 0 poops = 100%, 8 poops = 0% (12.5% less per poop).
         /// </summary>
         public void RecalculateCleanliness()
         {
@@ -242,7 +242,7 @@ namespace Cuy.Core
         }
 
         /// <summary>
-        /// Dodaje bobek (do limitu 8). Zwraca false jeśli limit został osiągnięty.
+        /// Adds a poop (up to 8). Returns false if the limit was reached.
         /// </summary>
         public bool TryAddPoop(PoopItem poop = null)
         {
@@ -258,7 +258,7 @@ namespace Cuy.Core
         }
 
         /// <summary>
-        /// Usuwa bobek (np. po kliknięciu): zmniejsza licznik, dodaje 1 koniczynkę i przelicza czystość.
+        /// Removes a poop (e.g. after a click): lowers the count, adds 1 clover and recomputes cleanliness.
         /// </summary>
         public bool CleanPoop(string poopId = null)
         {
@@ -275,13 +275,13 @@ namespace Cuy.Core
 
             State.PoopCount = Math.Max(0, State.PoopCount - 1);
             AddClovers(1);
-            Count("zebrane_bobki");
+            Count("poops_collected");
             RecalculateCleanliness();
             return true;
         }
 
         /// <summary>
-        /// Sprząta całą klatkę (np. w Domku): zeruje licznik bobków, czyści listę i przywraca czystość do 100.
+        /// Cleans the whole cage (e.g. in Home): resets the poop count, clears the list and restores cleanliness to 100.
         /// </summary>
         public void CleanAllPoops()
         {
@@ -303,7 +303,7 @@ namespace Cuy.Core
             State.Inventory[itemId] = GetItemCount(itemId) + count;
         }
 
-        /// <summary>Zabiera przedmioty z ekwipunku, jeśli są. Przy zerze wpis znika.</summary>
+        /// <summary>Takes items from the inventory if available. At zero the entry is removed.</summary>
         public bool TryRemoveItem(string itemId, int count = 1)
         {
             if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
@@ -314,7 +314,7 @@ namespace Cuy.Core
             return true;
         }
 
-        /// <summary>Zaznacza animację w Albumie zachowań. Zwraca true, jeśli zobaczona pierwszy raz.</summary>
+        /// <summary>Marks an animation in the behaviour album. Returns true if seen for the first time.</summary>
         public bool MarkSeen(string animationName)
         {
             if (string.IsNullOrEmpty(animationName) || State.Album.ContainsKey(animationName)) return false;
@@ -329,7 +329,7 @@ namespace Cuy.Core
             return entry;
         }
 
-        /// <summary>Zwiększa licznik w statystykach (np. "bell_pepper", "popcorn").</summary>
+        /// <summary>Increments a counter in the statistics (e.g. "bell_pepper", "popcorn").</summary>
         public int Count(string counter, int by = 1)
         {
             if (string.IsNullOrEmpty(counter)) throw new ArgumentNullException(nameof(counter));
@@ -342,8 +342,8 @@ namespace Cuy.Core
 
 
         /// <summary>
-        /// Zapisuje wynik minigry, nalicza nagrodę (koniczynki = min(40, punkty / 10), humor +15)
-        /// z uwzględnieniem limitu maks. 10 nagradzanych gier dziennie oraz aktualizuje rekordy w GameState.
+        /// Records a minigame score, grants the reward (clovers = min(40, score / 10), mood +15)
+        /// within the limit of 10 rewarded games per day, and updates the records in GameState.
         /// </summary>
         public bool RecordMinigameResult(string gameId, int score, out int cloversAwarded, out bool isNewRecord)
         {
@@ -358,7 +358,7 @@ namespace Cuy.Core
                 State.HighScores[gameId] = score;
             }
 
-            // Dzienny limit 10 nagradzanych gier
+            // Daily limit of 10 rewarded games
             string today = Clock.LocalNow().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             if (State.MinigamesDailyDate != today)
             {
@@ -369,7 +369,7 @@ namespace Cuy.Core
             cloversAwarded = 0;
             if (State.MinigamesDailyCount < 10)
             {
-                // koniczynki = min(40, punkty / 10)
+                // clovers = min(40, score / 10)
                 cloversAwarded = Math.Min(40, Math.Max(0, score / 10));
                 if (cloversAwarded > 0)
                 {
@@ -378,11 +378,11 @@ namespace Cuy.Core
                 State.MinigamesDailyCount++;
             }
 
-            // humor +15 po grze
+            // mood +15 after a game
             ChangeNeed(Need.Mood, 15.0);
 
-            Count("minigry_rozegrane");
-            Count("minigra_" + gameId);
+            Count("minigames_played");
+            Count("minigame_" + gameId);
 
             return isNewRecord;
         }
@@ -393,20 +393,20 @@ namespace Cuy.Core
         };
 
         /// <summary>
-        /// Rejestruje zjedzenie przedmiotu: zwiększa łączny licznik karmień,
-        /// licznik danego przedmiotu oraz dedykowany licznik spożycia "eaten_<id>".
+        /// Records eating an item: increments the total feedings counter,
+        /// the item's counter and the dedicated "eaten_<id>" counter.
         /// </summary>
         public void RecordFoodEaten(string itemId)
         {
             if (string.IsNullOrEmpty(itemId)) return;
-            Count("karmienia");
+            Count("feedings");
             Count(itemId);
             Count("eaten_" + itemId.ToLowerInvariant());
         }
 
         /// <summary>
-        /// Zwraca identyfikator warzywa/przysmaku, które świnka je najchętniej
-        /// (ma najwyższy licznik spożycia > 0). Zwraca null, jeśli żadne warzywo nie zostało jeszcze zjedzone.
+        /// Returns the id of the vegetable or treat the pig likes most
+        /// (highest eaten counter > 0). Returns null if no vegetable has been eaten yet.
         /// </summary>
         public string GetFavoriteVegetable(System.Collections.Generic.IEnumerable<string> candidateVegetableIds = null)
         {
@@ -435,7 +435,7 @@ namespace Cuy.Core
         }
 
         /// <summary>
-        /// Sprawdza, czy podany przedmiot jest aktualnie ulubionym warzywem świnki.
+        /// Checks whether the given item is currently the pig's favourite vegetable.
         /// </summary>
         public bool IsFavoriteVegetable(string itemId, System.Collections.Generic.IEnumerable<string> candidateVegetableIds = null)
         {

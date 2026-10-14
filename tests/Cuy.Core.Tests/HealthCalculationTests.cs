@@ -36,15 +36,15 @@ namespace Cuy.Core.Tests
                 needs[n] = value;
             }
 
-            // Gdy wszystkie potrzeby są równe: avg = value, min = value -> 0.5 * value + 0.5 * value = value
+            // When all needs are equal: avg = value, min = value -> 0.5 * value + 0.5 * value = value
             Assert.Equal(value, needs.Health, precision: 4);
         }
 
         [Fact]
         public void Needs_Health_MatchesDocstringFormula_AfterOfflineWeekend()
         {
-            // Przykład z dokumentacji Needs.cs:
-            // (20/20/100/20/100/77) -> zdrowie ok. 38
+            // Example from the Needs.cs documentation:
+            // (20/20/100/20/100/77) -> health about 38
             var needs = new Needs
             {
                 Satiety = 20.0,
@@ -77,8 +77,8 @@ namespace Cuy.Core.Tests
                 Teeth = 100.0
             };
 
-            // Średnia = 500 / 6 = 83.3333, ale min = 0
-            // Zdrowie = 0.5 * 83.3333 + 0 = 41.6667
+            // Average = 500 / 6 = 83.3333, but min = 0
+            // Health = 0.5 * 83.3333 + 0 = 41.6667
             double expected = 0.5 * (500.0 / 6.0) + 0.5 * 0.0;
 
             Assert.Equal(expected, needs.Health, precision: 4);
@@ -89,7 +89,7 @@ namespace Cuy.Core.Tests
         {
             var needs = new Needs();
 
-            // Ustawiamy kolejno każdą potrzebę jako najniższą (10.0)
+            // Set each need in turn as the lowest (10.0)
             foreach (var lowestNeed in NeedNames.All)
             {
                 foreach (var n in NeedNames.All) needs[n] = 90.0;

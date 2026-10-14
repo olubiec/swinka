@@ -20,8 +20,8 @@ namespace Cuy
     }
 
     /// <summary>
-    /// Katalog przedmiotów świnki, wczytywany z assets/data/items.json.
-    /// Zawiera też bezpieczne domyślne definicje podstawowych przedmiotów (hay, bell_pepper itd.).
+    /// The pig's item catalog, loaded from assets/data/items.json.
+    /// Also holds safe default definitions of the basic items (hay, bell_pepper and so on).
     /// </summary>
     public static class ItemCatalogLoader
     {
@@ -39,7 +39,7 @@ namespace Cuy
                 return def;
             }
 
-            // Fallback dla nieznanego przedmiotu
+            // Fallback for an unknown item
             return new CuyItemDef
             {
                 Id = itemId,
@@ -66,34 +66,34 @@ namespace Cuy
                 var map = new Dictionary<string, CuyItemDef>(StringComparer.OrdinalIgnoreCase);
 
                 // Default values (overridden by items.json when present)
-                AddDefault(map, "hay", "Siano", "food", 0, true, "hay", "eat",
+                AddDefault(map, "hay", "Hay", "food", 0, true, "hay", "eat",
                     new Dictionary<string, double> { { "fullness", 10 }, { "teeth", 6 } });
-                AddDefault(map, "pellets", "Granulat", "food", 5, false, "pellets", "eat_bowl",
+                AddDefault(map, "pellets", "Pellets", "food", 5, false, "pellets", "eat_bowl",
                     new Dictionary<string, double> { { "fullness", 20 }, { "vitamin_c", 5 } });
-                AddDefault(map, "bell_pepper", "Papryka", "vegetable", 12, false, "bell_pepper", "eat_treat",
+                AddDefault(map, "bell_pepper", "Bell pepper", "vegetable", 12, false, "bell_pepper", "eat_treat",
                     new Dictionary<string, double> { { "fullness", 8 }, { "vitamin_c", 35 }, { "mood", 5 } });
-                AddDefault(map, "parsley", "Natka pietruszki", "vegetable", 8, false, "parsley", "eat_treat",
+                AddDefault(map, "parsley", "Parsley", "vegetable", 8, false, "parsley", "eat_treat",
                     new Dictionary<string, double> { { "fullness", 6 }, { "vitamin_c", 20 } });
-                AddDefault(map, "kale", "Jarmuż", "vegetable", 10, false, "kale", "eat_big",
+                AddDefault(map, "kale", "Kale", "vegetable", 10, false, "kale", "eat_big",
                     new Dictionary<string, double> { { "fullness", 10 }, { "vitamin_c", 25 }, { "teeth", 3 } });
-                AddDefault(map, "cucumber", "Ogórek", "vegetable", 5, false, "cucumber", "eat_treat",
+                AddDefault(map, "cucumber", "Cucumber", "vegetable", 5, false, "cucumber", "eat_treat",
                     new Dictionary<string, double> { { "fullness", 6 }, { "mood", 4 }, { "vitamin_c", 2 } });
-                AddDefault(map, "carrot", "Marchewka", "treat", 8, false, "carrot", "eat_treat",
+                AddDefault(map, "carrot", "Carrot", "treat", 8, false, "carrot", "eat_treat",
                     new Dictionary<string, double> { { "fullness", 8 }, { "mood", 10 }, { "vitamin_c", 3 } });
-                AddDefault(map, "chew_stick", "Gryzak", "chew", 20, false, "chew_stick", "chew_stick",
+                AddDefault(map, "chew_stick", "Chew stick", "chew", 20, false, "chew_stick", "chew_stick",
                     new Dictionary<string, double> { { "teeth", 40 }, { "mood", 5 } });
-                AddDefault(map, "ball", "Piłeczka", "toy", 60, false, "ball", "ball_push",
+                AddDefault(map, "ball", "Ball", "toy", 60, false, "ball", "ball_push",
                     new Dictionary<string, double> { { "mood", 15 }, { "energy", -5 } });
-                AddDefault(map, "tunnel", "Tunel", "toy", 150, false, "tunnel", "tunnel_in",
+                AddDefault(map, "tunnel", "Tunnel", "toy", 150, false, "tunnel", "tunnel_in",
                     new Dictionary<string, double> { { "mood", 20 }, { "energy", -8 } });
-                AddDefault(map, "house", "Domek", "furniture", 250, false, "house", "sleep_house",
+                AddDefault(map, "house", "House", "furniture", 250, false, "house", "sleep_house",
                     new Dictionary<string, double> { { "energy", 10 }, { "mood", 5 } });
-                AddDefault(map, "water_bottle", "Poidło", "furniture", 40, false, "water_bottle", "drink",
+                AddDefault(map, "water_bottle", "Water bottle", "furniture", 40, false, "water_bottle", "drink",
                     new Dictionary<string, double> { { "mood", 2 }, { "fullness", 2 } });
-                AddDefault(map, "cake", "Tort z selera", "special", null, false, "cake", "party",
+                AddDefault(map, "cake", "Celery cake", "special", null, false, "cake", "party",
                     new Dictionary<string, double> { { "fullness", 15 }, { "mood", 30 }, { "vitamin_c", 10 } });
 
-                // Próba wczytania assets/data/items.json
+                // Try to load assets/data/items.json
                 string jsonPath = FindFile(Path.Combine("assets", "data", "items.json"))
                                ?? FindFile(Path.Combine("data", "items.json"))
                                ?? FindFile(Path.Combine("items.json"));

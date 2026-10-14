@@ -1,21 +1,21 @@
 /**
- * minigames-api.js — Wspólny szkielet i API minigier w Phaser 3 dla Domku Świnki.
- * Zgodny ze specyfikacją Etapu D (prompt D1) w PLAN.md:
- * - Wspólne API: start(config) -> wynik { punkty, koniczynki, rekord }
- * - Postacią jest świnka z arkusza klatek (run, popcorn, eat)
- * - Wzory: koniczynki = min(40, punkty / 10), humor +15 po grze, maks. 10 nagradzanych gier dziennie
- * - Rekordy zapisywane przez most w GameState
- * - Pauza przy zamknięciu Domku (i przyciskiem w HUD)
- * - Wspólny ekran końca gry z nagrodą i podsumowaniem
+ * minigames-api.js — Shared Phaser 3 minigame framework and API for Cuy's Home.
+ * Follows the stage D spec (prompt D1) in PLAN.md:
+ * - Shared API: start(config) -> result { points, clovers, record }
+ * - The character is the pig from the sprite sheet (run, popcorn, eat)
+ * - Formulas: clovers = min(40, points / 10), mood +15 after a game, max 10 rewarded games per day
+ * - Records saved through the bridge in GameState
+ * - Pauses when Home closes (and with a HUD button)
+ * - Shared game over screen with the reward and a summary
  */
 
 (function (root) {
   'use strict';
 
-  // --- 1. Pomocnik postaci świnki w Phaser 3 ---
+  // --- 1. Pig character helper for Phaser 3 ---
   class MinigryPig {
     /**
-     * Wczytuje arkusz klatek świnki w scenie Phaser
+     * Loads the pig sprite sheet in a Phaser scene
      * @param {Phaser.Scene} scene 
      * @param {string} [stageKey='adult']
      * @param {string} [basePath]
@@ -37,58 +37,58 @@
       };
       const file = files[stageKey] || files.adult;
 
-      scene.load.spritesheet('swinka_sheet', p + file, {
+      scene.load.spritesheet('pig_sheet', p + file, {
         frameWidth: 64,
         frameHeight: 64
       });
     }
 
     /**
-     * Rejestruje wspólne animacje świnki w Phaserze:
-     * - run: rząd 3, 6 klatek, 14 fps
-     * - popcorn: rząd 4, 12 klatek, 14 fps
-     * - eat: rząd 5, 12 klatek, 10 fps
-     * - idle: rząd 0, 16 klatek, 8 fps
+     * Registers the shared pig animations in Phaser:
+     * - run: row 3, 6 frames, 14 fps
+     * - popcorn: row 4, 12 frames, 14 fps
+     * - eat: row 5, 12 frames, 10 fps
+     * - idle: row 0, 16 frames, 8 fps
      * @param {Phaser.Scene} scene 
      */
     static createAnimations(scene) {
       const anims = scene.anims;
-      const key = 'swinka_sheet';
+      const key = 'pig_sheet';
 
-      // 1. Idle (rząd 0: klatki 0..15)
-      if (!anims.exists('swinka_idle')) {
+      // 1. Idle (row 0: frames 0..15)
+      if (!anims.exists('pig_idle')) {
         anims.create({
-          key: 'swinka_idle',
+          key: 'pig_idle',
           frames: anims.generateFrameNumbers(key, { start: 0, end: 15 }),
           frameRate: 8,
           repeat: -1
         });
       }
 
-      // 2. Run / bieg (rząd 3: klatki 48..53, 14 fps)
-      if (!anims.exists('swinka_run')) {
+      // 2. Run (row 3: frames 48..53, 14 fps)
+      if (!anims.exists('pig_run')) {
         anims.create({
-          key: 'swinka_run',
+          key: 'pig_run',
           frames: anims.generateFrameNumbers(key, { start: 48, end: 53 }),
           frameRate: 14,
           repeat: -1
         });
       }
 
-      // 3. Popcorn (rząd 4: klatki 64..75, 14 fps, bez pętli)
-      if (!anims.exists('swinka_popcorn')) {
+      // 3. Popcorn (row 4: frames 64..75, 14 fps, no loop)
+      if (!anims.exists('pig_popcorn')) {
         anims.create({
-          key: 'swinka_popcorn',
+          key: 'pig_popcorn',
           frames: anims.generateFrameNumbers(key, { start: 64, end: 75 }),
           frameRate: 14,
           repeat: 0
         });
       }
 
-      // 4. Eat / chrupanie (rząd 5: klatki 80..91, 10 fps)
-      if (!anims.exists('swinka_eat')) {
+      // 4. Eat / munching (row 5: frames 80..91, 10 fps)
+      if (!anims.exists('pig_eat')) {
         anims.create({
-          key: 'swinka_eat',
+          key: 'pig_eat',
           frames: anims.generateFrameNumbers(key, { start: 80, end: 91 }),
           frameRate: 10,
           repeat: -1
@@ -97,7 +97,7 @@
     }
 
     /**
-     * Tworzy duszka świnki w scenie z fizyką Arcade (lub zwykłego Sprite)
+     * Creates the pig sprite in the scene with Arcade physics (or a plain Sprite)
      * @param {Phaser.Scene} scene 
      * @param {number} x 
      * @param {number} y 
@@ -105,21 +105,21 @@
      */
     static create(scene, x, y) {
       MinigryPig.createAnimations(scene);
-      const sprite = scene.physics ? scene.physics.add.sprite(x, y, 'swinka_sheet') : scene.add.sprite(x, y, 'swinka_sheet');
+      const sprite = scene.physics ? scene.physics.add.sprite(x, y, 'pig_sheet') : scene.add.sprite(x, y, 'pig_sheet');
       sprite.setOrigin(0.5, 0.5);
 
       if (sprite.body) {
-        // Dopasowanie hitboxa do ciałka świnki (64x64, nóżki przy dole)
+        // Fit the hitbox to the pig's body (64x64, feet at the bottom)
         sprite.body.setSize(44, 28);
         sprite.body.setOffset(10, 32);
       }
 
-      sprite.play('swinka_idle');
+      sprite.play('pig_idle');
       return sprite;
     }
   }
 
-  // --- 2. Główny menedżer minigier ---
+  // --- 2. Main minigame manager ---
   class MinigryManager {
     constructor() {
       this.games = new Map();
@@ -131,20 +131,20 @@
       this.currentScore = 0;
       this.rootElement = null;
 
-      // Globalne nasłuchiwanie zamknięcia Domku lub ukrycia karty
+      // Global listener for Home closing or the tab being hidden
       this.bindWindowEvents();
     }
 
     /**
-     * Rejestracja minigry w systemie
+     * Registers a minigame in the system
      * @param {Object} gameDef { id, name, desc, icon, start: function(config) }
      */
     register(gameDef) {
       if (!gameDef || !gameDef.id) {
-        throw new Error('[Minigry] gameDef musi zawierać unikalne id!');
+        throw new Error('[Minigames] gameDef must have a unique id!');
       }
       this.games.set(gameDef.id, gameDef);
-      console.info(`[Minigry] Zarejestrowano minigrę: ${gameDef.name} (${gameDef.id})`);
+      console.info(`[Minigames] Registered minigame: ${gameDef.name} (${gameDef.id})`);
     }
 
     getGame(id) {
@@ -156,7 +156,7 @@
     }
 
     bindWindowEvents() {
-      // Pauza przy utracie widoczności (np. schowanie Domku, minimalizacja, przełączenie okna)
+      // Pause when visibility is lost (e.g. Home hidden, minimised, window switched)
       if (typeof document !== 'undefined' && document.addEventListener) {
         document.addEventListener('visibilitychange', () => {
           if (document.hidden && this.activeGame && !this.isPaused) {
@@ -174,10 +174,10 @@
       }
     }
 
-    // --- Formuły i zasady z PLAN.md ---
+    // --- Formulas and rules from PLAN.md ---
 
     /**
-     * koniczynki = min(40, punkty / 10)
+     * clovers = min(40, points / 10)
      */
     calculateClovers(score) {
       if (typeof score !== 'number' || score <= 0) return 0;
@@ -185,7 +185,7 @@
     }
 
     /**
-     * Pobiera rekord gry z mostu / stanu
+     * Gets a game's record from the bridge / state
      */
     getRecord(gameId) {
       if (root.bridge && typeof root.bridge.getMinigameRecord === 'function') {
@@ -195,7 +195,7 @@
     }
 
     /**
-     * Pobiera liczbę nagrodzonych gier z dzisiejszego dnia
+     * Gets the number of rewarded games played today
      */
     getDailyCount() {
       if (root.bridge && typeof root.bridge.getDailyGamesCount === 'function') {
@@ -204,7 +204,7 @@
       return 0;
     }
 
-    // --- Renderowanie ekranu wyboru gier ---
+    // --- Rendering the game selection screen ---
     renderSelectScreen(container) {
       this.rootElement = container;
       this.stopCurrentGame();
@@ -225,16 +225,16 @@
       ];
 
       let html = `
-        <div class="minigry-root">
-          <div class="minigry-select-screen">
-            <div class="minigry-status-bar">
-              <span class="minigry-status-clovers">🍀 Koniczynki: <b>${clovers}</b></span>
-              <span class="minigry-daily-limit" title="Maksymalnie 10 nagrodzonych gier dziennie">
-                Nagrody dziś: <b>${dailyCount}/10</b>
+        <div class="minigames-root">
+          <div class="minigames-select-screen">
+            <div class="minigames-status-bar">
+              <span class="minigames-status-clovers">🍀 Clovers: <b>${clovers}</b></span>
+              <span class="minigames-daily-limit" title="At most 10 rewarded games per day">
+                Rewards today: <b>${dailyCount}/10</b>
               </span>
             </div>
 
-            <div class="minigry-grid">
+            <div class="minigames-grid">
       `;
 
       allDisplayGames.forEach((g) => {
@@ -242,19 +242,19 @@
         const isReady = g.available;
 
         html += `
-          <div class="minigry-card ${isReady ? '' : 'minigry-card-disabled'}">
-            <div class="minigry-card-icon">${g.icon}</div>
-            <div class="minigry-card-content">
-              <div class="minigry-card-title">${g.name}</div>
-              <div class="minigry-card-desc">${g.desc}</div>
-              <div class="minigry-card-meta">
-                <span class="minigry-record-badge">🏆 Rekord: ${record} pkt</span>
+          <div class="minigames-card ${isReady ? '' : 'minigames-card-disabled'}">
+            <div class="minigames-card-icon">${g.icon}</div>
+            <div class="minigames-card-content">
+              <div class="minigames-card-title">${g.name}</div>
+              <div class="minigames-card-desc">${g.desc}</div>
+              <div class="minigames-card-meta">
+                <span class="minigames-record-badge">🏆 Record: ${record} pts</span>
               </div>
             </div>
             <div>
               ${isReady
-                ? `<button class="minigry-btn-play" data-start-game="${g.id}">Zagraj</button>`
-                : `<button class="minigry-btn-locked" disabled>More games soon</button>`
+                ? `<button class="minigames-btn-play" data-start-game="${g.id}">Play</button>`
+                : `<button class="minigames-btn-locked" disabled>More games soon</button>`
               }
             </div>
           </div>
@@ -269,7 +269,7 @@
 
       container.innerHTML = html;
 
-      // Podpięcie przycisków startu
+      // Hook up the start buttons
       container.querySelectorAll('button[data-start-game]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const gameId = btn.dataset.startGame;
@@ -279,18 +279,18 @@
       });
     }
 
-    // --- Uruchomienie minigry: start(config) -> wynik ---
+    // --- Starting a minigame: start(config) -> result ---
     /**
-     * Start minigry z konfiguracją
+     * Starts a minigame with a configuration
      * @param {string} gameId 
      * @param {Object} customConfig 
-     * @returns {Promise<Object>} wynik { punkty, koniczynki, rekord }
+     * @returns {Promise<Object>} result { points, clovers, record }
      */
     start(gameId, customConfig = {}) {
       const gameDef = this.games.get(gameId);
       if (!gameDef) {
-        console.error(`[Minigry] Nie znaleziono zarejestrowanej gry: ${gameId}`);
-        return Promise.reject(new Error(`Gra ${gameId} nie jest zarejestrowana.`));
+        console.error(`[Minigames] No registered game found: ${gameId}`);
+        return Promise.reject(new Error(`Game ${gameId} is not registered.`));
       }
 
       this.stopCurrentGame();
@@ -300,77 +300,77 @@
 
       const container = customConfig.container || this.rootElement || document.getElementById('modalBody');
       if (!container) {
-        throw new Error('[Minigry] Brak kontenera dla minigry!');
+        throw new Error('[Minigames] No container for the minigames!');
       }
 
       return new Promise((resolve) => {
-        // Zbudowanie struktury DOM rozgrywki (HUD + Canvas Wrapper + Nakładka Pauzy + Nakładka Końca Gry)
+        // Build the gameplay DOM (HUD + canvas wrapper + pause overlay + game over overlay)
         container.innerHTML = `
-          <div class="minigry-root">
-            <div class="minigry-play-screen" id="minigryPlayScreen">
-              <!-- HUD rozgrywki -->
-              <div class="minigry-hud">
-                <span class="minigry-hud-title">
+          <div class="minigames-root">
+            <div class="minigames-play-screen" id="minigamesPlayScreen">
+              <!-- Gameplay HUD -->
+              <div class="minigames-hud">
+                <span class="minigames-hud-title">
                   <span>${gameDef.icon || '🐹'}</span>
                   <span>${gameDef.name}</span>
                 </span>
-                <span class="minigry-hud-score" id="minigryLiveScore">Punkty: 0</span>
-                <div class="minigry-hud-controls">
-                  <button class="minigry-hud-btn" id="minigryBtnPause" type="button" title="Wstrzymaj grę">⏸️</button>
-                  <button class="minigry-hud-btn" id="minigryBtnBack" type="button" title="Wróć do menu">✕</button>
+                <span class="minigames-hud-score" id="minigamesLiveScore">Points: 0</span>
+                <div class="minigames-hud-controls">
+                  <button class="minigames-hud-btn" id="minigamesBtnPause" type="button" title="Pause">⏸️</button>
+                  <button class="minigames-hud-btn" id="minigamesBtnBack" type="button" title="Back to the menu">✕</button>
                 </div>
               </div>
 
-              <!-- Obszar canvasu Phasera -->
-              <div class="minigry-canvas-wrapper" id="minigryCanvasWrapper">
-                <!-- Phaser Canvas zostanie wstrzyknięty tutaj -->
+              <!-- Phaser canvas area -->
+              <div class="minigames-canvas-wrapper" id="minigamesCanvasWrapper">
+                <!-- The Phaser canvas is injected here -->
               </div>
 
-              <!-- Nakładka pauzy -->
-              <div class="minigry-pause-overlay" id="minigryPauseOverlay">
-                <div class="minigry-pause-card">
-                  <div class="minigry-pause-title">⏸️ GRA WSTRZYMANA</div>
-                  <div class="minigry-pause-sub">Odpocznij chwilę ze świnką!</div>
-                  <div class="minigry-pause-actions">
-                    <button class="minigry-btn-play" id="minigryBtnResume">▶ Wznów</button>
-                    <button class="minigry-btn-locked" id="minigryBtnQuit">✕ Wyjdź</button>
+              <!-- Pause overlay -->
+              <div class="minigames-pause-overlay" id="minigamesPauseOverlay">
+                <div class="minigames-pause-card">
+                  <div class="minigames-pause-title">⏸️ PAUSED</div>
+                  <div class="minigames-pause-sub">Take a little break with your pig!</div>
+                  <div class="minigames-pause-actions">
+                    <button class="minigames-btn-play" id="minigamesBtnResume">▶ Resume</button>
+                    <button class="minigames-btn-locked" id="minigamesBtnQuit">✕ Quit</button>
                   </div>
                 </div>
               </div>
 
-              <!-- Wspólny ekran końca gry z nagrodą -->
-              <div class="minigry-gameover-overlay" id="minigryGameOverOverlay">
-                <!-- Wypełniane dynamicznie w endGame() -->
+              <!-- Shared game over screen with the reward -->
+              <div class="minigames-gameover-overlay" id="minigamesGameOverOverlay">
+                <!-- Filled in by endGame() -->
               </div>
             </div>
           </div>
         `;
 
-        const canvasWrapper = document.getElementById('minigryCanvasWrapper');
-        const scoreEl = document.getElementById('minigryLiveScore');
+        const canvasWrapper = document.getElementById('minigamesCanvasWrapper');
+        const scoreEl = document.getElementById('minigamesLiveScore');
 
-        // Obsługa kontrolek HUD
-        document.getElementById('minigryBtnPause')?.addEventListener('click', () => {
+        // HUD control handlers
+        document.getElementById('minigamesBtnPause')?.addEventListener('click', () => {
           if (root.Sound) root.Sound.click();
           this.togglePause();
         });
 
-        document.getElementById('minigryBtnResume')?.addEventListener('click', () => {
+        document.getElementById('minigamesBtnResume')?.addEventListener('click', () => {
           if (root.Sound) root.Sound.click();
           this.resume();
         });
 
-        document.getElementById('minigryBtnQuit')?.addEventListener('click', () => {
+        document.getElementById('minigamesBtnQuit')?.addEventListener('click', () => {
           if (root.Sound) root.Sound.click();
           this.renderSelectScreen(container);
         });
 
-        document.getElementById('minigryBtnBack')?.addEventListener('click', () => {
+        document.getElementById('minigamesBtnBack')?.addEventListener('click', () => {
           if (root.Sound) root.Sound.click();
           this.renderSelectScreen(container);
         });
 
-        // Przygotowanie configa dla gry
+        // Prepare the config for the game
         const state = root.bridge ? root.bridge.getState() : null;
         const gameConfig = {
           container: canvasWrapper,
@@ -378,32 +378,32 @@
           height: 290,
           stageKey: state?.stageKey || 'adult',
           
-          // Aktualizacja punktów w HUD w czasie rzeczywistym
+          // Update the points in the HUD in real time
           updateScore: (newScore) => {
             this.currentScore = newScore;
-            if (scoreEl) scoreEl.textContent = `Punkty: ${newScore}`;
+            if (scoreEl) scoreEl.textContent = `Points: ${newScore}`;
           },
 
-          // Wspólne zakończenie gry wywoływane przez daną minigrę
+          // Shared game end, called by the minigame
           endGame: (resultScore) => {
             const finalScore = typeof resultScore === 'number' ? resultScore : this.currentScore;
-            const wynik = this.endGame(finalScore, gameId, container, resolve);
-            return wynik;
+            const result = this.endGame(finalScore, gameId, container, resolve);
+            return result;
           }
         };
 
         this.currentConfig = gameConfig;
 
-        // Start konkretnej implementacji minigry
+        // Start the specific minigame implementation
         try {
           this.activeGame = gameDef.start(gameConfig);
-          // Jeśli zwrócono instancję Phaser.Game, zapamiętaj ją
+          // If a Phaser.Game instance was returned, remember it
           if (this.activeGame instanceof Phaser.Game) {
             this.phaserInstance = this.activeGame;
           }
         } catch (err) {
-          console.error('[Minigry] Błąd podczas uruchamiania gry:', err);
-          container.innerHTML = `<div style="color:red; padding:20px;">Błąd gry: ${err.message}</div>`;
+          console.error('[Minigames] Error while starting the game:', err);
+          container.innerHTML = `<div style="color:red; padding:20px;">Game error: ${err.message}</div>`;
         }
       });
     }
@@ -423,7 +423,7 @@
         }
       }
 
-      const overlay = document.getElementById('minigryPauseOverlay');
+      const overlay = document.getElementById('minigamesPauseOverlay');
       if (overlay) overlay.classList.add('active');
     }
 
@@ -440,7 +440,7 @@
         }
       }
 
-      const overlay = document.getElementById('minigryPauseOverlay');
+      const overlay = document.getElementById('minigamesPauseOverlay');
       if (overlay) overlay.classList.remove('active');
     }
 
@@ -454,7 +454,7 @@
         try {
           this.phaserInstance.destroy(true);
         } catch (e) {
-          console.warn('[Minigry] Błąd przy niszczeniu gry Phasera:', e);
+          console.warn('[Minigames] Error while destroying the Phaser game:', e);
         }
         this.phaserInstance = null;
       }
@@ -463,20 +463,20 @@
       this.isPaused = false;
     }
 
-    // --- Wspólny ekran końca gry z nagrodą ---
+    // --- Shared game over screen with the reward ---
     endGame(score, gameId, container, resolvePromise) {
       this.stopCurrentGame();
 
-      // Zapisanie wyniku przez most do GameState
+      // Save the result through the bridge to GameState
       let result = null;
       if (root.bridge && typeof root.bridge.submitMinigameResult === 'function') {
         result = root.bridge.submitMinigameResult(gameId, score);
       } else {
         const prevRecord = this.getRecord(gameId);
         result = {
-          punkty: score,
-          koniczynki: this.calculateClovers(score),
-          rekord: Math.max(prevRecord, score),
+          points: score,
+          clovers: this.calculateClovers(score),
+          record: Math.max(prevRecord, score),
           nowyRekord: score > prevRecord
         };
       }
@@ -486,60 +486,60 @@
         else root.Sound.click();
       }
 
-      const overlay = document.getElementById('minigryGameOverOverlay');
+      const overlay = document.getElementById('minigamesGameOverOverlay');
       if (overlay) {
         const dailyCount = this.getDailyCount();
-        const limitReached = dailyCount >= 10 && result.koniczynki === 0;
+        const limitReached = dailyCount >= 10 && result.clovers === 0;
 
         overlay.innerHTML = `
-          <div class="minigry-gameover-card">
-            <div class="minigry-gameover-header">🏆 WYNIK GRY</div>
+          <div class="minigames-gameover-card">
+            <div class="minigames-gameover-header">🏆 RESULT</div>
 
-            <div class="minigry-score-box">
-              <span class="minigry-score-label">Zdobyte punkty</span>
-              <span class="minigry-score-val">${result.punkty}</span>
+            <div class="minigames-score-box">
+              <span class="minigames-score-label">Points earned</span>
+              <span class="minigames-score-val">${result.points}</span>
             </div>
 
             ${result.nowyRekord
-              ? `<div class="minigry-record-banner">🌟 NOWY REKORD ŚWINKI! 🌟</div>`
-              : `<div style="font-size:12px; color:#6e6a5c;">Twój rekord: <b>${result.rekord} pkt</b></div>`
+              ? `<div class="minigames-record-banner">🌟 NEW RECORD! 🌟</div>`
+              : `<div style="font-size:12px; color:#6e6a5c;">Your record: <b>${result.record} pts</b></div>`
             }
 
-            <div class="minigry-rewards-container">
-              <div class="minigry-reward-row">
-                <span>Nagroda w koniczynkach:</span>
-                <span class="minigry-reward-pill pill-clovers">
-                  ${result.koniczynki > 0 ? `+${result.koniczynki} 🍀` : (limitReached ? '0 🍀 (limit)' : '0 🍀')}
+            <div class="minigames-rewards-container">
+              <div class="minigames-reward-row">
+                <span>Clover reward:</span>
+                <span class="minigames-reward-pill pill-clovers">
+                  ${result.clovers > 0 ? `+${result.clovers} 🍀` : (limitReached ? '0 🍀 (limit)' : '0 🍀')}
                 </span>
               </div>
-              <div class="minigry-reward-row">
-                <span>Humor świnki:</span>
-                <span class="minigry-reward-pill pill-mood">+15 💖</span>
+              <div class="minigames-reward-row">
+                <span>Pig mood:</span>
+                <span class="minigames-reward-pill pill-mood">+15 💖</span>
               </div>
-              <div class="minigry-daily-note">
+              <div class="minigames-daily-note">
                 ${limitReached
-                  ? 'Osiągnięto limit 10 nagrodzonych gier dzisiaj. Punkty i rekordy są dalej zapisywane!'
-                  : `Dzisiejsze nagrodzone gry: ${dailyCount}/10`
+                  ? 'Daily limit of 10 rewarded games reached. Points and records are still saved!'
+                  : `Rewarded games today: ${dailyCount}/10`
                 }
               </div>
             </div>
 
-            <div class="minigry-gameover-actions">
-              <button class="minigry-btn-replay" id="minigryBtnReplay">🔄 Zagraj znowu</button>
-              <button class="minigry-btn-menu" id="minigryBtnGameOverMenu">📋 Lista gier</button>
+            <div class="minigames-gameover-actions">
+              <button class="minigames-btn-replay" id="minigamesBtnReplay">🔄 Play again</button>
+              <button class="minigames-btn-menu" id="minigamesBtnGameOverMenu">📋 Game list</button>
             </div>
           </div>
         `;
 
         overlay.classList.add('active');
 
-        // Obsługa przycisków końca gry
-        document.getElementById('minigryBtnReplay')?.addEventListener('click', () => {
+        // Game over button handlers
+        document.getElementById('minigamesBtnReplay')?.addEventListener('click', () => {
           if (root.Sound) root.Sound.click();
           this.start(gameId, { container });
         });
 
-        document.getElementById('minigryBtnGameOverMenu')?.addEventListener('click', () => {
+        document.getElementById('minigamesBtnGameOverMenu')?.addEventListener('click', () => {
           if (root.Sound) root.Sound.click();
           this.renderSelectScreen(container);
         });
@@ -553,7 +553,7 @@
     }
   }
 
-  // Udostępnienie w przestrzeni globalnej
+  // Expose globally
   const manager = new MinigryManager();
   root.Minigry = manager;
   root.MinigryPig = MinigryPig;

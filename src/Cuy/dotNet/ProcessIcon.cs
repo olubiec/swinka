@@ -7,10 +7,10 @@ using Cuy.Core;
 namespace Cuy
 {
     /// <summary>
-    /// Ikona w zasobniku systemowym (obok zegara Windows).
-    /// Wyświetla głowę świnki z assets/icons/icons_16.png,
-    /// tooltip z imieniem świnki i najniższą potrzebą,
-    /// otwiera Domek przy dwukliku oraz menu kontekstowe.
+    /// Icon in the system tray (next to the Windows clock).
+    /// Shows the guinea pig head from assets/icons/icons_16.png,
+    /// a tooltip with the pig's name and its lowest need,
+    /// opens Home on double-click, and the context menu.
     /// </summary>
     public class ProcessIcon : IDisposable
     {
@@ -27,7 +27,7 @@ namespace Cuy
             ni.MouseClick += new MouseEventHandler(Ni_MouseClick);
             ni.MouseDoubleClick += new MouseEventHandler(Ni_MouseDoubleClick);
 
-            // Ustaw ikonę główki świnki z assets/icons/icons_16.png
+            // Set the pig head icon from assets/icons/icons_16.png
             try
             {
                 ni.Icon = PetIcons.GetTrayIcon();
@@ -40,13 +40,13 @@ namespace Cuy
             UpdateTooltip();
             ni.Visible = true;
 
-            // Dołącz menu kontekstowe świnki
+            // Attach the pig's context menu
             var contextMenu = new ContextMenus();
             var strip = contextMenu.Create();
             strip.Opening += (s, e) => UpdateTooltip();
             ni.ContextMenuStrip = strip;
 
-            // Timer aktualizujący tooltip na bieżąco
+            // Timer that keeps the tooltip up to date
             _tooltipTimer = new Timer();
             _tooltipTimer.Interval = 1000;
             _tooltipTimer.Tick += (s, e) => UpdateTooltip();
@@ -54,7 +54,7 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Aktualizuje tekst podpowiedzi ikony w zasobniku: imię świnki i najniższa potrzeba.
+        /// Updates the tray icon tooltip: the pig's name and its lowest need.
         /// </summary>
         public void UpdateTooltip()
         {
@@ -63,13 +63,13 @@ namespace Cuy
             if (brain != null && brain.Pet != null && brain.Needs != null)
             {
                 string petName = brain.Pet.State?.Name;
-                if (string.IsNullOrWhiteSpace(petName)) petName = "Świnka";
+                if (string.IsNullOrWhiteSpace(petName)) petName = "Cuy";
 
                 Need lowest = brain.Needs.Lowest();
-                string needName = NeedNames.Polish(lowest);
+                string needName = NeedNames.DisplayName(lowest);
                 int percent = (int)Math.Round(brain.Needs[lowest]);
 
-                // Limit WinForms dla NotifyIcon.Text to 63 znaki
+                // WinForms limit for NotifyIcon.Text is 63 characters
                 string tip = string.Format("{0} - {1}: {2}%", petName, needName, percent);
                 if (tip.Length > 63)
                 {
@@ -80,7 +80,7 @@ namespace Cuy
             }
             else
             {
-                ni.Text = "Świnka";
+                ni.Text = "Cuy";
             }
         }
 
@@ -88,7 +88,7 @@ namespace Cuy
         {
             try
             {
-                // Upewnij się, że ikona zasobnika to głowa świnki
+                // Make sure the tray icon is the pig head
                 ni.Icon = PetIcons.GetTrayIcon();
                 UpdateTooltip();
                 ContextMenus.UpdateIcon(ni.Icon, petName, aboutAuthor, aboutTitle, aboutVersion, aboutInfo);
@@ -130,7 +130,7 @@ namespace Cuy
         {
             if (e.Button == MouseButtons.Left)
             {
-                // Kliknięcie lewym przyciskiem: przenieś świnkę na wierzch
+                // Left click: bring the pig to the front
                 Program.Mainthread.TopMostSheeps();
             }
         }
@@ -139,7 +139,7 @@ namespace Cuy
         {
             if (e.Button == MouseButtons.Left)
             {
-                // Dwuklik na ikonę otwiera Domek
+                // Double-click on the icon opens Home
                 HomeWindow.ShowHome();
             }
         }

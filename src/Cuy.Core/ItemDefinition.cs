@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Definicja pojedynczego przedmiotu wczytywana z assets/data/items.json.
+    /// A single item definition loaded from assets/data/items.json.
     /// </summary>
     public sealed class ItemDefinition
     {

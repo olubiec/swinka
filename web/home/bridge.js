@@ -1,84 +1,80 @@
 /**
- * bridge.js — Most komunikacji między C# (Cuy.Core / WebView2) a interfejsem Domku.
- * Zgodny ze specyfikacją z promptu C1 i C2 w PLAN.md.
+ * bridge.js — Communication bridge between C# (Cuy.Core / WebView2) and the Home interface.
+ * Follows the C1 and C2 spec in PLAN.md.
  * 
- * Tryb WebView2 (aplikacja C#):
- * - Odbiór stanu gry: wiadomości { type: "state", ... } z C# (PostWebMessageAsJson)
- * - Wysyłanie akcji: window.chrome.webview.postMessage({ type: "feed"|"clean"|"call"|"buy"|"play"|"album"|"settings", ... })
+ * WebView2 mode (the C# app):
+ * - Receives game state: { type: "state", ... } messages from C# (PostWebMessageAsJson)
+ * - Sends actions: window.chrome.webview.postMessage({ type: "feed"|"clean"|"call"|"buy"|"play"|"album"|"settings", ... })
  * 
- * Tryb Mock (zwykła przeglądarka):
- * - Automatycznie wykrywany, gdy brak window.chrome.webview
- * - Pełna symulacja stanu świnki z Cuy.Core (potrzeby, wiek, etapy, więź, koniczynki)
- * - Reaguje na akcje użytkownika, aktualizuje stan i rozsyła zdarzenia
+ * Mock mode (a normal browser):
+ * - Detected automatically when window.chrome.webview is missing
+ * - Full simulation of the pig state from Cuy.Core (needs, age, stages, bond, clovers)
+ * - Reacts to user actions, updates the state and broadcasts events
  */
 
 (function (root) {
   'use strict';
 
-  // Obliczenie etapu życia na podstawie wieku w dniach świnki (zgodnie z Cuy.Core.LifeStages)
+  // Life stage from the pig's age in days (matches Cuy.Core.LifeStages)
   function getStageFromPigDays(pigDays) {
-    if (pigDays >= 365.25 * 8) return { key: 'legend', name: 'Legenda' };
+    if (pigDays >= 365.25 * 8) return { key: 'legend', name: 'Legend' };
     if (pigDays >= 365.25 * 4) return { key: 'senior', name: 'Senior' };
-    if (pigDays >= 365.25 * 0.5) return { key: 'adult', name: 'Dorosła' };
-    if (pigDays >= 21) return { key: 'junior', name: 'Młodzik' };
-    return { key: 'baby', name: 'Maluch' };
+    if (pigDays >= 365.25 * 0.5) return { key: 'adult', name: 'Adult' };
+    if (pigDays >= 21) return { key: 'junior', name: 'Junior' };
+    return { key: 'baby', name: 'Baby' };
   }
 
-  // Formatowanie wieku w latach i miesiącach (zgodnie z PigAge.ToPolishString)
+  // Age in years and months (matches PigAge.ToDisplayString)
   function formatPigAge(pigDays) {
     const daysPerYear = 365.25;
     const years = Math.floor(pigDays / daysPerYear);
     const rest = pigDays - years * daysPerYear;
     const months = Math.min(11, Math.floor(rest / (daysPerYear / 12)));
 
-    function choosePlural(n, one, few, many) {
-      if (n === 1) return one;
-      const mod10 = n % 10;
-      const mod100 = n % 100;
-      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
-      return many;
+    function plural(n, one, many) {
+      return `${n} ${n === 1 ? one : many}`;
     }
 
     if (pigDays < 7) {
       const d = Math.max(1, Math.floor(pigDays));
-      return { years: 0, months: 0, pigDays, text: d === 1 ? '1 dzień' : `${d} dni` };
+      return { years: 0, months: 0, pigDays, text: plural(d, 'day', 'days') };
     }
     if (pigDays < daysPerYear / 12) {
       const w = Math.max(1, Math.floor(pigDays / 7));
-      return { years: 0, months: 0, pigDays, text: `${w} ${choosePlural(w, 'tydzień', 'tygodnie', 'tygodni')}` };
+      return { years: 0, months: 0, pigDays, text: plural(w, 'week', 'weeks') };
     }
 
-    const monthsStr = `${months} ${choosePlural(months, 'miesiąc', 'miesiące', 'miesięcy')}`;
+    const monthsStr = plural(months, 'month', 'months');
     if (years === 0) {
       return { years: 0, months, pigDays, text: monthsStr };
     }
-    const yearsStr = `${years} ${choosePlural(years, 'rok', 'lata', 'lat')}`;
+    const yearsStr = plural(years, 'year', 'years');
     return {
       years,
       months,
       pigDays,
-      text: months === 0 ? yearsStr : `${yearsStr} i ${monthsStr}`
+      text: months === 0 ? yearsStr : `${yearsStr} and ${monthsStr}`
     };
   }
 
-  // Domyślny stan początkowy w trybie mock
+  // Default starting state in mock mode
   const STORAGE_KEY = 'cuy_mock_state_v1';
   const defaultMockState = {
     type: 'state',
-    name: 'Grucha',
-    birthDateUtc: new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString(), // ~28 dni realnych temu
-    pigDays: 588, // 28 * 21 = 588 dni świnki (~1.6 roku -> Dorosła)
+    name: 'Cuy',
+    birthDateUtc: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), // born 2 real hours ago
+    pigDays: 2, // a baby
     needs: {
-      fullness: 82.0,      // Najedzenie
-      vitaminC: 75.0,     // Witamina C
+      fullness: 82.0,      // Fullness
+      vitaminC: 75.0,     // Vitamin C
       energy: 90.0,       // Energia
       mood: 68.0,         // Humor
-      cleanliness: 62.0,   // Czystość klatki
-      teeth: 84.0         // Ząbki
+      cleanliness: 62.0,   // Cage cleanliness
+      teeth: 84.0         // Teeth
     },
-    clovers: 48,          // Koniczynki (waluta)
+    clovers: 48,          // Clovers (currency)
     bond: {
-      level: 4,           // Poziom więzi (1-20)
+      level: 4,           // Bond level (1-20)
       points: 46,
       pointsToday: 6,
       maxPointsToday: 15
@@ -89,12 +85,12 @@
       carrot: 2,
       pellets: 5
     },
-    poops: 2,             // Bobki na wybiegu
+    poops: 2,             // Poops in the run
     minigames: {
       records: {
-        'deszcz': 0,
+        'veggie_rain': 0,
         'popcorn': 0,
-        'labirynt': 0,
+        'hay_maze': 0,
         'memory': 0
       },
       dailyRewardedDate: new Date().toISOString().slice(0, 10),
@@ -122,7 +118,7 @@
 
     // --- Inicjalizacja WebView2 ---
     initWebView2() {
-      console.info('[CuyBridge] Tryb WebView2 aktywny. Oczekiwanie na wiadomości z C#...');
+      console.info('[CuyBridge] WebView2 mode active. Waiting for messages from C#...');
 
       const applyWebViewMode = () => {
         if (document.body) {
@@ -160,7 +156,7 @@
 
         const onPointerDown = (e) => {
           if (e.target.closest('button') || e.target.closest('.header-right')) return;
-          if (e.button !== 0) return; // Tylko lewy przycisk myszy
+          if (e.button !== 0) return; // Left mouse button only
 
           isDragging = true;
           lastScreenX = e.screenX;
@@ -214,27 +210,27 @@
       }
     }
 
-    // --- Inicjalizacja trybu Mock ---
+    // --- Mock mode initialisation ---
     initMockMode() {
-      console.info('[CuyBridge] Tryb MOCK aktywny (otwarto w przeglądarce).');
+      console.info('[CuyBridge] MOCK mode active (opened in a browser).');
       
       let saved = null;
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) saved = JSON.parse(stored);
       } catch (e) {
-        console.warn('Nie udało się wczytać stanu mock z localStorage:', e);
+        console.warn('Could not load the mock state from localStorage:', e);
       }
 
       this.currentState = saved || defaultMockState;
       this.normalizeState(this.currentState);
 
-      // Symulacja upływu czasu (delikatny spadek potrzeb co 8 sekund w trybie demonstracyjnym)
+      // Simulated passage of time (gentle need decay every 8 seconds in demo mode)
       this.mockTimer = setInterval(() => {
         this.mockTick();
       }, 8000);
 
-      // Pierwsza emisja stanu
+      // First state broadcast
       setTimeout(() => {
         this.broadcastState();
       }, 50);
@@ -251,7 +247,7 @@
       state.stageKey = stageInfo.key;
       state.stageName = stageInfo.name;
 
-      // Minigry i rekordy
+      // Minigames and records
       if (!state.minigames) {
         state.minigames = {
           records: {},
@@ -262,7 +258,7 @@
       if (!state.minigames.records) state.minigames.records = {};
       if (typeof state.minigames.dailyRewardedCount !== 'number') state.minigames.dailyRewardedCount = 0;
 
-      // Zdrowie liczone zgodnie z Cuy.Core.Needs.Health: 0.5 * avg + 0.5 * min
+      // Health as in Cuy.Core.Needs.Health: 0.5 * avg + 0.5 * min
       const vals = [
         state.needs.fullness,
         state.needs.vitaminC,
@@ -280,7 +276,7 @@
     mockTick() {
       if (!this.currentState || !this.isMock) return;
       const n = this.currentState.needs;
-      // Bardzo delikatny, realistyczny spadek
+      // Very gentle, realistic decay
       n.fullness = Math.max(0, Math.round((n.fullness - 0.5) * 10) / 10);
       n.vitaminC = Math.max(0, Math.round((n.vitaminC - 0.3) * 10) / 10);
       n.mood = Math.max(0, Math.round((n.mood - 0.4) * 10) / 10);
@@ -315,19 +311,19 @@
       if (!this.currentState) return;
       const copy = JSON.parse(JSON.stringify(this.currentState));
       this.listeners.forEach((fn) => {
-        try { fn(copy); } catch (e) { console.error('Błąd w listenerze bridge:', e); }
+        try { fn(copy); } catch (e) { console.error('Error in a bridge listener:', e); }
       });
       if (typeof window !== 'undefined' && window.dispatchEvent && typeof CustomEvent !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('swinka:state', { detail: copy }));
+        window.dispatchEvent(new CustomEvent('cuy:state', { detail: copy }));
       }
     }
 
-    // --- API publiczne ---
+    // --- Public API ---
 
     /**
-     * Rejestracja callbacka do nasłuchiwania zmian stanu
+     * Registers a callback for state changes
      * @param {Function} callback 
-     * @returns {Function} funkcja wyrejestrowująca
+     * @returns {Function} a function that unregisters it
      */
     onState(callback) {
       this.listeners.add(callback);
@@ -338,7 +334,7 @@
     }
 
     /**
-     * Nasłuchiwanie akcji wysyłanych przez UI (przydatne do animacji)
+     * Listens to actions sent by the UI (useful for animations)
      */
     onAction(callback) {
       this.actionListeners.add(callback);
@@ -346,14 +342,14 @@
     }
 
     /**
-     * Pobranie bieżącego stanu
+     * Returns the current state
      */
     getState() {
       return this.currentState ? JSON.parse(JSON.stringify(this.currentState)) : null;
     }
 
     /**
-     * Zwraca najlepszy wynik dla podanej minigry (rekord)
+     * Returns the best score for the given minigame (record)
      */
     getMinigameRecord(gameId) {
       if (!this.currentState || !this.currentState.minigames || !this.currentState.minigames.records) return 0;
@@ -361,7 +357,7 @@
     }
 
     /**
-     * Zwraca liczbę nagrodzonych gier rozegranych dzisiaj (0-10)
+     * Returns the number of rewarded games played today (0-10)
      */
     getDailyGamesCount() {
       if (!this.currentState || !this.currentState.minigames) return 0;
@@ -371,7 +367,7 @@
     }
 
     /**
-     * Zgłasza wynik minigry przez most i zwraca szczegóły nagrody
+     * Reports a minigame result through the bridge and returns the reward details
      */
     submitMinigameResult(gameId, score) {
       const prevRecord = this.getMinigameRecord(gameId);
@@ -388,24 +384,24 @@
       });
 
       return {
-        punkty: score,
+        points: score,
         clovers: clovers,
-        rekord: Math.max(prevRecord, score),
+        record: Math.max(prevRecord, score),
         nowyRekord: isRecord
       };
     }
 
     /**
-     * Wysłanie wiadomości/polecenia do aplikacji
+     * Sends a message/command to the app
      * @param {Object} action np. { type: 'feed', item: 'bell_pepper' }
      */
     send(action) {
       if (!action || !action.type) {
-        console.warn('[CuyBridge] Próba wysłania pustej akcji:', action);
+        console.warn('[CuyBridge] Tried to send an empty action:', action);
         return;
       }
 
-      console.info('[CuyBridge] Wysłano akcję:', action);
+      console.info('[CuyBridge] Action sent:', action);
       this.actionListeners.forEach(fn => {
         try { fn(action); } catch (e) {}
       });
@@ -417,7 +413,7 @@
       }
     }
 
-    // Obsługa akcji w trybie Mock
+    // Mock mode action handling
     handleMockAction(action) {
       if (!this.currentState) return;
       const s = this.currentState;
@@ -453,7 +449,7 @@
         case 'clean': {
           n.cleanliness = 100.0;
           if (s.poops > 0) {
-            s.clovers += s.poops; // +1 koniczynka za każdy usunięty bobek
+            s.clovers += s.poops; // +1 clover for every poop removed
             s.poops = 0;
           } else {
             s.clovers += 1;
@@ -497,7 +493,7 @@
 
         case 'minigame_result': {
           const gameId = action.gameId;
-          const score = typeof action.score === 'number' ? action.score : (action.punkty || 0);
+          const score = typeof action.score === 'number' ? action.score : (action.points || 0);
           
           if (!s.minigames) {
             s.minigames = { records: {}, dailyRewardedDate: '', dailyRewardedCount: 0 };
@@ -510,7 +506,7 @@
             s.minigames.records[gameId] = score;
           }
 
-          // Limit 10 nagradzanych gier dziennie
+          // Limit of 10 rewarded games per day
           const today = new Date().toISOString().slice(0, 10);
           if (s.minigames.dailyRewardedDate !== today) {
             s.minigames.dailyRewardedDate = today;
@@ -519,7 +515,7 @@
 
           let cloversAwarded = 0;
           if (s.minigames.dailyRewardedCount < 10) {
-            // koniczynki = min(40, punkty / 10)
+            // clovers = min(40, points / 10)
             cloversAwarded = Math.min(40, Math.max(0, Math.floor(score / 10)));
             if (cloversAwarded > 0) {
               s.clovers = (s.clovers || 0) + cloversAwarded;
@@ -527,14 +523,14 @@
             s.minigames.dailyRewardedCount++;
           }
 
-          // Humor +15 po grze
+          // Mood +15 after a game
           n.mood = Math.min(100, Math.round(((n.mood || 0) + 15) * 10) / 10);
           s.currentAction = 'popcorn';
           break;
         }
 
         case 'album': {
-          // Podgląd albumu
+          // Album preview
           break;
         }
 
@@ -548,7 +544,7 @@
       this.broadcastState();
     }
 
-    // --- Narzędzia testowe dla programisty w trybie mock ---
+    // --- Developer test tools in mock mode ---
     mockSetNeed(needName, value) {
       if (!this.currentState) return;
       if (this.currentState.needs[needName] !== undefined) {
@@ -582,7 +578,7 @@
     }
   }
 
-  // Udostępnienie instancji mostu
+  // Expose the bridge instance
   root.CuyBridge = CuyBridge;
   root.bridge = new CuyBridge();
 

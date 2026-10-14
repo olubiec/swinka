@@ -10,7 +10,7 @@ using Cuy.Core;
 namespace Cuy
 {
     /// <summary>
-    /// Główny punkt wejściowy aplikacji Cuy.
+    /// Main entry point of the Cuy app.
     /// </summary>
     class Program
     {
@@ -72,13 +72,13 @@ namespace Cuy
             {
                 if (!mutex.WaitOne(TimeSpan.FromSeconds(1), false))
                 {
-                    MessageBox.Show("Aplikacja Cuy jest już uruchomiona! Dozwolona jest tylko 1 instancja.", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Cuy is already running. Only one copy can run at a time.", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Nie można uruchomić aplikacji: " + ex.Message);
+                MessageBox.Show("Cuy could not start: " + ex.Message);
                 return;
             }
 
@@ -135,13 +135,13 @@ namespace Cuy
                     {
                         try
                         {
-                            BrainController.Log("[Program] Wywołuję HomeWindow.ShowHome()...");
+                            BrainController.Log("[Program] Calling HomeWindow.ShowHome()...");
                             HomeWindow.ShowHome();
-                            BrainController.Log("[Program] HomeWindow.ShowHome() wykonano.");
+                            BrainController.Log("[Program] HomeWindow.ShowHome() done.");
                         }
                         catch (Exception ex)
                         {
-                            BrainController.Log("[Program] BŁĄD HomeWindow: " + ex.ToString());
+                            BrainController.Log("[Program] ERROR HomeWindow: " + ex.ToString());
                         }
                     }
 

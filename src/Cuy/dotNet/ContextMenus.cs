@@ -8,19 +8,19 @@ using Cuy.Properties;
 namespace Cuy
 {
     /// <summary>
-    /// Menu podręczne w zasobniku systemowym (obok zegara Windows).
-    /// - Nakarm (podmenu z przedmiotami z ekwipunku i liczbą sztuk, Siano zawsze bez limitu)
-    /// - Zawołaj
-    /// - Domek
-    /// - Mózg świnki (F9)
-    /// - Zegar 60x (Test)
-    /// - Zamknij
+    /// Context menu of the tray icon (next to the Windows clock).
+    /// - Feed (submenu with inventory items and counts; hay is always unlimited)
+    /// - Call
+    /// - Home
+    /// - Pig brain (F9)
+    /// - Clock 60x (test)
+    /// - Quit
     /// </summary>
     public class ContextMenus : IDisposable
     {
         static ToolStripMenuItem feedMenuItem;
         static ToolStripMenuItem callMenuItem;
-        static ToolStripMenuItem domekMenuItem;
+        static ToolStripMenuItem homeMenuItem;
         static ToolStripMenuItem closeMenuItem;
 
         static string author;
@@ -32,16 +32,16 @@ namespace Cuy
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            // 1. Nakarm (podmenu: Siano bez limitu + przedmioty z ekwipunku)
-            feedMenuItem = new ToolStripMenuItem("Nakarm");
+            // 1. Feed (submenu: unlimited hay + items from the inventory)
+            feedMenuItem = new ToolStripMenuItem("Feed");
             feedMenuItem.Image = PetIcons.GetIconBitmap("hay");
             feedMenuItem.Font = new Font(feedMenuItem.Font, feedMenuItem.Font.Style | FontStyle.Bold);
             feedMenuItem.DropDownOpening += (s, e) => PopulateFeedSubmenu(feedMenuItem);
             PopulateFeedSubmenu(feedMenuItem);
             menu.Items.Add(feedMenuItem);
 
-            // 2. Zawołaj
-            callMenuItem = new ToolStripMenuItem("Zawołaj");
+            // 2. Call
+            callMenuItem = new ToolStripMenuItem("Call");
             callMenuItem.Image = PetIcons.GetIconBitmap("pig_head");
             callMenuItem.Click += (s, e) =>
             {
@@ -52,24 +52,24 @@ namespace Cuy
             };
             menu.Items.Add(callMenuItem);
 
-            // 3. Domek
-            domekMenuItem = new ToolStripMenuItem("Domek");
-            domekMenuItem.Image = PetIcons.GetIconBitmap("house");
-            domekMenuItem.Click += (s, e) => OpenHomeWindow();
-            menu.Items.Add(domekMenuItem);
+            // 3. Home
+            homeMenuItem = new ToolStripMenuItem("Home");
+            homeMenuItem.Image = PetIcons.GetIconBitmap("house");
+            homeMenuItem.Click += (s, e) => OpenHomeWindow();
+            menu.Items.Add(homeMenuItem);
 
 #if DEBUG
             // Dev tools (Debug builds only)
             ToolStripSeparator sep = new ToolStripSeparator();
             menu.Items.Add(sep);
 
-            ToolStripMenuItem brainItem = new ToolStripMenuItem("Mózg świnki (F9)");
+            ToolStripMenuItem brainItem = new ToolStripMenuItem("Pig brain (F9)");
             brainItem.Click += (s, e) => DebugOverlay.Toggle();
             menu.Items.Add(brainItem);
 
             ToolStripMenuItem speedItem = new ToolStripMenuItem
             {
-                Text = "Zegar 60x (Test)",
+                Text = "Clock 60x (test)",
                 CheckOnClick = true,
                 Checked = (BrainController.Instance != null && BrainController.Instance.TimeMultiplier >= 50.0)
             };
@@ -90,8 +90,8 @@ namespace Cuy
 
             menu.Items.Add(new ToolStripSeparator());
 
-            // 5. Zamknij
-            closeMenuItem = new ToolStripMenuItem("Zamknij");
+            // 5. Quit
+            closeMenuItem = new ToolStripMenuItem("Quit");
             closeMenuItem.Image = Resources.exit;
             closeMenuItem.Click += new EventHandler(Exit_Click);
             menu.Items.Add(closeMenuItem);
@@ -104,25 +104,23 @@ namespace Cuy
             HomeWindow.ShowHome();
         }
 
-        public static void OpenDomekWindow() => OpenHomeWindow();
-
         public static void PopulateFeedSubmenu(ToolStripMenuItem feedMenu)
         {
             feedMenu.DropDownItems.Clear();
 
-            // Zawsze "Siano" bez limitu
-            ToolStripMenuItem sianoItem = new ToolStripMenuItem("Siano (bez limitu)");
-            sianoItem.Image = PetIcons.GetIconBitmap("hay");
-            sianoItem.Click += (s, e) =>
+            // Hay is always unlimited
+            ToolStripMenuItem hayItem = new ToolStripMenuItem("Hay (unlimited)");
+            hayItem.Image = PetIcons.GetIconBitmap("hay");
+            hayItem.Click += (s, e) =>
             {
                 if (BrainController.Instance != null)
                 {
                     BrainController.Instance.Feed("hay");
                 }
             };
-            feedMenu.DropDownItems.Add(sianoItem);
+            feedMenu.DropDownItems.Add(hayItem);
 
-            // Przedmioty z ekwipunku
+            // Items from the inventory
             var pet = BrainController.Instance?.Pet;
             if (pet != null && pet.State.Inventory != null)
             {
