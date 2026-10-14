@@ -56,6 +56,11 @@
 
   // Inicjalizacja aplikacji
   function init() {
+    // Ustawienie arkusza ikon z assets w zależności od WebView2 / zwykłej przeglądarki
+    const isWebView = !!(window.chrome && window.chrome.webview);
+    const iconsUrl = isWebView ? 'https://cuy.assets/icons/icons_16.png' : '../../assets/icons/icons_16.png';
+    document.documentElement.style.setProperty('--icons-sheet', `url('${iconsUrl}')`);
+
     // Inicjalizacja canvasu ze świnką
     const canvasEl = document.getElementById('pigCanvas');
     if (canvasEl && window.PigCanvas) {

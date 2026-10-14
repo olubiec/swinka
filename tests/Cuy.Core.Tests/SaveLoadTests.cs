@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Cuy.Core;
 using Cuy.Core.Save;
@@ -161,6 +161,22 @@ namespace Cuy.Core.Tests
                 Assert.Equal(42, session2.Pet.State.Clovers);
                 Assert.Equal(80.0, session2.Pet.Needs.Satiety, precision: 3);
             }
+        }
+
+        [Fact]
+        public void SaveSystem_MigrateLegacyDirectory_MovesSaveAndCleansLegacy()
+        {
+            string legacyDir = Path.Combine(_testDir, "LegacySwinka");
+            string targetDir = Path.Combine(_testDir, "TargetCuy");
+            Directory.CreateDirectory(legacyDir);
+            string legacySave = Path.Combine(legacyDir, SaveSystem.FileName);
+            File.WriteAllText(legacySave, "{\"Version\":1,\"Name\":\"Puszek\"}");
+
+            SaveSystem.MigrateLegacyDirectory(legacyDir, targetDir);
+
+            Assert.True(File.Exists(Path.Combine(targetDir, SaveSystem.FileName)));
+            Assert.False(File.Exists(legacySave));
+            Assert.False(Directory.Exists(legacyDir));
         }
     }
 }

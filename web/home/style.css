@@ -38,6 +38,9 @@
   --c-contour:      #3a1d17;
   --c-contour-dark: #2b1712;
   --c-hay:          #eedb7c;
+
+  /* Arkusz ikon 16x16 z assets */
+  --icons-sheet: url('../../assets/icons/icons_16.png');
   --c-hay-dark:     #cdb556;
   --c-hay-shadow:   #99903d;
   --c-leaf:         #7fbf4a;
@@ -612,7 +615,7 @@ body.webview-mode .game-device {
   display: inline-block;
   width: 16px;
   height: 16px;
-  background-image: url('assets/ikony_16.png');
+  background-image: var(--icons-sheet, url('https://cuy.assets/icons/icons_16.png'));
   background-repeat: no-repeat;
   background-size: 400px 16px; /* 25 ikon * 16px = 400px */
   image-rendering: pixelated;

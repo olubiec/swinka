@@ -223,19 +223,19 @@ namespace Cuy
             _session.Tick();
 
             // Aktualizacja bobków (B4: odliczanie czasu gry, aktualizacja pozycji na oknach)
-            SwinkaPoopManager.Instance?.Update(gameElapsed);
+            PoopManager.Instance?.Update(gameElapsed);
 
             // Aktualizacja mechaniki karmienia (B6)
-            SwinkaFoodManager.Instance?.Update(gameElapsed);
+            FoodManager.Instance?.Update(gameElapsed);
 
             // Aktualizacja chrupania dźwiękowego podczas jedzenia (F1)
             SoundManager.Instance?.UpdateEating(gameElapsed);
 
             // Aktualizacja interakcji z kursorem (I1)
-            SwinkaInteractionManager.Instance?.Update(gameElapsed);
+            InteractionManager.Instance?.Update(gameElapsed);
 
-            bool isFoodActive = SwinkaFoodManager.Instance != null && SwinkaFoodManager.Instance.State != FoodInteractionState.None;
-            bool isInteractionActive = SwinkaInteractionManager.Instance != null && SwinkaInteractionManager.Instance.IsActiveInteraction;
+            bool isFoodActive = FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None;
+            bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
 
             // Aktualizacja Brain (tylko gdy nie ma fizyki, nie trwa wybudzanie, nie trwa interakcja z jedzeniem ani kursorem)
             if (!_isPhysicsActive && !isFoodActive && !isInteractionActive)
@@ -313,12 +313,12 @@ namespace Cuy
         {
             if (string.IsNullOrEmpty(itemId)) return;
 
-            if (string.Equals(itemId, "siano", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(itemId, "hay", StringComparison.OrdinalIgnoreCase) || string.Equals(itemId, "siano", StringComparison.OrdinalIgnoreCase))
             {
                 // Siano jest zawsze bez limitu - kładziemy na pulpicie (B6)
-                if (SwinkaFoodManager.Instance != null)
+                if (FoodManager.Instance != null)
                 {
-                    SwinkaFoodManager.Instance.SpawnFood("siano");
+                    FoodManager.Instance.SpawnFood("hay");
                 }
                 return;
             }
@@ -326,9 +326,9 @@ namespace Cuy
             // Przedmioty z ekwipunku
             if (_session.Pet.TryRemoveItem(itemId, 1))
             {
-                if (SwinkaFoodManager.Instance != null)
+                if (FoodManager.Instance != null)
                 {
-                    SwinkaFoodManager.Instance.SpawnFood(itemId);
+                    FoodManager.Instance.SpawnFood(itemId);
                 }
             }
             else
@@ -339,9 +339,9 @@ namespace Cuy
 
         public void CallPet()
         {
-            if (SwinkaInteractionManager.Instance != null)
+            if (InteractionManager.Instance != null)
             {
-                SwinkaInteractionManager.Instance.CallPet();
+                InteractionManager.Instance.CallPet();
                 return;
             }
 
@@ -354,9 +354,9 @@ namespace Cuy
 
         public void PetPig()
         {
-            if (SwinkaInteractionManager.Instance != null)
+            if (InteractionManager.Instance != null)
             {
-                SwinkaInteractionManager.Instance.TriggerPetting();
+                InteractionManager.Instance.TriggerPetting();
                 return;
             }
 
@@ -378,15 +378,15 @@ namespace Cuy
 
         public void SpawnPoopNow()
         {
-            SwinkaPoopManager.Instance?.TrySpawnPoop(force: true);
+            PoopManager.Instance?.TrySpawnPoop(force: true);
         }
 
         // ---- Wybór kolejnej animacji dla silnika eSheep ----------------------
 
         public string GetCurrentDesiredAnimation()
         {
-            bool isInteractionActive = SwinkaInteractionManager.Instance != null && SwinkaInteractionManager.Instance.IsActiveInteraction;
-            if (_isPhysicsActive || (SwinkaFoodManager.Instance != null && SwinkaFoodManager.Instance.State != FoodInteractionState.None) || isInteractionActive)
+            bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
+            if (_isPhysicsActive || (FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None) || isInteractionActive)
             {
                 // Gdy fizyka, karmienie lub interakcja z kursorem jest aktywna, steruje animacjami bezpośrednio
                 return null;
@@ -420,8 +420,8 @@ namespace Cuy
         /// </summary>
         public string OnAnimationSequenceFinished(string currentAnimationName)
         {
-            bool isInteractionActive = SwinkaInteractionManager.Instance != null && SwinkaInteractionManager.Instance.IsActiveInteraction;
-            if (_isPhysicsActive || (SwinkaFoodManager.Instance != null && SwinkaFoodManager.Instance.State != FoodInteractionState.None) || isInteractionActive)
+            bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
+            if (_isPhysicsActive || (FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None) || isInteractionActive)
             {
                 return null;
             }

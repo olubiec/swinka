@@ -212,8 +212,7 @@ namespace Cuy
             if (_iconsStrip != null) return;
 
             string pngPath = FindFile(Path.Combine("assets", "icons", "icons_16.png"))
-                          ?? FindFile(Path.Combine("assets", "icons", "ikony_16.png"))
-                          ?? FindFile(Path.Combine("web", "home", "assets", "ikony_16.png"));
+                          ?? FindFile(Path.Combine("assets", "icons", "ikony_16.png"));
 
             if (!string.IsNullOrEmpty(pngPath))
             {

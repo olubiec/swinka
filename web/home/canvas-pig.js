@@ -11,7 +11,7 @@
 (function (root) {
   'use strict';
 
-  // Definicje animacji (z swinka_animacje.json)
+  // Definicje animacji (z animations.json)
   const ANIM_DEFS = {
     idle:        { row: 0,  frames: 16, fps: 8,  loop: true,  opis: "Siedzenie" },
     sniff:       { row: 1,  frames: 12, fps: 12, loop: true,  opis: "Węszenie" },
@@ -123,8 +123,8 @@
       this.iconsImg = new Image();
       this.iconsImg.onload = onDone;
       this.iconsImg.onerror = () => {
-        // Fallback do lokalnego jeśli assets nieosiągalne
-        this.iconsImg.src = 'assets/ikony_16.png';
+        // Fallback do względnego assets jeśli host nieosiągalny
+        this.iconsImg.src = '../../assets/icons/icons_16.png';
         onDone();
       };
       this.iconsImg.src = assetsBase + 'icons/icons_16.png';

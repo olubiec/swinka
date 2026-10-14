@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
@@ -69,20 +69,33 @@ namespace Cuy.Core.Save
         {
             try
             {
-                if (System.IO.Directory.Exists(legacyDir) && !System.IO.Directory.Exists(targetDir))
+                if (System.IO.Directory.Exists(legacyDir))
                 {
-                    System.IO.Directory.CreateDirectory(targetDir);
                     string legacySave = Path.Combine(legacyDir, FileName);
                     string targetSave = Path.Combine(targetDir, FileName);
-                    if (File.Exists(legacySave) && !File.Exists(targetSave))
-                    {
-                        File.Copy(legacySave, targetSave, true);
-                    }
                     string legacyBak = Path.Combine(legacyDir, BackupFileName);
                     string targetBak = Path.Combine(targetDir, BackupFileName);
-                    if (File.Exists(legacyBak) && !File.Exists(targetBak))
+
+                    if (File.Exists(legacySave) || File.Exists(legacyBak))
                     {
-                        File.Copy(legacyBak, targetBak, true);
+                        if (!System.IO.Directory.Exists(targetDir))
+                        {
+                            System.IO.Directory.CreateDirectory(targetDir);
+                        }
+
+                        if (File.Exists(legacySave) && !File.Exists(targetSave))
+                        {
+                            File.Move(legacySave, targetSave);
+                        }
+                        if (File.Exists(legacyBak) && !File.Exists(targetBak))
+                        {
+                            File.Move(legacyBak, targetBak);
+                        }
+
+                        if (System.IO.Directory.GetFileSystemEntries(legacyDir).Length == 0)
+                        {
+                            System.IO.Directory.Delete(legacyDir);
+                        }
                     }
                 }
             }

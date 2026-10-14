@@ -23,7 +23,7 @@ from PIL import Image
 
 def generate_icon_base64():
     """Generuje ikonę głowy świnki (ICO w base64) z arkusza ikon 16x16 (indeks 24)."""
-    icons_path = "assets/icons/ikony_16.png" if os.path.exists("assets/icons/ikony_16.png") else "assets/icons/icons_16.png"
+    icons_path = "assets/icons/icons_16.png" if os.path.exists("assets/icons/icons_16.png") else "assets/icons/ikony_16.png"
     if not os.path.exists(icons_path):
         raise FileNotFoundError(f"Brak pliku ikon: {icons_path}")
 

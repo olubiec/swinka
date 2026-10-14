@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -66,11 +66,11 @@ namespace Cuy
             _petForm = petForm ?? throw new ArgumentNullException(nameof(petForm));
         }
 
-        public static SwinkaInteractionManager Instance { get; private set; }
+        public static InteractionManager Instance { get; private set; }
 
         public static void Initialize(FormPet petForm)
         {
-            Instance = new SwinkaInteractionManager(petForm);
+            Instance = new InteractionManager(petForm);
         }
 
         public bool IsOffended => DateTime.UtcNow < _offendedUntil;

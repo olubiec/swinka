@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -730,9 +730,9 @@ namespace Cuy
             {
                 controller.PetPig();
             }
-            else if (SwinkaInteractionManager.Instance != null)
+            else if (InteractionManager.Instance != null)
             {
-                SwinkaInteractionManager.Instance.TriggerPetting();
+                InteractionManager.Instance.TriggerPetting();
             }
             else if (_petForm != null)
             {
@@ -749,9 +749,9 @@ namespace Cuy
             {
                 controller.CallPet();
             }
-            else if (SwinkaInteractionManager.Instance != null)
+            else if (InteractionManager.Instance != null)
             {
-                SwinkaInteractionManager.Instance.CallPet();
+                InteractionManager.Instance.CallPet();
             }
 
             Invalidate();

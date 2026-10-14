@@ -27,7 +27,7 @@ namespace Cuy
         private readonly BrainController _controller;
         private readonly Cuy.Core.Pet _pet;
         private readonly Random _random = new Random();
-        private readonly List<PoopForm> _activeBobki = new List<PoopForm>();
+        private readonly List<PoopForm> _activePoops = new List<PoopForm>();
 
         private TimeSpan _timeUntilNextPoop;
         private TimeSpan _elapsedGameTime;
@@ -51,7 +51,8 @@ namespace Cuy
             }
         }
 
-        public IReadOnlyList<PoopForm> ActiveBobki => _activeBobki;
+        public IReadOnlyList<PoopForm> ActivePoops => _activePoops;
+        public IReadOnlyList<PoopForm> ActiveBobki => _activePoops;
 
         /// <summary>
         /// Wywoływane co krok aktualizacji w BrainController.Update().
@@ -59,11 +60,11 @@ namespace Cuy
         public void Update(TimeSpan gameElapsed)
         {
             // 1. Sprawdzanie i aktualizacja pozycji bobków na oknach
-            for (int i = _activeBobki.Count - 1; i >= 0; i--)
+            for (int i = _activePoops.Count - 1; i >= 0; i--)
             {
-                if (i < _activeBobki.Count)
+                if (i < _activePoops.Count)
                 {
-                    _activeBobki[i].UpdateTracking();
+                    _activePoops[i].UpdateTracking();
                 }
             }
 
@@ -153,7 +154,7 @@ namespace Cuy
                 {
                     var form = new PoopForm(poopData, hwnd, relOffset);
                     form.Show();
-                    _activeBobki.Add(form);
+                    _activePoops.Add(form);
 
                     BrainController.Log(string.Format(
                         "[Bobek] Zostawiono bobek w ({0}, {1}) na {2}. Liczba bobków: {3}/8, Czystość: {4:0.#}%",
@@ -173,17 +174,17 @@ namespace Cuy
         /// <summary>
         /// Obsługa kliknięcia bobka przez gracza: usunięcie bobka, +1 koniczynka, odświeżenie czystości.
         /// </summary>
-        public void OnBobekClicked(PoopForm bobek)
+        public void OnPoopClicked(PoopForm poop)
         {
-            if (bobek == null) return;
+            if (poop == null) return;
 
-            _activeBobki.Remove(bobek);
-            _pet.CleanPoop(bobek.PoopData.Id);
+            _activePoops.Remove(poop);
+            _pet.CleanPoop(poop.PoopData.Id);
 
             try
             {
-                bobek.Close();
-                bobek.Dispose();
+                poop.Close();
+                poop.Dispose();
             }
             catch { }
 
@@ -193,6 +194,8 @@ namespace Cuy
             HomeWindow.NotifyStateChanged();
         }
 
+        public void OnBobekClicked(PoopForm bobek) => OnPoopClicked(bobek);
+
         /// <summary>
         /// Obsługa zamknięcia okna, na którym leżał bobek:
         /// Bobek znika z ekranu, ale licznik zostaje w stanie gry (wymóg B4).
@@ -201,7 +204,7 @@ namespace Cuy
         {
             if (bobek == null) return;
 
-            _activeBobki.Remove(bobek);
+            _activePoops.Remove(bobek);
             // Usunięcie z listy widocznych bobków na ekranie
             _pet.State.Poops.RemoveAll(p => p.Id == bobek.PoopData.Id);
             // Licznik _pet.State.PoopCount CELOWO NIE JEST zmniejszany!
@@ -237,7 +240,7 @@ namespace Cuy
                     {
                         var form = new PoopForm(item, IntPtr.Zero, Point.Empty);
                         form.Show();
-                        _activeBobki.Add(form);
+                        _activePoops.Add(form);
                     }
                     catch { }
                 }
@@ -252,7 +255,7 @@ namespace Cuy
                         {
                             var form = new PoopForm(item, foundHwnd, relOffset);
                             form.Show();
-                            _activeBobki.Add(form);
+                            _activePoops.Add(form);
                         }
                         catch { }
                     }
@@ -296,7 +299,7 @@ namespace Cuy
         /// </summary>
         public void CloseAllVisuals()
         {
-            foreach (var b in _activeBobki)
+            foreach (var b in _activePoops)
             {
                 try
                 {
@@ -305,7 +308,7 @@ namespace Cuy
                 }
                 catch { }
             }
-            _activeBobki.Clear();
+            _activePoops.Clear();
         }
     }
 

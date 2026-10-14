@@ -82,7 +82,7 @@ namespace Cuy
             base.OnMouseClick(e);
             if (e.Button == MouseButtons.Left)
             {
-                PoopManager.Instance?.OnBobekClicked(this);
+                PoopManager.Instance?.OnPoopClicked(this);
             }
         }
 
