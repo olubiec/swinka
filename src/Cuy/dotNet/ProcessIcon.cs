@@ -8,7 +8,7 @@ namespace Cuy
 {
     /// <summary>
     /// Ikona w zasobniku systemowym (obok zegara Windows).
-    /// Wyświetla głowę świnki z swinka/ikony/ikony_16.png,
+    /// Wyświetla głowę świnki z assets/icons/icons_16.png,
     /// tooltip z imieniem świnki i najniższą potrzebą,
     /// otwiera Domek przy dwukliku oraz menu kontekstowe.
     /// </summary>
@@ -27,7 +27,7 @@ namespace Cuy
             ni.MouseClick += new MouseEventHandler(Ni_MouseClick);
             ni.MouseDoubleClick += new MouseEventHandler(Ni_MouseDoubleClick);
 
-            // Ustaw ikonę główki świnki z swinka/ikony/ikony_16.png
+            // Ustaw ikonę główki świnki z assets/icons/icons_16.png
             try
             {
                 ni.Icon = PetIcons.GetTrayIcon();

@@ -12,7 +12,7 @@ namespace Cuy.Core.Tests
 
         public CorruptSaveBackupTests()
         {
-            _testDir = Path.Combine(Path.GetTempPath(), "SwinkaCorruptBackupTest_" + Guid.NewGuid().ToString("N"));
+            _testDir = Path.Combine(Path.GetTempPath(), "CuyCorruptBackupTest_" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(_testDir);
         }
 

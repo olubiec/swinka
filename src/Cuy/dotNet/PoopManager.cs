@@ -311,11 +311,4 @@ namespace Cuy
             _activePoops.Clear();
         }
     }
-
-    /// <summary>Alias dla kompatybilności wstecznej.</summary>
-    public static class SwinkaPoopManager
-    {
-        public static PoopManager Instance => PoopManager.Instance;
-        public static void Initialize(BrainController controller) => PoopManager.Initialize(controller);
-    }
 }

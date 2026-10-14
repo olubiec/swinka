@@ -68,7 +68,7 @@ namespace Cuy
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            Bitmap bmp = PetIcons.GetIconBitmap("poop") ?? PetIcons.GetIconBitmap("bobek");
+            Bitmap bmp = PetIcons.GetIconBitmap("poop");
             if (bmp != null)
             {
                 e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;

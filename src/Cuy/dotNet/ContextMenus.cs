@@ -34,7 +34,7 @@ namespace Cuy
 
             // 1. Nakarm (podmenu: Siano bez limitu + przedmioty z ekwipunku)
             feedMenuItem = new ToolStripMenuItem("Nakarm");
-            feedMenuItem.Image = PetIcons.GetIconBitmap("hay") ?? PetIcons.GetIconBitmap("siano");
+            feedMenuItem.Image = PetIcons.GetIconBitmap("hay");
             feedMenuItem.Font = new Font(feedMenuItem.Font, feedMenuItem.Font.Style | FontStyle.Bold);
             feedMenuItem.DropDownOpening += (s, e) => PopulateFeedSubmenu(feedMenuItem);
             PopulateFeedSubmenu(feedMenuItem);
@@ -42,7 +42,7 @@ namespace Cuy
 
             // 2. Zawołaj
             callMenuItem = new ToolStripMenuItem("Zawołaj");
-            callMenuItem.Image = PetIcons.GetIconBitmap("pet_head") ?? PetIcons.GetIconBitmap("glowa_swinki");
+            callMenuItem.Image = PetIcons.GetIconBitmap("pig_head");
             callMenuItem.Click += (s, e) =>
             {
                 if (BrainController.Instance != null)
@@ -54,11 +54,12 @@ namespace Cuy
 
             // 3. Domek
             domekMenuItem = new ToolStripMenuItem("Domek");
-            domekMenuItem.Image = PetIcons.GetIconBitmap("house") ?? PetIcons.GetIconBitmap("domek");
+            domekMenuItem.Image = PetIcons.GetIconBitmap("house");
             domekMenuItem.Click += (s, e) => OpenHomeWindow();
             menu.Items.Add(domekMenuItem);
 
-            // Narzędzia testowe (tylko w Debug lub jako opcjonalne skróty)
+#if DEBUG
+            // Dev tools (Debug builds only)
             ToolStripSeparator sep = new ToolStripSeparator();
             menu.Items.Add(sep);
 
@@ -81,6 +82,7 @@ namespace Cuy
                 }
             };
             menu.Items.Add(speedItem);
+#endif
 
             menu.Items.Add(new ToolStripSeparator());
 
@@ -106,7 +108,7 @@ namespace Cuy
 
             // Zawsze "Siano" bez limitu
             ToolStripMenuItem sianoItem = new ToolStripMenuItem("Siano (bez limitu)");
-            sianoItem.Image = PetIcons.GetIconBitmap("hay") ?? PetIcons.GetIconBitmap("siano");
+            sianoItem.Image = PetIcons.GetIconBitmap("hay");
             sianoItem.Click += (s, e) =>
             {
                 if (BrainController.Instance != null)
@@ -125,7 +127,7 @@ namespace Cuy
                     string itemId = kvp.Key;
                     int count = kvp.Value;
                     if (count <= 0) continue;
-                    if (string.Equals(itemId, "siano", StringComparison.OrdinalIgnoreCase) || string.Equals(itemId, "hay", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (string.Equals(itemId, "hay", StringComparison.OrdinalIgnoreCase)) continue;
 
                     var def = ItemCatalogLoader.GetItem(itemId);
                     string title = string.Format("{0} ({1})", def.Name, count);
@@ -159,7 +161,7 @@ namespace Cuy
                 BrainController.Instance?.Close();
             }
             catch { }
-            Program.Mainthread.KillSheeps(true);
+            Program.Mainthread.KillPets(true);
         }
 
         public void Dispose()

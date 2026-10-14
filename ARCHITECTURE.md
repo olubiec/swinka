@@ -1,6 +1,6 @@
 # Architektura eSheep (Świnka na pulpit)
 
-Niniejszy dokument stanowi wyczerpujący opis techniczny i architektoniczny projektu bazowego **eSheep** (`esheep/src/`, licencja MIT), który jest fundamentem dla projektu „Świnka na pulpit”.
+Niniejszy dokument stanowi wyczerpujący opis techniczny i architektoniczny projektu bazowego **eSheep** (`src/Cuy/`, licencja MIT), który jest fundamentem dla projektu „Świnka na pulpit”.
 
 ---
 
@@ -14,7 +14,7 @@ Niniejszy dokument stanowi wyczerpujący opis techniczny i architektoniczny proj
     *   Wsparcie dla języka C# 7.0+.
 
 ### 1.2. Rozwiązania (Solutions) w repozytorium
-W katalogu `esheep/src/` znajdują się dwa pliki rozwiązań:
+W katalogu `src/Cuy/` znajdują się dwa pliki rozwiązań:
 1.  **`DesktopPet.sln`** – pełne rozwiązanie deweloperskie, zawierające:
     *   Projekt główny `DesktopPet.csproj` (.NET Framework 4.8).
     *   Projekt instalatora `DesktopPet.Package.wapproj` (projekt tworzenia pakietów aplikacji systemu Windows / MSIX Desktop Bridge).
@@ -24,7 +24,7 @@ W katalogu `esheep/src/` znajdują się dwa pliki rozwiązań:
 ### 1.3. Instrukcja krok po kroku
 
 #### Wariant A: Uruchomienie rozwiązania `DesktopPet.sln`
-1.  Otwórz plik `esheep/src/DesktopPet.sln` w programie Visual Studio.
+1.  Otwórz plik `Cuy.sln` w programie Visual Studio.
 2.  **Przywrócenie pakietów NuGet**: Kliknij prawym przyciskiem myszy na węzeł rozwiązania w Eksploratorze rozwiązań (*Solution Explorer*) i wybierz **„Przywróć pakiety NuGet”** (*Restore NuGet Packages*). Alternatywnie w konsoli menedżera pakietów wykonaj `nuget restore`.
 3.  **Projekt startowy i projekt instalatora**:
     *   Jeśli nie masz zainstalowanego składnika Windows Application Packaging Project, projekt `DesktopPet.Package` może zgłosić błąd ładowania. W takim wypadku kliknij na niego prawym przyciskiem myszy i wybierz **„Wyładuj projekt”** (*Unload Project*).
@@ -33,11 +33,11 @@ W katalogu `esheep/src/` znajdują się dwa pliki rozwiązań:
 5.  Naciśnij klawisz **F5** (lub zielony przycisk **Start**), aby skompilować i uruchomić zwierzaka.
 
 #### Wariant B: Uruchomienie rozwiązania `DesktopPet_Portable.sln` (zalecane dla wersji standalone)
-1.  Otwórz plik `esheep/src/DesktopPet_Portable.sln` w Visual Studio.
+1.  Otwórz plik `Cuy.sln` w Visual Studio.
 2.  Przywróć pakiety NuGet (PPM na rozwiązaniu -> *Restore NuGet Packages*).
 3.  Wybierz konfigurację **Debug** lub **Release** oraz platformę **x86** (lub **x64**).
 4.  Naciśnij **F5**. Plik wykonywalny zostanie zbudowany w:
-    `esheep/build/DesktopPetPortable/bin/Debug/DesktopPet.exe` (lub odpowiednio w podfolderze `Release`).
+    `src/Cuy/bin/Debug/Cuy.exe` (lub odpowiednio w podfolderze `Release`).
 
 ### 1.4. Budowanie z wiersza poleceń (MSBuild)
 Możliwa jest również kompilacja bez otwierania interfejsu Visual Studio:
@@ -57,7 +57,7 @@ Możliwa jest również kompilacja bez otwierania interfejsu Visual Studio:
 ## 2. Struktura folderów i najważniejsze klasy
 
 ### 2.1. Układ katalogów repozytorium
-*   **`esheep/`**:
+*   **`src/Cuy/`** (bazowo eSheep):
     *   `src/`:
         *   `dotNet/` – rdzeń silnika zwierzaka (zarządzanie animacjami, oknami, zdarzeniami myszy i Win32 API).
         *   `Portable/` – formularze poboczne (okno opcji `FormOptions2.cs`, okno pomocy `FormHelp.cs`, okno o programie `AboutBox.cs`).
@@ -67,12 +67,12 @@ Możliwa jest również kompilacja bez otwierania interfejsu Visual Studio:
         *   `esheep64/` – wzorcowy zestaw owcy (zawiera plik `animations.xml` z zagnieżdżonym arkuszem klatek PNG i ikoną w formacie Base64).
     *   `Tools/` – narzędzia pomocnicze do edycji i testowania animacji eSheep (`PetEditor`, `PetTester`).
     *   `build/` – katalog wyjściowy skompilowanych plików binarnych (`DesktopPet.exe`, pliki DLL, pliki PDB).
-*   **`swinka/`**:
-    *   `swinka_spritesheet.png`, `swinka_animacje.json` – domyślne grafiki i opisy animacji świnki.
-    *   `dorosla/`, `maluch/`, `senior/`, `legenda/`, `towarzysz_*/` – arkusze klatek dla etapów życia i towarzyszy.
-    *   `ikony/` – ikony przedmiotów, potrzeb i zasobnika systemowego.
-    *   `dane/` – pliki konfiguracyjne dla przyszłego mózgu gry (`actions.json`, `items.json`, `symulacja.json`).
-*   **`narzedzia/`**:
+*   **`assets/`**:
+    *   `sprites/<variant>/spritesheet.png`, `animations.json` – grafiki i opisy animacji świnki.
+    *   `sprites/adult/`, `baby/`, `senior/`, `legend/`, `companion_*/` – arkusze klatek dla etapów życia i towarzyszy.
+    *   `icons/` – ikony przedmiotów, potrzeb i zasobnika systemowego.
+    *   `data/` – pliki konfiguracyjne mózgu gry (`actions.json`, `items.json`, `simulation.json`).
+*   **`tools/art/`**:
     *   Skrypty w języku Python do generowania klatek, eksportu arkusza i galerii (`export.py`, `pig.py`, `anims.py`, `anims2.py`, `props.py`).
 
 ### 2.2. Najważniejsze klasy i pliki źródłowe
@@ -92,7 +92,7 @@ Możliwa jest również kompilacja bez otwierania interfejsu Visual Studio:
 
 ## 3. Format `animations.xml`
 
-Format pliku konfiguracyjnego `animations.xml` jest zdefiniowany formalnym schematem XSD w `esheep/src/Resources/animations.xsd`. Plik ten łączy grafikę, dźwięki oraz graf stanów wszystkich zachowań zwierzaka.
+Format pliku konfiguracyjnego `animations.xml` jest zdefiniowany formalnym schematem XSD w `src/Cuy/Resources/animations.xsd`. Plik ten łączy grafikę, dźwięki oraz graf stanów wszystkich zachowań zwierzaka.
 
 ### 3.1. Główne sekcje dokumentu XML
 ```xml
@@ -421,5 +421,5 @@ Projekt bazowy eSheep został pomyślnie zbudowany w konfiguracji `Debug|x86` be
 
 *   **Pakiety NuGet**: Przywrócono komplet 16 pakietów (m.in. `Newtonsoft.Json 13.0.4`, `System.Text.Json 10.0.11`, `NAudio 1.8.4`).
 *   **Wynik kompilacji**: Kompilacja powiodła się bez błędów (0 błędów, ostrzeżenia zgodne z kodem bazowym eSheep).
-*   **Plik wykonywalny**: Wygenerowano `esheep/build/DesktopPetPortable/bin/Debug/DesktopPet.exe`.
+*   **Plik wykonywalny**: Wygenerowano `src/Cuy/bin/Debug/Cuy.exe`.
 *   **Test uruchomieniowy**: Proces uruchomiono pomyślnie w systemie Windows (PID 16764) i zweryfikowano jego poprawne działanie na pulpicie.

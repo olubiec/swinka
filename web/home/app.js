@@ -19,7 +19,7 @@
     
     // Paski potrzeb
     bars: {
-      satiety:     { fill: document.getElementById('barSatiety'),     val: document.getElementById('valSatiety') },
+      fullness:    { fill: document.getElementById('barFullness'),    val: document.getElementById('valFullness') },
       vitaminC:    { fill: document.getElementById('barVitaminC'),    val: document.getElementById('valVitaminC') },
       energy:      { fill: document.getElementById('barEnergy'),      val: document.getElementById('valEnergy') },
       mood:        { fill: document.getElementById('barMood'),        val: document.getElementById('valMood') },
@@ -38,9 +38,9 @@
     // Szuflada jedzenia
     foodDrawer: document.getElementById('foodDrawer'),
     foodBtns: document.querySelectorAll('.food-item-btn'),
-    foodQtyPapryka: document.getElementById('foodQtyPapryka'),
-    foodQtyMarchewka: document.getElementById('foodQtyMarchewka'),
-    foodQtyGranulat: document.getElementById('foodQtyGranulat'),
+    foodQtyBellPepper: document.getElementById('foodQtyBellPepper'),
+    foodQtyCarrot: document.getElementById('foodQtyCarrot'),
+    foodQtyPellets: document.getElementById('foodQtyPellets'),
 
     // Górne kontrolki
     btnSound: document.getElementById('btnSound'),
@@ -89,7 +89,7 @@
     // Etap życia
     if (elements.stageBadge) {
       const stageName = state.stageName || 'Dorosła';
-      const stageKey = state.stageKey || 'dorosla';
+      const stageKey = state.stageKey || 'adult';
       elements.stageBadge.textContent = getStageIcon(stageKey) + ' ' + stageName;
       elements.stageBadge.className = `stage-badge stage-${stageKey}`;
     }
@@ -111,7 +111,7 @@
 
     // Paski 6 potrzeb z dynamicznymi kolorami zależnymi od poziomu
     if (state.needs) {
-      updateNeedBar('satiety', state.needs.satiety);
+      updateNeedBar('fullness', state.needs.fullness);
       updateNeedBar('vitaminC', state.needs.vitaminC);
       updateNeedBar('energy', state.needs.energy);
       updateNeedBar('mood', state.needs.mood);
@@ -121,9 +121,9 @@
 
     // Ekwipunek w szufladzie karmienia
     if (state.inventory) {
-      if (elements.foodQtyPapryka) elements.foodQtyPapryka.textContent = `${state.inventory.papryka || 0} szt.`;
-      if (elements.foodQtyMarchewka) elements.foodQtyMarchewka.textContent = `${state.inventory.marchewka || 0} szt.`;
-      if (elements.foodQtyGranulat) elements.foodQtyGranulat.textContent = `${state.inventory.granulat || 0} szt.`;
+      if (elements.foodQtyBellPepper) elements.foodQtyBellPepper.textContent = `${state.inventory.bell_pepper || 0} szt.`;
+      if (elements.foodQtyCarrot) elements.foodQtyCarrot.textContent = `${state.inventory.carrot || 0} szt.`;
+      if (elements.foodQtyPellets) elements.foodQtyPellets.textContent = `${state.inventory.pellets || 0} szt.`;
     }
 
     // Aktualizacja canvasu
@@ -134,11 +134,11 @@
 
   function getStageIcon(key) {
     switch (key) {
-      case 'maluch': return '🌿';
-      case 'mlodzik': return '🌾';
-      case 'dorosla': return '🥕';
+      case 'baby': return '🌿';
+      case 'junior': return '🌾';
+      case 'adult': return '🥕';
       case 'senior': return '👑';
-      case 'legenda': return '⭐';
+      case 'legend': return '⭐';
       default: return '🐾';
     }
   }
@@ -181,7 +181,7 @@
         const food = btn.dataset.food;
         const state = window.bridge ? window.bridge.getState() : null;
 
-        if (food !== 'siano' && state?.inventory && (state.inventory[food] || 0) <= 0) {
+        if (food !== 'hay' && state?.inventory && (state.inventory[food] || 0) <= 0) {
           if (window.Sound) window.Sound.click();
           if (canvasPig) canvasPig.showBubble(`Brak ${food}! Kup w sklepiku!`, 2200);
           return;
@@ -189,7 +189,7 @@
 
         if (window.Sound) window.Sound.crunch();
         if (canvasPig) {
-          canvasPig.playAnim(food === 'siano' ? 'eat' : 'eat_treat', 3500);
+          canvasPig.playAnim(food === 'hay' ? 'eat' : 'eat_treat', 3500);
           canvasPig.showBubble('Mniam! Chrup-chrup!', 2500);
           canvasPig.spawnCrunch(canvasPig.pigX + 40, canvasPig.pigY + 50);
         }
@@ -330,18 +330,18 @@
     const clovers = state?.clovers || 0;
 
     const items = [
-      { id: 'papryka',   name: 'Papryka',          price: 12, icon: 'icon-papryka',   desc: 'Dużo witaminy C' },
-      { id: 'marchewka', name: 'Marchewka',        price: 10, icon: 'icon-marchewka', desc: 'Chrupanie i ząbki' },
-      { id: 'granulat',  name: 'Granulat',         price: 5,  icon: 'icon-granulat',  desc: 'Sycący posiłek' },
-      { id: 'gryzak',    name: 'Gryzak z gałązki', price: 20, icon: 'icon-gryzak',    desc: 'Ściera ząbki świnki' },
-      { id: 'domek',     name: 'Ciepły domek',     price: 250,icon: 'icon-domek',     desc: 'Wygodne schronienie' },
-      { id: 'tunel',     name: 'Miękki tunel',     price: 200,icon: 'icon-tunel',     desc: 'Zabawa i bieganie' }
+      { id: 'bell_pepper', name: 'Papryka',          price: 12, icon: 'icon-bell-pepper',   desc: 'Dużo witaminy C' },
+      { id: 'carrot',      name: 'Marchewka',        price: 10, icon: 'icon-carrot', desc: 'Chrupanie i ząbki' },
+      { id: 'pellets',   name: 'Granulat',         price: 5,  icon: 'icon-pellets',  desc: 'Sycący posiłek' },
+      { id: 'chew_stick', name: 'Gryzak z gałązki', price: 20, icon: 'icon-chew-stick',    desc: 'Ściera ząbki świnki' },
+      { id: 'house',      name: 'Ciepły domek',     price: 250,icon: 'icon-house',     desc: 'Wygodne schronienie' },
+      { id: 'tunnel',     name: 'Miękki tunel',     price: 200,icon: 'icon-tunnel',     desc: 'Zabawa i bieganie' }
     ];
 
     let html = `
       <div style="display:flex; justify-content:space-between; align-items:center; background:#2b1712; color:#eedb7c; padding:6px 10px; border-radius:4px;">
         <span>Twoje koniczynki:</span>
-        <b style="font-size:15px;"><span class="pixel-icon icon-koniczynka"></span> ${clovers} 🍀</b>
+        <b style="font-size:15px;"><span class="pixel-icon icon-clover"></span> ${clovers} 🍀</b>
       </div>
       <div class="shop-grid">
     `;
@@ -445,11 +445,11 @@
         <div class="test-row">
           <label>Zmień etap życia:</label>
           <div style="display:flex; gap:4px; flex-wrap:wrap;">
-            <button class="test-btn" data-stage="maluch">Maluch</button>
-            <button class="test-btn" data-stage="mlodzik">Młodzik</button>
-            <button class="test-btn" data-stage="dorosla">Dorosła</button>
+            <button class="test-btn" data-stage="baby">Maluch</button>
+            <button class="test-btn" data-stage="junior">Młodzik</button>
+            <button class="test-btn" data-stage="adult">Dorosła</button>
             <button class="test-btn" data-stage="senior">Senior</button>
-            <button class="test-btn" data-stage="legenda">Legenda</button>
+            <button class="test-btn" data-stage="legend">Legenda</button>
           </div>
         </div>
 
@@ -470,21 +470,21 @@
 
     // Obsługa kliknięć w testy
     document.getElementById('testLow')?.addEventListener('click', () => {
-      ['satiety', 'vitaminC', 'energy', 'mood', 'cleanliness', 'teeth'].forEach(k => {
+      ['fullness', 'vitaminC', 'energy', 'mood', 'cleanliness', 'teeth'].forEach(k => {
         window.bridge.mockSetNeed(k, 20);
       });
       closeModal();
     });
 
     document.getElementById('testMid')?.addEventListener('click', () => {
-      ['satiety', 'vitaminC', 'energy', 'mood', 'cleanliness', 'teeth'].forEach(k => {
+      ['fullness', 'vitaminC', 'energy', 'mood', 'cleanliness', 'teeth'].forEach(k => {
         window.bridge.mockSetNeed(k, 50);
       });
       closeModal();
     });
 
     document.getElementById('testHigh')?.addEventListener('click', () => {
-      ['satiety', 'vitaminC', 'energy', 'mood', 'cleanliness', 'teeth'].forEach(k => {
+      ['fullness', 'vitaminC', 'energy', 'mood', 'cleanliness', 'teeth'].forEach(k => {
         window.bridge.mockSetNeed(k, 95);
       });
       closeModal();
@@ -494,11 +494,11 @@
       b.addEventListener('click', () => {
         const s = b.dataset.stage;
         let days = 588;
-        if (s === 'maluch') days = 5;
-        else if (s === 'mlodzik') days = 40;
-        else if (s === 'dorosla') days = 450;
+        if (s === 'baby') days = 5;
+        else if (s === 'junior') days = 40;
+        else if (s === 'adult') days = 450;
         else if (s === 'senior') days = 1600;
-        else if (s === 'legenda') days = 3100;
+        else if (s === 'legend') days = 3100;
 
         window.bridge.mockSetPigDays(days);
         closeModal();

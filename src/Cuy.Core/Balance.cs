@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Liczby balansu gry. Domyślne wartości z PLAN.md ("Model świnki") i swinka/dane/actions.json.
+    /// Liczby balansu gry. Domyślne wartości z PLAN.md ("Model świnki") i assets/data/actions.json.
     /// To punkt startowy do testowania, nie ostateczny balans.
     /// </summary>
     public sealed class Balance
@@ -27,7 +27,7 @@ namespace Cuy.Core
         public double OfflineFloor { get; set; } = 20;
 
         /// <summary>
-        /// Przy wyłączonym komputerze świnka śpi, więc energia rośnie (tak wychodzi w swinka/dane/symulacja.json:
+        /// Przy wyłączonym komputerze świnka śpi, więc energia rośnie (tak wychodzi w assets/data/simulation.json:
         /// po weekendzie bez opieki energia = 100). Ustaw false, żeby energia spadała jak inne potrzeby.
         /// </summary>
         public bool OfflineCountsAsSleep { get; set; } = true;

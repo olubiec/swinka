@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 namespace Cuy.Core.AI
 {
     /// <summary>
-    /// Główny model danych wczytywany z swinka/dane/actions.json.
+    /// Główny model danych wczytywany z assets/data/actions.json.
     /// </summary>
     public sealed class ActionsConfiguration
     {
@@ -272,15 +272,12 @@ namespace Cuy.Core.AI
             {
                 var obj = (JObject)DailyLimitToken;
                 string key = LifeStages.DataKey(stage);
-                string plKey = LifeStages.PolishDataKey(stage);
                 JToken val;
-                if (obj.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out val) ||
-                    obj.TryGetValue(plKey, StringComparison.OrdinalIgnoreCase, out val))
+                if (obj.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out val))
                 {
                     return (int)val;
                 }
-                if (obj.TryGetValue("adult", StringComparison.OrdinalIgnoreCase, out val) ||
-                    obj.TryGetValue("dorosla", StringComparison.OrdinalIgnoreCase, out val))
+                if (obj.TryGetValue("adult", StringComparison.OrdinalIgnoreCase, out val))
                 {
                     return (int)val;
                 }
@@ -292,9 +289,8 @@ namespace Cuy.Core.AI
         {
             if (StageMultipliers == null || StageMultipliers.Count == 0) return 1.0;
             string key = LifeStages.DataKey(stage);
-            string plKey = LifeStages.PolishDataKey(stage);
             double m;
-            if (StageMultipliers.TryGetValue(key, out m) || StageMultipliers.TryGetValue(plKey, out m)) return m;
+            if (StageMultipliers.TryGetValue(key, out m)) return m;
             return 1.0;
         }
 

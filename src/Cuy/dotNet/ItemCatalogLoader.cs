@@ -19,12 +19,9 @@ namespace Cuy
         public string Description { get; set; }
     }
 
-    /// <summary>Alias dla kompatybilności wstecznej.</summary>
-    public class SwinkaItemDef : CuyItemDef { }
-
     /// <summary>
     /// Katalog przedmiotów świnki, wczytywany z assets/data/items.json.
-    /// Zawiera też bezpieczne domyślne definicje podstawowych przedmiotów (hay/siano, bell_pepper/papryka, itp.).
+    /// Zawiera też bezpieczne domyślne definicje podstawowych przedmiotów (hay, bell_pepper itd.).
     /// </summary>
     public static class ItemCatalogLoader
     {
@@ -68,33 +65,33 @@ namespace Cuy
 
                 var map = new Dictionary<string, CuyItemDef>(StringComparer.OrdinalIgnoreCase);
 
-                // Domyślne wartości z PLAN.md i items.json (zarówno klucze polskie, jak i angielskie)
-                AddDefault(map, "hay", "siano", "Siano", "food", 0, true, "hay", "eat",
-                    new Dictionary<string, double> { { "satiety", 10 }, { "teeth", 6 } });
-                AddDefault(map, "pellets", "granulat", "Granulat", "food", 5, false, "pellets", "eat_bowl",
-                    new Dictionary<string, double> { { "satiety", 20 }, { "vitamin_c", 5 } });
-                AddDefault(map, "bell_pepper", "papryka", "Papryka", "vegetable", 12, false, "bell_pepper", "eat_treat",
-                    new Dictionary<string, double> { { "satiety", 8 }, { "vitamin_c", 35 }, { "mood", 5 } });
-                AddDefault(map, "parsley", "natka", "Natka pietruszki", "vegetable", 8, false, "parsley", "eat_treat",
-                    new Dictionary<string, double> { { "satiety", 6 }, { "vitamin_c", 20 } });
-                AddDefault(map, "kale", "jarmuz", "Jarmuż", "vegetable", 10, false, "kale", "eat_big",
-                    new Dictionary<string, double> { { "satiety", 10 }, { "vitamin_c", 25 }, { "teeth", 3 } });
-                AddDefault(map, "cucumber", "ogorek", "Ogórek", "vegetable", 5, false, "cucumber", "eat_treat",
-                    new Dictionary<string, double> { { "satiety", 6 }, { "mood", 4 }, { "vitamin_c", 2 } });
-                AddDefault(map, "carrot", "marchewka", "Marchewka", "treat", 8, false, "carrot", "eat_treat",
-                    new Dictionary<string, double> { { "satiety", 8 }, { "mood", 10 }, { "vitamin_c", 3 } });
-                AddDefault(map, "chew_toy", "gryzak", "Gryzak", "chew", 20, false, "chew_toy", "chew_stick",
+                // Default values (overridden by items.json when present)
+                AddDefault(map, "hay", "Siano", "food", 0, true, "hay", "eat",
+                    new Dictionary<string, double> { { "fullness", 10 }, { "teeth", 6 } });
+                AddDefault(map, "pellets", "Granulat", "food", 5, false, "pellets", "eat_bowl",
+                    new Dictionary<string, double> { { "fullness", 20 }, { "vitamin_c", 5 } });
+                AddDefault(map, "bell_pepper", "Papryka", "vegetable", 12, false, "bell_pepper", "eat_treat",
+                    new Dictionary<string, double> { { "fullness", 8 }, { "vitamin_c", 35 }, { "mood", 5 } });
+                AddDefault(map, "parsley", "Natka pietruszki", "vegetable", 8, false, "parsley", "eat_treat",
+                    new Dictionary<string, double> { { "fullness", 6 }, { "vitamin_c", 20 } });
+                AddDefault(map, "kale", "Jarmuż", "vegetable", 10, false, "kale", "eat_big",
+                    new Dictionary<string, double> { { "fullness", 10 }, { "vitamin_c", 25 }, { "teeth", 3 } });
+                AddDefault(map, "cucumber", "Ogórek", "vegetable", 5, false, "cucumber", "eat_treat",
+                    new Dictionary<string, double> { { "fullness", 6 }, { "mood", 4 }, { "vitamin_c", 2 } });
+                AddDefault(map, "carrot", "Marchewka", "treat", 8, false, "carrot", "eat_treat",
+                    new Dictionary<string, double> { { "fullness", 8 }, { "mood", 10 }, { "vitamin_c", 3 } });
+                AddDefault(map, "chew_stick", "Gryzak", "chew", 20, false, "chew_stick", "chew_stick",
                     new Dictionary<string, double> { { "teeth", 40 }, { "mood", 5 } });
-                AddDefault(map, "ball", "pilka", "Piłeczka", "toy", 60, false, "ball", "ball_push",
+                AddDefault(map, "ball", "Piłeczka", "toy", 60, false, "ball", "ball_push",
                     new Dictionary<string, double> { { "mood", 15 }, { "energy", -5 } });
-                AddDefault(map, "tunnel", "tunel", "Tunel", "toy", 150, false, "tunnel", "tunnel_in",
+                AddDefault(map, "tunnel", "Tunel", "toy", 150, false, "tunnel", "tunnel_in",
                     new Dictionary<string, double> { { "mood", 20 }, { "energy", -8 } });
-                AddDefault(map, "house", "domek", "Domek", "furniture", 250, false, "house", "sleep_house",
+                AddDefault(map, "house", "Domek", "furniture", 250, false, "house", "sleep_house",
                     new Dictionary<string, double> { { "energy", 10 }, { "mood", 5 } });
-                AddDefault(map, "water_bottle", "poidlo", "Poidło", "furniture", 40, false, "water_bottle", "drink",
-                    new Dictionary<string, double> { { "mood", 2 }, { "satiety", 2 } });
-                AddDefault(map, "cake", "tort", "Tort z selera", "special", null, false, "cake", "party",
-                    new Dictionary<string, double> { { "satiety", 15 }, { "mood", 30 }, { "vitamin_c", 10 } });
+                AddDefault(map, "water_bottle", "Poidło", "furniture", 40, false, "water_bottle", "drink",
+                    new Dictionary<string, double> { { "mood", 2 }, { "fullness", 2 } });
+                AddDefault(map, "cake", "Tort z selera", "special", null, false, "cake", "party",
+                    new Dictionary<string, double> { { "fullness", 15 }, { "mood", 30 }, { "vitamin_c", 10 } });
 
                 // Próba wczytania assets/data/items.json
                 string jsonPath = FindFile(Path.Combine("assets", "data", "items.json"))
@@ -107,7 +104,7 @@ namespace Cuy
                     {
                         string json = File.ReadAllText(jsonPath);
                         var root = JObject.Parse(json);
-                        var itemsArr = (root["items"] ?? root["przedmioty"]) as JArray;
+                        var itemsArr = root["items"] as JArray;
                         if (itemsArr != null)
                         {
                             foreach (var tok in itemsArr)
@@ -118,17 +115,16 @@ namespace Cuy
                                 var def = new CuyItemDef
                                 {
                                     Id = id,
-                                    Name = (string)(tok["name"] ?? tok["nazwa"]) ?? id,
-                                    Category = (string)(tok["category"] ?? tok["kategoria"]) ?? "other",
-                                    Price = tok["price"] != null && tok["price"].Type == JTokenType.Integer ? (int?)tok["price"] :
-                                            tok["cena"] != null && tok["cena"].Type == JTokenType.Integer ? (int?)tok["cena"] : null,
-                                    IsUnlimited = (bool?)(tok["unlimited"] ?? tok["bez_limitu"]) ?? false,
-                                    IconName = (string)(tok["icon"] ?? tok["ikona"]) ?? id,
-                                    Animation = (string)(tok["animation"] ?? tok["animacja"]) ?? "eat_treat",
-                                    Description = (string)(tok["description"] ?? tok["opis"]) ?? ""
+                                    Name = (string)tok["name"] ?? id,
+                                    Category = (string)tok["category"] ?? "other",
+                                    Price = tok["price"] != null && tok["price"].Type == JTokenType.Integer ? (int?)tok["price"] : null,
+                                    IsUnlimited = (bool?)tok["unlimited"] ?? false,
+                                    IconName = (string)tok["icon"] ?? id,
+                                    Animation = (string)tok["animation"] ?? "eat_treat",
+                                    Description = (string)tok["description"] ?? ""
                                 };
 
-                                var effectsTok = (tok["effects"] ?? tok["efekty"]) as JObject;
+                                var effectsTok = tok["effects"] as JObject;
                                 if (effectsTok != null)
                                 {
                                     foreach (var prop in effectsTok.Properties())
@@ -143,7 +139,7 @@ namespace Cuy
                     }
                     catch (Exception ex)
                     {
-                        BrainController.Log("[Błąd] Nie udało się wczytać items.json: " + ex.Message);
+                        BrainController.Log("[ERROR] Failed to load items.json: " + ex.Message);
                     }
                 }
 
@@ -151,11 +147,11 @@ namespace Cuy
             }
         }
 
-        private static void AddDefault(Dictionary<string, CuyItemDef> map, string englishId, string polishId, string name, string cat, int? price, bool unlimited, string icon, string anim, Dictionary<string, double> effects)
+        private static void AddDefault(Dictionary<string, CuyItemDef> map, string id, string name, string cat, int? price, bool unlimited, string icon, string anim, Dictionary<string, double> effects)
         {
             var def = new CuyItemDef
             {
-                Id = englishId,
+                Id = id,
                 Name = name,
                 Category = cat,
                 Price = price,
@@ -164,11 +160,7 @@ namespace Cuy
                 Animation = anim,
                 Effects = effects
             };
-            map[englishId] = def;
-            if (!string.Equals(englishId, polishId, StringComparison.OrdinalIgnoreCase))
-            {
-                map[polishId] = def;
-            }
+            map[id] = def;
         }
 
         private static string FindFile(string relativePath)
@@ -195,12 +187,5 @@ namespace Cuy
 
             return null;
         }
-    }
-
-    /// <summary>Alias dla kompatybilności wstecznej.</summary>
-    public static class SwinkaItemCatalog
-    {
-        public static CuyItemDef GetItem(string itemId) => ItemCatalogLoader.GetItem(itemId);
-        public static IReadOnlyCollection<CuyItemDef> GetAll() => ItemCatalogLoader.GetAll();
     }
 }

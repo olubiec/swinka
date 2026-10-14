@@ -404,7 +404,7 @@ namespace Cuy.Core.AI
                         case "energia_max":
                             double maxEnergy = (double)kv.Value;
                             // Przy bezczynności użytkownika świnka kładzie się spać, chyba że energia jest już pełna
-                            if (IsUserIdle && (action.Id == "sleep" || action.Id == "sen" || action.Id == "sleep_house" || action.Id == "sen_w_domku" || action.Id == "doze" || action.Id == "drzemka"))
+                            if (IsUserIdle && (action.Id == "sleep" || action.Id == "sleep_house" || action.Id == "doze"))
                             {
                                 maxEnergy = 95.0;
                             }
@@ -452,7 +452,7 @@ namespace Cuy.Core.AI
                         case "item":
                         case "przedmiot":
                             string item = (string)kv.Value;
-                            if (_pet == null || (_pet.GetItemCount(item) <= 0 && _pet.GetItemCount(ItemCatalog.NormalizeId(item)) <= 0)) { unavailableReason = string.Format("Brak: {0}", item); return false; }
+                            if (_pet == null || (_pet.GetItemCount(item) <= 0)) { unavailableReason = string.Format("Brak: {0}", item); return false; }
                             break;
                         case "companion":
                         case "towarzysz":
@@ -502,7 +502,7 @@ namespace Cuy.Core.AI
             // Mnożnik pory dnia
             string group = ActionDefinition.GetBudgetGroup(action.Id, _config?.DailyBudget);
             bool isNight = (hour >= 23 || hour < 7);
-            bool isSleepOrDoze = (action.Id == "sleep" || action.Id == "sen" || action.Id == "sleep_house" || action.Id == "sen_w_domku" || action.Id == "doze" || action.Id == "drzemka");
+            bool isSleepOrDoze = (action.Id == "sleep" || action.Id == "sleep_house" || action.Id == "doze");
 
             if (isNight)
             {
@@ -559,11 +559,11 @@ namespace Cuy.Core.AI
                 double idleSleepBonus = (needs.Satiety < 15.0) ? 0.0 : 3.5;
                 double idleDozeBonus = (needs.Satiety < 15.0) ? 0.0 : 2.0;
 
-                if (action.Id == "sleep" || action.Id == "sen" || action.Id == "sleep_house" || action.Id == "sleep_in_house" || action.Id == "sen_w_domku")
+                if (action.Id == "sleep" || action.Id == "sleep_house" || action.Id == "sleep_in_house")
                 {
                     baseZysk += idleSleepBonus;
                 }
-                else if (action.Id == "doze" || action.Id == "nap" || action.Id == "drzemka")
+                else if (action.Id == "doze" || action.Id == "nap")
                 {
                     baseZysk += idleDozeBonus;
                 }
@@ -610,21 +610,13 @@ namespace Cuy.Core.AI
             var n = CurrentNeeds;
             switch (needName.ToLowerInvariant())
             {
-                case "satiety":
-                case "fullness":
-                case "najedzenie": val = n.Satiety; return true;
-                case "vitamin_c":
-                case "witamina_c": val = n.VitaminC; return true;
-                case "energy":
-                case "energia": val = n.Energy; return true;
-                case "mood":
-                case "humor": val = n.Mood; return true;
-                case "cleanliness":
-                case "czystosc": val = n.Cleanliness; return true;
-                case "teeth":
-                case "zabki": val = n.Teeth; return true;
-                case "health":
-                case "zdrowie": val = n.Health; return true;
+                case "fullness": val = n.Satiety; return true;
+                case "vitamin_c": val = n.VitaminC; return true;
+                case "energy": val = n.Energy; return true;
+                case "mood": val = n.Mood; return true;
+                case "cleanliness": val = n.Cleanliness; return true;
+                case "teeth": val = n.Teeth; return true;
+                case "health": val = n.Health; return true;
                 default: val = 0.0; return false;
             }
         }
@@ -637,19 +629,12 @@ namespace Cuy.Core.AI
             {
                 switch (kv.Key.ToLowerInvariant())
                 {
-                    case "satiety":
-                    case "fullness":
-                    case "najedzenie": n.Satiety = ClampNeed(n.Satiety + kv.Value); break;
-                    case "vitamin_c":
-                    case "witamina_c": n.VitaminC = ClampNeed(n.VitaminC + kv.Value); break;
-                    case "energy":
-                    case "energia": n.Energy = ClampNeed(n.Energy + kv.Value); break;
-                    case "mood":
-                    case "humor": n.Mood = ClampNeed(n.Mood + kv.Value); break;
-                    case "cleanliness":
-                    case "czystosc": n.Cleanliness = ClampNeed(n.Cleanliness + kv.Value); break;
-                    case "teeth":
-                    case "zabki": n.Teeth = ClampNeed(n.Teeth + kv.Value); break;
+                    case "fullness": n.Satiety = ClampNeed(n.Satiety + kv.Value); break;
+                    case "vitamin_c": n.VitaminC = ClampNeed(n.VitaminC + kv.Value); break;
+                    case "energy": n.Energy = ClampNeed(n.Energy + kv.Value); break;
+                    case "mood": n.Mood = ClampNeed(n.Mood + kv.Value); break;
+                    case "cleanliness": n.Cleanliness = ClampNeed(n.Cleanliness + kv.Value); break;
+                    case "teeth": n.Teeth = ClampNeed(n.Teeth + kv.Value); break;
                 }
             }
         }
@@ -725,21 +710,21 @@ namespace Cuy.Core.AI
                 double hours = sec / 3600.0;
                 var n = _fallbackNeeds;
                 double decay;
-                if (_config.DecayPerHour.TryGetValue("satiety", out decay) || _config.DecayPerHour.TryGetValue("fullness", out decay) || _config.DecayPerHour.TryGetValue("najedzenie", out decay)) n.Satiety = Math.Max(0.0, n.Satiety - (decay * hours));
-                if (_config.DecayPerHour.TryGetValue("vitamin_c", out decay) || _config.DecayPerHour.TryGetValue("witamina_c", out decay)) n.VitaminC = Math.Max(0.0, n.VitaminC - (decay * hours));
-                bool isAutoSleeping = (_currentAction != null && (_currentAction.ActionId == "sleep" || _currentAction.ActionId == "sen" || _currentAction.ActionId == "sleep_house" || _currentAction.ActionId == "sleep_in_house" || _currentAction.ActionId == "sen_w_domku" || _currentAction.ActionId == "doze" || _currentAction.ActionId == "nap" || _currentAction.ActionId == "drzemka"));
+                if (_config.DecayPerHour.TryGetValue("fullness", out decay)) n.Satiety = Math.Max(0.0, n.Satiety - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("vitamin_c", out decay)) n.VitaminC = Math.Max(0.0, n.VitaminC - (decay * hours));
+                bool isAutoSleeping = (_currentAction != null && (_currentAction.ActionId == "sleep" || _currentAction.ActionId == "sleep_house" || _currentAction.ActionId == "sleep_in_house" || _currentAction.ActionId == "doze" || _currentAction.ActionId == "nap"));
                 if (isAutoSleeping)
                 {
                     // Sen podnosi energię
                     n.Energy = Math.Min(100.0, n.Energy + (15.0 * hours));
                 }
-                else if (_config.DecayPerHour.TryGetValue("energy", out decay) || _config.DecayPerHour.TryGetValue("energia", out decay))
+                else if (_config.DecayPerHour.TryGetValue("energy", out decay))
                 {
                     n.Energy = Math.Max(0.0, n.Energy - (decay * hours));
                 }
-                if (_config.DecayPerHour.TryGetValue("mood", out decay) || _config.DecayPerHour.TryGetValue("humor", out decay)) n.Mood = Math.Max(0.0, n.Mood - (decay * hours));
-                if (_config.DecayPerHour.TryGetValue("cleanliness", out decay) || _config.DecayPerHour.TryGetValue("czystosc", out decay)) n.Cleanliness = Math.Max(0.0, n.Cleanliness - (decay * hours));
-                if (_config.DecayPerHour.TryGetValue("teeth", out decay) || _config.DecayPerHour.TryGetValue("zabki", out decay)) n.Teeth = Math.Max(0.0, n.Teeth - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("mood", out decay)) n.Mood = Math.Max(0.0, n.Mood - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("cleanliness", out decay)) n.Cleanliness = Math.Max(0.0, n.Cleanliness - (decay * hours));
+                if (_config.DecayPerHour.TryGetValue("teeth", out decay)) n.Teeth = Math.Max(0.0, n.Teeth - (decay * hours));
             }
 
             if (_currentAction == null)

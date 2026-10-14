@@ -4,18 +4,18 @@ using System.Collections.Generic;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Cały stan gry zapisywany do %AppData%/Swinka/save.json.
+    /// Cały stan gry zapisywany do %AppData%/Cuy/save.json.
     /// Zwykła klasa danych: logika jest w <see cref="Pet"/>.
     /// </summary>
     public sealed class GameState
     {
         /// <summary>Aktualna wersja formatu zapisu. Podbij przy zmianie formatu i dodaj migrację w SaveSystem.</summary>
-        public const int CurrentVersion = 1;
+        public const int CurrentVersion = 2;
 
         public int Version { get; set; } = CurrentVersion;
 
         /// <summary>Imię świnki.</summary>
-        public string Name { get; set; } = "Świnka";
+        public string Name { get; set; } = "Cuy";
 
         /// <summary>Data urodzenia (czas gry, UTC). Wiek liczy się od niej.</summary>
         public DateTime BirthDateUtc { get; set; }
@@ -72,7 +72,7 @@ namespace Cuy.Core
         {
             return new GameState
             {
-                Name = string.IsNullOrWhiteSpace(name) ? "Świnka" : name,
+                Name = string.IsNullOrWhiteSpace(name) ? "Cuy" : name,
                 BirthDateUtc = nowUtc,
                 LastActiveUtc = nowUtc,
                 Stats = new Statistics { FirstStartUtc = nowUtc },
@@ -83,7 +83,7 @@ namespace Cuy.Core
         public void Normalize()
         {
             if (Version <= 0) Version = CurrentVersion;
-            if (string.IsNullOrWhiteSpace(Name)) Name = "Świnka";
+            if (string.IsNullOrWhiteSpace(Name)) Name = "Cuy";
             if (Needs == null) Needs = new Needs();
             if (Bond == null) Bond = new Bond();
             if (Bond.Level < 1) Bond.Level = 1;
@@ -148,7 +148,7 @@ namespace Cuy.Core
         /// <summary>Godziny gry przy zamkniętej aplikacji.</summary>
         public double OfflineHours { get; set; }
 
-        /// <summary>Dowolne liczniki, np. "karmienia", "papryka", "popcorn".</summary>
+        /// <summary>Dowolne liczniki, np. "karmienia", "bell_pepper", "popcorn".</summary>
         public Dictionary<string, int> Counters { get; set; } = new Dictionary<string, int>();
     }
 

@@ -1,5 +1,5 @@
 /**
- * bridge.js — Most komunikacji między C# (SwinkaCore / WebView2) a interfejsem Domku.
+ * bridge.js — Most komunikacji między C# (Cuy.Core / WebView2) a interfejsem Domku.
  * Zgodny ze specyfikacją z promptu C1 i C2 w PLAN.md.
  * 
  * Tryb WebView2 (aplikacja C#):
@@ -8,20 +8,20 @@
  * 
  * Tryb Mock (zwykła przeglądarka):
  * - Automatycznie wykrywany, gdy brak window.chrome.webview
- * - Pełna symulacja stanu świnki z SwinkaCore (potrzeby, wiek, etapy, więź, koniczynki)
+ * - Pełna symulacja stanu świnki z Cuy.Core (potrzeby, wiek, etapy, więź, koniczynki)
  * - Reaguje na akcje użytkownika, aktualizuje stan i rozsyła zdarzenia
  */
 
 (function (root) {
   'use strict';
 
-  // Obliczenie etapu życia na podstawie wieku w dniach świnki (zgodnie z SwinkaCore.LifeStages)
+  // Obliczenie etapu życia na podstawie wieku w dniach świnki (zgodnie z Cuy.Core.LifeStages)
   function getStageFromPigDays(pigDays) {
-    if (pigDays >= 365.25 * 8) return { key: 'legenda', name: 'Legenda' };
+    if (pigDays >= 365.25 * 8) return { key: 'legend', name: 'Legenda' };
     if (pigDays >= 365.25 * 4) return { key: 'senior', name: 'Senior' };
-    if (pigDays >= 365.25 * 0.5) return { key: 'dorosla', name: 'Dorosła' };
-    if (pigDays >= 21) return { key: 'mlodzik', name: 'Młodzik' };
-    return { key: 'maluch', name: 'Maluch' };
+    if (pigDays >= 365.25 * 0.5) return { key: 'adult', name: 'Dorosła' };
+    if (pigDays >= 21) return { key: 'junior', name: 'Młodzik' };
+    return { key: 'baby', name: 'Maluch' };
   }
 
   // Formatowanie wieku w latach i miesiącach (zgodnie z PigAge.ToPolishString)
@@ -62,14 +62,14 @@
   }
 
   // Domyślny stan początkowy w trybie mock
-  const STORAGE_KEY = 'swinka_mock_state_v1';
+  const STORAGE_KEY = 'cuy_mock_state_v1';
   const defaultMockState = {
     type: 'state',
     name: 'Grucha',
     birthDateUtc: new Date(Date.now() - 28 * 24 * 3600 * 1000).toISOString(), // ~28 dni realnych temu
     pigDays: 588, // 28 * 21 = 588 dni świnki (~1.6 roku -> Dorosła)
     needs: {
-      satiety: 82.0,      // Najedzenie
+      fullness: 82.0,      // Najedzenie
       vitaminC: 75.0,     // Witamina C
       energy: 90.0,       // Energia
       mood: 68.0,         // Humor
@@ -84,15 +84,14 @@
       maxPointsToday: 15
     },
     inventory: {
-      siano: 999,
-      papryka: 3,
-      marchewka: 2,
-      granulat: 5
+      hay: 999,
+      bell_pepper: 3,
+      carrot: 2,
+      pellets: 5
     },
     poops: 2,             // Bobki na wybiegu
     minigames: {
       records: {
-        'gra-przyklad': 0,
         'deszcz': 0,
         'popcorn': 0,
         'labirynt': 0,
@@ -106,7 +105,7 @@
     lastActiveUtc: new Date().toISOString()
   };
 
-  class SwinkaBridge {
+  class CuyBridge {
     constructor() {
       this.isWebView2 = Boolean(window.chrome && window.chrome.webview && window.chrome.webview.postMessage);
       this.isMock = !this.isWebView2;
@@ -123,7 +122,7 @@
 
     // --- Inicjalizacja WebView2 ---
     initWebView2() {
-      console.info('[SwinkaBridge] Tryb WebView2 aktywny. Oczekiwanie na wiadomości z C#...');
+      console.info('[CuyBridge] Tryb WebView2 aktywny. Oczekiwanie na wiadomości z C#...');
 
       const applyWebViewMode = () => {
         if (document.body) {
@@ -217,7 +216,7 @@
 
     // --- Inicjalizacja trybu Mock ---
     initMockMode() {
-      console.info('[SwinkaBridge] Tryb MOCK aktywny (otwarto w przeglądarce).');
+      console.info('[CuyBridge] Tryb MOCK aktywny (otwarto w przeglądarce).');
       
       let saved = null;
       try {
@@ -263,9 +262,9 @@
       if (!state.minigames.records) state.minigames.records = {};
       if (typeof state.minigames.dailyRewardedCount !== 'number') state.minigames.dailyRewardedCount = 0;
 
-      // Zdrowie liczone zgodnie z SwinkaCore.Needs.Health: 0.5 * avg + 0.5 * min
+      // Zdrowie liczone zgodnie z Cuy.Core.Needs.Health: 0.5 * avg + 0.5 * min
       const vals = [
-        state.needs.satiety,
+        state.needs.fullness,
         state.needs.vitaminC,
         state.needs.energy,
         state.needs.mood,
@@ -282,7 +281,7 @@
       if (!this.currentState || !this.isMock) return;
       const n = this.currentState.needs;
       // Bardzo delikatny, realistyczny spadek
-      n.satiety = Math.max(0, Math.round((n.satiety - 0.5) * 10) / 10);
+      n.fullness = Math.max(0, Math.round((n.fullness - 0.5) * 10) / 10);
       n.vitaminC = Math.max(0, Math.round((n.vitaminC - 0.3) * 10) / 10);
       n.mood = Math.max(0, Math.round((n.mood - 0.4) * 10) / 10);
       n.teeth = Math.max(0, Math.round((n.teeth - 0.2) * 10) / 10);
@@ -390,7 +389,7 @@
 
       return {
         punkty: score,
-        koniczynki: clovers,
+        clovers: clovers,
         rekord: Math.max(prevRecord, score),
         nowyRekord: isRecord
       };
@@ -398,15 +397,15 @@
 
     /**
      * Wysłanie wiadomości/polecenia do aplikacji
-     * @param {Object} action np. { type: 'feed', item: 'papryka' }
+     * @param {Object} action np. { type: 'feed', item: 'bell_pepper' }
      */
     send(action) {
       if (!action || !action.type) {
-        console.warn('[SwinkaBridge] Próba wysłania pustej akcji:', action);
+        console.warn('[CuyBridge] Próba wysłania pustej akcji:', action);
         return;
       }
 
-      console.info('[SwinkaBridge] Wysłano akcję:', action);
+      console.info('[CuyBridge] Wysłano akcję:', action);
       this.actionListeners.forEach(fn => {
         try { fn(action); } catch (e) {}
       });
@@ -426,28 +425,28 @@
 
       switch (action.type) {
         case 'feed': {
-          const item = action.item || 'siano';
-          if (item === 'siano') {
-            n.satiety = Math.min(100, n.satiety + 12);
+          const item = action.item || 'hay';
+          if (item === 'hay') {
+            n.fullness = Math.min(100, n.fullness + 12);
             n.teeth = Math.min(100, n.teeth + 8);
-          } else if (item === 'papryka') {
-            n.satiety = Math.min(100, n.satiety + 15);
+          } else if (item === 'bell_pepper') {
+            n.fullness = Math.min(100, n.fullness + 15);
             n.vitaminC = Math.min(100, n.vitaminC + 35);
             n.mood = Math.min(100, n.mood + 10);
-            if (s.inventory && s.inventory.papryka > 0) s.inventory.papryka--;
-          } else if (item === 'marchewka') {
-            n.satiety = Math.min(100, n.satiety + 18);
+            if (s.inventory && s.inventory.bell_pepper > 0) s.inventory.bell_pepper--;
+          } else if (item === 'carrot') {
+            n.fullness = Math.min(100, n.fullness + 18);
             n.vitaminC = Math.min(100, n.vitaminC + 15);
             n.teeth = Math.min(100, n.teeth + 10);
-            if (s.inventory && s.inventory.marchewka > 0) s.inventory.marchewka--;
-          } else if (item === 'granulat') {
-            n.satiety = Math.min(100, n.satiety + 25);
+            if (s.inventory && s.inventory.carrot > 0) s.inventory.carrot--;
+          } else if (item === 'pellets') {
+            n.fullness = Math.min(100, n.fullness + 25);
             n.vitaminC = Math.min(100, n.vitaminC + 5);
-            if (s.inventory && s.inventory.granulat > 0) s.inventory.granulat--;
+            if (s.inventory && s.inventory.pellets > 0) s.inventory.pellets--;
           }
           s.bond.points += 2;
           s.bond.pointsToday += 2;
-          s.currentAction = item === 'siano' ? 'eat' : 'eat_treat';
+          s.currentAction = item === 'hay' ? 'eat' : 'eat_treat';
           break;
         }
 
@@ -482,7 +481,7 @@
           const cost = action.price || 10;
           if (s.clovers >= cost) {
             s.clovers -= cost;
-            const itemId = action.itemId || 'papryka';
+            const itemId = action.itemId || 'bell_pepper';
             s.inventory[itemId] = (s.inventory[itemId] || 0) + 1;
           }
           break;
@@ -497,7 +496,7 @@
         }
 
         case 'minigame_result': {
-          const gameId = action.gameId || 'gra-przyklad';
+          const gameId = action.gameId;
           const score = typeof action.score === 'number' ? action.score : (action.punkty || 0);
           
           if (!s.minigames) {
@@ -584,7 +583,7 @@
   }
 
   // Udostępnienie instancji mostu
-  root.SwinkaBridge = SwinkaBridge;
-  root.bridge = new SwinkaBridge();
+  root.CuyBridge = CuyBridge;
+  root.bridge = new CuyBridge();
 
 })(typeof window !== 'undefined' ? window : this);

@@ -329,7 +329,7 @@ namespace Cuy.Core
             return entry;
         }
 
-        /// <summary>Zwiększa licznik w statystykach (np. "papryka", "popcorn").</summary>
+        /// <summary>Zwiększa licznik w statystykach (np. "bell_pepper", "popcorn").</summary>
         public int Count(string counter, int by = 1)
         {
             if (string.IsNullOrEmpty(counter)) throw new ArgumentNullException(nameof(counter));
@@ -389,7 +389,7 @@ namespace Cuy.Core
 
         private static readonly string[] DefaultVegetableIds = new[]
         {
-            "papryka", "ogorek", "natka", "marchewka", "jarmuz"
+            "bell_pepper", "cucumber", "parsley", "carrot", "kale"
         };
 
         /// <summary>

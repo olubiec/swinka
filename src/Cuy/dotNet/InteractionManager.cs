@@ -503,7 +503,4 @@ namespace Cuy
             }
         }
     }
-
-    /// <summary>Alias dla kompatybilności wstecznej.</summary>
-    public class SwinkaInteractionManager : InteractionManager { public SwinkaInteractionManager(FormPet petForm) : base(petForm) { } }
 }

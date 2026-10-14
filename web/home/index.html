@@ -6,7 +6,7 @@
   <title>Domek Świnki Morskiej</title>
   <meta name="description" content="Domek pikselowej świnki morskiej z potrzebami, animacjami, sklepikiem i opieką w stylu retro gry.">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="minigry/minigry.css">
+  <link rel="stylesheet" href="minigames/minigames.css">
 </head>
 <body>
 
@@ -16,12 +16,12 @@
     <!-- 1. Pasek górny (Tytuł, waluta koniczynki, dźwięk, dev/mock testy, zamknięcie) -->
     <header class="game-header">
       <div class="header-left">
-        <span class="pixel-icon icon-glowa-swinki" aria-hidden="true"></span>
+        <span class="pixel-icon icon-pig-head" aria-hidden="true"></span>
         <h1 class="app-title">DOMEK ŚWINKI</h1>
       </div>
       <div class="header-right">
         <div class="currency-badge" id="cloverBadge" title="Zgromadzone koniczynki">
-          <span class="pixel-icon icon-koniczynka" aria-hidden="true"></span>
+          <span class="pixel-icon icon-clover" aria-hidden="true"></span>
           <span id="cloverCount">0</span>
         </div>
         <button class="header-btn" id="btnSound" type="button" title="Wycisz / włącz dźwięki" aria-label="Dźwięk">🔊</button>
@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="identity-badges">
-        <span class="stage-badge stage-dorosla" id="stageBadge">🥕 Dorosła</span>
+        <span class="stage-badge stage-adult" id="stageBadge">🥕 Dorosła</span>
         <span class="bond-indicator" id="bondIndicator">❤️ Więź: Poz. 4</span>
       </div>
     </section>
@@ -64,16 +64,16 @@
 
       <div class="needs-grid">
         <!-- 1. Najedzenie -->
-        <article class="need-card" id="cardSatiety">
+        <article class="need-card" id="cardFullness">
           <div class="need-card-top">
             <div class="need-title-wrap">
-              <span class="pixel-icon x1_5 icon-potrzeba-najedzenie" aria-hidden="true"></span>
+              <span class="pixel-icon x1_5 icon-need-fullness" aria-hidden="true"></span>
               <span class="need-name">Najedzenie</span>
             </div>
-            <span class="need-percent" id="valSatiety">82%</span>
+            <span class="need-percent" id="valFullness">82%</span>
           </div>
           <div class="progress-groove">
-            <div class="progress-fill level-high" id="barSatiety" style="width: 82%;"></div>
+            <div class="progress-fill level-high" id="barFullness" style="width: 82%;"></div>
           </div>
         </article>
 
@@ -81,7 +81,7 @@
         <article class="need-card" id="cardVitaminC">
           <div class="need-card-top">
             <div class="need-title-wrap">
-              <span class="pixel-icon x1_5 icon-potrzeba-witamina-c" aria-hidden="true"></span>
+              <span class="pixel-icon x1_5 icon-need-vitamin-c" aria-hidden="true"></span>
               <span class="need-name">Witamina C</span>
             </div>
             <span class="need-percent" id="valVitaminC">75%</span>
@@ -95,7 +95,7 @@
         <article class="need-card" id="cardEnergy">
           <div class="need-card-top">
             <div class="need-title-wrap">
-              <span class="pixel-icon x1_5 icon-potrzeba-energia" aria-hidden="true"></span>
+              <span class="pixel-icon x1_5 icon-need-energy" aria-hidden="true"></span>
               <span class="need-name">Energia</span>
             </div>
             <span class="need-percent" id="valEnergy">90%</span>
@@ -109,7 +109,7 @@
         <article class="need-card" id="cardMood">
           <div class="need-card-top">
             <div class="need-title-wrap">
-              <span class="pixel-icon x1_5 icon-potrzeba-humor" aria-hidden="true"></span>
+              <span class="pixel-icon x1_5 icon-need-mood" aria-hidden="true"></span>
               <span class="need-name">Humor</span>
             </div>
             <span class="need-percent" id="valMood">68%</span>
@@ -123,7 +123,7 @@
         <article class="need-card" id="cardCleanliness">
           <div class="need-card-top">
             <div class="need-title-wrap">
-              <span class="pixel-icon x1_5 icon-potrzeba-czystosc" aria-hidden="true"></span>
+              <span class="pixel-icon x1_5 icon-need-cleanliness" aria-hidden="true"></span>
               <span class="need-name">Czystość</span>
             </div>
             <span class="need-percent" id="valCleanliness">62%</span>
@@ -137,7 +137,7 @@
         <article class="need-card" id="cardTeeth">
           <div class="need-card-top">
             <div class="need-title-wrap">
-              <span class="pixel-icon x1_5 icon-potrzeba-zabki" aria-hidden="true"></span>
+              <span class="pixel-icon x1_5 icon-need-teeth" aria-hidden="true"></span>
               <span class="need-name">Ząbki</span>
             </div>
             <span class="need-percent" id="valTeeth">84%</span>
@@ -159,25 +159,25 @@
           <span style="color:#887;">Siano jest zawsze darmowe!</span>
         </div>
         <div class="food-grid">
-          <button class="food-item-btn" id="feedSiano" type="button" data-food="siano">
-            <span class="pixel-icon x1_5 icon-siano" aria-hidden="true"></span>
+          <button class="food-item-btn" id="feedHay" type="button" data-food="hay">
+            <span class="pixel-icon x1_5 icon-hay" aria-hidden="true"></span>
             <span>Siano</span>
             <span class="food-qty">zawsze ∞</span>
           </button>
-          <button class="food-item-btn" id="feedPapryka" type="button" data-food="papryka">
-            <span class="pixel-icon x1_5 icon-papryka" aria-hidden="true"></span>
+          <button class="food-item-btn" id="feedBellPepper" type="button" data-food="bell_pepper">
+            <span class="pixel-icon x1_5 icon-bell-pepper" aria-hidden="true"></span>
             <span>Papryka</span>
-            <span class="food-qty" id="foodQtyPapryka">3 szt.</span>
+            <span class="food-qty" id="foodQtyBellPepper">3 szt.</span>
           </button>
-          <button class="food-item-btn" id="feedMarchewka" type="button" data-food="marchewka">
-            <span class="pixel-icon x1_5 icon-marchewka" aria-hidden="true"></span>
+          <button class="food-item-btn" id="feedCarrot" type="button" data-food="carrot">
+            <span class="pixel-icon x1_5 icon-carrot" aria-hidden="true"></span>
             <span>Marchew</span>
-            <span class="food-qty" id="foodQtyMarchewka">2 szt.</span>
+            <span class="food-qty" id="foodQtyCarrot">2 szt.</span>
           </button>
-          <button class="food-item-btn" id="feedGranulat" type="button" data-food="granulat">
-            <span class="pixel-icon x1_5 icon-granulat" aria-hidden="true"></span>
+          <button class="food-item-btn" id="feedPellets" type="button" data-food="pellets">
+            <span class="pixel-icon x1_5 icon-pellets" aria-hidden="true"></span>
             <span>Granulat</span>
-            <span class="food-qty" id="foodQtyGranulat">5 szt.</span>
+            <span class="food-qty" id="foodQtyPellets">5 szt.</span>
           </button>
         </div>
       </div>
@@ -185,32 +185,32 @@
       <!-- Sześć głównych przycisków gry -->
       <nav class="actions-grid" aria-label="Menu akcji">
         <button class="game-btn btn-feed" id="btnFeed" type="button">
-          <span class="pixel-icon icon-papryka" aria-hidden="true"></span>
+          <span class="pixel-icon icon-bell-pepper" aria-hidden="true"></span>
           <span>Nakarm</span>
         </button>
 
         <button class="game-btn btn-clean" id="btnClean" type="button">
-          <span class="pixel-icon icon-bobek" aria-hidden="true"></span>
+          <span class="pixel-icon icon-poop" aria-hidden="true"></span>
           <span>Posprzątaj</span>
         </button>
 
         <button class="game-btn btn-call" id="btnCall" type="button">
-          <span class="pixel-icon icon-glowa-swinki" aria-hidden="true"></span>
+          <span class="pixel-icon icon-pig-head" aria-hidden="true"></span>
           <span>Zawołaj</span>
         </button>
 
         <button class="game-btn btn-shop" id="btnShop" type="button">
-          <span class="pixel-icon icon-koniczynka" aria-hidden="true"></span>
+          <span class="pixel-icon icon-clover" aria-hidden="true"></span>
           <span>Sklepik</span>
         </button>
 
         <button class="game-btn btn-minigames" id="btnMinigames" type="button">
-          <span class="pixel-icon icon-pilka" aria-hidden="true"></span>
+          <span class="pixel-icon icon-ball" aria-hidden="true"></span>
           <span>Minigry</span>
         </button>
 
         <button class="game-btn btn-album" id="btnAlbum" type="button">
-          <span class="pixel-icon icon-domek" aria-hidden="true"></span>
+          <span class="pixel-icon icon-house" aria-hidden="true"></span>
           <span>Album</span>
         </button>
       </nav>
@@ -237,8 +237,8 @@
   <script src="canvas-pig.js"></script>
 
   <!-- Szkielet minigier w Phaser 3 (Etap D) -->
-  <script src="minigry/lib/phaser.min.js"></script>
-  <script src="minigry/minigry-api.js"></script>
+  <script src="minigames/lib/phaser.min.js"></script>
+  <script src="minigames/minigames-api.js"></script>
 
   <script src="app.js"></script>
 </body>

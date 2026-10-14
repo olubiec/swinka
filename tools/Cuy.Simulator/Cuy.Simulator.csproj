@@ -2,7 +2,7 @@
 
   <!--
     Symulator mózgu gry. Celowo na .NET Framework 4.8 (tym samym co eSheep),
-    żeby od razu było widać, że SwinkaCore działa na tym środowisku.
+    żeby od razu było widać, że Cuy.Core działa na tym środowisku.
   -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>

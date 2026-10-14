@@ -274,12 +274,9 @@ namespace Cuy
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
-            // 1. Sprawdź folder web/home lub domek obok pliku wykonywalnego
+            // 1. Sprawdź folder web/home obok pliku wykonywalnego
             string p1 = Path.Combine(baseDir, "web", "home");
             if (Directory.Exists(p1)) return Path.GetFullPath(p1);
-
-            string p1Old = Path.Combine(baseDir, "domek");
-            if (Directory.Exists(p1Old)) return Path.GetFullPath(p1Old);
 
             // 2. Szukaj w górę drzewa katalogów (repozytorium / solucja)
             DirectoryInfo dir = new DirectoryInfo(baseDir);
@@ -289,11 +286,6 @@ namespace Cuy
                 if (Directory.Exists(candidate))
                 {
                     return Path.GetFullPath(candidate);
-                }
-                string candidateOld = Path.Combine(dir.FullName, "domek");
-                if (Directory.Exists(candidateOld))
-                {
-                    return Path.GetFullPath(candidateOld);
                 }
                 dir = dir.Parent;
             }
@@ -363,7 +355,6 @@ namespace Cuy
 
                 var inventoryCopy = new Dictionary<string, int>(state.Inventory ?? new Dictionary<string, int>());
                 inventoryCopy["hay"] = 999;
-                inventoryCopy["siano"] = 999; // siano bez limitu
 
                 var highScores = state.HighScores ?? new Dictionary<string, int>();
 
@@ -377,7 +368,7 @@ namespace Cuy
                     stageName = LifeStages.Polish(stage),
                     needs = new
                     {
-                        satiety = Math.Round(needs.Satiety, 1),
+                        fullness = Math.Round(needs.Satiety, 1),
                         vitaminC = Math.Round(needs.VitaminC, 1),
                         energy = Math.Round(needs.Energy, 1),
                         mood = Math.Round(needs.Mood, 1),
@@ -481,7 +472,7 @@ namespace Cuy
             var pet = brain?.Pet;
             if (pet == null) return;
 
-            if (string.Equals(item, "siano", StringComparison.OrdinalIgnoreCase) || string.Equals(item, "hay", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(item, "hay", StringComparison.OrdinalIgnoreCase))
             {
                 pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 12.0);
                 pet.Needs.Teeth = Math.Min(100.0, pet.Needs.Teeth + 8.0);
@@ -494,19 +485,19 @@ namespace Cuy
             {
                 if (pet.TryRemoveItem(item, 1))
                 {
-                    if (string.Equals(item, "papryka", StringComparison.OrdinalIgnoreCase) || string.Equals(item, "bell_pepper", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(item, "bell_pepper", StringComparison.OrdinalIgnoreCase))
                     {
                         pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 15.0);
                         pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 35.0);
                         pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 10.0);
                     }
-                    else if (string.Equals(item, "marchewka", StringComparison.OrdinalIgnoreCase) || string.Equals(item, "carrot", StringComparison.OrdinalIgnoreCase))
+                    else if (string.Equals(item, "carrot", StringComparison.OrdinalIgnoreCase))
                     {
                         pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 18.0);
                         pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 15.0);
                         pet.Needs.Teeth = Math.Min(100.0, pet.Needs.Teeth + 10.0);
                     }
-                    else if (string.Equals(item, "granulat", StringComparison.OrdinalIgnoreCase) || string.Equals(item, "pellets", StringComparison.OrdinalIgnoreCase))
+                    else if (string.Equals(item, "pellets", StringComparison.OrdinalIgnoreCase))
                     {
                         pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 25.0);
                         pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 5.0);
@@ -680,13 +671,5 @@ namespace Cuy
             _refreshTimer?.Dispose();
             base.OnFormClosing(e);
         }
-    }
-
-    /// <summary>Alias dla kompatybilności wstecznej.</summary>
-    public static class FormDomek
-    {
-        public static HomeWindow Instance => HomeWindow.Instance;
-        public static void ShowDomek() => HomeWindow.ShowHome();
-        public static void NotifyStateChanged() => HomeWindow.NotifyStateChanged();
     }
 }

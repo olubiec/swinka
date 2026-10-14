@@ -99,7 +99,7 @@ namespace Cuy.Core.Tests
         [Fact]
         public void SaveSystem_PersistsPoopCountAndPoopList()
         {
-            string tempDir = Path.Combine(Path.GetTempPath(), "SwinkaTest_Poops_" + Guid.NewGuid().ToString("N"));
+            string tempDir = Path.Combine(Path.GetTempPath(), "CuyTest_Poops_" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(tempDir);
             try
             {

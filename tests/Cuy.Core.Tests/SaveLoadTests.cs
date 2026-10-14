@@ -13,7 +13,7 @@ namespace Cuy.Core.Tests
 
         public SaveLoadTests()
         {
-            _testDir = Path.Combine(Path.GetTempPath(), "SwinkaSaveLoadTest_" + Guid.NewGuid().ToString("N"));
+            _testDir = Path.Combine(Path.GetTempPath(), "CuySaveLoadTest_" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(_testDir);
         }
 
@@ -40,8 +40,8 @@ namespace Cuy.Core.Tests
 
             var state = GameState.CreateNew("Puszek", nowUtc);
             state.Clovers = 150;
-            state.Inventory["papryka"] = 5;
-            state.Inventory["siano"] = 12;
+            state.Inventory["bell_pepper"] = 5;
+            state.Inventory["hay"] = 12;
             state.Album["popcorn"] = nowUtc;
             state.Diary.Add(new DiaryEntry { DateUtc = nowUtc, Text = "Pamiętnik świnki - wpis testowy" });
             state.Needs.Satiety = 75.5;
@@ -74,8 +74,8 @@ namespace Cuy.Core.Tests
             Assert.Equal(GameState.CurrentVersion, loaded.Version);
             Assert.Equal("Puszek", loaded.Name);
             Assert.Equal(150, loaded.Clovers);
-            Assert.Equal(5, loaded.Inventory["papryka"]);
-            Assert.Equal(12, loaded.Inventory["siano"]);
+            Assert.Equal(5, loaded.Inventory["bell_pepper"]);
+            Assert.Equal(12, loaded.Inventory["hay"]);
             Assert.True(loaded.Album.ContainsKey("popcorn"));
             Assert.Single(loaded.Diary);
             Assert.Equal("Pamiętnik świnki - wpis testowy", loaded.Diary[0].Text);

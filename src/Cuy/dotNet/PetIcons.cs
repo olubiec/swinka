@@ -10,12 +10,13 @@ namespace Cuy
 {
     /// <summary>
     /// Zarządza ikonami pixel art projektu Cuy (z arkusza assets/icons/icons_16.png).
-    /// Udostępnia m.in. ikonę główki świnki do zasobnika (pet_head / glowa_swinki) oraz ikony przedmiotów do menu.
+    /// Udostępnia m.in. ikonę główki świnki do zasobnika (pig_head) oraz ikony przedmiotów do menu.
     /// </summary>
     public static class PetIcons
     {
         // Indeksy ikon w arkuszu icons_16.png (400x16 px, 25 ikon w rzędzie, każda 16x16 px)
-        private static readonly Dictionary<string, int> IconIndices = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+        // Hardcoded fallback; replaced by assets/icons/icons.json when it can be read.
+        private static Dictionary<string, int> IconIndices = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
         {
             // English IDs
             { "bell_pepper", 0 },
@@ -23,7 +24,7 @@ namespace Cuy
             { "parsley", 2 },
             { "carrot", 3 },
             { "pellets", 4 },
-            { "chew_toy", 5 },
+            { "chew_stick", 5 },
             { "ball", 6 },
             { "tunnel", 7 },
             { "house", 8 },
@@ -36,43 +37,16 @@ namespace Cuy
             { "strawberry", 15 },
             { "onion", 16 },
             { "chocolate", 17 },
-            { "need_satiety", 18 },
+            { "need_fullness", 18 },
             { "need_vitamin_c", 19 },
             { "need_energy", 20 },
             { "need_mood", 21 },
             { "need_cleanliness", 22 },
             { "need_teeth", 23 },
-            { "pet_head", 24 },
-
-            // Polish legacy aliases
-            { "papryka", 0 },
-            { "ogorek", 1 },
-            { "natka", 2 },
-            { "marchewka", 3 },
-            { "granulat", 4 },
-            { "gryzak", 5 },
-            { "pilka", 6 },
-            { "tunel", 7 },
-            { "domek", 8 },
-            { "poidlo", 9 },
-            { "bobek", 10 },
-            { "tort", 11 },
-            { "siano", 12 },
-            { "koniczynka", 13 },
-            { "jarmuz", 14 },
-            { "truskawka", 15 },
-            { "cebula", 16 },
-            { "czekolada", 17 },
-            { "potrzeba_najedzenie", 18 },
-            { "potrzeba_witamina_c", 19 },
-            { "potrzeba_energia", 20 },
-            { "potrzeba_humor", 21 },
-            { "potrzeba_czystosc", 22 },
-            { "potrzeba_zabki", 23 },
-            { "glowa_swinki", 24 }
+            { "pig_head", 24 }
         };
 
-        // Zapasowy base64 dla ikony pet_head (z animations.xml), gwarantujący poprawne działanie zawsze
+        // Zapasowy base64 dla ikony pig_head (z animations.xml), gwarantujący poprawne działanie zawsze
         private const string FallbackGlowaSwinkiBase64 =
             "AAABAAEAEBAAAAAAIAAgAQAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAQAAAAEAgGAAAAH/P/YQAAAOdJREFUeJxjYBgFKMBKVvw/Oh+bGDKfBVmi0UKcoZ6BAa7g6IOHYNpaQR4uBlNz7PFLRrgBVlDNclqRDI0Myxls4h1QXLZ3ejiYPrLwAFwNzBAmVE8wwDVzeHaB6Z8fnjIwWuYzfLpxhUHPXARdOQKAXPF9S95/bXEhMP7x9i4Khom/7HHCCBcwAAmCFIAAuiEwPkwO2QAmBjSgIyGMLoRXjgmZs6/UAM4+e+00w99tR8EYxIaBuUGyOC1gADkN5EeY05+c3wp2LogG4ROZ+tj9j24ITAOMjUyjqwcnBmyGYBOHJR6qAgD3dJ+4l2IhiAAAAABJRU5ErkJggg==";
 
@@ -82,7 +56,7 @@ namespace Cuy
         private static readonly Dictionary<string, Bitmap> _cachedBitmaps = new Dictionary<string, Bitmap>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Zwraca obiekt Icon reprezentujący ikonę 'pet_head' z assets/icons/icons_16.png (lub pet_head.ico).
+        /// Zwraca obiekt Icon reprezentujący ikonę 'pig_head' z assets/icons/pig_head.ico (lub icons_16.png).
         /// </summary>
         public static Icon GetTrayIcon()
         {
@@ -108,12 +82,9 @@ namespace Cuy
 
         private static void LoadTrayIcon()
         {
-            // 1. Sprawdź czy plik pet_head.ico lub glowa_swinki.ico istnieje na dysku
+            // 1. Sprawdź czy plik pig_head.ico istnieje na dysku
             string icoPath = FindFile(Path.Combine("assets", "icons", "pig_head.ico"))
-                          ?? FindFile(Path.Combine("assets", "icons", "pet_head.ico"))
-                          ?? FindFile(Path.Combine("assets", "icons", "glowa_swinki.ico"))
-                          ?? FindFile(Path.Combine("assets", "app-icon", "cuy.ico"))
-                          ?? FindFile(Path.Combine("assets", "app-icon", "icon.ico"));
+                                                    ?? FindFile(Path.Combine("assets", "app-icon", "cuy.ico"));
 
             if (!string.IsNullOrEmpty(icoPath))
             {
@@ -128,8 +99,8 @@ namespace Cuy
                 catch { }
             }
 
-            // 2. Wytnij ikonę nr 24 (pet_head) z arkusza icons_16.png
-            Bitmap headBmp = GetIconBitmap("pet_head") ?? GetIconBitmap("glowa_swinki");
+            // 2. Wytnij ikonę nr 24 (pig_head) z arkusza icons_16.png
+            Bitmap headBmp = GetIconBitmap("pig_head");
             if (headBmp != null)
             {
                 try
@@ -176,6 +147,7 @@ namespace Cuy
                     return cached;
                 }
 
+                EnsureIndicesLoaded();
                 EnsureStripLoaded();
                 if (_iconsStrip == null)
                 {
@@ -207,12 +179,38 @@ namespace Cuy
             }
         }
 
+        private static bool _indicesLoaded;
+
+        private static void EnsureIndicesLoaded()
+        {
+            if (_indicesLoaded) return;
+            _indicesLoaded = true;
+
+            string jsonPath = FindFile(Path.Combine("assets", "icons", "icons.json"));
+            if (string.IsNullOrEmpty(jsonPath)) return;
+            try
+            {
+                var root = Newtonsoft.Json.Linq.JObject.Parse(File.ReadAllText(jsonPath));
+                var icons = root["icons"] as Newtonsoft.Json.Linq.JObject;
+                if (icons == null) return;
+                var map = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                foreach (var prop in icons.Properties())
+                {
+                    map[prop.Name] = (int)prop.Value;
+                }
+                if (map.Count > 0) IconIndices = map;
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[ERROR] Failed to read icons.json: " + ex.Message);
+            }
+        }
+
         private static void EnsureStripLoaded()
         {
             if (_iconsStrip != null) return;
 
-            string pngPath = FindFile(Path.Combine("assets", "icons", "icons_16.png"))
-                          ?? FindFile(Path.Combine("assets", "icons", "ikony_16.png"));
+            string pngPath = FindFile(Path.Combine("assets", "icons", "icons_16.png"));
 
             if (!string.IsNullOrEmpty(pngPath))
             {
@@ -226,7 +224,7 @@ namespace Cuy
                 }
                 catch (Exception ex)
                 {
-                    BrainController.Log("[Błąd] Nie udało się załadować icons_16.png: " + ex.Message);
+                    BrainController.Log("[ERROR] Failed to load icons_16.png: " + ex.Message);
                 }
             }
         }
@@ -286,12 +284,5 @@ namespace Cuy
 
             return null;
         }
-    }
-
-    /// <summary>Alias dla kompatybilności wstecznej.</summary>
-    public static class SwinkaIcons
-    {
-        public static Icon GetTrayIcon() => PetIcons.GetTrayIcon();
-        public static Bitmap GetIconBitmap(string iconName) => PetIcons.GetIconBitmap(iconName);
     }
 }

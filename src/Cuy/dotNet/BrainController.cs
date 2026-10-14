@@ -313,7 +313,7 @@ namespace Cuy
         {
             if (string.IsNullOrEmpty(itemId)) return;
 
-            if (string.Equals(itemId, "hay", StringComparison.OrdinalIgnoreCase) || string.Equals(itemId, "siano", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(itemId, "hay", StringComparison.OrdinalIgnoreCase))
             {
                 // Siano jest zawsze bez limitu - kładziemy na pulpicie (B6)
                 if (FoodManager.Instance != null)
@@ -668,14 +668,6 @@ namespace Cuy
             }
             catch { }
         }
-    }
-
-    /// <summary>Alias dla kompatybilności wstecznej.</summary>
-    public static class SwinkaBrainController
-    {
-        public static BrainController Instance => BrainController.Instance;
-        public static void Initialize(double initialMultiplier = 1.0) => BrainController.Initialize(initialMultiplier);
-        public static void Log(string message) => BrainController.Log(message);
     }
 
     [StructLayout(LayoutKind.Sequential)]

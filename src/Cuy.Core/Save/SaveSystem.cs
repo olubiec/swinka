@@ -31,7 +31,7 @@ namespace Cuy.Core.Save
     }
 
     /// <summary>
-    /// Zapis stanu gry w JSON: %AppData%/Swinka/save.json z polem version i kopią save.bak.
+    /// Zapis stanu gry w JSON: %AppData%/Cuy/save.json z polem version i kopią save.bak.
     /// </summary>
     /// <remarks>
     /// Zapis jest bezpieczny przy nagłym wyłączeniu: najpierw powstaje save.tmp, potem
@@ -254,13 +254,59 @@ namespace Cuy.Core.Save
         }
 
         /// <summary>
-        /// Miejsce na migracje starszych wersji zapisu. Na razie jest tylko wersja 1.
+        /// Migracje starszych wersji zapisu (1 -> 2: polskie id przedmiotów na angielskie).
         /// Plik z nowszej wersji jest wczytywany "jak się da" (nieznane pola są pomijane).
         /// </summary>
         private static void Migrate(GameState state)
         {
             if (state.Version <= 0) state.Version = 1;
-            // if (state.Version == 1) { ...; state.Version = 2; }
+            if (state.Version < 2)
+            {
+                RenameKeys(state.Inventory, "");
+                if (state.Stats != null)
+                {
+                    RenameKeys(state.Stats.Counters, "");
+                    RenameKeys(state.Stats.Counters, "eaten_");
+                }
+                state.Version = 2;
+            }
+        }
+
+        /// <summary>Version 1 used Polish item ids; this is the only place they may appear in code.</summary>
+        private static readonly System.Collections.Generic.Dictionary<string, string> V1ItemIds =
+            new System.Collections.Generic.Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "siano", "hay" },
+            { "granulat", "pellets" },
+            { "papryka", "bell_pepper" },
+            { "natka", "parsley" },
+            { "jarmuz", "kale" },
+            { "ogorek", "cucumber" },
+            { "marchewka", "carrot" },
+            { "gryzak", "chew_stick" },
+            { "chew_toy", "chew_stick" },
+            { "pilka", "ball" },
+            { "tunel", "tunnel" },
+            { "domek", "house" },
+            { "poidlo", "water_bottle" },
+            { "tort", "cake" }
+        };
+
+        /// <summary>Renames dictionary keys "[prefix]old" to "[prefix]new"; counts are summed on collision.</summary>
+        private static void RenameKeys(System.Collections.Generic.Dictionary<string, int> dict, string prefix)
+        {
+            if (dict == null) return;
+            foreach (var key in new System.Collections.Generic.List<string>(dict.Keys))
+            {
+                if (!key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) continue;
+                string newId;
+                if (!V1ItemIds.TryGetValue(key.Substring(prefix.Length), out newId)) continue;
+                string newKey = prefix + newId;
+                int count = dict[key];
+                dict.Remove(key);
+                int existing;
+                dict[newKey] = dict.TryGetValue(newKey, out existing) ? existing + count : count;
+            }
         }
 
         private static void WriteDurable(string path, string content)

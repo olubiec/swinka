@@ -81,7 +81,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>cuy.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>E5C82D9887B1D997FCD9E686720A4263D2F75B7E</ManifestCertificateThumbprint>
@@ -231,7 +231,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="dotNet\StartUp.cs" />
-    <Compile Include="dotNet\Compatibility.cs" />
     <Compile Include="dotNet\FormPet.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -252,7 +251,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="Tools\XmlToDot.cs" />
     <Compile Include="dotNet\Xml.cs" />
     <Compile Include="dotNet\BrainController.cs" />
     <Compile Include="dotNet\SoundManager.cs" />
@@ -296,7 +294,6 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="dotNet\app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <SubType>Designer</SubType>
@@ -308,8 +305,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="esheep.png.ico" />
-    <Content Include="icon.ico" />
+    <Content Include="cuy.ico" />
     <Content Include="Images\enabled.png" />
     <Content Include="Images\exit.png" />
     <Content Include="Images\help.png" />

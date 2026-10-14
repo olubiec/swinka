@@ -8,7 +8,7 @@ using Cuy.Core.AI;
 using Cuy.Core.Save;
 using Cuy.Core.Time;
 
-namespace Symulator
+namespace Cuy.Simulator
 {
     /// <summary>
     /// Przewija N dni gry na sztucznym zegarze i wypisuje stan świnki co godzinę gry.
@@ -47,7 +47,7 @@ namespace Symulator
             }
 
             bool tempDir = o.SaveDir == null;
-            string dir = o.SaveDir ?? Path.Combine(Path.GetTempPath(), "SwinkaSymulator");
+            string dir = o.SaveDir ?? Path.Combine(Path.GetTempPath(), "CuySimulator");
             if (tempDir)
             {
                 // Zawsze świeża gra w folderze tymczasowym; prawdziwego zapisu z %AppData% nie dotykamy.
@@ -205,14 +205,14 @@ namespace Symulator
             {
                 pet.ChangeNeed(Need.Satiety, 20);
                 pet.ChangeNeed(Need.Teeth, 6);
-                Reward(pet, "siano");
+                Reward(pet, "hay");
             }
             if (h == 10 || h == 16)
             {
                 pet.ChangeNeed(Need.VitaminC, 35);
                 pet.ChangeNeed(Need.Satiety, 8);
                 pet.ChangeNeed(Need.Mood, 5);
-                Reward(pet, "papryka");
+                Reward(pet, "bell_pepper");
             }
             pet.ChangeNeed(Need.Mood, 6);
             pet.AddBondPoints(2);
@@ -343,7 +343,7 @@ namespace Symulator
             Console.WriteLine("  --opieka   prosta opieka: siano co 2 h, papryka 2x dziennie, głaskanie co godzinę");
             Console.WriteLine("  --co 24    wypisuj stan co tyle godzin gry (domyślnie 1)");
             Console.WriteLine("  --start    początek symulacji (domyślnie dziś 08:00)");
-            Console.WriteLine("  --zapis    folder zapisu; domyślnie %TEMP%\\SwinkaSymulator (czyszczony na starcie)");
+            Console.WriteLine("  --zapis    folder zapisu; domyślnie %TEMP%\\CuySimulator (czyszczony na starcie)");
         }
     }
 }

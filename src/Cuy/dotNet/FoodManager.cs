@@ -466,7 +466,7 @@ namespace Cuy
             petForm.SetFacing(food.Location.X < petForm.PositionX);
 
             // Animacja: "eat" dla siana, "eat_treat" dla warzyw/smakołyków
-            string anim = (string.Equals(food.ItemId, "siano", StringComparison.OrdinalIgnoreCase) || string.Equals(food.ItemId, "hay", StringComparison.OrdinalIgnoreCase))
+            string anim = (string.Equals(food.ItemId, "hay", StringComparison.OrdinalIgnoreCase))
                 ? "eat"
                 : (food.ItemDef?.Animation ?? "eat_treat");
 
@@ -547,12 +547,5 @@ namespace Cuy
             // Natychmiastowe powiadomienie otwartego okna Domku o zmianie stanu
             HomeWindow.NotifyStateChanged();
         }
-    }
-
-    /// <summary>Alias dla kompatybilności wstecznej.</summary>
-    public static class SwinkaFoodManager
-    {
-        public static FoodManager Instance => FoodManager.Instance;
-        public static void Initialize(BrainController controller) => FoodManager.Initialize(controller);
     }
 }

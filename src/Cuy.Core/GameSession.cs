@@ -35,7 +35,7 @@ namespace Cuy.Core
         public bool IsNewGame { get { return LoadResult.Source == LoadSource.None; } }
 
         /// <param name="clock">Zegar gry.</param>
-        /// <param name="saveDirectory">Folder zapisu; domyślnie %AppData%/Swinka.</param>
+        /// <param name="saveDirectory">Folder zapisu; domyślnie %AppData%/Cuy.</param>
         /// <param name="balance">Balans; domyślnie z PLAN.md.</param>
         /// <param name="newPetName">Imię, jeśli powstaje nowa świnka.</param>
         public static GameSession Open(IClock clock, string saveDirectory = null, Balance balance = null,

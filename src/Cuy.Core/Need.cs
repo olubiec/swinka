@@ -5,7 +5,7 @@ namespace Cuy.Core
 {
     /// <summary>
     /// Sześć potrzeb świnki z PLAN.md (sekcja "Model świnki").
-    /// Kolejność jak w swinka/dane/actions.json.
+    /// Kolejność jak w assets/data/actions.json.
     /// </summary>
     public enum Need
     {
@@ -23,7 +23,7 @@ namespace Cuy.Core
         Teeth
     }
 
-    /// <summary>Nazwy potrzeb: polskie (dla użytkownika) i klucze z plików w swinka/dane/.</summary>
+    /// <summary>Nazwy potrzeb: polskie (dla użytkownika) i klucze z plików w assets/data/.</summary>
     public static class NeedNames
     {
         public static readonly IReadOnlyList<Need> All = (Need[])Enum.GetValues(typeof(Need));
@@ -47,7 +47,7 @@ namespace Cuy.Core
         {
             switch (need)
             {
-                case Need.Satiety: return "satiety";
+                case Need.Satiety: return "fullness";
                 case Need.VitaminC: return "vitamin_c";
                 case Need.Energy: return "energy";
                 case Need.Mood: return "mood";
@@ -57,26 +57,11 @@ namespace Cuy.Core
             }
         }
 
-        public static string PolishDataKey(Need need)
-        {
-            switch (need)
-            {
-                case Need.Satiety: return "najedzenie";
-                case Need.VitaminC: return "witamina_c";
-                case Need.Energy: return "energia";
-                case Need.Mood: return "humor";
-                case Need.Cleanliness: return "czystosc";
-                case Need.Teeth: return "zabki";
-                default: throw new ArgumentOutOfRangeException(nameof(need));
-            }
-        }
-
         public static bool TryParseDataKey(string key, out Need need)
         {
             foreach (var n in All)
             {
-                if (string.Equals(DataKey(n), key, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(PolishDataKey(n), key, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(DataKey(n), key, StringComparison.OrdinalIgnoreCase))
                 {
                     need = n;
                     return true;

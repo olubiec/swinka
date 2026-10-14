@@ -2,7 +2,7 @@
  * canvas-pig.js — Żywa animacja pixel-artowej świnki morskiej na canvasie.
  * Obsługuje:
  * - Arkusz klatek 64x64 px (image-rendering: pixelated)
- * - Dynamiczną zmianę wariantów etapu życia (maluch, dorosła, senior, legenda)
+ * - Dynamiczną zmianę wariantów etapu życia (baby, junior, adult, senior, legend)
  * - Płynne animacje (idle, sniff, eat, popcorn, greet, purr_pet, sleep, yawn itp.)
  * - Reaktywne zachowania, dymki myśli/nastroju, głaskanie kursorem, unoszące się serduszka
  * - Pixel-artowe tło wybiegu / klatki (sianko, drewniane ścianki, paśnik, poidło)
@@ -53,7 +53,7 @@
       this.frameAcc = 0;
       this.animTimer = 0;
       this.facing = 1; // 1 = w prawo, -1 = w lewo
-      this.stageKey = 'dorosla';
+      this.stageKey = 'adult';
 
       // Pozycja świnki w scenie
       this.pigX = 90;
@@ -88,12 +88,10 @@
       const isWebView = window.chrome && window.chrome.webview;
       const assetsBase = isWebView ? 'https://cuy.assets/' : '../../assets/';
       const stageFiles = {
-        dorosla: assetsBase + 'sprites/adult/spritesheet.png',
-        maluch: assetsBase + 'sprites/baby/spritesheet.png',
-        senior: assetsBase + 'sprites/senior/spritesheet.png',
-        legenda: assetsBase + 'sprites/legend/spritesheet.png',
-        adult: assetsBase + 'sprites/adult/spritesheet.png',
         baby: assetsBase + 'sprites/baby/spritesheet.png',
+        junior: assetsBase + 'sprites/baby/spritesheet.png', // no junior sprites yet
+        adult: assetsBase + 'sprites/adult/spritesheet.png',
+        senior: assetsBase + 'sprites/senior/spritesheet.png',
         legend: assetsBase + 'sprites/legend/spritesheet.png'
       };
 
@@ -105,29 +103,22 @@
           this.showBubble('Jestem gotowa!', 2000);
         }
       };
-
-      Object.entries(stageFiles).forEach(([key, src]) => {
+      const loadImage = (src) => {
         const img = new Image();
         img.onload = onDone;
         img.onerror = () => {
-          // Jeśli wariant nie istnieje lokalnie, użyj domyślnego
-          if (key !== 'dorosla' && key !== 'adult' && (this.sheets['dorosla'] || this.sheets['adult'])) {
-            this.sheets[key] = this.sheets['dorosla'] || this.sheets['adult'];
-          }
+          console.error('[canvas-pig] Failed to load image: ' + src);
           onDone();
         };
         img.src = src;
-        this.sheets[key] = img;
+        return img;
+      };
+
+      Object.entries(stageFiles).forEach(([key, src]) => {
+        this.sheets[key] = loadImage(src);
       });
 
-      this.iconsImg = new Image();
-      this.iconsImg.onload = onDone;
-      this.iconsImg.onerror = () => {
-        // Fallback do względnego assets jeśli host nieosiągalny
-        this.iconsImg.src = '../../assets/icons/icons_16.png';
-        onDone();
-      };
-      this.iconsImg.src = assetsBase + 'icons/icons_16.png';
+      this.iconsImg = loadImage(assetsBase + 'icons/icons_16.png');
     }
 
     bindEvents() {
@@ -470,7 +461,7 @@
     }
 
     drawPig(ctx) {
-      const sheet = this.sheets[this.stageKey] || this.sheets.dorosla;
+      const sheet = this.sheets[this.stageKey] || this.sheets.adult;
       if (!sheet || !this.isLoaded) {
         // Fallback placeholder dopóki się ładuje
         ctx.fillStyle = '#e98c42';

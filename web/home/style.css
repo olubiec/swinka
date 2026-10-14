@@ -286,11 +286,11 @@ body.webview-mode .game-device {
   box-shadow: 0 2px 0 var(--c-contour-dark);
 }
 
-.stage-maluch  { background: var(--c-leaf); }
-.stage-mlodzik { background: var(--c-orange); }
-.stage-dorosla { background: var(--c-rust); }
+.stage-baby  { background: var(--c-leaf); }
+.stage-junior { background: var(--c-orange); }
+.stage-adult { background: var(--c-rust); }
 .stage-senior  { background: #8c8479; }
-.stage-legenda { background: var(--c-gold); color: #493305; text-shadow: none; border-color: #5a3e05; }
+.stage-legend { background: var(--c-gold); color: #493305; text-shadow: none; border-color: #5a3e05; }
 
 .bond-indicator {
   font-size: 11px;
@@ -636,45 +636,45 @@ body.webview-mode .game-device {
 }
 
 /* Pozycje ikon w arkuszu (indeks * 16px w x1, indeks * 24px w x1_5, indeks * 32px w x2) */
-.icon-papryka             { background-position: calc(-0 * 16px) 0; }
-.icon-ogorek              { background-position: calc(-1 * 16px) 0; }
-.icon-natka               { background-position: calc(-2 * 16px) 0; }
-.icon-marchewka           { background-position: calc(-3 * 16px) 0; }
-.icon-granulat            { background-position: calc(-4 * 16px) 0; }
-.icon-gryzak              { background-position: calc(-5 * 16px) 0; }
-.icon-pilka               { background-position: calc(-6 * 16px) 0; }
-.icon-tunel               { background-position: calc(-7 * 16px) 0; }
-.icon-domek               { background-position: calc(-8 * 16px) 0; }
-.icon-poidlo              { background-position: calc(-9 * 16px) 0; }
-.icon-bobek               { background-position: calc(-10 * 16px) 0; }
-.icon-tort                { background-position: calc(-11 * 16px) 0; }
-.icon-siano               { background-position: calc(-12 * 16px) 0; }
-.icon-koniczynka          { background-position: calc(-13 * 16px) 0; }
-.icon-jarmuz              { background-position: calc(-14 * 16px) 0; }
-.icon-truskawka           { background-position: calc(-15 * 16px) 0; }
-.icon-cebula              { background-position: calc(-16 * 16px) 0; }
-.icon-czekolada           { background-position: calc(-17 * 16px) 0; }
-.icon-potrzeba-najedzenie { background-position: calc(-18 * 16px) 0; }
-.icon-potrzeba-witamina-c { background-position: calc(-19 * 16px) 0; }
-.icon-potrzeba-energia    { background-position: calc(-20 * 16px) 0; }
-.icon-potrzeba-humor      { background-position: calc(-21 * 16px) 0; }
-.icon-potrzeba-czystosc   { background-position: calc(-22 * 16px) 0; }
-.icon-potrzeba-zabki      { background-position: calc(-23 * 16px) 0; }
-.icon-glowa-swinki        { background-position: calc(-24 * 16px) 0; }
+.icon-bell-pepper             { background-position: calc(-0 * 16px) 0; }
+.icon-cucumber              { background-position: calc(-1 * 16px) 0; }
+.icon-parsley               { background-position: calc(-2 * 16px) 0; }
+.icon-carrot           { background-position: calc(-3 * 16px) 0; }
+.icon-pellets            { background-position: calc(-4 * 16px) 0; }
+.icon-chew-stick              { background-position: calc(-5 * 16px) 0; }
+.icon-ball               { background-position: calc(-6 * 16px) 0; }
+.icon-tunnel               { background-position: calc(-7 * 16px) 0; }
+.icon-house               { background-position: calc(-8 * 16px) 0; }
+.icon-water-bottle              { background-position: calc(-9 * 16px) 0; }
+.icon-poop               { background-position: calc(-10 * 16px) 0; }
+.icon-cake                { background-position: calc(-11 * 16px) 0; }
+.icon-hay               { background-position: calc(-12 * 16px) 0; }
+.icon-clover          { background-position: calc(-13 * 16px) 0; }
+.icon-kale              { background-position: calc(-14 * 16px) 0; }
+.icon-strawberry           { background-position: calc(-15 * 16px) 0; }
+.icon-onion              { background-position: calc(-16 * 16px) 0; }
+.icon-chocolate           { background-position: calc(-17 * 16px) 0; }
+.icon-need-fullness { background-position: calc(-18 * 16px) 0; }
+.icon-need-vitamin-c { background-position: calc(-19 * 16px) 0; }
+.icon-need-energy    { background-position: calc(-20 * 16px) 0; }
+.icon-need-mood      { background-position: calc(-21 * 16px) 0; }
+.icon-need-cleanliness   { background-position: calc(-22 * 16px) 0; }
+.icon-need-teeth      { background-position: calc(-23 * 16px) 0; }
+.icon-pig-head        { background-position: calc(-24 * 16px) 0; }
 
 /* Skala x1_5 dla pasków potrzeb */
-.pixel-icon.x1_5.icon-potrzeba-najedzenie { background-position: calc(-18 * 24px) 0; }
-.pixel-icon.x1_5.icon-potrzeba-witamina-c { background-position: calc(-19 * 24px) 0; }
-.pixel-icon.x1_5.icon-potrzeba-energia    { background-position: calc(-20 * 24px) 0; }
-.pixel-icon.x1_5.icon-potrzeba-humor      { background-position: calc(-21 * 24px) 0; }
-.pixel-icon.x1_5.icon-potrzeba-czystosc   { background-position: calc(-22 * 24px) 0; }
-.pixel-icon.x1_5.icon-potrzeba-zabki      { background-position: calc(-23 * 24px) 0; }
+.pixel-icon.x1_5.icon-need-fullness { background-position: calc(-18 * 24px) 0; }
+.pixel-icon.x1_5.icon-need-vitamin-c { background-position: calc(-19 * 24px) 0; }
+.pixel-icon.x1_5.icon-need-energy    { background-position: calc(-20 * 24px) 0; }
+.pixel-icon.x1_5.icon-need-mood      { background-position: calc(-21 * 24px) 0; }
+.pixel-icon.x1_5.icon-need-cleanliness   { background-position: calc(-22 * 24px) 0; }
+.pixel-icon.x1_5.icon-need-teeth      { background-position: calc(-23 * 24px) 0; }
 
 /* Skala x1_5 dla jedzenia w szufladzie */
-.pixel-icon.x1_5.icon-siano     { background-position: calc(-12 * 24px) 0; }
-.pixel-icon.x1_5.icon-papryka   { background-position: calc(-0 * 24px) 0; }
-.pixel-icon.x1_5.icon-marchewka { background-position: calc(-3 * 24px) 0; }
-.pixel-icon.x1_5.icon-granulat  { background-position: calc(-4 * 24px) 0; }
+.pixel-icon.x1_5.icon-hay     { background-position: calc(-12 * 24px) 0; }
+.pixel-icon.x1_5.icon-bell-pepper   { background-position: calc(-0 * 24px) 0; }
+.pixel-icon.x1_5.icon-carrot { background-position: calc(-3 * 24px) 0; }
+.pixel-icon.x1_5.icon-pellets  { background-position: calc(-4 * 24px) 0; }
 
 /* ==========================================================================
    MODALE / DIALOGI PIXEL ART (Sklepik, Minigry, Album, Testy)

@@ -11,7 +11,7 @@ namespace Cuy
     /// <summary>
     /// Główny menedżer dźwięków świnki na pulpit (Zadanie F1).
     /// Odpowiada za:
-    /// - Wczytanie i buforowanie 10 klipów WAV z /swinka/dzwieki
+    /// - Wczytanie i buforowanie 10 klipów WAV z assets/sounds
     /// - Mapowanie zdarzeń gry i animacji na dźwięki
     /// - Kontrolę głośności i wyciszenie (Mute)
     /// - Sprawdzanie godzin ciszy (domyślnie 22:00 - 07:00)
@@ -106,7 +106,7 @@ namespace Cuy
             return _instance;
         }
 
-        // ---- Wczytywanie klipów z /swinka/dzwieki -----------------------------
+        // ---- Wczytywanie klipów z assets/sounds -----------------------------
 
         private void LoadSounds()
         {
@@ -550,7 +550,7 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Wywoływane co krok aktualizacji gry (np. w SwinkaBrainController.Update lub SwinkaFoodManager.Update).
+        /// Wywoływane co krok aktualizacji gry (np. w BrainController.Update lub FoodManager.Update).
         /// Powtarza chrupanie co 0.3 - 0.6 sekundy z lekką zmianą tonu.
         /// </summary>
         public void UpdateEating(TimeSpan gameElapsed)

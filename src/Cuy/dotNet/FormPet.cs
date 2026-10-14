@@ -813,20 +813,9 @@ namespace Cuy
             }
         }
 
-        private static readonly object _behaviorLogLock = new object();
         public static void LogBehavior(string name, int id)
         {
-            try
-            {
-                string logDir = AppDomain.CurrentDomain.BaseDirectory;
-                string logFile = Path.Combine(logDir, "behavior_log.txt");
-                string line = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}|{name}|{id}\r\n";
-                lock (_behaviorLogLock)
-                {
-                    File.AppendAllText(logFile, line);
-                }
-            }
-            catch { }
+            BrainController.Log(string.Format("[Behavior] {0}|{1}", name, id));
         }
 
             /// <summary>

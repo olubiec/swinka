@@ -46,7 +46,6 @@ namespace Cuy
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.convertXMLToDOTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openXMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.convertoToDOTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -223,8 +222,7 @@ namespace Cuy
             // convertXMLToDOTToolStripMenuItem
             // 
             this.convertXMLToDOTToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openXMLToolStripMenuItem,
-            this.convertoToDOTToolStripMenuItem});
+            this.openXMLToolStripMenuItem});
             this.convertXMLToDOTToolStripMenuItem.Name = "convertXMLToDOTToolStripMenuItem";
             this.convertXMLToDOTToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.convertXMLToDOTToolStripMenuItem.Text = "XML &Animation";
@@ -235,13 +233,6 @@ namespace Cuy
             this.openXMLToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.openXMLToolStripMenuItem.Text = "&Open XML";
             this.openXMLToolStripMenuItem.Click += new System.EventHandler(this.openXMLToolStripMenuItem_Click);
-            // 
-            // convertoToDOTToolStripMenuItem
-            // 
-            this.convertoToDOTToolStripMenuItem.Name = "convertoToDOTToolStripMenuItem";
-            this.convertoToDOTToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.convertoToDOTToolStripMenuItem.Text = "&Converto to DOT";
-            this.convertoToDOTToolStripMenuItem.Click += new System.EventHandler(this.convertoToDOTToolStripMenuItem_Click);
             // 
             // FormDebug
             // 
@@ -286,7 +277,6 @@ namespace Cuy
 		private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem convertXMLToDOTToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem openXMLToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem convertoToDOTToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem clearWindowToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem removeInfosToolStripMenuItem;

@@ -57,7 +57,6 @@ namespace Cuy
         }
 
         public static string ArgumentLocalXML = "";
-        public static string ArgumentInstall = "";
 
         /// <summary>
         /// The main entry point for the application.
@@ -66,13 +65,6 @@ namespace Cuy
         static void Main(string[] args)
         {
             Application.SetCompatibleTextRenderingDefault(false);
-
-            try
-            {
-                EmbeddedAssembly.Load("DesktopPet.Portable.NAudio.dll", "NAudio.dll");
-                EmbeddedAssembly.Load("DesktopPet.Portable.Newtonsoft.Json.dll", "Newtonsoft.Json.dll");
-            }
-            catch { }
 
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 
@@ -92,7 +84,6 @@ namespace Cuy
 
             // Check and parse the arguments
             string SearchStringLocalXml = "localxml=";
-            string SearchStringInstall = "install=";
             bool loadExternalXml = false;
             foreach (string s in args)
             {
@@ -105,15 +96,6 @@ namespace Cuy
                     }
                     loadExternalXml = true;
                 }
-                else if (s.IndexOf(SearchStringInstall) >= 0)
-                {
-                    ArgumentInstall = s.Substring(s.IndexOf(SearchStringInstall) + SearchStringInstall.Length);
-                    if (ArgumentInstall.IndexOf(" ") >= 0)
-                    {
-                        ArgumentInstall = ArgumentInstall.Substring(0, ArgumentInstall.IndexOf(" "));
-                    }
-                    loadExternalXml = true;
-                }
             }
 
             if (loadExternalXml)
@@ -123,13 +105,14 @@ namespace Cuy
 
             double initialSpeed = ParseSpeedMultiplier(args);
             BrainController.Initialize(initialSpeed);
+            ItemCatalog.ErrorLogger = message => BrainController.Log("[ERROR] " + message);
             Application.ApplicationExit += (s, e) => { BrainController.Instance?.Close(); };
 
             BrainController.Log("[Program] Args: " + (args != null ? string.Join(" ", args) : "null"));
             bool autoOpenHome = false;
             foreach (string s in args)
             {
-                if (s.IndexOf("domek", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("home", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (string.Equals(s, "--home", StringComparison.OrdinalIgnoreCase))
                 {
                     autoOpenHome = true;
                 }
@@ -165,11 +148,6 @@ namespace Cuy
                 mutex.ReleaseMutex();
             }
             catch { }
-        }
-
-        public static bool IsApplicationInstalled()
-        {
-            return true;
         }
 
         public static void RestartApp()

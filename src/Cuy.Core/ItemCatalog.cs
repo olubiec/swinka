@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 namespace Cuy.Core
 {
     /// <summary>
-    /// Katalog przedmiotów wczytywany z swinka/dane/items.json.
+    /// Katalog przedmiotów wczytywany z assets/data/items.json.
     /// Zgodny z .NET Standard 2.0 (brak zależności od WinForms/Win32).
     /// </summary>
     public sealed class ItemCatalog
@@ -18,15 +18,18 @@ namespace Cuy.Core
         private readonly Dictionary<string, ItemDefinition> _itemsById;
         private readonly List<ItemDefinition> _itemsList;
 
+        /// <summary>Receives ERROR messages (the app routes them to cuy.log).</summary>
+        public static Action<string> ErrorLogger { get; set; }
+
         public string CurrencyName { get; }
         public string CurrencyIcon { get; }
 
         public IReadOnlyList<ItemDefinition> AllItems => _itemsList;
 
-        public ItemCatalog(IEnumerable<ItemDefinition> items, string currencyName = "koniczynki", string currencyIcon = "koniczynka")
+        public ItemCatalog(IEnumerable<ItemDefinition> items, string currencyName = "clovers", string currencyIcon = "clover")
         {
-            CurrencyName = currencyName ?? "koniczynki";
-            CurrencyIcon = currencyIcon ?? "koniczynka";
+            CurrencyName = currencyName ?? "clovers";
+            CurrencyIcon = currencyIcon ?? "clover";
             _itemsById = new Dictionary<string, ItemDefinition>(StringComparer.OrdinalIgnoreCase);
             _itemsList = new List<ItemDefinition>();
 
@@ -37,18 +40,6 @@ namespace Cuy.Core
                     if (item == null || string.IsNullOrEmpty(item.Id)) continue;
                     _itemsById[item.Id] = item;
                     _itemsList.Add(item);
-
-                    // Rejestracja aliasu angielskiego/polskiego do wyszukiwania
-                    string norm = NormalizeId(item.Id);
-                    if (!string.Equals(norm, item.Id, StringComparison.OrdinalIgnoreCase) && !_itemsById.ContainsKey(norm))
-                    {
-                        _itemsById[norm] = item;
-                    }
-                    string pl = ToPolishId(item.Id);
-                    if (!string.Equals(pl, item.Id, StringComparison.OrdinalIgnoreCase) && !_itemsById.ContainsKey(pl))
-                    {
-                        _itemsById[pl] = item;
-                    }
                 }
             }
         }
@@ -89,56 +80,6 @@ namespace Cuy.Core
             }
         }
 
-        private static readonly Dictionary<string, string> PolishToEnglishItemIds = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            { "siano", "hay" },
-            { "granulat", "pellets" },
-            { "papryka", "bell_pepper" },
-            { "natka", "parsley" },
-            { "jarmuz", "kale" },
-            { "ogorek", "cucumber" },
-            { "marchewka", "carrot" },
-            { "gryzak", "chew_toy" },
-            { "pilka", "ball" },
-            { "tunel", "tunnel" },
-            { "domek", "house" },
-            { "poidlo", "water_bottle" },
-            { "tort", "cake" }
-        };
-
-        private static readonly Dictionary<string, string> EnglishToPolishItemIds = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            { "hay", "siano" },
-            { "pellets", "granulat" },
-            { "bell_pepper", "papryka" },
-            { "parsley", "natka" },
-            { "kale", "jarmuz" },
-            { "cucumber", "ogorek" },
-            { "carrot", "marchewka" },
-            { "chew_toy", "gryzak" },
-            { "ball", "pilka" },
-            { "tunnel", "tunel" },
-            { "house", "domek" },
-            { "water_bottle", "poidlo" },
-            { "cake", "tort" }
-        };
-
-        public static string NormalizeId(string id)
-        {
-            if (string.IsNullOrEmpty(id)) return id;
-            string mapped;
-            if (PolishToEnglishItemIds.TryGetValue(id, out mapped)) return mapped;
-            return id;
-        }
-
-        public static string ToPolishId(string id)
-        {
-            if (string.IsNullOrEmpty(id)) return id;
-            string mapped;
-            if (EnglishToPolishItemIds.TryGetValue(id, out mapped)) return mapped;
-            return id;
-        }
-
         public static ItemCatalog LoadJson(string json)
         {
             if (string.IsNullOrWhiteSpace(json))
@@ -148,18 +89,18 @@ namespace Cuy.Core
             string currencyName = "clovers";
             string currencyIcon = "clover";
 
-            var walutaTok = (root["currency"] ?? root["waluta"]) as JObject;
-            if (walutaTok != null)
+            var currencyTok = root["currency"] as JObject;
+            if (currencyTok != null)
             {
-                currencyName = (string)(walutaTok["name"] ?? walutaTok["nazwa"]) ?? currencyName;
-                currencyIcon = (string)(walutaTok["icon"] ?? walutaTok["ikona"]) ?? currencyIcon;
+                currencyName = (string)currencyTok["name"] ?? currencyName;
+                currencyIcon = (string)currencyTok["icon"] ?? currencyIcon;
             }
 
             var itemsList = new List<ItemDefinition>();
-            var przedmiotyArr = (root["items"] ?? root["przedmioty"]) as JArray;
-            if (przedmiotyArr != null)
+            var itemsArr = root["items"] as JArray;
+            if (itemsArr != null)
             {
-                foreach (var tok in przedmiotyArr)
+                foreach (var tok in itemsArr)
                 {
                     string id = (string)tok["id"];
                     if (string.IsNullOrEmpty(id)) continue;
@@ -167,34 +108,26 @@ namespace Cuy.Core
                     var def = new ItemDefinition
                     {
                         Id = id,
-                        Name = (string)(tok["name"] ?? tok["nazwa"]) ?? id,
-                        Category = (string)(tok["category"] ?? tok["kategoria"]) ?? "other",
-                        Price = tok["price"] != null && tok["price"].Type == JTokenType.Integer ? (int?)tok["price"] :
-                                (tok["cena"] != null && tok["cena"].Type == JTokenType.Integer ? (int?)tok["cena"] : null),
-                        IsUnlimited = (bool?)(tok["unlimited"] ?? tok["bez_limitu"]) ?? false,
-                        IsDurable = (bool?)(tok["durable"] ?? tok["trwale"]) ?? false,
-                        IconName = (string)(tok["icon"] ?? tok["ikona"]) ?? id,
-                        Animation = (string)(tok["animation"] ?? tok["animacja"]) ?? "eat_treat",
-                        Description = (string)(tok["description"] ?? tok["opis"]) ?? "",
-                        DailyLimit = (int?)(tok["daily_limit"] ?? tok["limit_dzienny"]),
-                        Uses = (int?)(tok["uses"] ?? tok["uzycia"])
+                        Name = (string)tok["name"] ?? id,
+                        Category = (string)tok["category"] ?? "other",
+                        Price = tok["price"] != null && tok["price"].Type == JTokenType.Integer ? (int?)tok["price"] : null,
+                        IsUnlimited = (bool?)tok["unlimited"] ?? false,
+                        IsDurable = (bool?)tok["durable"] ?? false,
+                        IconName = (string)tok["icon"] ?? id,
+                        Animation = (string)tok["animation"] ?? "eat_treat",
+                        Description = (string)tok["description"] ?? "",
+                        DailyLimit = (int?)tok["daily_limit"],
+                        Uses = (int?)tok["uses"]
                     };
 
-                    var efektyTok = (tok["effects"] ?? tok["efekty"]) as JObject;
-                    if (efektyTok != null)
+                    var effectsTok = tok["effects"] as JObject;
+                    if (effectsTok != null)
                     {
-                        foreach (var prop in efektyTok.Properties())
+                        foreach (var prop in effectsTok.Properties())
                         {
                             try
                             {
                                 def.Effects[prop.Name] = (double)prop.Value;
-                                // Also alias between English and Polish need names in effects
-                                Need needEnum;
-                                if (NeedNames.TryParseDataKey(prop.Name, out needEnum))
-                                {
-                                    def.Effects[NeedNames.DataKey(needEnum)] = (double)prop.Value;
-                                    def.Effects[NeedNames.PolishDataKey(needEnum)] = (double)prop.Value;
-                                }
                             }
                             catch { }
                         }
@@ -227,10 +160,7 @@ namespace Cuy.Core
                 Path.Combine(baseDir, "..", "..", "assets", "data", "items.json"),
                 Path.Combine(baseDir, "..", "..", "..", "assets", "data", "items.json"),
                 Path.Combine(baseDir, "..", "..", "..", "..", "assets", "data", "items.json"),
-                Path.Combine(Directory.GetCurrentDirectory(), "assets", "data", "items.json"),
-                Path.Combine(baseDir, "swinka", "dane", "items.json"),
-                Path.Combine(baseDir, "..", "swinka", "dane", "items.json"),
-                Path.Combine(baseDir, "..", "..", "swinka", "dane", "items.json")
+                Path.Combine(Directory.GetCurrentDirectory(), "assets", "data", "items.json")
             };
 
             foreach (var path in candidatePaths)
@@ -265,30 +195,9 @@ namespace Cuy.Core
                 }
             }
 
-            // 3. Bezpieczny fallback z podstawowymi danymi
-            return CreateHardcodedFallback();
-        }
-
-        private static ItemCatalog CreateHardcodedFallback()
-        {
-            var list = new List<ItemDefinition>
-            {
-                new ItemDefinition { Id = "siano", Name = "Siano", Category = "jedzenie", Price = 0, IsUnlimited = true, IconName = "siano", Animation = "eat", Effects = new Dictionary<string, double> { { "najedzenie", 10 }, { "zabki", 6 } }, Description = "Podstawa diety. Darmowe, bez limitu." },
-                new ItemDefinition { Id = "granulat", Name = "Granulat", Category = "jedzenie", Price = 5, IconName = "granulat", Animation = "eat_bowl", Effects = new Dictionary<string, double> { { "najedzenie", 20 }, { "witamina_c", 5 } }, Description = "Sycący dodatek z miseczki." },
-                new ItemDefinition { Id = "papryka", Name = "Papryka", Category = "warzywo", Price = 12, IconName = "papryka", Animation = "eat_treat", Effects = new Dictionary<string, double> { { "najedzenie", 8 }, { "witamina_c", 35 }, { "humor", 5 } }, Description = "Najlepsze źródło witaminy C." },
-                new ItemDefinition { Id = "natka", Name = "Natka pietruszki", Category = "warzywo", Price = 8, IconName = "natka", Animation = "eat_treat", Effects = new Dictionary<string, double> { { "najedzenie", 6 }, { "witamina_c", 20 } }, Description = "Dużo witaminy C, mało kalorii." },
-                new ItemDefinition { Id = "jarmuz", Name = "Jarmuż", Category = "warzywo", Price = 10, IconName = "jarmuz", Animation = "eat_big", Effects = new Dictionary<string, double> { { "najedzenie", 10 }, { "witamina_c", 25 }, { "zabki", 3 } }, Description = "Duży liść do szarpania." },
-                new ItemDefinition { Id = "ogorek", Name = "Ogórek", Category = "warzywo", Price = 5, IconName = "ogorek", Animation = "eat_treat", Effects = new Dictionary<string, double> { { "najedzenie", 6 }, { "humor", 4 }, { "witamina_c", 2 } }, Description = "Orzeźwiający, prawie bez witaminy C." },
-                new ItemDefinition { Id = "marchewka", Name = "Marchewka", Category = "smakolyk", Price = 8, IconName = "marchewka", Animation = "eat_treat", DailyLimit = 1, Effects = new Dictionary<string, double> { { "najedzenie", 8 }, { "humor", 10 }, { "witamina_c", 3 } }, Description = "Słodka, więc tylko raz dziennie." },
-                new ItemDefinition { Id = "gryzak", Name = "Gryzak", Category = "gryzak", Price = 20, Uses = 5, IconName = "gryzak", Animation = "chew_stick", Effects = new Dictionary<string, double> { { "zabki", 40 }, { "humor", 5 } }, Description = "Ściera ząbki. Starcza na 5 razy." },
-                new ItemDefinition { Id = "pilka", Name = "Piłeczka", Category = "zabawka", Price = 60, IsDurable = true, IconName = "pilka", Animation = "ball_push", Effects = new Dictionary<string, double> { { "humor", 15 }, { "energia", -5 } }, Description = "Odblokowuje zabawę piłeczką." },
-                new ItemDefinition { Id = "tunel", Name = "Tunel", Category = "zabawka", Price = 150, IsDurable = true, IconName = "tunel", Animation = "tunnel_in", Effects = new Dictionary<string, double> { { "humor", 20 }, { "energia", -8 } }, Description = "Odblokowuje bieganie przez tunel." },
-                new ItemDefinition { Id = "domek", Name = "Domek", Category = "wyposazenie", Price = 250, IsDurable = true, IconName = "domek", Animation = "sleep_house", Effects = new Dictionary<string, double> { { "energia", 10 }, { "humor", 5 } }, Description = "Sen w domku regeneruje energię 1,5x szybciej." },
-                new ItemDefinition { Id = "poidlo", Name = "Poidło", Category = "wyposazenie", Price = 40, IsDurable = true, IconName = "poidlo", Animation = "drink", Effects = new Dictionary<string, double> { { "humor", 2 }, { "najedzenie", 2 } }, Description = "Odblokowuje picie." },
-                new ItemDefinition { Id = "tort", Name = "Tort z selera", Category = "specjalne", Price = null, IconName = "tort", Animation = "party", Effects = new Dictionary<string, double> { { "najedzenie", 15 }, { "humor", 30 }, { "witamina_c", 10 } }, Description = "Tylko na urodziny." }
-            };
-
-            return new ItemCatalog(list, "koniczynki", "koniczynka");
+            // 3. No catalog available: report an error and continue with an empty one.
+            ErrorLogger?.Invoke("ItemCatalog: items.json not found on disk or in embedded resources; using an empty catalog.");
+            return new ItemCatalog(new List<ItemDefinition>());
         }
     }
 }

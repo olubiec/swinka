@@ -62,19 +62,6 @@ namespace Cuy.Core
                 default: throw new ArgumentOutOfRangeException(nameof(stage));
             }
         }
-
-        public static string PolishDataKey(LifeStage stage)
-        {
-            switch (stage)
-            {
-                case LifeStage.Baby: return "maluch";
-                case LifeStage.Junior: return "mlodzik";
-                case LifeStage.Adult: return "dorosla";
-                case LifeStage.Senior: return "senior";
-                case LifeStage.Legend: return "legenda";
-                default: throw new ArgumentOutOfRangeException(nameof(stage));
-            }
-        }
     }
 
     /// <summary>Wiek świnki w jej "świnkowym" czasie (1 dzień realny = 21 dni świnki).</summary>

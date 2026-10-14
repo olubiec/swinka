@@ -12,8 +12,8 @@ namespace Cuy
 {
     /// <summary>
     /// Dymek stanu świnki w stylu retro pixel art:
-    /// - Bez paska tytułu i ramki Windows, przezroczyste tło, ramka i kolory jak w domek/style.css
-    /// - Czcionka Pixelify Sans z domek/fonts, skalowanie nearest neighbor
+    /// - Bez paska tytułu i ramki Windows, przezroczyste tło, ramka i kolory jak w web/home/style.css
+    /// - Czcionka Pixelify Sans z web/home/fonts, skalowanie nearest neighbor
     /// - "Ogonek" dymka wskazujący świnkę
     /// - Imię świnki, 6 ikon potrzeb z paskami 0-100 (zielony >60, żółty 30-60, czerwony <30)
     /// - 3 małe przyciski-ikony: Nakarm (siano), Pogłaszcz (purr_pet, +3 humoru), Domek (aktywny po C1)
@@ -33,7 +33,7 @@ namespace Cuy
         private const int WS_EX_TOOLWINDOW = 0x00000080;
         private const int WS_EX_TOPMOST = 0x00000008;
 
-        // Paleta z domek/style.css
+        // Paleta z web/home/style.css
         private static readonly Color ColTransparentKey = Color.FromArgb(255, 0, 255); // Magenta
         private static readonly Color ColBubbleBg = Color.FromArgb(248, 237, 221);     // --c-cream (#f8eddd)
         private static readonly Color ColContourDark = Color.FromArgb(43, 23, 18);     // --c-contour-dark (#2b1712)
@@ -132,10 +132,6 @@ namespace Cuy
                     string[] searchPaths = new string[]
                     {
                         Path.Combine(baseDir, "web", "home", "fonts", "PixelifySans-Bold.ttf"),
-                        Path.Combine(baseDir, "..", "domek", "fonts", "PixelifySans-Bold.ttf"),
-                        Path.Combine(baseDir, "..", "..", "domek", "fonts", "PixelifySans-Bold.ttf"),
-                        Path.Combine(baseDir, "..", "..", "..", "domek", "fonts", "PixelifySans-Bold.ttf"),
-                        Path.Combine(baseDir, "..", "..", "..", "..", "domek", "fonts", "PixelifySans-Bold.ttf"),
                         Path.Combine(Directory.GetCurrentDirectory(), "web", "home", "fonts", "PixelifySans-Bold.ttf")
                     };
 
@@ -390,7 +386,7 @@ namespace Cuy
             string petName = pet?.State?.Name ?? "Świnka";
 
             // Ikonka główki świnki w rogu
-            Bitmap iconHead = PetIcons.GetIconBitmap("glowa_swinki");
+            Bitmap iconHead = PetIcons.GetIconBitmap("pig_head");
             if (iconHead != null)
             {
                 g.DrawImage(iconHead, new Rectangle(8, 6, 16, 16), new Rectangle(0, 0, 16, 16), GraphicsUnit.Pixel);
@@ -415,16 +411,16 @@ namespace Cuy
 
             // 6 potrzeb w siatce 2 kolumny x 3 wiersze
             // Rząd 1: Najedzenie (L) | Witamina C (P)
-            DrawNeedItem(g, 8, 25, "potrzeba_najedzenie", satiety);
-            DrawNeedItem(g, 88, 25, "potrzeba_witamina_c", vitC);
+            DrawNeedItem(g, 8, 25, "need_fullness", satiety);
+            DrawNeedItem(g, 88, 25, "need_vitamin_c", vitC);
 
             // Rząd 2: Energia (L) | Humor (P)
-            DrawNeedItem(g, 8, 43, "potrzeba_energia", energy);
-            DrawNeedItem(g, 88, 43, "potrzeba_humor", mood);
+            DrawNeedItem(g, 8, 43, "need_energy", energy);
+            DrawNeedItem(g, 88, 43, "need_mood", mood);
 
             // Rząd 3: Czystość (L) | Ząbki (P)
-            DrawNeedItem(g, 8, 61, "potrzeba_czystosc", clean);
-            DrawNeedItem(g, 88, 61, "potrzeba_zabki", teeth);
+            DrawNeedItem(g, 8, 61, "need_cleanliness", clean);
+            DrawNeedItem(g, 88, 61, "need_teeth", teeth);
         }
 
         private void DrawNeedItem(Graphics g, int x, int y, string iconName, double value)
@@ -491,16 +487,16 @@ namespace Cuy
         private void DrawButtons(Graphics g)
         {
             // Przycisk 1: Nakarm (ikona: siano)
-            DrawPixelButton(g, _rcBtnFeed, "siano", 0, isEnabled: true, baseColor: ColBtnFeed);
+            DrawPixelButton(g, _rcBtnFeed, "hay", 0, isEnabled: true, baseColor: ColBtnFeed);
 
-            // Przycisk 2: Pogłaszcz (ikona: potrzeba_humor / serduszko)
-            DrawPixelButton(g, _rcBtnPet, "potrzeba_humor", 1, isEnabled: true, baseColor: ColBtnPet);
+            // Przycisk 2: Pogłaszcz (ikona: need_mood / serduszko)
+            DrawPixelButton(g, _rcBtnPet, "need_mood", 1, isEnabled: true, baseColor: ColBtnPet);
 
-            // Przycisk 3: Zawołaj (ikona: glowa_swinki)
-            DrawPixelButton(g, _rcBtnCall, "glowa_swinki", 2, isEnabled: true, baseColor: ColBtnCall);
+            // Przycisk 3: Zawołaj (ikona: pig_head)
+            DrawPixelButton(g, _rcBtnCall, "pig_head", 2, isEnabled: true, baseColor: ColBtnCall);
 
             // Przycisk 4: Domek (ikona: domek)
-            DrawPixelButton(g, _rcBtnDomek, "domek", 3, isEnabled: true, baseColor: ColBtnDomek);
+            DrawPixelButton(g, _rcBtnDomek, "house", 3, isEnabled: true, baseColor: ColBtnDomek);
         }
 
         private void DrawPixelButton(Graphics g, Rectangle r, string iconName, int btnIndex, bool isEnabled, Color baseColor)
@@ -713,7 +709,7 @@ namespace Cuy
             var controller = BrainController.Instance;
             if (controller != null)
             {
-                controller.Feed("siano");
+                controller.Feed("hay");
             }
             else if (_petForm != null)
             {

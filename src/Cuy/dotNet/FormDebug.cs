@@ -109,18 +109,6 @@ namespace Cuy
 			if(checkBox4.Checked)	item.EnsureVisible();
         }
 		
-		private void convertoToDOTToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			ProcessStartInfo startInfo = new ProcessStartInfo("notepad");
-			startInfo.UseShellExecute = false;
-
-			Process notepad = Process.Start(startInfo);
-			notepad.WaitForInputIdle();
-
-			IntPtr child = FindWindowEx(notepad.MainWindowHandle, new IntPtr(0), null, null);
-			SendMessage(child, 0x000c, 0, XmlToDot.ProcessXml(Animations.Xml.AnimationXML));
-		}
-
 		private void openXMLToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ProcessStartInfo startInfo = new ProcessStartInfo("notepad");

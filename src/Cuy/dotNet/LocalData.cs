@@ -229,8 +229,7 @@ namespace Cuy
 		/// <returns>the number of pets to start automatically</returns>
 		public int GetAutoStartPets()
         {
-            int.TryParse(AppSettings[SettingName.AutostartPets].Value, out int ret);
-            return Math.Max(1, ret);
+            return 1;
         }
 
 		/// <summary>
@@ -378,14 +377,6 @@ namespace Cuy
             if (File.Exists(localFile))
             {
                 string sXML = File.ReadAllText(localFile, System.Text.Encoding.UTF8);
-                writer.Write(sXML);
-                SetXml(sXML, "");
-                return sXML;
-            }
-            else if (File.Exists(Application.StartupPath + "\\installpet.xml"))
-            {
-                string sXML = System.Text.Encoding.Default.GetString(File.ReadAllBytes(Application.StartupPath + "\\installpet.xml"));
-                File.Delete(Application.StartupPath + "\\installpet.xml");
                 writer.Write(sXML);
                 SetXml(sXML, "");
                 return sXML;

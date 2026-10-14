@@ -13,9 +13,9 @@ namespace Cuy
     public sealed class StartUp : IDisposable
     {
         /// <summary>
-        /// Maximal sheeps (too much sheeps will cover too much the screen and would not be nice to see).
+        /// Maximal pets (too much pets will cover too much the screen and would not be nice to see).
         /// </summary>
-        public const int MAX_SHEEPS = 16;
+        public const int MaxPets = 1;
 
         /// <summary>
         /// DEBUG TYPE. If you press "SHIFT" by starting the application, a debug Window will appear.
@@ -37,14 +37,14 @@ namespace Cuy
         }
 
         /// <summary>
-        /// A timer to allow some times to the sheeps to die, before the application will close definitively.
+        /// A timer to allow some times to the pets to die, before the application will close definitively.
         /// </summary>
         static public System.Windows.Forms.Timer timer1 = new System.Windows.Forms.Timer();
 
         /// <summary>
         /// Each sheep is in a different form.
         /// </summary>
-        readonly FormPet[] sheeps = new FormPet[MAX_SHEEPS];
+        readonly FormPet[] pets = new FormPet[MaxPets];
 
         /// <summary>
         /// Debug window, used only if SHIFT was pressed by starting the application.
@@ -52,9 +52,9 @@ namespace Cuy
         static FormDebug debug = null;
 
         /// <summary>
-        /// Number of currently active sheeps.
+        /// Number of currently active pets.
         /// </summary>
-        int iSheeps = 0;
+        int petCount = 0;
 
         /// <summary>
         /// The XML file where all animations are defined.
@@ -169,21 +169,21 @@ namespace Cuy
             /// </summary>
         public void AddSheep()
         {
-            if (iSheeps < MAX_SHEEPS)
+            if (petCount < MaxPets)
             {
                 var newSheep = new FormPet(animations, xml);
                 foreach (var sprite in xml.sprites)
                 {
                     newSheep.AddImage(sprite);
                 }
-                sheeps[iSheeps] = newSheep;
-                sheeps[iSheeps].Show(xml.spriteWidth, xml.spriteHeight);
+                pets[petCount] = newSheep;
+                pets[petCount].Show(xml.spriteWidth, xml.spriteHeight);
                 AddDebugInfo(DEBUG_TYPE.info, "new pet...");
                 AddDebugInfo(DEBUG_TYPE.info, xml.sprites.Count.ToString() + " frames added");
                 
                     // Start the animation of the pet
-                sheeps[iSheeps].Play(true);
-                iSheeps++;
+                pets[petCount].Play(true);
+                petCount++;
             }
             else
             {
@@ -192,27 +192,27 @@ namespace Cuy
         }
 
             /// <summary>
-            /// Close all sheeps on the desktop and eventually closes the application.
+            /// Close all pets on the desktop and eventually closes the application.
             /// </summary>
-            /// <param name="exit">If true, the application will close after 1 second (leaving time to the sheeps to die).</param>
-        public void KillSheeps(bool exit)
+            /// <param name="exit">If true, the application will close after 1 second (leaving time to the pets to die).</param>
+        public void KillPets(bool exit)
         {
-            AddDebugInfo(DEBUG_TYPE.info, "Killing all sheeps");
+            AddDebugInfo(DEBUG_TYPE.info, "Killing all pets");
             timer1.Tag = "0";
             pi.Dispose();
 
                 // Leave open application to show some kill animations. 
                 // Only if there is a pet on the desktop.
-            if (iSheeps > 0)
+            if (petCount > 0)
             {
                 Random rand = new Random();
-                for (int i = 0; i < iSheeps; i++)
+                for (int i = 0; i < petCount; i++)
                 {
                     Thread.Sleep(rand.Next(100, 200));
-                    sheeps[i].Kill();
+                    pets[i].Kill();
                     Application.DoEvents();
                 }
-                iSheeps = 0;
+                petCount = 0;
 
                 if (exit)
                 {
@@ -233,11 +233,11 @@ namespace Cuy
         /// </summary>
         public void TopMostSheeps()
         {
-            AddDebugInfo(DEBUG_TYPE.info, "Top most all sheeps");
+            AddDebugInfo(DEBUG_TYPE.info, "Top most all pets");
 
-            for (int i = 0; i < iSheeps; i++)
+            for (int i = 0; i < petCount; i++)
             {
-                sheeps[i].TopMost = true;
+                pets[i].TopMost = true;
             }
         }
 
@@ -251,13 +251,13 @@ namespace Cuy
 
             AddDebugInfo(DEBUG_TYPE.info, "Kill one sheep");
             
-            for (int i = 0; i < iSheeps; i++)
+            for (int i = 0; i < petCount; i++)
             {
-                if(sheeps[i] == sheep)
+                if(pets[i] == sheep)
                 {
-                    sheeps[i].Kill();
-                    for (int j = i; j < iSheeps - 1; j++) sheeps[j] = sheeps[j + 1];
-                    iSheeps--;
+                    pets[i].Kill();
+                    for (int j = i; j < petCount - 1; j++) pets[j] = pets[j + 1];
+                    petCount--;
                     Application.DoEvents();
                     bSheepRemoved = true;
                     break;
@@ -266,8 +266,8 @@ namespace Cuy
 
             /*
              * This will close application if all Sheeps are removed. But Maybe the user want see the try icon to add a sheep later.
-             * Maybe in future you can choose 0 to 10 sheeps at startup, so this is commented out for the moment.
-            if (iSheeps <= 0)
+             * Maybe in future you can choose 0 to 10 pets at startup, so this is commented out for the moment.
+            if (petCount <= 0)
             {
                 timer1.Tag = "0";
                 pi.Dispose();
@@ -290,9 +290,9 @@ namespace Cuy
                 // "A" when application starts. Add a sheep.
             if (timer1.Tag.ToString() == "A")
             {
-				if (iSheeps < Program.MyData.GetAutoStartPets() && iSheeps < MAX_SHEEPS)
+				if (petCount < Program.MyData.GetAutoStartPets() && petCount < MaxPets)
 				{
-					if (iSheeps == 0)
+					if (petCount == 0)
 					{
 						AddDebugInfo(DEBUG_TYPE.info, "init application...");
 						xml.LoadAnimations(animations);
@@ -325,24 +325,24 @@ namespace Cuy
         {
             AddDebugInfo(DEBUG_TYPE.info, "load new XML string");
 
-            if (sheeps[0].InvokeRequired)
+            if (pets[0].InvokeRequired)
             {
-                sheeps[0].BeginInvoke(new MethodInvoker(delegate{
+                pets[0].BeginInvoke(new MethodInvoker(delegate{
                     LoadNewXMLFromString(strXml);
                 }));
                 return;
             }
 
-            // Close all sheeps
-            for (int i = 0; i < iSheeps; i++)
+            // Close all pets
+            for (int i = 0; i < petCount; i++)
             {
-                sheeps[i].Kill();
+                pets[i].Kill();
                 /*
-                sheeps[i].Close();
-                sheeps[i].Dispose();
+                pets[i].Close();
+                pets[i].Dispose();
                 */
             }
-            iSheeps = 0;
+            petCount = 0;
 
                 // reload XML and Animations
             xml = new Xml(Program.MyData.GetScale());
@@ -408,14 +408,14 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Calling this function, all sheeps will execute the same animation (if the sync-word is present in the XML).
+        /// Calling this function, all pets will execute the same animation (if the sync-word is present in the XML).
         /// </summary>
         public void SyncSheeps()
         {
-            AddDebugInfo(DEBUG_TYPE.info, "synchronize sheeps");
-            for (int i = 0; i < iSheeps; i++)
+            AddDebugInfo(DEBUG_TYPE.info, "synchronize pets");
+            for (int i = 0; i < petCount; i++)
             {
-                sheeps[i].Sync();
+                pets[i].Sync();
             }
         }
     }

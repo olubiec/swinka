@@ -1,5 +1,5 @@
 /**
- * minigry-api.js — Wspólny szkielet i API minigier w Phaser 3 dla Domku Świnki.
+ * minigames-api.js — Wspólny szkielet i API minigier w Phaser 3 dla Domku Świnki.
  * Zgodny ze specyfikacją Etapu D (prompt D1) w PLAN.md:
  * - Wspólne API: start(config) -> wynik { punkty, koniczynki, rekord }
  * - Postacią jest świnka z arkusza klatek (run, popcorn, eat)
@@ -17,27 +17,25 @@
     /**
      * Wczytuje arkusz klatek świnki w scenie Phaser
      * @param {Phaser.Scene} scene 
-     * @param {string} [stageKey='dorosla']
+     * @param {string} [stageKey='adult']
      * @param {string} [basePath]
      */
-    static preload(scene, stageKey = 'dorosla', basePath = null) {
+    static preload(scene, stageKey = 'adult', basePath = null) {
       const isWebView = window.chrome && window.chrome.webview;
       const defaultBase = isWebView
         ? 'https://cuy.assets/sprites/'
-        : (location.pathname.includes('/minigames') || location.pathname.includes('/minigry')
+        : (location.pathname.includes('/minigames')
             ? '../../../assets/sprites/'
             : '../../assets/sprites/');
       const p = basePath || defaultBase;
       const files = {
-        dorosla: 'adult/spritesheet.png',
-        adult: 'adult/spritesheet.png',
-        maluch: 'baby/spritesheet.png',
         baby: 'baby/spritesheet.png',
+        junior: 'baby/spritesheet.png', // no junior sprites yet
+        adult: 'adult/spritesheet.png',
         senior: 'senior/spritesheet.png',
-        legenda: 'legend/spritesheet.png',
         legend: 'legend/spritesheet.png'
       };
-      const file = files[stageKey] || files.dorosla;
+      const file = files[stageKey] || files.adult;
 
       scene.load.spritesheet('swinka_sheet', p + file, {
         frameWidth: 64,
@@ -215,42 +213,14 @@
       const state = root.bridge ? root.bridge.getState() : null;
       const clovers = state?.clovers ?? 0;
 
-      // Definicje wszystkich planowanych gier (D1..D5)
+      // No games yet: a single disabled placeholder tile
       const allDisplayGames = [
         {
-          id: 'gra-przyklad',
-          name: 'Trening Świnki',
-          icon: '🏃',
-          desc: 'Podskakuj, biegaj i zbieraj sianko! Pusta gra-szablon z pełną mechaniką.',
-          available: this.games.has('gra-przyklad')
-        },
-        {
-          id: 'deszcz',
-          name: 'Deszcz Warzyw',
-          icon: '🥦',
-          desc: 'Łap spadające smakołyki, unikaj szkodliwej cebuli! (Etap D2)',
-          available: this.games.has('deszcz')
-        },
-        {
-          id: 'popcorn',
-          name: 'Popcorn Jump',
-          icon: '🍿',
-          desc: 'Skacz w górę po belach siana niczym w Doodle Jump! (Etap D3)',
-          available: this.games.has('popcorn')
-        },
-        {
-          id: 'labirynt',
-          name: 'Labirynt z Siana',
-          icon: '🌾',
-          desc: 'Znajdź drogę przez losowy labirynt do soczystej papryki. (Etap D4)',
-          available: this.games.has('labirynt')
-        },
-        {
-          id: 'memory',
-          name: 'Memory Warzyw',
-          icon: '🃏',
-          desc: 'Spokojna gra w dopasowywanie par kart warzywnych. (Etap D5)',
-          available: this.games.has('memory')
+          id: 'more-games-soon',
+          name: 'More games soon',
+          icon: '🎮',
+          desc: 'New minigames are on the way.',
+          available: false
         }
       ];
 
@@ -284,7 +254,7 @@
             <div>
               ${isReady
                 ? `<button class="minigry-btn-play" data-start-game="${g.id}">Zagraj</button>`
-                : `<button class="minigry-btn-locked" disabled>Wkrótce</button>`
+                : `<button class="minigry-btn-locked" disabled>More games soon</button>`
               }
             </div>
           </div>
@@ -406,7 +376,7 @@
           container: canvasWrapper,
           width: 360,
           height: 290,
-          stageKey: state?.stageKey || 'dorosla',
+          stageKey: state?.stageKey || 'adult',
           
           // Aktualizacja punktów w HUD w czasie rzeczywistym
           updateScore: (newScore) => {
