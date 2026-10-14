@@ -46,6 +46,17 @@ namespace Cuy
         /// </summary>
         readonly FormPet[] pets = new FormPet[MaxPets];
 
+        /// <summary>Currently active pets (for diagnostics).</summary>
+        internal FormPet[] GetActivePets()
+        {
+            var list = new System.Collections.Generic.List<FormPet>();
+            for (int i = 0; i < petCount && i < pets.Length; i++)
+            {
+                if (pets[i] != null) list.Add(pets[i]);
+            }
+            return list.ToArray();
+        }
+
         /// <summary>
         /// Debug window, used only if SHIFT was pressed by starting the application.
         /// </summary>

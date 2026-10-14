@@ -182,7 +182,7 @@ namespace Cuy
                 {
                     if (File.Exists(p)) return Path.GetFullPath(p);
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] ItemCatalogLoader.FindFile: " + ex.Message); }
             }
 
             return null;

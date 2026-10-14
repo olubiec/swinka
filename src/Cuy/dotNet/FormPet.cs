@@ -239,7 +239,7 @@ namespace Cuy
                 {
                     RegisterHotKey(this.Handle, HOTKEY_ID_F9, 0, (uint)Keys.F9);
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] FormPet.OnHandleCreated: " + ex.Message); }
             }
 #endif
         }
@@ -253,7 +253,7 @@ namespace Cuy
                 {
                     UnregisterHotKey(this.Handle, HOTKEY_ID_F9);
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] FormPet.OnFormClosing: " + ex.Message); }
             }
 #endif
             if (_brain != null)
@@ -299,7 +299,7 @@ namespace Cuy
             if (this.IsDisposed) return;
             if (this.InvokeRequired)
             {
-                try { this.BeginInvoke(new Action<string>(OnAnimationRequested), animName); } catch { }
+                try { this.BeginInvoke(new Action<string>(OnAnimationRequested), animName); } catch (Exception ex) { BrainController.Log("[WARN] FormPet.OnAnimationRequested: " + ex.Message); }
                 return;
             }
 
@@ -314,7 +314,7 @@ namespace Cuy
             if (this.IsDisposed) return;
             if (this.InvokeRequired)
             {
-                try { this.BeginInvoke(new Action<string>(PlayAnimationByName), name); } catch { }
+                try { this.BeginInvoke(new Action<string>(PlayAnimationByName), name); } catch (Exception ex) { BrainController.Log("[WARN] FormPet.PlayAnimationByName: " + ex.Message); }
                 return;
             }
 
@@ -403,7 +403,7 @@ namespace Cuy
             if (this.IsDisposed) return;
             if (this.InvokeRequired)
             {
-                try { this.BeginInvoke(new Action<int>(ShowCustomSprite), tileIndex); } catch { }
+                try { this.BeginInvoke(new Action<int>(ShowCustomSprite), tileIndex); } catch (Exception ex) { BrainController.Log("[WARN] FormPet.ShowCustomSprite: " + ex.Message); }
                 return;
             }
             pictureBox1.Image = GetSprite(tileIndex);
@@ -465,7 +465,7 @@ namespace Cuy
             if (this.IsDisposed) return;
             if (this.InvokeRequired)
             {
-                try { this.BeginInvoke(new Action(ShowStatusBubble)); } catch { }
+                try { this.BeginInvoke(new Action(ShowStatusBubble)); } catch (Exception ex) { BrainController.Log("[WARN] FormPet.ShowStatusBubble: " + ex.Message); }
                 return;
             }
 
@@ -823,6 +823,83 @@ namespace Cuy
             /// Will calculate how much and where a pet should be positioned in the next step.<br />
             /// This function is called from <see cref="Timer1_Tick(object, EventArgs)"/>.
             /// </summary>
+        private const int VisibilityCheckIntervalMs = 2000;
+        private const int LowOpacityLimitMs = 5000;
+        private int _lastVisibilityCheckTick = Environment.TickCount;
+        private int _lowOpacitySinceTick = 0;
+        private int _forcedVisibleAnimId = int.MinValue;
+
+        private static bool IsHidingAnimation(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            return name.IndexOf("peek", StringComparison.OrdinalIgnoreCase) >= 0
+                || name.IndexOf("house", StringComparison.OrdinalIgnoreCase) >= 0
+                || name.IndexOf("tunnel", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        /// <summary>
+        /// Safety net, runs from the animation step at most every 2 s: brings the pet back when it
+        /// is outside every screen or stuck (almost) transparent in an animation that should be visible.
+        /// </summary>
+        private void EnsurePetVisible()
+        {
+            int now = Environment.TickCount;
+            if (now - _lastVisibilityCheckTick < VisibilityCheckIntervalMs) return;
+            _lastVisibilityCheckTick = now;
+
+            if (IsDragging || IsTossing) return;
+
+            bool onScreen = false;
+            foreach (Screen screen in Screen.AllScreens)
+            {
+                if (screen.WorkingArea.IntersectsWith(Bounds)) { onScreen = true; break; }
+            }
+            if (!onScreen)
+            {
+                Rectangle wa = Screen.PrimaryScreen.WorkingArea;
+                int x = Math.Max(wa.Left, Math.Min(Left, wa.Right - Width));
+                PositionX = x;
+                PositionY = wa.Bottom - Height - OffsetY;
+                Location = new Point(x, wa.Bottom - Height);
+                ResetMotion();
+                Opacity = 1.0;
+                _forcedVisibleAnimId = CurrentAnimation.ID;
+                BrainController.Log("[WARN] pet off-screen, restored");
+            }
+
+            if (Opacity >= 0.05 || IsHidingAnimation(CurrentAnimation.Name))
+            {
+                _lowOpacitySinceTick = 0;
+            }
+            else if (_lowOpacitySinceTick == 0)
+            {
+                _lowOpacitySinceTick = now == 0 ? 1 : now;
+            }
+            else if (now - _lowOpacitySinceTick > LowOpacityLimitMs)
+            {
+                Opacity = 1.0;
+                _forcedVisibleAnimId = CurrentAnimation.ID;
+                _lowOpacitySinceTick = 0;
+                BrainController.Log("[WARN] pet opacity stuck near 0 in animation '" + CurrentAnimation.Name + "', set to 1");
+            }
+        }
+
+#if DEBUG
+        internal string DescribeForDiagnostics()
+        {
+            var frames = CurrentAnimation.Sequence.Frames;
+            int frameIndex = -1;
+            if (frames != null && frames.Count > 0)
+            {
+                frameIndex = AnimationStep < frames.Count
+                    ? Math.Max(0, AnimationStep)
+                    : ((AnimationStep - frames.Count + CurrentAnimation.Sequence.RepeatFrom) % Math.Max(1, frames.Count - CurrentAnimation.Sequence.RepeatFrom)) + CurrentAnimation.Sequence.RepeatFrom;
+            }
+            return string.Format("Visible={0} Opacity={1:0.##} Bounds={2} TopMost={3} Animation={4}#{5} FrameIndex={6} FrameImage={7}",
+                Visible, Opacity, Bounds, TopMost, CurrentAnimationName, CurrentAnimation.ID, frameIndex, pictureBox1.Image != null);
+        }
+#endif
+
         private void NextStep()
         {
             if (_brain == null) _brain = BrainController.Instance;
@@ -846,7 +923,11 @@ namespace Cuy
             if(!IsTossing)
                 timer1.Interval = CurrentAnimation.Start.Interval.Value + ((CurrentAnimation.End.Interval.Value - CurrentAnimation.Start.Interval.Value) * AnimationStep / CurrentAnimation.Sequence.TotalSteps);
             int movementDuration = timer1.Interval;
-            Opacity = CurrentAnimation.Start.Opacity + (CurrentAnimation.End.Opacity - CurrentAnimation.Start.Opacity) * AnimationStep / CurrentAnimation.Sequence.TotalSteps;
+            if (_forcedVisibleAnimId != CurrentAnimation.ID)
+            {
+                Opacity = CurrentAnimation.Start.Opacity + (CurrentAnimation.End.Opacity - CurrentAnimation.Start.Opacity) * AnimationStep / CurrentAnimation.Sequence.TotalSteps;
+            }
+            EnsurePetVisible();
 			OffsetY = CurrentAnimation.Start.OffsetY + (double)((CurrentAnimation.End.OffsetY - CurrentAnimation.Start.OffsetY) * AnimationStep / CurrentAnimation.Sequence.TotalSteps);
 
                 // If dragging is enabled, move the pet to the mouse position.

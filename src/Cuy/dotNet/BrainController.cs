@@ -546,6 +546,14 @@ namespace Cuy
 
             Log(string.Format("[Brain] Nowa czynność: {0} ({1}), czas: {2:0.#}s, dystans: {3}px, zysk: {4:0.00}",
                 action.ActionId, action.AnimationName, action.Duration.TotalSeconds, action.MoveDistancePx, action.Score));
+#if DEBUG
+            lock (_recentDecisions)
+            {
+                _recentDecisions.Enqueue(string.Format("{0:HH:mm:ss} {1} ({2}) score {3:0.00}",
+                    DateTime.Now, action.ActionId, action.AnimationName, action.Score));
+                while (_recentDecisions.Count > 20) _recentDecisions.Dequeue();
+            }
+#endif
         }
 
         public bool IsCurrentlySleeping()
@@ -623,8 +631,27 @@ namespace Cuy
         }
 
         private static readonly object _logLock = new object();
+        private static int _errorCount;
+
+        /// <summary>Number of [WARN]/[ERROR]/[FATAL] lines logged since start.</summary>
+        public static int ExceptionCount => _errorCount;
+
+#if DEBUG
+        private static readonly Queue<string> _recentDecisions = new Queue<string>();
+
+        /// <summary>Last 20 Brain decisions, oldest first.</summary>
+        public static string[] RecentDecisions
+        {
+            get { lock (_recentDecisions) { return _recentDecisions.ToArray(); } }
+        }
+#endif
+
         public static void Log(string message)
         {
+            if (message != null && (message.StartsWith("[WARN]") || message.StartsWith("[ERROR]") || message.StartsWith("[FATAL]")))
+            {
+                System.Threading.Interlocked.Increment(ref _errorCount);
+            }
             try
             {
                 string logsDir = Path.Combine(
@@ -650,7 +677,7 @@ namespace Cuy
                     File.AppendAllText(logFile, line);
                 }
             }
-            catch { }
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine("[WARN] BrainController.Log: " + ex.Message); }
         }
 
         private static void RotateLogs(string logsDir, string logFile)
@@ -666,7 +693,7 @@ namespace Cuy
                 if (File.Exists(log1)) File.Move(log1, log2);
                 if (File.Exists(logFile)) File.Move(logFile, log1);
             }
-            catch { }
+            catch (Exception ex) { Log("[WARN] BrainController.RotateLogs: " + ex.Message); }
         }
     }
 

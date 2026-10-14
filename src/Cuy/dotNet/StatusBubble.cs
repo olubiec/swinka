@@ -145,7 +145,7 @@ namespace Cuy
                         }
                     }
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] StatusBubble.InitFonts: " + ex.Message); }
 
                 if (_pixelFamily == null)
                 {

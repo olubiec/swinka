@@ -103,51 +103,74 @@ namespace Cuy
                 MyData.SetXml(MyData.LoadXML(), "");
             }
 
-            double initialSpeed = ParseSpeedMultiplier(args);
-            BrainController.Initialize(initialSpeed);
-            ItemCatalog.ErrorLogger = message => BrainController.Log("[ERROR] " + message);
-            Application.ApplicationExit += (s, e) => { BrainController.Instance?.Close(); };
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += (s, e) => BrainController.Log("[ERROR] " + e.Exception);
+            AppDomain.CurrentDomain.UnhandledException += (s, e) => BrainController.Log("[ERROR] " + e.ExceptionObject);
 
-            BrainController.Log("[Program] Args: " + (args != null ? string.Join(" ", args) : "null"));
-            bool autoOpenHome = false;
-            foreach (string s in args)
+            try
             {
-                if (string.Equals(s, "--home", StringComparison.OrdinalIgnoreCase))
+                double initialSpeed = ParseSpeedMultiplier(args);
+                BrainController.Initialize(initialSpeed);
+                ItemCatalog.ErrorLogger = message => BrainController.Log("[ERROR] " + message);
+                Application.ApplicationExit += (s, e) => { BrainController.Instance?.Close(); };
+
+                BrainController.Log("[Program] Args: " + (args != null ? string.Join(" ", args) : "null"));
+                bool autoOpenHome = false;
+                foreach (string s in args)
                 {
-                    autoOpenHome = true;
+                    if (string.Equals(s, "--home", StringComparison.OrdinalIgnoreCase))
+                    {
+                        autoOpenHome = true;
+                    }
+                }
+
+                // Show the system tray icon.
+                using (ProcessIcon pi = new ProcessIcon())
+                {
+                    pi.Display();
+
+                    Mainthread = new StartUp(pi);
+
+                    if (autoOpenHome)
+                    {
+                        try
+                        {
+                            BrainController.Log("[Program] Wywołuję HomeWindow.ShowHome()...");
+                            HomeWindow.ShowHome();
+                            BrainController.Log("[Program] HomeWindow.ShowHome() wykonano.");
+                        }
+                        catch (Exception ex)
+                        {
+                            BrainController.Log("[Program] BŁĄD HomeWindow: " + ex.ToString());
+                        }
+                    }
+
+#if DEBUG
+                    foreach (string s in args)
+                    {
+                        if (string.Equals(s, "--diag", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var diagTimer = new System.Windows.Forms.Timer { Interval = 10000 };
+                            diagTimer.Tick += (sender, e) => { diagTimer.Stop(); PetDiagnostics.Dump(); };
+                            diagTimer.Start();
+                        }
+                    }
+#endif
+
+                    // Make sure the application runs!
+                    Application.Run();
                 }
             }
-
-            // Show the system tray icon.
-            using (ProcessIcon pi = new ProcessIcon())
+            catch (Exception ex)
             {
-                pi.Display();
-
-                Mainthread = new StartUp(pi);
-
-                if (autoOpenHome)
-                {
-                    try
-                    {
-                        BrainController.Log("[Program] Wywołuję HomeWindow.ShowHome()...");
-                        HomeWindow.ShowHome();
-                        BrainController.Log("[Program] HomeWindow.ShowHome() wykonano.");
-                    }
-                    catch (Exception ex)
-                    {
-                        BrainController.Log("[Program] BŁĄD HomeWindow: " + ex.ToString());
-                    }
-                }
-
-                // Make sure the application runs!
-                Application.Run();
+                BrainController.Log("[FATAL] " + ex);
             }
 
             try
             {
                 mutex.ReleaseMutex();
             }
-            catch { }
+            catch (Exception ex) { BrainController.Log("[WARN] Program.Main: " + ex.Message); }
         }
 
         public static void RestartApp()

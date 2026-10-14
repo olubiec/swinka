@@ -280,6 +280,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="dotNet\FoodManager.cs" />
+    <Compile Include="dotNet\Diagnostics.cs" />
     <EmbeddedResource Include="dotNet\FormPet.resx">
       <DependentUpon>FormPet.cs</DependentUpon>
     </EmbeddedResource>

@@ -82,6 +82,10 @@ namespace Cuy
                 }
             };
             menu.Items.Add(speedItem);
+
+            ToolStripMenuItem diagItem = new ToolStripMenuItem("Diagnostics");
+            diagItem.Click += (s, e) => PetDiagnostics.Dump();
+            menu.Items.Add(diagItem);
 #endif
 
             menu.Items.Add(new ToolStripSeparator());
@@ -160,7 +164,7 @@ namespace Cuy
             {
                 BrainController.Instance?.Close();
             }
-            catch { }
+            catch (Exception ex) { BrainController.Log("[WARN] ContextMenus.Exit_Click: " + ex.Message); }
             Program.Mainthread.KillPets(true);
         }
 

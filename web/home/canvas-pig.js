@@ -99,13 +99,16 @@
       const onDone = () => {
         pending--;
         if (pending <= 0) {
-          this.isLoaded = true;
           this.showBubble('Jestem gotowa!', 2000);
         }
       };
       const loadImage = (src) => {
         const img = new Image();
-        img.onload = onDone;
+        img.onload = () => {
+          // The pet is drawn as soon as any sheet is usable; no need to wait for the rest.
+          this.isLoaded = true;
+          onDone();
+        };
         img.onerror = () => {
           console.error('[canvas-pig] Failed to load image: ' + src);
           onDone();
@@ -229,8 +232,13 @@
 
     updateState(state) {
       if (!state) return;
-      if (state.stageKey && this.sheets[state.stageKey]) {
-        this.stageKey = state.stageKey;
+      if (state.stageKey) {
+        if (!this.sheets[state.stageKey]) {
+          console.error('[canvas-pig] No sprite sheet for stage "' + state.stageKey + '", using baby');
+          this.stageKey = 'baby';
+        } else {
+          this.stageKey = state.stageKey;
+        }
       }
       if (typeof state.poops === 'number') {
         this.poopCount = state.poops;
@@ -447,7 +455,7 @@
     }
 
     drawPoops(ctx) {
-      if (this.poopCount <= 0 || !this.iconsImg) return;
+      if (this.poopCount <= 0 || !this.iconsImg || !this.iconsImg.naturalWidth) return;
       // Rysuj małe bobki z ikony bobek (#10) na podłodze
       const count = Math.min(8, this.poopCount);
       const startX = this.pigX - 35;
@@ -460,9 +468,20 @@
       }
     }
 
+    // Sheet for the current stage; falls back to baby, then to any sheet that loaded.
+    usableSheet() {
+      const ok = (img) => img && img.complete && img.naturalWidth > 0;
+      if (ok(this.sheets[this.stageKey])) return this.sheets[this.stageKey];
+      if (ok(this.sheets.baby)) return this.sheets.baby;
+      for (const key of Object.keys(this.sheets)) {
+        if (ok(this.sheets[key])) return this.sheets[key];
+      }
+      return null;
+    }
+
     drawPig(ctx) {
-      const sheet = this.sheets[this.stageKey] || this.sheets.adult;
-      if (!sheet || !this.isLoaded) {
+      const sheet = this.usableSheet();
+      if (!sheet) {
         // Fallback placeholder dopóki się ładuje
         ctx.fillStyle = '#e98c42';
         ctx.fillRect(this.pigX + 10, this.pigY + 30, 44, 28);

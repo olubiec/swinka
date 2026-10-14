@@ -100,7 +100,7 @@ namespace Cuy
                     ni.Icon = new Icon(icon, 32, 32);
                     UpdateTooltip();
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] ProcessIcon.SetIcon: " + ex.Message); }
             }
         }
 

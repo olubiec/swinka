@@ -355,7 +355,7 @@ namespace Cuy
                         return sXml;
                     }
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] LocalData.GetXml: " + ex.Message); }
             }
 #endif
             return AppSettings["xml"].Value;
@@ -485,7 +485,7 @@ namespace Cuy
                     AppConfiguration?.Save();
                 }
             }
-            catch { }
+            catch (Exception ex) { BrainController.Log("[WARN] LocalData.Save: " + ex.Message); }
         }
     }
 }

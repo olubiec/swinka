@@ -97,7 +97,7 @@ namespace Cuy
                 pet.Birthday += (s, e) => NotifyStateChanged();
                 pet.LevelUp += (s, e) => NotifyStateChanged();
             }
-            catch { }
+            catch (Exception ex) { BrainController.Log("[WARN] HomeWindow.AttachPetEvents: " + ex.Message); }
         }
 
         public static void ShowHome()
@@ -137,7 +137,7 @@ namespace Cuy
             {
                 this.Icon = PetIcons.GetTrayIcon();
             }
-            catch { }
+            catch (Exception ex) { BrainController.Log("[WARN] HomeWindow.SetupFormStyle: " + ex.Message); }
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -233,7 +233,11 @@ namespace Cuy
 
                 _webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 _webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+#if DEBUG
                 _webView.CoreWebView2.Settings.AreDevToolsEnabled = true;
+#else
+                _webView.CoreWebView2.Settings.AreDevToolsEnabled = false;
+#endif
 
                 string homeDir = ResolveHomePath();
                 string assetsDir = ResolveAssetsPath();
@@ -245,7 +249,11 @@ namespace Cuy
                     CoreWebView2HostResourceAccessKind.Allow
                 );
 
-                if (!string.IsNullOrEmpty(assetsDir) && Directory.Exists(assetsDir))
+                if (string.IsNullOrEmpty(assetsDir) || !Directory.Exists(assetsDir))
+                {
+                    BrainController.Log("[ERROR] Home: cuy.assets folder not found. Paths tried: " + string.Join("; ", _assetsPathsTried));
+                }
+                else
                 {
                     _webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
                         "cuy.assets",
@@ -253,6 +261,22 @@ namespace Cuy
                         CoreWebView2HostResourceAccessKind.Allow
                     );
                 }
+
+                _webView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+                _webView.CoreWebView2.WebResourceResponseReceived += (s, e) =>
+                {
+                    try
+                    {
+                        int status = e.Response.StatusCode;
+                        if (status >= 400)
+                        {
+                            BrainController.Log("[WARN] Home " + status + " " + e.Request.Uri);
+                        }
+                    }
+                    catch (Exception ex) { BrainController.Log("[WARN] HomeWindow.WebResourceResponseReceived: " + ex.Message); }
+                };
+
+                await _webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(JsErrorForwarder);
 
                 _webView.CoreWebView2.WebMessageReceived += OnWebMessageReceived;
                 _webView.CoreWebView2.NavigationCompleted += (s, e) =>
@@ -297,17 +321,41 @@ namespace Cuy
             return p1;
         }
 
+        private static readonly List<string> _assetsPathsTried = new List<string>();
+
+        // Forwards page errors to the host log (see the 'log' case in OnWebMessageReceived).
+        private const string JsErrorForwarder = @"(function () {
+  function send(level, msg) {
+    try { window.chrome.webview.postMessage({ type: 'log', level: level, msg: String(msg) }); } catch (e) {}
+  }
+  window.addEventListener('error', function (e) {
+    send('error', (e.message || 'error') + ' at ' + (e.filename || '?') + ':' + (e.lineno || 0));
+  });
+  window.addEventListener('unhandledrejection', function (e) {
+    var r = e.reason;
+    send('error', 'unhandledrejection: ' + (r && r.stack ? r.stack : r));
+  });
+  var origError = console.error;
+  console.error = function () {
+    send('error', Array.prototype.map.call(arguments, String).join(' '));
+    return origError.apply(console, arguments);
+  };
+})();";
+
         private static string ResolveAssetsPath()
         {
+            _assetsPathsTried.Clear();
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
 
             string p1 = Path.Combine(baseDir, "assets");
+            _assetsPathsTried.Add(p1);
             if (Directory.Exists(p1)) return Path.GetFullPath(p1);
 
             DirectoryInfo dir = new DirectoryInfo(baseDir);
             while (dir != null)
             {
                 string candidate = Path.Combine(dir.FullName, "assets");
+                _assetsPathsTried.Add(candidate);
                 if (Directory.Exists(candidate))
                 {
                     return Path.GetFullPath(candidate);
@@ -316,6 +364,7 @@ namespace Cuy
             }
 
             string pCurrent = Path.GetFullPath("assets");
+            _assetsPathsTried.Add(pCurrent);
             if (Directory.Exists(pCurrent)) return Path.GetFullPath(pCurrent);
 
             return p1;
@@ -450,6 +499,10 @@ namespace Cuy
                         int score = obj.Value<int?>("score") ?? 0;
                         HandleMinigameResult(gameId, score);
                         break;
+
+                    case "log":
+                        BrainController.Log("[Home JS] " + obj.Value<string>("msg"));
+                        return;
 
                     case "settings":
                         string action = obj.Value<string>("action")?.ToLowerInvariant();

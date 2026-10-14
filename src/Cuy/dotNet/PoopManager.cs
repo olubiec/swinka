@@ -186,7 +186,7 @@ namespace Cuy
                 poop.Close();
                 poop.Dispose();
             }
-            catch { }
+            catch (Exception ex) { BrainController.Log("[WARN] PoopManager.OnPoopClicked: " + ex.Message); }
 
             BrainController.Log(string.Format(
                 "[Bobek] Posprzątano bobek (+1 koniczynka). Łącznie koniczynek: {0}, Pozostało bobków: {1}/8, Czystość: {2:0.#}%",
@@ -214,7 +214,7 @@ namespace Cuy
                 bobek.Close();
                 bobek.Dispose();
             }
-            catch { }
+            catch (Exception ex) { BrainController.Log("[WARN] PoopManager.OnWindowClosed: " + ex.Message); }
 
             BrainController.Log(string.Format(
                 "[Bobek] Zamknięto okno z bobkiem (\"{0}\"). Bobek zniknął z ekranu, ale licznik zostaje w stanie gry ({1}/8, Czystość: {2:0.#}%).",
@@ -242,7 +242,7 @@ namespace Cuy
                         form.Show();
                         _activePoops.Add(form);
                     }
-                    catch { }
+                    catch (Exception ex) { BrainController.Log("[WARN] PoopManager.RestoreSavedPoops: " + ex.Message); }
                 }
                 else
                 {
@@ -257,7 +257,7 @@ namespace Cuy
                             form.Show();
                             _activePoops.Add(form);
                         }
-                        catch { }
+                        catch (Exception ex) { BrainController.Log("[WARN] PoopManager.RestoreSavedPoops: " + ex.Message); }
                     }
                     else
                     {
@@ -306,7 +306,7 @@ namespace Cuy
                     b.Close();
                     b.Dispose();
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] PoopManager.CloseAllVisuals: " + ex.Message); }
             }
             _activePoops.Clear();
         }

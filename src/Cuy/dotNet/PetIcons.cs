@@ -96,7 +96,7 @@ namespace Cuy
                         return;
                     }
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] PetIcons.LoadTrayIcon: " + ex.Message); }
             }
 
             // 2. Wytnij ikonę nr 24 (pig_head) z arkusza icons_16.png
@@ -113,7 +113,7 @@ namespace Cuy
                         if (_trayIcon != null) return;
                     }
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] PetIcons.LoadTrayIcon: " + ex.Message); }
             }
 
             // 3. Ostateczny fallback: wbudowany strumień ICO base64
@@ -279,7 +279,7 @@ namespace Cuy
                 {
                     if (File.Exists(p)) return Path.GetFullPath(p);
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] PetIcons.FindFile: " + ex.Message); }
             }
 
             return null;

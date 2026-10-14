@@ -196,7 +196,7 @@ namespace Cuy
                     _activeFood.Close();
                     _activeFood.Dispose();
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] FoodManager.CancelActiveFood: " + ex.Message); }
             }
             _activeFood = null;
             _currentFoodId = null;

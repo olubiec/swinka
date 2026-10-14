@@ -72,7 +72,7 @@ namespace Cuy
                         return Program.MyData.GetVolume();
                     }
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] SoundManager.Volume: " + ex.Message); }
                 return _volumeFallback;
             }
             set
@@ -86,7 +86,7 @@ namespace Cuy
                         Program.MyData.SetVolume(clamped);
                     }
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] SoundManager.Volume: " + ex.Message); }
             }
         }
         private float _volumeFallback = 0.8f;
@@ -193,7 +193,7 @@ namespace Cuy
                 {
                     if (File.Exists(p)) return Path.GetFullPath(p);
                 }
-                catch { }
+                catch (Exception ex) { BrainController.Log("[WARN] SoundManager.FindSoundFile: " + ex.Message); }
             }
 
             return null;
@@ -284,7 +284,7 @@ namespace Cuy
                     }
                 }
             }
-            catch { }
+            catch (Exception ex) { BrainController.Log("[WARN] SoundManager.IsFullScreenOrBusy: " + ex.Message); }
 
             _lastFullScreenResult = isFs;
             return isFs;
@@ -380,7 +380,7 @@ namespace Cuy
                         rawStream.Dispose();
                         memStream.Dispose();
                     }
-                    catch { }
+                    catch (Exception ex) { BrainController.Log("[WARN] SoundManager.PlayClip: " + ex.Message); }
                 };
 
                 waveOut.Play();
@@ -469,7 +469,7 @@ namespace Cuy
                         rawStream.Dispose();
                         memStream.Dispose();
                     }
-                    catch { }
+                    catch (Exception ex) { BrainController.Log("[WARN] SoundManager.PlayNextPurr: " + ex.Message); }
 
                     if (_isPurring)
                     {
@@ -492,7 +492,7 @@ namespace Cuy
             {
                 _purrPlayer?.Stop();
             }
-            catch { }
+            catch (Exception ex) { BrainController.Log("[WARN] SoundManager.StopPurrLoop: " + ex.Message); }
             _purrPlayer = null;
         }
 
@@ -623,7 +623,7 @@ namespace Cuy
             {
                 foreach (var p in _activePlayers)
                 {
-                    try { p.Stop(); p.Dispose(); } catch { }
+                    try { p.Stop(); p.Dispose(); } catch (Exception ex) { BrainController.Log("[WARN] SoundManager.Dispose: " + ex.Message); }
                 }
                 _activePlayers.Clear();
             }
