@@ -746,6 +746,199 @@ Report each root cause, what changed and how you verified it.
 
 **Sprawdź:** uruchom wersję Debug, potem tę z `bin\Release`; otwórz i zamknij Domek 5 razy, nakarm, zawołaj, pogłaszcz, kliknij świnkę 10 razy szybko, zostaw na 10 minut; w menu zasobnika (Debug) kliknij Diagnostics. **Powinno być:** świnka na pasku najpóźniej 5 s po starcie i cały czas widoczna; w Domku animowana świnka; w logu Visible = True, Opacity = 1, brak wyjątków.
 
+### Claude Code: CC1–CC3 (zamiast V1b2, V1a i V1d)
+
+Te prompty zastępują V1b2, V1a i V1d, gdy pracujesz w Claude Code. Są rozpisane plik po pliku, więc agent nie musi niczego szukać ani zgadywać. Plik `CLAUDE.md` w repo Claude Code czyta sam: są w nim zasady oszczędzania, komendy budowania (`tools/build.ps1`) i lista angielskich nazw.
+
+**Model:** `/model sonnet` (Sonnet). Do tych zadań wystarczy i zużywa mniej limitu niż Opus. Opusa włączaj tylko wtedy, gdy Sonnet dwa razy nie poradzi sobie z tym samym błędem.
+
+**Każde zadanie w świeżej sesji:** wpisz `/clear`, potem wklej prompt. Najpierw włącz tryb planu (Shift+Tab), przeczytaj plan i zatwierdź.
+
+**Kolejność:**
+
+1. CC1.
+2. CC2.
+3. V1c: tłumaczenie robię ja w czacie, nic cię nie kosztuje.
+4. CC3.
+5. Lista z `TESTING.md` na drugim koncie Windows.
+
+Po każdym kroku: `git pull --rebase`, `git push`.
+
+#### CC1 · dokończenie zmiany nazw (V1b2)
+
+```text
+Task CC1: finish the rename to Cuy. Follow CLAUDE.md. Do only these steps. Grep before deleting anything.
+A. Delete compatibility shims and fix any caller to the new class name:
+   src/Cuy/dotNet/Compatibility.cs (and its <Compile> line in src/Cuy/Cuy.csproj); class SwinkaBrainController
+   (end of BrainController.cs); SwinkaFoodManager (FoodManager.cs); SwinkaPoopManager (PoopManager.cs); SwinkaIcons
+   (PetIcons.cs); SwinkaInteractionManager (InteractionManager.cs); SwinkaItemDef and SwinkaItemCatalog
+   (ItemCatalogLoader.cs); FormDomek (HomeWindow.cs). Build.
+B. English ids only (list in CLAUDE.md):
+   1. src/Cuy.Core/Need.cs (~line 64): return fullness, vitamin_c, energy, mood, cleanliness, teeth.
+   2. src/Cuy.Core/AI/Brain.cs (~610-655 switch cases, ~725-745 DecayPerHour lookups): English names only; remove
+      "najedzenie", "satiety" and all Polish aliases.
+   3. src/Cuy.Core/LifeStage.cs (~70): return baby, junior, adult, senior, legend. AI/ActionDefinition.cs (~283): "adult" only.
+   4. src/Cuy.Core/ItemCatalog.cs: delete both Polish<->English dictionaries (~90-125), every fallback to
+      przedmioty/waluta/nazwa/cena/ikona, defaults "clovers"/"clover"; delete the hardcoded fallback catalog (~270-291):
+      if items.json cannot be read from disk or the embedded resource, log an ERROR and use an empty catalog.
+   5. src/Cuy/dotNet/ItemCatalogLoader.cs: remove the Polish argument and Polish names from AddDefault (~72-96), the
+      fallbacks przedmioty/nazwa/cena/ikona (~110-126), "satiety" -> "fullness", "chew_toy" -> "chew_stick".
+   6. src/Cuy/dotNet/PetIcons.cs: delete the "Polish legacy aliases" block; "pet_head" -> "pig_head";
+      "chew_toy" -> "chew_stick". Load the name->index map from assets/icons/icons.json when present; keep the
+      hardcoded English table only as fallback.
+   7. Keep only the English id in: BrainController.cs ~316; FoodManager.cs ~469; ContextMenus.cs ~37, ~57, ~109, ~128;
+      PoopForm.cs ~71; HomeWindow.cs ~366, ~484, ~497, ~503, ~509; StatusBubble.cs ~494 ("hay"), ~503 ("house"), ~716 ("hay").
+   8. Remove old "domek" folder candidates: StatusBubble.cs ~135-138, HomeWindow.cs ~281 and ~293.
+   9. Program.cs ~132: open Home only for the argument "--home".
+   10. Pet.cs ~392 vegetable list: bell_pepper, cucumber, parsley, carrot, kale. GameState.cs ~18 default Name "Cuy".
+   11. web/home/canvas-pig.js initAssets (~89): stage map with exactly baby, junior, adult, senior, legend
+       (junior -> sprites/junior is missing: use sprites/baby for junior); icons from assetsBase + 'icons/icons_16.png'
+       (~127). If an image fails to load, still decrement the pending counter and log via console.error.
+   12. web/home/app.js and web/home/bridge.js: canonical ids (siano->hay, papryka->bell_pepper, satiety->fullness,
+       maluch/mlodzik/dorosla/legenda -> baby/junior/adult/legend, koniczynki->clovers). Rename class SwinkaBridge ->
+       CuyBridge (bridge.js ~109, ~587 and all uses). Remove 'gra-przyklad' (bridge.js ~95, ~500;
+       minigames/minigry-api.js ~221); the minigame list shows one disabled tile "More games soon".
+   13. git mv web/home/minigames/minigry-api.js -> minigames-api.js and minigry.css -> minigames.css; update
+       web/home/minigames/index.html.
+   14. tests/Cuy.Core.Tests/FoodPreferenceTests.cs and SaveLoadTests.cs; tools/Cuy.Simulator/Program.cs (~208, ~215,
+       temp dir "SwinkaSymulator" -> "CuySimulator", namespace Symulator -> Cuy.Simulator): English ids.
+   Build + tests.
+C. Save migration, the only Polish allowed in code: GameState.CurrentVersion = 2. In SaveSystem migration (~249) when
+   Version < 2: rename Inventory and Stats.Counters keys with {siano:hay, granulat:pellets, papryka:bell_pepper,
+   natka:parsley, jarmuz:kale, ogorek:cucumber, marchewka:carrot, gryzak:chew_stick, chew_toy:chew_stick, pilka:ball,
+   tunel:tunnel, domek:house, poidlo:water_bottle, tort:cake} (sum counts on collision), then Version = 2.
+   Add tests/Cuy.Core.Tests/SaveMigrationTests.cs: a version-1 JSON with "papryka": 3 and "siano": 2 loads as
+   bell_pepper 3 and hay 2 with Version 2. Build + tests.
+D. eSheep leftovers:
+   1. Delete src/Cuy/Tools/XmlToDot.cs, src/Cuy/esheep.png.ico, src/Cuy/dotNet/esheep.png.ico,
+      src/Cuy/Images/microsoftstore.png, src/Cuy/Images/optional.png and their csproj lines.
+   2. Copy assets/app-icon/cuy.ico to src/Cuy/cuy.ico; <ApplicationIcon>cuy.ico</ApplicationIcon>; delete icon.ico if
+      nothing else uses it.
+   3. Program.cs: remove install= parsing, ArgumentInstall, IsApplicationInstalled, and the two
+      EmbeddedAssembly.Load("DesktopPet.Portable...") lines. LocalData.cs (~385-390): remove installpet.xml handling.
+   4. app.config: rename section and element DesktopPet.Properties.Settings -> Cuy.Properties.Settings (must match the
+      Settings class namespace). Delete src/Cuy/dotNet/app.config and its csproj line if the project uses src/Cuy/app.config.
+   5. StartUp.cs: MAX_SHEEPS -> MaxPets = 1, sheeps -> pets, iSheeps -> petCount, KillSheeps -> KillPets
+      (also ContextMenus.cs ~162); LocalData.GetAutoStartPets() returns 1.
+   6. FormPet.cs (~822): log through BrainController.Log instead of behavior_log.txt. BrainController.Log (~631):
+      rotate cuy.log at 1 MB, keep cuy.1.log..cuy.3.log.
+   7. ContextMenus.cs: the "Mózg świnki (F9)" and "Zegar 60x (Test)" items only inside #if DEBUG.
+   Build Debug and Release.
+E. Fix path mentions of %AppData%/Swinka, swinka/, esheep/, domek/ in ARCHITECTURE.md, README.md and code comments.
+F. Check: grep -rnE '"(siano|papryka|domek|bobek|koniczynki|najedzenie|satiety|chew_toy|pet_head|maluch|dorosla)"|Swinka[A-Z]|DesktopPet|KillSheeps|MAX_SHEEPS' src tests tools/Cuy.Simulator web
+   Allowed hits: only the migration map in SaveSystem.cs. Run tools/build.ps1 and tools/build.ps1 -Config Release.
+   Start src/Cuy/bin/Debug/Cuy.exe for 60 s, then read the last 50 lines of cuy.log and report ERROR lines.
+Commit: "CC1: finish Cuy rename, English ids, save migration v2".
+```
+
+**Sprawdź:** `git pull`, zbuduj, uruchom. **Powinno być:** świnka chodzi; w Domku sklepik pokazuje przedmioty z cenami; po karmieniu paski się zmieniają; dotychczasowy zapis (imię, koniczynki, przedmioty) jest na miejscu.
+
+#### CC2 · niewidoczna świnka i diagnostyka (V1a)
+
+```text
+Task CC2: make sure the pet is always visible on the desktop and in Home, and add diagnostics. Follow CLAUDE.md.
+Known risks to check first: Home canvas got a stage name with no sprite sheet (e.g. junior); the canvas waits
+for an image that never loads; the desktop pet left at Opacity 0 or outside every screen.
+A. Startup safety
+   1. Program.Main: wrap everything from BrainController.Initialize to Application.Run in try/catch(Exception ex)
+      -> BrainController.Log("[FATAL] " + ex). Add Application.ThreadException and
+      AppDomain.CurrentDomain.UnhandledException handlers that log "[ERROR] " + exception.
+   2. Replace every empty catch in src/Cuy/dotNet (BrainController 2, ContextMenus 1, FoodManager 1, FormPet 7,
+      HomeWindow 2, ItemCatalogLoader 1, LocalData 2, PetIcons 3, PoopManager 5, ProcessIcon 1, Program 2,
+      SoundManager 8, StatusBubble 1) with catch (Exception ex) { BrainController.Log("[WARN] <Class>.<Method>: " + ex.Message); }.
+B. Diagnostics (Debug builds only, #if DEBUG)
+   1. New src/Cuy/dotNet/Diagnostics.cs, static PetDiagnostics.Dump(): logs pet count; for each pet: Visible, Opacity,
+      Bounds, TopMost, current animation id, current frame index, frame image != null; every Screen's Bounds and
+      WorkingArea; last 20 Brain decisions (keep a ring buffer in BrainController); interaction state from
+      InteractionManager (petting, watching, sulking, called); count of exceptions logged since start.
+   2. Tray item "Diagnostics" (ContextMenus, #if DEBUG) calls Dump(). Command line "--diag" calls Dump() 10 s after start.
+C. Desktop pet guard (FormPet, inside the existing animation step; check at most every 2 s):
+   - if the pet bounds do not intersect any Screen.WorkingArea: move it to the bottom of the primary working area,
+     set Opacity = 1, log "[WARN] pet off-screen, restored".
+   - if Opacity < 0.05 for more than 5 s while the current animation is not a hiding one (peek, house, tunnel):
+     set Opacity = 1 and log it.
+D. Home window
+   1. HomeWindow (~236): AreDevToolsEnabled = true only in DEBUG, false in Release.
+   2. Subscribe CoreWebView2.WebResourceResponseReceived: log "[WARN] Home 404/500 <uri>" for status >= 400.
+   3. AddScriptToExecuteOnDocumentCreatedAsync: forward window.onerror, unhandledrejection and console.error as
+      chrome.webview.postMessage({type:'log', level, msg}); in OnWebMessageReceived (~418) handle type 'log' ->
+      BrainController.Log("[Home JS] " + msg).
+   4. If the cuy.assets folder is not found (~250), log an ERROR with the paths tried.
+   5. web/home/canvas-pig.js: if no sheet for the current stage, use baby; draw the pet once any sheet loads;
+      log via console.error when an image fails.
+E. Verify: tools/build.ps1. Run src/Cuy/bin/Debug/Cuy.exe --diag, wait 30 s, open Home from the tray menu yourself if
+   possible (or start with --home), then read cuy.log. Report each root cause found, what changed, and the Dump output.
+Commit: "CC2: visible pet guards, diagnostics, Home error logging".
+```
+
+**Sprawdź:** uruchom, otwórz i zamknij Domek 5 razy, nakarm, zawołaj, pogłaszcz, kliknij świnkę 10 razy szybko, zostaw na 10 minut; w menu (Debug) kliknij Diagnostics. **Powinno być:** świnka cały czas widoczna na pasku i w Domku; w `cuy.log` Visible = True, Opacity = 1, brak ERROR.
+
+#### CC3 · wersja prezentowa Cuy 1.0.0 (V1d)
+
+```text
+Task CC3: prepare Cuy 1.0.0 for giving away. Follow CLAUDE.md. UI texts in English. Do only these steps.
+A. First run and name
+   1. GameState: add bool NeedsNaming (true for a new game, false after naming; missing in old saves -> false),
+      bool GiftNoteShown, DateTime? GrowthStartUtc. New game default Name "Cuy".
+   2. Program: after BrainController.Initialize, if NeedsNaming -> HomeWindow.ShowHome().
+   3. web/home/index.html + app.js + style.css: view #welcome (same pixel style and CSS variables as the main view):
+      title "Welcome!", text "Your guinea pig has arrived. What will you call it?", input (maxlength 16, letters,
+      digits, spaces, trimmed, not empty), button "Let's go" (Enter works). Sends {type:'setName', name}.
+      Then view #intro with 3 cards and a "Next" button: "I live on your taskbar." /
+      "Click me to see how I feel." / "The little head by the clock opens my Home." Last button "Start".
+   4. HomeWindow.OnWebMessageReceived: 'setName' -> state.Name = name, NeedsNaming = false, save,
+      NotifyStateChanged; update the tray tooltip (ProcessIcon) to the name.
+   5. Gift note: if <exe folder>\gift\note.txt exists and !GiftNoteShown, after the intro show view #letter with the
+      text (pre-wrap, scrollable) and a "Close" button; then GiftNoteShown = true and save. HomeWindow sends the text
+      in the state message as giftNote (only while not shown).
+B. Baby stage
+   1. GameState: stage stays Baby in this version: const bool GrowthEnabled = false in Balance.cs; stage
+      calculation returns Baby when false. Set GrowthStartUtc on first start if null.
+   2. Desktop pet: after loading animations.xml, if assets/sprites/<stage>/spritesheet.png exists next to the exe,
+      use that bitmap instead of the embedded image (same 16x60 grid of 64 px frames). Home and minigames use the
+      baby sheet via the stage name.
+C. Release behaviour
+   1. Only in DEBUG: F9 overlay, 60x clock item, Diagnostics, DevTools, --speed argument.
+   2. Single instance: on a second start, signal the first one through a named EventWaitHandle "Cuy.ShowHome"
+      (the first one waits on a background thread and invokes HomeWindow.ShowHome on the UI thread), then exit
+      without a message box.
+   3. New src/Cuy/dotNet/AutoStart.cs: HKCU\Software\Microsoft\Windows\CurrentVersion\Run value "Cuy" =
+      "\"<full exe path>\"". IsEnabled, Enable, Disable. On a new game enable it. On every start, if enabled and the
+      stored path differs, rewrite it.
+   4. Tray menu, in this order: Home | Feed (submenu as now) | Call | separator | Sounds (checked = on) |
+      Start with Windows (checked) | About Cuy (message "Cuy 1.0.0 - made with love") | separator | Quit.
+      Tooltip: the pet name.
+   5. Sounds: default volume 0.6, quiet hours 22:00-08:00, muted while a full-screen app is in front (if not done
+      yet in SoundManager). Persist Sounds on/off in settings.
+   6. Crash handling (Program): ThreadException and UnhandledException log, show once "Cuy hit a snag and will
+      restart.", Application.Restart(). Store the crash time in %LocalAppData%\Cuy\lastcrash.txt; if the previous
+      crash was less than 60 s ago, log and exit without restarting.
+   7. WebView2 missing: catch WebView2RuntimeNotFoundException around CoreWebView2Environment.CreateAsync; show
+      "Cuy's Home needs Microsoft Edge WebView2. Get it at https://go.microsoft.com/fwlink/p/?LinkId=2124703";
+      the desktop pet keeps running; Home menu item disabled.
+   8. Microsoft.Win32.SystemEvents.PowerModeChanged Resume: apply the offline rules once for the sleep time.
+   9. SaveSystem: write to save.json.tmp, then File.Replace(tmp, save.json, save.bak); if save.json is corrupt on
+      load, load save.bak and log a WARN.
+   10. Add app.manifest with PerMonitorV2 DPI awareness. If the pet position or bubble breaks at 150 % scale,
+       use System awareness instead and report it.
+D. Self-test and package
+   1. Cuy.exe --selftest (no windows): checks assets/data/actions.json and items.json parse; every animation used in
+      actions.json exists in assets/sprites/baby/animations.json; every sprite sheet referenced loads with the
+      expected size (16 x 60 frames of 64 px); icons.json and icons_16.png load; every file in assets/sounds opens as
+      a valid WAV (NAudio WaveFileReader); WebView2 version string available; %AppData%\Cuy writable. Write
+      "PASS name" / "FAIL name: reason" lines to %TEMP%\cuy-selftest.txt and to the parent console
+      (AttachConsole(-1)); exit code 0 if all pass, else 1.
+   2. tools/package.ps1: run tools/build.ps1 -Config Release; clear dist/; copy src/Cuy/bin/Release to
+      dist/Cuy_v1 without *.pdb, *.xml, *.config.bak, logs; ensure assets/ and web/ are inside; copy
+      tools/package/README.txt and THIRD_PARTY_NOTICES.md; create dist/Cuy_v1/gift/note.txt.example with
+      "Rename this file to note.txt and write your message."; run dist/Cuy_v1/Cuy.exe --selftest and stop on exit
+      code 1; Compress-Archive dist/Cuy_v1 -> dist/Cuy_v1.zip; print the zip size.
+E. Verify: tools/build.ps1 -Config Release, then tools/package.ps1. Report the selftest output and the zip size.
+Commit: "CC3: Cuy 1.0.0 gift build, first run, autostart, selftest, package".
+```
+
+**Sprawdź:** przejdź `TESTING.md` na drugim koncie Windows z `dist\Cuy_v1.zip`. **Powinno być:** wszystkie 15 punktów zgodnych z kolumną „Expected”.
+
 #### V1c · Gemini: wszystko po angielsku
 
 ```text
