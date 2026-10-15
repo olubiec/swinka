@@ -448,15 +448,14 @@
         }
 
         case 'clean': {
-          n.cleanliness = 100.0;
           if (s.poops > 0) {
+            n.cleanliness = 100.0;
             s.clovers += s.poops; // +1 clover for every poop removed
             s.poops = 0;
-          } else {
-            s.clovers += 1;
+            n.mood = Math.min(100, n.mood + 6);
+            s.currentAction = 'happy';
           }
-          n.mood = Math.min(100, n.mood + 6);
-          s.currentAction = 'happy';
+          // Nothing to clean: no reward.
           break;
         }
 
@@ -475,20 +474,18 @@
         }
 
         case 'buy': {
-          const cost = action.price || 10;
-          if (s.clovers >= cost) {
+          const prices = { pellets: 5, cucumber: 5, parsley: 8, carrot: 8, kale: 10, bell_pepper: 12, chew_stick: 20, ball: 60, tunnel: 150, house: 250 };
+          const itemId = action.itemId;
+          const cost = prices[itemId];
+          if (cost && s.clovers >= cost) {
             s.clovers -= cost;
-            const itemId = action.itemId || 'bell_pepper';
             s.inventory[itemId] = (s.inventory[itemId] || 0) + 1;
           }
           break;
         }
 
         case 'play': {
-          n.mood = Math.min(100, n.mood + 15);
-          n.energy = Math.max(0, n.energy - 10);
-          s.clovers += 10;
-          s.currentAction = 'popcorn';
+          // No reward: opening the games window gives nothing (only minigame_result does).
           break;
         }
 

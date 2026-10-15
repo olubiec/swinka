@@ -227,6 +227,29 @@ namespace Cuy.Core
             return true;
         }
 
+        // ---- Petting rewards ----------------------------------------------------
+
+        /// <summary>At most this many pets per rolling hour raise mood and bond (desktop and Home share the limit).</summary>
+        public const int MaxRewardedPetsPerHour = 10;
+
+        private readonly System.Collections.Generic.List<DateTime> _rewardedPetTimes = new System.Collections.Generic.List<DateTime>();
+
+        /// <summary>
+        /// Rewards a pet with mood and bond if the hourly limit allows it. Returns false when the limit is reached
+        /// (the pig may still purr, but nothing changes).
+        /// </summary>
+        public bool TryRewardPetting(double moodGain)
+        {
+            DateTime now = Clock.UtcNow;
+            _rewardedPetTimes.RemoveAll(t => (now - t).TotalSeconds > 3600.0);
+            if (_rewardedPetTimes.Count >= MaxRewardedPetsPerHour) return false;
+            _rewardedPetTimes.Add(now);
+            ChangeNeed(Need.Mood, moodGain);
+            AddBondPoints(1);
+            Count("pets");
+            return true;
+        }
+
         // ---- Poops and cage cleanliness ---------------------------------------
 
         public const int MaxPoops = 8;
@@ -367,8 +390,10 @@ namespace Cuy.Core
             }
 
             cloversAwarded = 0;
+            bool rewardedGame = false;
             if (State.MinigamesDailyCount < 10)
             {
+                rewardedGame = true;
                 // clovers = min(40, score / 10)
                 cloversAwarded = Math.Min(40, Math.Max(0, score / 10));
                 if (cloversAwarded > 0)
@@ -378,8 +403,9 @@ namespace Cuy.Core
                 State.MinigamesDailyCount++;
             }
 
-            // mood +15 after a game
-            ChangeNeed(Need.Mood, 15.0);
+            // Mood: +15 for a rewarded game, only +3 once the daily limit is used up; nothing for a zero score
+            // (otherwise starting and instantly ending games would be a free mood boost).
+            if (score > 0) ChangeNeed(Need.Mood, rewardedGame ? 15.0 : 3.0);
 
             Count("minigames_played");
             Count("minigame_" + gameId);

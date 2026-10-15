@@ -533,9 +533,7 @@ namespace Cuy
                         break;
 
                     case "buy":
-                        string buyItem = obj.Value<string>("itemId") ?? "bell_pepper";
-                        int price = obj.Value<int?>("price") ?? 10;
-                        HandleBuy(buyItem, price);
+                        HandleBuy(obj.Value<string>("itemId"));
                         break;
 
                     case "play":
@@ -571,49 +569,62 @@ namespace Cuy
         {
             var brain = BrainController.Instance;
             var pet = brain?.Pet;
-            if (pet == null) return;
+            if (pet == null || string.IsNullOrEmpty(item)) return;
 
-            if (string.Equals(item, "hay", StringComparison.OrdinalIgnoreCase))
+            CuyItemDef def = FindItem(item);
+            if (def == null)
             {
-                pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 12.0);
-                pet.Needs.Teeth = Math.Min(100.0, pet.Needs.Teeth + 8.0);
-                pet.AddBondPoints(2);
-                pet.Count("feedings");
-                brain.RequestAnimation("eat");
-                BrainController.Log("[HomeWindow] Fed hay.");
+                BrainController.Log("[HomeWindow] Unknown item to feed: " + item);
+                return;
             }
-            else
+
+            // Only food can be fed (toys and equipment cannot be eaten).
+            bool isFood = def.Category == "food" || def.Category == "vegetable" || def.Category == "treat" || def.Category == "chew_stick";
+            if (!isFood)
             {
-                if (pet.TryRemoveItem(item, 1))
+                BrainController.Log("[HomeWindow] Not food: " + def.Id);
+                return;
+            }
+
+            // A full pig refuses food; nothing is consumed and nothing is rewarded.
+            double fullnessEffect = 0.0;
+            def.Effects.TryGetValue("fullness", out fullnessEffect);
+            if (fullnessEffect > 0.0 && pet.Needs.Satiety >= 95.0)
+            {
+                BrainController.Log("[HomeWindow] The pig is full, refused " + def.Id + ".");
+                return;
+            }
+
+            if (!def.IsUnlimited && !pet.TryRemoveItem(def.Id, 1))
+            {
+                BrainController.Log("[HomeWindow] Item not in inventory: " + def.Id);
+                return;
+            }
+
+            // Effects come from assets/data/items.json (the same as food dropped on the desktop).
+            foreach (var eff in def.Effects)
+            {
+                Need need;
+                if (NeedNames.TryParseDataKey(eff.Key, out need))
                 {
-                    if (string.Equals(item, "bell_pepper", StringComparison.OrdinalIgnoreCase))
-                    {
-                        pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 15.0);
-                        pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 35.0);
-                        pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 10.0);
-                    }
-                    else if (string.Equals(item, "carrot", StringComparison.OrdinalIgnoreCase))
-                    {
-                        pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 18.0);
-                        pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 15.0);
-                        pet.Needs.Teeth = Math.Min(100.0, pet.Needs.Teeth + 10.0);
-                    }
-                    else if (string.Equals(item, "pellets", StringComparison.OrdinalIgnoreCase))
-                    {
-                        pet.Needs.Satiety = Math.Min(100.0, pet.Needs.Satiety + 25.0);
-                        pet.Needs.VitaminC = Math.Min(100.0, pet.Needs.VitaminC + 5.0);
-                    }
-                    pet.AddBondPoints(2);
-                    pet.Count("feedings");
-                    pet.Count(item);
-                    brain.RequestAnimation("eat_treat");
-                    BrainController.Log(string.Format("[HomeWindow] Fed treat: {0}", item));
-                }
-                else
-                {
-                    BrainController.Log(string.Format("[HomeWindow] Item not in inventory: {0}", item));
+                    pet.ChangeNeed(need, eff.Value);
                 }
             }
+
+            pet.AddBondPoints(1);
+            pet.Count("feedings");
+            if (!def.IsUnlimited) pet.Count(def.Id);
+            brain.RequestAnimation(def.IsUnlimited ? "eat" : "eat_treat");
+            BrainController.Log("[HomeWindow] Fed " + def.Id + ".");
+        }
+
+        private static CuyItemDef FindItem(string itemId)
+        {
+            foreach (var d in ItemCatalogLoader.GetAll())
+            {
+                if (string.Equals(d.Id, itemId, StringComparison.OrdinalIgnoreCase)) return d;
+            }
+            return null;
         }
 
         private void HandleSetName(string rawName)
@@ -650,14 +661,21 @@ namespace Cuy
             var pet = brain?.Pet;
             if (pet == null) return;
 
-            int poops = pet.State.PoopCount;
+            int poops = Math.Max(pet.State.PoopCount, pet.State.Poops.Count);
+            if (poops <= 0)
+            {
+                // Nothing to clean: no clovers, no mood, no counter.
+                BrainController.Log("[HomeWindow] Clean: the cage is already clean, nothing happened.");
+                return;
+            }
+
             pet.CleanAllPoops();
             PoopManager.Instance?.CloseAllVisuals();
-            pet.AddClovers(poops > 0 ? poops : 1);
+            pet.AddClovers(poops);
             pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 6.0);
             pet.Count("cleanings");
             brain.RequestAnimation("happy");
-            BrainController.Log(string.Format("[HomeWindow] Cage cleaned ({0} poops removed, +clovers).", poops));
+            BrainController.Log(string.Format("[HomeWindow] Cage cleaned ({0} poops removed, +{0} clovers).", poops));
         }
 
         private void HandleCall()
@@ -673,47 +691,52 @@ namespace Cuy
         private void HandlePet()
         {
             var brain = BrainController.Instance;
-            var pet = brain?.Pet;
-            if (pet == null) return;
+            if (brain == null) return;
 
-            pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 3.0);
-            pet.AddBondPoints(1);
-            pet.Count("pets");
-            brain.RequestAnimation("purr_pet");
-            BrainController.Log("[HomeWindow] Pig petted from Home (+3 mood, +1 bond).");
+            // Same path as petting on the desktop: shared limit of rewarded pets per hour.
+            brain.PetPig();
         }
 
-        private void HandleBuy(string itemId, int price)
+        private void HandleBuy(string itemId)
         {
             var brain = BrainController.Instance;
             var pet = brain?.Pet;
-            if (pet == null) return;
+            if (pet == null || string.IsNullOrEmpty(itemId)) return;
 
-            if (price < 0) price = 10;
+            // The price always comes from assets/data/items.json, never from the page.
+            CuyItemDef def = FindItem(itemId);
+            if (def == null || !def.Price.HasValue || def.Price.Value <= 0 || def.IsUnlimited)
+            {
+                BrainController.Log("[HomeWindow] Item cannot be bought: " + itemId);
+                return;
+            }
+
+            // Toys and equipment are bought once.
+            bool oneTime = def.Category == "toy" || def.Category == "equipment";
+            if (oneTime && pet.GetItemCount(def.Id) > 0)
+            {
+                BrainController.Log("[HomeWindow] Already owned: " + def.Id);
+                return;
+            }
+
+            int price = def.Price.Value;
             if (pet.TrySpendClovers(price))
             {
-                pet.AddItem(itemId, 1);
+                pet.AddItem(def.Id, 1);
                 pet.Count("purchases");
-                BrainController.Log(string.Format("[HomeWindow] Bought {0} for {1} clovers.", itemId, price));
+                BrainController.Log(string.Format("[HomeWindow] Bought {0} for {1} clovers.", def.Id, price));
             }
             else
             {
                 BrainController.Log(string.Format("[HomeWindow] Not enough clovers for {0} (price: {1}, balance: {2}).",
-                    itemId, price, pet.State.Clovers));
+                    def.Id, price, pet.State.Clovers));
             }
         }
 
         private void HandlePlay()
         {
-            var brain = BrainController.Instance;
-            var pet = brain?.Pet;
-            if (pet == null) return;
-
-            pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 15.0);
-            pet.Needs.Energy = Math.Max(0.0, pet.Needs.Energy - 10.0);
-            pet.AddClovers(10);
-            brain.RequestAnimation("popcorn");
-            BrainController.Log("[HomeWindow] Play in Home (+15 mood, +10 clovers).");
+            // Opening the games window must never give a reward; rewards come only from minigame_result.
+            BrainController.Log("[HomeWindow] 'play' message ignored (no reward).");
         }
 
         private void HandleMinigameResult(string gameId, int score)
@@ -722,40 +745,16 @@ namespace Cuy
             var pet = brain?.Pet;
             if (pet == null) return;
 
-            if (pet.State.HighScores == null)
-            {
-                pet.State.HighScores = new Dictionary<string, int>();
-            }
+            if (string.IsNullOrEmpty(gameId) || gameId.Length > 40) gameId = "minigame";
+            if (score < 0) score = 0;
 
-            int prev = 0;
-            pet.State.HighScores.TryGetValue(gameId, out prev);
-            if (score > prev)
-            {
-                pet.State.HighScores[gameId] = score;
-            }
-
-            // Limit of 10 rewarded games per day
-            string today = DateTime.UtcNow.ToString("yyyy-MM-dd");
-            if (pet.State.MinigamesDailyDate != today)
-            {
-                pet.State.MinigamesDailyDate = today;
-                pet.State.MinigamesDailyCount = 0;
-            }
-
-            int clovers = 0;
-            if (pet.State.MinigamesDailyCount < 10)
-            {
-                clovers = Math.Min(40, Math.Max(0, score / 10));
-                if (clovers > 0)
-                {
-                    pet.AddClovers(clovers);
-                }
-                pet.State.MinigamesDailyCount++;
-            }
-
-            pet.Needs.Mood = Math.Min(100.0, pet.Needs.Mood + 15.0);
+            // All rules (10 rewarded games a day, clovers = min(40, score / 10), mood) live in Cuy.Core.
+            int clovers;
+            bool isNewRecord;
+            pet.RecordMinigameResult(gameId, score, out clovers, out isNewRecord);
             brain.RequestAnimation("popcorn");
-            BrainController.Log(string.Format("[HomeWindow] Minigame score {0}: {1} pts (+{2} clovers).", gameId, score, clovers));
+            BrainController.Log(string.Format("[HomeWindow] Minigame {0}: {1} pts (+{2} clovers, record: {3}).",
+                gameId, score, clovers, isNewRecord));
         }
 
         private void HandleSettings(string action, JObject obj)

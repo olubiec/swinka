@@ -281,6 +281,13 @@
 
     // 2. CLEAN — cleans the cage and poops, +1 clover
     elements.btnClean?.addEventListener('click', () => {
+      const cleanState = window.bridge ? window.bridge.getState() : null;
+      const hasPoops = !cleanState || (cleanState.poops || 0) > 0;
+      if (!hasPoops) {
+        // Nothing to clean: no reward (the game ignores it too).
+        if (canvasPig) canvasPig.showBubble('Already clean!', 1800);
+        return;
+      }
       if (window.Sound) window.Sound.sweep();
       if (canvasPig) {
         canvasPig.playAnim('happy', 2500);
@@ -314,14 +321,12 @@
     // 4. SHOP — opens the retro shop dialog
     elements.btnShop?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
-      if (window.bridge) window.bridge.send({ type: 'buy' });
       openShopModal();
     });
 
     // 5. GAMES — opens the retro minigames dialog
     elements.btnMinigames?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
-      if (window.bridge) window.bridge.send({ type: 'play' });
       openMinigamesModal();
     });
 
@@ -406,13 +411,18 @@
     const state = window.bridge ? window.bridge.getState() : null;
     const clovers = state?.clovers || 0;
 
+    // Prices must match assets/data/items.json (the game always charges the price from that file).
     const items = [
-      { id: 'bell_pepper', name: 'Bell pepper',      price: 12, icon: 'icon-bell-pepper',   desc: 'Lots of vitamin C' },
-      { id: 'carrot',      name: 'Carrot',           price: 10, icon: 'icon-carrot', desc: 'Crunchy, good for teeth' },
-      { id: 'pellets',   name: 'Pellets',          price: 5,  icon: 'icon-pellets',  desc: 'A filling meal' },
-      { id: 'chew_stick', name: 'Chew stick',      price: 20, icon: 'icon-chew-stick',    desc: 'Wears down the teeth' },
-      { id: 'house',      name: 'Cosy house',       price: 250,icon: 'icon-house',     desc: 'A comfy hideout' },
-      { id: 'tunnel',     name: 'Soft tunnel',      price: 200,icon: 'icon-tunnel',     desc: 'For play and zoomies' }
+      { id: 'pellets',     name: 'Pellets',     price: 5,   icon: 'icon-pellets',     desc: 'A filling extra' },
+      { id: 'cucumber',    name: 'Cucumber',    price: 5,   icon: 'icon-cucumber',    desc: 'Refreshing, a mood boost' },
+      { id: 'parsley',     name: 'Parsley',     price: 8,   icon: 'icon-parsley',     desc: 'Lots of vitamin C' },
+      { id: 'carrot',      name: 'Carrot',      price: 8,   icon: 'icon-carrot',      desc: 'Sweet treat for a good mood' },
+      { id: 'kale',        name: 'Kale',        price: 10,  icon: 'icon-kale',        desc: 'A big leaf to tug at' },
+      { id: 'bell_pepper', name: 'Bell pepper', price: 12,  icon: 'icon-bell-pepper', desc: 'Best source of vitamin C' },
+      { id: 'chew_stick',  name: 'Chew stick',  price: 20,  icon: 'icon-chew-stick',  desc: 'Wears down the teeth' },
+      { id: 'ball',        name: 'Ball',        price: 60,  icon: 'icon-ball',        desc: 'For playing', once: true },
+      { id: 'tunnel',      name: 'Tunnel',      price: 150, icon: 'icon-tunnel',      desc: 'For play and zoomies', once: true },
+      { id: 'house',       name: 'House',       price: 250, icon: 'icon-house',       desc: 'A comfy hideout', once: true }
     ];
 
     let html = `
@@ -424,15 +434,16 @@
     `;
 
     items.forEach(it => {
-      const canAfford = clovers >= it.price;
+      const owned = !!(it.once && state?.inventory && (state.inventory[it.id] || 0) > 0);
+      const canAfford = clovers >= it.price && !owned;
       html += `
         <div class="shop-item">
           <div class="pixel-icon x1_5 ${it.icon}"></div>
           <b>${it.name}</b>
           <small style="color:#6e6a5c;">${it.desc}</small>
           <span style="font-weight:700; color:#c99a2e;">${it.price} 🍀</span>
-          <button class="shop-item-btn" data-buy="${it.id}" data-price="${it.price}" ${!canAfford ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
-            Kup
+          <button class="shop-item-btn" data-buy="${it.id}" ${!canAfford ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
+            ${owned ? 'Owned' : 'Buy'}
           </button>
         </div>
       `;
@@ -445,9 +456,8 @@
     elements.modalBody.querySelectorAll('button[data-buy]').forEach(b => {
       b.addEventListener('click', (e) => {
         const id = b.dataset.buy;
-        const price = parseInt(b.dataset.price, 10);
         if (window.bridge) {
-          window.bridge.send({ type: 'buy', itemId: id, price });
+          window.bridge.send({ type: 'buy', itemId: id });
         }
         if (window.Sound) window.Sound.fanfare();
         if (canvasPig) canvasPig.showBubble(`Bought: ${id}!`, 2000);

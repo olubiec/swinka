@@ -366,10 +366,9 @@ namespace Cuy
 
             if (_session?.Pet != null)
             {
-                _session.Pet.Needs.Mood = Math.Min(100.0, _session.Pet.Needs.Mood + 3.0);
-                _session.Pet.Count("pets");
-                _session.Pet.AddBondPoints(1);
-                Log(string.Format("[Petting] Pig petted (+3 mood). Mood: {0:0.#}%",
+                bool rewarded = _session.Pet.TryRewardPetting(3.0);
+                Log(string.Format("[Petting] Pig petted ({0}). Mood: {1:0.#}%",
+                    rewarded ? "+3 mood" : "hourly reward limit reached",
                     _session.Pet.Needs.Mood));
             }
             RequestAnimation("purr_pet");

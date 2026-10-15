@@ -61,12 +61,12 @@ namespace Cuy.Core.Tests
             Assert.Equal(100, state.Clovers);
             Assert.Equal(10, state.MinigamesDailyCount);
 
-            // 11th game on the same day -> 0 clovers, but score and mood still work
+            // 11th game on the same day -> 0 clovers, only a small mood gain (+3), score still recorded
             state.Needs.Mood = 40.0;
             pet.RecordMinigameResult("popcorn", 120, out int clovers11, out bool isRecord);
             Assert.Equal(0, clovers11);
             Assert.Equal(100, state.Clovers);
-            Assert.Equal(55.0, state.Needs.Mood);
+            Assert.Equal(43.0, state.Needs.Mood);
             Assert.True(isRecord);
             Assert.Equal(120, state.HighScores["popcorn"]);
 
