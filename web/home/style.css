@@ -313,13 +313,18 @@ body.webview-mode .game-device {
   border-bottom: 3px solid var(--c-contour-dark);
   overflow: hidden;
   line-height: 0;
+  /* Fixed height, never shrunk by the flex column: otherwise the floor and the pig get cropped. */
+  flex: 0 0 150px;
+  height: 150px;
 }
 
 #pigCanvas {
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 240 / 130;
+  height: 100%;
+  /* Keep the floor (where the pig stands) visible; crop the top of the wall instead. */
+  object-fit: cover;
+  object-position: 50% 100%;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
