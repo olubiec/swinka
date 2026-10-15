@@ -77,8 +77,8 @@ namespace Cuy
             double w = pet.Width;
             // The pig faces right; in the 64 px frame the nose is at about 80 % of the width.
             double hiddenX = wa.Left - w * 0.9;   // completely behind the edge
-            double noseX = wa.Left - w * 0.72;    // only the nose sticks out
-            double headX = wa.Left - w * 0.5;     // half of the head
+            double noseX = wa.Left - w * 0.6;     // the nose and whiskers stick out
+            double headX = wa.Left - w * 0.38;    // nose, eye and ear
             double outX = wa.Left + 90;           // fully out on the taskbar
 
             _phaseMs += TickMs;
@@ -88,8 +88,8 @@ namespace Cuy
             Point c = Cursor.Position;
             double dx = c.X - wa.Left;
             double dy = c.Y - (pet.Top + pet.Height / 2.0);
-            bool cursorNear = dx < 220 && Math.Abs(dy) < 220;
-            _calmMs = cursorNear ? 0 : _calmMs + TickMs;
+            bool cursorNear = dx < 200 && Math.Abs(dy) < 200;
+            _calmMs = cursorNear ? 0 : Math.Min(_calmMs + TickMs, _phaseMs); // counted only within the phase
 
             // Safety net: never keep her waiting forever.
             bool forceOut = _totalMs > 120000;
@@ -99,7 +99,7 @@ namespace Cuy
                 case Setup: // behind the edge, a moment of nothing
                     Animate(pet, "idle");
                     pet.ScriptBegin(hiddenX);
-                    if (_phaseMs < 2500) break;
+                    if (_phaseMs < 3000) break;
                     Go(Peek, hiddenX);
                     break;
 
@@ -107,20 +107,20 @@ namespace Cuy
                     Animate(pet, "sniff");
                     Slide(pet, noseX, 900);
                     if (cursorNear && !forceOut) { Go(Retreat, pet.PositionX); break; }
-                    if (_phaseMs > 900 && (_calmMs > 6000 || forceOut)) Go(PeekMore, pet.PositionX);
+                    if (_phaseMs > 900 && (_calmMs > 7000 || forceOut)) Go(PeekMore, pet.PositionX);
                     break;
 
                 case Retreat: // the cursor came close: hides quickly and waits until it is gone
                     Animate(pet, "idle");
                     Slide(pet, hiddenX, 250);
-                    if (_phaseMs > 250 && _calmMs > 2500) Go(Peek, pet.PositionX);
+                    if (_phaseMs > 250 && _calmMs > 3000) Go(Peek, pet.PositionX);
                     break;
 
                 case PeekMore: // more of the head, still careful
                     Animate(pet, "sniff");
                     Slide(pet, headX, 1400);
                     if (cursorNear && !forceOut) { Go(Retreat, pet.PositionX); break; }
-                    if (_phaseMs > 1400 && (_calmMs > 4000 || forceOut)) Go(WalkOut, pet.PositionX);
+                    if (_phaseMs > 1400 && (_calmMs > 5000 || forceOut)) Go(WalkOut, pet.PositionX);
                     break;
 
                 case WalkOut: // comes out and from here on lives as usual

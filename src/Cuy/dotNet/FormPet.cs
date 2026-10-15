@@ -453,6 +453,7 @@ namespace Cuy
         // ---- Home: the pig goes into the Home window while it is open -------------
 
         private bool _inHome;
+        private int _tickErrors;
 
         /// <summary>True while the pig is inside the open Home window (the desktop pet is hidden).</summary>
         public bool IsInHome => _inHome;
@@ -828,7 +829,18 @@ namespace Cuy
             catch(Exception ex)
             {
                 if (IsDisposed) return;
-                BrainController.Log("[FormPet] Error in Timer1_Tick: " + ex.Message);
+                // Never leave the timer off: that froze the pig in one frame for good.
+                _tickErrors++;
+                BrainController.Log("[FormPet] Error in Timer1_Tick (animation '" + CurrentAnimationName + "', step " + AnimationStep + "): "
+                    + (_tickErrors <= 5 ? ex.ToString() : ex.Message));
+                try
+                {
+                    int idleId = GetAnimationIdByName("idle");
+                    SetNewAnimation(idleId >= 0 ? idleId : 3);
+                }
+                catch (Exception ex2) { BrainController.Log("[FormPet] Recovery failed: " + ex2.Message); }
+                AnimationStep = 0;
+                timer1.Enabled = true;
             }
         }
 
