@@ -93,20 +93,19 @@ namespace Cuy
 
         void Ni_MouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (e.Button != MouseButtons.Left) return;
+            // Left click on the head icon: opens Home, or closes it when it is already open.
+            try
             {
-                // Left click: bring the pig to the front
-                Program.Mainthread.TopMostSheeps();
+                if (HomeWindow.IsOpen) HomeWindow.CloseIfOpen();
+                else HomeWindow.ShowHome();
             }
+            catch (Exception ex) { BrainController.Log("[ERROR] Tray click: " + ex); }
         }
 
         void Ni_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
-            {
-                // Double-click on the icon opens Home
-                HomeWindow.ShowHome();
-            }
+            // Nothing: a double click is two single clicks (open + close) and would flicker otherwise.
         }
     }
 }

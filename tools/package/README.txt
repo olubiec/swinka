@@ -10,7 +10,7 @@ Start
 4. Watch the bottom-left corner of the screen and be patient... someone shy is coming.
    Then give your guinea pig a name. It lives on your taskbar.
    Hold the mouse over it to see how it feels, click it to pet it.
-   The little head icon next to the clock opens its Home.
+   Click the little head icon next to the clock to open or close its Home.
 
 Start with Windows
 Cuy starts with Windows by default. Right-click the head icon next to the clock
