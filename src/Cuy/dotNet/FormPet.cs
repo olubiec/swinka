@@ -451,6 +451,58 @@ namespace Cuy
             ResetMotion();
         }
 
+        // ---- Home: the pig goes into the Home window while it is open -------------
+
+        private bool _inHome;
+
+        /// <summary>True while the pig is inside the open Home window (the desktop pet is hidden).</summary>
+        public bool IsInHome => _inHome;
+
+        /// <summary>Hides the desktop pet while Home is open. The game keeps running.</summary>
+        public void EnterHome()
+        {
+            if (this.IsDisposed) return;
+            if (this.InvokeRequired)
+            {
+                try { this.BeginInvoke(new Action(EnterHome)); } catch (Exception ex) { BrainController.Log("[WARN] FormPet.EnterHome: " + ex.Message); }
+                return;
+            }
+            if (_inHome) return;
+            _inHome = true;
+            Visible = false;
+            BrainController.Log("[Home] The pig went into Home.");
+        }
+
+        /// <summary>Shows the desktop pet again at a screen point and lets it fall to the nearest surface.</summary>
+        public void LeaveHome(Point screenPoint)
+        {
+            if (this.IsDisposed) return;
+            if (this.InvokeRequired)
+            {
+                try { this.BeginInvoke(new Action<Point>(LeaveHome), screenPoint); } catch (Exception ex) { BrainController.Log("[WARN] FormPet.LeaveHome: " + ex.Message); }
+                return;
+            }
+            if (!_inHome) return;
+            _inHome = false;
+
+            Rectangle wa = Screen.FromPoint(screenPoint).WorkingArea;
+            int x = Math.Max(wa.Left, Math.Min(screenPoint.X - Width / 2, wa.Right - Width));
+            int y = Math.Max(wa.Top, Math.Min(screenPoint.Y - Height / 2, wa.Bottom - Height));
+            hwndWindow = IntPtr.Zero;
+            PositionX = x;
+            PositionY = y;
+            OffsetY = 0.0;
+            Location = new Point(x, y);
+            ResetMotion();
+            Opacity = 1.0;
+            Visible = true;
+            TopMost = true;
+            _brain?.InterruptPhysics("leave_home");
+            SetNewAnimation(Animations.AnimationFall);
+            timer1.Enabled = true;
+            BrainController.Log(string.Format("[Home] The pig left Home at {0},{1}.", x, y));
+        }
+
         public void TriggerFallFromWindow()
         {
             if (this.IsDisposed) return;
@@ -644,7 +696,8 @@ namespace Cuy
             IsLeaving = false;
             ResetMotion();
             SetNewAnimation(spawn.Next);                // Set next animation
-            Visible = true;                             // Now we can show the form
+            if (HomeWindow.IsOpen) _inHome = true;      // Home is open: the pig stays inside
+            Visible = !_inHome;                         // Now we can show the form
             Opacity = 0.0;                              // do not show first frame (as it is undefined)
             timer1.Enabled = true;                      // Enable the timer (interval is well known now)
             TopMost = true;     // new in 1.2.6

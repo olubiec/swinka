@@ -343,6 +343,7 @@ namespace Cuy
 
         public void CallPet()
         {
+            HomeWindow.CloseIfOpen(); // the pig comes out of Home first
             if (InteractionManager.Instance != null)
             {
                 InteractionManager.Instance.CallPet();

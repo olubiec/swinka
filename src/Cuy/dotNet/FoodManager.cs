@@ -62,6 +62,8 @@ namespace Cuy
         {
             if (string.IsNullOrEmpty(itemId)) return false;
 
+            HomeWindow.CloseIfOpen(); // food goes on the desktop, so the pig comes out of Home first
+
             var petForm = FormPet.ActivePet;
             if (petForm == null || petForm.IsDisposed) return false;
 

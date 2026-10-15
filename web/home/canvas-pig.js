@@ -60,7 +60,7 @@
       this.pigY = 60; // floor at ~119px
 
       // Bubble / notification
-      this.bubbleText = 'Kwi-kwi!';
+      this.bubbleText = 'Wheek!';
       this.bubbleTimer = 2500;
       this.bubbleVisible = true;
 
@@ -124,34 +124,74 @@
       this.iconsImg = loadImage(assetsBase + 'icons/icons_16.png');
     }
 
+    // Mouse position -> scene coordinates. The canvas is drawn with object-fit: cover,
+    // aligned to the bottom (see style.css), so the scale is uniform and the top may be cropped.
+    toScene(e) {
+      const rect = this.canvas.getBoundingClientRect();
+      const s = Math.max(rect.width / this.sceneWidth, rect.height / this.sceneHeight);
+      const offX = (rect.width - this.sceneWidth * s) / 2;
+      const offY = rect.height - this.sceneHeight * s;
+      return { x: (e.clientX - rect.left - offX) / s, y: (e.clientY - rect.top - offY) / s };
+    }
+
+    isOverPig(x, y) {
+      return x >= this.pigX && x <= this.pigX + 64 && y >= this.pigY + 20 && y <= this.pigY + 64;
+    }
+
     bindEvents() {
       // Petting or clicking the pig
       this.canvas.addEventListener('click', (e) => {
+        if (this.suppressClick) { this.suppressClick = false; return; }
         this.handleCanvasClick(e);
       });
 
-      // Change the cursor over the pig
-      this.canvas.addEventListener('mousemove', (e) => {
-        const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.sceneWidth / rect.width;
-        const scaleY = this.sceneHeight / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
-
-        if (x >= this.pigX && x <= this.pigX + 64 && y >= this.pigY + 20 && y <= this.pigY + 64) {
-          this.canvas.style.cursor = 'pointer';
-        } else {
-          this.canvas.style.cursor = 'default';
-        }
+      // Drag the pig: inside the scene it is carried; dragged out of the scene it leaves Home onto the desktop.
+      this.drag = null;
+      this.canvas.addEventListener('pointerdown', (e) => {
+        const p = this.toScene(e);
+        if (!this.isOverPig(p.x, p.y)) return;
+        this.drag = { startX: e.clientX, startY: e.clientY, moved: false };
+        try { this.canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
       });
+      this.canvas.addEventListener('pointermove', (e) => {
+        if (this.drag) {
+          if (Math.abs(e.clientX - this.drag.startX) + Math.abs(e.clientY - this.drag.startY) > 6) this.drag.moved = true;
+          if (!this.drag.moved) return;
+          const rect = this.canvas.getBoundingClientRect();
+          const out = e.clientX < rect.left - 12 || e.clientX > rect.right + 12 || e.clientY < rect.top - 12 || e.clientY > rect.bottom + 12;
+          if (out) {
+            this.drag = null;
+            this.suppressClick = true;
+            try { this.canvas.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+            this.pigY = 60;
+            if (root.bridge) root.bridge.send({ type: 'take_out' });
+            return;
+          }
+          const p = this.toScene(e);
+          this.pigX = Math.max(-16, Math.min(this.sceneWidth - 48, p.x - 32));
+          this.pigY = Math.max(-10, Math.min(60, p.y - 40));
+          this.currentAnim = 'idle';
+          this.animTimer = 1000;
+          return;
+        }
+        // Change the cursor over the pig
+        const p = this.toScene(e);
+        this.canvas.style.cursor = this.isOverPig(p.x, p.y) ? 'grab' : 'default';
+      });
+      const endDrag = () => {
+        if (!this.drag) return;
+        if (this.drag.moved) this.suppressClick = true;
+        this.drag = null;
+        this.pigY = 60; // back on the floor
+      };
+      this.canvas.addEventListener('pointerup', endDrag);
+      this.canvas.addEventListener('pointercancel', endDrag);
     }
 
     handleCanvasClick(e) {
-      const rect = this.canvas.getBoundingClientRect();
-      const scaleX = this.sceneWidth / rect.width;
-      const scaleY = this.sceneHeight / rect.height;
-      const x = (e.clientX - rect.left) * scaleX;
-      const y = (e.clientY - rect.top) * scaleY;
+      const p = this.toScene(e);
+      const x = p.x;
+      const y = p.y;
 
       // If a poop was clicked, clean it up!
       if (y >= 105 && this.poopCount > 0 && Math.abs(x - (this.pigX - 25)) < 20) {
@@ -176,7 +216,7 @@
 
     pet() {
       this.playAnim('purr_pet', 3000);
-      this.showBubble('Mruuu... ❤️', 2500);
+      this.showBubble('Purr... ❤️', 2500);
       if (root.Sound) root.Sound.wheek();
       
       // Emit hearts
@@ -303,7 +343,7 @@
             this.playAnim('sniff', 2000);
           } else if (r < 0.55) {
             this.playAnim('scratch', 2200);
-            this.showBubble('Drapu-drap...', 1800);
+            this.showBubble('Scratch scratch...', 1800);
           } else if (r < 0.70) {
             this.playAnim('yawn', 2000);
             this.showBubble('*yawn*', 1800);
@@ -534,7 +574,8 @@
     drawSpeechBubble(ctx) {
       const text = this.bubbleText;
       const bx = Math.max(16, Math.min(this.sceneWidth - 110, this.pigX - 10));
-      const by = Math.max(8, this.pigY - 34);
+      // Just above the head (the sprite body starts ~36 px into the 64 px frame); the top of the scene may be cropped.
+      const by = Math.max(42, this.pigY + 8);
 
       ctx.font = 'bold 11px "Pixelify Sans", monospace';
       const textWidth = ctx.measureText(text).width;

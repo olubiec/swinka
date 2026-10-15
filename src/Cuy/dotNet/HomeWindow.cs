@@ -67,6 +67,35 @@ namespace Cuy
 
         public static HomeWindow Instance => _instance;
 
+        /// <summary>True while the Home window is on screen.</summary>
+        public static bool IsOpen => _instance != null && !_instance.IsDisposed && _instance.Visible;
+
+        /// <summary>Closes Home (if open); the pig comes out onto the desktop.</summary>
+        public static void CloseIfOpen()
+        {
+            if (IsOpen) _instance.Hide();
+        }
+
+        // Where the pig appears when Home closes; set by "take_out" (drag the pig out), otherwise below the window.
+        private Point? _leavePoint;
+
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            var pet = FormPet.ActivePet;
+            if (pet == null || pet.IsDisposed) return;
+            if (this.Visible)
+            {
+                pet.EnterHome();
+            }
+            else
+            {
+                Point p = _leavePoint ?? new Point(this.Left + this.Width / 2, this.Bottom - 40);
+                _leavePoint = null;
+                pet.LeaveHome(p);
+            }
+        }
+
         /// <summary>True when the Microsoft Edge WebView2 runtime is not installed: Home cannot open.</summary>
         public static bool WebView2Missing { get; private set; }
 
@@ -528,6 +557,13 @@ namespace Cuy
                         HandleCall();
                         break;
 
+                    case "take_out":
+                        // The pig was dragged out of the Home scene: close Home, the pig drops at the cursor.
+                        _leavePoint = Cursor.Position;
+                        this.Hide();
+                        BrainController.Log("[HomeWindow] Pig taken out of Home.");
+                        return;
+
                     case "pet":
                         HandlePet();
                         break;
@@ -680,12 +716,14 @@ namespace Cuy
 
         private void HandleCall()
         {
+            // The pig is inside Home, so it only greets here (calling to the cursor is for the desktop).
             var brain = BrainController.Instance;
-            if (brain != null)
-            {
-                brain.CallPet();
-                BrainController.Log("[HomeWindow] Pig called from Home.");
-            }
+            var pet = brain?.Pet;
+            if (pet == null) return;
+            pet.AddBondPoints(1);
+            pet.Count("calls");
+            brain.RequestAnimation("greet");
+            BrainController.Log("[HomeWindow] Pig called inside Home.");
         }
 
         private void HandlePet()
