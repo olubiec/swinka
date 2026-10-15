@@ -255,7 +255,12 @@ namespace Cuy
 
                     Mainthread = new StartUp(pi);
 
-                    if (autoOpenHome || BrainController.Instance.Pet.State.NeedsNaming)
+                    if (BrainController.Instance.Pet.State.NeedsNaming && !autoOpenHome)
+                    {
+                        // New game: the pig first peeks out from the screen corner, then Home opens for naming.
+                        FirstRunIntro.Start(() => HomeWindow.ShowHome());
+                    }
+                    else if (autoOpenHome)
                     {
                         try
                         {

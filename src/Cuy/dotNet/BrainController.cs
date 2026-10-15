@@ -242,7 +242,7 @@ namespace Cuy
             bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
 
             // Update Brain (only without physics, wake-up, food interaction or cursor interaction)
-            if (!_isPhysicsActive && !isFoodActive && !isInteractionActive)
+            if (!_isPhysicsActive && !isFoodActive && !isInteractionActive && ScriptAnimation == null)
             {
                 var beforeAction = _brain.CurrentAction;
                 if (!_isWakingUp)
@@ -341,6 +341,11 @@ namespace Cuy
             }
         }
 
+        /// <summary>
+        /// While set (first-run intro), the Brain makes no decisions and the pet keeps playing this animation.
+        /// </summary>
+        public string ScriptAnimation { get; set; }
+
         public void CallPet()
         {
             HomeWindow.CloseIfOpen(); // the pig comes out of Home first
@@ -424,6 +429,8 @@ namespace Cuy
         /// </summary>
         public string OnAnimationSequenceFinished(string currentAnimationName)
         {
+            if (ScriptAnimation != null) return ScriptAnimation;
+
             bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
             if (_isPhysicsActive || (FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None) || isInteractionActive)
             {

@@ -93,7 +93,7 @@ namespace Cuy
             RenderMotion(now);
             if (land)
             {
-                if ((TossForce.X < 0 && !IsMovingLeft) || (TossForce.X > 0 && IsMovingLeft))
+                if ((TossForce.X < 0 && !spritesFlipped) || (TossForce.X > 0 && spritesFlipped)) // face the throw direction
                 {
                     IsMovingLeft = !IsMovingLeft;
                     spritesFlipped = !spritesFlipped;

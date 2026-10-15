@@ -48,7 +48,7 @@ namespace Cuy
 
         public static FormPet ActivePet { get; private set; }
         public IntPtr CurrentHwndWindow => hwndWindow;
-        public bool IsFacingLeft => IsMovingLeft;
+        public bool IsFacingLeft => spritesFlipped;
         internal NativeMethods.RECT CurrentWindowRect => currentWindowSize;
         public string CurrentAnimationName => CurrentAnimation.Name ?? "";
 
@@ -328,11 +328,10 @@ namespace Cuy
 
         public void SetFacing(bool faceLeft)
         {
-            if (IsMovingLeft != faceLeft)
-            {
-                IsMovingLeft = faceLeft;
-                spritesFlipped = faceLeft;
-            }
+            // The sprite sheet faces right. The eSheep movement code moves right while IsMovingLeft is true,
+            // so facing left = flipped sprites + IsMovingLeft false.
+            spritesFlipped = faceLeft;
+            IsMovingLeft = !faceLeft;
         }
 
         public void StepTowards(int targetX, int speedPx = 2)
@@ -501,6 +500,36 @@ namespace Cuy
             SetNewAnimation(Animations.AnimationFall);
             timer1.Enabled = true;
             BrainController.Log(string.Format("[Home] The pig left Home at {0},{1}.", x, y));
+        }
+
+        // ---- Scripted scene (first-run intro) -------------------------------------
+
+        /// <summary>While true, animations do not move the pet; a script sets the position itself.</summary>
+        public bool ScriptHoldsPosition { get; private set; }
+
+        /// <summary>Starts a scripted scene: the pet stands on the bottom of the primary working area at x, facing right.</summary>
+        public void ScriptBegin(double x)
+        {
+            ScriptHoldsPosition = true;
+            hwndWindow = IntPtr.Zero;
+            SetFacing(false);
+            Rectangle wa = Screen.PrimaryScreen.WorkingArea;
+            PositionY = wa.Bottom - Height - OffsetY;
+            Opacity = 1.0;
+            ScriptMoveTo(x);
+        }
+
+        public void ScriptMoveTo(double x)
+        {
+            if (this.IsDisposed) return;
+            PositionX = x;
+            Location = new Point((int)PositionX, (int)(PositionY + OffsetY));
+            ResetMotion();
+        }
+
+        public void ScriptEnd()
+        {
+            ScriptHoldsPosition = false;
         }
 
         public void TriggerFallFromWindow()
@@ -1007,8 +1036,9 @@ namespace Cuy
             bool bLeavingScreen = false;
                 // If the pet is "flipped", mirror the movement
             if (!IsMovingLeft) x = -x;
+            if (ScriptHoldsPosition) { x = 0; y = 0; } // a script (first-run intro) moves the pet itself
 
-            if (CurrentAnimation.Name == "walk")
+            if (CurrentAnimation.Name == "walk" && !ScriptHoldsPosition)
             {
                 _brain?.StepWalk((int)Math.Round(Math.Abs(x)));
                 if (_brain != null && !_brain.IsWalking)

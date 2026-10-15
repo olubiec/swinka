@@ -7,8 +7,10 @@ Start
 2. Double-click Cuy.exe.
 3. If Windows shows "Windows protected your PC", click "More info" and then "Run anyway".
    Cuy is a small hand-made app without a paid certificate, so Windows does not know it yet.
-4. Give your guinea pig a name. It lives on your taskbar.
-   Click it to see how it feels. The little head icon next to the clock opens its Home.
+4. Watch the bottom-left corner of the screen... someone shy is coming.
+   Then give your guinea pig a name. It lives on your taskbar.
+   Hold the mouse over it to see how it feels, click it to pet it.
+   The little head icon next to the clock opens its Home.
 
 Start with Windows
 Cuy starts with Windows by default. Right-click the head icon next to the clock

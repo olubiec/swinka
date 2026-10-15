@@ -61,6 +61,9 @@
     const iconsUrl = isWebView ? 'https://cuy.assets/icons/icons_16.png' : '../../assets/icons/icons_16.png';
     document.documentElement.style.setProperty('--icons-sheet', `url('${iconsUrl}')`);
 
+    // The test panel is only for development in a normal browser.
+    if (isWebView && elements.btnDevTest) elements.btnDevTest.style.display = 'none';
+
     // Initialise the pig canvas
     const canvasEl = document.getElementById('pigCanvas');
     if (canvasEl && window.PigCanvas) {
@@ -131,12 +134,13 @@
   }
 
   function showIntroStep() {
-    for (let i = 0; i < 3; i++) {
+    const introCount = document.querySelectorAll('.intro-card').length;
+    for (let i = 0; i < introCount; i++) {
       const card = document.getElementById('introCard' + i);
       if (card) card.hidden = (i !== onboard.introStep);
     }
     const btn = document.getElementById('btnIntroNext');
-    if (btn) btn.textContent = onboard.introStep === 2 ? 'Start' : 'Next';
+    if (btn) btn.textContent = onboard.introStep === introCount - 1 ? 'Start' : 'Next';
     showOnly('intro');
   }
 
@@ -164,11 +168,20 @@
     input?.select();
   }
 
+  // Closes Home so the pig comes out onto the desktop (end of the first-run flow).
+  function closeHomeAfterOnboarding() {
+    if (window.bridge && window.bridge.isWebView2) {
+      setTimeout(() => window.bridge.send({ type: 'settings', action: 'close' }), 400);
+    }
+  }
+
   function finishIntro() {
     onboard.introActive = false;
     setWelcomeMode(false);
     const state = window.bridge.currentState;
     if (state) updateOnboarding(state); else showOnly(null);
+    // No gift letter waiting: the tutorial is over, the pig goes out to the taskbar.
+    if (!(state && state.giftNote && !onboard.letterClosed)) closeHomeAfterOnboarding();
   }
 
   function bindOnboarding() {
@@ -188,7 +201,7 @@
       if (e.key === 'Enter') submitName();
     });
     document.getElementById('btnIntroNext')?.addEventListener('click', () => {
-      if (onboard.introStep < 2) {
+      if (onboard.introStep < document.querySelectorAll('.intro-card').length - 1) {
         onboard.introStep++;
         showIntroStep();
       } else {
@@ -199,6 +212,7 @@
       onboard.letterClosed = true;
       showOnly(null);
       window.bridge.send({ type: 'giftNoteShown' });
+      closeHomeAfterOnboarding();
     });
   }
 

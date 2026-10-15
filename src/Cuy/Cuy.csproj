@@ -282,6 +282,7 @@
     <Compile Include="dotNet\FoodManager.cs" />
     <Compile Include="dotNet\Diagnostics.cs" />
     <Compile Include="dotNet\AutoStart.cs" />
+    <Compile Include="dotNet\FirstRunIntro.cs" />
     <Compile Include="dotNet\SelfTest.cs" />
     <EmbeddedResource Include="dotNet\FormPet.resx">
       <DependentUpon>FormPet.cs</DependentUpon>
