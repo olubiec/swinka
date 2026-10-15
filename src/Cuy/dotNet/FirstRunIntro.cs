@@ -20,6 +20,7 @@ namespace Cuy
         private double _waitMs;
         private double _fromX;
         private bool _finished;
+        private int _errors;
 
         private FirstRunIntro(Action onDone)
         {
@@ -42,8 +43,10 @@ namespace Cuy
             }
             catch (Exception ex)
             {
-                BrainController.Log("[ERROR] FirstRunIntro: " + ex.Message);
-                Finish();
+                // One bad tick must not skip the whole scene; give up only if it keeps failing.
+                _errors++;
+                BrainController.Log("[ERROR] FirstRunIntro phase " + _phase + ": " + ex);
+                if (_errors > 20) Finish();
             }
         }
 
@@ -62,7 +65,11 @@ namespace Cuy
             if (pet == null || pet.IsDisposed || !pet.Visible || brain == null)
             {
                 _waitMs += TickMs;
-                if (_waitMs > 20000) Finish();
+                if (_waitMs > 30000)
+                {
+                    BrainController.Log("[Intro] The desktop pet did not appear in 30 s, skipping the intro.");
+                    Finish();
+                }
                 return;
             }
 
@@ -127,6 +134,7 @@ namespace Cuy
 
         private void Go(int phase, double fromX)
         {
+            BrainController.Log(string.Format("[Intro] Phase {0} -> {1} at x={2:0}", _phase, phase, fromX));
             _phase = phase;
             _phaseMs = 0;
             _fromX = fromX;
