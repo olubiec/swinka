@@ -24,8 +24,6 @@ foreach ($name in "assets", "web") {
 
 Copy-Item (Join-Path $PSScriptRoot "package\README.txt") $out
 Copy-Item (Join-Path $root "THIRD_PARTY_NOTICES.md") $out
-New-Item -ItemType Directory -Path (Join-Path $out "gift") | Out-Null
-Set-Content -Path (Join-Path $out "gift\note.txt.example") -Value "Rename this file to note.txt and write your message." -Encoding UTF8
 
 # Self-test the packed copy.
 $selftestFile = Join-Path $env:TEMP "cuy-selftest.txt"

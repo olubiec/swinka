@@ -5,9 +5,9 @@ using System.Windows.Forms;
 namespace Cuy
 {
     /// <summary>
-    /// First start of a new game: the pig is hidden behind the left screen edge, peeks out with its nose,
-    /// hides again, peeks a little more, then walks out onto the taskbar and wheeks. After that Home opens
-    /// for naming and the short tutorial.
+    /// First start of a new game: the pig stands on the taskbar hidden behind the left screen edge and shows
+    /// only its nose. When the cursor comes close it hides; when left alone for a while it shows more of its head
+    /// and finally walks out and lives as usual. A few seconds later Home opens for naming and the tutorial.
     /// </summary>
     internal sealed class FirstRunIntro
     {
@@ -47,6 +47,12 @@ namespace Cuy
             }
         }
 
+        // Phases
+        private const int Setup = 0, Peek = 1, Retreat = 2, PeekMore = 3, WalkOut = 4;
+
+        private double _calmMs;      // how long the cursor has stayed away from the pig
+        private double _totalMs;
+
         private void Step()
         {
             var pet = FormPet.ActivePet;
@@ -64,78 +70,74 @@ namespace Cuy
             double w = pet.Width;
             // The pig faces right; in the 64 px frame the nose is at about 80 % of the width.
             double hiddenX = wa.Left - w * 0.9;   // completely behind the edge
-            double noseX = wa.Left - w * 0.74;    // only the nose shows
-            double headX = wa.Left - w * 0.55;    // nose and eyes show
+            double noseX = wa.Left - w * 0.72;    // only the nose sticks out
+            double headX = wa.Left - w * 0.5;     // half of the head
             double outX = wa.Left + 90;           // fully out on the taskbar
 
             _phaseMs += TickMs;
+            _totalMs += TickMs;
+
+            // Is the cursor close to the corner where the pig hides?
+            Point c = Cursor.Position;
+            double dx = c.X - wa.Left;
+            double dy = c.Y - (pet.Top + pet.Height / 2.0);
+            bool cursorNear = dx < 220 && Math.Abs(dy) < 220;
+            _calmMs = cursorNear ? 0 : _calmMs + TickMs;
+
+            // Safety net: never keep her waiting forever.
+            bool forceOut = _totalMs > 120000;
 
             switch (_phase)
             {
-                case 0: // set up behind the edge
-                    brain.ScriptAnimation = "idle";
-                    pet.ScriptBegin(hiddenX);
-                    pet.PlayAnimationByName("idle");
-                    Next(hiddenX);
-                    break;
-
-                case 1: // short pause, then the nose slides out
-                    if (_phaseMs < 1500) break;
-                    Animate(pet, "sniff");
-                    if (Slide(pet, noseX, 900, 1500)) break;
-                    if (_phaseMs < 1500 + 2500) break;
-                    Next(noseX);
-                    break;
-
-                case 2: // shy: hides again
+                case Setup: // behind the edge, a moment of nothing
                     Animate(pet, "idle");
-                    if (Slide(pet, hiddenX, 300, 0)) break;
-                    if (_phaseMs < 1600) break;
-                    Next(hiddenX);
+                    pet.ScriptBegin(hiddenX);
+                    if (_phaseMs < 2500) break;
+                    Go(Peek, hiddenX);
                     break;
 
-                case 3: // peeks out a bit more and sniffs around
+                case Peek: // only the nose, sniffing
                     Animate(pet, "sniff");
-                    if (Slide(pet, headX, 1300, 0)) break;
-                    if (_phaseMs < 1300 + 2500) break;
-                    Next(headX);
+                    Slide(pet, noseX, 900);
+                    if (cursorNear && !forceOut) { Go(Retreat, pet.PositionX); break; }
+                    if (_phaseMs > 900 && (_calmMs > 6000 || forceOut)) Go(PeekMore, pet.PositionX);
                     break;
 
-                case 4: // walks out confidently (about 30 px per second)
+                case Retreat: // the cursor came close: hides quickly and waits until it is gone
+                    Animate(pet, "idle");
+                    Slide(pet, hiddenX, 250);
+                    if (_phaseMs > 250 && _calmMs > 2500) Go(Peek, pet.PositionX);
+                    break;
+
+                case PeekMore: // more of the head, still careful
+                    Animate(pet, "sniff");
+                    Slide(pet, headX, 1400);
+                    if (cursorNear && !forceOut) { Go(Retreat, pet.PositionX); break; }
+                    if (_phaseMs > 1400 && (_calmMs > 4000 || forceOut)) Go(WalkOut, pet.PositionX);
+                    break;
+
+                case WalkOut: // comes out and from here on lives as usual
                     Animate(pet, "walk");
                     double x = Math.Min(outX, pet.PositionX + 1.6);
                     pet.ScriptMoveTo(x);
-                    if (x >= outX) Next(outX);
-                    break;
-
-                case 5: // happy wheek
-                    if (_phaseMs <= TickMs)
-                    {
-                        Animate(pet, "greet");
-                        SoundManager.Instance?.PlayWheek("greet");
-                    }
-                    if (_phaseMs < 1800) break;
-                    Finish();
+                    if (x >= outX) Finish();
                     break;
             }
         }
 
-        private void Next(double fromX)
+        private void Go(int phase, double fromX)
         {
-            _phase++;
+            _phase = phase;
             _phaseMs = 0;
             _fromX = fromX;
         }
 
-        /// <summary>Moves from the phase start position to targetX between startMs and startMs + durationMs. Returns true while moving.</summary>
-        private bool Slide(FormPet pet, double targetX, double durationMs, double startMs)
+        /// <summary>Eases from the phase start position to targetX over durationMs.</summary>
+        private void Slide(FormPet pet, double targetX, double durationMs)
         {
-            double t = (_phaseMs - startMs) / durationMs;
-            if (t < 0) return true;
-            if (t > 1) t = 1;
+            double t = Math.Min(1.0, _phaseMs / durationMs);
             double eased = t * t * (3 - 2 * t);
             pet.ScriptMoveTo(_fromX + (targetX - _fromX) * eased);
-            return t < 1;
         }
 
         private static void Animate(FormPet pet, string animation)
@@ -161,10 +163,18 @@ namespace Cuy
                 pet.ScriptEnd();
                 pet.PlayAnimationByName("idle");
             }
-            BrainController.Log("[Intro] First-run intro finished.");
+            BrainController.Log("[Intro] First-run intro finished; naming opens in a few seconds.");
 
-            try { _onDone?.Invoke(); }
-            catch (Exception ex) { BrainController.Log("[ERROR] FirstRunIntro done callback: " + ex.Message); }
+            // Let her watch the pig wander for a moment before Home opens for naming.
+            var later = new Timer { Interval = 8000 };
+            later.Tick += (s2, e2) =>
+            {
+                later.Stop();
+                later.Dispose();
+                try { _onDone?.Invoke(); }
+                catch (Exception ex) { BrainController.Log("[ERROR] FirstRunIntro done callback: " + ex.Message); }
+            };
+            later.Start();
         }
     }
 }
