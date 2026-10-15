@@ -33,7 +33,7 @@ namespace Cuy.Core.Tests
         {
             var birthUtc = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc);
             var state = GameState.CreateNew("Cuy", birthUtc);
-            var pet = new Pet(state, new ManualClock(birthUtc.AddDays(15)));
+            var pet = new Pet(state, new ManualClock(birthUtc.AddDays(15)), new Balance { GrowthActive = false });
             pet.Start();
             Assert.Equal(LifeStage.Baby, pet.Stage);
         }

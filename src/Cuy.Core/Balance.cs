@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Cuy.Core
@@ -9,8 +9,8 @@ namespace Cuy.Core
     /// </summary>
     public sealed class Balance
     {
-        /// <summary>Version 1.0.0: the pig stays a baby. Set to true to let it grow through the life stages.</summary>
-        public const bool GrowthEnabled = false;
+        /// <summary>The pig grows through the life stages (1 real day = 21 pig days). Set to false to keep it a baby.</summary>
+        public const bool GrowthEnabled = true;
 
         /// <summary>Whether this Balance lets the pig grow. Starts as <see cref="GrowthEnabled"/>; tests of the life stages switch it on.</summary>
         public bool GrowthActive { get; set; } = GrowthEnabled;

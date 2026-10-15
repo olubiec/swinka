@@ -78,7 +78,7 @@
   }
 
   // ---- First run: welcome -> intro -> gift letter ----
-  const onboard = { introActive: false, introStep: 0, letterClosed: false, nameSent: false };
+  const onboard = { introActive: false, introStep: 0, letterClosed: false, nameSent: false, renaming: false };
 
   function showOnly(id) {
     ['welcome', 'intro', 'letter'].forEach((v) => {
@@ -88,7 +88,9 @@
   }
 
   function updateOnboarding(state) {
-    if (state.needsNaming && !onboard.nameSent) {
+    if (onboard.renaming) {
+      showOnly('welcome');
+    } else if (state.needsNaming && !onboard.nameSent) {
       if (document.getElementById('welcome')?.hidden) {
         showOnly('welcome');
         document.getElementById('nameInput')?.focus();
@@ -113,6 +115,14 @@
       return;
     }
     error.hidden = true;
+    if (onboard.renaming) {
+      // Rename from the Home header: no intro, just save the name.
+      onboard.renaming = false;
+      window.bridge.send({ type: 'setName', name: name });
+      const state = window.bridge.currentState;
+      if (state) updateOnboarding(state); else showOnly(null);
+      return;
+    }
     onboard.nameSent = true;
     onboard.introActive = true;
     onboard.introStep = 0;
@@ -130,7 +140,49 @@
     showOnly('intro');
   }
 
+  function setWelcomeMode(rename) {
+    const title = document.getElementById('welcomeTitle');
+    const text = document.getElementById('welcomeText');
+    const go = document.getElementById('btnNameGo');
+    const cancel = document.getElementById('btnNameCancel');
+    if (title) title.textContent = rename ? 'New name' : 'Welcome!';
+    if (text) text.textContent = rename ? 'What should your guinea pig be called?' : 'Your guinea pig has arrived. What will you call it?';
+    if (go) go.textContent = rename ? 'Save' : "Let's go";
+    if (cancel) cancel.hidden = !rename;
+  }
+
+  function startRename() {
+    const state = window.bridge ? window.bridge.currentState : null;
+    if (state && state.needsNaming) return; // first-run naming is already on screen
+    onboard.renaming = true;
+    setWelcomeMode(true);
+    const input = document.getElementById('nameInput');
+    if (input) input.value = (state && state.name) || '';
+    document.getElementById('nameError').hidden = true;
+    showOnly('welcome');
+    input?.focus();
+    input?.select();
+  }
+
+  function finishIntro() {
+    onboard.introActive = false;
+    setWelcomeMode(false);
+    const state = window.bridge.currentState;
+    if (state) updateOnboarding(state); else showOnly(null);
+  }
+
   function bindOnboarding() {
+    document.getElementById('petName')?.addEventListener('click', startRename);
+    document.getElementById('petName')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') startRename();
+    });
+    document.getElementById('btnNameCancel')?.addEventListener('click', () => {
+      onboard.renaming = false;
+      setWelcomeMode(false);
+      const state = window.bridge.currentState;
+      if (state) updateOnboarding(state); else showOnly(null);
+    });
+    document.getElementById('btnIntroSkip')?.addEventListener('click', finishIntro);
     document.getElementById('btnNameGo')?.addEventListener('click', submitName);
     document.getElementById('nameInput')?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') submitName();
@@ -140,9 +192,7 @@
         onboard.introStep++;
         showIntroStep();
       } else {
-        onboard.introActive = false;
-        const state = window.bridge.currentState;
-        if (state) updateOnboarding(state); else showOnly(null);
+        finishIntro();
       }
     });
     document.getElementById('btnLetterClose')?.addEventListener('click', () => {

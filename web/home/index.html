@@ -34,7 +34,7 @@
     <section class="pet-identity-card" aria-label="Pig profile">
       <div class="identity-main">
         <div class="pet-name-wrap">
-          <span class="pet-name" id="petName">Cuy</span>
+          <span class="pet-name" id="petName" role="button" tabindex="0" title="Click to rename">Cuy</span>
         </div>
         <div>
           <span class="pet-age-text" id="petAge">Age: 3 days</span>
@@ -233,10 +233,11 @@
     <section class="onboard-view" id="welcome" hidden aria-labelledby="welcomeTitle">
       <div class="onboard-card">
         <h2 id="welcomeTitle">Welcome!</h2>
-        <p>Your guinea pig has arrived. What will you call it?</p>
+        <p id="welcomeText">Your guinea pig has arrived. What will you call it?</p>
         <input class="onboard-input" id="nameInput" type="text" maxlength="16" autocomplete="off" spellcheck="false" aria-label="Pig name">
         <p class="onboard-error" id="nameError" hidden>Use letters, digits and spaces.</p>
         <button class="game-btn onboard-btn" id="btnNameGo" type="button">Let's go</button>
+        <button class="onboard-link" id="btnNameCancel" type="button" hidden>Cancel</button>
       </div>
     </section>
 
@@ -246,6 +247,7 @@
         <div class="intro-card" id="introCard1" hidden>Click me to see how I feel.</div>
         <div class="intro-card" id="introCard2" hidden>The little head by the clock opens my Home.</div>
         <button class="game-btn onboard-btn" id="btnIntroNext" type="button">Next</button>
+        <button class="onboard-link" id="btnIntroSkip" type="button">Skip</button>
       </div>
     </section>
 

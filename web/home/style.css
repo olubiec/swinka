@@ -952,3 +952,23 @@ body.webview-mode .game-device {
   border: 3px solid var(--c-contour-dark);
   border-radius: 8px;
 }
+
+/* Secondary text button on the first-run cards (Skip, Cancel) */
+.onboard-link {
+  display: block;
+  margin: 8px auto 0;
+  background: none;
+  border: none;
+  color: var(--c-contour-dark);
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  text-decoration: underline;
+  cursor: pointer;
+  opacity: 0.75;
+}
+.onboard-link:hover { opacity: 1; }
+.onboard-link[hidden] { display: none; }
+
+/* The pig name in the header can be clicked to rename */
+#petName { cursor: pointer; }
+#petName:hover { text-decoration: underline dotted; }
