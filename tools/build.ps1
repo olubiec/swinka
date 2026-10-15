@@ -6,7 +6,10 @@ $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.e
 if (-not (Test-Path $vswhere)) { Write-Error "vswhere not found: install Visual Studio 2022 with .NET desktop development" }
 $msbuild = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild -find "MSBuild\**\Bin\MSBuild.exe" | Select-Object -First 1
 if (-not $msbuild) { Write-Error "MSBuild not found" }
-& $msbuild "$root\Cuy.sln" /restore /p:RestorePackagesConfig=true /p:Configuration=$Config /m /v:minimal /nologo
+# Restore in its own step: packages.config .targets must exist before the build evaluates Cuy.csproj.
+& $msbuild "$root\Cuy.sln" /t:Restore /p:RestorePackagesConfig=true /p:Configuration=$Config /v:minimal /nologo
+if ($LASTEXITCODE -ne 0) { Write-Host "RESTORE FAILED"; exit $LASTEXITCODE }
+& $msbuild "$root\Cuy.sln" /p:Configuration=$Config /m /v:minimal /nologo
 if ($LASTEXITCODE -ne 0) { Write-Host "BUILD FAILED"; exit $LASTEXITCODE }
 Write-Host "BUILD OK ($Config)"
 if (-not $NoTests) {
