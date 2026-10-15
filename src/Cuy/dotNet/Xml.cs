@@ -129,6 +129,12 @@ namespace Cuy
             bool bError = false;
             // Construct an instance of the XmlSerializer with the type
             // of object that is being deserialized.
+            // Cuy always uses the animations built into the exe: an older copy kept in the user settings
+            // would otherwise hide every update of animations.xml.
+            if (Program.MyData.GetXml() != Properties.Resources.animations)
+            {
+                Program.MyData.SetXml(Properties.Resources.animations, "esheep64");
+            }
             XmlSerializer mySerializer = new XmlSerializer(typeof(XmlData.RootNode));
             // To read the file, create a FileStream.
             MemoryStream stream = new MemoryStream();
