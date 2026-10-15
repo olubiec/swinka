@@ -37,10 +37,9 @@
 
     // Food drawer
     foodDrawer: document.getElementById('foodDrawer'),
-    foodBtns: document.querySelectorAll('.food-item-btn'),
-    foodQtyBellPepper: document.getElementById('foodQtyBellPepper'),
-    foodQtyCarrot: document.getElementById('foodQtyCarrot'),
-    foodQtyPellets: document.getElementById('foodQtyPellets'),
+    foodGrid: document.getElementById('foodGrid'),
+    foodEmpty: document.getElementById('foodEmpty'),
+    foodDrawerClose: document.getElementById('foodDrawerClose'),
 
     // Top controls
     btnSound: document.getElementById('btnSound'),
@@ -262,9 +261,7 @@
 
     // Inventory in the food drawer
     if (state.inventory) {
-      if (elements.foodQtyBellPepper) elements.foodQtyBellPepper.textContent = `x${state.inventory.bell_pepper || 0}`;
-      if (elements.foodQtyCarrot) elements.foodQtyCarrot.textContent = `x${state.inventory.carrot || 0}`;
-      if (elements.foodQtyPellets) elements.foodQtyPellets.textContent = `x${state.inventory.pellets || 0}`;
+      if (elements.foodDrawer?.classList.contains('active')) renderFoodDrawer(state);
     }
 
     // Update the canvas
@@ -304,43 +301,77 @@
     }
   }
 
+  // ---- Food drawer ----
+  // Food that can be given from Home (same ids and order as assets/data/items.json).
+  const FOODS = [
+    { id: 'hay',         name: 'Hay',         icon: 'icon-hay' },
+    { id: 'pellets',     name: 'Pellets',     icon: 'icon-pellets' },
+    { id: 'bell_pepper', name: 'Bell pepper', icon: 'icon-bell-pepper' },
+    { id: 'parsley',     name: 'Parsley',     icon: 'icon-parsley' },
+    { id: 'kale',        name: 'Kale',        icon: 'icon-kale' },
+    { id: 'cucumber',    name: 'Cucumber',    icon: 'icon-cucumber' },
+    { id: 'carrot',      name: 'Carrot',      icon: 'icon-carrot' },
+    { id: 'chew_stick',  name: 'Chew stick',  icon: 'icon-chew-stick' }
+  ];
+
+  function closeFoodDrawer() {
+    elements.foodDrawer?.classList.remove('active');
+  }
+
+  function renderFoodDrawer(state) {
+    if (!elements.foodGrid) return;
+    const inv = (state && state.inventory) || {};
+    const list = FOODS.filter((f) => f.id === 'hay' || (inv[f.id] || 0) > 0);
+    elements.foodGrid.innerHTML = list.map((f) => `
+      <button class="food-item-btn" type="button" data-food="${f.id}">
+        <span class="pixel-icon x1_5 ${f.icon}" aria-hidden="true"></span>
+        <span>${f.name}</span>
+        <span class="food-qty">${f.id === 'hay' ? 'free' : 'x' + inv[f.id]}</span>
+      </button>`).join('');
+    if (elements.foodEmpty) elements.foodEmpty.hidden = list.length > 1;
+    elements.foodGrid.querySelectorAll('.food-item-btn').forEach((btn) => {
+      btn.addEventListener('click', () => giveFood(btn.dataset.food));
+    });
+  }
+
+  function giveFood(food) {
+    const state = window.bridge ? window.bridge.getState() : null;
+    const fullness = state?.needs?.fullness;
+    if (typeof fullness === 'number' && fullness >= 95) {
+      // The game refuses food when the pig is full; say so here too.
+      if (canvasPig) canvasPig.showBubble("I'm full!", 1800);
+      closeFoodDrawer();
+      return;
+    }
+    if (window.Sound) window.Sound.crunch();
+    if (canvasPig) {
+      canvasPig.playAnim(food === 'hay' ? 'eat' : 'eat_treat', 3500);
+      canvasPig.showBubble('Yum! Crunch crunch!', 2500);
+      canvasPig.spawnCrunch(canvasPig.pigX + 40, canvasPig.pigY + 50);
+    }
+    if (window.bridge) window.bridge.send({ type: 'feed', item: food });
+    closeFoodDrawer();
+  }
+
   // UI button handlers
   function bindButtons() {
-    // 1. FEED — opens the slide-out food drawer
+    // 1. FEED — opens the food drawer above the buttons (× / Feed again / Esc closes it)
     elements.btnFeed?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
-      const isActive = elements.foodDrawer.classList.toggle('active');
-      if (isActive && canvasPig) {
+      if (elements.foodDrawer.classList.contains('active')) {
+        closeFoodDrawer();
+        return;
+      }
+      renderFoodDrawer(window.bridge ? window.bridge.getState() : null);
+      elements.foodDrawer.classList.add('active');
+      if (canvasPig) {
         canvasPig.playAnim('beg', 2000);
-        canvasPig.showBubble('Bell pepper please! Wheee!', 2000);
+        canvasPig.showBubble('Something tasty? Wheek!', 2000);
       }
     });
-
-    // Clicking a food item in the drawer
-    elements.foodBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const food = btn.dataset.food;
-        const state = window.bridge ? window.bridge.getState() : null;
-
-        if (food !== 'hay' && state?.inventory && (state.inventory[food] || 0) <= 0) {
-          if (window.Sound) window.Sound.click();
-          if (canvasPig) canvasPig.showBubble(`No ${food} left! Buy some in the shop!`, 2200);
-          return;
-        }
-
-        if (window.Sound) window.Sound.crunch();
-        if (canvasPig) {
-          canvasPig.playAnim(food === 'hay' ? 'eat' : 'eat_treat', 3500);
-          canvasPig.showBubble('Yum! Crunch crunch!', 2500);
-          canvasPig.spawnCrunch(canvasPig.pigX + 40, canvasPig.pigY + 50);
-        }
-
-        if (window.bridge) {
-          window.bridge.send({ type: 'feed', item: food });
-        }
-
-        elements.foodDrawer.classList.remove('active');
-      });
+    elements.foodDrawerClose?.addEventListener('click', closeFoodDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeFoodDrawer();
     });
 
     // 2. CLEAN — cleans the cage and poops, +1 clover
@@ -539,41 +570,66 @@
   }
 
   // Sticker album dialog
-  function openAlbumModal() {
-    const stickers = [
-      { name: 'Sitting', id: 'idle', unlocked: true },
-      { name: 'Sniffing', id: 'sniff', unlocked: true },
-      { name: 'Popcorning', id: 'popcorn', unlocked: true },
-      { name: 'Eating hay', id: 'eat', unlocked: true },
-      { name: 'Crunching', id: 'eat_treat', unlocked: true },
-      { name: 'Purring', id: 'purr_pet', unlocked: true },
-      { name: 'Wheeking', id: 'wheek', unlocked: true },
-      { name: 'Sleeping', id: 'sleep', unlocked: true },
-      { name: 'Dancing', id: 'dance', unlocked: false },
-      { name: 'Running away', id: 'flee', unlocked: false },
-      { name: 'Agility', id: 'hurdle', unlocked: false },
-      { name: 'Birthday', id: 'party', unlocked: false }
-    ];
+  // Behaviour album: a sticker for every behaviour the pig has shown (state.album = animation names seen).
+  const STICKERS = [
+      { id: 'idle', name: 'Sitting', row: 0, frame: 2 },
+      { id: 'sniff', name: 'Sniffing', row: 1, frame: 2 },
+      { id: 'walk', name: 'Walking', row: 2, frame: 2 },
+      { id: 'run', name: 'Zoomies', row: 3, frame: 2 },
+      { id: 'popcorn', name: 'Popcorning', row: 4, frame: 2 },
+      { id: 'eat', name: 'Eating hay', row: 5, frame: 2 },
+      { id: 'eat_treat', name: 'Crunching a treat', row: 6, frame: 2 },
+      { id: 'drink', name: 'Drinking', row: 26, frame: 2 },
+      { id: 'scratch', name: 'Scratching', row: 7, frame: 2 },
+      { id: 'yawn', name: 'Yawning', row: 12, frame: 2 },
+      { id: 'doze', name: 'Dozing', row: 10, frame: 2 },
+      { id: 'sleep', name: 'Sleeping', row: 9, frame: 2 },
+      { id: 'purr_pet', name: 'Purring', row: 40, frame: 2 },
+      { id: 'wheek', name: 'Wheeking', row: 15, frame: 2 },
+      { id: 'greet', name: 'Greeting', row: 44, frame: 2 },
+      { id: 'happy', name: 'Happy', row: 17, frame: 2 },
+      { id: 'beg', name: 'Begging', row: 32, frame: 2 },
+      { id: 'chin_rub', name: 'Chin rub', row: 29, frame: 2 },
+      { id: 'dig_hay', name: 'Digging in hay', row: 28, frame: 2 },
+      { id: 'chew_stick', name: 'Chewing', row: 27, frame: 2 },
+      { id: 'rumble', name: 'Rumblestrutting', row: 42, frame: 2 },
+      { id: 'startle', name: 'Startled', row: 13, frame: 2 },
+      { id: 'chatter', name: 'Grumpy', row: 41, frame: 2 },
+      { id: 'peek', name: 'Peeking', row: 24, frame: 2 },
+      { id: 'dance', name: 'Dancing', row: 16, frame: 2 },
+      { id: 'flee', name: 'Running away', row: 43, frame: 2 },
+      { id: 'hurdle', name: 'Jumping', row: 47, frame: 2 },
+      { id: 'ball_push', name: 'Playing ball', row: 53, frame: 2 },
+      { id: 'tunnel_in', name: 'Into the tunnel', row: 50, frame: 2 },
+      { id: 'sleep_house', name: 'Napping in the house', row: 39, frame: 2 },
+      { id: 'party', name: 'Birthday party', row: 58, frame: 2 }
+  ];
 
-    const unlockedCount = stickers.filter(s => s.unlocked).length;
+  function openAlbumModal() {
+    const state = window.bridge ? window.bridge.getState() : null;
+    const seen = new Set((state && state.album) || ['idle', 'sniff']);
+    const isWebView = !!(window.chrome && window.chrome.webview);
+    const stage = (state && state.stageKey) || 'baby';
+    const folder = (stage === 'junior') ? 'baby' : stage;
+    const sheet = (isWebView ? 'https://cuy.assets/' : '../../assets/') + 'sprites/' + folder + '/spritesheet.png';
+    const unlockedCount = STICKERS.filter((st) => seen.has(st.id)).length;
 
     let html = `
       <div style="background:#2b1712; color:#fffdf8; padding:5px 8px; border-radius:4px; font-weight:700;">
-        Sticker collection: ${unlockedCount} / ${stickers.length}
+        Stickers found: ${unlockedCount} / ${STICKERS.length}
       </div>
       <div class="album-grid">
     `;
-
-    stickers.forEach(st => {
+    STICKERS.forEach((st) => {
+      const ok = seen.has(st.id);
       html += `
-        <div class="album-card ${st.unlocked ? '' : 'album-locked'}">
-          <span style="font-size:20px;">${st.unlocked ? '🐹' : '❓'}</span>
-          <b>${st.unlocked ? st.name : '???'}</b>
-          <small style="color:#6e6a5c;">${st.unlocked ? 'Found!' : 'Not yet'}</small>
+        <div class="album-card ${ok ? '' : 'album-locked'}">
+          <span class="album-sprite" style="background-image:url('${sheet}'); background-position:${-st.frame * 48}px ${-st.row * 48}px;"></span>
+          <b>${ok ? st.name : '???'}</b>
+          <small style="color:#6e6a5c;">${ok ? 'Found!' : 'Not seen yet'}</small>
         </div>
       `;
     });
-
     html += `</div>`;
     openModal('📖 Behaviour Album', html);
   }

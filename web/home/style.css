@@ -547,15 +547,40 @@ body.webview-mode .game-device {
    SLIDE-OUT FEEDING PANEL
    ========================================================================== */
 
+.actions-section { position: relative; }
+
+/* Opens above the action buttons (over the needs), so the buttons never get pushed out of the window */
 .food-drawer {
   display: none;
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: calc(100% + 6px);
+  z-index: 30;
   background: var(--c-white);
   border: 3px solid var(--c-contour-dark);
   border-radius: 8px;
   padding: 8px;
-  margin-bottom: 8px;
   box-shadow: 0 4px 0 var(--c-contour-dark);
 }
+
+.food-drawer-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--c-contour-dark);
+  padding: 0 4px;
+}
+
+.food-empty {
+  margin: 6px 0 0;
+  font-size: 11px;
+  text-align: center;
+  color: var(--c-wood-deep);
+}
+.food-empty[hidden] { display: none; }
 
 .food-drawer.active {
   display: block;
@@ -617,69 +642,49 @@ body.webview-mode .game-device {
    ========================================================================== */
 
 .pixel-icon {
+  --s: 16px;   /* size of one icon */
+  --i: 0;      /* index in assets/icons/icons.json */
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: var(--s);
+  height: var(--s);
   background-image: var(--icons-sheet, url('https://cuy.assets/icons/icons_16.png'));
   background-repeat: no-repeat;
-  background-size: 400px 16px; /* 25 ikon * 16px = 400px */
+  background-size: calc(25 * var(--s)) var(--s); /* 25 icons in one row */
+  background-position: calc(var(--i) * -1 * var(--s)) 0;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   vertical-align: middle;
 }
 
-.pixel-icon.x1_5 {
-  width: 24px;
-  height: 24px;
-  background-size: 600px 24px;
-}
+.pixel-icon.x1_5 { --s: 24px; }
+.pixel-icon.x2 { --s: 32px; }
 
-.pixel-icon.x2 {
-  width: 32px;
-  height: 32px;
-  background-size: 800px 32px;
-}
-
-/* Icon positions in the sheet (index * 16px at x1, index * 24px at x1_5, index * 32px at x2) */
-.icon-bell-pepper             { background-position: calc(-0 * 16px) 0; }
-.icon-cucumber              { background-position: calc(-1 * 16px) 0; }
-.icon-parsley               { background-position: calc(-2 * 16px) 0; }
-.icon-carrot           { background-position: calc(-3 * 16px) 0; }
-.icon-pellets            { background-position: calc(-4 * 16px) 0; }
-.icon-chew-stick              { background-position: calc(-5 * 16px) 0; }
-.icon-ball               { background-position: calc(-6 * 16px) 0; }
-.icon-tunnel               { background-position: calc(-7 * 16px) 0; }
-.icon-house               { background-position: calc(-8 * 16px) 0; }
-.icon-water-bottle              { background-position: calc(-9 * 16px) 0; }
-.icon-poop               { background-position: calc(-10 * 16px) 0; }
-.icon-cake                { background-position: calc(-11 * 16px) 0; }
-.icon-hay               { background-position: calc(-12 * 16px) 0; }
-.icon-clover          { background-position: calc(-13 * 16px) 0; }
-.icon-kale              { background-position: calc(-14 * 16px) 0; }
-.icon-strawberry           { background-position: calc(-15 * 16px) 0; }
-.icon-onion              { background-position: calc(-16 * 16px) 0; }
-.icon-chocolate           { background-position: calc(-17 * 16px) 0; }
-.icon-need-fullness { background-position: calc(-18 * 16px) 0; }
-.icon-need-vitamin-c { background-position: calc(-19 * 16px) 0; }
-.icon-need-energy    { background-position: calc(-20 * 16px) 0; }
-.icon-need-mood      { background-position: calc(-21 * 16px) 0; }
-.icon-need-cleanliness   { background-position: calc(-22 * 16px) 0; }
-.icon-need-teeth      { background-position: calc(-23 * 16px) 0; }
-.icon-pig-head        { background-position: calc(-24 * 16px) 0; }
-
-/* x1_5 scale for the need bars */
-.pixel-icon.x1_5.icon-need-fullness { background-position: calc(-18 * 24px) 0; }
-.pixel-icon.x1_5.icon-need-vitamin-c { background-position: calc(-19 * 24px) 0; }
-.pixel-icon.x1_5.icon-need-energy    { background-position: calc(-20 * 24px) 0; }
-.pixel-icon.x1_5.icon-need-mood      { background-position: calc(-21 * 24px) 0; }
-.pixel-icon.x1_5.icon-need-cleanliness   { background-position: calc(-22 * 24px) 0; }
-.pixel-icon.x1_5.icon-need-teeth      { background-position: calc(-23 * 24px) 0; }
-
-/* x1_5 scale for food in the drawer */
-.pixel-icon.x1_5.icon-hay     { background-position: calc(-12 * 24px) 0; }
-.pixel-icon.x1_5.icon-bell-pepper   { background-position: calc(-0 * 24px) 0; }
-.pixel-icon.x1_5.icon-carrot { background-position: calc(-3 * 24px) 0; }
-.pixel-icon.x1_5.icon-pellets  { background-position: calc(-4 * 24px) 0; }
+/* Icon index in the sheet (same as assets/icons/icons.json); the size classes scale the position automatically */
+.icon-bell-pepper { --i: 0; }
+.icon-cucumber { --i: 1; }
+.icon-parsley { --i: 2; }
+.icon-carrot { --i: 3; }
+.icon-pellets { --i: 4; }
+.icon-chew-stick { --i: 5; }
+.icon-ball { --i: 6; }
+.icon-tunnel { --i: 7; }
+.icon-house { --i: 8; }
+.icon-water-bottle { --i: 9; }
+.icon-poop { --i: 10; }
+.icon-cake { --i: 11; }
+.icon-hay { --i: 12; }
+.icon-clover { --i: 13; }
+.icon-kale { --i: 14; }
+.icon-strawberry { --i: 15; }
+.icon-onion { --i: 16; }
+.icon-chocolate { --i: 17; }
+.icon-need-fullness { --i: 18; }
+.icon-need-vitamin-c { --i: 19; }
+.icon-need-energy { --i: 20; }
+.icon-need-mood { --i: 21; }
+.icon-need-cleanliness { --i: 22; }
+.icon-need-teeth { --i: 23; }
+.icon-pig-head { --i: 24; }
 
 /* ==========================================================================
    PIXEL ART MODALS / DIALOGS (shop, games, album, tests)
@@ -972,3 +977,15 @@ body.webview-mode .game-device {
 /* The pig name in the header can be clicked to rename */
 #petName { cursor: pointer; }
 #petName:hover { text-decoration: underline dotted; }
+
+/* Album sticker: one 64 px frame of the sprite sheet shown at 48 px */
+.album-sprite {
+  display: block;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 2px;
+  background-repeat: no-repeat;
+  background-size: 768px 2880px; /* 1024 x 3840 sheet at 0.75 */
+  image-rendering: pixelated;
+}
+.album-locked .album-sprite { filter: brightness(0); opacity: 0.25; }

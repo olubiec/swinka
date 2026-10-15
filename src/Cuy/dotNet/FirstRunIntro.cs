@@ -96,9 +96,9 @@ namespace Cuy
 
             switch (_phase)
             {
-                case Setup: // behind the edge, a moment of nothing
+                case Setup: // behind the edge, standing on the taskbar, a moment of nothing
+                    if (_phaseMs <= TickMs) pet.ScriptBegin(hiddenX);
                     Animate(pet, "idle");
-                    pet.ScriptBegin(hiddenX);
                     if (_phaseMs < 3000) break;
                     Go(Peek, hiddenX);
                     break;

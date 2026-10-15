@@ -189,6 +189,22 @@ namespace Cuy
             }
         }
 
+        /// <summary>Right-click on the food: it disappears, an inventory item goes back to the inventory.</summary>
+        public void RemoveFoodByUser(FoodItemForm food)
+        {
+            if (food == null || food != _activeFood) { try { food?.Close(); } catch (Exception) { } return; }
+            string id = _currentFoodId;
+            bool wasEating = _state == FoodInteractionState.Eating;
+            CancelActiveFood();
+            if (!wasEating && !string.IsNullOrEmpty(id) && !string.Equals(id, "hay", StringComparison.OrdinalIgnoreCase))
+            {
+                BrainController.Instance?.Pet?.AddItem(id, 1);
+            }
+            var petForm = FormPet.ActivePet;
+            if (petForm != null && !petForm.IsDisposed) petForm.PlayAnimationByName("idle");
+            BrainController.Log("[Feeding] Food taken away by the user: " + id);
+        }
+
         public void CancelActiveFood()
         {
             if (_activeFood != null && !_activeFood.IsDisposed)

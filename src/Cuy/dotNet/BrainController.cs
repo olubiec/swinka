@@ -236,7 +236,7 @@ namespace Cuy
             SoundManager.Instance?.UpdateEating(gameElapsed);
 
             // Update cursor interactions
-            InteractionManager.Instance?.Update(gameElapsed);
+            if (ScriptAnimation == null) InteractionManager.Instance?.Update(gameElapsed); // no cursor reactions during the intro
 
             bool isFoodActive = FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None;
             bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
@@ -345,6 +345,13 @@ namespace Cuy
         /// While set (first-run intro), the Brain makes no decisions and the pet keeps playing this animation.
         /// </summary>
         public string ScriptAnimation { get; set; }
+
+        /// <summary>A scripted scene puts the pet on the ground itself: drop any fall/drag state from the spawn.</summary>
+        public void ClearPhysicsForScript()
+        {
+            _isPhysicsActive = false;
+            _physicsReason = null;
+        }
 
         public void CallPet()
         {

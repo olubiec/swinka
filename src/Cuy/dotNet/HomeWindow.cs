@@ -503,6 +503,7 @@ namespace Cuy
                         maxPointsToday = pet.Balance?.BondDailyLimit ?? 30
                     },
                     inventory = inventoryCopy,
+                    album = state.Album != null ? new List<string>(state.Album.Keys) : new List<string>(),
                     poops = state.PoopCount,
                     minigames = new
                     {

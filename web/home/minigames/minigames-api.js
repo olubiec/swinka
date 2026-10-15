@@ -213,16 +213,17 @@
       const state = root.bridge ? root.bridge.getState() : null;
       const clovers = state?.clovers ?? 0;
 
-      // No games yet: a single disabled placeholder tile
-      const allDisplayGames = [
-        {
-          id: 'more-games-soon',
-          name: 'More games soon',
-          icon: '🎮',
-          desc: 'New minigames are on the way.',
-          available: false
-        }
-      ];
+      // Registered games, then one disabled tile for the games still to come
+      const allDisplayGames = this.getAllGames().map((g) => ({
+        id: g.id, name: g.name, icon: g.icon || '🎮', desc: g.desc || '', available: true
+      }));
+      allDisplayGames.push({
+        id: 'more-games-soon',
+        name: 'More games soon',
+        icon: '🎮',
+        desc: 'New minigames are on the way.',
+        available: false
+      });
 
       let html = `
         <div class="minigames-root">
@@ -490,6 +491,8 @@
       if (overlay) {
         const dailyCount = this.getDailyCount();
         const limitReached = dailyCount >= 10 && result.clovers === 0;
+        // Same rule as Cuy.Core: +15 for a rewarded game, +3 after the daily limit, nothing for 0 points
+        const moodGain = score <= 0 ? 0 : (limitReached ? 3 : 15);
 
         overlay.innerHTML = `
           <div class="minigames-gameover-card">
@@ -514,7 +517,7 @@
               </div>
               <div class="minigames-reward-row">
                 <span>Pig mood:</span>
-                <span class="minigames-reward-pill pill-mood">+15 💖</span>
+                <span class="minigames-reward-pill pill-mood">+${moodGain} 💖</span>
               </div>
               <div class="minigames-daily-note">
                 ${limitReached

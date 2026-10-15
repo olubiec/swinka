@@ -155,31 +155,12 @@
       <!-- Slide-out food drawer shown after clicking "Feed" -->
       <div class="food-drawer" id="foodDrawer" aria-label="Food choice">
         <div class="food-drawer-title">
-          <span>Pick a treat:</span>
-          <span style="color:#887;">Hay is always free!</span>
+          <span>What will you give?</span>
+          <button class="food-drawer-close" id="foodDrawerClose" type="button" aria-label="Close">×</button>
         </div>
-        <div class="food-grid">
-          <button class="food-item-btn" id="feedHay" type="button" data-food="hay">
-            <span class="pixel-icon x1_5 icon-hay" aria-hidden="true"></span>
-            <span>Hay</span>
-            <span class="food-qty">always ∞</span>
-          </button>
-          <button class="food-item-btn" id="feedBellPepper" type="button" data-food="bell_pepper">
-            <span class="pixel-icon x1_5 icon-bell-pepper" aria-hidden="true"></span>
-            <span>Bell pepper</span>
-            <span class="food-qty" id="foodQtyBellPepper">x3</span>
-          </button>
-          <button class="food-item-btn" id="feedCarrot" type="button" data-food="carrot">
-            <span class="pixel-icon x1_5 icon-carrot" aria-hidden="true"></span>
-            <span>Carrot</span>
-            <span class="food-qty" id="foodQtyCarrot">x2</span>
-          </button>
-          <button class="food-item-btn" id="feedPellets" type="button" data-food="pellets">
-            <span class="pixel-icon x1_5 icon-pellets" aria-hidden="true"></span>
-            <span>Pellets</span>
-            <span class="food-qty" id="foodQtyPellets">x5</span>
-          </button>
-        </div>
+        <!-- Filled by app.js from the inventory: hay is always there, other food when you have it -->
+        <div class="food-grid" id="foodGrid"></div>
+        <p class="food-empty" id="foodEmpty" hidden>Buy vegetables and treats in the Shop 🍀</p>
       </div>
 
       <!-- Six main game buttons -->
@@ -270,6 +251,7 @@
   <!-- Phaser 3 minigame framework -->
   <script src="minigames/lib/phaser.min.js"></script>
   <script src="minigames/minigames-api.js"></script>
+  <script src="minigames/veggie-rain.js"></script>
 
   <script src="app.js"></script>
 </body>

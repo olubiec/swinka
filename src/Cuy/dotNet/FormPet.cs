@@ -508,11 +508,18 @@ namespace Cuy
         /// <summary>While true, animations do not move the pet; a script sets the position itself.</summary>
         public bool ScriptHoldsPosition { get; private set; }
 
+        /// <summary>True while another manager walks the pet (to food or to the cursor) with StepTowards / RunTowards.</summary>
+        private bool IsMovedExternally =>
+            ScriptHoldsPosition
+            || (FoodManager.Instance != null && FoodManager.Instance.State == FoodInteractionState.Approaching)
+            || (InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction);
+
         /// <summary>Starts a scripted scene: the pet stands on the bottom of the primary working area at x, facing right.</summary>
         public void ScriptBegin(double x)
         {
             ScriptHoldsPosition = true;
             hwndWindow = IntPtr.Zero;
+            _brain?.ClearPhysicsForScript(); // the spawn may have been a fall from the top of the screen
             SetFacing(false);
             Rectangle wa = Screen.PrimaryScreen.WorkingArea;
             PositionY = wa.Bottom - Height - OffsetY;
@@ -859,6 +866,9 @@ namespace Cuy
             {
 				AnimationStep = -1;
                 CurrentAnimation = Animations.GetAnimation(id);
+                // Behaviour album: remember every animation she has seen the pig do
+                try { BrainController.Instance?.Pet?.MarkSeen(CurrentAnimation.Name); }
+                catch (Exception ex) { BrainController.Log("[WARN] MarkSeen: " + ex.Message); }
                 CurrentAnimation.UpdateValues(DisplayIndex);
                 LogBehavior(CurrentAnimation.Name, id);
 
@@ -1050,7 +1060,11 @@ namespace Cuy
             if (!IsMovingLeft) x = -x;
             if (ScriptHoldsPosition) { x = 0; y = 0; } // a script (first-run intro) moves the pet itself
 
-            if (CurrentAnimation.Name == "walk" && !ScriptHoldsPosition)
+            // Walking to food or to the cursor: FoodManager / InteractionManager move the pet themselves (StepTowards),
+            // the walk animation only moves the legs.
+            if (IsMovedExternally && (CurrentAnimation.Name == "walk" || CurrentAnimation.Name == "run")) x = 0;
+
+            if (CurrentAnimation.Name == "walk" && !ScriptHoldsPosition && !IsMovedExternally)
             {
                 _brain?.StepWalk((int)Math.Round(Math.Abs(x)));
                 if (_brain != null && !_brain.IsWalking)
@@ -1220,7 +1234,11 @@ namespace Cuy
                     IsMovingLeft = !IsMovingLeft;
                     spritesFlipped = !spritesFlipped;
                 }
-                if (PositionX < ScreenBounds.X - Width || PositionX > ScreenBounds.X + ScreenBounds.Width)
+                if (IsMovedExternally && (CurrentAnimation.Name == "walk" || CurrentAnimation.Name == "run"))
+                {
+                    iNextAni = CurrentAnimation.ID; // keep the legs moving while walking to the food / cursor
+                }
+                else if (PositionX < ScreenBounds.X - Width || PositionX > ScreenBounds.X + ScreenBounds.Width)
                 {
                     iNextAni = -1;
                 }

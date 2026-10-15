@@ -51,6 +51,7 @@ namespace Cuy
             BackColor = Color.Magenta;
             TransparencyKey = Color.Magenta;
             DoubleBuffered = true;
+            AutoScaleMode = AutoScaleMode.None; // stay 32 px at any Windows scaling, so it sits on the taskbar
             Size = new Size(32, 32);
             Cursor = Cursors.Hand;
 
@@ -59,7 +60,7 @@ namespace Cuy
                 ? ItemDef.Description
                 : "Tasty food for your guinea pig";
             string title = ItemDef != null ? ItemDef.Name : itemId;
-            _toolTip.SetToolTip(this, string.Format("{0}\n{1}\n(Drag with the mouse to move it)", title, desc));
+            _toolTip.SetToolTip(this, string.Format("{0}\n{1}\n(Drag to move it, right-click to take it away)", title, desc));
 
             _fallTimer = new Timer();
             _fallTimer.Interval = 15;
@@ -89,8 +90,22 @@ namespace Cuy
             {
                 e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
                 e.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
-                e.Graphics.DrawImage(bmp, new Rectangle(0, 0, 32, 32), new Rectangle(0, 0, 16, 16), GraphicsUnit.Pixel);
+                // Draw so the lowest visible pixel touches the bottom edge: the food lies on the surface, not above it.
+                int emptyRows = EmptyBottomRows(bmp);
+                e.Graphics.DrawImage(bmp, new Rectangle(0, Height - 32 + emptyRows * 2, 32, 32), new Rectangle(0, 0, 16, 16), GraphicsUnit.Pixel);
             }
+        }
+
+        private static int EmptyBottomRows(Bitmap bmp)
+        {
+            try
+            {
+                for (int y = Math.Min(15, bmp.Height - 1); y >= 0; y--)
+                    for (int x = 0; x < Math.Min(16, bmp.Width); x++)
+                        if (bmp.GetPixel(x, y).A > 0) return 15 - y;
+            }
+            catch (Exception) { }
+            return 0;
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
@@ -119,6 +134,11 @@ namespace Cuy
         protected override void OnMouseUp(MouseEventArgs e)
         {
             base.OnMouseUp(e);
+            if (e.Button == MouseButtons.Right && !_isDragging)
+            {
+                FoodManager.Instance?.RemoveFoodByUser(this);
+                return;
+            }
             if (_isDragging && e.Button == MouseButtons.Left)
             {
                 _isDragging = false;
