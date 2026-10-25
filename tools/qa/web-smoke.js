@@ -59,7 +59,7 @@ function serve() {
     if (!(await page.isVisible('#foodDrawer'))) throw new Error('food drawer not visible');
     await page.click('#foodDrawerClose'); await page.waitForTimeout(200);
   });
-  for (const [btn, name] of [['#btnShop', '03_shop'], ['#btnMinigames', '04_games'], ['#btnAlbum', '05_album']]) {
+  for (const [btn, name] of [['#btnShop', '03_shop'], ['#btnMinigames', '04_games'], ['#btnMore', '05_more']]) {
     if (!(await page.$(btn))) { console.log('SKIP ' + name + ' (no ' + btn + ')'); continue; }
     await step(name, async () => {
       await page.click(btn); await page.waitForTimeout(400);
