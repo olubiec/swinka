@@ -1,0 +1,22 @@
+{ "tasks": [
+  { "id": "veggies",   "title": "Fresh veggies",   "schedule": "daily",  "time": "18:00",
+    "text": "Time for fresh veggies: about a cup per pig, with something rich in vitamin C (bell pepper, parsley, kale)." },
+  { "id": "water",     "title": "Fresh water",     "schedule": "daily",  "time": "09:00",
+    "text": "Change the water and check that the bottle drips." },
+  { "id": "hay",       "title": "Hay top-up",      "schedule": "daily",  "time": "09:00",
+    "text": "Top up the hay. Guinea pigs should always have hay (it keeps their teeth short)." },
+  { "id": "spot_clean","title": "Quick clean",     "schedule": "daily",  "time": "20:00",
+    "text": "Remove wet bedding and poops from the favourite corners." },
+  { "id": "weigh",     "title": "Weigh-in",        "schedule": "weekly", "weekday": 0, "time": "10:00", "weight_log": true,
+    "text": "Weekly weigh-in. Write down each pig's weight; a steady loss is an early sign of illness." },
+  { "id": "full_clean","title": "Big cage clean",  "schedule": "weekly", "weekday": 6, "time": "11:00",
+    "text": "Change all bedding and wash the bowls and the bottle." },
+  { "id": "brush",     "title": "Brushing",        "schedule": "weekly", "weekday": 3, "time": "19:00",
+    "text": "Brush the fur (long-haired pigs more often) and check the skin for flakes or bald spots." },
+  { "id": "nails",     "title": "Nail trim",       "schedule": "every_n_days", "every_days": 28, "time": "17:00",
+    "text": "Check the nails and trim them if they curl." },
+  { "id": "vet_check", "title": "Vet check-up",    "schedule": "every_n_days", "every_days": 365, "time": "12:00",
+    "text": "Yearly check-up at a vet who knows guinea pigs (teeth, weight, skin)." }
+],
+  "weight_alert": { "drop_grams": 50, "drop_percent": 5 },
+  "snooze_minutes": [15, 60, 180] }

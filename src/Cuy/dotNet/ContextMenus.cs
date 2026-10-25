@@ -64,6 +64,33 @@ namespace Cuy
             };
             menu.Items.Add(soundsItem);
 
+            // Size submenu
+            var sizeItem = new ToolStripMenuItem("Size");
+
+            var smallItem = new ToolStripMenuItem("Small");
+            var bigItem = new ToolStripMenuItem("Big");
+
+            EventHandler sizeChangeHandler = (s, e) =>
+            {
+                var clickedItem = s as ToolStripMenuItem;
+                int newScale = clickedItem == smallItem ? 1 : 2;
+                if (newScale != Program.MyData.GetScale())
+                {
+                    Program.MyData.SetScale(newScale);
+                    smallItem.Checked = (newScale == 1);
+                    bigItem.Checked = (newScale == 2);
+                    BrainController.Log(string.Format("[Settings] Pet size -> {0}", newScale == 1 ? "Small" : "Big"));
+                    Program.Mainthread.ReloadSize();
+                }
+            };
+
+            smallItem.Click += sizeChangeHandler;
+            bigItem.Click += sizeChangeHandler;
+
+            sizeItem.DropDownItems.Add(smallItem);
+            sizeItem.DropDownItems.Add(bigItem);
+            menu.Items.Add(sizeItem);
+
             // 5. Start with Windows (checked = on)
             var autoStartItem = new ToolStripMenuItem("Start with Windows") { CheckOnClick = true };
             autoStartItem.Click += (s, e) =>
@@ -77,6 +104,9 @@ namespace Cuy
                 soundsItem.Checked = SoundManager.Instance == null || SoundManager.Instance.SoundsEnabled;
                 autoStartItem.Checked = AutoStart.IsEnabled;
                 homeMenuItem.Enabled = !HomeWindow.WebView2Missing;
+                int currentScale = Program.MyData.GetScale();
+                smallItem.Checked = (currentScale == 1);
+                bigItem.Checked = (currentScale == 2);
             };
 
             // 6. About

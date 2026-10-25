@@ -451,6 +451,35 @@ namespace Cuy
             _refreshTimer.Start();
         }
 
+        public static void PostToPage(object payload)
+        {
+            if (_instance == null || _instance.IsDisposed || !_instance._isWebViewReady || _instance._webView?.CoreWebView2 == null)
+            {
+                return;
+            }
+
+            try
+            {
+                string json = JsonConvert.SerializeObject(payload);
+                if (_instance.InvokeRequired)
+                {
+                    _instance.Invoke((Action)(() =>
+                    {
+                        try { _instance._webView.CoreWebView2.PostWebMessageAsJson(json); }
+                        catch (Exception ex) { BrainController.Log("[HomeWindow] PostToPage Invoke error: " + ex.Message); }
+                    }));
+                }
+                else
+                {
+                    _instance._webView.CoreWebView2.PostWebMessageAsJson(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[HomeWindow] PostToPage serialize error: " + ex.Message);
+            }
+        }
+
         /// <summary>
         /// Sends the current game state from Cuy.Core to the WebView2 control as JSON.
         /// </summary>
@@ -474,47 +503,68 @@ namespace Cuy
 
                 var highScores = state.HighScores ?? new Dictionary<string, int>();
 
-                var payload = new
+                var payload = new Dictionary<string, object>
                 {
-                    type = "state",
-                    name = string.IsNullOrWhiteSpace(state.Name) ? "Cuy" : state.Name,
-                    needsNaming = state.NeedsNaming,
-                    giftNote = ReadGiftNote(state),
-                    birthDateUtc = state.BirthDateUtc.ToString("o"),
-                    pigDays = Math.Round(age.PigDays, 1),
-                    stageKey = stage.ToString().ToLowerInvariant(),
-                    stageName = LifeStages.DisplayName(stage),
-                    needs = new
-                    {
-                        fullness = Math.Round(needs.Satiety, 1),
-                        vitaminC = Math.Round(needs.VitaminC, 1),
-                        energy = Math.Round(needs.Energy, 1),
-                        mood = Math.Round(needs.Mood, 1),
-                        cleanliness = Math.Round(needs.Cleanliness, 1),
-                        teeth = Math.Round(needs.Teeth, 1),
-                        health = Math.Round(needs.Health, 1)
+                    { "type", "state" },
+                    { "name", string.IsNullOrWhiteSpace(state.Name) ? "Cuy" : state.Name },
+                    { "needsNaming", state.NeedsNaming },
+                    { "giftNote", ReadGiftNote(state) },
+                    { "birthDateUtc", state.BirthDateUtc.ToString("o") },
+                    { "pigDays", Math.Round(age.PigDays, 1) },
+                    { "stageKey", stage.ToString().ToLowerInvariant() },
+                    { "stageName", LifeStages.DisplayName(stage) },
+                    { "needs", new
+                        {
+                            fullness = Math.Round(needs.Satiety, 1),
+                            vitaminC = Math.Round(needs.VitaminC, 1),
+                            energy = Math.Round(needs.Energy, 1),
+                            mood = Math.Round(needs.Mood, 1),
+                            cleanliness = Math.Round(needs.Cleanliness, 1),
+                            teeth = Math.Round(needs.Teeth, 1),
+                            health = Math.Round(needs.Health, 1)
+                        }
                     },
-                    clovers = state.Clovers,
-                    bond = new
-                    {
-                        level = state.Bond.Level,
-                        points = state.Bond.Points,
-                        pointsToday = state.Bond.PointsToday,
-                        maxPointsToday = pet.Balance?.BondDailyLimit ?? 30
+                    { "clovers", state.Clovers },
+                    { "bond", new
+                        {
+                            level = state.Bond.Level,
+                            points = state.Bond.Points,
+                            pointsToday = state.Bond.PointsToday,
+                            maxPointsToday = pet.Balance?.BondDailyLimit ?? 30
+                        }
                     },
-                    inventory = inventoryCopy,
-                    album = state.Album != null ? new List<string>(state.Album.Keys) : new List<string>(),
-                    poops = state.PoopCount,
-                    minigames = new
-                    {
-                        records = highScores,
-                        dailyRewardedDate = state.MinigamesDailyDate ?? DateTime.UtcNow.ToString("yyyy-MM-dd"),
-                        dailyRewardedCount = state.MinigamesDailyCount
+                    { "inventory", inventoryCopy },
+                    { "album", state.Album != null ? new List<string>(state.Album.Keys) : new List<string>() },
+                    { "poops", state.PoopCount },
+                    { "minigames", new
+                        {
+                            records = highScores,
+                            dailyRewardedDate = state.MinigamesDailyDate ?? DateTime.UtcNow.ToString("yyyy-MM-dd"),
+                            dailyRewardedCount = state.MinigamesDailyCount
+                        }
                     },
-                    currentAction = brain.CurrentAction?.AnimationName ?? "idle",
-                    isSleeping = pet.IsSleeping,
-                    lastActiveUtc = state.LastActiveUtc.ToString("o")
+                    { "currentAction", brain.CurrentAction?.AnimationName ?? "idle" },
+                    { "isSleeping", pet.IsSleeping },
+                    { "lastActiveUtc", state.LastActiveUtc.ToString("o") }
                 };
+
+                Cuy.Features.HomeFeatures.AddAllState(payload, brain);
+
+                List<string> featureDirs = new List<string>();
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string featuresPath = Path.Combine(baseDir, "web", "home", "features");
+                if (Directory.Exists(featuresPath))
+                {
+                    foreach (var dir in Directory.GetDirectories(featuresPath))
+                    {
+                        if (File.Exists(Path.Combine(dir, "feature.js")))
+                        {
+                            featureDirs.Add(Path.GetFileName(dir));
+                        }
+                    }
+                    featureDirs.Sort();
+                }
+                payload["features"] = featureDirs;
 
                 string json = JsonConvert.SerializeObject(payload);
                 _webView.CoreWebView2.PostWebMessageAsJson(json);
@@ -591,6 +641,14 @@ namespace Cuy
                         string action = obj.Value<string>("action")?.ToLowerInvariant();
                         HandleSettings(action, obj);
                         break;
+
+                    default:
+                        if (Cuy.Features.HomeFeatures.Dispatch(type, obj, BrainController.Instance))
+                        {
+                            // If a feature handled it, it might have modified state
+                            SendStateToWebView();
+                        }
+                        return; // return so we don't double send below, unless we change logic
                 }
 
                 // Update the state right after handling the action

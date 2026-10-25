@@ -644,12 +644,13 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
+  --icon-count: 49; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
   background-image: var(--icons-sheet, url('https://cuy.assets/icons/icons_16.png'));
   background-repeat: no-repeat;
-  background-size: calc(25 * var(--s)) var(--s); /* 25 icons in one row */
+  background-size: calc(var(--icon-count) * var(--s)) var(--s); /* all icons in one row */
   background-position: calc(var(--i) * -1 * var(--s)) 0;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
@@ -685,6 +686,31 @@ body.webview-mode .game-device {
 .icon-need-cleanliness { --i: 22; }
 .icon-need-teeth { --i: 23; }
 .icon-pig-head { --i: 24; }
+.icon-dandelion { --i: 25; }
+.icon-apple { --i: 26; }
+.icon-hay-ball { --i: 27; }
+.icon-chew-bridge { --i: 28; }
+.icon-hammock { --i: 29; }
+.icon-cuddle-cup { --i: 30; }
+.icon-vet { --i: 31; }
+.icon-vitamin-drops { --i: 32; }
+.icon-medicine { --i: 33; }
+.icon-calendar { --i: 34; }
+.icon-water-drop { --i: 35; }
+.icon-scale { --i: 36; }
+.icon-brush { --i: 37; }
+.icon-nail-clipper { --i: 38; }
+.icon-broom { --i: 39; }
+.icon-wallpaper { --i: 40; }
+.icon-floor { --i: 41; }
+.icon-rug { --i: 42; }
+.icon-plant { --i: 43; }
+.icon-picture-frame { --i: 44; }
+.icon-lamp { --i: 45; }
+.icon-gift { --i: 46; }
+.icon-palette { --i: 47; }
+.icon-music-note { --i: 48; }
+
 
 /* ==========================================================================
    PIXEL ART MODALS / DIALOGS (shop, games, album, tests)

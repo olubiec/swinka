@@ -515,12 +515,12 @@ namespace Cuy
             || (InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction);
 
         /// <summary>Starts a scripted scene: the pet stands on the bottom of the primary working area at x, facing right.</summary>
-        public void ScriptBegin(double x)
+        public void ScriptBegin(double x, EdgeSide side = EdgeSide.Left)
         {
             ScriptHoldsPosition = true;
             hwndWindow = IntPtr.Zero;
             _brain?.ClearPhysicsForScript(); // the spawn may have been a fall from the top of the screen
-            SetFacing(false);
+            SetFacing(side == EdgeSide.Right);
             Rectangle wa = Screen.PrimaryScreen.WorkingArea;
             PositionY = wa.Bottom - Height - OffsetY;
             Opacity = 1.0;
@@ -1006,6 +1006,22 @@ namespace Cuy
 
         private void NextStep()
         {
+            if (Visible)
+            {
+                EdgePeekDirector.EnsureStarted();
+            }
+            if (HomeWindow.IsOpen && !_inHome)
+            {
+                EnterHome();
+                BrainController.Log("[Home] Bug corrected: forced pig into Home.");
+            }
+            else if (!HomeWindow.IsOpen && _inHome && !Visible)
+            {
+                var wa = Screen.PrimaryScreen.WorkingArea;
+                LeaveHome(new Point(wa.Left + wa.Width / 2, wa.Bottom));
+                BrainController.Log("[Home] Bug corrected: forced pig out of Home.");
+            }
+
             if (_brain == null) _brain = BrainController.Instance;
             _brain?.Update();
 
