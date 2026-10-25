@@ -109,7 +109,7 @@ namespace Cuy
             pi = processIcon;
                         
                 // Init XML class
-            xml = new Xml((int)Math.Pow(2, Program.MyData.GetScale() - 1));
+            xml = new Xml(Program.MyData.GetScale());
                 // Init Animations class
             animations = new Animations(xml);
 
@@ -382,6 +382,72 @@ namespace Cuy
             /// Returns the Animation class.
             /// </summary>
             /// <returns>Member variable to access all animations of the current pet.</returns>
+
+        public void ReloadSize()
+        {
+            AddDebugInfo(DEBUG_TYPE.info, "reloading size...");
+
+            if (petCount > 0 && pets[0] != null && pets[0].InvokeRequired)
+            {
+                pets[0].BeginInvoke(new MethodInvoker(delegate{
+                    ReloadSize();
+                }));
+                return;
+            }
+
+            double oldLeft = 0;
+            double oldTop = 0;
+            bool oldFacing = false;
+
+            if (petCount > 0 && pets[0] != null)
+            {
+                oldLeft = pets[0].PositionX; // Capture the real un-scaled X position
+                oldTop = pets[0].PositionY;
+                oldFacing = pets[0].IsFacingLeft;
+            }
+
+            // Close all pets instantly without playing death animation
+            for (int i = 0; i < petCount; i++)
+            {
+                if (pets[i] != null)
+                {
+                    pets[i].Close();
+                    pets[i].Dispose();
+                }
+            }
+            petCount = 0;
+
+            // reload XML and Animations
+            xml = new Xml(Program.MyData.GetScale());
+            animations = new Animations(xml);
+
+            if (!xml.ReadXML())
+            {
+                Program.MyData.SetXml(Properties.Resources.animations, "esheep64");
+                xml.ReadXML();
+            }
+
+            pi.SetIcon(
+                xml.bitmapIcon,
+                xml.AnimationXML.Header.Petname,
+                xml.AnimationXML.Header.Author,
+                xml.AnimationXML.Header.Title,
+                xml.AnimationXML.Header.Version,
+                xml.AnimationXML.Header.Info);
+
+            AddSheep();
+
+            if (petCount > 0 && pets[0] != null)
+            {
+                pets[0].PositionX = oldLeft;
+                pets[0].Left = (int)oldLeft;
+                pets[0].PositionY = oldTop;
+                pets[0].Top = (int)oldTop;
+                pets[0].SetFacing(oldFacing);
+                // The BrainController remains active and will continue assigning animations for the new form
+            }
+        }
+
         public Animations GetAnimations()
         {
             return animations;
