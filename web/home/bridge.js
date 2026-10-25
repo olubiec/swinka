@@ -107,6 +107,7 @@
       this.isMock = !this.isWebView2;
       this.listeners = new Set();
       this.actionListeners = new Set();
+      this.messageListeners = new Map();
       this.currentState = null;
 
       if (this.isWebView2) {
@@ -136,8 +137,12 @@
         if (typeof msg === 'string') {
           try { msg = JSON.parse(msg); } catch (e) { /* ignore */ }
         }
-        if (msg && msg.type === 'state') {
-          this.handleStateUpdate(msg);
+        if (msg) {
+          if (msg.type === 'state') {
+            this.handleStateUpdate(msg);
+          } else if (msg.type) {
+            this.dispatchMessage(msg);
+          }
         }
       });
 
@@ -319,6 +324,16 @@
       }
     }
 
+    dispatchMessage(msg) {
+      if (!msg || !msg.type) return;
+      const cbs = this.messageListeners.get(msg.type);
+      if (cbs) {
+        cbs.forEach(cb => {
+          try { cb(msg); } catch (e) { console.error(`[CuyBridge] Error in onMessage handler for ${msg.type}:`, e); }
+        });
+      }
+    }
+
     // --- Public API ---
 
     /**
@@ -332,6 +347,23 @@
         try { callback(JSON.parse(JSON.stringify(this.currentState))); } catch (e) {}
       }
       return () => this.listeners.delete(callback);
+    }
+
+    /**
+     * Registers a callback for a specific message type (other than 'state')
+     * @param {String} type
+     * @param {Function} callback
+     * @returns {Function} a function that unregisters it
+     */
+    onMessage(type, callback) {
+      if (!this.messageListeners.has(type)) {
+        this.messageListeners.set(type, new Set());
+      }
+      this.messageListeners.get(type).add(callback);
+      return () => {
+        const cbs = this.messageListeners.get(type);
+        if (cbs) cbs.delete(callback);
+      };
     }
 
     /**
@@ -535,6 +567,10 @@
         case 'settings': {
           break;
         }
+
+        default:
+          console.info(`[mock] Unknown action type "${action.type}":`, action);
+          break;
       }
 
       this.normalizeState(s);

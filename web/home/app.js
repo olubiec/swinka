@@ -33,7 +33,7 @@
     btnCall: document.getElementById('btnCall'),
     btnShop: document.getElementById('btnShop'),
     btnMinigames: document.getElementById('btnMinigames'),
-    btnAlbum: document.getElementById('btnAlbum'),
+    btnMore: document.getElementById('btnMore'),
 
     // Food drawer
     foodDrawer: document.getElementById('foodDrawer'),
@@ -218,6 +218,15 @@
     // Update the UI on every game state change
   function updateStateUI(state) {
     if (!state) return;
+    loadFeatures(state);
+
+    // Broadcast state to all registered features
+    window.CuyHome.listFeatures().forEach(feat => {
+      if (feat.onState) {
+        try { feat.onState(state); } catch (e) { console.error('[feature ' + feat.id + ']', e); }
+      }
+    });
+
     updateOnboarding(state);
 
     // Pig profile
@@ -426,10 +435,9 @@
     });
 
     // 6. ALBUM — opens the retro behaviour sticker dialog
-    elements.btnAlbum?.addEventListener('click', () => {
+    elements.btnMore?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
-      if (window.bridge) window.bridge.send({ type: 'album' });
-      openAlbumModal();
+      openMoreModal();
     });
 
     // Sound on/off
@@ -482,6 +490,137 @@
     if (!elements.btnSound || !window.Sound) return;
     elements.btnSound.textContent = window.Sound.isMuted ? '🔇' : '🔊';
     elements.btnSound.title = window.Sound.isMuted ? 'Turn sounds on' : 'Mute sounds';
+  }
+
+
+  // --- FEATURES MODULE SYSTEM ---
+  window.CuyHome = {
+    features: [],
+    registerFeature(def) {
+      this.features.push(def);
+      this.features.sort((a, b) => (a.order || 99) - (b.order || 99));
+    },
+    listFeatures() {
+      return this.features;
+    },
+    openFeature(id) {
+      const feat = this.features.find(f => f.id === id);
+      if (!feat) return;
+      openModal(feat.title, '');
+      if (elements.modalBody) {
+        elements.modalBody.className = 'modal-body feature-' + id;
+        try {
+          feat.open(elements.modalBody, this.api);
+        } catch (err) {
+          console.error('[feature ' + id + ']', err);
+        }
+      }
+      this.currentFeatureId = id;
+    },
+    closeFeature() {
+      if (this.currentFeatureId) {
+        const feat = this.features.find(f => f.id === this.currentFeatureId);
+        if (feat && feat.close) {
+          try { feat.close(); } catch (e) { console.error(e); }
+        }
+        this.currentFeatureId = null;
+      if (elements.modalBackdrop) elements.modalBackdrop.classList.remove('active');
+      }
+      if (elements.modalBody) {
+        elements.modalBody.className = 'modal-body';
+      }
+    },
+    api: {
+      send(msg) { if (window.bridge) window.bridge.send(msg); },
+      getState() { return window.bridge ? window.bridge.getState() : null; },
+      onState(cb) { return window.bridge ? window.bridge.onState(cb) : () => {}; },
+      onMessage(type, cb) { return window.bridge ? window.bridge.onMessage(type, cb) : () => {}; },
+      showBubble(text, ms) { if (canvasPig) canvasPig.showBubble(text, ms); },
+      playAnim(name, ms) { if (canvasPig) canvasPig.playAnim(name, ms); },
+      sound: typeof window !== 'undefined' ? window.Sound : null,
+      assetUrl(rel) {
+        const isWebView = !!(window.chrome && window.chrome.webview);
+        return isWebView ? 'https://cuy.assets/' + rel : '../../assets/' + rel;
+      }
+    }
+  };
+
+  function openMoreModal() {
+    let html = `<div class="album-grid">`;
+
+    // Always include Album first
+    html += `
+      <button class="shop-item" data-open-feature="album" style="justify-content:center;">
+        <span class="pixel-icon icon-house x2"></span>
+        <span class="shop-name">Album</span>
+      </button>
+    `;
+
+    // Then registered features
+    window.CuyHome.listFeatures().forEach(feat => {
+      let iconHtml = '';
+      if (feat.icon) {
+        if (feat.icon.startsWith('icon-')) {
+          iconHtml = `<span class="pixel-icon ${feat.icon} x2"></span>`;
+        } else {
+          iconHtml = `<span style="font-size:32px;line-height:1">${feat.icon}</span>`;
+        }
+      }
+      html += `
+        <button class="shop-item" data-open-feature="${feat.id}" style="justify-content:center;">
+          ${iconHtml}
+          <span class="shop-name">${feat.title}</span>
+        </button>
+      `;
+    });
+
+    html += `</div>`;
+    openModal('More', html);
+
+    // Bind clicks
+    if (elements.modalBody) {
+      elements.modalBody.querySelectorAll('button[data-open-feature]').forEach(b => {
+        b.addEventListener('click', () => {
+          const id = b.dataset.openFeature;
+          if (id === 'album') {
+            if (window.bridge) window.bridge.send({ type: 'album' });
+            openAlbumModal();
+          } else {
+            window.CuyHome.openFeature(id);
+          }
+        });
+      });
+    }
+  }
+
+  function loadFeatures(state) {
+    if (window.CuyHome._featuresLoaded) return;
+    window.CuyHome._featuresLoaded = true;
+
+    let featureList = [];
+    const isWebView = !!(window.chrome && window.chrome.webview);
+
+    const loadFromList = (list) => {
+      list.forEach(id => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'features/' + id + '/feature.css';
+        document.head.appendChild(link);
+
+        const script = document.createElement('script');
+        script.src = 'features/' + id + '/feature.js';
+        document.body.appendChild(script);
+      });
+    };
+
+    if (isWebView && state && state.features) {
+      loadFromList(state.features);
+    } else {
+      fetch('features/index.json')
+        .then(res => res.json())
+        .then(list => loadFromList(list))
+        .catch(err => console.error('Error loading features/index.json:', err));
+    }
   }
 
   // --- MODALE ---
