@@ -99,8 +99,19 @@ z oryginalnego planu (etapy C–F z `PLAN.md` w głównym katalogu) i dają **we
 | F7-02 | Strojenie ekonomii, więzi i tempa na symulacji 60 dni |
 | F7-03 | Końcowy self-test, paczka, licencje, dokumentacja i lista 40 testów ręcznych |
 
-Razem 54 zadania w 8 falach. Kolejność scalania w obrębie fali jest dowolna. Jeśli PR-y w jednej fali się gryzą
+Razem 58 zadań w 8 falach. Kolejność scalania w obrębie fali jest dowolna. Jeśli PR-y w jednej fali się gryzą
 (rzadko), scalaj po kolei i napisz mi, a poprawię.
+
+## Fala 8: dopięcie do pełnej listy (4 zadania, razem; wymaga fali 7)
+| Zadanie | Co daje |
+| --- | --- |
+| F8-01 | Osiągnięcia (ok. 20, nagrody 50–200 koniczynek), ekran i dymek przy zdobyciu |
+| F8-02 | Wygląd etapów w Domku: maluch 75 %, senior z siwym pyszczkiem, legenda ze złotym konturem |
+| F8-03 | Ustawienia: start nowej świnki z potwierdzeniem (stary zapis zostaje w kopii) i wybór monitora |
+| F8-04 | Rzeczy zależne od etapu: miękkie jedzenie i ciepłe legowisko dla seniorów, gryzaki przy zębach, witamina C |
+
+Po fali 8 wersja 2.0 ma wszystko, co ustaliliśmy. Świadomie poza zakresem: instalator, liścik w grze, port na ESP32,
+tryb deweloperski w paczce (jest tylko w buildzie Debug).
 
 ## Co z oryginalnego planu jest już zrobione (nie ma zadań)
 Budżet dnia i pory dnia (utility AI), czas offline (3× wolniej, nie poniżej 20), głaskanie kursorem, wołanie, powitanie po starcie,
