@@ -1,6 +1,7 @@
 # Starts one Jules task per Markdown file added to jules/queue/ (pushed to main).
 # The file content is the full task prompt. Jules opens a pull request; a human merges it.
-# Needs the repository secret JULES_API_KEY (jules.google -> Settings -> API key).
+# Calls the Jules REST API directly (v1alpha). Needs the repository secret JULES_API_KEY
+# (jules.google -> Settings -> API key).
 name: Jules dispatch
 on:
   push:
@@ -39,18 +40,39 @@ jobs:
       max-parallel: 15
       matrix:
         file: ${{ fromJson(needs.list.outputs.files) }}
+    env:
+      JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+      JULES_API: https://jules.googleapis.com/v1alpha
+      REPO_OWNER: olubiec
+      REPO_NAME: swinka
+      STARTING_BRANCH: main
+      TASK_FILE: ${{ matrix.file }}
     steps:
       - uses: actions/checkout@v4
-      - id: p
+      - name: Find the Jules source for this repository
         run: |
-          {
-            echo 'prompt<<EOF_JULES_PROMPT'
-            cat "${{ matrix.file }}"
-            echo
-            echo 'EOF_JULES_PROMPT'
-          } >> "$GITHUB_OUTPUT"
-      - uses: google-labs-code/jules-invoke@v1
-        with:
-          prompt: ${{ steps.p.outputs.prompt }}
-          jules_api_key: ${{ secrets.JULES_API_KEY }}
-          starting_branch: main
+          curl -sS --fail-with-body "$JULES_API/sources" \
+            -H "X-Goog-Api-Key: $JULES_API_KEY" > sources.json
+          SOURCE=$(jq -r --arg o "$REPO_OWNER" --arg r "$REPO_NAME" \
+            '.sources[] | select(.githubRepo.owner == $o and .githubRepo.repo == $r) | .name' sources.json | head -n1)
+          if [ -z "$SOURCE" ]; then
+            echo "No Jules source for $REPO_OWNER/$REPO_NAME. Connect the repository in Jules first." >&2
+            jq -r '.sources[]?.name' sources.json >&2 || true
+            exit 1
+          fi
+          echo "JULES_SOURCE=$SOURCE" >> "$GITHUB_ENV"
+      - name: Start the Jules session
+        run: |
+          TITLE=$(basename "$TASK_FILE" .md)
+          jq -n \
+            --rawfile prompt "$TASK_FILE" \
+            --arg title "$TITLE" \
+            --arg source "$JULES_SOURCE" \
+            --arg branch "$STARTING_BRANCH" \
+            '{prompt: $prompt, title: $title,
+              sourceContext: {source: $source, githubRepoContext: {startingBranch: $branch}},
+              automationMode: "AUTO_CREATE_PR"}' > body.json
+          curl -sS --fail-with-body -X POST "$JULES_API/sessions" \
+            -H "Content-Type: application/json" \
+            -H "X-Goog-Api-Key: $JULES_API_KEY" \
+            --data @body.json
