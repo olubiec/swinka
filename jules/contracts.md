@@ -73,7 +73,38 @@ then page message `{ type: 'daily_claimed', amount, streak }`.
 ## settings – task F2-08
 State key `settings`: `{ "petSize": "small|big", "sounds": true, "autostart": true }`. Messages:
 `settings_pet_size { size }`, `settings_sounds { on }`, `settings_autostart { on }`. Music volume/on-off stay in the
-page (`CuyMusic`, localStorage).
+page (`CuyMusic`, localStorage). Added by F4-07: `volume` (0-100), `quietHours { enabled, start, end }`, `muteFullscreen`,
+`soundSuppressed` (state only) with messages `settings_volume`, `settings_quiet_hours`, `settings_mute_fullscreen`.
+Added by F6-01: `danceToMusic` + `settings_dance { on }`.
+
+## diary and album – Core: `Diary/DiaryWriter.cs` (task F4-03), UI F4-04
+State keys: `diary: [ { "date": "2026-10-24", "text": "..." } ]` (last 60, newest first) and
+`album: [ { "key": "sniff", "firstSeen": "2026-10-20" } ]` (a bare string means seen, date unknown).
+
+## bond – Core: `Bond/BondUnlocks.cs` (task F4-05)
+State key `bond`: `{ "level": 4, "points": 61, "pointsToNext": 24, "next": { "level": 5, "title": "..." }, "pointsToday": 12, "dailyLimit": 30 }`.
+Unlock ids (`assets/data/bond.json`): approach_cursor 2, greet_on_start 3, trick_spin 5, come_when_called 7, trick_stand_up 9,
+companion 10, trick_popcorn 12, trick_hurdle 15, golden_bowl 20. C# asks `Pet.IsUnlocked(id)`.
+
+## hayRack – Core: `Pet.Hay.cs` (task F4-06)
+State key `hayRack: { "value": 60, "max": 100 }`. Feeding `hay` refills the rack (`Pet.RefillHay()`).
+
+## minigames (task F5-04)
+State key `minigames: { "dailyCount": 3, "dailyMax": 10, "highScores": { "veggie_rain": 140 }, "plays": { "veggie_rain": 6 } }`.
+Game list: `web/home/minigames/games.json` (ids: veggie_rain, hay_hop, hay_maze, veggie_memory).
+
+## tricks – Core: `Pet.Tricks.cs` (task F6-05)
+State key `tricks: [ { "id": "spin", "unlocked": true, "readyIn": 0 } ]` (ids spin, stand_up, popcorn, hurdle).
+Message `trick { id }` -> result `Ok|Locked|Tired|Cooldown|Sleeping`; `Tired` posts toast "Too tired for tricks".
+
+## companion – Core: `Companion/CompanionState.cs` (tasks F6-06 to F6-08)
+State key `companion: { "canAdopt": true, "reason": "Reach bond level 10", "pig": { "name": "Oreo", "coat": "black_white|agouti|cream",
+"needs": { "fullness": 80, "energy": 70, "mood": 60, "vitamin_c": 75, "teeth": 90 }, "together": true } | null }`.
+Message `companion_adopt { name, coat }`.
+
+## weather – task F6-04 (the only network use)
+State key `weather: { "city": "Warsaw", "place": "Warsaw, Poland", "temperatureC": 12.3, "condition": "clear|cloudy|rain|snow|storm" } | null`.
+Message `settings_city { city }` (empty = off).
 
 ## generic
 Page message `{ type: 'toast', text }` → the page shows a small pixel toast for 2.5 s (implemented in F2-05's app.js

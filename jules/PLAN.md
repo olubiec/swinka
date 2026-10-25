@@ -47,15 +47,70 @@ Kod okienkowy na Windowsa testujesz Ty: po fali 1 i po fali 2 (`tools/build.ps1`
 | F2-10 | Naprawa błędu „Index out of range” w animacji |
 | F2-11 | Dzienny prezent w Domku |
 
-## Fala 3: dopięcie (3 zadania, razem; wymaga fali 2)
+## Fala 3: dopięcie pierwszej wersji (3 zadania, razem; wymaga fali 2)
 | Zadanie | Co daje |
 | --- | --- |
 | F3-01 | Wszystkie funkcje podpięte, rozszerzony automatyczny test Domku |
 | F3-02 | Symulacja ekonomii na 30 dni i strojenie cen |
 | F3-03 | Self-test, paczka, licencje, dokumentacja, lista testów ręcznych |
 
-Potem Twój test na Windowsie (`TESTING.md`), fala poprawek i nowa paczka dla niej.
+Po fali 3 masz **wersję 1.1** (wszystko z listy nowych pomysłów). Możesz ją już dać w prezencie i dokładać resztę jako
+aktualizacje (nowy ZIP rozpakowany w to samo miejsce, zapis gry jest osobno w `%AppData%\Cuy`). Fale 4–7 to reszta
+z oryginalnego planu (etapy C–F z `PLAN.md` w głównym katalogu) i dają **wersję 2.0 = pełna, końcowa**.
 
-## Pomysł na później (nie w planie)
-Adopcja drugiej świnki (grafiki 3 kolegów już są: `companion_*`): największy cel na koniczynki, świnki ocierają się
-noskami i śpią razem.
+## Fala 4: życie świnki i fundamenty (10 zadań, razem; wymaga fali 3)
+| Zadanie | Co daje |
+| --- | --- |
+| F4-01 | Pulpit: wygląd świnki zmienia się z etapem życia (maluch, młodzik, dorosła, senior, legenda), bez restartu |
+| F4-02 | Urodziny: animacja party, tort, 100 koniczynek, wpis w pamiętniku |
+| F4-03 | Silnik pamiętnika: jeden wpis dziennie pisany przez świnkę (ponad 48 szablonów po angielsku) |
+| F4-04 | Ekrany Pamiętnik i Album (ciemne sylwetki „???”, daty, licznik zebranych) |
+| F4-05 | Poziomy więzi 1–20 z prawdziwymi odblokowaniami i paskiem w Domku |
+| F4-06 | Paśnik z sianem: świnka je sama, także gdy komputer jest wyłączony |
+| F4-07 | Ustawienia dźwięku: głośność, godziny ciszy, wyciszenie przy pełnym ekranie |
+| F4-08 | Lista minigier w pliku (nowe gry nie ruszają wspólnych plików) |
+| F4-09 | Wtyczki zachowań pulpitu (jedno miejsce na nowe reakcje świnki) |
+| F4-10 | Audyt: w paczce dla niej nie ma żadnych opcji deweloperskich |
+
+## Fala 5: minigry (4 zadania, razem; wymaga F4-08)
+| Zadanie | Co daje |
+| --- | --- |
+| F5-01 | Gra Hay Hop (skakanie po belach siana) |
+| F5-02 | Gra Hay Maze (labirynt z siana) |
+| F5-03 | Gra Veggie Memory (spokojne pary kart) |
+| F5-04 | Hub gier: dzienny limit, rekordy, ekran wyniku |
+
+## Fala 6: świat, reakcje i towarzysz (8 zadań, razem; wymaga F4-05, F4-09, F1-05, F4-01)
+| Zadanie | Co daje |
+| --- | --- |
+| F6-01 | Taniec do muzyki z komputera (jedyna nowa biblioteka: NAudio) |
+| F6-02 | Strach przed gwałtownie machaną myszką: ucieczka za krawędź, zerkanie, powrót |
+| F6-03 | Chowanie się podczas gier, filmów i prezentacji na pełnym ekranie |
+| F6-04 | Pogoda z Open-Meteo (jedyne użycie internetu; miasto w ustawieniach) |
+| F6-05 | Sztuczki odblokowywane więzią (kółko, na dwóch łapkach, popcorn, przeskok) |
+| F6-06 | Towarzysz, część 1: logika (adopcja, potrzeby, wspólna opieka) |
+| F6-07 | Towarzysz, część 2: druga świnka chodzi po pulpicie (nosek w nosek, spanie razem) |
+| F6-08 | Towarzysz, część 3: ekran adopcji i druga świnka w Domku |
+
+## Fala 7: wersja końcowa (3 zadania, razem; wymaga fal 4–6)
+| Zadanie | Co daje |
+| --- | --- |
+| F7-01 | Wszystko podpięte, rozszerzony automatyczny test Domku |
+| F7-02 | Strojenie ekonomii, więzi i tempa na symulacji 60 dni |
+| F7-03 | Końcowy self-test, paczka, licencje, dokumentacja i lista 40 testów ręcznych |
+
+Razem 54 zadania w 8 falach. Kolejność scalania w obrębie fali jest dowolna. Jeśli PR-y w jednej fali się gryzą
+(rzadko), scalaj po kolei i napisz mi, a poprawię.
+
+## Co z oryginalnego planu jest już zrobione (nie ma zadań)
+Budżet dnia i pory dnia (utility AI), czas offline (3× wolniej, nie poniżej 20), głaskanie kursorem, wołanie, powitanie po starcie,
+bobki, sen, karmienie, silnik dźwięków (kwik co najwyżej raz na 2 minuty, godziny ciszy), autostart.
+
+## Świadomie pominięte
+Instalator Inno Setup (zostaje ZIP), liścik w grze (usunięty), port na ESP32 (osobny projekt na później).
+
+## Tryb pracy
+1. Ja wrzucam do `jules/queue/` zadania kolejnej fali, GitHub uruchamia Julesa, Jules robi PR-y.
+2. Ty scalasz, piszesz „fala N scalona”. Ja sprawdzam stan repo i puszczam następną.
+3. Po falach 1, 3, 5 i 7 testujesz na Windowsie (`tools/build.ps1`, `TESTING.md`) i dajesz mi listę usterek: poprawki idą jako
+   małe zadania w następnej fali.
