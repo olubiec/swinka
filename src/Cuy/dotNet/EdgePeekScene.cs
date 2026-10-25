@@ -1,0 +1,217 @@
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace Cuy
+{
+    public enum EdgeSide { Left, Right }
+
+    internal sealed class EdgePeekScene
+    {
+        private const int TickMs = 50;
+
+        private readonly Timer _timer = new Timer { Interval = TickMs };
+        private readonly Action _onDone;
+        private readonly EdgeSide _side;
+        private readonly bool _firstRun;
+        private int _phase;
+        private double _phaseMs;
+        private double _waitMs;
+        private double _fromX;
+        private bool _finished;
+        private int _errors;
+
+        public EdgePeekScene(EdgeSide side, Action onDone, bool firstRun)
+        {
+            _side = side;
+            _onDone = onDone;
+            _firstRun = firstRun;
+            _timer.Tick += (s, e) => Tick();
+        }
+
+        public void Start()
+        {
+            _timer.Start();
+            BrainController.Log($"[Intro] {(_firstRun ? "First-run intro" : "Edge peek")} started on {_side} edge.");
+        }
+
+        private void Tick()
+        {
+            try
+            {
+                Step();
+            }
+            catch (Exception ex)
+            {
+                // One bad tick must not skip the whole scene; give up only if it keeps failing.
+                _errors++;
+                BrainController.Log("[ERROR] EdgePeekScene phase " + _phase + ": " + ex);
+                if (_errors > 20) Finish();
+            }
+        }
+
+        // Phases
+        private const int Setup = 0, Peek = 1, Retreat = 2, PeekMore = 3, WalkOut = 4;
+
+        private double _calmMs;      // how long the cursor has stayed away from the pig
+        private double _totalMs;
+
+        private void Step()
+        {
+            var pet = FormPet.ActivePet;
+            var brain = BrainController.Instance;
+
+            // Wait until the desktop pet exists (StartUp creates it about a second after launch).
+            if (pet == null || pet.IsDisposed || !pet.Visible || brain == null)
+            {
+                _waitMs += TickMs;
+                if (_waitMs > 30000)
+                {
+                    BrainController.Log("[Intro] The desktop pet did not appear in 30 s, skipping the scene.");
+                    Finish();
+                }
+                return;
+            }
+
+            Rectangle wa = Screen.PrimaryScreen.WorkingArea;
+            double w = pet.Width;
+
+            double hiddenX, noseX, headX, outX;
+
+            if (_side == EdgeSide.Left)
+            {
+                // The pig faces right; in the 64 px frame the nose is at about 80 % of the width.
+                hiddenX = wa.Left - w * 0.9;   // completely behind the edge
+                noseX = wa.Left - w * 0.6;     // the nose and whiskers stick out
+                headX = wa.Left - w * 0.38;    // nose, eye and ear
+                outX = wa.Left + 90;           // fully out on the taskbar
+            }
+            else
+            {
+                // Pig faces left (mirrored)
+                hiddenX = wa.Right - w * 0.1;
+                noseX = wa.Right - w * 0.4;
+                headX = wa.Right - w * 0.62;
+                outX = wa.Right - 90 - w;
+            }
+
+            _phaseMs += TickMs;
+            _totalMs += TickMs;
+
+            // Is the cursor close to the corner where the pig hides?
+            Point c = Cursor.Position;
+            double dx = _side == EdgeSide.Left ? c.X - wa.Left : wa.Right - c.X;
+            double dy = c.Y - (pet.Top + pet.Height / 2.0);
+            bool cursorNear = dx < 200 && Math.Abs(dy) < 200;
+            _calmMs = cursorNear ? 0 : Math.Min(_calmMs + TickMs, _phaseMs); // counted only within the phase
+
+            // Safety net: never keep her waiting forever.
+            bool forceOut = _totalMs > 120000;
+
+            switch (_phase)
+            {
+                case Setup: // behind the edge, standing on the taskbar, a moment of nothing
+                    if (_phaseMs <= TickMs) pet.ScriptBegin(hiddenX, _side);
+                    Animate(pet, "idle");
+                    if (_phaseMs < 3000) break;
+                    Go(Peek, hiddenX);
+                    break;
+
+                case Peek: // only the nose, sniffing
+                    Animate(pet, "sniff");
+                    Slide(pet, noseX, 900);
+                    if (cursorNear && !forceOut) { Go(Retreat, pet.PositionX); break; }
+                    if (_phaseMs > 900 && (_calmMs > 7000 || forceOut)) Go(PeekMore, pet.PositionX);
+                    break;
+
+                case Retreat: // the cursor came close: hides quickly and waits until it is gone
+                    if (!_firstRun)
+                    {
+                        Animate(pet, "flee");
+                    }
+                    else
+                    {
+                        Animate(pet, "idle");
+                    }
+                    Slide(pet, hiddenX, 250);
+                    if (_phaseMs > 250 && _calmMs > 3000) Go(Peek, pet.PositionX);
+                    break;
+
+                case PeekMore: // more of the head, still careful
+                    Animate(pet, "sniff");
+                    Slide(pet, headX, 1400);
+                    if (cursorNear && !forceOut) { Go(Retreat, pet.PositionX); break; }
+                    if (_phaseMs > 1400 && (_calmMs > 5000 || forceOut)) Go(WalkOut, pet.PositionX);
+                    break;
+
+                case WalkOut: // comes out and from here on lives as usual
+                    Animate(pet, "walk");
+                    double x = _side == EdgeSide.Left ? Math.Min(outX, pet.PositionX + 1.6) : Math.Max(outX, pet.PositionX - 1.6);
+                    pet.ScriptMoveTo(x);
+                    if (_side == EdgeSide.Left ? x >= outX : x <= outX) Finish();
+                    break;
+            }
+        }
+
+        private void Go(int phase, double fromX)
+        {
+            BrainController.Log(string.Format("[Intro] Phase {0} -> {1} at x={2:0}", _phase, phase, fromX));
+            _phase = phase;
+            _phaseMs = 0;
+            _fromX = fromX;
+        }
+
+        /// <summary>Eases from the phase start position to targetX over durationMs.</summary>
+        private void Slide(FormPet pet, double targetX, double durationMs)
+        {
+            double t = Math.Min(1.0, _phaseMs / durationMs);
+            double eased = t * t * (3 - 2 * t);
+            pet.ScriptMoveTo(_fromX + (targetX - _fromX) * eased);
+        }
+
+        private static void Animate(FormPet pet, string animation)
+        {
+            var brain = BrainController.Instance;
+            if (brain == null || brain.ScriptAnimation == animation) return;
+            brain.ScriptAnimation = animation;
+            pet.PlayAnimationByName(animation);
+        }
+
+        private void Finish()
+        {
+            if (_finished) return;
+            _finished = true;
+            _timer.Stop();
+            _timer.Dispose();
+
+            var brain = BrainController.Instance;
+            if (brain != null) brain.ScriptAnimation = null;
+            var pet = FormPet.ActivePet;
+            if (pet != null && !pet.IsDisposed)
+            {
+                pet.ScriptEnd();
+                pet.PlayAnimationByName("idle");
+            }
+            BrainController.Log($"[Intro] {(_firstRun ? "First-run intro" : "Edge peek")} finished.");
+
+            if (_firstRun)
+            {
+                // Let her watch the pig wander for a moment before Home opens for naming.
+                var later = new Timer { Interval = 8000 };
+                later.Tick += (s2, e2) =>
+                {
+                    later.Stop();
+                    later.Dispose();
+                    try { _onDone?.Invoke(); }
+                    catch (Exception ex) { BrainController.Log("[ERROR] EdgePeekScene done callback: " + ex.Message); }
+                };
+                later.Start();
+            }
+            else
+            {
+                try { _onDone?.Invoke(); }
+                catch (Exception ex) { BrainController.Log("[ERROR] EdgePeekScene done callback: " + ex.Message); }
+            }
+        }
+    }
+}

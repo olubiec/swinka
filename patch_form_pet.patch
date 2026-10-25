@@ -1,0 +1,17 @@
+--- src/Cuy/dotNet/FormPet.cs
++++ src/Cuy/dotNet/FormPet.cs
+@@ -515,12 +515,12 @@
+             || (InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction);
+
+         /// <summary>Starts a scripted scene: the pet stands on the bottom of the primary working area at x, facing right.</summary>
+-        public void ScriptBegin(double x)
++        public void ScriptBegin(double x, EdgeSide side = EdgeSide.Left)
+         {
+             ScriptHoldsPosition = true;
+             hwndWindow = IntPtr.Zero;
+             _brain?.ClearPhysicsForScript(); // the spawn may have been a fall from the top of the screen
+-            SetFacing(false);
++            SetFacing(side == EdgeSide.Right);
+             Rectangle wa = Screen.PrimaryScreen.WorkingArea;
+             PositionY = wa.Bottom - Height - OffsetY;
+             Opacity = 1.0;
