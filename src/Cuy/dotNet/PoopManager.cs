@@ -104,18 +104,47 @@ namespace Cuy
             }
 
             // Play the poop animation
-            petForm.PlayAnimationByName("poop");
-            _controller.RequestAnimation("poop");
+            bool isSleeping = _controller.IsCurrentlySleeping() ||
+                              petForm.CurrentAnimationName == "sleep" ||
+                              petForm.CurrentAnimationName == "doze" ||
+                              petForm.CurrentAnimationName == "lie_down" ||
+                              petForm.CurrentAnimationName == "sleep_house";
+
+            if (!isSleeping)
+            {
+                petForm.PlayAnimationByName("poop");
+                _controller.RequestAnimation("poop");
+            }
 
             // Work out the position and the surface
             int petX = (int)petForm.PositionX;
             int petY = (int)(petForm.PositionY + petForm.OffsetY);
             int petW = petForm.Width;
             int petH = petForm.Height;
+            double scale = petW / 64.0;
 
             // The poop lands behind the pig at the level of its feet
-            int poopX = petForm.IsFacingLeft ? (petX + petW - 24) : (petX + 4);
-            int poopY = petY + petH - 26;
+            int poopX = petForm.IsFacingLeft ? (int)(petX + 54 * scale) : (int)(petX + 13 * scale) - 32;
+            int poopY = (int)(petY + 61 * scale) - 32;
+
+            int topBound = petForm.ScreenArea.Top;
+            poopY = Math.Max(topBound, poopY);
+
+            for (int i = 0; i < 6; i++)
+            {
+                var newRect = new Rectangle(poopX, poopY, 32, 32);
+                bool overlaps = false;
+                foreach (var p in _activePoops)
+                {
+                    if (new Rectangle(p.Location.X, p.Location.Y, 32, 32).IntersectsWith(newRect))
+                    {
+                        overlaps = true;
+                        break;
+                    }
+                }
+                if (!overlaps) break;
+                poopX += petForm.IsFacingLeft ? 14 : -14;
+            }
 
             IntPtr hwnd = petForm.CurrentHwndWindow;
             bool onTaskbar = (hwnd == IntPtr.Zero);
@@ -155,6 +184,9 @@ namespace Cuy
                     var form = new PoopForm(poopData, hwnd, relOffset);
                     form.Show();
                     _activePoops.Add(form);
+
+                    petForm.TopMost = false;
+                    petForm.TopMost = true;
 
                     BrainController.Log(string.Format(
                         "[Poop] Left a poop at ({0}, {1}) on {2}. Poops: {3}/8, Cleanliness: {4:0.#}%",
