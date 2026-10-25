@@ -136,6 +136,7 @@ namespace Cuy
             if (motionTimer != null) SetMotionTimer(false);
             if (followFallback != null) followFallback.Stop();
             if (followHook != IntPtr.Zero) { UnhookWinEvent(followHook); followHook = IntPtr.Zero; }
+            ShadowForm.DisposeShadow();
             foreach (Image image in flippedSprites.Values) image.Dispose();
             flippedSprites.Clear();
         }
@@ -219,6 +220,7 @@ namespace Cuy
             PointF p = motion.Sample(now);
             Point position = new Point((int)Math.Round(p.X), (int)Math.Round(p.Y));
             if (Location != position) Location = position;
+            ShadowForm.Update(this);
         }
 
         private void MotionTimer_Tick(object sender, EventArgs e)
@@ -239,6 +241,7 @@ namespace Cuy
                 if (motion.Initialized) RenderMotion(motionClock.Elapsed.TotalMilliseconds);
             }
             if (!IsTossing && !motion.IsMoving(now)) SetMotionTimer(false);
+            ShadowForm.Update(this);
         }
 
         private void BeginSmoothDrag()
@@ -263,6 +266,7 @@ namespace Cuy
             dragVelocity.Add(PositionX, PositionY, now);
             motion.Reset(PositionX, PositionY, now);
             if (Location != position) Location = position;
+            ShadowForm.Update(this);
         }
     }
 }
