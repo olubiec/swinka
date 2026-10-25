@@ -9,7 +9,6 @@ dist/
 *.sln.docstates
 app.publish/
 *.log
-packages/
 *.nupkg
 nuget.exe
 __pycache__/

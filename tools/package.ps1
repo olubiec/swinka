@@ -15,6 +15,9 @@ New-Item -ItemType Directory -Path $out | Out-Null
 robocopy $release $out /E /XF *.pdb *.xml *.config.bak /XD logs /NFL /NDL /NJH /NJS /NP | Out-Null
 if ($LASTEXITCODE -ge 8) { Write-Host "PACKAGE STOPPED: copy failed"; exit 1 }
 
+# WebView2Loader.dll is in runtimes\win-x64\native\ etc., but WebView2 package on .NET Framework expects it next to the exe or in runtimes folder.
+# The SDK style project puts runtimes/ folder in bin/Release, so it gets copied by robocopy.
+
 # assets/ and web/ must be inside.
 foreach ($name in "assets", "web") {
     if (-not (Test-Path (Join-Path $out $name))) {
