@@ -30,7 +30,12 @@
     poop:        { row: 36, frames: 10, fps: 8,  loop: false, description: "Poop" },
     purr_pet:    { row: 40, frames: 8,  fps: 10, loop: true,  description: "Purring while petted" },
     greet:       { row: 44, frames: 14, fps: 10, loop: false, description: "Greeting" },
-    come_called: { row: 45, frames: 10, fps: 10, loop: false, description: "Coming when called" }
+    come_called: { row: 45, frames: 10, fps: 10, loop: false, description: "Coming when called" },
+    house_enter: { row: 48, frames: 13, fps: 10, loop: false, description: "Enter house" },
+    house_exit:  { row: 49, frames: 13, fps: 10, loop: false, description: "Exit house" },
+    tunnel_in:   { row: 50, frames: 15, fps: 12, loop: false, description: "Enter tunnel" },
+    tunnel_out:  { row: 52, frames: 10, fps: 12, loop: false, description: "Exit tunnel" },
+    ball_push:   { row: 53, frames: 12, fps: 10, loop: false, description: "Push ball" }
   };
 
   const FRAME_SIZE = 64;
@@ -78,9 +83,28 @@
       // Random idle behaviours
       this.idleBehaviorTimer = 4000;
 
+      this.inventory = {};
+      this.ballX = 150; // Initial ball position
+      this.toyPlaying = null;
+      this.targetToy = null;
+      this.targetX = null;
+
       this.initAssets();
       this.bindEvents();
       this.lastTime = performance.now();
+
+      this.layers = [];
+      window.CuyRoom = {
+        addLayer: (name, z, drawFn) => {
+          this.layers = this.layers.filter((l) => l.name !== name);
+          this.layers.push({ name, z, drawFn });
+          this.layers.sort((a, b) => a.z - b.z);
+        },
+        removeLayer: (name) => {
+          this.layers = this.layers.filter((l) => l.name !== name);
+        }
+      };
+
       requestAnimationFrame((t) => this.loop(t));
     }
 
@@ -182,7 +206,8 @@
         if (!this.drag) return;
         if (this.drag.moved) this.suppressClick = true;
         this.drag = null;
-        this.pigY = 60; // back on the floor
+        this.fallTimer = 250;
+        this.fallStartY = this.pigY;
       };
       this.canvas.addEventListener('pointerup', endDrag);
       this.canvas.addEventListener('pointercancel', endDrag);
@@ -192,6 +217,23 @@
       const p = this.toScene(e);
       const x = p.x;
       const y = p.y;
+
+      if (this.toyPlaying || this.targetToy) return;
+
+      const f = 119;
+      // Hit test toys
+      if (this.inventory.house && x >= 42 && x <= 42 + 48 && y >= f - 48 && y <= f) {
+        this.startToyWalk('house', 42 + 24);
+        return;
+      }
+      if (this.inventory.tunnel && x >= this.sceneWidth - 8 - 48 && x <= this.sceneWidth - 8 && y >= f - 48 && y <= f) {
+        this.startToyWalk('tunnel', this.sceneWidth - 8 - 48 + 24);
+        return;
+      }
+      if (this.inventory.ball && x >= this.ballX && x <= this.ballX + 32 && y >= f - 32 && y <= f) {
+        this.startToyWalk('ball', this.ballX + 16);
+        return;
+      }
 
       // If a poop was clicked, clean it up!
       if (y >= 105 && this.poopCount > 0 && Math.abs(x - (this.pigX - 25)) < 20) {
@@ -272,6 +314,7 @@
 
     updateState(state) {
       if (!state) return;
+      this.lastState = state;
       if (state.stageKey) {
         if (!this.sheets[state.stageKey]) {
           console.error('[canvas-pig] No sprite sheet for stage "' + state.stageKey + '", using baby');
@@ -282,6 +325,9 @@
       }
       if (typeof state.poops === 'number') {
         this.poopCount = state.poops;
+      }
+      if (state.inventory) {
+        this.inventory = state.inventory;
       }
 
       // React to an action from the state
@@ -324,8 +370,75 @@
         }
       }
 
+      // Pig falling animation
+      if (this.fallTimer > 0 && !this.drag) {
+        this.fallTimer -= dt;
+        if (this.fallTimer <= 0) {
+          this.pigY = 60;
+        } else {
+          // ease-out: t is from 0 to 1. f(t) = 1 - (1-t)^2.
+          const t = 1 - (this.fallTimer / 250);
+          const easeOut = 1 - Math.pow(1 - t, 2);
+          this.pigY = this.fallStartY + (60 - this.fallStartY) * easeOut;
+        }
+      }
+
+      // Toy walking logic
+      if (this.targetToy) {
+        const speed = (60 * dt) / 1000;
+        const dx = this.targetX - (this.pigX + 32);
+
+        if (Math.abs(dx) <= speed) {
+          this.pigX = this.targetX - 32;
+          const toy = this.targetToy;
+          this.targetToy = null;
+          this.playToy(toy);
+        } else {
+          this.facing = dx > 0 ? 1 : -1;
+          this.pigX += this.facing * speed;
+          if (this.currentAnim !== 'walk') {
+            this.currentAnim = 'walk';
+            this.animTimer = 0;
+          }
+        }
+      }
+
+      // Toy playing logic sequences
+      if (this.toyPlaying) {
+        this.toyTimer -= dt;
+        if (this.toyPlaying === 'ball') {
+          // Ball rolls away and back
+          const progress = 1 - (this.toyTimer / 2500); // 0 to 1
+          if (progress >= 0 && progress <= 1) {
+            // roll away 30px then back
+            const offset = Math.sin(progress * Math.PI) * 30;
+            this.ballX = 150 + offset * this.facing;
+          }
+        }
+        if (this.toyTimer <= 0) {
+          if (this.toyPlaying === 'tunnel_phase1') {
+            this.toyPlaying = 'tunnel_phase2';
+            this.playAnim('tunnel_out', (10 / 12) * 1000);
+            this.toyTimer = (10 / 12) * 1000;
+          } else if (this.toyPlaying === 'house_phase1') {
+            this.toyPlaying = 'house_phase2';
+            this.pigY = -1000; // hide pig
+            this.toyTimer = 2000;
+          } else if (this.toyPlaying === 'house_phase2') {
+            this.toyPlaying = 'house_phase3';
+            this.pigY = 60; // restore pig
+            this.playAnim('house_exit', (13 / 10) * 1000);
+            this.toyTimer = (13 / 10) * 1000;
+          } else {
+            this.toyPlaying = null;
+            this.currentAnim = 'idle';
+            this.animTimer = 0;
+          }
+        }
+      }
+
       // Timer of the current forced animation
-      if (this.animTimer > 0) {
+      if (this.animTimer > 0 && !this.targetToy && !this.toyPlaying) {
         this.animTimer -= dt;
         if (this.animTimer <= 0 && !def.loop) {
           this.currentAnim = 'idle';
@@ -334,7 +447,7 @@
       }
 
       // Autonomous idle behaviours
-      if (this.currentAnim === 'idle') {
+      if (this.currentAnim === 'idle' && !this.targetToy && !this.toyPlaying) {
         this.idleBehaviorTimer -= dt;
         if (this.idleBehaviorTimer <= 0) {
           this.idleBehaviorTimer = 4000 + Math.random() * 6000;
@@ -382,8 +495,33 @@
       const ctx = this.ctx;
       ctx.clearRect(0, 0, this.sceneWidth, this.sceneHeight);
 
+      const scene = {
+        width: this.sceneWidth,
+        height: this.sceneHeight,
+        floorY: 119,
+        state: this.lastState || {},
+        time: performance.now(),
+        skipDefaultWall: false,
+        skipDefaultFloor: false
+      };
+
+      // Z < 0: drawn after the wall but before props (wallpaper, rugs)
+      // These layers might set scene.skipDefaultWall or scene.skipDefaultFloor
+      // Wait, we need to know the flags BEFORE drawing defaults!
+      // But if they set it inside drawFn, they will draw behind the defaults if defaults are drawn after!
+      // Wait, the spec says: "a layer may set scene.skipDefaultWall = true... read these flags before drawing the defaults".
+      // Let's first scan z < 0 layers to set flags:
+      const zNegLayers = this.layers.filter(l => l.z < 0);
+      zNegLayers.forEach(l => {
+        if (l.name === 'wallpaper') scene.skipDefaultWall = true;
+        if (l.name === 'floor') scene.skipDefaultFloor = true;
+      });
+
       // --- 1. RUN / ROOM BACKGROUND (pixel art habitat) ---
-      this.drawHabitat(ctx);
+      this.drawHabitat(ctx, scene);
+
+      // Draw Z < 0 layers
+      zNegLayers.forEach(l => l.drawFn(ctx, scene));
 
       // --- 2. POOPS IN THE RUN (if any) ---
       this.drawPoops(ctx);
@@ -391,8 +529,17 @@
       // --- 3. ACCESSORIES / HAY RACK / WATER BOTTLE ---
       this.drawProps(ctx);
 
+      // --- 3.5. OWNED TOYS ---
+      this.drawToys(ctx);
+
+      // Draw 0 <= Z < 10 layers
+      this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
+
       // --- 4. THE GUINEA PIG (from the sprite sheet) ---
       this.drawPig(ctx);
+
+      // Draw Z >= 10 layers
+      this.layers.filter(l => l.z >= 10).forEach(l => l.drawFn(ctx, scene));
 
       // --- 5. PARTICLES (hearts, crumbs) ---
       this.drawParticles(ctx);
@@ -403,50 +550,76 @@
       }
     }
 
-    drawHabitat(ctx) {
+    drawHabitat(ctx, scene) {
       // Wooden plank wall (panels)
-      const woodDark = '#6e4424';
-      const woodMid = '#9c6636';
-      const woodLight = '#c98d50';
-      const woodShine = '#e6b073';
+      if (!scene.skipDefaultWall) {
+        const woodDark = '#6e4424';
+        const woodMid = '#9c6636';
+        const woodLight = '#c98d50';
+        const woodShine = '#e6b073';
 
-      ctx.fillStyle = woodMid;
-      ctx.fillRect(0, 0, this.sceneWidth, 96);
+        ctx.fillStyle = woodMid;
+        ctx.fillRect(0, 0, this.sceneWidth, 96);
 
-      // Vertical planks on the wall
-      ctx.fillStyle = woodDark;
-      for (let x = 0; x < this.sceneWidth; x += 30) {
-        ctx.fillRect(x, 0, 2, 96);
+        // Vertical planks on the wall
+        ctx.fillStyle = woodDark;
+        for (let x = 0; x < this.sceneWidth; x += 30) {
+          ctx.fillRect(x, 0, 2, 96);
+        }
+        // Horizontal wall trim
+        ctx.fillStyle = woodLight;
+        ctx.fillRect(0, 36, this.sceneWidth, 4);
+        ctx.fillStyle = woodDark;
+        ctx.fillRect(0, 40, this.sceneWidth, 1);
       }
-      // Horizontal wall trim
-      ctx.fillStyle = woodLight;
-      ctx.fillRect(0, 36, this.sceneWidth, 4);
-      ctx.fillStyle = woodDark;
-      ctx.fillRect(0, 40, this.sceneWidth, 1);
 
       // Floor with straw and hay (the main living space)
-      const floorY = 96;
-      ctx.fillStyle = '#eedb7c'; // light hay
-      ctx.fillRect(0, floorY, this.sceneWidth, this.sceneHeight - floorY);
+      if (!scene.skipDefaultFloor) {
+        const floorY = 96;
+        ctx.fillStyle = '#eedb7c'; // light hay
+        ctx.fillRect(0, floorY, this.sceneWidth, this.sceneHeight - floorY);
 
-      // Shadow under the trim
-      ctx.fillStyle = '#cdb556';
-      ctx.fillRect(0, floorY, this.sceneWidth, 4);
+        // Shadow under the trim
+        ctx.fillStyle = '#cdb556';
+        ctx.fillRect(0, floorY, this.sceneWidth, 4);
 
-      // Pixel hay strands on the floor
-      ctx.fillStyle = '#cdb556';
-      const haySpots = [
-        [15, 102], [35, 115], [75, 106], [120, 118], [150, 105],
-        [185, 114], [210, 104], [60, 122], [140, 124], [195, 122]
-      ];
-      haySpots.forEach(([x, y]) => {
-        ctx.fillRect(x, y, 6, 2);
-        ctx.fillRect(x + 2, y - 2, 2, 2);
-      });
-      ctx.fillStyle = '#99903d';
-      haySpots.forEach(([x, y]) => {
-        ctx.fillRect(x + 1, y + 2, 4, 1);
-      });
+        // Pixel hay strands on the floor
+        ctx.fillStyle = '#cdb556';
+        const haySpots = [
+          [15, 102], [35, 115], [75, 106], [120, 118], [150, 105],
+          [185, 114], [210, 104], [60, 122], [140, 124], [195, 122]
+        ];
+        haySpots.forEach(([x, y]) => {
+          ctx.fillRect(x, y, 6, 2);
+          ctx.fillRect(x + 2, y - 2, 2, 2);
+        });
+        ctx.fillStyle = '#99903d';
+        haySpots.forEach(([x, y]) => {
+          ctx.fillRect(x + 1, y + 2, 4, 1);
+        });
+      }
+    }
+
+    drawToys(ctx) {
+      if (!this.iconsImg || !this.iconsImg.naturalWidth) return;
+      const f = 119; // floor y
+
+      // house: icon 8, 3x (48px)
+      if (this.inventory.house) {
+        // icon 8 in a 16x16 grid -> col 8 (sx = 128)
+        ctx.drawImage(this.iconsImg, 8 * 16, 0, 16, 16, 42, f - 48, 48, 48);
+      }
+
+      // tunnel: icon 7, 3x (48px)
+      if (this.inventory.tunnel) {
+        // right edge at sceneWidth - 8 -> x = 240 - 8 - 48 = 184
+        ctx.drawImage(this.iconsImg, 7 * 16, 0, 16, 16, this.sceneWidth - 8 - 48, f - 48, 48, 48);
+      }
+
+      // ball: icon 6, 2x (32px)
+      if (this.inventory.ball) {
+        ctx.drawImage(this.iconsImg, 6 * 16, 0, 16, 16, this.ballX, f - 32, 32, 32);
+      }
     }
 
     drawProps(ctx) {
@@ -519,7 +692,33 @@
       return null;
     }
 
+    startToyWalk(toyName, targetX) {
+      this.targetToy = toyName;
+      this.targetX = targetX;
+    }
+
+    playToy(toy) {
+      if (root.bridge) root.bridge.send({ type: 'play_toy', item: toy });
+      if (toy === 'ball') {
+        this.toyPlaying = 'ball';
+        this.toyTimer = 2500;
+        this.playAnim('ball_push', 2500);
+      } else if (toy === 'tunnel') {
+        this.toyPlaying = 'tunnel_phase1';
+        const tInDur = (15 / 12) * 1000;
+        this.toyTimer = tInDur;
+        this.playAnim('tunnel_in', tInDur);
+      } else if (toy === 'house') {
+        this.toyPlaying = 'house_phase1';
+        const hEnterDur = (13 / 10) * 1000;
+        this.toyTimer = hEnterDur;
+        this.playAnim('house_enter', hEnterDur);
+      }
+    }
+
     drawPig(ctx) {
+      if (this.pigY < -100) return; // Hidden
+
       const sheet = this.usableSheet();
       if (!sheet) {
         // Placeholder while loading
@@ -535,9 +734,13 @@
       ctx.save();
 
       // Shadow under the pig
-      ctx.fillStyle = 'rgba(70, 45, 30, 0.45)';
+      const h = Math.max(0, 60 - this.pigY);
+      const factor = Math.max(0.4, Math.min(1, 1 - h / 80));
+      const shadowAlpha = 0.45 * Math.max(0.2, Math.min(1, 1 - h / 80));
+
+      ctx.fillStyle = `rgba(70, 45, 30, ${shadowAlpha})`;
       ctx.beginPath();
-      ctx.ellipse(this.pigX + 32, this.pigY + 59, 22, 6, 0, 0, Math.PI * 2);
+      ctx.ellipse(this.pigX + 32, 119, 22 * factor, 6 * factor, 0, 0, Math.PI * 2);
       ctx.fill();
 
       // Draw the pig frame, mirrored if needed
