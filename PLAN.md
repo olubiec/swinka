@@ -256,6 +256,18 @@ Etapy idą jeden po drugim, bo każdy korzysta z poprzedniego; wyróżniona bram
 
 Etap G (opcjonalny) to port na ESP32, opisany niżej.
 
+## Korekty po przeglądzie (25.10.2026)
+
+Pełna treść poprawek, nowe prompty i zlecenia researchu dla Gemini: `PLAN_POPRAWKI.md`. Skrót:
+
+- **Wstęp do każdego promptu z tego pliku** (C4, C5, D2-D5, E*, F*): „Read RULES.md and ARCHITECTURE.md first. Prompts in PLAN.md written before the Cuy rename use old Polish names; map them with the tables in RULES.md. All code, comments, UI texts and docs are in English. Do only the current task. If this prompt contradicts RULES.md, RULES.md wins; report the contradiction.”
+- **C4:** użyj `GrowthStartUtc` (z CC3) zamiast `start_wzrostu` i przestaw `GrowthEnabled` na `true`. Folder `assets/sprites/junior` może nie istnieć (CC1 mapuje junior na baby): sprawdź i zgłoś.
+- **C5:** szablony pamiętnika po angielsku (RULES.md).
+- **D2-D5:** ikony i arkusze z `assets/icons/` i `assets/sprites/`.
+- **E1, E3, E5:** prompty podmienione na wersje oparte na gotowych rozwiązaniach (miernik głośności NAudio, wzorzec z Chromium, Open-Meteo).
+- **Etap F:** F1 zrobione, F2 zawężone do ekranu Ustawienia, F3 opcjonalne (po researchu R1/R2), F4 zastąpione etapem Q, F5 zrobione w CC3. Bramka F: QA1/QA2 bez P0 i P1 + 3 dni na czystym laptopie.
+- **Licencje:** w `THIRD_PARTY_NOTICES.md` brakuje NAudio, atrybucji Open-Meteo i ewentualnie SoundTouch.Net (prompt w `PLAN_POPRAWKI.md`, A4).
+
 ## Prompty do Antigravity
 
 Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do ciężkich zadań, **Gemini** do lżejszych. Zanim zaczniesz, wrzuć do repo dwa pliki: `PLAN.md` (ten dokument wyeksportowany do Markdown) i `ZASADY.md` (poniżej).
@@ -1230,16 +1242,30 @@ Gra ma być spokojna: bez limitu czasu, łagodne dźwięki.
 
 ### E1 · Claude: taniec do muzyki
 
+Zamiast własnej autokorelacji: najpierw prosty detektor "muzyka gra" na mierniku głośności urządzenia, BPM tylko opcjonalnie.
+
 ```text
-Przeczytaj PLAN.md, ZASADY.md i Brain.
-Dokumentacja: https://github.com/naudio/NAudio/blob/master/Docs/WasapiLoopbackCapture.md
-Nasłuchuj dźwięk systemowy przez WasapiLoopbackCapture. Co 50 ms licz głośność RMS.
-Muzyka = głośność powyżej progu przez 5 s z wyraźnymi zmianami (nie stały szum). Wtedy Brain dostaje warunek "muzyka"
-i czynność dance ma wysoką wagę. Oszacuj tempo z autokorelacji obwiedni i dopasuj prędkość animacji dance do rytmu.
-Koniec po 3 s ciszy. Przełącznik w ustawieniach. Zużycie CPU poniżej 1%. Brak muzyki = DataAvailable nie przychodzi, obsłuż to.
+Task E1: dance to music. Read RULES.md, ARCHITECTURE.md, Brain and the E3 FullscreenDetector (if it exists).
+Reuse existing libraries, do not write DSP from scratch.
+1. Cuy.Core: interface IMusicSignal { bool IsMusicPlaying; double? Bpm; } and a Brain condition "music".
+   The action dance gets a high base weight while music plays; at most one dance bout per 3 minutes, 8-20 s each,
+   stops when the music stops. Quiet hours and full-screen mute apply (no dancing while hidden).
+2. src/Cuy/dotNet/MusicDetector.cs implements IMusicSignal with NAudio only. Step A: poll the default render device
+   peak meter (MMDevice.AudioMeterInformation.MasterPeakValue) every 100 ms. Music = peak above a threshold AND
+   enough variation (standard deviation over a 5 s window above a threshold) for at least 5 s; steady noise and
+   constant hum must not count. Re-resolve the default device when it changes (headphones plugged in) and survive
+   having no audio device. Put thresholds in assets/data/actions.json or a settings constant, not inline.
+3. Step B (OFF by default, behind a setting "Dance in rhythm"): BPM through WasapiLoopbackCapture +
+   SoundTouch.Net BPMDetect. Known gotcha: loopback raises no data events while the device plays silence, so use a
+   2 s watchdog and treat "no data" as "no music". Before adding the package, check its licence (original SoundTouch is
+   LGPL) and report it; if it is a problem, skip Step B and leave Bpm = null.
+4. Without a BPM the dance animation loops at its normal speed; with a BPM, scale frame time within +-25 %.
+5. Tests with a fake IMusicSignal in tests/Cuy.Core.Tests (weight, cooldown, stop). Add a --music-test Debug flag that
+   logs peak, variation and the decision once per second.
+Report: how to test (song, podcast/speech, silence, a browser video, YouTube with the volume low, headphones plug/unplug).
 ```
 
-**Sprawdź:** włącz muzykę (YouTube, Spotify), potem ją wycisz; otwórz Menedżer zadań. **Powinno być:** po ok. 5 s świnka tańczy z nutkami w rytm; 3 s po ciszy przestaje; aplikacja zużywa poniżej 1–2% CPU.
+**Sprawdź:** utwór, podcast, cisza, wideo w przeglądarce, wtyczka słuchawek. **Powinno być:** taniec do muzyki, brak tańca do mowy i szumu, max jeden taniec na 3 minuty, brak wyjątków przy braku urządzenia audio.
 
 ### E2 · Claude: strach i chowanie się
 
@@ -1253,16 +1279,27 @@ od poziomu 2 kursor przyciąga, nie straszy. Seria ponad 8 kliknięć w świnkę
 
 **Sprawdź:** potrząśnij gwałtownie myszką obok świnki, potem powtórz w ciągu 10 s; kliknij ją szybko 10 razy. **Powinno być:** podskok z „!” i zamarcie; przy powtórce ucieka za krawędź, po chwili wystaje sama głowa i świnka wraca; seria kliknięć wywołuje zgrzytanie ząbkami; przy więzi od poziomu 2 kursor przyciąga zamiast straszyć.
 
+**Korekta (25.10.2026):** najpierw użyj istniejącego próbkowania prędkości z przeciągania w `FormPet` (`dragVelocity`), nie pisz nowego kodu myszy. Cooldown 5 minut, nigdy podczas snu, przeciągania i fizyki. Zachowanie przy normalnej pracy myszką musi być rzadkie. Szczegóły: `PLAN_POPRAWKI.md`, sekcja E2.
+
 ### E3 · Gemini: chowanie przy grach
 
 ```text
-Przeczytaj PLAN.md i ZASADY.md.
-Co 5 s sprawdzaj SHQueryUserNotificationState (https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shqueryusernotificationstate).
-Przy QUNS_BUSY, QUNS_RUNNING_D3D_FULL_SCREEN lub QUNS_PRESENTATION_MODE świnka spokojnie odchodzi za krawędź i znika,
-dźwięki są wyciszone, potrzeby spadają jak offline. Po zakończeniu wraca z peek.
+Task E3: hide the pet during full-screen apps and presentations. Read RULES.md, ARCHITECTURE.md, SoundManager and Brain.
+Reuse the proven pattern from Chromium (fullscreen_win.cc): combine two signals.
+1. SHQueryUserNotificationState (shell32): QUNS_BUSY (2), QUNS_RUNNING_D3D_FULL_SCREEN (3), QUNS_PRESENTATION_MODE (4)
+   mean "do not disturb".
+2. Window check: the foreground window rectangle covers its whole monitor and the window is not the desktop shell
+   (Progman, WorkerW), not Cuy's own windows, and has no normal caption/WS_CAPTION or is maximized-borderless.
+Class FullscreenDetector in src/Cuy/dotNet: poll every 2 s, debounce 3 s to enter and 5 s to leave. Expose
+bool IsFullscreen plus an event.
+Effects while true: hide or park the pet window off the way (no flicker), mute sounds, no status bubble or popups,
+needs decay like offline while hidden (3x slower, floor 20), as in the original plan. On leave: reappear with the peek animation. Multi-monitor: hide the pet
+only when the full-screen window is on the pet's monitor. Log every state change to cuy.log.
+Report test results for: a game in exclusive full screen, a borderless game, a YouTube video in full screen,
+PowerPoint slide show, a maximized (not full-screen) window (must NOT hide), a second monitor, Alt+Tab out of a game.
 ```
 
-**Sprawdź:** włącz film na pełnym ekranie albo pokaz slajdów, potem wyjdź. **Powinno być:** świnka spokojnie odchodzi za krawędź i jest cicho; po wyjściu z pełnego ekranu wraca, wyglądając zza krawędzi.
+**Sprawdź:** lista z końca promptu. **Powinno być:** chowa się w grze, wideo i pokazie slajdów; NIE chowa się przy zwykłym zmaksymalizowanym oknie; po wyjściu wraca przez peek.
 
 ### E4 · Gemini: głaskanie
 
@@ -1278,13 +1315,22 @@ humor +5, więź +1 (limit 10 głaskań na godzinę z nagrodą). Głaskanie śpi
 ### E5 · Gemini: pogoda
 
 ```text
-Przeczytaj PLAN.md i ZASADY.md. API: https://open-meteo.com/en/docs (bez klucza).
-W ustawieniach wpisuje się miasto; zamień je na współrzędne przez geocoding Open-Meteo. Pobieraj pogodę co godzinę.
-Reguły dla Brain: deszcz = częściej sleep_house, poniżej 5°C = czasem shiver, powyżej 28°C = heat_flop i więcej picia.
-Pogoda trafia też do wpisu w pamiętniku. Bez internetu wszystko działa normalnie.
+Task E5: weather reactions with Open-Meteo. Read RULES.md, ARCHITECTURE.md, Brain and the settings code.
+1. Location: a text setting "City" (Home -> Settings). Resolve it once with the Open-Meteo geocoding API, store
+   latitude/longitude in the save (local only, never sent anywhere else). No Windows location API.
+2. src/Cuy/dotNet/WeatherService.cs: HttpClient (TLS 1.2 on .NET Framework 4.8), 5 s timeout, fetch every 30 minutes
+   https://api.open-meteo.com/v1/forecast?latitude=..&longitude=..&current=temperature_2m,weather_code,is_day
+   (no API key). Never block the UI thread; keep the last good value in the save; fully offline-tolerant.
+3. Map WMO weather_code to {clear, cloudy, fog, drizzle, rain, snow, thunder} in Cuy.Core (a pure, tested function).
+4. Brain conditions: rain/thunder -> prefers house/sleep_in_house; temperature >= 28 -> heat_flop and shade-seeking
+   (stay under a window edge if possible); temperature <= 5 -> shiver. At most one weather action per 20 minutes.
+5. About dialog and Home -> Settings footer: "Weather data by Open-Meteo.com" (attribution). Request rate must stay far
+   below the free limits; free use is non-commercial only (this is a gift, keep it that way).
+6. Settings toggle "Weather reactions" (default on once a city is set).
+Tests: WMO mapping, offline fallback, no request when no city is set.
 ```
 
-**Sprawdź:** wpisz miasto w ustawieniach i poproś agenta o sposób wymuszenia pogody testowej; potem odłącz internet. **Powinno być:** przy deszczu częściej śpi w domku, przy mrozie drży, w upał leży rozpłaszczona; pogoda pojawia się w pamiętniku; bez internetu wszystko działa.
+**Sprawdź:** wpisz miasto, wymuś deszcz w trybie testowym. **Powinno być:** świnka reaguje na deszcz i upał/zimno, bez miasta nie ma żadnych zapytań, w razie braku internetu brak błędów.
 
 ### E6 · Claude: sztuczki i towarzysz
 
@@ -1298,6 +1344,8 @@ Przeczytaj PLAN.md (Poziom więzi), ZASADY.md, ARCHITEKTURA.md, Brain i SwinkaCo
 ```
 
 **Sprawdź:** w trybie deweloperskim ustaw więź 10 i wiek po 1. urodzinach, adoptuj towarzysza, zrestartuj aplikację. **Powinno być:** przyciski sztuczek działają, zmęczona świnka odmawia; adopcja z wyborem imienia i umaszczenia; dwie świnki robią nosek w nosek, chodzą za sobą i śpią razem; po restarcie obie są na miejscu.
+
+**Korekta (25.10.2026):** CC1 wymusił `MaxPets = 1`. Ustaw 2 dopiero po odblokowaniu towarzysza (więź 10 + 1. urodziny), a drugą świnkę zbuduj na istniejącym mechanizmie eSheep (`<childs>` w `animations.xml` i kod wielu zwierzaków w `StartUp`/`FormPet`). Dźwięki obu świnek mają wspólny limit (jedno kwiknięcie na 30 s). Szczegóły: `PLAN_POPRAWKI.md`, sekcja E6.
 
 ### F1 · ty + Gemini: dźwięki
 
@@ -1321,6 +1369,8 @@ w oknie Domku. Ukryty tryb deweloperski (5 kliknięć w wersję): mnożnik czasu
 
 **Sprawdź:** zmień imię, włącz autostart i zrestartuj Windows. **Powinno być:** nowe imię od razu w Domku i w zasobniku; po restarcie świnka wraca sama; reset gry pyta o potwierdzenie w oknie Domku.
 
+**Korekta (25.10.2026):** autostart i ikonę w zasobniku zrobił już CC3. W F2 zostaje ekran Ustawienia w Domku (głośność, godziny ciszy, reakcja na muzykę, miasto do pogody, wielkość, monitor, reset, tryb deweloperski). Tray i Ustawienia mają być zsynchronizowane.
+
 ### F3 · Gemini: instalator
 
 ```text
@@ -1332,6 +1382,8 @@ Opisz, co zobaczy użytkownik przy ostrzeżeniu SmartScreen i jak je przejść.
 
 **Sprawdź:** zainstaluj na innym komputerze albo innym koncie Windows. **Powinno być:** instalator ze skrótem w menu Start i opcją autostartu; ostrzeżenie SmartScreen przechodzisz przez „Więcej informacji → Uruchom mimo to”; po odinstalowaniu zapis gry zostaje.
 
+**Korekta (25.10.2026):** paczka zip, `tools/package.ps1` i `--selftest` z CC3 już działają, więc instalator jest opcjonalny. Przed F3 zrób research R1 i R2 (`PLAN_POPRAWKI.md`, część B): porównanie Inno Setup, Velopack i zip oraz SmartScreen. Dla instalatora nie używaj starych nazw (`Swinka`, `/domek`), tylko `Cuy`, `assets/`, `web/`.
+
 ### F4 · Claude: przegląd przed oddaniem
 
 ```text
@@ -1342,6 +1394,8 @@ Napisz TESTY_RECZNE.md: lista 30 kroków do sprawdzenia przed prezentem. Popraw 
 ```
 
 **Powinno być:** plik `TESTY_RECZNE.md` z 30 krokami, log błędów w `%AppData%\Swinka\log.txt`, każda poprawka osobnym commitem. Przejdź listę sam przed wręczeniem prezentu.
+
+**Korekta (25.10.2026):** ten krok zastępują QA1 i QA2 (etap Q) oraz `TESTING.md`. Log błędów jest w `%LocalAppData%\Cuy\logs\cuy.log`, nie w `%AppData%\Swinka`.
 
 ### Szablon, gdy agent utknie
 

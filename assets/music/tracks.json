@@ -1,0 +1,7 @@
+[
+  { "id": "games_1", "file": "music/adventure_stage1.ogg", "title": "Chiptune Adventures - Stage 1", "author": "Juhani Junkala", "license": "CC0", "url": "https://opengameart.org/content/4-chiptunes-adventure", "use": "games" },
+  { "id": "games_2", "file": "music/adventure_stage2.ogg", "title": "Chiptune Adventures - Stage 2", "author": "Juhani Junkala", "license": "CC0", "url": "https://opengameart.org/content/4-chiptunes-adventure", "use": "games" },
+  { "id": "games_boss", "file": "music/adventure_boss.ogg", "title": "Chiptune Adventures - Boss", "author": "Juhani Junkala", "license": "CC0", "url": "https://opengameart.org/content/4-chiptunes-adventure", "use": "games" },
+  { "id": "menu", "file": "music/adventure_select.ogg", "title": "Chiptune Adventures - Stage Select", "author": "Juhani Junkala", "license": "CC0", "url": "https://opengameart.org/content/4-chiptunes-adventure", "use": "menu" },
+  { "id": "calm", "file": "music/calm_loop.ogg", "title": "Exploring Town", "author": "Spring Spring", "license": "CC0", "url": "https://opengameart.org/content/exploring-town", "use": "calm" }
+]

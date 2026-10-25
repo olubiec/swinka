@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json.Linq;
 
@@ -82,58 +83,81 @@ namespace Cuy.Core
 
         public static ItemCatalog LoadJson(string json)
         {
-            if (string.IsNullOrWhiteSpace(json))
-                throw new ArgumentNullException(nameof(json));
+            return LoadJsonFiles(new[] { json });
+        }
 
-            var root = JObject.Parse(json);
+        public static ItemCatalog LoadJsonFiles(IEnumerable<string> jsonTexts)
+        {
             string currencyName = "clovers";
             string currencyIcon = "clover";
-
-            var currencyTok = root["currency"] as JObject;
-            if (currencyTok != null)
-            {
-                currencyName = (string)currencyTok["name"] ?? currencyName;
-                currencyIcon = (string)currencyTok["icon"] ?? currencyIcon;
-            }
-
             var itemsList = new List<ItemDefinition>();
-            var itemsArr = root["items"] as JArray;
-            if (itemsArr != null)
+            var seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (string json in jsonTexts)
             {
-                foreach (var tok in itemsArr)
+                if (string.IsNullOrWhiteSpace(json)) continue;
+
+                try
                 {
-                    string id = (string)tok["id"];
-                    if (string.IsNullOrEmpty(id)) continue;
+                    var root = JObject.Parse(json);
 
-                    var def = new ItemDefinition
+                    var currencyTok = root["currency"] as JObject;
+                    if (currencyTok != null)
                     {
-                        Id = id,
-                        Name = (string)tok["name"] ?? id,
-                        Category = (string)tok["category"] ?? "other",
-                        Price = tok["price"] != null && tok["price"].Type == JTokenType.Integer ? (int?)tok["price"] : null,
-                        IsUnlimited = (bool?)tok["unlimited"] ?? false,
-                        IsDurable = (bool?)tok["durable"] ?? false,
-                        IconName = (string)tok["icon"] ?? id,
-                        Animation = (string)tok["animation"] ?? "eat_treat",
-                        Description = (string)tok["description"] ?? "",
-                        DailyLimit = (int?)tok["daily_limit"],
-                        Uses = (int?)tok["uses"]
-                    };
-
-                    var effectsTok = tok["effects"] as JObject;
-                    if (effectsTok != null)
-                    {
-                        foreach (var prop in effectsTok.Properties())
-                        {
-                            try
-                            {
-                                def.Effects[prop.Name] = (double)prop.Value;
-                            }
-                            catch { }
-                        }
+                        currencyName = (string)currencyTok["name"] ?? currencyName;
+                        currencyIcon = (string)currencyTok["icon"] ?? currencyIcon;
                     }
 
-                    itemsList.Add(def);
+                    var itemsArr = root["items"] as JArray;
+                    if (itemsArr != null)
+                    {
+                        foreach (var tok in itemsArr)
+                        {
+                            string id = (string)tok["id"];
+                            if (string.IsNullOrEmpty(id)) continue;
+
+                            if (seenIds.Contains(id))
+                            {
+                                ErrorLogger?.Invoke($"ItemCatalog: Duplicate item id '{id}' found, ignoring subsequent definition.");
+                                continue;
+                            }
+
+                            var def = new ItemDefinition
+                            {
+                                Id = id,
+                                Name = (string)tok["name"] ?? id,
+                                Category = (string)tok["category"] ?? "other",
+                                Price = tok["price"] != null && tok["price"].Type == JTokenType.Integer ? (int?)tok["price"] : null,
+                                IsUnlimited = (bool?)tok["unlimited"] ?? false,
+                                IsDurable = (bool?)tok["durable"] ?? false,
+                                IconName = (string)tok["icon"] ?? id,
+                                Animation = (string)tok["animation"] ?? "eat_treat",
+                                Description = (string)tok["description"] ?? "",
+                                DailyLimit = (int?)tok["daily_limit"],
+                                Uses = (int?)tok["uses"]
+                            };
+
+                            var effectsTok = tok["effects"] as JObject;
+                            if (effectsTok != null)
+                            {
+                                foreach (var prop in effectsTok.Properties())
+                                {
+                                    try
+                                    {
+                                        def.Effects[prop.Name] = (double)prop.Value;
+                                    }
+                                    catch { }
+                                }
+                            }
+
+                            itemsList.Add(def);
+                            seenIds.Add(id);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorLogger?.Invoke($"ItemCatalog: Error parsing JSON: {ex.Message}");
                 }
             }
 
@@ -154,23 +178,37 @@ namespace Cuy.Core
             string baseDir = AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory();
             string[] candidatePaths = new[]
             {
-                Path.Combine(baseDir, "assets", "data", "items.json"),
-                Path.Combine(baseDir, "items.json"),
-                Path.Combine(baseDir, "..", "assets", "data", "items.json"),
-                Path.Combine(baseDir, "..", "..", "assets", "data", "items.json"),
-                Path.Combine(baseDir, "..", "..", "..", "assets", "data", "items.json"),
-                Path.Combine(baseDir, "..", "..", "..", "..", "assets", "data", "items.json"),
-                Path.Combine(Directory.GetCurrentDirectory(), "assets", "data", "items.json")
+                Path.Combine(baseDir, "assets", "data"),
+                Path.Combine(baseDir),
+                Path.Combine(baseDir, "..", "assets", "data"),
+                Path.Combine(baseDir, "..", "..", "assets", "data"),
+                Path.Combine(baseDir, "..", "..", "..", "assets", "data"),
+                Path.Combine(baseDir, "..", "..", "..", "..", "assets", "data"),
+                Path.Combine(Directory.GetCurrentDirectory(), "assets", "data")
             };
 
-            foreach (var path in candidatePaths)
+            foreach (var dirPath in candidatePaths)
             {
                 try
                 {
-                    string fullPath = Path.GetFullPath(path);
-                    if (File.Exists(fullPath))
+                    string fullDirPath = Path.GetFullPath(dirPath);
+                    if (Directory.Exists(fullDirPath))
                     {
-                        return LoadFromFile(fullPath);
+                        string itemsFile = Path.Combine(fullDirPath, "items.json");
+                        if (File.Exists(itemsFile))
+                        {
+                            var jsons = new List<string>();
+                            jsons.Add(File.ReadAllText(itemsFile));
+
+                            var extraFiles = Directory.GetFiles(fullDirPath, "items_*.json");
+                            Array.Sort(extraFiles); // alphabetical
+                            foreach (var f in extraFiles)
+                            {
+                                jsons.Add(File.ReadAllText(f));
+                            }
+
+                            return LoadJsonFiles(jsons);
+                        }
                     }
                 }
                 catch { }
@@ -178,21 +216,30 @@ namespace Cuy.Core
 
             // 2. Check embedded resources
             var asm = typeof(ItemCatalog).GetTypeInfo().Assembly;
-            foreach (var resName in asm.GetManifestResourceNames())
+            var jsonTexts = new List<string>();
+            var resNames = asm.GetManifestResourceNames().Where(r => r.Contains("items.json") || r.Contains("items_")).OrderBy(r => r).ToList();
+
+            string mainRes = resNames.FirstOrDefault(r => r.EndsWith("items.json", StringComparison.OrdinalIgnoreCase));
+            if (mainRes != null)
             {
-                if (resName.EndsWith("items.json", StringComparison.OrdinalIgnoreCase))
+                using (var stream = asm.GetManifestResourceStream(mainRes))
+                using (var reader = new StreamReader(stream))
                 {
-                    using (var stream = asm.GetManifestResourceStream(resName))
+                    jsonTexts.Add(reader.ReadToEnd());
+                }
+
+                foreach (var resName in resNames)
+                {
+                    if (resName != mainRes && (resName.Contains("items_") && resName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (stream != null)
+                        using (var stream = asm.GetManifestResourceStream(resName))
+                        using (var reader = new StreamReader(stream))
                         {
-                            using (var reader = new StreamReader(stream))
-                            {
-                                return LoadJson(reader.ReadToEnd());
-                            }
+                            jsonTexts.Add(reader.ReadToEnd());
                         }
                     }
                 }
+                return LoadJsonFiles(jsonTexts);
             }
 
             // 3. No catalog available: report an error and continue with an empty one.

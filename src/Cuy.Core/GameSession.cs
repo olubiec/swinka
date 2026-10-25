@@ -44,8 +44,11 @@ namespace Cuy.Core
             if (clock == null) throw new ArgumentNullException(nameof(clock));
             var saveSystem = new SaveSystem(saveDirectory);
             var load = saveSystem.Load();
+            var isNewGame = load.State == null;
             var state = load.State ?? GameState.CreateNew(newPetName, clock.UtcNow);
-            return new GameSession(new Pet(state, clock, balance), saveSystem, load);
+            var session = new GameSession(new Pet(state, clock, balance), saveSystem, load);
+            if (isNewGame) session.Pet.ApplyNewGameEconomy();
+            return session;
         }
 
         public void Start()

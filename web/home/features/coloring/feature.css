@@ -1,0 +1,233 @@
+.feature-coloring {
+   font-family: var(--font-pixel, monospace);
+   width: 100%;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+}
+
+.feature-coloring .coloring-header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 10px;
+   background: #3e2723;
+   color: #ffccbc;
+   border-bottom: 2px solid #2b1712;
+}
+
+.feature-coloring .coloring-btn {
+   background: #5d4037;
+   color: #fff;
+   border: 2px solid #2b1712;
+   border-radius: 4px;
+   padding: 4px 10px;
+   cursor: pointer;
+   font-family: var(--font-pixel, monospace);
+   box-shadow: 0 2px 0 #2b1712;
+}
+
+.feature-coloring .coloring-btn:hover {
+   background: #795548;
+}
+
+.feature-coloring .coloring-packs-grid,
+.feature-coloring .coloring-pics-grid {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 10px;
+   padding: 10px;
+   overflow-y: auto;
+   flex-grow: 1;
+   background: #f0e3db;
+}
+
+.feature-coloring .coloring-pack-card,
+.feature-coloring .coloring-pic-card {
+   width: calc(33.33% - 7px);
+   background: #fff;
+   border: 2px solid #d5c8c0;
+   border-radius: 6px;
+   overflow: hidden;
+   cursor: pointer;
+   box-shadow: 0 2px 0 #d5c8c0;
+   position: relative;
+   display: flex;
+   flex-direction: column;
+}
+
+.feature-coloring .pack-thumb,
+.feature-coloring .pic-thumb {
+   width: 100%;
+   aspect-ratio: 1;
+   image-rendering: pixelated;
+   display: block;
+   background: #e5d8d0;
+}
+
+.feature-coloring .pack-info {
+   padding: 4px;
+   text-align: center;
+   background: #f7f3f0;
+   flex-grow: 1;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+}
+
+.feature-coloring .pack-title {
+   font-size: 14px;
+   font-weight: bold;
+   color: #3e2723;
+   line-height: 1.1;
+}
+
+.feature-coloring .pack-count {
+   font-size: 12px;
+   color: #795548;
+}
+
+.feature-coloring .pack-lock {
+   font-size: 12px;
+   color: #d84315;
+   font-weight: bold;
+}
+
+.feature-coloring .coloring-pack-card[data-unlocked="false"] .pack-thumb {
+   filter: grayscale(100%) opacity(0.5);
+}
+
+.feature-coloring .coloring-editor {
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+}
+
+.feature-coloring .editor-canvas-wrap {
+   flex-grow: 1;
+   position: relative;
+   background: #f0e3db;
+   overflow: hidden;
+   user-select: none;
+}
+
+.feature-coloring #editorCanvas {
+   display: block;
+   width: 100%;
+   height: 100%;
+   touch-action: none;
+}
+
+.feature-coloring .editor-palette {
+   display: flex;
+   overflow-x: auto;
+   gap: 8px;
+   padding: 10px;
+   background: #d5c8c0;
+   border-top: 2px solid #bcaaa4;
+   scrollbar-width: thin;
+}
+
+.feature-coloring .palette-chip {
+   width: 44px;
+   height: 44px;
+   flex-shrink: 0;
+   border-radius: 50%;
+   position: relative;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   transition: transform 0.1s;
+}
+
+.feature-coloring .palette-chip.selected {
+   transform: scale(1.15);
+   box-shadow: 0 0 0 2px #3e2723;
+   z-index: 2;
+}
+
+.feature-coloring .palette-chip.done {
+   opacity: 0.5;
+   transform: scale(0.9);
+}
+
+.feature-coloring .chip-ring {
+   position: absolute;
+   top: -2px; left: -2px; right: -2px; bottom: -2px;
+   border-radius: 50%;
+   z-index: 0;
+}
+
+.feature-coloring .chip-circle {
+   position: relative;
+   width: 38px;
+   height: 38px;
+   border-radius: 50%;
+   z-index: 1;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   color: #fff;
+   text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+   font-weight: bold;
+   font-size: 14px;
+   box-shadow: inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.3);
+}
+
+.feature-coloring .editor-confetti-layer {
+   position: absolute;
+   top: 0; left: 0; right: 0; bottom: 0;
+   pointer-events: none;
+   overflow: hidden;
+}
+
+.feature-coloring .confetti {
+   position: absolute;
+   width: 8px;
+   height: 8px;
+   top: -10px;
+   animation: confettiDrop 2s ease-in forwards;
+}
+
+@keyframes confettiDrop {
+   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.feature-coloring .editor-completion-modal {
+   position: absolute;
+   top: 0; left: 0; right: 0; bottom: 0;
+   background: rgba(0,0,0,0.5);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   z-index: 10;
+}
+
+.feature-coloring .modal-card {
+   background: #fff;
+   padding: 20px;
+   border-radius: 8px;
+   border: 4px solid #3e2723;
+   text-align: center;
+   box-shadow: 0 4px 0 #2b1712;
+   animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+   0% { transform: scale(0.5); opacity: 0; }
+   100% { transform: scale(1); opacity: 1; }
+}
+
+.feature-coloring .modal-card h2 {
+   margin: 0 0 10px;
+   color: #d84315;
+   font-size: 24px;
+}
+
+.feature-coloring .reward-text {
+   margin-bottom: 20px;
+   color: #3e2723;
+   font-weight: bold;
+}
