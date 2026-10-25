@@ -100,46 +100,79 @@ namespace Cuy
 
                 if (!string.IsNullOrEmpty(jsonPath))
                 {
+                    var filesToLoad = new List<string> { jsonPath };
                     try
                     {
-                        string json = File.ReadAllText(jsonPath);
-                        var root = JObject.Parse(json);
-                        var itemsArr = root["items"] as JArray;
-                        if (itemsArr != null)
+                        string dir = Path.GetDirectoryName(jsonPath);
+                        if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
                         {
-                            foreach (var tok in itemsArr)
-                            {
-                                string id = (string)(tok["id"]);
-                                if (string.IsNullOrEmpty(id)) continue;
-
-                                var def = new CuyItemDef
-                                {
-                                    Id = id,
-                                    Name = (string)tok["name"] ?? id,
-                                    Category = (string)tok["category"] ?? "other",
-                                    Price = tok["price"] != null && tok["price"].Type == JTokenType.Integer ? (int?)tok["price"] : null,
-                                    IsUnlimited = (bool?)tok["unlimited"] ?? false,
-                                    IconName = (string)tok["icon"] ?? id,
-                                    Animation = (string)tok["animation"] ?? "eat_treat",
-                                    Description = (string)tok["description"] ?? ""
-                                };
-
-                                var effectsTok = tok["effects"] as JObject;
-                                if (effectsTok != null)
-                                {
-                                    foreach (var prop in effectsTok.Properties())
-                                    {
-                                        def.Effects[prop.Name] = (double)prop.Value;
-                                    }
-                                }
-
-                                map[id] = def;
-                            }
+                            var extraFiles = Directory.GetFiles(dir, "items_*.json");
+                            Array.Sort(extraFiles); // alphabetical
+                            filesToLoad.AddRange(extraFiles);
                         }
                     }
                     catch (Exception ex)
                     {
-                        BrainController.Log("[ERROR] Failed to load items.json: " + ex.Message);
+                        BrainController.Log("[WARN] ItemCatalogLoader failed to find extra files: " + ex.Message);
+                    }
+
+                    var seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    // Add default ids so we can override them but not duplicate from files
+                    foreach (var key in map.Keys) seenIds.Add(key); // We will override them if in file, but we use this list to know if we already saw them *in files*
+                    // Actually, if a duplicate is in the json files, keep the first.
+                    // To do this, let's clear seenIds and only add to it when reading files.
+                    seenIds.Clear();
+
+                    foreach (var file in filesToLoad)
+                    {
+                        try
+                        {
+                            string json = File.ReadAllText(file);
+                            var root = JObject.Parse(json);
+                            var itemsArr = root["items"] as JArray;
+                            if (itemsArr != null)
+                            {
+                                foreach (var tok in itemsArr)
+                                {
+                                    string id = (string)(tok["id"]);
+                                    if (string.IsNullOrEmpty(id)) continue;
+
+                                    if (seenIds.Contains(id))
+                                    {
+                                        BrainController.Log($"[WARN] ItemCatalogLoader: Duplicate item id '{id}' found, ignoring subsequent definition.");
+                                        continue;
+                                    }
+                                    seenIds.Add(id);
+
+                                    var def = new CuyItemDef
+                                    {
+                                        Id = id,
+                                        Name = (string)tok["name"] ?? id,
+                                        Category = (string)tok["category"] ?? "other",
+                                        Price = tok["price"] != null && tok["price"].Type == JTokenType.Integer ? (int?)tok["price"] : null,
+                                        IsUnlimited = (bool?)tok["unlimited"] ?? false,
+                                        IconName = (string)tok["icon"] ?? id,
+                                        Animation = (string)tok["animation"] ?? "eat_treat",
+                                        Description = (string)tok["description"] ?? ""
+                                    };
+
+                                    var effectsTok = tok["effects"] as JObject;
+                                    if (effectsTok != null)
+                                    {
+                                        foreach (var prop in effectsTok.Properties())
+                                        {
+                                            def.Effects[prop.Name] = (double)prop.Value;
+                                        }
+                                    }
+
+                                    map[id] = def;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            BrainController.Log($"[ERROR] Failed to load {Path.GetFileName(file)}: " + ex.Message);
+                        }
                     }
                 }
 

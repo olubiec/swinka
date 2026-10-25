@@ -206,6 +206,8 @@ namespace Cuy
                 double initialSpeed = 1.0;
 #endif
                 BrainController.Initialize(initialSpeed);
+                Cuy.Features.HomeFeatures.LoadAll();
+                Cuy.Features.HomeFeatures.InitializeAll(BrainController.Instance);
                 bool isNewGame = BrainController.Instance.Session.IsNewGame;
                 ItemCatalog.ErrorLogger = message => BrainController.Log("[ERROR] " + message);
                 Application.ApplicationExit += (s, e) => { BrainController.Instance?.Close(); };

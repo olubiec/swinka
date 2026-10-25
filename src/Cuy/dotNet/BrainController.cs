@@ -238,6 +238,8 @@ namespace Cuy
             // Update cursor interactions
             if (ScriptAnimation == null) InteractionManager.Instance?.Update(gameElapsed); // no cursor reactions during the intro
 
+            Cuy.Features.HomeFeatures.TickAll(gameElapsed, this);
+
             bool isFoodActive = FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None;
             bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
 
