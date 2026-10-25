@@ -158,7 +158,8 @@ namespace Cuy.Core.Tests
                 Assert.False(session2.IsNewGame);
                 Assert.Equal(LoadSource.Main, session2.LoadResult.Source);
                 Assert.Equal("Dottie", session2.Pet.State.Name);
-                Assert.Equal(42, session2.Pet.State.Clovers);
+                // Clovers = StartingClovers (30) + added (42) = 72
+                Assert.Equal(72, session2.Pet.State.Clovers);
                 Assert.Equal(80.0, session2.Pet.Needs.Satiety, precision: 3);
             }
         }
