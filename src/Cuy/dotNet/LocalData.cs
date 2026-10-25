@@ -151,29 +151,34 @@ namespace Cuy
         }
 
 		/// <summary>
-		/// Set the scale of the pet (1, 2, 4, 8). The limit is in the option dialog. The scale is stored as a power of 2 (0, 1, 2, 3). The default is 1 (0).
+		/// Set the sprite scale factor of the pet (1 or 2).
 		/// </summary>
-		/// <param name="pow2">Set the scale as a power of 2</param>
-		public void SetScale(int pow2)
+		/// <param name="scaleFactor">Integer sprite scale (1 = small, 2 = big)</param>
+		public void SetScale(int scaleFactor)
         {
-            if (pow2.ToString() != AppSettings[SettingName.PetScale].Value)
+            if (scaleFactor.ToString() != AppSettings[SettingName.PetScale].Value)
             {
-                Properties.Settings.Default.Scale = pow2;
-                AppSettings[SettingName.PetScale].Value = pow2.ToString();
+                Properties.Settings.Default.Scale = scaleFactor;
+                AppSettings[SettingName.PetScale].Value = scaleFactor.ToString();
                 Save();
             }
         }
         /// <summary>
-        /// Get the current scale of the pet.
+        /// Get the current integer sprite scale factor of the pet (1 or 2).
+        /// If the setting has never been written, it defaults to 2 if the primary screen's WorkingArea.Height >= 900 physical pixels, else 1.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Integer sprite scale</returns>
         public int GetScale()
         {
             if (int.TryParse(AppSettings[SettingName.PetScale].Value, out int iScale))
             {
-                return iScale;
+                // In case an old save has 0 (from the old power of 2 format), convert it to 1.
+                return iScale == 0 ? 1 : iScale;
             }
-            return 1;
+            // New install: setting has never been written. Determine default based on screen height.
+            int defaultScale = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height >= 900 ? 2 : 1;
+            SetScale(defaultScale);
+            return defaultScale;
         }
 
         /// <summary>
