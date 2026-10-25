@@ -1,0 +1,226 @@
+.feature-vet {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--c-contour);
+  padding-bottom: 8px;
+}
+
+.feature-vet-illustration {
+  background: var(--c-cream);
+  border: 2px solid var(--c-contour);
+  border-radius: 6px;
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feature-vet-cross {
+  margin-top: 10px;
+  background: var(--c-white);
+  border: 2px solid var(--c-contour);
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+}
+
+.feature-vet-desk {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 35px;
+  background: var(--c-wood);
+  border-top: 2px solid var(--c-contour);
+  box-shadow: inset 0 4px 0 rgba(255,255,255,0.2);
+}
+
+.feature-vet-status {
+  text-align: center;
+  font-size: 1.1em;
+}
+
+.feature-vet-healthy {
+  color: var(--c-leaf-dark);
+  font-weight: bold;
+}
+
+.feature-vet-symptoms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.feature-vet-tag {
+  background: var(--c-orange-light);
+  color: var(--c-contour);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.9em;
+  border: 1px solid var(--c-orange-dark);
+}
+
+.feature-vet-conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feature-vet-card {
+  background: var(--c-white);
+  border: 2px solid var(--c-contour);
+  border-radius: 6px;
+  padding: 12px;
+  box-shadow: 0 4px 0 var(--c-cream-dark);
+}
+
+.feature-vet-unknown {
+  background: var(--c-cream);
+  border-style: dashed;
+}
+
+.feature-vet-card-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 6px;
+}
+
+.feature-vet-severity {
+  height: 8px;
+  background: var(--c-cream-dark);
+  border-radius: 4px;
+  margin: 8px 0;
+  overflow: hidden;
+  border: 1px solid var(--c-contour);
+}
+
+.feature-vet-severity-bar {
+  height: 100%;
+  transition: width 0.3s, background-color 0.3s;
+}
+
+.feature-vet-card-info {
+  font-size: 0.9em;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.feature-vet-cure-hint {
+  font-size: 0.9em;
+  color: var(--c-rust-deep);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.feature-vet-card-actions {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.feature-vet-medicine-status {
+  font-weight: bold;
+  color: var(--c-wood-deep);
+}
+
+.feature-vet-dose-done {
+  color: var(--c-leaf-dark);
+  font-weight: bold;
+}
+
+.feature-vet-error {
+  color: var(--c-red);
+  font-size: 0.85em;
+}
+
+.feature-vet-history {
+  background: var(--c-white);
+  border: 2px solid var(--c-contour);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.feature-vet-history summary {
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+}
+
+.feature-vet-history-list {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+  font-size: 0.9em;
+}
+
+.feature-vet-tips {
+  background: var(--c-cream);
+  border: 2px solid var(--c-contour);
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+}
+
+.feature-vet-tips-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: var(--c-wood-deep);
+}
+
+.feature-vet-tips-text {
+  font-size: 0.9em;
+  transition: opacity 0.3s;
+  min-height: 3em;
+}
+
+.feature-vet-toast-container {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.feature-vet-toast {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  animation: vetToastFade 2.5s forwards;
+}
+
+@keyframes vetToastFade {
+  0% { opacity: 0; transform: translateY(10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+.feature-vet button.game-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.feature-vet button.game-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
