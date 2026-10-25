@@ -1,0 +1,8 @@
+{
+  "daily_gift":   { "base": 10, "per_streak_day": 5, "max": 50, "streak_resets_after_missed_days": 1 },
+  "poop_clean":   { "clovers": 1 },
+  "minigame":     { "points_per_clover": 10, "max_per_game": 40, "rewarded_games_per_day": 10, "max_clovers_per_day": 150 },
+  "coloring":     { "cells_per_clover": 40, "min_per_picture": 5, "max_per_picture": 25, "rewarded_pictures_per_day": 5 },
+  "care_task":    { "clovers": 5, "max_per_day": 6 },
+  "starting_clovers": 30
+}

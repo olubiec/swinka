@@ -297,7 +297,7 @@ namespace Cuy.Core
             }
 
             State.PoopCount = Math.Max(0, State.PoopCount - 1);
-            AddClovers(1);
+            AddClovers(Economy.EconomyConfig.Current.PoopClean.Clovers);
             Count("poops_collected");
             RecalculateCleanliness();
             return true;
@@ -381,24 +381,35 @@ namespace Cuy.Core
                 State.HighScores[gameId] = score;
             }
 
-            // Daily limit of 10 rewarded games
+            // Daily limit of rewarded games and clovers
             string today = Clock.LocalNow().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             if (State.MinigamesDailyDate != today)
             {
                 State.MinigamesDailyDate = today;
                 State.MinigamesDailyCount = 0;
             }
+            CheckEconomyDay();
+
+            var config = Economy.EconomyConfig.Current.Minigame;
 
             cloversAwarded = 0;
             bool rewardedGame = false;
-            if (State.MinigamesDailyCount < 10)
+            if (State.MinigamesDailyCount < config.RewardedGamesPerDay)
             {
                 rewardedGame = true;
-                // clovers = min(40, score / 10)
-                cloversAwarded = Math.Min(40, Math.Max(0, score / 10));
+                cloversAwarded = Math.Min(config.MaxPerGame, Math.Max(0, score / config.PointsPerClover));
+
+                // Cap daily
+                int remainingCap = config.MaxCloversPerDay - State.Economy.MinigameCloversToday;
+                if (cloversAwarded > remainingCap)
+                {
+                    cloversAwarded = remainingCap;
+                }
+
                 if (cloversAwarded > 0)
                 {
                     AddClovers(cloversAwarded);
+                    State.Economy.MinigameCloversToday += cloversAwarded;
                 }
                 State.MinigamesDailyCount++;
             }
