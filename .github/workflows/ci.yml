@@ -1,0 +1,50 @@
+# Checks every pull request (Jules PRs included): Core tests, JS syntax, Home page smoke test,
+# and (once src/Cuy/Cuy.csproj is SDK-style) a Linux compile of the desktop app.
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths-ignore: ['jules/**', '**.md']
+
+jobs:
+  core-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Core tests
+        run: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+      - name: Desktop app compiles (SDK-style project only)
+        run: |
+          if grep -q '<Project Sdk=' src/Cuy/Cuy.csproj; then
+            dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+          else
+            echo "src/Cuy/Cuy.csproj is not SDK-style yet: skipped"
+          fi
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JS syntax
+        run: |
+          find web -name '*.js' -not -path '*/lib/*' -print0 | xargs -0 -n1 node --check
+      - name: JSON syntax
+        run: |
+          find assets web -name '*.json' -print0 | xargs -0 -n1 node -e 'JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"))'
+      - name: Home smoke test
+        run: |
+          npm --prefix tools/qa ci
+          npx --prefix tools/qa playwright install --with-deps chromium
+          node tools/qa/web-smoke.js
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: web-smoke-screenshots
+          path: tools/qa/out/

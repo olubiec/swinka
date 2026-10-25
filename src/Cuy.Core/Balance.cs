@@ -7,7 +7,7 @@ namespace Cuy.Core
     /// Game balance numbers. Defaults from PLAN.md (pig model section) and assets/data/actions.json.
     /// A starting point for testing, not the final balance.
     /// </summary>
-    public sealed class Balance
+    public sealed partial class Balance
     {
         /// <summary>The pig grows through the life stages (1 real day = 21 pig days). Set to false to keep it a baby.</summary>
         public const bool GrowthEnabled = true;

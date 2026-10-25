@@ -7,7 +7,7 @@ namespace Cuy.Core
     /// The whole game state, saved to %AppData%/Cuy/save.json.
     /// A plain data class: the logic lives in <see cref="Pet"/>.
     /// </summary>
-    public sealed class GameState
+    public sealed partial class GameState
     {
         /// <summary>Current save format version. Bump it when the format changes and add a migration in SaveSystem.</summary>
         public const int CurrentVersion = 2;

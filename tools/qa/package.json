@@ -1,0 +1,11 @@
+{
+  "name": "cuy-qa",
+  "private": true,
+  "description": "Headless checks of the Home page (web/home) for CI and agents.",
+  "scripts": {
+    "smoke": "node web-smoke.js"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}

@@ -10,7 +10,7 @@ namespace Cuy.Core
     /// The single source of truth about the game state. Call <see cref="Update"/> regularly (e.g. every second) from the game thread.
     /// </summary>
     /// <remarks>Not thread-safe: use it from one thread.</remarks>
-    public sealed class Pet
+    public sealed partial class Pet
     {
         private readonly bool[] _lowNotified = new bool[NeedNames.All.Count];
         private readonly bool[] _criticalNotified = new bool[NeedNames.All.Count];
