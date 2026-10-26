@@ -2,6 +2,14 @@
 
 Read `AGENTS.md` first and follow it. Requires F6-06, F4-01 (`SpriteSheetLoader`) and F4-09 merged.
 
+## Findings from research (R14) to respect
+- eSheep (MIT since 2026-10-14; keep its attribution in `THIRD_PARTY_NOTICES.md`) keeps pets in `StartUp.sheeps[]`, `MAX_SHEEPS = 16`, added
+  by `AddSheep()`; pet-to-pet interaction there is matched by WINDOW TITLE (a window titled "Sheep") and position. The companion window
+  therefore gets a UNIQUE window title (`Cuy companion`, different from the main pig's) and an own limit of 2 pets in Cuy (not 16).
+- Ideas taken from Shimeji: spawn the companion with a start behaviour (Breed + BornBehavior) and cap the count with one global counter.
+- Before integrating, on a clone of eSheep run `git log --since=2024-01-01` and read what changed in `FormPet`/`StartUp` (the list was
+  not retrieved in research; DPI/multi-monitor changes were not found in the 4 releases 1.3.2-1.6.0). Report what you found.
+
 ## Specification
 1. `CompanionBehavior` (`src/Cuy/dotNet/Behaviors/`): when `Pet.State.Companion != null`, create a second `FormPet`
    (use `StartUp.AddSheep()`/`MaxPets` machinery; raise `MaxPets` to 2 if needed) whose sprites come from
@@ -22,5 +30,12 @@ Read `AGENTS.md` first and follow it. Requires F6-06, F4-01 (`SpriteSheetLoader`
 
 ## Checks
 Build passes; `--selftest` still passes. PR "Windows check": adopt (dev save edit or F6-08), watch pair actions.
+
+## Gotowe pliki
+None: no ready-made code (pattern only: eSheep `StartUp.AddSheep()` and `FormPet`).
+
+## Testy ręczne (ZWERYFIKUJ NA PC)
+- ZWERYFIKUJ NA PC (`TESTY_RECZNE.md` ESH-01..ESH-03): two pigs do not react to each other through the title match by accident; limit 2 holds;
+  the companion never appears twice after a restart.
 
 When done, open a pull request against `main` titled `F6-07: Companion on the desktop`.

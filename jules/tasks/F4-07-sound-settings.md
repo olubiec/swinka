@@ -8,7 +8,8 @@ Read `AGENTS.md` first and follow it. Requires F2-08 (Settings panel) merged.
 
 ## Files you may change
 `src/Cuy/dotNet/SoundManager.cs`, `src/Cuy/dotNet/LocalData.cs`, `src/Cuy/dotNet/HomeWindow.cs` (settings messages),
-`web/home/features/settings/feature.js` (or the settings code F2-08 created), `web/home/bridge.js` (mock),
+`web/home/features/settings/feature.js` (or the settings code F2-08 created), `web/home/bridge.js` (mock), `web/home/sound.js`,
+`web/home/lib/zzfx.min.js`, `THIRD_PARTY_NOTICES.md`,
 `tests/Cuy.Core.Tests/AudioTests.cs` (only if you touch `SoundPolicy`).
 
 ## Specification
@@ -19,8 +20,21 @@ Read `AGENTS.md` first and follow it. Requires F2-08 (Settings panel) merged.
 4. Quiet hours also silence the Home page music/sounds: send `soundSuppressed` boolean in the state (true while
    `SoundManager.IsSoundSuppressed`), and `CuyMusic` / `Sound` in the page pause while it is true.
 5. The pet must never wheek more than once per 2 minutes (already enforced); add a test if it is not covered.
+6. Page sound effects (R2.1, R2.2): `web/home/sound.js` generates short effects at runtime with ZzFX 1.4.0 (MIT, repository
+   github.com/KilledByAPixel/ZzFX): vendor `ZzFXMicro.min.js` (1,226 bytes) as `web/home/lib/zzfx.min.js`, call `zzfx(...params)`,
+   master volume is the global `zzfxV` (default 0.3; set it from the volume setting). Design own parameter arrays (coin, pop,
+   click, soft error) with the sound designer https://killedbyapixel.github.io/ZzFX and paste the arrays into `sound.js` (no
+   ready preset list exists). No jsfxr. The `AudioContext` starts suspended: `resume()` it on the first `pointerdown`/`keydown` (R2.4).
+   Add ZzFX (MIT) to `THIRD_PARTY_NOTICES.md` and a line in the Settings footer ("sounds: ZzFX (MIT)").
 
 ## Checks
 Build passes, `node --check`, smoke test passes, `dotnet test` passes if Core changed.
+
+## Gotowe pliki
+None for C#. The `MuteOnFullScreen` logic uses `FullscreenDetector` after F6-03; do not change its detection here
+(the `SoundManager.IsFullScreenOrBusy()` bug is fixed in F6-03).
+
+## Testy ręczne (ZWERYFIKUJ NA PC)
+- ZWERYFIKUJ NA PC (`TESTY_RECZNE.md` AUTOPLAY-01): first sound only after the first click is acceptable; check it in the real Home.
 
 When done, open a pull request against `main` titled `F4-07: Sound settings`.

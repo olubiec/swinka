@@ -20,10 +20,20 @@ bond unlocks, hay rack, companion care, level-20 golden bowl. Check they do not 
    the companion becomes possible, total spending, any day with zero clovers and no food.
 3. Tune numbers (each change at most +-40 %), keep a before/after table in the report. Update tests that assert old
    numbers and say so.
-4. Check "no exploits": a script that clicks everything as fast as possible for one simulated hour must not exceed the
+4. R5 rules for the final pass: balance sources and sinks to roughly net zero for the regular profile and add sinks rather than cutting
+   income; state every cost as days of play; the daily gift is the 7-day cycle of F3-02 (never reset to zero, one grace day, no
+   countdowns); achievement rewards (F8-01) stay small multiples of one day's income; uncollected or offline income must not stockpile (cap
+   it, Neko Atsume caps at 100). All numbers are design choices (no source gives sourced days-to-afford figures).
+4b. Check "no exploits": a script that clicks everything as fast as possible for one simulated hour must not exceed the
    documented daily caps; list the caps found.
 
 ## Checks
 `dotnet test ... -c Release`; `dotnet run --project tools/Cuy.Simulator -- --full` output pasted into the PR.
+
+## Gotowe pliki
+None: no ready-made code exists for this task.
+
+## Testy ręczne (ZWERYFIKUJ NA PC)
+- ZWERYFIKUJ NA PC: nothing UNVERIFIED depends on code. In the PR: chosen achievement-reward-to-daily-income ratio and why (R5.3: no source).
 
 When done, open a pull request against `main` titled `F7-02: Final balance pass`.

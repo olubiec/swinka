@@ -12,6 +12,11 @@ New: `assets/data/achievements.json`, `src/Cuy.Core/Achievements/AchievementCata
 `tests/Cuy.Core.Tests/AchievementTests.cs`; `web/home/features/achievements/feature.js` (+ `feature.css`);
 `src/Cuy/dotNet/HomeWindow.cs` (state key), `web/home/bridge.js` (mock).
 
+## Design rules from research (R5.3)
+A short list (about 20; no source fixes a number), weighted to easy and medium with only a few hard ones (reference split 20 % easy,
+20 % medium, the rest harder; UNVERIFIED for cozy games). No trivial and no grind achievements: reward care and discovery. Rewards are small multiples
+of one day's income (no source gives the ratio: use the numbers from the F7-02 simulation, do not guess).
+
 ## Specification
 1. `achievements.json` entries: `{ "id", "title", "text", "rule": { "counter": "feed", "atLeast": 1 }, "reward": 50 }`.
    Include at least: first meal, 100 pettings, 10 minigame plays, 3 minigame plays in one day, first colouring picture
@@ -27,5 +32,11 @@ New: `assets/data/achievements.json`, `src/Cuy.Core/Achievements/AchievementCata
 
 ## Checks
 `dotnet test ... -c Release`; `node --check`; `node tools/qa/web-smoke.js`; Cuy.csproj builds.
+
+## Gotowe pliki
+None: no ready-made code exists for this task.
+
+## Testy ręczne (ZWERYFIKUJ NA PC)
+- ZWERYFIKUJ NA PC: nothing UNVERIFIED depends on code. In the PR: list of achievements by difficulty (easy/medium/hard counts).
 
 When done, open a pull request against `main` titled `F8-01: Achievements`.

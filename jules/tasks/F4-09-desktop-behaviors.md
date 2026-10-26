@@ -12,10 +12,12 @@ New: `src/Cuy/dotNet/Behaviors/IDesktopBehavior.cs`, `src/Cuy/dotNet/Behaviors/B
 `src/Cuy/dotNet/BrainController.cs` (three small hook calls only), `src/Cuy/dotNet/SelfTest.cs`.
 
 ## Specification
-1. `IDesktopBehavior`: `string Id`, `void Start(BehaviorContext ctx)`, `void Tick(TimeSpan dt)` (UI thread, ~every 100 ms,
-   must return fast), `void Stop()`. `BehaviorContext` exposes: `Pet` (Core), `FormPet ActivePet`, `BrainController Brain`,
-   `Action<string> Log`, `bool IsHomeOpen`, `Func<string, bool> RequestAnimation` (wrapper that refuses while a script
-   such as `FirstRunIntro` holds the pig), `IsBusy` (script, drag, toss, sulk). A behaviour must call
+1. `IDesktopBehavior` — the contract MUST match the ready-made behaviours in `research/gotowce/src/Cuy/dotNet/Behaviors/`
+   (`DanceToMusicBehavior`, `FullscreenHideBehavior`) exactly: `string Id { get; }`, `void Start(BehaviorContext ctx)`,
+   `void Tick(TimeSpan dt)` (UI thread, ~every 100 ms, must return fast), `void Stop()`. `BehaviorContext` exposes exactly these
+   members, with these names and types: `Cuy.Core.Pet Pet`, `FormPet ActivePet`, `BrainController Brain`, `Action<string> Log`,
+   `bool IsBusy` (script, drag, toss, sulk), `bool IsHomeOpen`, `Func<string, bool> RequestAnimation` (returns false and does nothing
+   while a script such as `FirstRunIntro` holds the pig). Namespace of the behaviours: `Cuy.Behaviors`. A behaviour must call
    `ctx.Brain.ScriptAnimation`-style APIs only through the context.
 2. `BehaviorHost` finds all non-abstract classes implementing the interface in the executing assembly (reflection, same
    pattern as `HomeFeatures`), creates them with the default constructor, starts them after the pet exists, ticks them
@@ -27,5 +29,14 @@ New: `src/Cuy/dotNet/Behaviors/IDesktopBehavior.cs`, `src/Cuy/dotNet/Behaviors/B
 
 ## Checks
 Build passes (`-p:EnableWindowsTargeting=true`); `--selftest` code compiles.
+
+## Gotowe pliki
+- `research/gotowce/src/Cuy/dotNet/Behaviors/DanceToMusicBehavior.cs` and `FullscreenHideBehavior.cs` are the two consumers of this contract
+  (built in F6-01 and F6-03). Read them first; the interface must compile with them unchanged except for the notes in those tasks.
+  They also call `ctx.Brain.IsCurrentlySleeping()` (exists in `BrainController`) and `LocalData.GetIntValue(string)` (exists).
+- `SampleBehavior` stays inactive; do not copy the gotowce behaviours in this task.
+
+## Testy ręczne (ZWERYFIKUJ NA PC)
+- ZWERYFIKUJ NA PC: nothing UNVERIFIED depends on this task.
 
 When done, open a pull request against `main` titled `F4-09: Desktop behaviour plug-ins`.

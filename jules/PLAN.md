@@ -81,7 +81,7 @@ z oryginalnego planu (etapy C–F z `PLAN.md` w głównym katalogu) i dają **we
 | F5-03 | Gra Veggie Memory (spokojne pary kart); po researchu (R10.2): `canMove`/`isFlipping`, tween `scaleX` |
 | F5-04 | Hub gier: dzienny limit, rekordy, ekran wyniku |
 
-## Fala 6: świat, reakcje i towarzysz (10 zadań, razem; wymaga F4-05, F4-09, F1-05, F4-01; F6-01 wymaga też F6-00)
+## Fala 6: świat, reakcje i towarzysz (10 zadań, razem; wymaga F4-05, F4-09, F1-05, F4-01; F6-01 wymaga też F6-00, a F6-09 wymaga F6-01 i F6-03)
 | Zadanie | Co daje |
 | --- | --- |
 | F6-00 | Podbicie NAudio 1.8.4 → 2.2.1 (`NAudio.WinMM` + `NAudio.Wasapi`), `tools/package.ps1`, `THIRD_PARTY_NOTICES.md` (nowe) |
