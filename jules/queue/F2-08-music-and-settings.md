@@ -18,6 +18,9 @@ sounds on/off, set the music volume, the pet size and autostart from one Setting
    when the game pauses, resume on resume; on game over play `menu` quietly (volume x0.6) for the result screen; stop
    music when the games dialog closes (listen for the modal closing the same way the manager already pauses games).
    Everything guarded with `if (window.CuyMusic)`.
+   Autoplay (R2.4): the page's `AudioContext` starts suspended until the first click in Chromium/WebView2. The music code
+   must create or `resume()` its `AudioContext` on the first `pointerdown`/`keydown` and retry playback after that. Do NOT
+   add `--autoplay-policy` to the host in this task: no source confirms it works in WebView2 (UNVERIFIED, tested by hand).
 2. `SettingsFeature` (`Id = "settings"`): `AddState` → `{ petSize: "small"|"big" (from LocalData scale), sounds: bool
    (SoundManager/LocalData setting used by the tray "Sounds" item), autostart: AutoStart.IsEnabled() }`.
    Messages: `settings_pet_size { size }` → same code path as the tray Size menu from F1-12 (call the method F1-12
@@ -28,10 +31,19 @@ sounds on/off, set the music volume, the pet size and autostart from one Setting
 3. Settings panel (More → Settings, `order: 90`, icon `icon-music-note`): toggles Sounds, Music (CuyMusic.setEnabled),
    music volume slider (0-100 %, CuyMusic.setVolume, plays a short preview of `menu` while dragging), Pet size
    Small/Big, Start with Windows; a footer "Cuy 1.0 · music: Juhani Junkala (CC0) · emoji art: Twemoji (CC-BY 4.0)".
-   Mock mode works with a demo `settings` object.
+   Mock mode works with a demo `settings` object. Build the panel with own CSS (`web/home/style.css` pieces); do not add NES.css
+   (R1.2: no range slider and no toggle, last commit about 2020, Edge untested).
 
 ## Checks
 `node --check` on changed JS; `dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true`; smoke test
 with `"settings"` temporarily listed (revert). In the PR: how you verified music start/stop in a browser.
+
+## Gotowe pliki
+None: no ready-made code exists for this task.
+
+## Testy ręczne (ZWERYFIKUJ NA PC)
+- ZWERYFIKUJ NA PC (`TESTY_RECZNE.md` AUTOPLAY-01): in the real WebView2 Home, does music start only after the first click? Does
+  `--autoplay-policy=no-user-gesture-required` via `AdditionalBrowserArguments` change it (R2.4, UNVERIFIED)?
+- In the PR: how you verified music start/stop in a browser (unchanged).
 
 When done, open a pull request against `main` titled `F2-08: Game music and Settings panel`.

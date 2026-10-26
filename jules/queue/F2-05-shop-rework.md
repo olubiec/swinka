@@ -23,6 +23,8 @@ new `web/home/features/shop/feature.css`, `web/home/app.js`, `src/Cuy/dotNet/Hom
 | cuddle_cup | equipment | 200 | one-time; sleep energy +20 % |
 | hammock | equipment | 350 | one-time; sleep energy +30 %, mood +5 after naps |
 Existing prices stay (items.json). Add `"one_time": true` to toys/equipment in items_shop.json; do not edit items.json.
+The vitamin C values in this table are game values on the 0-100 need scale, not veterinary amounts: never show them as mg and do
+not say in any description that dandelion is rich in vitamin C (R8.1 found no value for it).
 
 ## C#
 1. `ShopFeature : HomeFeatureBase`, `Id = "shop"`: `AddState` → contract `shop` object built from the merged catalog
@@ -51,8 +53,21 @@ Existing prices stay (items.json). Add `"one_time": true` to toys/equipment in i
    (Read `healthDisplay` from the top-level state key `vet` if F2-04 put it there; support both `state.healthDisplay`
    and `state.vet.healthDisplay`.)
 
+## UI and wording rules (R1, R8)
+- Own CSS only (`web/home/style.css` and `features/shop/feature.css`). Do NOT add NES.css or any CSS kit (R1.2: no range slider, no
+  toggle; R1.1: unmaintained).
+- In the Care tab a static note "Never feed: onion, garlic, chives, leeks, chocolate, avocado, potato, rhubarb. Sweet or fatty treats
+  only now and then." (R8.4: RSPCA NSW, Wood Green). Do not put spinach on this list (sources disagree).
+- No mg figures and no weight-loss numbers in any shop text.
+
 ## Checks
 - `dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true`, Core tests, `node --check` on changed JS,
   smoke test with `"shop"` temporarily in `features/index.json` (revert before commit).
+
+## Gotowe pliki
+None: no ready-made code exists for this task.
+
+## Testy ręczne (ZWERYFIKUJ NA PC)
+- ZWERYFIKUJ NA PC: nothing UNVERIFIED depends on this task. In the PR: screenshot of the Care tab with the note.
 
 When done, open a pull request against `main` titled `F2-05: Shop rework and new items`.
