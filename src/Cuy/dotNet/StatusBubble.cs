@@ -632,7 +632,14 @@ namespace Cuy
 
                 // Tooltips over the needs
                 var pet = BrainController.Instance?.Pet;
-                if (pet != null && pet.IsSick && new Rectangle(110, 6, 50, 16).Contains(e.Location)) SetToolTip("Sick – visit the vet in Home");
+                if (pet != null && pet.IsSick && new Rectangle(120, 6, 40, 16).Contains(e.Location))
+                {
+                    if (!string.Equals(_lastHoveredTip, "Sick – visit the vet in Home", StringComparison.Ordinal))
+                    {
+                        _lastHoveredTip = "Sick – visit the vet in Home";
+                        _toolTip.SetToolTip(this, "Sick – visit the vet in Home");
+                    }
+                }
                 else if (new Rectangle(8, 25, 70, 16).Contains(e.Location)) SetToolTipNeed("Fullness", BrainController.Instance?.Needs?.Satiety);
                 else if (new Rectangle(88, 25, 70, 16).Contains(e.Location)) SetToolTipNeed("Vitamin C", BrainController.Instance?.Needs?.VitaminC);
                 else if (new Rectangle(8, 43, 70, 16).Contains(e.Location)) SetToolTipNeed("Energy", BrainController.Instance?.Needs?.Energy);

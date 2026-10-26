@@ -12,8 +12,9 @@ namespace Cuy.Features
         public override string Id => "vet";
 
         private readonly Random _rng = new Random();
-        private HashSet<string> _knownActiveConditions = new HashSet<string>();
-        private TimeSpan _symptomTimer;
+        private HashSet<string> _knownActiveConditions = null;
+        private double _symptomRealSecondsLeft;
+        private DateTime _lastTickTime = DateTime.MinValue;
 
         public VetFeature()
         {
@@ -22,9 +23,8 @@ namespace Cuy.Features
 
         private void ResetSymptomTimer()
         {
-            // 4 to 8 minutes
-            double minutes = 4 + _rng.NextDouble() * 4;
-            _symptomTimer = TimeSpan.FromMinutes(minutes);
+            // 4 to 8 real minutes -> 240 to 480 seconds
+            _symptomRealSecondsLeft = 240 + _rng.NextDouble() * 240;
         }
 
         public override void Tick(TimeSpan gameElapsed, BrainController brain)
@@ -32,23 +32,34 @@ namespace Cuy.Features
             var pet = brain.Pet;
             if (pet == null) return;
 
+            // Calculate real time elapsed
+            DateTime now = DateTime.UtcNow;
+            if (_lastTickTime == DateTime.MinValue) _lastTickTime = now;
+            double realSecondsElapsed = (now - _lastTickTime).TotalSeconds;
+            _lastTickTime = now;
+
             pet.TickHealth(gameElapsed);
 
             bool newConditionAppeared = false;
-
-            // Check for new conditions
             var currentConditions = pet.State.Health.Active.Select(c => c.Id).ToHashSet();
-            foreach (var conditionId in currentConditions)
-            {
-                if (!_knownActiveConditions.Contains(conditionId))
-                {
-                    BrainController.Log($"[Health] {conditionId} started");
-                    newConditionAppeared = true;
-                }
-            }
 
-            // Clean up removed conditions
-            _knownActiveConditions = currentConditions;
+            if (_knownActiveConditions == null)
+            {
+                // First tick after load - just sync, don't trigger new condition alerts
+                _knownActiveConditions = currentConditions;
+            }
+            else
+            {
+                foreach (var conditionId in currentConditions)
+                {
+                    if (!_knownActiveConditions.Contains(conditionId))
+                    {
+                        BrainController.Log($"[Health] {conditionId} started");
+                        newConditionAppeared = true;
+                    }
+                }
+                _knownActiveConditions = currentConditions;
+            }
 
             if (newConditionAppeared)
             {
@@ -61,10 +72,10 @@ namespace Cuy.Features
             if (pet.IsSick)
             {
                 double scratchingFactor = Math.Max(1.0, pet.ScratchingFactor);
-                // Reduce timer more quickly if mites is present
-                _symptomTimer -= TimeSpan.FromSeconds(gameElapsed.TotalSeconds * scratchingFactor);
+                // Reduce timer based on real time, multiplied by scratching factor
+                _symptomRealSecondsLeft -= realSecondsElapsed * scratchingFactor;
 
-                if (_symptomTimer <= TimeSpan.Zero)
+                if (_symptomRealSecondsLeft <= 0)
                 {
                     ResetSymptomTimer();
 
