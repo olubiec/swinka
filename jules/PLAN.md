@@ -130,6 +130,12 @@ fala 5: R9-R10; fala 6: R11-R15.
 
 **Status (26.10.2026): wykonany** dla wszystkich grup (R1–R15, 47 plików). Statusy wyników: `RESEARCH.md`; decyzje: `DECYZJE.md`; rzeczy do sprawdzenia na PC: `TESTY_RECZNE.md`.
 
+## Stan (26.10.2026, 18:30)
+- Fale 0 i 1: scalone. Research R1–R15: wykonany i wdrożony do promptów (DECYZJE.md).
+- Fala 2: scalone F2-01, F2-03, F2-06, F2-09, F2-10, F2-11. Otwarte PR-y: F2-04 (#22), F2-08 (#24). F2-05 puszczone ponownie z poprawionym promptem (PR jeszcze nie ma). Brak PR-ów: F2-02, F2-07 (sprawdzić w Jules).
+- Fale 3–8: prompty gotowe w `jules/tasks/`, jeszcze nie w `jules/queue/`.
+- Do zrobienia po fali 2: build na Windowsie (`tools/build.ps1`), potem „fala 2 scalona” i fala 3.
+
 ## Tryb pracy
 1. Ja wrzucam do `jules/queue/` zadania kolejnej fali, GitHub uruchamia Julesa, Jules robi PR-y.
 2. Ty scalasz, piszesz „fala N scalona”. Ja sprawdzam stan repo i puszczam następną.
