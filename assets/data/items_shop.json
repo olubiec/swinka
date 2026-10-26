@@ -1,0 +1,114 @@
+{
+  "items": [
+    {
+      "id": "dandelion",
+      "name": "Dandelion",
+      "category": "vegetable",
+      "price": 6,
+      "icon": "dandelion",
+      "animation": "eat_treat",
+      "effects": {
+        "fullness": 6,
+        "vitamin_c": 12,
+        "mood": 3
+      },
+      "description": "Tasty and good for mood."
+    },
+    {
+      "id": "apple",
+      "name": "Apple",
+      "category": "treat",
+      "price": 10,
+      "icon": "apple",
+      "animation": "eat_treat",
+      "daily_limit": 1,
+      "effects": {
+        "fullness": 6,
+        "mood": 8
+      },
+      "description": "Sweet, so only once a day."
+    },
+    {
+      "id": "strawberry",
+      "name": "Strawberry",
+      "category": "treat",
+      "price": 15,
+      "icon": "strawberry",
+      "animation": "eat_treat",
+      "daily_limit": 1,
+      "effects": {
+        "fullness": 4,
+        "vitamin_c": 10,
+        "mood": 12
+      },
+      "description": "Very sweet, so only once a day."
+    },
+    {
+      "id": "vitamin_drops",
+      "name": "Vitamin drops",
+      "category": "care",
+      "price": 25,
+      "icon": "vitamin_drops",
+      "animation": "drink",
+      "daily_limit": 1,
+      "effects": {
+        "vitamin_c": 40
+      },
+      "description": "Added into the water."
+    },
+    {
+      "id": "hay_ball",
+      "name": "Hay ball",
+      "category": "toy",
+      "price": 80,
+      "icon": "hay_ball",
+      "animation": "hay_ball_play",
+      "one_time": true,
+      "effects": {
+        "mood": 10,
+        "teeth": 5
+      },
+      "description": "Unlocks playing with a hay ball."
+    },
+    {
+      "id": "chew_bridge",
+      "name": "Chew bridge",
+      "category": "toy",
+      "price": 120,
+      "icon": "chew_bridge",
+      "animation": "chew_stick",
+      "one_time": true,
+      "effects": {
+        "teeth_decay_multiplier": 0.75
+      },
+      "description": "A wooden bridge. Teeth decay -25 %."
+    },
+    {
+      "id": "cuddle_cup",
+      "name": "Cuddle cup",
+      "category": "equipment",
+      "price": 200,
+      "icon": "cuddle_cup",
+      "animation": "sleep_house",
+      "one_time": true,
+      "effects": {
+        "sleep_energy_multiplier": 1.2
+      },
+      "description": "A soft cup. Sleep energy +20 %."
+    },
+    {
+      "id": "hammock",
+      "name": "Hammock",
+      "category": "equipment",
+      "price": 350,
+      "icon": "hammock",
+      "animation": "sleep_house",
+      "one_time": true,
+      "effects": {
+        "mood": 5,
+        "sleep_energy_multiplier": 1.3
+      },
+      "description": "A hanging hammock. Sleep energy +30 % and mood +5 after naps."
+    }
+  ]
+}

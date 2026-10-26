@@ -53,6 +53,40 @@
     modalCloseBtn: document.getElementById('modalCloseBtn')
   };
 
+  // Simple toast UI
+  function showToast(text) {
+    let toast = document.getElementById('globalToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'globalToast';
+      Object.assign(toast.style, {
+        position: 'fixed',
+        bottom: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: '#2b1712',
+        color: '#eedb7c',
+        padding: '8px 16px',
+        borderRadius: '8px',
+        border: '2px solid #523023',
+        fontFamily: '"Pixelify Sans", sans-serif',
+        fontSize: '14px',
+        zIndex: '10000',
+        pointerEvents: 'none',
+        opacity: '0',
+        transition: 'opacity 0.2s ease-in-out'
+      });
+      document.body.appendChild(toast);
+    }
+    toast.textContent = text;
+    toast.style.opacity = '1';
+
+    if (toast.timeoutId) clearTimeout(toast.timeoutId);
+    toast.timeoutId = setTimeout(() => {
+      toast.style.opacity = '0';
+    }, 2500);
+  }
+
   // App initialisation
   function init() {
     // Set the icon sheet from assets depending on WebView2 / a normal browser
@@ -72,6 +106,9 @@
     // Hook up the bridge listener (works both in WebView2 and in the mock)
     if (window.bridge) {
       window.bridge.onState(updateStateUI);
+      if (window.CuyHome && window.CuyHome.api) {
+        window.CuyHome.api.onMessage('toast', m => showToast(m.text));
+      }
     }
 
     bindButtons();
@@ -254,8 +291,14 @@
     }
 
     // Overall health
-    if (elements.healthPercent && state.needs?.health !== undefined) {
-      elements.healthPercent.textContent = `${Math.round(state.needs.health)}%`;
+    if (elements.healthPercent) {
+      let hp = state.needs?.health;
+      if (state.vet && state.vet.healthDisplay !== undefined) hp = state.vet.healthDisplay;
+      else if (state.healthDisplay !== undefined) hp = state.healthDisplay;
+
+      if (hp !== undefined) {
+        elements.healthPercent.textContent = `${Math.round(hp)}%`;
+      }
     }
 
     // The 6 need bars with level-dependent colours
@@ -313,14 +356,18 @@
   // ---- Food drawer ----
   // Food that can be given from Home (same ids and order as assets/data/items.json).
   const FOODS = [
-    { id: 'hay',         name: 'Hay',         icon: 'icon-hay' },
-    { id: 'pellets',     name: 'Pellets',     icon: 'icon-pellets' },
-    { id: 'bell_pepper', name: 'Bell pepper', icon: 'icon-bell-pepper' },
-    { id: 'parsley',     name: 'Parsley',     icon: 'icon-parsley' },
-    { id: 'kale',        name: 'Kale',        icon: 'icon-kale' },
-    { id: 'cucumber',    name: 'Cucumber',    icon: 'icon-cucumber' },
-    { id: 'carrot',      name: 'Carrot',      icon: 'icon-carrot' },
-    { id: 'chew_stick',  name: 'Chew stick',  icon: 'icon-chew-stick' }
+    { id: 'hay',           name: 'Hay',           icon: 'icon-hay' },
+    { id: 'pellets',       name: 'Pellets',       icon: 'icon-pellets' },
+    { id: 'bell_pepper',   name: 'Bell pepper',   icon: 'icon-bell-pepper' },
+    { id: 'parsley',       name: 'Parsley',       icon: 'icon-parsley' },
+    { id: 'kale',          name: 'Kale',          icon: 'icon-kale' },
+    { id: 'cucumber',      name: 'Cucumber',      icon: 'icon-cucumber' },
+    { id: 'carrot',        name: 'Carrot',        icon: 'icon-carrot' },
+    { id: 'chew_stick',    name: 'Chew stick',    icon: 'icon-chew-stick' },
+    { id: 'dandelion',     name: 'Dandelion',     icon: 'icon-dandelion' },
+    { id: 'apple',         name: 'Apple',         icon: 'icon-apple' },
+    { id: 'strawberry',    name: 'Strawberry',    icon: 'icon-strawberry' },
+    { id: 'vitamin_drops', name: 'Vitamin drops', icon: 'icon-vitamin-drops' }
   ];
 
   function closeFoodDrawer() {
@@ -425,7 +472,7 @@
     // 4. SHOP — opens the retro shop dialog
     elements.btnShop?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
-      openShopModal();
+      if (window.CuyHome) window.CuyHome.openFeature('shop');
     });
 
     // 5. GAMES — opens the retro minigames dialog
@@ -641,64 +688,6 @@
   }
 
   // Shop dialog
-  function openShopModal() {
-    const state = window.bridge ? window.bridge.getState() : null;
-    const clovers = state?.clovers || 0;
-
-    // Prices must match assets/data/items.json (the game always charges the price from that file).
-    const items = [
-      { id: 'pellets',     name: 'Pellets',     price: 5,   icon: 'icon-pellets',     desc: 'A filling extra' },
-      { id: 'cucumber',    name: 'Cucumber',    price: 5,   icon: 'icon-cucumber',    desc: 'Refreshing, a mood boost' },
-      { id: 'parsley',     name: 'Parsley',     price: 8,   icon: 'icon-parsley',     desc: 'Lots of vitamin C' },
-      { id: 'carrot',      name: 'Carrot',      price: 8,   icon: 'icon-carrot',      desc: 'Sweet treat for a good mood' },
-      { id: 'kale',        name: 'Kale',        price: 10,  icon: 'icon-kale',        desc: 'A big leaf to tug at' },
-      { id: 'bell_pepper', name: 'Bell pepper', price: 12,  icon: 'icon-bell-pepper', desc: 'Best source of vitamin C' },
-      { id: 'chew_stick',  name: 'Chew stick',  price: 20,  icon: 'icon-chew-stick',  desc: 'Wears down the teeth' },
-      { id: 'ball',        name: 'Ball',        price: 60,  icon: 'icon-ball',        desc: 'For playing', once: true },
-      { id: 'tunnel',      name: 'Tunnel',      price: 150, icon: 'icon-tunnel',      desc: 'For play and zoomies', once: true },
-      { id: 'house',       name: 'House',       price: 250, icon: 'icon-house',       desc: 'A comfy hideout', once: true }
-    ];
-
-    let html = `
-      <div style="display:flex; justify-content:space-between; align-items:center; background:#2b1712; color:#eedb7c; padding:6px 10px; border-radius:4px;">
-        <span>Your clovers:</span>
-        <b style="font-size:15px;"><span class="pixel-icon icon-clover"></span> ${clovers} 🍀</b>
-      </div>
-      <div class="shop-grid">
-    `;
-
-    items.forEach(it => {
-      const owned = !!(it.once && state?.inventory && (state.inventory[it.id] || 0) > 0);
-      const canAfford = clovers >= it.price && !owned;
-      html += `
-        <div class="shop-item">
-          <div class="pixel-icon x1_5 ${it.icon}"></div>
-          <b>${it.name}</b>
-          <small style="color:#6e6a5c;">${it.desc}</small>
-          <span style="font-weight:700; color:#c99a2e;">${it.price} 🍀</span>
-          <button class="shop-item-btn" data-buy="${it.id}" ${!canAfford ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
-            ${owned ? 'Owned' : 'Buy'}
-          </button>
-        </div>
-      `;
-    });
-
-    html += `</div>`;
-    openModal('🏪 Pig Shop', html);
-
-    // Handle a purchase
-    elements.modalBody.querySelectorAll('button[data-buy]').forEach(b => {
-      b.addEventListener('click', (e) => {
-        const id = b.dataset.buy;
-        if (window.bridge) {
-          window.bridge.send({ type: 'buy', itemId: id });
-        }
-        if (window.Sound) window.Sound.fanfare();
-        if (canvasPig) canvasPig.showBubble(`Bought: ${id}!`, 2000);
-        openShopModal(); // refresh the view
-      });
-    });
-  }
 
   // Modal Minigier
   function openMinigamesModal() {

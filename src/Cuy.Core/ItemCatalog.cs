@@ -134,7 +134,8 @@ namespace Cuy.Core
                                 Animation = (string)tok["animation"] ?? "eat_treat",
                                 Description = (string)tok["description"] ?? "",
                                 DailyLimit = (int?)tok["daily_limit"],
-                                Uses = (int?)tok["uses"]
+                                Uses = (int?)tok["uses"],
+                                OneTime = (bool?)tok["one_time"] ?? (bool?)tok["permanent"] ?? false
                             };
 
                             var effectsTok = tok["effects"] as JObject;

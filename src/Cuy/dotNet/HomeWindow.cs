@@ -10,6 +10,7 @@ using Microsoft.Web.WebView2.WinForms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Cuy.Core;
+using Cuy.Core.Time;
 
 namespace Cuy
 {
@@ -619,10 +620,6 @@ namespace Cuy
                         HandlePet();
                         break;
 
-                    case "buy":
-                        HandleBuy(obj.Value<string>("itemId"));
-                        break;
-
                     case "play":
                         HandlePlay();
                         break;
@@ -674,11 +671,33 @@ namespace Cuy
             }
 
             // Only food can be fed (toys and equipment cannot be eaten).
-            bool isFood = def.Category == "food" || def.Category == "vegetable" || def.Category == "treat" || def.Category == "chew_stick";
+            bool isFood = def.Category == "food" || def.Category == "vegetable" || def.Category == "treat" || def.Category == "chew_stick" || def.Category == "care";
             if (!isFood)
             {
                 BrainController.Log("[HomeWindow] Not food: " + def.Id);
                 return;
+            }
+
+            if (pet.RefusesTreats && (def.Category == "treat" || def.Category == "vegetable"))
+            {
+                PostToPage(new { type = "toast", text = "Ouch, teeth hurt – see the vet" });
+                BrainController.Log("[HomeWindow] Pig refused treat/vegetable due to teeth pain.");
+                return;
+            }
+
+            string todayStr = pet.Clock.LocalNow().ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
+            string eatenCounterKey = $"ate_{def.Id}_{todayStr}";
+
+            if (def.DailyLimit.HasValue)
+            {
+                int eatenToday = 0;
+                pet.State.Stats.Counters.TryGetValue(eatenCounterKey, out eatenToday);
+                if (eatenToday >= def.DailyLimit.Value)
+                {
+                    PostToPage(new { type = "toast", text = "Pig had enough of this today" });
+                    BrainController.Log($"[HomeWindow] Daily limit reached for feeding {def.Id}.");
+                    return;
+                }
             }
 
             // A full pig refuses food; nothing is consumed and nothing is rewarded.
@@ -699,8 +718,8 @@ namespace Cuy
             // Effects come from assets/data/items.json (the same as food dropped on the desktop).
             foreach (var eff in def.Effects)
             {
-                Need need;
-                if (NeedNames.TryParseDataKey(eff.Key, out need))
+                Cuy.Core.Need need;
+                if (Cuy.Core.NeedNames.TryParseDataKey(eff.Key, out need))
                 {
                     pet.ChangeNeed(need, eff.Value);
                 }
@@ -708,9 +727,19 @@ namespace Cuy
 
             pet.AddBondPoints(1);
             pet.Count("feedings");
-            if (!def.IsUnlimited) pet.Count(def.Id);
+            if (!def.IsUnlimited)
+            {
+                pet.Count(def.Id);
+                pet.Count(eatenCounterKey); // Increment daily eating limit counter
+            }
+            if (def.Id == "carrot" || def.Id == "apple" || def.Id == "strawberry")
+            {
+                pet.RecordTreat(def.Id);
+            }
+
             brain.RequestAnimation(def.IsUnlimited ? "eat" : "eat_treat");
             BrainController.Log("[HomeWindow] Fed " + def.Id + ".");
+            brain.Session.AutoSaver.SaveNow();
         }
 
         private static CuyItemDef FindItem(string itemId)

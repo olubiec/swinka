@@ -17,6 +17,8 @@ namespace Cuy
         public string Animation { get; set; }
         public Dictionary<string, double> Effects { get; set; } = new Dictionary<string, double>();
         public string Description { get; set; }
+        public int? DailyLimit { get; set; }
+        public bool OneTime { get; set; }
     }
 
     /// <summary>
@@ -153,7 +155,9 @@ namespace Cuy
                                         IsUnlimited = (bool?)tok["unlimited"] ?? false,
                                         IconName = (string)tok["icon"] ?? id,
                                         Animation = (string)tok["animation"] ?? "eat_treat",
-                                        Description = (string)tok["description"] ?? ""
+                                        Description = (string)tok["description"] ?? "",
+                                        DailyLimit = (int?)tok["daily_limit"],
+                                        OneTime = (bool?)tok["one_time"] ?? (bool?)tok["permanent"] ?? false
                                     };
 
                                     var effectsTok = tok["effects"] as JObject;

@@ -20,6 +20,7 @@ namespace Cuy.Core
         public string Description { get; set; }
         public int? DailyLimit { get; set; }
         public int? Uses { get; set; }
+        public bool OneTime { get; set; }
 
         public bool CanBuy => Price.HasValue && Price.Value >= 0;
 
