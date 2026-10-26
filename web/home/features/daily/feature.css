@@ -1,0 +1,39 @@
+.feature-daily {
+  text-align: center;
+  padding: 16px;
+}
+.feature-daily .daily-icon {
+  animation: daily-bounce 1s infinite alternate;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+@keyframes daily-bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
+.feature-daily .daily-streak-container {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 16px 0;
+}
+.feature-daily .daily-streak-box {
+  width: 16px;
+  height: 16px;
+  background-color: var(--c-leaf-light);
+  border: 1px solid var(--c-leaf-dark);
+}
+.feature-daily .daily-streak-box.filled {
+  background-color: var(--c-leaf-dark);
+}
+.feature-daily .daily-amount {
+  font-size: 20px;
+  color: var(--c-leaf-dark);
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+.feature-daily .daily-claimed-msg {
+  font-size: 18px;
+  color: var(--c-leaf-dark);
+  margin: 20px 0;
+}

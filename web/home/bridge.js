@@ -64,6 +64,11 @@
     name: 'Cuy',
     birthDateUtc: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), // born 2 real hours ago
     pigDays: 2, // a baby
+    daily: {
+      available: true,
+      amount: 20,
+      streak: 3
+    },
     needs: {
       fullness: 82.0,      // Fullness
       vitaminC: 75.0,     // Vitamin C
@@ -561,6 +566,30 @@
 
         case 'album': {
           // Album preview
+          break;
+        }
+
+        case 'daily_claim': {
+          if (s.daily && s.daily.available) {
+            const amount = s.daily.amount || 20;
+            s.clovers = (s.clovers || 0) + amount;
+            s.daily.available = false;
+            s.daily.streak = (s.daily.streak || 0) + 1;
+
+            // Post page message
+            setTimeout(() => {
+              if (window.CuyHome && window.CuyHome.api) {
+                const cbs = this.messageListeners.get('daily_claimed');
+                if (cbs) {
+                  cbs.forEach(cb => {
+                    try { cb({ type: 'daily_claimed', amount, streak: s.daily.streak }); } catch (e) {}
+                  });
+                }
+              }
+            }, 100);
+
+            s.currentAction = 'popcorn';
+          }
           break;
         }
 
