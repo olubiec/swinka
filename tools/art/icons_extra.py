@@ -3,12 +3,35 @@ import json
 import numpy as np
 from PIL import Image
 from props import Canvas, MAT, RAMP, E, shade, rect, hx, XX, YY
+from pig import OUT
 
 def _icon(draw):
     c = Canvas()
     draw(c)
     img = c.finish()
     return img[:16, :16].copy()
+
+def _paint(c, mask, col):
+    c.mat[mask] = -2
+    c.pig[mask] = col
+    c.fill |= mask
+
+def _cloud(c, dy=0, dark=False):
+    """Cloud made of three puffs on a flat base; dy shifts it vertically."""
+    puffs = [E(5, 8.2 + dy, 3, 2.6), E(8.2, 6.2 + dy, 3.6, 3.2), E(11.2, 8 + dy, 3, 2.6)]
+    m = rect(3, 8 + dy, 13, 11 + dy)
+    for p, _, _ in puffs:
+        m = m | p
+    y0, y1 = 3.2 + dy, 11 + dy
+    u = (XX - 7.5) / 5.5
+    v = (YY - (y0 + y1) / 2) / ((y1 - y0) / 2)
+    lv = np.minimum(shade(u, v), 2)
+    if dark:
+        ramp = [hx('8e9bb0'), hx('6b7890'), hx('4d5870'), hx('343d52')]
+        for k in range(3):
+            _paint(c, m & (lv == k), ramp[k])
+    else:
+        c.put_mat(m, MAT['grey'], lv)
 
 def get_new_icons():
     I = {}
@@ -226,6 +249,81 @@ def get_new_icons():
         c.put_mat(n1 | n2, MAT['blue'], 1)
     I['music_note'] = _icon(music_note)
 
+    # weather
+    def weather_clear(c):
+        disk, u, v = E(8, 8, 3.6, 3.6)
+        for r in (rect(7, 1, 9, 3), rect(7, 13, 9, 15), rect(1, 7, 3, 9), rect(13, 7, 15, 9)):
+            c.put_mat(r, MAT['gold'], 2)
+        for x, y in [(3, 3), (12, 3), (3, 12), (12, 12)]:
+            c.put_px(x, y, RAMP['gold'][2])
+        c.put_mat(disk, MAT['gold'], shade(u, v))
+        c.put_px(6, 6, RAMP['gold'][0])
+    I['weather_clear'] = _icon(weather_clear)
+
+    def weather_cloudy(c):
+        _cloud(c, 0)
+    I['weather_cloudy'] = _icon(weather_cloudy)
+
+    def weather_fog(c):
+        _cloud(c, -2)
+        c.put_mat(rect(2, 10, 12, 11), MAT['grey'], 1)
+        c.put_mat(rect(4, 12, 14, 13), MAT['grey'], 2)
+        c.put_mat(rect(2, 14, 10, 15), MAT['grey'], 1)
+    I['weather_fog'] = _icon(weather_fog)
+
+    def weather_rain(c):
+        _cloud(c, -2)
+        for cx, cy in [(3, 11.5), (8, 12.5), (13, 11.5)]:
+            d, u, v = E(cx, cy, 1.1, 1.8)
+            c.put_mat(d, MAT['blue'], np.where(XX < cx, 1, 2))
+            c.put_px(int(cx) - 1, int(cy) - 1, RAMP['blue'][0])
+    I['weather_rain'] = _icon(weather_rain)
+
+    def weather_snow(c):
+        _cloud(c, -2)
+        for cx, cy in [(3, 12), (8, 13), (13, 12)]:
+            for dx, dy in [(0, -1), (-1, 0), (1, 0), (0, 1)]:
+                c.put_px(cx + dx, cy + dy, hx('c4e6ff'))
+            c.put_px(cx, cy, hx('ffffff'))
+    I['weather_snow'] = _icon(weather_snow)
+
+    def weather_storm(c):
+        _cloud(c, -2, dark=True)
+        bolt = [(9, 9), (10, 9), (11, 9), (8, 10), (9, 10), (10, 10), (6, 11), (7, 11), (8, 11), (9, 11), (10, 11),
+                (9, 12), (10, 12), (8, 13), (9, 13), (8, 14)]
+        for x, y in bolt:
+            c.put_px(x, y, RAMP['gold'][1] if x < 9 else RAMP['gold'][2])
+        c.put_px(9, 9, RAMP['gold'][0]); c.put_px(8, 10, RAMP['gold'][0]); c.put_px(7, 11, RAMP['gold'][0])
+    I['weather_storm'] = _icon(weather_storm)
+
+    # padlock / trophy
+    def padlock(c):
+        outer, _, _ = E(8.5, 6.5, 4.3, 5.2)
+        inner, _, _ = E(8.5, 7, 2.2, 3.4)
+        sh = outer & ~inner & (YY < 9)
+        c.put_mat(sh, MAT['grey'], np.where(XX < 6, 0, np.where(XX < 10, 1, 2)))
+        body = rect(3, 7, 14, 14) & ~(((XX < 4) | (XX >= 13)) & ((YY < 8) | (YY >= 13)))
+        c.put_mat(body, MAT['gold'], shade((XX - 8.5) / 5.5, (YY - 10.5) / 3.5))
+        for x in (7, 8, 9):
+            c.put_px(x, 9, OUT); c.put_px(x, 10, OUT)
+        c.put_px(8, 11, OUT); c.put_px(8, 12, OUT)
+    I['padlock'] = _icon(padlock)
+
+    def trophy(c):
+        for cx in (2.8, 13.2):
+            o, _, _ = E(cx, 4.6, 2.1, 2.3)
+            i, _, _ = E(cx, 4.6, 0.9, 1.1)
+            c.put_mat(o & ~i & (YY < 8), MAT['gold'], 2)
+        bowl, u, v = E(8, 2, 4, 6.8)
+        bowl &= (YY >= 2) & (YY < 9)
+        c.put_mat(bowl, MAT['gold'], shade(u, v))
+        c.put_mat(rect(3, 1, 13, 3), MAT['gold'], np.where(XX < 8, 0, 1))
+        c.put_mat(rect(7, 9, 9, 12), MAT['gold'], np.where(XX < 8, 1, 2))
+        c.put_mat(rect(5, 12, 11, 13), MAT['gold'], 1)
+        c.put_mat(rect(4, 13, 12, 15), MAT['gold'], 2)
+        c.put_px(5, 4, RAMP['gold'][0]); c.put_px(5, 5, RAMP['gold'][0])
+    I['trophy'] = _icon(trophy)
+
     return I
 
 def main(assets_dir):
@@ -240,7 +338,9 @@ def main(assets_dir):
         'dandelion', 'apple', 'hay_ball', 'chew_bridge', 'hammock', 'cuddle_cup',
         'vet', 'vitamin_drops', 'medicine', 'calendar', 'water_drop', 'scale', 'brush', 'nail_clipper', 'broom',
         'wallpaper', 'floor', 'rug', 'plant', 'picture_frame', 'lamp',
-        'gift', 'palette', 'music_note'
+        'gift', 'palette', 'music_note',
+        'weather_clear', 'weather_cloudy', 'weather_fog', 'weather_rain', 'weather_snow', 'weather_storm',
+        'padlock', 'trophy'
     ]
 
     new_icons_funcs = get_new_icons()

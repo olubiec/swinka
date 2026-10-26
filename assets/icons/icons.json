@@ -49,6 +49,14 @@
   "lamp": 45,
   "gift": 46,
   "palette": 47,
-  "music_note": 48
+  "music_note": 48,
+  "weather_clear": 49,
+  "weather_cloudy": 50,
+  "weather_fog": 51,
+  "weather_rain": 52,
+  "weather_snow": 53,
+  "weather_storm": 54,
+  "padlock": 55,
+  "trophy": 56
  }
 }

@@ -644,7 +644,7 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
-  --icon-count: 49; /* total icons */
+  --icon-count: 57; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
@@ -710,6 +710,14 @@ body.webview-mode .game-device {
 .icon-gift { --i: 46; }
 .icon-palette { --i: 47; }
 .icon-music-note { --i: 48; }
+.icon-weather-clear { --i: 49; }
+.icon-weather-cloudy { --i: 50; }
+.icon-weather-fog { --i: 51; }
+.icon-weather-rain { --i: 52; }
+.icon-weather-snow { --i: 53; }
+.icon-weather-storm { --i: 54; }
+.icon-padlock { --i: 55; }
+.icon-trophy { --i: 56; }
 
 
 /* ==========================================================================
