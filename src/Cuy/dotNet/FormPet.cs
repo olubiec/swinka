@@ -1059,6 +1059,9 @@ namespace Cuy
             if (Visible)
             {
                 EdgePeekDirector.EnsureStarted();
+#if DEBUG
+                Cuy.Platform.MouseShakeMonitor.EnsureDebugStarted();
+#endif
             }
             if (HomeWindow.IsOpen && !_inHome)
             {

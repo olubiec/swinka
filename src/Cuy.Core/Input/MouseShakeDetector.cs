@@ -8,6 +8,7 @@ namespace Cuy.Core.Input
     /// MinSpeedPxPerSec, while the cursor is within MaxDistancePx of the pig. After a shake the detector is quiet
     /// for DebounceSeconds. Small jitter (below MinStepPx) is ignored, so normal work with the mouse never counts.
     /// </summary>
+    // not sourced (R16.1): tune on the PC, see SHAKE-01
     public sealed class MouseShakeDetector
     {
         public int MinReversals { get; set; } = 6;
