@@ -1,5 +1,60 @@
 # Cuy: plan researchu (Haiku)
 
+## Statusy wyników
+
+Statusy z 26.10.2026 (po przeczytaniu odpowiedzi): „zweryfikowane” = źródła oficjalne lub kod z tagu i brak UNVERIFIED w pliku; „częściowo” = odpowiedź użyteczna, ale ma UNVERIFIED lub opiera się na jednym źródle/forum (do promptów Julesa trafiają tylko sprawdzone fakty, reszta do TESTY_RECZNE.md); „niepotwierdzone” = brak źródła (R8.5: budżet czasu to decyzja projektowa, nie fakt weterynaryjny).
+
+| ID | status | plik(i) planu, których dotyczy |
+| --- | --- | --- |
+| R1.1 | częściowo (do testu na PC) | F2-08, F8-01, F8-03, F6-08; `web/home/style.css` |
+| R1.2 | częściowo (do testu na PC) | F2-08, F8-01, F8-03, F6-08; `web/home/style.css` |
+| R1.3 | częściowo (do testu na PC) | F2-08, F8-01, F8-03, F6-08; `web/home/style.css` |
+| R2.1 | częściowo (do testu na PC) | `web/home/sound.js`, F2-08, F4-07 |
+| R2.2 | zweryfikowane | `web/home/sound.js`, F2-08, F4-07 |
+| R2.3 | częściowo (do testu na PC) | `web/home/sound.js`, F2-08, F4-07 |
+| R2.4 | częściowo (do testu na PC) | `web/home/sound.js`, F2-08, F4-07 |
+| R3.1 | częściowo (do testu na PC) | F3-03, F7-03, `src/Cuy/dotNet/AutoStart.cs`, `Program.cs` |
+| R3.2 | częściowo (do testu na PC) | F3-03, F7-03, `src/Cuy/dotNet/AutoStart.cs`, `Program.cs` |
+| R3.3 | częściowo (do testu na PC) | F3-03, F7-03, `src/Cuy/dotNet/AutoStart.cs`, `Program.cs` |
+| R3.4 | częściowo (do testu na PC) | F3-03, F7-03, `src/Cuy/dotNet/AutoStart.cs`, `Program.cs` |
+| R4.1 | częściowo (do testu na PC) | `tools/package/README.txt`, README.md, F3-03, F7-03 |
+| R4.2 | częściowo (do testu na PC) | `tools/package/README.txt`, README.md, F3-03, F7-03 |
+| R4.3 | częściowo (do testu na PC) | `tools/package/README.txt`, README.md, F3-03, F7-03 |
+| R4.4 | częściowo (do testu na PC) | `tools/package/README.txt`, README.md, F3-03, F7-03 |
+| R5.1 | częściowo (do testu na PC) | F3-02, F7-02, F8-01, `assets/data/economy.json` |
+| R5.2 | częściowo (do testu na PC) | F3-02, F7-02, F8-01, `assets/data/economy.json` |
+| R5.3 | częściowo (do testu na PC) | F3-02, F7-02, F8-01, `assets/data/economy.json` |
+| R6.1 | częściowo (do testu na PC) | F4-03, `assets/data/diary.json` |
+| R6.2 | częściowo (do testu na PC) | F4-03, `assets/data/diary.json` |
+| R6.3 | częściowo (do testu na PC) | F4-03, `assets/data/diary.json` |
+| R7.1 | zweryfikowane | F4-10, F3-03, `src/Cuy/dotNet/HomeWindow.cs` |
+| R7.2 | zweryfikowane | F4-10, F3-03, `src/Cuy/dotNet/HomeWindow.cs` |
+| R8.1 | częściowo (do testu na PC) | F2-03, F2-04, `assets/data/care.json`, `health.json`, `actions.json` |
+| R8.2 | zweryfikowane | F2-03, F2-04, `assets/data/care.json`, `health.json`, `actions.json` |
+| R8.3 | częściowo (do testu na PC) | F2-03, F2-04, `assets/data/care.json`, `health.json`, `actions.json` |
+| R8.4 | częściowo (do testu na PC) | F2-03, F2-04, `assets/data/care.json`, `health.json`, `actions.json` |
+| R8.5 | niepotwierdzone | F2-03, F2-04, `assets/data/care.json`, `health.json`, `actions.json` |
+| R9.1 | zweryfikowane | F5-01..F5-04, `web/home/minigames/lib/` |
+| R9.2 | zweryfikowane | F5-01..F5-04, `web/home/minigames/lib/` |
+| R10.1 | częściowo (do testu na PC) | F5-01, F5-02, F5-03 |
+| R10.2 | częściowo (do testu na PC) | F5-01, F5-02, F5-03 |
+| R10.3 | częściowo (do testu na PC) | F5-01, F5-02, F5-03 |
+| R11.1 | zweryfikowane | F6-00, F6-01, `tools/package.ps1`, `SoundManager.cs` |
+| R11.2 | zweryfikowane | F6-00, F6-01, `tools/package.ps1`, `SoundManager.cs` |
+| R11.3 | zweryfikowane | F6-00, F6-01, `tools/package.ps1`, `SoundManager.cs` |
+| R12.1 | częściowo (do testu na PC) | F6-01, F6-08 |
+| R12.2 | częściowo (do testu na PC) | F6-01, F6-08 |
+| R12.3 | częściowo (do testu na PC) | F6-01, F6-08 |
+| R13.1 | częściowo (do testu na PC) | F6-03, F6-08, `SoundManager.IsFullScreenOrBusy()` |
+| R13.2 | częściowo (do testu na PC) | F6-03, F6-08, `SoundManager.IsFullScreenOrBusy()` |
+| R13.3 | częściowo (do testu na PC) | F6-03, F6-08, `SoundManager.IsFullScreenOrBusy()` |
+| R14.1 | częściowo (do testu na PC) | F6-07, F4-01 |
+| R14.2 | częściowo (do testu na PC) | F6-07, F4-01 |
+| R14.3 | częściowo (do testu na PC) | F6-07, F4-01 |
+| R15.1 | częściowo (do testu na PC) | F6-04 |
+| R15.2 | zweryfikowane | F6-04 |
+
+
 Wersja z 26.10.2026. Uzupełnia `PLAN.md` i `PLAN_POPRAWKI.md` (część B). Notatki po polsku, polecenia po angielsku (RULES.md).
 
 ## Po co i jak
