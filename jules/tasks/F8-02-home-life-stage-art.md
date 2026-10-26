@@ -4,8 +4,8 @@ Read `AGENTS.md` first and follow it. Requires F4-01 and F0-02 merged.
 
 ## Goal
 F4-01 changes the desktop pig only. The Home canvas (`web/home/canvas-pig.js`) must show the same stage: baby 75 % size
-with a bigger head, senior with a greyer muzzle, legend with a golden outline in the room. Junior uses the baby sheet
-if no junior folder exists (say so in the PR).
+with a bigger head, senior with a greyer muzzle, legend with a golden outline in the room. Junior uses its own sheet
+`assets/sprites/junior/` (it exists; proportions between baby and adult), no workaround with the baby sheet.
 
 ## Files you may change
 `web/home/canvas-pig.js`, `web/home/app.js` (only what passes the stage), `web/home/style.css`, `web/home/bridge.js` (mock stage),

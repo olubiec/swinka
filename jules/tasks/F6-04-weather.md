@@ -25,7 +25,8 @@ mapping that already exist.
 3. Settings panel: text field "City", a result list (name, region, sub-region), "Off" button; messages `settings_city { city }` and `settings_city_pick { index }`.
    Next to the weather show: a link "Weather data by Open-Meteo.com" to https://open-meteo.com/, a link to the licence CC BY 4.0
    (https://creativecommons.org/licenses/by/4.0/) and the words "city search by GeoNames" (https://www.geonames.org/). Say in the UI if values
-   are modified. Add the attribution to `THIRD_PARTY_NOTICES.md` and a "Weather data" section to `README.md` (non-commercial use only).
+   are modified. Show the condition with the pixel icons `weather_clear`, `weather_cloudy`, `weather_fog`, `weather_rain`, `weather_snow`,
+   `weather_storm` (CSS `.icon-weather-*`, already in `assets/icons`; map drizzle to `weather_rain`, thunder to `weather_storm`). Add the attribution to `THIRD_PARTY_NOTICES.md` and a "Weather data" section to `README.md` (non-commercial use only).
 4. Diary: provide the weather data to F4-03 templates (`when.weather`) through `DayStats` if F4-03 is merged (minimal hook; skip silently if absent and say so).
 5. No telemetry: the only request data is the city name and coordinates.
 

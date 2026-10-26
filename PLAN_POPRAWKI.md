@@ -21,7 +21,7 @@ Game ids, data keys and file names follow RULES.md. If this prompt contradicts R
 **C4 (wiek, etapy, więź)**
 - Zamiast pola `start_wzrostu` użyj `GrowthStartUtc` z CC3.
 - Zmień `GrowthEnabled` w `Balance.cs` z `false` na `true` (CC3 trzyma świnkę na etapie baby).
-- Foldery sprite'ów: `assets/sprites/baby|junior|adult|senior|legend`. Uwaga: `junior` nie istnieje jako folder (CC1 mapuje junior na baby). Najpierw sprawdź `assets/sprites/`; brakujący wariant zgłoś w raporcie, nie rysuj go.
+- Foldery sprite'ów: `assets/sprites/baby|junior|adult|senior|legend`. Folder `junior` istnieje od 26.10.2026 (kb 0,9, kh 0,94). Jeśli kod CC1 nadal mapuje junior na baby, zmień to na folder `junior`. Najpierw sprawdź `assets/sprites/`; brakujący wariant zgłoś w raporcie, nie rysuj go.
 - Dodaj test: po włączeniu wzrostu świnka z zapisu v1 nie przeskakuje etapu (wiek liczony od `GrowthStartUtc`).
 
 **C5 (album, pamiętnik)**: szablony pamiętnika po angielsku, nie po polsku (RULES.md). Reszta bez zmian.

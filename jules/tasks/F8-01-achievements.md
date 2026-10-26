@@ -27,7 +27,8 @@ of one day's income (no source gives the ratio: use the numbers from the F7-02 s
    birthday) and grants each achievement once: clovers via `AddClovers`, a diary line, and an event `AchievementEarned`.
 3. Tests: each rule fires once only, reward added once, save/load keeps earned ids, unknown counter names are ignored.
 4. Home feature `achievements`: grid of cards; earned = coloured with date, not earned = greyed with the text but no hint
-   for hidden ones (`hidden: true` in json shows "???"). State key `achievements: [{ id, title, text, reward, earned, date, hidden }]`.
+   for hidden ones (`hidden: true` in json shows "???"). Use the icon `trophy` (CSS `.icon-trophy`) in the screen header and on cards;
+   optional per-category colour via `badge_care`, `badge_play`, `badge_growth`, `badge_social` (all exist in `assets/icons`, fall back to `trophy`). State key `achievements: [{ id, title, text, reward, earned, date, hidden }]`.
 5. Desktop: toast/bubble "Achievement: <title> +<reward> clovers" through `StatusBubble`, once per achievement.
 
 ## Checks

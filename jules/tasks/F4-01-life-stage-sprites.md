@@ -5,7 +5,7 @@ Read `AGENTS.md` first and follow it. Requires waves 0-3 merged.
 ## Goal
 `Pet.StageChanged` already fires (Baby, Junior, Adult, Senior, Legend) and the art for every stage exists in
 `assets/sprites/<baby|junior|adult|senior|legend>/spritesheet.png` (+ `animations.json`, same 16x60 grid of 64 px frames
-and the same animation rows in every folder; `junior` may be missing - then use `baby`, and say so in the PR). The
+and the same animation rows in every folder; `junior` exists since the art pass of 26.10.2026: body 0.9 / head 0.94 of adult, between baby and adult). The
 desktop pig, however, always uses the single sheet embedded in `Resources/animations.xml`. Make it switch.
 
 ## Files you may change
