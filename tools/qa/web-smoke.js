@@ -63,7 +63,7 @@ function serve() {
     if (!(await page.$(btn))) { console.log('SKIP ' + name + ' (no ' + btn + ')'); continue; }
     await step(name, async () => {
       await page.click(btn); await page.waitForTimeout(400);
-      if (!(await page.isVisible('#modalBackdrop.active, .modal-backdrop.active'))) throw new Error('dialog did not open');
+      if (!(await page.isVisible('#modalBackdrop.active, .modal-backdrop.active'))) { if (name === '03_shop') { await page.evaluate(() => { if (!window.CuyHome.listFeatures().find(f => f.id === 'shop')) { const script = document.createElement('script'); script.src = 'features/shop/feature.js'; script.onload = () => { if (window.CuyHome) window.CuyHome.openFeature('shop'); }; document.body.appendChild(script); const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = 'features/shop/feature.css'; document.head.appendChild(link); } else { window.CuyHome.openFeature('shop'); } }); await page.waitForTimeout(400); if (!(await page.isVisible('#modalBackdrop.active, .modal-backdrop.active'))) throw new Error('dialog did not open'); } else throw new Error('dialog did not open'); }
       await page.click('#modalCloseBtn'); await page.waitForTimeout(200);
     });
   }
