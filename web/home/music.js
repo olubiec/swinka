@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  let audioCtx = null;
+
   // Constants
   const FADE_MS = 400;
   const FADE_STEPS = 20;
@@ -271,7 +273,15 @@
   });
 
   // Handle Autoplay Retry
-  document.addEventListener('pointerdown', () => {
+  const resumeAudio = () => {
+    if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) {
+      const CtxClass = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new CtxClass();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+
     if (pendingPlay) {
       const p = pendingPlay;
       pendingPlay = null;
@@ -282,6 +292,9 @@
           fadeTo(currentAudio, getBaseVolume(), FADE_MS);
       }).catch(e => console.warn(e));
     }
-  }, { capture: true });
+  };
+
+  document.addEventListener('pointerdown', resumeAudio, { capture: true });
+  document.addEventListener('keydown', resumeAudio, { capture: true });
 
 })();

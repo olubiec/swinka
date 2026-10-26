@@ -130,6 +130,7 @@
       this.currentConfig = null;
       this.currentScore = 0;
       this.rootElement = null;
+      this.musicTrack = 'games_1';
 
       // Global listener for Home closing or the tab being hidden
       this.bindWindowEvents();
@@ -298,6 +299,8 @@
       this.activeGameId = gameId;
       this.currentScore = 0;
       this.isPaused = false;
+      this.musicTrack = this.musicTrack === 'games_1' ? 'games_2' : 'games_1';
+      if (window.CuyMusic) window.CuyMusic.play(this.musicTrack);
 
       const container = customConfig.container || this.rootElement || document.getElementById('modalBody');
       if (!container) {
@@ -378,6 +381,9 @@
           width: 360,
           height: 290,
           stageKey: state?.stageKey || 'adult',
+          onTimeLeft: (s) => {
+            if (s === 15 && window.CuyMusic) window.CuyMusic.play('games_boss');
+          },
           
           // Update the points in the HUD in real time
           updateScore: (newScore) => {
@@ -414,6 +420,7 @@
     pause() {
       if (!this.activeGame || this.isPaused) return;
       this.isPaused = true;
+      if (window.CuyMusic) window.CuyMusic.pause();
 
       // Pauzowanie Phasera
       if (this.phaserInstance) {
@@ -431,6 +438,7 @@
     resume() {
       if (!this.activeGame || !this.isPaused) return;
       this.isPaused = false;
+      if (window.CuyMusic) window.CuyMusic.resume();
 
       // Wznawianie Phasera
       if (this.phaserInstance) {
@@ -467,6 +475,7 @@
     // --- Shared game over screen with the reward ---
     endGame(score, gameId, container, resolvePromise) {
       this.stopCurrentGame();
+      if (window.CuyMusic) window.CuyMusic.play('menu', { volume: 0.6 });
 
       // Save the result through the bridge to GameState
       let result = null;
