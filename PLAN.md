@@ -268,6 +268,13 @@ Pełna treść poprawek, nowe prompty i zlecenia researchu dla Gemini: `PLAN_POP
 - **Etap F:** F1 zrobione, F2 zawężone do ekranu Ustawienia, F3 opcjonalne (po researchu R1/R2), F4 zastąpione etapem Q, F5 zrobione w CC3. Bramka F: QA1/QA2 bez P0 i P1 + 3 dni na czystym laptopie.
 - **Licencje:** w `THIRD_PARTY_NOTICES.md` brakuje NAudio, atrybucji Open-Meteo i ewentualnie SoundTouch.Net (prompt w `PLAN_POPRAWKI.md`, A4).
 
+## Research przed falami (26.10.2026)
+
+Wąskie pytania dla Claude Haiku, po jednym na zadanie, z miejscem użycia każdego wyniku: `RESEARCH.md`.
+Wyniki trafiają do `research/<id>.md`; po weryfikacji poprawiamy prompty w `jules/tasks/` przed wrzuceniem fali do kolejki.
+Kolejność: teraz R1, R2, R8 (R8 sprawdza zdrowie świnek w scalonych F1-07/F1-08); przed falą 3 R3-R5; przed falą 4 R6-R7;
+przed falą 5 R9-R10; przed falą 6 R11-R15.
+
 ## Prompty do Antigravity
 
 Każda faza ma jeden prompt do wklejenia. Przy każdym jest model: **Claude** do ciężkich zadań, **Gemini** do lżejszych. Zanim zaczniesz, wrzuć do repo dwa pliki: `PLAN.md` (ten dokument wyeksportowany do Markdown) i `ZASADY.md` (poniżej).

@@ -120,6 +120,11 @@ bobki, sen, karmienie, silnik dźwięków (kwik co najwyżej raz na 2 minuty, go
 ## Świadomie pominięte
 Instalator Inno Setup (zostaje ZIP), liścik w grze (usunięty), port na ESP32 (osobny projekt na później).
 
+## Research przed falą
+Przed wrzuceniem fali do `jules/queue/` robimy research z `RESEARCH.md` dla tej fali (Claude Haiku, wąskie pytania),
+wyniki w `research/`, po weryfikacji poprawiamy prompty fali. Fala 2 (reszta): R1, R2, R8; fala 3: R3-R5; fala 4: R6-R7;
+fala 5: R9-R10; fala 6: R11-R15.
+
 ## Tryb pracy
 1. Ja wrzucam do `jules/queue/` zadania kolejnej fali, GitHub uruchamia Julesa, Jules robi PR-y.
 2. Ty scalasz, piszesz „fala N scalona”. Ja sprawdzam stan repo i puszczam następną.
