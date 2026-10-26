@@ -101,6 +101,11 @@
       dailyRewardedDate: new Date().toISOString().slice(0, 10),
       dailyRewardedCount: 0
     },
+    settings: {
+      petSize: 'small',
+      sounds: true,
+      autostart: false
+    },
     currentAction: 'idle',
     isSleeping: false,
     lastActiveUtc: new Date().toISOString()
@@ -594,6 +599,24 @@
         }
 
         case 'settings': {
+          break;
+        }
+
+        case 'settings_pet_size': {
+          if (!s.settings) s.settings = {};
+          s.settings.petSize = action.size;
+          break;
+        }
+
+        case 'settings_sounds': {
+          if (!s.settings) s.settings = {};
+          s.settings.sounds = action.on;
+          break;
+        }
+
+        case 'settings_autostart': {
+          if (!s.settings) s.settings = {};
+          s.settings.autostart = action.on;
           break;
         }
 

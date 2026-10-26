@@ -75,6 +75,7 @@
           loop: true,
           callback: () => {
             timeLeft--;
+            if (config.onTimeLeft) config.onTimeLeft(timeLeft);
             // A little faster every second
             this.fallSpeed = Math.min(230, this.fallSpeed + 2.5);
             this.spawnDelay = Math.max(380, this.spawnDelay - 9);
