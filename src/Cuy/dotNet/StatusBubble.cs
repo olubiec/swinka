@@ -396,6 +396,29 @@ namespace Cuy
             using (SolidBrush textBrush = new SolidBrush(ColContourDark))
             {
                 g.DrawString(petName, _fontName, textBrush, new PointF(27, 7));
+
+                // Draw Health Percentage
+                var needs = BrainController.Instance?.Needs;
+                if (pet != null && needs != null)
+                {
+                    double rawHealth = needs.Health;
+                    double healthDisplay = Math.Max(5.0, rawHealth - pet.HealthPenalty);
+                    string healthStr = $"{healthDisplay:0}%";
+
+                    // Measure text to align it to the right
+                    SizeF textSize = g.MeasureString(healthStr, _fontName);
+                    float healthX = 160 - textSize.Width; // Right align at width - padding
+                    g.DrawString(healthStr, _fontName, textBrush, new PointF(healthX, 7));
+
+                    if (pet.IsSick)
+                    {
+                        Bitmap vetIcon = PetIcons.GetIconBitmap("vet");
+                        if (vetIcon != null)
+                        {
+                            g.DrawImage(vetIcon, new Rectangle((int)healthX - 18, 6, 16, 16), new Rectangle(0, 0, 16, 16), GraphicsUnit.Pixel);
+                        }
+                    }
+                }
             }
         }
 
@@ -608,7 +631,9 @@ namespace Cuy
                 Cursor = Cursors.Default;
 
                 // Tooltips over the needs
-                if (new Rectangle(8, 25, 70, 16).Contains(e.Location)) SetToolTipNeed("Fullness", BrainController.Instance?.Needs?.Satiety);
+                var pet = BrainController.Instance?.Pet;
+                if (pet != null && pet.IsSick && new Rectangle(110, 6, 50, 16).Contains(e.Location)) SetToolTip("Sick – visit the vet in Home");
+                else if (new Rectangle(8, 25, 70, 16).Contains(e.Location)) SetToolTipNeed("Fullness", BrainController.Instance?.Needs?.Satiety);
                 else if (new Rectangle(88, 25, 70, 16).Contains(e.Location)) SetToolTipNeed("Vitamin C", BrainController.Instance?.Needs?.VitaminC);
                 else if (new Rectangle(8, 43, 70, 16).Contains(e.Location)) SetToolTipNeed("Energy", BrainController.Instance?.Needs?.Energy);
                 else if (new Rectangle(88, 43, 70, 16).Contains(e.Location)) SetToolTipNeed("Mood", BrainController.Instance?.Needs?.Mood);
