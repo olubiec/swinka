@@ -792,6 +792,9 @@ namespace Cuy
 
                     iRandMax += anim.Probability;
                 }
+
+                if (iRandMax <= 0) return -1;
+
                 iVal = rand.Next(1, iRandMax+1);
                 foreach (TNextAnimation anim in list)
                 {

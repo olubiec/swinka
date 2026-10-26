@@ -136,6 +136,53 @@ namespace Cuy
         /// Form2(Animations animations, Xml xml) -> Called when a new sheep is generated<br />
         /// Form2(Animations animations, Xml xml, Point parentPos, bool parentFlipped) -> Called when a Child is generated<br />
         /// </summary>
+#if DEBUG
+        private static bool _animationsValidated = false;
+        private void ValidateAnimations()
+        {
+            if (_animationsValidated) return;
+            _animationsValidated = true;
+
+            int spriteCount = imageList1?.Images?.Count ?? 0;
+            if (Animations?.SheepAnimations == null) return;
+
+            foreach (var kvp in Animations.SheepAnimations)
+            {
+                var anim = kvp.Value;
+                if (anim.Sequence.Frames.Count == 0)
+                {
+                    BrainController.Log($"[DEBUG] Validation Error: Animation '{anim.Name}' ({anim.ID}) has 0 frames.");
+                }
+                else
+                {
+                    foreach (int frameIdx in anim.Sequence.Frames)
+                    {
+                        if (frameIdx >= spriteCount || frameIdx < 0)
+                        {
+                            BrainController.Log($"[DEBUG] Validation Error: Animation '{anim.Name}' ({anim.ID}) references frame {frameIdx}, but sprite count is {spriteCount}.");
+                        }
+                    }
+                }
+
+                Action<List<TNextAnimation>, string> checkNexts = (list, listName) =>
+                {
+                    if (list == null) return;
+                    foreach (var nextAnim in list)
+                    {
+                        if (nextAnim.ID > 0 && !Animations.SheepAnimations.ContainsKey(nextAnim.ID))
+                        {
+                            BrainController.Log($"[DEBUG] Validation Error: Animation '{anim.Name}' ({anim.ID}) has {listName} pointing to non-existent ID {nextAnim.ID}.");
+                        }
+                    }
+                };
+
+                checkNexts(anim.EndAnimation, "EndAnimation");
+                checkNexts(anim.EndBorder, "EndBorder");
+                checkNexts(anim.EndGravity, "EndGravity");
+            }
+        }
+#endif
+
         public FormPet()
         {
             InitializeComponent();
@@ -1006,6 +1053,9 @@ namespace Cuy
 
         private void NextStep()
         {
+#if DEBUG
+            ValidateAnimations();
+#endif
             if (Visible)
             {
                 EdgePeekDirector.EnsureStarted();
@@ -1025,30 +1075,37 @@ namespace Cuy
             if (_brain == null) _brain = BrainController.Instance;
             _brain?.Update();
 
+            int currentStep = Math.Max(0, AnimationStep);
+
             if (InteractionManager.Instance == null || InteractionManager.Instance.LookState != LookAtUserState.TrackingCursor)
             {
                 // If there is no repeat, we don't need to calculate the frame index.
-                if (AnimationStep < CurrentAnimation.Sequence.Frames.Count)
+                if (currentStep < CurrentAnimation.Sequence.Frames.Count)
                 {
-                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[AnimationStep]);
+                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[currentStep]);
                 }
                 else
                 {
-                    int index = ((AnimationStep - CurrentAnimation.Sequence.Frames.Count + CurrentAnimation.Sequence.RepeatFrom) % (CurrentAnimation.Sequence.Frames.Count - CurrentAnimation.Sequence.RepeatFrom)) + CurrentAnimation.Sequence.RepeatFrom;
-                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[index]);
+                    int repeatLen = Math.Max(1, CurrentAnimation.Sequence.Frames.Count - CurrentAnimation.Sequence.RepeatFrom);
+                    int index = ((currentStep - CurrentAnimation.Sequence.Frames.Count + CurrentAnimation.Sequence.RepeatFrom) % repeatLen) + CurrentAnimation.Sequence.RepeatFrom;
+                    index = Math.Max(0, Math.Min(index, CurrentAnimation.Sequence.Frames.Count - 1));
+                    if (CurrentAnimation.Sequence.Frames.Count > 0)
+                    {
+                        pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[index]);
+                    }
                 }
             }
 
                 // Get interval (if not in tossing mode), opacity and offset interpolated from START and END values.
             if(!IsTossing)
-                timer1.Interval = CurrentAnimation.Start.Interval.Value + ((CurrentAnimation.End.Interval.Value - CurrentAnimation.Start.Interval.Value) * AnimationStep / CurrentAnimation.Sequence.TotalSteps);
+                timer1.Interval = CurrentAnimation.Start.Interval.Value + ((CurrentAnimation.End.Interval.Value - CurrentAnimation.Start.Interval.Value) * currentStep / CurrentAnimation.Sequence.TotalSteps);
             int movementDuration = timer1.Interval;
             if (_forcedVisibleAnimId != CurrentAnimation.ID)
             {
-                Opacity = CurrentAnimation.Start.Opacity + (CurrentAnimation.End.Opacity - CurrentAnimation.Start.Opacity) * AnimationStep / CurrentAnimation.Sequence.TotalSteps;
+                Opacity = CurrentAnimation.Start.Opacity + (CurrentAnimation.End.Opacity - CurrentAnimation.Start.Opacity) * currentStep / CurrentAnimation.Sequence.TotalSteps;
             }
             EnsurePetVisible();
-			OffsetY = CurrentAnimation.Start.OffsetY + (double)((CurrentAnimation.End.OffsetY - CurrentAnimation.Start.OffsetY) * AnimationStep / CurrentAnimation.Sequence.TotalSteps);
+			OffsetY = CurrentAnimation.Start.OffsetY + (double)((CurrentAnimation.End.OffsetY - CurrentAnimation.Start.OffsetY) * currentStep / CurrentAnimation.Sequence.TotalSteps);
 
                 // If dragging is enabled, move the pet to the mouse position.
             if (IsDragging)
@@ -1065,8 +1122,8 @@ namespace Cuy
             // if TotalSteps is more than 1, we have to interpolate START and END values)
             if (CurrentAnimation.Sequence.TotalSteps > 1)
             {
-                x += ((CurrentAnimation.End.X.Value - CurrentAnimation.Start.X.Value) * (double)AnimationStep / (CurrentAnimation.Sequence.TotalSteps - 1.0));
-                y += ((CurrentAnimation.End.Y.Value - CurrentAnimation.Start.Y.Value) * (double)AnimationStep / (CurrentAnimation.Sequence.TotalSteps - 1.0));
+                x += ((CurrentAnimation.End.X.Value - CurrentAnimation.Start.X.Value) * (double)currentStep / (CurrentAnimation.Sequence.TotalSteps - 1.0));
+                y += ((CurrentAnimation.End.Y.Value - CurrentAnimation.Start.Y.Value) * (double)currentStep / (CurrentAnimation.Sequence.TotalSteps - 1.0));
             }
                 // If a new animation need to be started
             bool bNewAnimation = false;

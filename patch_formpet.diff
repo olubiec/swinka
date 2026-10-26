@@ -1,0 +1,96 @@
+<<<<<<< SEARCH
+            if (InteractionManager.Instance == null || InteractionManager.Instance.LookState != LookAtUserState.TrackingCursor)
+            {
+                // If there is no repeat, we don't need to calculate the frame index.
+                if (AnimationStep < CurrentAnimation.Sequence.Frames.Count)
+                {
+                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[AnimationStep]);
+                }
+                else
+                {
+                    int index = ((AnimationStep - CurrentAnimation.Sequence.Frames.Count + CurrentAnimation.Sequence.RepeatFrom) % (CurrentAnimation.Sequence.Frames.Count - CurrentAnimation.Sequence.RepeatFrom)) + CurrentAnimation.Sequence.RepeatFrom;
+                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[index]);
+                }
+            }
+
+                // Get interval (if not in tossing mode), opacity and offset interpolated from START and END values.
+            if(!IsTossing)
+                timer1.Interval = CurrentAnimation.Start.Interval.Value + ((CurrentAnimation.End.Interval.Value - CurrentAnimation.Start.Interval.Value) * AnimationStep / CurrentAnimation.Sequence.TotalSteps);
+            int movementDuration = timer1.Interval;
+            if (_forcedVisibleAnimId != CurrentAnimation.ID)
+            {
+                Opacity = CurrentAnimation.Start.Opacity + (CurrentAnimation.End.Opacity - CurrentAnimation.Start.Opacity) * AnimationStep / CurrentAnimation.Sequence.TotalSteps;
+            }
+            EnsurePetVisible();
+			OffsetY = CurrentAnimation.Start.OffsetY + (double)((CurrentAnimation.End.OffsetY - CurrentAnimation.Start.OffsetY) * AnimationStep / CurrentAnimation.Sequence.TotalSteps);
+
+                // If dragging is enabled, move the pet to the mouse position.
+            if (IsDragging)
+            {
+                // Position follows mouse messages and the independent render timer.
+                return;
+            }
+
+            // Physics runs on the independent motion clock, not sprite frames.
+            if (IsTossing) return;
+
+            double x = CurrentAnimation.Start.X.Value;
+            double y = CurrentAnimation.Start.Y.Value;
+            // if TotalSteps is more than 1, we have to interpolate START and END values)
+            if (CurrentAnimation.Sequence.TotalSteps > 1)
+            {
+                x += ((CurrentAnimation.End.X.Value - CurrentAnimation.Start.X.Value) * (double)AnimationStep / (CurrentAnimation.Sequence.TotalSteps - 1.0));
+                y += ((CurrentAnimation.End.Y.Value - CurrentAnimation.Start.Y.Value) * (double)AnimationStep / (CurrentAnimation.Sequence.TotalSteps - 1.0));
+            }
+=======
+            int currentStep = Math.Max(0, AnimationStep);
+
+            if (InteractionManager.Instance == null || InteractionManager.Instance.LookState != LookAtUserState.TrackingCursor)
+            {
+                // If there is no repeat, we don't need to calculate the frame index.
+                if (currentStep < CurrentAnimation.Sequence.Frames.Count)
+                {
+                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[currentStep]);
+                }
+                else
+                {
+                    int repeatLen = Math.Max(1, CurrentAnimation.Sequence.Frames.Count - CurrentAnimation.Sequence.RepeatFrom);
+                    int index = ((currentStep - CurrentAnimation.Sequence.Frames.Count + CurrentAnimation.Sequence.RepeatFrom) % repeatLen) + CurrentAnimation.Sequence.RepeatFrom;
+                    index = Math.Max(0, Math.Min(index, CurrentAnimation.Sequence.Frames.Count - 1));
+                    if (CurrentAnimation.Sequence.Frames.Count > 0)
+                    {
+                        pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[index]);
+                    }
+                }
+            }
+
+                // Get interval (if not in tossing mode), opacity and offset interpolated from START and END values.
+            if(!IsTossing)
+                timer1.Interval = CurrentAnimation.Start.Interval.Value + ((CurrentAnimation.End.Interval.Value - CurrentAnimation.Start.Interval.Value) * currentStep / CurrentAnimation.Sequence.TotalSteps);
+            int movementDuration = timer1.Interval;
+            if (_forcedVisibleAnimId != CurrentAnimation.ID)
+            {
+                Opacity = CurrentAnimation.Start.Opacity + (CurrentAnimation.End.Opacity - CurrentAnimation.Start.Opacity) * currentStep / CurrentAnimation.Sequence.TotalSteps;
+            }
+            EnsurePetVisible();
+			OffsetY = CurrentAnimation.Start.OffsetY + (double)((CurrentAnimation.End.OffsetY - CurrentAnimation.Start.OffsetY) * currentStep / CurrentAnimation.Sequence.TotalSteps);
+
+                // If dragging is enabled, move the pet to the mouse position.
+            if (IsDragging)
+            {
+                // Position follows mouse messages and the independent render timer.
+                return;
+            }
+
+            // Physics runs on the independent motion clock, not sprite frames.
+            if (IsTossing) return;
+
+            double x = CurrentAnimation.Start.X.Value;
+            double y = CurrentAnimation.Start.Y.Value;
+            // if TotalSteps is more than 1, we have to interpolate START and END values)
+            if (CurrentAnimation.Sequence.TotalSteps > 1)
+            {
+                x += ((CurrentAnimation.End.X.Value - CurrentAnimation.Start.X.Value) * (double)currentStep / (CurrentAnimation.Sequence.TotalSteps - 1.0));
+                y += ((CurrentAnimation.End.Y.Value - CurrentAnimation.Start.Y.Value) * (double)currentStep / (CurrentAnimation.Sequence.TotalSteps - 1.0));
+            }
+>>>>>>> REPLACE
