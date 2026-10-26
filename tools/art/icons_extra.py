@@ -3,7 +3,7 @@ import json
 import numpy as np
 from PIL import Image
 from props import Canvas, MAT, RAMP, E, shade, rect, hx, XX, YY
-from pig import OUT
+from pig import OUT, EYE, dil
 
 def _icon(draw):
     c = Canvas()
@@ -324,6 +324,54 @@ def get_new_icons():
         c.put_px(5, 4, RAMP['gold'][0]); c.put_px(5, 5, RAMP['gold'][0])
     I['trophy'] = _icon(trophy)
 
+    # achievement badges
+    def badge_care(c):
+        hw = np.where(YY < 8, 5.5, 5.5 - (YY - 8) * 0.95)
+        shield = (np.abs(XX - 8) <= hw) & (YY >= 1) & (YY < 15)
+        hw2 = hw - 1.3
+        inner = (np.abs(XX - 8) <= hw2) & (YY >= 2.3) & (YY < 13.6)
+        c.put_mat(shield, MAT['gold'], shade((XX - 8) / 5.5, (YY - 8) / 6.5))
+        c.put_mat(inner, MAT['blue'], shade((XX - 8) / 5.5, (YY - 8) / 6.5, 0.15))
+        cm = {'a': RAMP['red'][0], 'b': RAMP['red'][1], 'c': RAMP['red'][2]}
+        c.stamp(['.ab.bb.', 'abbbbbc', 'bbbbbbc', '.bbbbc.', '..bbc..', '...c...'], 5, 4, cm)
+    I['badge_care'] = _icon(badge_care)
+
+    def badge_play(c):
+        m, u, v = E(8, 8, 6.3, 6.3)
+        c.put_mat(m, MAT['red'], shade(u, v))
+        band = m & (np.abs((YY - 8) - 0.45 * (XX - 8)) < 1.4)
+        c.put_mat(band, MAT['cream'], shade(u, v, 0.35))
+        c.put_px(4, 4, RAMP['red'][0]); c.put_px(5, 3, RAMP['red'][0]); c.put_px(4, 5, RAMP['red'][0])
+    I['badge_play'] = _icon(badge_play)
+
+    def badge_growth(c):
+        soil, su, sv = E(8, 14, 5.5, 2.6)
+        c.put_mat(soil & (YY >= 12), MAT['wood'], shade(su, sv, -0.2))
+        c.put_mat(rect(7, 6, 9, 13), MAT['leaf'], np.where(XX < 8, 1, 2))
+        l1, u1, v1 = E(5, 5.5, 3.6, 2.0, 35)
+        l2, u2, v2 = E(11.2, 4, 3.6, 2.0, -35)
+        c.put_mat(l1, MAT['leaf'], shade(u1, v1))
+        c.put_mat(l2, MAT['leaf'], shade(u2, v2))
+        c.put_px(4, 5, RAMP['leaf'][0]); c.put_px(10, 3, RAMP['leaf'][0])
+    I['badge_growth'] = _icon(badge_growth)
+
+    def badge_social(c):
+        def head(cp, rp, mat):
+            m, u, v = E(cp + 0.5, rp + 0.5, 3.6, 3.6)
+            ears = E(cp + 0.5 - 2.8, rp + 0.5 - 2.6, 1.4, 1.3)[0] | E(cp + 0.5 + 2.8, rp + 0.5 - 2.6, 1.4, 1.3)[0]
+            c.put_mat(ears & ~m, MAT['pink'], 1)
+            c.put_mat(m, MAT[mat], shade(u, v))
+            c.put_px(cp - 2, rp, EYE); c.put_px(cp + 2, rp, EYE)
+            c.put_px(cp, rp + 2, RAMP['pink'][2])
+            return m | ears
+        back = head(10, 6, 'white')
+        front_cp, front_rp = 5, 10
+        front = head(front_cp, front_rp, 'orange')
+        ring = dil(front) & ~front & back
+        c.pig[ring] = OUT
+        c.mat[ring] = -2
+    I['badge_social'] = _icon(badge_social)
+
     return I
 
 def main(assets_dir):
@@ -340,7 +388,8 @@ def main(assets_dir):
         'wallpaper', 'floor', 'rug', 'plant', 'picture_frame', 'lamp',
         'gift', 'palette', 'music_note',
         'weather_clear', 'weather_cloudy', 'weather_fog', 'weather_rain', 'weather_snow', 'weather_storm',
-        'padlock', 'trophy'
+        'padlock', 'trophy',
+        'badge_care', 'badge_play', 'badge_growth', 'badge_social'
     ]
 
     new_icons_funcs = get_new_icons()

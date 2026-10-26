@@ -57,6 +57,10 @@
   "weather_snow": 53,
   "weather_storm": 54,
   "padlock": 55,
-  "trophy": 56
+  "trophy": 56,
+  "badge_care": 57,
+  "badge_play": 58,
+  "badge_growth": 59,
+  "badge_social": 60
  }
 }
