@@ -135,3 +135,14 @@ fala 5: R9-R10; fala 6: R11-R15.
 2. Ty scalasz, piszesz „fala N scalona”. Ja sprawdzam stan repo i puszczam następną.
 3. Po falach 1, 3, 5 i 7 testujesz na Windowsie (`tools/build.ps1`, `TESTING.md`) i dajesz mi listę usterek: poprawki idą jako
    małe zadania w następnej fali.
+
+## Kolejność puszczania po researchu (26.10.2026)
+Do `jules/queue/` kopiujesz pliki z `jules/tasks/` falami. Zależności w obrębie fal (reszta dowolnie):
+- Fala 3: F3-01..F3-04 razem.
+- Fala 4: F4-01..F4-10 razem (F4-09 przed falą 6).
+- Fala 5: F5-01..F5-04 razem (wymaga F4-08).
+- Fala 6: najpierw **F6-00** (NAudio 2.2.1) i dopiero po jego scaleniu F6-01. F6-09 po scaleniu F6-01 i F6-03. Reszta (F6-02..F6-08) razem z F6-00.
+- Fala 7: F7-01..F7-03 razem. F7-03 krok 6 (Velopack) tylko, gdy napiszesz w wątku „yes, Velopack”.
+- Fala 8: F8-01..F8-04 razem.
+Po scaleniu fal 3 i 6 zrób testy z `TESTY_RECZNE.md` (sonda z F6-09 po fali 6) i wpisz wyniki.
+
