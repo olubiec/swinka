@@ -19,6 +19,12 @@
    "animations": 60,
    "frames": 592
   },
+  "junior": {
+   "description": "Junior",
+   "folder": "junior",
+   "animations": 60,
+   "frames": 592
+  },
   "senior": {
    "description": "Senior",
    "folder": "senior",

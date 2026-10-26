@@ -2,9 +2,9 @@
 import json, os, shutil, sys
 from PIL import Image
 SRC, DST = sys.argv[1], sys.argv[2]
-VAR = {'dorosla':'adult','maluch':'baby','senior':'senior','legenda':'legend',
+VAR = {'dorosla':'adult','maluch':'baby','mlodzik':'junior','senior':'senior','legenda':'legend',
        'towarzysz_czarno-biala':'companion_black_white','towarzysz_agouti':'companion_agouti','towarzysz_kremowa':'companion_cream'}
-VAR_DESC = {'adult':'Adult (ginger)','baby':'Baby','senior':'Senior','legend':'Legend',
+VAR_DESC = {'adult':'Adult (ginger)','baby':'Baby','junior':'Junior','senior':'Senior','legend':'Legend',
             'companion_black_white':'Companion: black and white','companion_agouti':'Companion: agouti','companion_cream':'Companion: cream'}
 NEED = {'najedzenie':'fullness','witamina_c':'vitamin_c','energia':'energy','humor':'mood','czystosc':'cleanliness','zabki':'teeth'}
 ICON = {'papryka':'bell_pepper','ogorek':'cucumber','natka':'parsley','marchewka':'carrot','granulat':'pellets','gryzak':'chew_stick',

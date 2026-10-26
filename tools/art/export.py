@@ -10,6 +10,7 @@ OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file_
 VARIANTS = [
     ('dorosla', 'adult', 'ruda', 'Dorosła (ruda)'),
     ('maluch', 'baby', 'ruda', 'Maluch'),
+    ('mlodzik', 'junior', 'ruda', 'Młodzik'),
     ('senior', 'senior', 'ruda', 'Senior'),
     ('legenda', 'legend', 'ruda', 'Legenda'),
     ('towarzysz_czarno-biala', 'adult', 'czarno-biala', 'Towarzysz: czarno-biała'),

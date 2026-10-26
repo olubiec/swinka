@@ -42,6 +42,8 @@ def set_style(age='adult', coat='ruda'):
     STYLE.update(kb=1.0, kh=1.0, coat=coat, senior=False, gold=False)
     if age == 'baby':
         STYLE.update(kb=0.78, kh=0.88)
+    elif age == 'junior':
+        STYLE.update(kb=0.9, kh=0.94)
     elif age == 'senior':
         STYLE.update(senior=True)
     elif age == 'legend':
