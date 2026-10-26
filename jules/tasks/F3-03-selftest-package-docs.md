@@ -36,7 +36,7 @@ Read `AGENTS.md` first. All F1/F2 tasks are merged.
    task (the runtime hook is F7-03, optional). Never change `--packId` after the first release (it is the install identity);
    vpk version must equal the Velopack NuGet version.
 9. Docs (R4): `tools/package/README.txt` and `README.md`: a section "Windows warns me" for an unsigned app (no code-signing
-   certificate: Azure Trusted Signing is for individuals only in the US/Canada, so not possible for a private person in
+   certificate: Azure Artifact Signing (formerly Trusted Signing) is for individuals only in the US/Canada, so not possible for a private person in
    Poland): SmartScreen shows "Windows protected your PC" with More info > Run anyway; with Smart App Control turned On the
    file can be blocked completely (no Run anyway); the only ways are turning Smart App Control off in Windows Security or
    Microsoft recognising the file; false positives can be reported at https://www.microsoft.com/en-us/wdsi/filesubmission.

@@ -1415,7 +1415,7 @@ Opisz, co zobaczy użytkownik przy ostrzeżeniu SmartScreen i jak je przejść.
 
 **Korekta (25.10.2026):** paczka zip, `tools/package.ps1` i `--selftest` z CC3 już działają, więc instalator jest opcjonalny. Przed F3 zrób research R1 i R2 (`PLAN_POPRAWKI.md`, część B): porównanie Inno Setup, Velopack i zip oraz SmartScreen. Dla instalatora nie używaj starych nazw (`Swinka`, `/domek`), tylko `Cuy`, `assets/`, `web/`.
 
-Zmiana po researchu (R3.1–R3.4, R4.1–R4.4, R7.2): zostaje ZIP; Velopack tylko opcjonalnie (`VelopackApp.Build().Run()` pierwsza linia `Main()`, klucz Run usuwany w `OnBeforeUninstallFastCallback`, test na VM, `--packId` nigdy nie zmieniać); brak podpisu kodu (Azure Trusted Signing: osoba prywatna w PL odpada), więc README opisuje SmartScreen i Smart App Control; brak WebView2 sprawdza `GetAvailableBrowserVersionString()` z linkiem do strony Microsoftu.
+Zmiana po researchu (R3.1–R3.4, R4.1–R4.4, R7.2): zostaje ZIP; Velopack tylko opcjonalnie (`VelopackApp.Build().Run()` pierwsza linia `Main()`, klucz Run usuwany w `OnBeforeUninstallFastCallback`, test na VM, `--packId` nigdy nie zmieniać); brak podpisu kodu (Azure Artifact Signing (formerly Trusted Signing): osoba prywatna w PL odpada), więc README opisuje SmartScreen i Smart App Control; brak WebView2 sprawdza `GetAvailableBrowserVersionString()` z linkiem do strony Microsoftu.
 
 ### F4 · Claude: przegląd przed oddaniem
 

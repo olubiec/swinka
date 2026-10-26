@@ -9,7 +9,7 @@ The notices and full license texts are provided below.
 
 - Project: https://github.com/Adrianotiger/desktopPet
 - Author: Adriano Petrucci (Adrianotiger) and contributors
-- License: MIT License
+- License: MIT License (added to the upstream repository on 2026-10-14; keep this attribution)
 
 ### Contributors & Acknowledgments:
 - NAudio integration for audio playback
@@ -45,7 +45,7 @@ SOFTWARE.
 
 ---
 
-## 2. Phaser 3
+## 2. Phaser 3 (3.90.0, pinned locally)
 
 - Project: https://github.com/phaserjs/phaser
 - Author: Richard Davey, Photon Storm Ltd.
@@ -158,3 +158,64 @@ Audio clips used in Cuy are licensed under the **Pixabay Content License** (orig
 | `pisk_zlosci.wav` | Upset, excessive clicks (`chatter`) | Angry guinea pig (Karola3206) / Pixabay |
 | `chrupanie_1.wav`, `chrupanie_2.wav` | Eating | Eating a Carrot / Pixabay |
 | `pop.wav` | Popcorning | Happy Pop 2 (floraphonic) / Pixabay |
+
+---
+
+## 7. NAudio
+
+- Project: https://github.com/naudio/NAudio (packages `NAudio.Core`, `NAudio.WinMM`, `NAudio.Wasapi`, version 2.2.1 after task F6-00)
+- Author: Mark Heath and contributors
+- License: MIT License (https://github.com/naudio/NAudio/blob/master/LICENSE)
+
+Used for sound playback and for the per-session audio peak meters that let the pig dance to music (no audio is recorded).
+
+---
+
+## 8. Open-Meteo and GeoNames (weather data)
+
+- Weather data by Open-Meteo.com: https://open-meteo.com/
+- Data licence: Creative Commons Attribution 4.0 (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/
+- City search uses the Open-Meteo geocoding API, which is based on GeoNames (https://www.geonames.org/, CC BY 4.0).
+- The free API is for non-commercial use only; Cuy is a free gift and must stay non-commercial while it uses it (see `README.md`, "Weather data").
+
+The attribution link is shown next to the weather in the Home settings.
+
+---
+
+## 9. Tracery (concept and syntax only)
+
+- Project: https://github.com/galaxykate/tracery (Kate Compton), Apache-2.0
+- Cuy uses its own implementation (`src/Cuy.Core/Diary/TraceryGrammar.cs`) of the Tracery grammar syntax for the diary; no Tracery code is included.
+- Own extensions (not part of Tracery): the `[key:POP]` action and the `lower` modifier.
+
+---
+
+## 10. ZzFX
+
+- Project: https://github.com/KilledByAPixel/ZzFX (Frank Force)
+- License: MIT License (https://github.com/KilledByAPixel/ZzFX/blob/master/LICENSE)
+- `ZzFXMicro.min.js` (about 1.2 KB) generates the short sound effects in the Home page at runtime (task F4-07).
+
+---
+
+## 11. Chromium (ported logic)
+
+- Project: https://chromium.googlesource.com/chromium/src (`ui/base/fullscreen_win.cc`)
+- License: BSD 3-Clause, Copyright The Chromium Authors (https://chromium.googlesource.com/chromium/src/+/main/LICENSE)
+- `FullscreenDetector` (task F6-03) is a C# port of the logic of `IsPlatformFullScreenMode` and `IsFullScreenWindowMode` with Cuy changes (desktop shell exclusion, per-monitor test).
+  The idea of excluding the desktop shell windows comes from Flow Launcher (no code copied; its licence is unconfirmed).
+
+---
+
+## 12. Velopack (optional, only if the installer is built)
+
+- Project: https://github.com/velopack/velopack, https://docs.velopack.io
+- License: MIT License
+- Used only for the optional installer and auto-update (tasks F3-03, F7-03). The ZIP package stays the default.
+
+---
+
+## 13. Only if the code is actually copied or used (not part of the build today)
+
+- `ourcade/infinite-jumper-template-phaser3` (MIT, https://github.com/ourcade/infinite-jumper-template-phaser3): the Hay Hop game follows its pattern; add its MIT notice here if code is copied (F5-01).
+- NES.css (MIT) and rot.js (BSD-3-Clause): NOT used (decision R1, R10.3); add them here only if that changes.

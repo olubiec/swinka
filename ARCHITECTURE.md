@@ -158,3 +158,18 @@ Tiles are scaled nearest neighbour (each source pixel drawn as an `iScale x iSca
 - Flight (`AdvanceToss`): horizontal movement with a -0.3 bounce at screen edges, vertical `dy = vy*dt + 0.75*dt^2`, `vy += 1.5*dt`, window landing through `FallDetect`. On landing it plays `fall soft` (vy < 40) or `fall hard`.
 
 Physics always has priority over the Brain: `BrainController` pauses the current action while the pet is dragged, thrown or falling, and resumes it after landing.
+
+## 8. Planned components (not implemented yet)
+
+Decided after the research of 26.10.2026 (`DECYZJE.md`). Ready-made drafts live in `research/gotowce/`; the Core ones are already in `src/Cuy.Core`.
+
+| Component | Where | Role | Task |
+| --- | --- | --- | --- |
+| `AudioSessionProbe` | `src/Cuy/dotNet/Platform/` | Loudest per-session audio peak (NAudio 2.2.1, no loopback) | F6-01 |
+| `MusicDetector` (exists) | `src/Cuy.Core/Audio/` | Peaks over time to "music is playing" | F6-01 |
+| `FullscreenDetector` | `src/Cuy/dotNet/Platform/` | Chromium-style full-screen test, desktop shell excluded, per monitor | F6-03 |
+| `WeatherService` | `src/Cuy/dotNet/Platform/` | Own Open-Meteo client (the only network use); Core mapping in `Cuy.Core.Weather` (exists) | F6-04 |
+| `Updater` (optional) | `src/Cuy/dotNet/Platform/` | Velopack background update next to the ZIP | F7-03 |
+| `MouseShakeDetector` (exists), `MouseShakeMonitor` | `src/Cuy.Core/Input/`, `src/Cuy/dotNet/Platform/` | Shaken mouse near the pig | F3-04 |
+| `TraceryGrammar` (exists) | `src/Cuy.Core/Diary/` | Own Tracery-style engine for the diary | F4-03 |
+
