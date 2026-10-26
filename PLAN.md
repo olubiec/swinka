@@ -53,6 +53,8 @@ Dlaczego tak: eSheep daje za darmo najtrudniejszą część (fizykę na pulpicie
 - W repo leży plik `PLAN.md` (ten dokument) i `ZASADY.md` dla agentów. Każdy prompt zaczyna się od „przeczytaj PLAN.md i ZASADY.md”.
 - Gdy agent utknie dwa razy na tym samym, przekazujesz zadanie drugiemu modelowi albo wklejasz błąd do tego czatu.
 
+Zmiana po researchu (R9.1, R9.2): minigry w Phaser 3.90.0 przypiętym lokalnie (zamiast 3.80.1); bez migracji na Phaser 4 i bez mieszania wersji.
+
 ## Pierwowzory dla każdego podsystemu
 
 Każdy podsystem ma gotowy wzór: albo kod do skopiowania lub przerobienia, albo działającą grę do podejrzenia. Agent w Antigravity dostaje link w prompcie i sam czyta repozytorium.
@@ -153,6 +155,8 @@ Punkty więzi daje każda opieka, z dziennym limitem, żeby nie dało się „na
 | Opieka (karmienie, sprzątanie) | 1–3 |
 
 Walutą są koniczynki: koniczyna to przysmak świnek, a ziaren nie powinny jeść. Granulat zostaje zwykłym jedzeniem ze sklepiku. Wydatki: warzywa 5–15, gryzaki 20, zabawki 50–150, domki i tunele 200–400, wystrój Domku 100–500.
+
+Zmiana po researchu (R5.1, R5.2): kwoty w tabeli to wybory projektowe do strojenia w symulacji 30/60 dni (żadne źródło nie podaje „dni do zakupu”). Dzienna nagroda: cykl 7 dni z łagodną eskalacją, bez resetu do zera po opuszczonym dniu, mały „dzień łaski”, bez odliczań i czerwonych komunikatów.
 
 ## Lista animacji
 
@@ -274,6 +278,8 @@ Wąskie pytania dla Claude Haiku, po jednym na zadanie, z miejscem użycia każd
 Wyniki trafiają do `research/<id>.md`; po weryfikacji poprawiamy prompty w `jules/tasks/` przed wrzuceniem fali do kolejki.
 Kolejność: teraz R1, R2, R8 (R8 sprawdza zdrowie świnek w scalonych F1-07/F1-08); przed falą 3 R3-R5; przed falą 4 R6-R7;
 przed falą 5 R9-R10; przed falą 6 R11-R15.
+
+Zmiana po researchu (R1–R15): wykonany 26.10.2026; statusy w `RESEARCH.md`, decyzje w `DECYZJE.md`, prompty fal przepisane w `jules/tasks/`. Rzeczy z UNVERIFIED są w `TESTY_RECZNE.md`.
 
 ## Prompty do Antigravity
 
@@ -1189,6 +1195,8 @@ Przeczytaj PLAN.md (Lista animacji), ZASADY.md, SwinkaCore i /domek.
 
 **Sprawdź:** zakładki Album i Pamiętnik w Domku. **Powinno być:** niezobaczone animacje jako ciemne sylwetki ze znakami zapytania, zobaczone jako mała animacja z datą; licznik zebranych; w pamiętniku wpis z dzisiaj pisany przez świnkę.
 
+Zmiana po researchu (R6.1–R6.3): pamiętnik dostaje własny silnik w stylu Tracery (`TraceryGrammar` w `Cuy.Core/Diary`), szablony po angielsku (RULES.md); zasady treści z R6.3 (średnie sloty, stały wybór w obrębie wpisu, wpisy zależne od stanu, limit rekurencji).
+
 ### D1 · Claude: szkielet minigier
 
 ```text
@@ -1236,6 +1244,8 @@ Czas 60 s, każdy kolejny poziom większy o 2. Punkty = poziomy x pozostały cza
 
 **Powinno być:** za każdym razem inny labirynt z siana; świnka widziana z góry idzie strzałkami do papryki; licznik 60 s; kolejne poziomy większe; po drodze koniczynki do zebrania.
 
+Zmiana po researchu (R10.3, R9.1): własny recursive backtracker (~20 linii), bez rot.js; Phaser 3.90.0.
+
 ### D5 · Gemini: Memory warzyw
 
 ```text
@@ -1246,6 +1256,8 @@ Gra ma być spokojna: bez limitu czasu, łagodne dźwięki.
 ```
 
 **Powinno być:** karty z ikonami warzyw, odkrywanie par, po ułożeniu wszystkich mała świnka w rogu robi popcorn; poziomy 12, 16 i 20 kart; bez limitu czasu.
+
+Zmiana po researchu (R10.2): własny wzorzec `canMove`/`isFlipping` i dwustopniowy tween `scaleX` (nie `rotateY`); Phaser 3.90.0.
 
 ### E1 · Claude: taniec do muzyki
 
@@ -1273,6 +1285,8 @@ Report: how to test (song, podcast/speech, silence, a browser video, YouTube wit
 ```
 
 **Sprawdź:** utwór, podcast, cisza, wideo w przeglądarce, wtyczka słuchawek. **Powinno być:** taniec do muzyki, brak tańca do mowy i szumu, max jeden taniec na 3 minuty, brak wyjątków przy braku urządzenia audio.
+
+Zmiana po researchu (R11.1–R12.3): zamiast jednego miernika urządzenia — per-sesyjne mierniki szczytu (`AudioSessionProbe` → `MusicDetector`), bez WASAPI loopback i bez BPM (Step B odpada); NAudio 2.2.1 w osobnym F6-00; SMTC tylko jako opcjonalne rozszerzenie po testach; lista wykluczeń procesów (Discord, Zoom, Teams…) niezweryfikowana, trzymana w konfiguracji.
 
 ### E2 · Claude: strach i chowanie się
 
@@ -1308,6 +1322,8 @@ PowerPoint slide show, a maximized (not full-screen) window (must NOT hide), a s
 
 **Sprawdź:** lista z końca promptu. **Powinno być:** chowa się w grze, wideo i pokazie slajdów; NIE chowa się przy zwykłym zmaksymalizowanym oknie; po wyjściu wraca przez peek.
 
+Zmiana po researchu (R13.1–R13.3): bez `QUNS_BUSY` (tylko D3D_FULL_SCREEN + PRESENTATION_MODE), plus geometria (maksymalizowane okno wystaje ok. 8 px i ma `WS_THICKFRAME`), wykluczenie pulpitu Progman/WorkerW z `SHELLDLL_DefView`, `Covers(punkt)` per monitor; poprawka błędu w `SoundManager.IsFullScreenOrBusy()`; sonda logująca stan do `cuy.log` (F6-09).
+
 ### E4 · Gemini: głaskanie
 
 ```text
@@ -1339,6 +1355,8 @@ Tests: WMO mapping, offline fallback, no request when no city is set.
 
 **Sprawdź:** wpisz miasto, wymuś deszcz w trybie testowym. **Powinno być:** świnka reaguje na deszcz i upał/zimno, bez miasta nie ma żadnych zapytań, w razie braku internetu brak błędów.
 
+Zmiana po researchu (R15.1, R15.2): własny klient Open-Meteo (OpenMeteo.dotnet wymaga netstandard2.1); geokodowanie `language=pl`, `countryCode=PL`, `count=10` z wyborem z listy (nazwa + admin1 + admin2); atrybucja: link „Weather data by Open-Meteo.com” + licencja CC BY 4.0 + GeoNames; nie polegać na `current_units`.
+
 ### E6 · Claude: sztuczki i towarzysz
 
 ```text
@@ -1354,6 +1372,8 @@ Przeczytaj PLAN.md (Poziom więzi), ZASADY.md, ARCHITEKTURA.md, Brain i SwinkaCo
 
 **Korekta (25.10.2026):** CC1 wymusił `MaxPets = 1`. Ustaw 2 dopiero po odblokowaniu towarzysza (więź 10 + 1. urodziny), a drugą świnkę zbuduj na istniejącym mechanizmie eSheep (`<childs>` w `animations.xml` i kod wielu zwierzaków w `StartUp`/`FormPet`). Dźwięki obu świnek mają wspólny limit (jedno kwiknięcie na 30 s). Szczegóły: `PLAN_POPRAWKI.md`, sekcja E6.
 
+Zmiana po researchu (R14.1–R14.3): eSheep ma MIT od 2026-10-14 (zachować atrybucję); interakcja eSheep działa po tytule okna „Sheep”, więc drugi zwierzak ma unikalny tytuł okna i własny limit (np. 2); idea Breed+BornBehavior ze Shimeji; przed integracją `git log --since=2024-01-01` na klonie eSheep.
+
 ### F1 · ty + Gemini: dźwięki
 
 - [x] Zrobione: 10 klipów (kwiki, mruczenie, ćwierkanie, piski, chrupanie, pop) leży w swinka/dzwieki/, opis w CZYTAJ.md
@@ -1366,6 +1386,8 @@ losowa lekka zmiana wysokości dźwięku, maks. jeden dźwięk kwiczenia na 2 mi
 
 **Powinno być:** kwiczenie przy głodzie (najwyżej raz na 2 minuty), chrupanie przy jedzeniu, mruczenie przy głaskaniu; cisza w godzinach ciszy i przy pełnym ekranie.
 
+Zmiana po researchu (R2.1, R2.4, R13.1): efekty z ZzFX (MIT, 1,226 B) generowane w `web/home/sound.js`; AudioContext startuje wstrzymany, więc `resume()` na pierwszym kliknięciu; błąd `SoundManager.IsFullScreenOrBusy()` naprawia F6-03.
+
 ### F2 · Gemini: ustawienia i autostart
 
 ```text
@@ -1377,6 +1399,8 @@ w oknie Domku. Ukryty tryb deweloperski (5 kliknięć w wersję): mnożnik czasu
 **Sprawdź:** zmień imię, włącz autostart i zrestartuj Windows. **Powinno być:** nowe imię od razu w Domku i w zasobniku; po restarcie świnka wraca sama; reset gry pyta o potwierdzenie w oknie Domku.
 
 **Korekta (25.10.2026):** autostart i ikonę w zasobniku zrobił już CC3. W F2 zostaje ekran Ustawienia w Domku (głośność, godziny ciszy, reakcja na muzykę, miasto do pogody, wielkość, monitor, reset, tryb deweloperski). Tray i Ustawienia mają być zsynchronizowane.
+
+Zmiana po researchu (R1.1–R1.3, R2.4): panel Ustawienia w własnym CSS z `web/home/style.css` (bez NES.css: brak suwaka i przełącznika); fallback autoplay `audioContext.resume()`.
 
 ### F3 · Gemini: instalator
 
@@ -1391,6 +1415,8 @@ Opisz, co zobaczy użytkownik przy ostrzeżeniu SmartScreen i jak je przejść.
 
 **Korekta (25.10.2026):** paczka zip, `tools/package.ps1` i `--selftest` z CC3 już działają, więc instalator jest opcjonalny. Przed F3 zrób research R1 i R2 (`PLAN_POPRAWKI.md`, część B): porównanie Inno Setup, Velopack i zip oraz SmartScreen. Dla instalatora nie używaj starych nazw (`Swinka`, `/domek`), tylko `Cuy`, `assets/`, `web/`.
 
+Zmiana po researchu (R3.1–R3.4, R4.1–R4.4, R7.2): zostaje ZIP; Velopack tylko opcjonalnie (`VelopackApp.Build().Run()` pierwsza linia `Main()`, klucz Run usuwany w `OnBeforeUninstallFastCallback`, test na VM, `--packId` nigdy nie zmieniać); brak podpisu kodu (Azure Trusted Signing: osoba prywatna w PL odpada), więc README opisuje SmartScreen i Smart App Control; brak WebView2 sprawdza `GetAvailableBrowserVersionString()` z linkiem do strony Microsoftu.
+
 ### F4 · Claude: przegląd przed oddaniem
 
 ```text
@@ -1403,6 +1429,8 @@ Napisz TESTY_RECZNE.md: lista 30 kroków do sprawdzenia przed prezentem. Popraw 
 **Powinno być:** plik `TESTY_RECZNE.md` z 30 krokami, log błędów w `%AppData%\Swinka\log.txt`, każda poprawka osobnym commitem. Przejdź listę sam przed wręczeniem prezentu.
 
 **Korekta (25.10.2026):** ten krok zastępują QA1 i QA2 (etap Q) oraz `TESTING.md`. Log błędów jest w `%LocalAppData%\Cuy\logs\cuy.log`, nie w `%AppData%\Swinka`.
+
+Zmiana po researchu (R7.1, R4.4): WebView2 w Release bez DevTools, skrótów przeglądarki, menu kontekstowego, zoomu, autouzupełniania (lista w DECYZJE.md); lista testów ręcznych z UNVERIFIED w `TESTY_RECZNE.md`.
 
 ### Szablon, gdy agent utknie
 
