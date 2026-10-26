@@ -1,0 +1,24 @@
+{
+  "items": [
+    { "id": "wallpaper_mint", "name": "Mint wallpaper", "category": "decor", "price": 150, "icon": "wallpaper", "one_time": true, "slot": "wallpaper", "description": "Mint stripes.", "look": { "color1": "#bfe3c9", "color2": "#a7d4b5", "pattern": "stripes" } },
+    { "id": "wallpaper_peach", "name": "Peach wallpaper", "category": "decor", "price": 150, "icon": "wallpaper", "one_time": true, "slot": "wallpaper", "description": "Peach dots.", "look": { "bg": "#f9dcc4", "dots": "#f6c9a8", "pattern": "dots" } },
+    { "id": "wallpaper_sky", "name": "Sky wallpaper", "category": "decor", "price": 150, "icon": "wallpaper", "one_time": true, "slot": "wallpaper", "description": "Sky clouds.", "look": { "clouds": "#cfe6f7", "pattern": "clouds" } },
+    { "id": "wallpaper_lilac", "name": "Lilac wallpaper", "category": "decor", "price": 150, "icon": "wallpaper", "one_time": true, "slot": "wallpaper", "description": "Lilac diamonds.", "look": { "color1": "#d9c8ef", "color2": "#c9b3e6", "pattern": "diamonds" } },
+    { "id": "wallpaper_night", "name": "Night wallpaper", "category": "decor", "price": 250, "icon": "wallpaper", "one_time": true, "slot": "wallpaper", "description": "Night stars.", "look": { "bg": "#2e3557", "pattern": "stars" } },
+    { "id": "floor_wood_light", "name": "Light wood floor", "category": "decor", "price": 120, "icon": "floor", "one_time": true, "slot": "floor", "description": "A light wood floor.", "look": { "type": "wood_light" } },
+    { "id": "floor_tiles_checker", "name": "Checker floor", "category": "decor", "price": 120, "icon": "floor", "one_time": true, "slot": "floor", "description": "A checker tiles floor.", "look": { "type": "tiles_checker" } },
+    { "id": "floor_grass", "name": "Grass floor", "category": "decor", "price": 120, "icon": "floor", "one_time": true, "slot": "floor", "description": "A grass floor.", "look": { "type": "grass" } },
+    { "id": "floor_carpet_red", "name": "Red carpet floor", "category": "decor", "price": 120, "icon": "floor", "one_time": true, "slot": "floor", "description": "A red carpet floor.", "look": { "type": "carpet_red" } },
+    { "id": "rug_round_pink", "name": "Pink round rug", "category": "decor", "price": 80, "icon": "rug", "one_time": true, "slot": "rug", "description": "A round pink rug.", "look": { "type": "round_pink" } },
+    { "id": "rug_stripes", "name": "Stripes rug", "category": "decor", "price": 80, "icon": "rug", "one_time": true, "slot": "rug", "description": "A striped rug.", "look": { "type": "stripes" } },
+    { "id": "rug_heart", "name": "Heart rug", "category": "decor", "price": 80, "icon": "rug", "one_time": true, "slot": "rug", "description": "A heart rug.", "look": { "type": "heart" } },
+    { "id": "plant_fern", "name": "Fern", "category": "decor", "price": 60, "icon": "plant", "one_time": true, "slot": "plant", "description": "A nice fern.", "look": { "type": "fern" } },
+    { "id": "plant_cactus", "name": "Cactus", "category": "decor", "price": 60, "icon": "plant", "one_time": true, "slot": "plant", "description": "A cactus.", "look": { "type": "cactus" } },
+    { "id": "plant_flowers", "name": "Flowers", "category": "decor", "price": 60, "icon": "plant", "one_time": true, "slot": "plant", "description": "Nice flowers.", "look": { "type": "flowers" } },
+    { "id": "picture_pig", "name": "Pig picture", "category": "decor", "price": 100, "icon": "picture_frame", "one_time": true, "slot": "picture", "description": "A framed pixel pig.", "look": { "type": "pig" } },
+    { "id": "picture_sunset", "name": "Sunset picture", "category": "decor", "price": 100, "icon": "picture_frame", "one_time": true, "slot": "picture", "description": "A framed sunset.", "look": { "type": "sunset" } },
+    { "id": "picture_carrot", "name": "Carrot picture", "category": "decor", "price": 100, "icon": "picture_frame", "one_time": true, "slot": "picture", "description": "A framed carrot.", "look": { "type": "carrot" } },
+    { "id": "lamp_mushroom", "name": "Mushroom lamp", "category": "decor", "price": 140, "icon": "lamp", "one_time": true, "slot": "lamp", "description": "Warm glow.", "look": { "type": "mushroom" } },
+    { "id": "lamp_star", "name": "Star lamp", "category": "decor", "price": 140, "icon": "lamp", "one_time": true, "slot": "lamp", "description": "A star lamp.", "look": { "type": "star" } }
+  ]
+}
