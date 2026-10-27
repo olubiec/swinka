@@ -10,6 +10,8 @@ namespace Cuy.Core
     {
         private List<CareTaskDefinition> _careTasks = new List<CareTaskDefinition>();
 
+        public IReadOnlyList<CareTaskDefinition> CareTasks => _careTasks;
+
         public void SetCareTasks(IEnumerable<CareTaskDefinition> tasks)
         {
             _careTasks = tasks?.ToList() ?? new List<CareTaskDefinition>();
