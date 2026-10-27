@@ -13,3 +13,6 @@ app.publish/
 nuget.exe
 __pycache__/
 *.pyc
+*.orig
+*.bak
+*.rej
