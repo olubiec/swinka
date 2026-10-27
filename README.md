@@ -4,8 +4,10 @@ A pixel art guinea pig for the Windows desktop. It walks on the taskbar and on w
 
 | What | Where |
 | --- | --- |
-| Project plan, stages and prompts (Polish) | `PLAN.md` |
-| Rules for AI agents | `RULES.md`, `CLAUDE.md` |
+| Concept, current plan, waves and status (Polish) | `docs/CONCEPT.md`, `docs/PLAN.md` (old master plan: `PLAN.md`) |
+| Rules for AI agents (Claude, Jules) | `AGENTS.md`, `CLAUDE.md` |
+| Jules tasks: one file = one task; evening backlog | `tasks/`, `tasks/BACKLOG.md`, `tools/jules-wave.sh`, `setup.sh` |
+| Home message and state contracts | `docs/contracts.md` |
 | Architecture | `ARCHITECTURE.md` |
 | Art (60 animations x 7 variants, icons), sounds and game data | `assets/` |
 | Desktop app (C#, .NET Framework 4.8, based on eSheep, MIT) | `src/Cuy/` |
