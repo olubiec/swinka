@@ -1,0 +1,13 @@
+{
+ "levels": [
+  { "level": 2, "id": "approach_cursor", "title": "Comes to your cursor instead of running away" },
+  { "level": 3, "id": "greet_on_start", "title": "Wheeks hello when you start the PC" },
+  { "level": 5, "id": "trick_spin", "title": "Spins around" },
+  { "level": 7, "id": "come_when_called", "title": "Comes running when you call" },
+  { "level": 9, "id": "trick_stand_up", "title": "Stands up on two legs" },
+  { "level": 10, "id": "companion", "title": "Allows adding a companion" },
+  { "level": 12, "id": "trick_popcorn", "title": "Popcorns when happy" },
+  { "level": 15, "id": "trick_hurdle", "title": "Jumps over a hurdle" },
+  { "level": 20, "id": "golden_bowl", "title": "Unlocks the golden bowl" }
+ ]
+}
