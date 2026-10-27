@@ -1,0 +1,17 @@
+Wykonaj to zadanie zgodnie z AGENTS.md (przeczytaj AGENTS.md najpierw). Jedno zadanie = jeden PR; tytuł PR = "<ID>: <tytuł>".
+
+# W1-07: Hay rack (Core): stock, refill and consumption
+Goal: a hay rack holds 0-100 hay, the player refills it for free and Core can consume it online and offline.
+Depends on: nothing (wave start). Offline decay already uses a multiplier of 1/3 with a floor of 20 (`actions.json` `offline`, `OfflineRulesTests.cs`): do not change that.
+Pattern: data tables follow `EconomyConfig` (see AGENTS.md, "Data tables"): `Current`, `Load(string)`, `LoadDefault()`. The desktop never passes JSON to Core.
+Change: new `assets/data/hay.json`, new `src/Cuy.Core/Hay/HayConfig.cs`, new `src/Cuy.Core/GameState.Hay.cs`, new `src/Cuy.Core/Pet.Hay.cs`, new `tests/Cuy.Core.Tests/HayRackTests.cs`
+Do not touch: everything not listed under Change; in particular `AGENTS.md`, `docs/PLAN.md`, `tasks/*`, `src/Cuy.Core/Pet.cs`, `src/Cuy.Core/Cuy.Core.csproj`.
+Steps:
+1. `hay.json`: `{ "max": 100, "refillAmount": 50, "eatPerGameHour": 6, "offlineEatPerHour": 2, "fullnessPerHayUnit": 0.5, "wheekBelow": 10 }` (camelCase keys map to the C# properties by Newtonsoft's case-insensitive matching).
+2. `Cuy.Core.Hay.HayConfig` (sealed class with those six properties and the same defaults as the file): `static HayConfig Current` (lazy), `static HayConfig Load(string json)` (bad JSON: log through `ItemCatalog.ErrorLogger`, return defaults), `static HayConfig LoadDefault()` (file `assets/data/hay.json`, same candidate paths as `EconomyConfig.LoadDefault`, then code defaults).
+3. `GameState.Hay.cs`: `public sealed partial class GameState` (check how the other `GameState.*.cs` files declare it) with one property `HayRack` (double, default 60). Old saves without it must load with 60.
+4. `Pet.Hay.cs` (`partial class Pet`): property `HayConfig HayTable { get; set; }` (null means `HayConfig.Current`; tests inject their own). `void RefillHay()` adds `refillAmount`, capped at `max`; no clover cost, no reward, nothing happens at the cap. `double ConsumeHay(double gameHours, bool offline)`: eats `eatPerGameHour` (online) or `offlineEatPerHour` (offline) units per hour, limited by the stock and by the fullness cap (it stops when `Needs.Satiety` reaches 95), raises fullness by `fullnessPerHayUnit` per unit (use `ChangeNeed(Need.Satiety, delta)`), never lets the stock go below 0, returns the units eaten. Do NOT call these from `Pet.Update` or `Start` (W2-04 does).
+5. Tests (`RepoFile` helper from AGENTS.md; inject the table with `pet.HayTable`; never assign `HayConfig.Current`): refill and the cap (60 -> 100, then no change); online consumption lowers the stock and raises fullness; offline uses the slower rate; the stock never goes negative; no eating at fullness 95 or more; an old save JSON without `HayRack` loads with 60; save/load round trip keeps the stock; `hay.json` parses to the six values above.
+Verify: `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release` passes.
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Change".
+PR: what was done, decisions and why, how to check by hand; screenshot if the change is visual.
