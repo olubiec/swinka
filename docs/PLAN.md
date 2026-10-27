@@ -178,4 +178,4 @@ F7-01→W7-06 · F7-02→W6-07 · F7-03→W7-07..W7-09 · F8-01→W4-13,W5-09,W6
 4. Pamięć repo (Knowledge → memory): włącz. 5. MCP: Context7 (aktualne docs bibliotek), Stitch (makiety). 6. Reactive Mode, jeśli Jules ma reagować tylko na `@jules`.
 7. Powiadomienia przeglądarki i Commit Authoring „Co-authored” wg uznania. 8. Scheduled Tasks (Performance, Design, Security; dziennie na tym repo) i Suggested Tasks
 (zostawiaj `// TODO:` z konkretnym opisem). 9. Sekrety i klucze tylko w ustawieniach Julesa, nigdy w repo (aktualnie nie ma żadnych).
-10. Usunięto własny workflow `jules-dispatch.yml` i `jules/queue/`: start fal idzie przez CLI (`tools/jules-wave.sh`, `npm i -g @google/jules`, `jules login`). Sekret `JULES_API_KEY` w repo nie jest już potrzebny.
+10. Start fal przez GitHub: PR dodający pliki do `jules/queue/*.md` (kopie `tasks/Wn-*.md`) uruchamia workflow `jules-dispatch.yml` po scaleniu do `main` (jedna sesja Julesa na plik, REST API v1alpha, sekret `JULES_API_KEY`). Ponowny start pliku: `workflow_dispatch` z wejściem `file`. Alternatywa: CLI `tools/jules-wave.sh Wn`.
