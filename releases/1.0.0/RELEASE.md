@@ -9,7 +9,7 @@ The first version handed out as a gift (`Cuy_v1.zip`, first build on 2026-10-15 
 
 ## Known gaps in 1.0.0 (fixed later on main, not in this zip)
 - Work in progress from the Jules waves (F0 onwards) is on `main` only.
-- Anything listed in `jules/PLAN.md` as wave 1 or later is not in this build.
+- Anything listed in `docs/PLAN.md` as wave 1 or later is not in this build.
 
 ## Updating a gift copy
 Unzip the new version into the same folder and replace the files. The save is in `%AppData%\Cuy` and stays.

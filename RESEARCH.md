@@ -83,8 +83,8 @@ Research robi Claude Haiku: jedno wąskie pytanie = jedno zadanie. Haiku zbiera 
 1. Do każdego pytania doklej **wstęp** (niżej) i treść pytania z bloku `Question`.
 2. Wynik zapisz jako `research/<id>.md` (np. `research/R3.2.md`).
 3. Weryfikacja: Claude (Sonnet/Opus) sprawdza wersje, licencje i nazwy API z linków, potem poprawia prompt zadania
-   w `jules/tasks/` (kolumna „Gdzie trafia”). Bez weryfikacji wynik nie trafia do promptu.
-4. Research danej fali robimy, zanim fala trafi do `jules/queue/`.
+   w `tasks/` (wave files) i `docs/PLAN.md` (kolumna „Gdzie trafia”). Bez weryfikacji wynik nie trafia do promptu.
+4. Research danej fali robimy, zanim fala zostanie uruchomiona (`tools/jules-wave.sh`).
 
 ### Wstęp do każdego pytania
 

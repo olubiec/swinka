@@ -1,11 +1,11 @@
-# Checks every pull request (Jules PRs included): Core tests, JS syntax, Home page smoke test,
+# Checks every pull request (Jules PRs included; CI Fixer repairs red checks here): Core tests, JS syntax, Home page smoke test,
 # and (once src/Cuy/Cuy.csproj is SDK-style) a Linux compile of the desktop app.
 name: CI
 on:
   pull_request:
   push:
     branches: [main]
-    paths-ignore: ['jules/**', '**.md']
+    paths-ignore: ['**.md', 'docs/**', 'tasks/**']
 
 jobs:
   core-tests:

@@ -1,37 +1,6 @@
-# Rules for agents (Cuy)
+# Old Polish names → current English names
 
-Valid from step V1b. Until V1b is done, ZASADY.md applies.
-
-- Cuy is a pixel-art guinea pig desktop pet for Windows, built on eSheep (MIT). Read PLAN.md for the plan; prompts in PLAN.md are for the human, do only the current task.
-- PLAN.md is written in Polish and older prompts use old Polish names. Map them with the table below.
-- Parallel work: change only your task's files; keep shared files (GameState, Brain, Program, bridge.js) changes minimal and list them in the report; commit only when told.
-- App: C# WinForms, .NET Framework 4.8, `src/Cuy` (Cuy.sln at the root). Game logic: `src/Cuy.Core`, .NET Standard 2.0, no WinForms or Win32. Tests: `tests/Cuy.Core.Tests`.
-- Home window: HTML/JS in `web/home` inside WebView2 (virtual host https://cuy.home/). Minigames: Phaser 3 in `web/home/minigames/<game>/`.
-- Art, sounds and data live in `assets/`. Do not draw new art; report what is missing. Pixel art is scaled with nearest neighbour only.
-- Currency: clovers. Save: `%AppData%\Cuy\save.json` + `save.bak`, with a version field and migrations. Logs: `%LocalAppData%\Cuy\logs`.
-- All code, comments, UI texts and docs are in English.
-- The clock has a speed multiplier (60x in Debug only). Dev tools (F9 overlay, Diagnostics, DevTools) exist in Debug builds only.
-- Do not guess APIs; check docs or the code. Do not remove features without being asked.
-- Before reporting a task done, run `tools/qa/run-all.ps1` once it exists and add a regression test for every bug you fix.
-- After each task: report what changed, how you tested it, and what the human should check.
-
-## Layout
-
-| Path | Contents |
-| --- | --- |
-| `src/Cuy` | Desktop app (pet window, tray, Home window host, managers) |
-| `src/Cuy.Core` | Needs, Brain (utility AI), GameState, SaveSystem, clock |
-| `tests/Cuy.Core.Tests` | xUnit tests |
-| `tools/Cuy.Simulator` | Console simulation of many days |
-| `tools/build_pet_xml.py` | Builds the desktop animations.xml from a sprite sheet |
-| `tools/art` | Python pixel-art generator (pig.py, anims*.py, props.py, export.py, english_assets.py) |
-| `web/home` | Home window page; `web/home/minigames` minigames |
-| `qa/`, `tools/qa/` | Test strategy, requirements matrix, bug list, reports; QA scripts (`tools/qa/run-all.ps1`) |
-| `assets/sprites/<variant>/` | `spritesheet.png` (64 px frames), `spritesheet_x2.png` (128 px), `animations.json`, `animations_x2.json` |
-| `assets/icons/` | `icons_16.png` + `icons.json`, `pig_head.ico` (tray) |
-| `assets/app-icon/` | `cuy.ico`, `icon_16/32/256.png`, `logo_256.png` |
-| `assets/sounds/` | `wheek_1-3`, `purr`, `chirp`, `fear_squeal`, `angry_squeal`, `crunch_1-2`, `pop` (.wav) |
-| `assets/data/` | `actions.json`, `items.json`, `simulation.json` |
+Reference for old notes and research files (the agent rules now live in `AGENTS.md`). Polish ids may appear in code only in the save migration `src/Cuy.Core/Save/SaveSystem.cs`.
 
 ## Old Polish names → new names
 

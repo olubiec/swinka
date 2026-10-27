@@ -1,3 +1,5 @@
+> **Uwaga (27.10.2026):** to jest historyczny plan wyjściowy człowieka. Aktualny plan, fale i status: `docs/PLAN.md`; zasady dla agentów: `AGENTS.md` (dawne `RULES.md` zostało scalone z `AGENTS.md`, a tabele starych polskich nazw są w `docs/NAMES.md`); zadania: `tasks/`.
+
 # Świnka na pulpit — plan projektu
 
 Oct 10, 2026 · @Mateusz
@@ -275,13 +277,13 @@ Pełna treść poprawek, nowe prompty i zlecenia researchu dla Gemini: `PLAN_POP
 ## Research przed falami (26.10.2026)
 
 Wąskie pytania dla Claude Haiku, po jednym na zadanie, z miejscem użycia każdego wyniku: `RESEARCH.md`.
-Wyniki trafiają do `research/<id>.md`; po weryfikacji poprawiamy prompty w `jules/tasks/` przed wrzuceniem fali do kolejki.
+Wyniki trafiają do `research/<id>.md`; po weryfikacji poprawiamy pliki zadań w `tasks/` przed startem fali.
 Kolejność: teraz R1, R2, R8 (R8 sprawdza zdrowie świnek w scalonych F1-07/F1-08); przed falą 3 R3-R5; przed falą 4 R6-R7;
 przed falą 5 R9-R10; przed falą 6 R11-R15.
 
 Research R16–R20 (27.10.2026): luki po R1–R15 zamknięte z kodu Velopack, PowerToys i eSheep (`research/R20-synteza.md`, `DECYZJE.md` sekcja 3).
 
-Zmiana po researchu (R1–R15): wykonany 26.10.2026; statusy w `RESEARCH.md`, decyzje w `DECYZJE.md`, prompty fal przepisane w `jules/tasks/`. Rzeczy z UNVERIFIED są w `TESTY_RECZNE.md`.
+Zmiana po researchu (R1–R15): wykonany 26.10.2026; statusy w `RESEARCH.md`, decyzje w `DECYZJE.md`, stare prompty fal w `docs/archive/jules-F-tasks/`, aktualny plan w `docs/PLAN.md`. Rzeczy z UNVERIFIED są w `TESTY_RECZNE.md`.
 
 ## Prompty do Antigravity
 
