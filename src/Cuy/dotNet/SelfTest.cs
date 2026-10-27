@@ -58,6 +58,7 @@ namespace Cuy
                 if (string.IsNullOrEmpty(version)) throw new Exception("runtime not installed");
                 Lines.Add("     version " + version);
             });
+            Check("mouse shake detector", CheckMouseShake);
             Check("save folder writable", CheckSaveFolder);
 
             Lines.Add(_failed ? "SELFTEST FAILED" : "SELFTEST OK");
@@ -172,6 +173,29 @@ namespace Cuy
                     throw new Exception(Path.GetFileName(file) + ": " + ex.Message);
                 }
             }
+        }
+
+        private static void CheckMouseShake()
+        {
+            var d = new Cuy.Core.Input.MouseShakeDetector();
+            int hits = 0;
+            var t0 = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            for (int i = 0; i < 45; i++)
+            {
+                int phase = i % 6;
+                int x = 500 + (phase < 3 ? phase * 50 : (6 - phase) * 50);
+                if (d.Push(x, 400, 100, t0.AddMilliseconds(i * 33))) hits++;
+            }
+            if (hits != 1) throw new Exception("zig-zag not flagged exactly once (hits: " + hits + ")");
+
+            d.Reset();
+            hits = 0;
+            for (int i = 0; i < 45; i++)
+            {
+                int x = 500 + (i * 150 / 45);
+                if (d.Push(x, 400, 100, t0.AddMilliseconds(i * 33))) hits++;
+            }
+            if (hits != 0) throw new Exception("straight line flagged");
         }
 
         private static void CheckSaveFolder()
