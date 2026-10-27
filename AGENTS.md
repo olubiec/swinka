@@ -35,6 +35,10 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 - Third-party assets: only CC0 or CC-BY, attribution in a new file under `assets/LICENSES/`, source URL recorded.
 - PR description: what was done, decisions and why, files changed, how to check it by hand, a screenshot for visual changes (Playwright), anything left undone.
 
+- Data tables (JSON in `assets/data/`) follow the `EconomyConfig` pattern: static `Current` (lazy `LoadDefault()`), `Load(string)`, `LoadDefault()` (file candidates, then code defaults, errors logged through `ItemCatalog.ErrorLogger`). A table is useless until something calls its loader: the task must name where. Tests inject tables into `Pet` (e.g. `BondTable`, `HayTable`) and never change statics. Tests find repo files by walking up from `AppContext.BaseDirectory` to the folder with `Cuy.sln` (`RepoFile` helper).
+- New Core behavior that changes numbers is behind a `Balance` flag (default off, switched on in `GameSession.Open`) so existing tests keep their numbers.
+- Use the signatures a task gives exactly; if the real code differs, stop and say so in the PR instead of inventing an alias.
+
 ## Prohibited
 - Do not commit secrets or `.env`. Do not run processes that never end (dev server, the game loop) without a timeout.
 - Do not edit `docs/archive/`, `research/` or `docs/PLAN.md` unless the task says so (integration tasks update the status in `docs/PLAN.md`).

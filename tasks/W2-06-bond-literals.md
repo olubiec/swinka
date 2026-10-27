@@ -1,4 +1,4 @@
-# W2-07: Greeting and call read the bond unlock table
+# W2-06: Greeting and call read the bond unlock table
 Goal: the desktop greeting and the call behavior depend on `Pet.IsUnlocked` instead of level literals.
 Depends on: W1-06 (bond core) merged.
 Change: `src/Cuy/dotNet/InteractionManager.cs`
