@@ -642,6 +642,25 @@ namespace Cuy
 
         // ---- Closing the session ---------------------------------------------
 
+        public bool ForceAction(string id)
+        {
+            if (HomeWindow.IsOpen) return false;
+
+            bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
+            if (_isPhysicsActive || (FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None) || isInteractionActive || ScriptAnimation != null)
+            {
+                return false;
+            }
+
+            var decision = _brain.ForceAction(id);
+            if (decision == null) return false;
+
+            SetupActionState(decision);
+
+            Log(string.Format("[Play] Forced action {0} ({1})", decision.ActionId, decision.AnimationName));
+            return true;
+        }
+
         public void Close()
         {
             try
