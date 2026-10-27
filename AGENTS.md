@@ -27,8 +27,9 @@ Everything in code, UI, logs and commits is **English**. Read `ARCHITECTURE.md` 
 ## Hard rules
 1. Do only the task you were given. Touch only the files the task lists (plus new files it asks for). If another file
    really must change, change the minimum and say why in the PR description.
-2. One task = one branch = one pull request. PR title = the task title. In the PR description list: files changed,
-   how you verified it, anything left undone.
+2. One task = one branch = one pull request. PR title = the task title. The PR must explain itself (the reviewer sees it cold). In the PR
+   description list: what was done, the decisions you made and why, files changed, how you verified it, how to check it by hand,
+   a screenshot for visual changes (Playwright), anything left undone.
 3. All listed checks of the task must pass before you open the PR. Run Core tests whenever you touched C# in
    `src/Cuy.Core` or `tests/`. Run `node --check` on changed JS. Run the smoke test when you touched `web/`.
 4. Keep each file's existing encoding and line endings (some C# files have a UTF-8 BOM and CRLF). No mass reformatting.
@@ -63,3 +64,8 @@ Once `web/home/features/` exists: a feature is a folder `web/home/features/<id>/
 `feature.css`. The C# side of a feature is a class implementing `Cuy.Features.IHomeFeature` in
 `src/Cuy/dotNet/Features/<Name>Feature.cs` (found by reflection, no registration list to edit). See
 `web/home/features/README.md` and `src/Cuy/dotNet/Features/README.md` once they exist.
+
+## Extra rules (from the Claude + Jules workflow)
+10. Never change or delete an existing test assertion to make a check pass. If an old assertion is wrong, say so in the PR and stop.
+11. A task you cannot verify with its own check command is not finished: do not open the PR, explain what blocks you.
+12. Tunable numbers (speeds, timings) go to a config/data file as named constants so the human can tune them.
