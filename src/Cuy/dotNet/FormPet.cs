@@ -47,30 +47,6 @@ namespace Cuy
         NativeMethods.RECT currentWindowSize;
 
         public static FormPet ActivePet { get; private set; }
-
-        public void WalkTowardsScreenCenterAndRemind(Cuy.Core.Care.CareTaskDefinition task)
-        {
-            Rectangle wa = Screen.PrimaryScreen.WorkingArea;
-            int screenCenter = wa.Left + wa.Width / 2;
-            int targetX = screenCenter;
-
-            if (Math.Abs(PositionX - targetX) > 100)
-            {
-                targetX = (int)(PositionX + (targetX > PositionX ? 50 : -50));
-            }
-
-            StepTowards(targetX, 2);
-
-            var timer = new System.Windows.Forms.Timer { Interval = 1000 };
-            timer.Tick += (s, e) => {
-                timer.Stop();
-                timer.Dispose();
-                BrainController.Instance.RequestAnimation("wheek");
-                SoundManager.Instance?.PlayWheek("reminder");
-                CareReminderForm.ShowReminder(task);
-            };
-            timer.Start();
-        }
         public IntPtr CurrentHwndWindow => hwndWindow;
         public bool IsFacingLeft => spritesFlipped;
         internal NativeMethods.RECT CurrentWindowRect => currentWindowSize;

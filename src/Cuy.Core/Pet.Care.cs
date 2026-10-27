@@ -10,19 +10,14 @@ namespace Cuy.Core
     {
         private List<CareTaskDefinition> _careTasks = new List<CareTaskDefinition>();
 
-        public IReadOnlyList<CareTaskDefinition> CareTasks => _careTasks;
-
         public void SetCareTasks(IEnumerable<CareTaskDefinition> tasks)
         {
             _careTasks = tasks?.ToList() ?? new List<CareTaskDefinition>();
         }
 
-        public IReadOnlyList<int> CareSnoozeMinutes { get; private set; } = new List<int> { 15, 60, 180 };
-
         public void SetCareConfig(WeightAlertSettings alertConfig, IEnumerable<int> snoozeMinutes)
         {
             if (alertConfig != null) WeightAlertsConfig = alertConfig;
-            if (snoozeMinutes != null) CareSnoozeMinutes = snoozeMinutes.ToList();
         }
 
         public bool MarkCareDone(string taskId)
