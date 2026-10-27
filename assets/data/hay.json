@@ -1,0 +1,8 @@
+{
+  "max": 100,
+  "refillAmount": 50,
+  "eatPerGameHour": 6,
+  "offlineEatPerHour": 2,
+  "fullnessPerHayUnit": 0.5,
+  "wheekBelow": 10
+}
