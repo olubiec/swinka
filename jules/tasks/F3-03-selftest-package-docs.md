@@ -7,10 +7,9 @@ Run `ls src/Cuy/dotNet/Features/CalendarFeature.cs src/Cuy/dotNet/Features/ToysF
 merged: STOP, open no pull request, and say which one is missing in the Jules thread (the checklist in step 7 covers both).
 
 ## Research status (read this, it limits what you may write in docs)
-- Verified from the Velopack docs (R3, R18.3): `--framework` takes a comma list that includes `webview2` and `net45`..`net481`, and the listed
-  dependencies are installed BEFORE the app and re-checked before updates. NOT verified: what Setup does without internet, the runtime download URL,
-  silent install, whether uninstall removes the HKCU `Run` value, the root stub file name, Setup.exe size. Do not write any claim about those
-  anywhere; they are manual tests (VEL-01..VEL-07).
+- Verified (R3, R20.1; Velopack docs and source tag 1.2.161): `--framework` takes a comma list that includes `webview2` and `net45`..`net481`; the listed dependencies are installed BEFORE the app
+  and re-checked before updates; without internet Setup shows an error dialog and installs nothing; uninstall never removes the HKCU `Run` value. NOT verified: Setup.exe size and whether the
+  root stub is named like `--mainExe`. Do not write a claim about those two anywhere; they are manual tests (VEL-01, VEL-02). Do not add the exact error text to any document (it depends on the HTTP library).
 - Smart App Control (R4.3, R18.4): only third-party sources (a forum guide, tech press, one technical blog) were found; Microsoft pages were not
   reachable. Do not add new SAC or Mark-of-the-Web claims. Keep the wording that already exists in `README.md` ("not verified").
 - No schema library or licence tool was verified (R18.1, R18.2): this task adds NO new NuGet/npm package. Validation is written by hand.
@@ -22,7 +21,8 @@ merged: STOP, open no pull request, and say which one is missing in the Jules th
 - `HomeWindow.cs` already handles a missing runtime lazily (only when Home is opened): it catches `WebView2RuntimeNotFoundException` around
   `CoreWebView2Environment.CreateAsync`, sets `HomeWindow.WebView2Missing`, disables the tray "Home" item and shows a `MessageBox` with the const
   `WebView2MissingMessage`, which points to a `go.microsoft.com/fwlink/p/?LinkId=2124703` short link. The project decision (DECYZJE.md, R7.2)
-  is NOT to use a short link whose target was not verified.
+  is to show the full developer.microsoft.com page in the message (user-facing). Velopack's own source uses the same `go.microsoft.com/fwlink/p/?LinkId=2124703` Evergreen bootstrapper link
+  (R20.1), so it is a known link, but keep the message text as specified in step 5.
 - Data files: `assets/music/tracks.json` (array of `{id, file, title, author, license, url, use}`, `file` relative to `assets/`);
   `assets/coloring/index.json` (`{version, packs:[{id, title, price, count, thumb}]}`) and one `assets/coloring/<packId>.json` per pack
   (`{id, title, pictures:[{id, title, w, h, palette, cells}]}` where `cells` is a string of `w*h` characters); `assets/icons/icons.json`

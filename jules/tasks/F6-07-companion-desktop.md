@@ -7,8 +7,10 @@ Read `AGENTS.md` first and follow it. Requires F6-06, F4-01 (`SpriteSheetLoader`
   by `AddSheep()`; pet-to-pet interaction there is matched by WINDOW TITLE (a window titled "Sheep") and position. The companion window
   therefore gets a UNIQUE window title (`Cuy companion`, different from the main pig's) and an own limit of 2 pets in Cuy (not 16).
 - Ideas taken from Shimeji: spawn the companion with a start behaviour (Breed + BornBehavior) and cap the count with one global counter.
-- Before integrating, on a clone of eSheep run `git log --since=2024-01-01` and read what changed in `FormPet`/`StartUp` (the list was
-  not retrieved in research; DPI/multi-monitor changes were not found in the 4 releases 1.3.2-1.6.0). Report what you found.
+- eSheep history is now known (R20.7, read from a clone on 2026-10-27): the licence is MIT (Copyright 2016 Adriano Petrucci, added 2026-10-14); the title match "Sheep" is STILL used
+  (`FormPet.Designer.cs`: `Text = "Sheep"`, comparisons `== "Sheep"` in `FormPet.cs`, extended by the pet-interaction commit 3fca39f of 2026-10-16), so a unique companion window
+  title stays mandatory. There is no rename to "Poe" in the code. 14 commits since 2024 touched `FormPet*.cs`; compare these with our fork and port only if they fix a problem we can reproduce:
+  db8c33b (display indices after a monitor is removed), a199abd (lag when killing all pets), a77dd54 and f81d873 (smooth movement), c7d4596 and 47ace4b (tossing, window-side collisions).
 
 ## Specification
 1. `CompanionBehavior` (`src/Cuy/dotNet/Behaviors/`): when `Pet.State.Companion != null`, create a second `FormPet`

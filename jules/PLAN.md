@@ -47,13 +47,14 @@ Kod okienkowy na Windowsa testujesz Ty: po fali 1 i po fali 2 (`tools/build.ps1`
 | F2-10 | Naprawa błędu „Index out of range” w animacji |
 | F2-11 | Dzienny prezent w Domku |
 
-## Fala 3: dopięcie pierwszej wersji (4 zadania, razem; wymaga fali 2)
+## Fala 3: dopięcie pierwszej wersji (5 zadań; wymaga fali 2; F3-01 i F3-03 także F2-02 i F2-07)
 | Zadanie | Co daje |
 | --- | --- |
 | F3-01 | Wszystkie funkcje podpięte, rozszerzony automatyczny test Domku |
 | F3-02 | Symulacja ekonomii na 30 dni i strojenie cen; po researchu (R5): kwoty to wybory projektowe, dzienna nagroda 7-dniowa bez resetu do zera |
 | F3-03 | Self-test, paczka, licencje, dokumentacja, lista testów ręcznych; po researchu (R3, R4, R7.2): sprawdzenie WebView2, Velopack opcjonalnie obok ZIP, README o SmartScreen |
-| F3-04 | Potrząśnięcie myszą: `MouseShakeDetector` (Cuy.Core, z gotowca) + test, bez zmian w zachowaniu świnki |
+| F3-04 | Potrząśnięcie myszą: `MouseShakeDetector` (Cuy.Core, z gotowca) + test + `MouseShakeMonitor`, bez zmian w zachowaniu świnki (scalone) |
+| F3-05 | Porządki: usunięcie skryptów i łatek po agentach z roota, `TestRand/`, `*.orig`, `*.bak`; `.gitignore` (scalone) |
 
 Po fali 3 masz **wersję 1.1** (wszystko z listy nowych pomysłów). Możesz ją już dać w prezencie i dokładać resztę jako
 aktualizacje (nowy ZIP rozpakowany w to samo miejsce, zapis gry jest osobno w `%AppData%\Cuy`). Fale 4–7 to reszta
@@ -130,11 +131,16 @@ fala 5: R9-R10; fala 6: R11-R15.
 
 **Status (26.10.2026): wykonany** dla wszystkich grup (R1–R15, 47 plików). Statusy wyników: `RESEARCH.md`; decyzje: `DECYZJE.md`; rzeczy do sprawdzenia na PC: `TESTY_RECZNE.md`.
 
-## Stan (26.10.2026, 18:30)
-- Fale 0 i 1: scalone. Research R1–R15: wykonany i wdrożony do promptów (DECYZJE.md).
-- Fala 2: scalone F2-01, F2-03, F2-06, F2-09, F2-10, F2-11. Otwarte PR-y: F2-04 (#22), F2-08 (#24). F2-05 puszczone ponownie z poprawionym promptem (PR jeszcze nie ma). Brak PR-ów: F2-02, F2-07 (sprawdzić w Jules).
-- Fale 3–8: prompty gotowe w `jules/tasks/`, jeszcze nie w `jules/queue/`.
-- Do zrobienia po fali 2: build na Windowsie (`tools/build.ps1`), potem „fala 2 scalona” i fala 3.
+## Stan (27.10.2026)
+- Fale 0 i 1: scalone. Fala 2: scalone F2-01, F2-03, F2-04, F2-05, F2-06, F2-08, F2-09, F2-10, F2-11 (9 z 11).
+  **Nie zrobione: F2-02 (przypomnienia z kalendarza na pulpicie, `CalendarFeature.cs`, `CareReminderForm.cs`) i F2-07 (zabawki i menu Play, `ToysFeature.cs`).**
+  Pliki są w `jules/queue/` od 25.10, ale w repo nie ma po nich ani kodu, ani PR-a. Trzeba je uruchomić ponownie: Actions → "Jules dispatch" → Run workflow ze ścieżką pliku.
+- Fala 3: scalone F3-02 (#28, symulacja ekonomii i dzienna nagroda 7-dniowa), F3-04 (#26, detektor i monitor potrząsania), F3-05 (#27, porządki).
+  **Czekają F3-01 (spięcie funkcji i smoke test) i F3-03 (self-test, paczka, noty)**: oba wymagają F2-02 i F2-07 (prompty same się zatrzymają, jeśli ich brakuje).
+- Prompty F3-01..F3-05 w `jules/tasks/` są przepisane 26-27.10 pod stan kodu i wyniki researchu R16-R20. Fale 4-8: prompty gotowe, nie w kolejce.
+- Research: R1-R15 wdrożony (26.10), R16-R19 (sesja 8) i R20 (27.10, Haiku + Gemini + weryfikacja z kodu) zapisane w `research/`, decyzje w `DECYZJE.md` sekcja 3, statusy w `RESEARCH.md`, synteza w `research/R20-synteza.md`.
+  Otwarte pytania nie blokują żadnego promptu; każde ma test ręczny w `TESTY_RECZNE.md`.
+- Windows: dotąd nie zbudowano `tools/build.ps1` po fali 2 ani po fali 3. Test ręczny po scaleniu F3-01 i F3-03.
 
 ## Tryb pracy
 1. Ja wrzucam do `jules/queue/` zadania kolejnej fali, GitHub uruchamia Julesa, Jules robi PR-y.
@@ -144,8 +150,8 @@ fala 5: R9-R10; fala 6: R11-R15.
 
 ## Kolejność puszczania po researchu (26.10.2026)
 Do `jules/queue/` kopiujesz pliki z `jules/tasks/` falami. Zależności w obrębie fal (reszta dowolnie):
-- Fala 3: F3-01..F3-04 razem.
-- Fala 4: F4-01..F4-10 razem (F4-09 przed falą 6).
+- Fala 3: F3-02, F3-04, F3-05 poszły (scalone). F3-01 i F3-03 dopiero po scaleniu F2-02 i F2-07 (najpierw ponownie uruchomić te dwa).
+- Fala 4: F4-01..F4-10 razem (F4-09 przed falą 6). **Wymaga scalonej całej fali 3**, czyli także F3-01 i F3-03.
 - Fala 5: F5-01..F5-04 razem (wymaga F4-08).
 - Fala 6: najpierw **F6-00** (NAudio 2.2.1) i dopiero po jego scaleniu F6-01. F6-09 po scaleniu F6-01 i F6-03. Reszta (F6-02..F6-08) razem z F6-00.
 - Fala 7: F7-01..F7-03 razem. F7-03 krok 6 (Velopack) tylko, gdy napiszesz w wątku „yes, Velopack”.

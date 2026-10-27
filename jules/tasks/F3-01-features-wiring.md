@@ -70,8 +70,8 @@ Do not touch `tools/qa/calendar-screenshot.js`, any C# other than deleting `Ping
       `10_feature_<id>.png`. Then click the first visible, enabled `button` inside `#modalBody` whose text does NOT match
       `/buy|treat|check-up|claim|unlock|new pig|reset|delete/i`, wait 300 ms, run `layoutProblems()`, screenshot `10_feature_<id>_click.png`,
       close. Second pass (re-open the feature before each click, at most 3 per feature): click the buttons that DO match that pattern and assert no
-      page error (the mock bridge may ignore a message: that is fine). Use `animations: 'disabled'` in `page.screenshot` only after confirming
-      the option exists in `tools/qa/node_modules/playwright-core/types/types.d.ts`.
+      page error (the mock bridge may ignore a message: that is fine). Use `animations: 'disabled'` (and `caret: 'hide'`) in `page.screenshot`; both options are
+      confirmed in the Playwright 1.56 docs (R20.5).
    f. More menu: click `#btnMore`; assert there is one `button[data-open-feature]` for every feature in `listFeatures()` plus `album`, that the
       ids `daily, shop, calendar, vet, coloring, decor, settings` are present and `hello` is not (8 tiles in total); run `layoutProblems()`;
       screenshot `05_more.png`.

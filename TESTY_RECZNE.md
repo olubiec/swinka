@@ -63,13 +63,14 @@ Na czystej VM (Windows 10 lub 11, migawka przed testem).
 | ID | Krok | Oczekiwany wynik | Wpisz wynik |
 | --- | --- | --- | --- |
 | VEL-01 | Zainstaluj `Cuy-win-Setup.exe` | Instalacja do `%LocalAppData%\Cuy.DesktopPet`, skrót na pulpicie i w menu Start, Cuy startuje; zapisz rozmiar Setup.exe | |
-| VEL-02 | Włącz autostart w Ustawieniach, sprawdź klucz HKCU `...\Run` | Wpis wskazuje stub w katalogu głównym instalacji, nie `Update.exe` (R3.2: wnioskowanie) | |
+| VEL-02 | Włącz autostart w Ustawieniach, sprawdź klucz HKCU `...\Run` i nazwę stuba w katalogu głównym instalacji | Wpis wskazuje stub w katalogu głównym, nie `Update.exe`; zapisz, czy nazwa stuba jest równa `Cuy.exe` (R20.1: stub to `<Nazwa>_ExecutionStub.exe` rozpakowany jako `<Nazwa>.exe`; równość z `--mainExe` niepotwierdzona) | |
 | VEL-03 | Odinstaluj (Ustawienia > Aplikacje) | Katalog instalacji znika, zapis `%AppData%\Cuy` zostaje | |
-| VEL-04 | Po odinstalowaniu sprawdź klucz Run | Czy wpis został (R3.3: dokumentacja milczy)? Z hakiem `OnBeforeUninstallFastCallback` ma zniknąć | |
-| VEL-05 | Setup.exe bez internetu (i bez WebView2) | Zapisz zachowanie i komunikat (R3.4: zakładamy, że Setup nie zadziała) | |
+| VEL-04 | Po odinstalowaniu sprawdź klucz Run | Bez haka wpis ZOSTAJE (R20.1: kod uninstall dotyka tylko klucza Uninstall); z hakiem `OnBeforeUninstallFastCallback` ma zniknąć | |
+| VEL-05 | Setup.exe bez internetu (i bez WebView2) | Z kodu: okno błędu z tytułem "Setup", nic nie jest instalowane, kod wyjścia 1 (R20.1); zapisz dokładny tekst błędu i rozmiar Setup.exe | |
 | VEL-06 | `VelopackApp.Build().Run()` jako pierwsza linia `Main()`: start z autostartu i ręczny start dwa razy | Brak konfliktu z Mutexem (kolejność to wnioskowanie, R3.1); druga instancja się nie uruchamia | |
 | VEL-07 | Aktualizacja: opublikuj wersję testową na GitHub Releases, uruchom starą | Aktualizacja pobiera się w tle i stosuje przy zamknięciu; wpis Run nadal działa po aktualizacji | |
-| SAC-01 | Windows 11 z włączonym Smart App Control: uruchom niepodpisany Cuy.exe | Zapisz dokładny tekst ostrzeżenia SmartScreen i czy jest „Uruchom mimo to” (R4.3: brak oficjalnej strony) | |
+| SAC-01 | Windows 11 z włączonym Smart App Control: uruchom niepodpisany Cuy.exe | Zapisz dokładny tekst ostrzeżenia SmartScreen i czy jest „Uruchom mimo to” (R4.3: brak oficjalnej strony; R20.6: dla blokady SAC okna "Run anyway" nie ma) | |
+| SAC-02 | Windows 11 z SAC w trybie Off: sprawdź w Zabezpieczeniach Windows, czy da się go włączyć ponownie bez reinstalacji | Zapisz numer kompilacji Windows i wynik (R20.6: źródła sprzeczne) | |
 
 ## 5. Pogoda (R15; zadanie F6-04)
 
@@ -87,9 +88,13 @@ Na czystej VM (Windows 10 lub 11, migawka przed testem).
 | --- | --- | --- | --- |
 | AUTOPLAY-01 | Prawdziwe okno Domku: czy muzyka startuje bez kliknięcia? Czy flaga `--autoplay-policy=no-user-gesture-required` (przez `AdditionalBrowserArguments`) cokolwiek zmienia? | Domyślnie dźwięk po pierwszym kliknięciu (`resume()`); flaga nieudokumentowana dla WebView2 (R2.4) | |
 | PHASER-01 | Po wymianie na Phaser 3.90.0: odpal każdą minigrę raz (Veggie Rain, Hay Hop, Hay Maze, Veggie Memory) | Ostrość pikseli (`roundPixels`), kolizje, animacje, hover/klik przy nałożonych obiektach bez regresji (R9.1) | |
-| ESH-01 | `git log --since=2024-01-01` na sklonowanym eSheep przed integracją drugiego zwierzaka | Lista zmian w `FormPet`/`StartUp` przejrzana (R14.1: nie pobrano) | |
+| ESH-01 | Lista zmian `FormPet` w eSheep przed integracją drugiego zwierzaka | ZROBIONE 27.10.2026 (R20.7, `research/R20-synteza.md`): 14 commitów od 2024; do przeniesienia rozważyć db8c33b, a199abd, a77dd54, f81d873. Zostaje sprawdzić, czy te poprawki dotyczą naszego forka | |
 | ESH-02 | Dwie świnki: unikalny tytuł okna drugiej | Nie reagują na siebie przez dopasowanie tytułu „Sheep” (R14.2) | |
 | ESH-03 | Limit zwierząt (np. 2) po restarcie | Towarzysz nie pojawia się dwa razy | |
-| SHAKE-01 | Potrząśnij prawdziwą myszką przy śwince (Debug, monitor włączony) | W logu `[Shake] detected` raz na potrząśnięcie; zwykła praca myszą nie wyzwala; progi (900 px/s, 6 zmian kierunku) ze szkicu, nie ze źródła | |
+| SHAKE-01 | Potrząśnij prawdziwą myszką przy śwince (build Debug, uruchom `Cuy.exe --shake-test`) | W logu `[Shake] detected` raz na potrząśnięcie; zwykła praca myszą, przeciąganie okna i plików nie wyzwala; progi (900 px/s, 6 zmian kierunku, 300 px, 2 s) są ze szkicu, nie ze źródła (R20.2: PowerToys używa 1000 px w 1000 ms i 4× przekątnej). Wpisz wartości, na których stanęło | |
+| SHAKE-02 | (opcjonalnie, później) Porównaj odpytywanie 33 ms z `GetMouseMovePointsEx` na PC z dwoma monitorami, jeden na lewo od głównego | Czy współrzędne ujemne dają poprawne punkty (R20.3: dokumentacja ostrzega o błędach) | |
+| SHAKE-03 | Jeśli SHAKE-01 pokaże fałszywe alarmy lub pominięcia | Spróbuj dodać kryterium "droga / przekątna prostokąta ruchu > 4" (wzorzec PowerToys); zapisz, czy poprawia wynik | |
 | VET-01 | Przeczytaj z osobą, która ma świnki, karty Lecznicy | Etykiety pilności: dziś (zastój jelit, infekcja dróg oddechowych), jak najszybciej (zęby), w ciągu kilku dni (szkorbut, nagniotki, świerzbowce: wybór projektowy, R8.3) | |
 | VET-02 | Weryfikacja wieku etapów życia | Etapy z PetMD (nowonarodzona 0–1 mies., młoda 1–6, dorosła 6 mies.–4 lata, senior 4+) nie są źródłem weterynaryjnym (R8.4); nazwy etapów gry mogą się różnić | |
+| CI-01 | Uruchom `Cuy.exe --selftest` na PC i porównaj wypisaną wersję WebView2 z wersją Chromium w logu CI (smoke test wypisuje `Chromium <wersja>`, Playwright 1.56.1 = 141.0.7390.37) | Otwórz każdą funkcję Domku na PC i porównaj z zrzutami z CI; zapisz różnice (R20.4: autoplay, czcionki, DPI, `localStorage` nie są potwierdzone) | |
+| DPI-01 | Skalowanie ekranu 125/150 % i dwa monitory: otwórz Domek, przeciągnij okno między monitorami | Układ Domku bez przycięć, świnka i potrząśnięcie działają po obu stronach (R20.4: DPI w WebView2 niezweryfikowane) | |

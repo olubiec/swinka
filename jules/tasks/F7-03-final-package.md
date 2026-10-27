@@ -28,8 +28,8 @@ Read `AGENTS.md` first. All other tasks are merged. Extends F3-03 (do not redo i
    (the ZIP stays the default, no installer is required). Add the NuGet package `Velopack` to `Cuy.csproj` (the version must equal the `vpk` tool
    version, issue #195); `VelopackApp.Build().Run();` as the VERY FIRST line of `Main()`, before the `Mutex` and before `Application.Run`
    (the order versus the Mutex is the docs' "first code" rule plus our inference, UNVERIFIED); in
-   `VelopackApp.Build().OnBeforeUninstallFastCallback(v => ...)` delete the HKCU `...\Run` value of Cuy (not removed by uninstall; the callback has 30 s and
-   must show no UI); add `src/Cuy/dotNet/Platform/Updater.cs` (background check 2 min after start, `GithubSource(repoUrl, null, false)`,
+   `VelopackApp.Build().OnBeforeUninstallFastCallback(v => ...)` delete the HKCU `...\Run` value of Cuy (VERIFIED in the Velopack 1.2.161 source, R20.1: uninstall only touches
+   `HKCU\...\Uninstall\<id>`, never `Run`; the callback has 30 s and must show no UI; alternative: a Startup-folder shortcut, `ShortcutLocation.Startup`); add `src/Cuy/dotNet/Platform/Updater.cs` (background check 2 min after start, `GithubSource(repoUrl, null, false)`,
    `WaitExitThenApplyUpdates(asset, silent, restart)`); the autostart Run entry must point to the root stub exe of the install, never `Update.exe`;
    `--packId` must never change.
 7. README.md: section "Dane pogodowe" is written in English as "Weather data" (attribution + non-commercial use only); sections about
@@ -46,6 +46,7 @@ Build passes; `Cuy.exe --selftest` compiles; Core tests pass.
 ## Testy ręczne (ZWERYFIKUJ NA PC)
 UNVERIFIED (R3.1-R3.4), done by the human on a clean Windows 10/11 VM (`TESTY_RECZNE.md` VEL-01..VEL-07):
 - Install with Setup.exe, run, enable autostart, uninstall: is the HKCU Run value left behind without the hook? Does the hook remove it?
-- Setup.exe without internet and without the WebView2 runtime: what happens? Setup.exe size. Does the Run entry on the root stub keep working after an update?
+- Setup.exe without internet and without the WebView2 runtime: from the source (R20.1) Setup shows an error dialog titled "Setup" and installs nothing; record the exact text. Setup.exe size (unknown). Is the root
+  stub named `Cuy.exe` (the package carries `<Name>_ExecutionStub.exe`, extracted as `<Name>.exe`; equality with `--mainExe` is not confirmed)? Does the Run entry on the root stub keep working after an update?
 
 When done, open a pull request against `main` titled `F7-03: Final self-test, package and docs`.

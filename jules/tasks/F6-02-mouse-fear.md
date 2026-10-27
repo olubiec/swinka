@@ -25,5 +25,9 @@ Read `AGENTS.md` first and follow it. Requires F3-04 (shake detector), F4-09, F4
 
 ## Testy ręczne (ZWERYFIKUJ NA PC)
 - `TESTY_RECZNE.md` SHAKE-01: thresholds come from a draft, not from a source; tune them by hand.
+- Research R20.2 (PowerToys Find My Mouse, MIT, read in its source): a shake there is path length >= 1000 px within 1000 ms AND path >= 4 x the diagonal of the
+  rectangle containing the movement, computed on raw relative mouse movement. Only the speed (900 px/s ~ 1000 px in 1 s) has support; 300 px from the pig, 2 s debounce,
+  4 px step and 6 reversals have no source. Do NOT change the detector in this task; if SHAKE-01 shows false alarms, SHAKE-03 (add the path/diagonal criterion) is a separate task.
+- Research R20.3: do not switch to `GetMouseMovePointsEx` (documented to misbehave with negative multi-monitor coordinates); keep `Cursor.Position` polling.
 
 When done, open a pull request against `main` titled `F6-02: Fear of a shaken mouse`.

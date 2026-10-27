@@ -279,6 +279,8 @@ Wyniki trafiają do `research/<id>.md`; po weryfikacji poprawiamy prompty w `jul
 Kolejność: teraz R1, R2, R8 (R8 sprawdza zdrowie świnek w scalonych F1-07/F1-08); przed falą 3 R3-R5; przed falą 4 R6-R7;
 przed falą 5 R9-R10; przed falą 6 R11-R15.
 
+Research R16–R20 (27.10.2026): luki po R1–R15 zamknięte z kodu Velopack, PowerToys i eSheep (`research/R20-synteza.md`, `DECYZJE.md` sekcja 3).
+
 Zmiana po researchu (R1–R15): wykonany 26.10.2026; statusy w `RESEARCH.md`, decyzje w `DECYZJE.md`, prompty fal przepisane w `jules/tasks/`. Rzeczy z UNVERIFIED są w `TESTY_RECZNE.md`.
 
 ## Prompty do Antigravity

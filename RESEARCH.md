@@ -53,6 +53,24 @@ Statusy z 26.10.2026 (po przeczytaniu odpowiedzi): „zweryfikowane” = źród�
 | R14.3 | częściowo (do testu na PC) | F6-07, F4-01 |
 | R15.1 | częściowo (do testu na PC) | F6-04 |
 | R15.2 | zweryfikowane | F6-04 |
+| R16.1 | zamknięte w R20.2 (kod PowerToys) | F3-04, F6-02 |
+| R16.2 | zamknięte w R20.3 (decyzja: nie używamy `GetMouseMovePointsEx`) | F3-04, F6-02 |
+| R17.1 | zamknięte w R20.5 (typy Playwright 1.56.1) | F3-01 |
+| R17.2 | częściowo (Chromium 141.0.7390.37; WebView2 do testu na PC, CI-01) | F3-01, F4-10 |
+| R18.1 | niepotwierdzone (brak biblioteki; decyzja: własne sprawdzenia w SelfTest.cs) | F3-03 |
+| R18.2 | częściowo (nuget-license nie porównuje z notami; test `NoticesTests` w F3-03) | F3-03 |
+| R18.3 | zamknięte w R20.1 (kod Velopack 1.2.161), poza rozmiarem Setup.exe | F3-03, F7-03 |
+| R18.4 | częściowo (źródła nieoficjalne; patrz R20.6) | README, F7-03 |
+| R19.1 | niepotwierdzone (brak liczb Pou; Neko Atsume z drugiej ręki) | F3-02 |
+| R20.1 | zweryfikowane z kodu źródłowego (Velopack 1.2.161) | F3-03, F7-03 |
+| R20.2 | zweryfikowane z kodu źródłowego (PowerToys 9e6593c, MIT) | F6-02 |
+| R20.3 | częściowo (Microsoft Learn; P/Invoke nieskompilowany) | F3-04, F6-02 |
+| R20.4 | częściowo (wersja runtime sprzeczna, autoplay nieudokumentowany) | F3-01, F4-07, F4-10 |
+| R20.5 | zweryfikowane (typy 1.56.1); axe-core to MPL-2.0 | F3-01 |
+| R20.6 | częściowo (źródła Microsoftu sprzeczne co do ponownego włączenia SAC) | README, F7-03 |
+| R20.7 | zweryfikowane z kodu źródłowego (eSheep ddaabd0, MIT) | F6-07 |
+
+Szczegóły i porównanie Haiku z Gemini: `research/R20-synteza.md`.
 
 
 Wersja z 26.10.2026. Uzupełnia `PLAN.md` i `PLAN_POPRAWKI.md` (część B). Notatki po polsku, polecenia po angielsku (RULES.md).
@@ -98,6 +116,10 @@ Rules:
 | Phaser 3.90 to najpewniej ostatnia wersja v3; Phaser 4 wyszedł później | phaser.io/news/2025/05/phaser-mega-update |
 | Licencje: NES.css 2.3.0 MIT, ZzFX 1.3.0 MIT, Tracery Apache-2.0, rot.js 2.2.1 BSD-3, uPlot MIT | npm / GitHub |
 | Błąd: `SoundManager.IsFullScreenOrBusy()` uznaje kliknięty pulpit (Progman/WorkerW) za pełny ekran | kod w repo |
+| Velopack 1.2.161: Setup bez internetu pokazuje okno błędu "Setup" i niczego nie instaluje; WebView2 z `go.microsoft.com/fwlink/p/?LinkId=2124703` (`/silent /install`), .NET 4.8 z `fwlink LinkId=2085155` (`/norestart /q`); uninstall nie dotyka klucza Run; stub `<Nazwa>_ExecutionStub.exe` jest rozpakowywany jako `<Nazwa>.exe` | kod: `runtimes.rs`, `prerequisite.rs`, `registry.rs`, `bundle.rs` (R20.1) |
+| PowerToys Find My Mouse (MIT): potrząśnięcie = droga ≥ 1000 px w 1000 ms i droga ≥ 4× przekątna prostokąta ruchu; surowe przesunięcia względne | kod: `FindMyMouse.cpp`, `FindMyMouse.h` (R20.2) |
+| eSheep: MIT od 14.10.2026 (Copyright 2016 Adriano Petrucci); tytuł okna "Sheep" nadal służy do dopasowania zwierzaków; brak przemianowania na "Poe" | kod: `FormPet.cs`, `FormPet.Designer.cs`, `LICENSE.md` (R20.7) |
+| Playwright 1.56.1 (sama biblioteka): zdarzenia `pageerror`/`console`/`requestfailed`/`response`, opcje `animations`/`caret`; brak `toHaveScreenshot`; Chromium 141.0.7390.37; axe-core to MPL-2.0 | typy paczki, notatki wydania (R20.5) |
 
 ## Kolejność
 
