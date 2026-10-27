@@ -1,3 +1,4 @@
+<!-- DONE 2026-10-27 by PR #32 (legacy F2-02, merged as one change). Not to be run again. Gaps fixed by W1-09, W1-10, W2-01. -->
 # W1-02: Calendar: C# state and messages for the Home page
 Goal: the Home calendar page receives its state and its four `calendar_*` messages are handled by C#.
 Depends on: nothing (wave start). Contract: `docs/contracts.md`, section calendar. Core: `CareSchedule`, `Pet.Care.cs`, `assets/data/care.json` (all on main).

@@ -55,49 +55,58 @@ czerwone CI naprawia CI Fixer, po 2 rundach nowe zadanie od gałęzi PR, po trze
 i build, napraw błędy, zaktualizuj status w docs/PLAN.md”. 7. Wieczorem `tools/jules-backlog.sh` (15 linii z `tasks/BACKLOG.md`). 8. Do Claude wracasz po pliki
 następnej fali (szablon A2) albo gdy błąd jest w koncepcie lub planie.
 
-## Status (27.10.2026)
-- Zrobione i scalone: fale 0–1 starego planu, F2-01, F2-03..F2-11 (w tym **F2-07 zabawki**: `Brain.ForceAction`, `ToysFeature`, menu Play, `hay_ball_play`), F3-02, F3-04, F3-05.
-- **F2-02 (przypomnienia z kalendarza) nie istnieje w kodzie**: PR #30 dodał tylko pliki robocze i został cofnięty. Rozpisane niżej jako W1-01, W1-02, W2-01.
-- Czekają F3-01 i F3-03 (spięcie funkcji, paczka): rozbite na małe zadania (W1-03/04, W2-02, W3-01, W4-01..03).
+## Status (27.10.2026, wieczór)
+- Zrobione i scalone: fale 0–1 starego planu, F2-01, F2-03..F2-11 (w tym **F2-07 zabawki**), F3-02, F3-04, F3-05, **PR #32** (W1-01 karta przypomnienia + W1-02 stan kalendarza + W2-01 tick; scalone, ale z lukami).
+- Luki po PR #32: dane opieki (`care.json`) nie są nigdzie wczytywane, wiadomości z JS nie są walidowane, brak mapowania snake_case. Naprawiają W1-09, W1-10 i przepisane W2-01 (stare pliki w `tasks/done/`).
+- Nadal nie istnieje: tabele więzi i siana jako ładowane dane (W1-06/07), pamiętnik, host zachowań, ekran pamiętnika, filtr etapów, dźwięk w ustawieniach.
+- Reguła danych (nowa w AGENTS.md): każda tabela danych ma `Current`/`Load`/`LoadDefault` jak `EconomyConfig`; testy używają wstrzykiwanych tabel `Pet`, nie statyków. Nowe zachowania Core są za flagą w `Balance` (`HayRackActive`, `DiaryActive`), włączaną w `GameSession.Open`.
 - Research R1–R20 wdrożony (`RESEARCH.md`, `DECYZJE.md`); rzeczy do sprawdzenia na PC: `TESTY_RECZNE.md`. Windows: nie zbudowano `tools/build.ps1` po falach 2–3 starego planu: zrób to po „Integracji W2”.
 
-## Fale (A1: ID | cel | Zmieniaj | akceptacja). Pliki zadań: W1 i W2 gotowe w `tasks/`, kolejne pisze Claude przed każdą falą (A2) z uwzględnieniem stanu repo.
-### W1 (8, razem, bez zależności)
+## Fale (A1). Pliki zadań W1–W3 gotowe w `tasks/`; W4+ pisze Claude (A2) po integracji W3, z uwzględnieniem stanu repo. Prompty integracyjne: `docs/wave-prompts.md`.
+### W1 (9; bez zależności; W1-06/07 dotykają innych plików niż reszta)
 | ID | Cel | Zmieniaj | Akceptacja |
 | --- | --- | --- | --- |
-| W1-01 | Karta przypomnienia nad świnką (Done/Later) | `CareReminderForm.cs` (nowy) | BUILD |
-| W1-02 | Kalendarz: stan i wiadomości po stronie C# | `Features/CalendarFeature.cs` (nowy) | BUILD + CORE |
 | W1-03 | Moduł `layoutProblems` dla smoke testu + self-test | `tools/qa/lib/layout.*`, `ci.yml` | `layout.selftest.js` + SMOKE |
 | W1-04 | Usunięcie przykładów i poprawna lista funkcji | `features/index.json`, `hello/`, `PingFeature.cs` | SMOKE + BUILD |
-| W1-05 | 48+ szablonów pamiętnika (dane) + test poprawności | `diary.json`, `DiaryTemplatesTests.cs`, `docs/diary-grammar.md` | CORE |
-| W1-06 | Tabela odblokowań więzi, `IsUnlocked`, `NextUnlock` | `bond.json`, `Bond/BondUnlocks.cs`, `Pet.Bond.cs`, testy | CORE |
-| W1-07 | Paśnik z sianem (Core): stan, dosypanie, zużycie | `hay.json`, `GameState.Hay.cs`, `Pet.Hay.cs`, testy | CORE |
+| W1-05 | 48+ szablonów pamiętnika (dane) + test | `diary.json`, `DiaryTemplatesTests.cs`, `docs/diary-grammar.md` | CORE |
+| W1-06 | Tabela więzi: Current/Load, `IsUnlocked`, `NextUnlock` | `bond.json`, `Bond/BondUnlocks.cs`, `Pet.Bond.cs`, testy | CORE |
+| W1-07 | Paśnik z sianem (Core): stan, dosypanie, zużycie | `hay.json`, `Hay/HayConfig.cs`, `GameState.Hay.cs`, `Pet.Hay.cs`, testy | CORE |
 | W1-08 | Kontrakt wtyczek zachowań pulpitu | `Behaviors/IDesktopBehavior.cs`, `BehaviorContext.cs` | BUILD |
-**Integracja W1** (sesja bez pliku): testy, build, napraw błędy, zaktualizuj status.
-### W2 (7; wymaga W1)
+| W1-09 | Loader danych opieki `CareData` | `Care/CareData.cs`, testy | CORE |
+| W1-10 | Walidacja wejść z formularza opieki `CareInput` | `Care/CareInput.cs`, testy | CORE |
+| W1-11 | Nowe rzeczy zależne od etapu (dane) | `items_shop.json`, `items.json`, `BRAKUJACA_GRAFIKA.md`, test | CORE |
+**Integracja W1** (prompt w `docs/wave-prompts.md`), potem **A2-check** (Claude sprawdza, czy W2 nadal pasuje do kodu).
+### W2 (10; wymaga W1)
 | ID | Cel | Zmieniaj | Akceptacja |
 | --- | --- | --- | --- |
-| W2-01 | Przypomnienia z kalendarza na pulpicie (Tick, karta, wheek) | `CalendarFeature.cs` | BUILD + CORE |
+| W2-01 | Kalendarz: wczytanie `CareData`, walidacja, odporne handlery | `CalendarFeature.cs` | BUILD + CORE |
 | W2-02 | Smoke test: błędy, brakujące pliki, folder=index, layout | `tools/qa/web-smoke.js` | SMOKE |
-| W2-03 | Pisarz pamiętnika: `DayStats`, `TryWriteDiary` (Core) | `Diary/DiaryWriter.cs`, `DayStats.cs`, `Pet.Diary.cs`, testy | CORE |
-| W2-04 | Siano zużywane online i offline + scenariusz 7 dni | `Pet.cs`, `simulation.json`, test | CORE |
-| W2-05 | Host wtyczek zachowań + `SampleBehavior` | `Behaviors/BehaviorHost.cs`, `SampleBehavior.cs`, `README.md`, `LocalData.cs` | BUILD |
-| W2-06 | Nowe rzeczy zależne od etapu (dane) | `items_shop.json`, `items.json`, `BRAKUJACA_GRAFIKA.md`, test | CORE |
-| W2-07 | Powitanie i wołanie z tabeli więzi | `InteractionManager.cs` | BUILD + CORE |
-**Integracja W2** + **test na Windowsie** (`tools/build.ps1`, kalendarz i zabawki).
-### W3 (9; wymaga W2)
+| W2-03 | Pisarz pamiętnika (czysty): `DiaryWriter`, `DayStats` | `Diary/*`, testy | CORE |
+| W2-04 | Siano zużywane online i offline (flaga) + scenariusz 7 dni | `Balance.cs`, `GameSession.cs`, `Pet.cs` (1 linia), testy | CORE |
+| W2-05 | Host wtyczek zachowań + `SampleBehavior` (wyłączony) | `Behaviors/BehaviorHost.cs`, `SampleBehavior.cs`, `README.md` | BUILD |
+| W2-06 | Powitanie i wołanie z tabeli więzi | `InteractionManager.cs` | BUILD + CORE |
+| W2-07 | Filtr etapów w katalogu, ranking jedzenia | `ItemCatalog.cs`, `ItemDefinition`, `Pet.StageCare.cs`, testy | CORE |
+| W2-08 | Nagroda poziomu 20: `golden_bowl` raz + wpis w pamiętniku | `Pet.Bond.cs`, `Pet.cs` (1 linia), `items_shop.json`, testy | CORE |
+| W2-09 | Ustawienia dźwięku po stronie desktopu | `SoundManager.cs`, `LocalData.cs`, `SettingsFeature.cs` | BUILD |
+| W2-10 | Stan Domku: `diary`, `albumDates`, `bondNext`, `hayRack` | `Features/ProgressFeature.cs`, `docs/contracts.md` | BUILD |
+**Integracja W2** + **test na Windowsie** (`tools/build.ps1`, kalendarz, zabawki, karta przypomnienia), potem A2-check W3.
+### W3 (11 + 1 zarezerwowane; wymaga W2)
 | ID | Cel | Zmieniaj | Akceptacja |
 | --- | --- | --- | --- |
-| W3-01 | Smoke: przejście po funkcjach, menu More, toast, pierwszy start | `web-smoke.js` | SMOKE |
-| W3-02 | Podpięcie hosta wtyczek do `BrainController` + test w `SelfTest` | `BrainController.cs`, `SelfTest.cs` | BUILD |
-| W3-03 | Pamiętnik: liczniki dnia i wywołanie `TryWriteDiary` | `Pet.cs`, testy | CORE |
-| W3-04 | Stan Domku: `diary`, `album` | `HomeWindow.cs` | BUILD |
-| W3-05 | Ekran Pamiętnik | `features/diary/*` | SMOKE + JS |
-| W3-06 | Filtr etapów w katalogu, ranking jedzenia przy zębach | `ItemCatalog.cs`, `Pet.StageCare.cs`, testy | CORE |
-| W3-07 | Lista minigier z pliku `games.json` | `index.html`, `minigames-api.js`, `games.json` | SMOKE |
-| W3-08 | Ustawienia dźwięku w Core/desktopie: głośność, cisza nocna, wyciszenie | `SoundManager.cs`, `LocalData.cs`, `AudioTests.cs` | CORE + BUILD |
-| W3-09 | Nagroda poziomu 20: `golden_bowl` raz + wpis w pamiętniku | `Pet.Bond.cs`, `items_shop.json`, testy | CORE |
-**Integracja W3**.
+| W3-01 | Smoke: przejście po funkcjach, menu More, album, gry, toast, pierwszy start | `web-smoke.js` | SMOKE |
+| W3-02 | Podpięcie hosta wtyczek do `BrainController` + test w `SelfTest` | `BrainController.cs`, `LocalData.cs`, `SelfTest.cs` | BUILD |
+| W3-03 | Pamiętnik: dzienny zapis wieczorem (flaga `DiaryActive`) | `Pet.Diary.cs`, `GameState.DayLog.cs`, `Pet.cs` (1 linia), testy | CORE |
+| W3-04 | Ekran Pamiętnik + mock nowych kluczy stanu | `features/diary/*`, `index.json`, `bridge.js` | SMOKE |
+| W3-05 | Album: sylwetki, daty, licznik | `app.js`, `style.css` | SMOKE |
+| W3-06 | Lista minigier z `games.json` | `index.html`, `minigames-api.js`, `games.json` | SMOKE |
+| W3-07 | Ekran ustawień dźwięku + ZzFX | `features/settings/*`, `sound.js`, `lib/zzfx.min.js` | SMOKE |
+| W3-08 | Sztuczki (Core): dane i `TryPerformTrick` | `tricks.json`, `Tricks/*`, `Pet.Tricks.cs`, testy | CORE |
+| W3-09 | Tryb „away” w Core + detektor pełnego ekranu | `Pet.Away.cs`, `Pet.cs` (2 linie), `FullscreenDetector.cs` | CORE + BUILD |
+| W3-10 | Ładowanie arkusza sprite’ów etapu | `Graphics/SpriteSheetLoader.cs`, `SelfTest.cs` | BUILD |
+| W3-11 | Generator labiryntu (czysta logika + test) | `hay-maze-logic.js`, `maze-test.js`, `ci.yml` | `maze-test.js` |
+| W3-12 | (rezerwa) poprawki z tabeli problemów W2-02, pisane po Integracji W2 | wg tabeli | SMOKE |
+**Integracja W3**, potem A2 dla W4.
+
 ### W4 (13; wymaga W3) → po integracji **wersja 1.1**
 | ID | Cel | Zmieniaj | Akceptacja |
 | --- | --- | --- | --- |
@@ -159,10 +168,10 @@ Hay Hop [WARIANTY] (logika w czystym module + rysowanie), towarzysz (Core, pulpi
 taniec do muzyki (NAudio 2.2.1, sonda audio: tylko kompilacja i testy ręczne), wygląd etapów w Domku. Pełne stare prompty: `docs/archive/jules-F-tasks/` (F5-01, F6-00, F6-01, F6-04, F6-06..F6-09, F8-02).
 
 ## Mapa starych zadań
-F2-02→W1-01,W1-02,W2-01 · F2-07→zrobione · F3-01→W1-03,W1-04,W2-02,W3-01,W7-06 · F3-03→W4-01..W4-04,W7-07,W7-08 · F4-01→W4-07,W5-01,W5-02 · F4-02→W4-06,W6-01,W6-02 ·
-F4-03→W1-05,W2-03,W3-03 · F4-04→W3-04,W3-05,W4-05 · F4-05→W1-06,W2-07,W3-09,W5-04 · F4-06→W1-07,W2-04,W5-03,W6-02,W6-03 · F4-07→W3-08,W4-08 · F4-08→W3-07 ·
+F2-02→PR #32 (W1-01,W1-02,W2-01 stare) + W1-09,W1-10,W2-01 · F2-07→zrobione · F3-01→W1-03,W1-04,W2-02,W3-01,W7-06 · F3-03→W4-01..W4-04,W7-07,W7-08 · F4-01→W4-07,W5-01,W5-02 · F4-02→W4-06,W6-01,W6-02 ·
+F4-03→W1-05,W2-03,W3-03 · F4-04→W3-04,W3-05,W4-05 · F4-05→W1-06,W2-06,W2-08,W5-04 · F4-06→W1-07,W2-04,W5-03,W6-02,W6-03 · F4-07→W3-08,W4-08 · F4-08→W2-09,W3-07 ·
 F4-09→W1-08,W2-05,W3-02 · F4-10→W7-03..W7-05 · F5-02→W4-10,W5-08 · F5-03→W4-09 · F5-04→W7-01 · F6-02→W5-07 · F6-03→W4-11,W5-05,W5-06 · F6-05→W4-12,W5-10,W6-04 ·
-F7-01→W7-06 · F7-02→W6-07 · F7-03→W7-07..W7-09 · F8-01→W4-13,W5-09,W6-05 · F8-03→W6-06,W7-02 · F8-04→W2-06,W3-06 · F5-01, F6-00/01/04/06..09, F8-02→W8.
+F7-01→W7-06 · F7-02→W6-07 · F7-03→W7-07..W7-09 · F8-01→W4-13,W5-09,W6-05 · F8-03→W6-06,W7-02 · F8-04→W1-11,W2-07 · F5-01, F6-00/01/04/06..09, F8-02→W8.
 
 ## Ustawienia Julesa i GitHuba (raz na repo)
 1. Skrypt środowiska: `bash setup.sh` → Run and Snapshot. 2. CI jest (`ci.yml`): testy + build + smoke; bez niego nie działa CI Fixer. 3. Ochrona `main`: merge tylko przez PR z zielonym CI.

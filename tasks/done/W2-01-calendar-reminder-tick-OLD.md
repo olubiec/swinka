@@ -1,3 +1,4 @@
+<!-- SUPERSEDED: the Tick and the card already exist (PR #32). The new W2-01 replaces this file. -->
 # W2-01: Calendar: reminders from the desktop pig
 Goal: when a care task is due, the desktop pig wheeks and the reminder card appears above it.
 Depends on: W1-01 (CareReminderForm) and W1-02 (CalendarFeature) merged.

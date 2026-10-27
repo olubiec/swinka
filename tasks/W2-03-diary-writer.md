@@ -1,13 +1,15 @@
-# W2-03: Diary writer: one entry per day (Core)
-Goal: Core can write one warm diary entry for a day from templates and the day's numbers.
-Depends on: W1-05 (`assets/data/diary.json`) merged. `GameState.Diary` and `Pet.AddDiaryEntry` exist.
-Change: new `src/Cuy.Core/Diary/DiaryWriter.cs`, new `src/Cuy.Core/Diary/DayStats.cs`, new `src/Cuy.Core/Pet.Diary.cs`, new `tests/Cuy.Core.Tests/DiaryWriterTests.cs`
-Do not touch: everything not listed under Change; in particular `AGENTS.md`, `docs/PLAN.md`, `tasks/*`.
+# W2-03: Diary writer: pick and render one entry (Core, pure)
+Goal: Core can render one warm diary entry from the templates and a plain context object, with no clock, no saving and no `Pet`.
+Depends on: W1-05 (`assets/data/diary.json`, `docs/diary-grammar.md`) merged. `Cuy.Core.Diary.TraceryGrammar` exists. `GameState.Diary` and `Pet.AddDiaryEntry` exist (W3-03 connects the writer to them).
+Pattern: see AGENTS.md, "Data tables" (`Current`, `Load(string)`, `LoadDefault()`).
+Change: new `src/Cuy.Core/Diary/DiaryWriter.cs`, new `src/Cuy.Core/Diary/DiaryContext.cs`, new `src/Cuy.Core/Diary/DayStats.cs`, new `tests/Cuy.Core.Tests/DiaryWriterTests.cs`
+Do not touch: everything not listed under Change; in particular `AGENTS.md`, `docs/PLAN.md`, `tasks/*`, `Pet.cs`, `TraceryGrammar.cs` (unless a test proves a bug: then the minimum fix and say so in the PR).
 Steps:
-1. `DiaryWriter.Load(string json)` (desktop passes the text) and `Render(template inputs, Random)` using `TraceryGrammar`: set facts before rendering, pick a template matching stage, mood, sickness, birthday and weather, never repeat the previous template id.
-2. `DayStats`: counts for fed, pets, games, poops cleaned, bond points, clovers, keyed by local date; keeps the last 3 days; a small plain class that `Pet` fills (W3-03 hooks the counters in; here only the class and its unit tests).
-3. `Pet.TryWriteDiary()` (not yet called from `Pet.Update`): writes at most one entry per local date through `AddDiaryEntry`; no entry for a day with zero activity (one generic "quiet day" line is allowed once); keeps at most 365 entries. Time from `IClock`, randomness from an injectable `Random`.
-4. Tests (`ManualClock`, fixed `Random`): one entry per day, never twice, stage filter, no `#` or `[` left, length <= 160, 400 simulated days stay under 365 entries, the same template is never used twice in a row.
+1. Read `assets/data/diary.json` and `docs/diary-grammar.md` first and use their exact keys.
+2. `DiaryContext` (plain class, public settable properties): `Name`, `Stage` (`LifeStage`), `Mood` (`"low"`, `"ok"`, `"high"`), `Sick` (bool), `Birthday` (bool), `Weather` (`"any"` by default), `Fed`, `Pets`, `Games`, `Poops`, `Clovers` (ints), `FavoriteVegetable`, `PreviousTemplateId`.
+3. `DayStats` (plain class): `Date` (`yyyy-MM-dd`), `Fed`, `Pets`, `Games`, `Poops`, `bool HasActivity` (any count above 0) and `static DayStats FromCounters(string date, IDictionary<string,int> before, IDictionary<string,int> after)`: the delta of the counters `feedings`, `pets`, `minigames_played`, `poops_collected` (a missing key is 0, a negative delta is 0). These counter names already exist in `Pet.Count(...)`.
+4. `DiaryWriter`: `Current` / `Load(string)` / `LoadDefault()` and `DiaryResult Render(DiaryContext ctx, Random rng)` (`DiaryResult`: `TemplateId`, `Text`; `null` when nothing matches). Selection: templates whose `stages` and `when` match the context; never `PreviousTemplateId` unless it is the only match; random pick from `rng`; facts set with `SetFact` (name, fed, vegetable, pets, games, poops, clovers); first letter capitalized; trimmed; at most 160 characters (otherwise try another template, at most 5 tries, then `null`). Never throws; a broken file gives a writer with no templates.
+5. Tests (seeded `Random`; the real `diary.json` through `RepoFile` from AGENTS.md; never assign `Current`): stage filter, sick / birthday / mood filters, previous id never repeated, no `#` or `[` left, length 160 or less, 2000 renders per stage group with no opening (first three words) above 40 %, `DayStats.FromCounters` (normal, missing keys, negative delta, no activity), a broken JSON string.
 Verify: `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release` passes.
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Change".
-PR: what was done, decisions and why, how to check by hand; screenshot if the change is visual.
+PR: what was done, decisions and why, how to check by hand; ten rendered sample entries for a junior and ten for a senior so the human can read them for tone; screenshot if the change is visual.

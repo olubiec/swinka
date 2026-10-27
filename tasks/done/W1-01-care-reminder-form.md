@@ -1,3 +1,4 @@
+<!-- DONE 2026-10-27 by PR #32 (legacy F2-02, merged as one change). Not to be run again. Gaps fixed by W1-09, W1-10, W2-01. -->
 # W1-01: Care reminder card (WinForms)
 Goal: a small pixel card that can appear above the desktop pig with a care task, a Done button and a Later button.
 Depends on: nothing (wave start). Contract: `docs/contracts.md`, section calendar.
