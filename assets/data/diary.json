@@ -1,0 +1,850 @@
+{
+  "templates": [
+    {
+      "id": "t_1",
+      "stages": [
+        "baby"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#[my_feel:#generic_feelings#]greeting# I am just a #baby_cute# little piggy. Today I #baby_action# and felt so #my_feel#."
+    },
+    {
+      "id": "t_2",
+      "stages": [
+        "baby"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "My name is #name#. I love to eat #vegetable#! #baby_action.capitalize# was so much fun."
+    },
+    {
+      "id": "t_3",
+      "stages": [
+        "baby"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Today I made #poops# and played #games#. Being a baby is great."
+    },
+    {
+      "id": "t_4",
+      "stages": [
+        "baby"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I learned how to do #baby_action#. I was rewarded with #clovers#."
+    },
+    {
+      "id": "t_5",
+      "stages": [
+        "baby"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#greeting# I met my new world! I #baby_action# right after breakfast."
+    },
+    {
+      "id": "t_6",
+      "stages": [
+        "baby"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Growing up fast! Today I had #fed# meals and #baby_action#."
+    },
+    {
+      "id": "t_7",
+      "stages": [
+        "baby"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Everything is so big! I got some #pets# and then #baby_action#."
+    },
+    {
+      "id": "t_8",
+      "stages": [
+        "baby"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#[act:#baby_action#]greeting# Guess what? I #act#! And then I did it again!"
+    },
+    {
+      "id": "t_9",
+      "stages": [
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#greeting# I #junior_action# today! Growing up is exciting, I need more #vegetable.s#."
+    },
+    {
+      "id": "t_10",
+      "stages": [
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#[my_act:#junior_action#]greeting# I feel so #generic_feelings# today. I had #fed# portions of food. I #my_act#."
+    },
+    {
+      "id": "t_11",
+      "stages": [
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Got some #pets# from my human. I also #junior_action# which made me tired."
+    },
+    {
+      "id": "t_12",
+      "stages": [
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I found #clovers# while I #junior_action#. I love my life as #name#."
+    },
+    {
+      "id": "t_13",
+      "stages": [
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I am so full of energy! Today I #junior_action# and then demanded a #vegetable#."
+    },
+    {
+      "id": "t_14",
+      "stages": [
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "What a busy day. I #junior_action# all afternoon. Left #poops# everywhere."
+    },
+    {
+      "id": "t_15",
+      "stages": [
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "They say I'm a teenager now. I just #junior_action# and ignored everyone."
+    },
+    {
+      "id": "t_16",
+      "stages": [
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#greeting# Played #games# with the human, then #junior_action#."
+    },
+    {
+      "id": "t_17",
+      "stages": [
+        "adult"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#greeting# Life is #generic_feelings#. I #adult_action# and enjoyed some #vegetable#."
+    },
+    {
+      "id": "t_18",
+      "stages": [
+        "adult"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "A peaceful day. I #adult_action#, got some #pets# and left #poops#."
+    },
+    {
+      "id": "t_19",
+      "stages": [
+        "adult"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#[veg:#vegetable#]greeting# I'm a grown piggy. Today I ate #fed# meals, specifically #veg.s#."
+    },
+    {
+      "id": "t_20",
+      "stages": [
+        "adult"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "My human gave me #clovers# for being good. I just #adult_action# all day."
+    },
+    {
+      "id": "t_21",
+      "stages": [
+        "adult"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I took it easy today. Just #adult_action# and enjoyed a lovely #vegetable#."
+    },
+    {
+      "id": "t_22",
+      "stages": [
+        "adult"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Life is good as #name#. I #adult_action# and got plenty of #pets#."
+    },
+    {
+      "id": "t_23",
+      "stages": [
+        "adult"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Routine is nice. Ate my #fed# meals, #adult_action#, and went to sleep."
+    },
+    {
+      "id": "t_24",
+      "stages": [
+        "adult"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#greeting# Found a new comfy spot. I #adult_action# there for hours."
+    },
+    {
+      "id": "t_25",
+      "stages": [
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#[act:#senior_action#]greeting# I am an old and wise pig. Today I just #act#."
+    },
+    {
+      "id": "t_26",
+      "stages": [
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Bones are a bit stiff, but I #senior_action#. I enjoyed my #vegetable#."
+    },
+    {
+      "id": "t_27",
+      "stages": [
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Remembering when I was young. Now I prefer to have #pets# and #senior_action#."
+    },
+    {
+      "id": "t_28",
+      "stages": [
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "A quiet day. #fed# meals eaten. Left #poops# and #senior_action#."
+    },
+    {
+      "id": "t_29",
+      "stages": [
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "The youngsters are too loud. I just #senior_action# in my corner."
+    },
+    {
+      "id": "t_30",
+      "stages": [
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Life is about simple pleasures now. Like a good #vegetable# and #senior_action#."
+    },
+    {
+      "id": "t_31",
+      "stages": [
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "#greeting# Still the king of the cage. I #senior_action# and got my #pets#."
+    },
+    {
+      "id": "t_32",
+      "stages": [
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Had a lovely nap. Then I #senior_action# some more. Perfect."
+    },
+    {
+      "id": "t_33",
+      "stages": [
+        "baby",
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": true,
+        "mood": "low",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Oh no, I feel #sick_feelings#. My tummy hurts and I didn't want my #vegetable#."
+    },
+    {
+      "id": "t_34",
+      "stages": [
+        "baby",
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "high",
+        "birthday": true,
+        "weather": "any"
+      },
+      "text": "It's my birthday! I got extra #vegetable# and so many #pets#! Best day ever!"
+    },
+    {
+      "id": "t_35",
+      "stages": [
+        "baby",
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "hot"
+      },
+      "text": "The weather is #good_weather#. I feel #generic_feelings# and want to play #games#."
+    },
+    {
+      "id": "t_36",
+      "stages": [
+        "baby",
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "cold"
+      },
+      "text": "It's so #bad_weather# outside. I'm staying in my cozy bed."
+    },
+    {
+      "id": "t_37",
+      "stages": [
+        "baby",
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "low",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I am SO hungry. I only had #fed# meals. I need a #vegetable#!"
+    },
+    {
+      "id": "t_38",
+      "stages": [
+        "baby",
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "high",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I am feeling amazing! I had #fed# meals and I love #pets#."
+    },
+    {
+      "id": "t_39",
+      "stages": [
+        "baby",
+        "junior"
+      ],
+      "when": {
+        "minFed": 3,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Just a normal day. Ate #vegetable#, did #activity#, left #poops#."
+    },
+    {
+      "id": "t_40",
+      "stages": [
+        "baby",
+        "junior"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "high",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Found #clovers# today! I'm so lucky. #greeting# to everyone."
+    },
+    {
+      "id": "t_41",
+      "stages": [
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": true,
+        "mood": "low",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Oh no, I feel #sick_feelings#. My tummy hurts and I didn't want my #vegetable#."
+    },
+    {
+      "id": "t_42",
+      "stages": [
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "high",
+        "birthday": true,
+        "weather": "any"
+      },
+      "text": "It's my birthday! I got extra #vegetable# and so many #pets#! Best day ever!"
+    },
+    {
+      "id": "t_43",
+      "stages": [
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "hot"
+      },
+      "text": "The weather is #good_weather#. I feel #generic_feelings# and want to play #games#."
+    },
+    {
+      "id": "t_44",
+      "stages": [
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "cold"
+      },
+      "text": "It's so #bad_weather# outside. I'm staying in my cozy bed."
+    },
+    {
+      "id": "t_45",
+      "stages": [
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "low",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I am SO hungry. I only had #fed# meals. I need a #vegetable#!"
+    },
+    {
+      "id": "t_46",
+      "stages": [
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "high",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I am feeling amazing! I had #fed# meals and I love #pets#."
+    },
+    {
+      "id": "t_47",
+      "stages": [
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 3,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Just a normal day. Ate #vegetable#, did #activity#, left #poops#."
+    },
+    {
+      "id": "t_48",
+      "stages": [
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "high",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Found #clovers# today! I'm so lucky. #greeting# to everyone."
+    }
+  ],
+  "generic_feelings": [
+    "happy",
+    "content",
+    "safe",
+    "loved",
+    "curious",
+    "chill",
+    "sleepy",
+    "calm"
+  ],
+  "good_weather": [
+    "sunny",
+    "warm",
+    "breezy",
+    "nice",
+    "pleasant"
+  ],
+  "bad_weather": [
+    "rainy",
+    "cold",
+    "stormy",
+    "windy",
+    "wet",
+    "freezing"
+  ],
+  "toys": [
+    "ball",
+    "tunnel",
+    "chew stick",
+    "bell"
+  ],
+  "activity": [
+    "running around",
+    "exploring",
+    "napping",
+    "squeaking",
+    "popcorning",
+    "eating",
+    "resting",
+    "observing the room"
+  ],
+  "vegetable_type": [
+    "carrot",
+    "cucumber",
+    "bell_pepper",
+    "lettuce",
+    "parsley",
+    "kale",
+    "celery",
+    "tomato"
+  ],
+  "snack": [
+    "a piece of hay",
+    "a #vegetable#",
+    "some pellets"
+  ],
+  "games_type": [
+    "hide and seek",
+    "chase",
+    "tunnel run",
+    "floor time"
+  ],
+  "pets_type": [
+    "scratches",
+    "cuddles",
+    "head rubs",
+    "pets",
+    "chin scratches"
+  ],
+  "poops_type": [
+    "a few beans",
+    "a tiny pile",
+    "some drops",
+    "poops"
+  ],
+  "clovers_type": [
+    "a shiny clover",
+    "some clovers",
+    "a lucky clover"
+  ],
+  "baby_action": [
+    "squeaked loudly",
+    "popcorned everywhere",
+    "zoomed around",
+    "hid under the hay",
+    "bothered the human",
+    "chewed a bar",
+    "ran in circles",
+    "did a little hop"
+  ],
+  "junior_action": [
+    "explored every corner",
+    "played with my toys",
+    "chewed everything",
+    "begged for food",
+    "made a huge mess",
+    "stood on two legs",
+    "knocked over the bowl",
+    "investigated a shadow"
+  ],
+  "adult_action": [
+    "relaxed in the shade",
+    "ate a big meal",
+    "took a long nap",
+    "chilled out",
+    "watched the human",
+    "arranged my bedding",
+    "stared into space",
+    "waited patiently"
+  ],
+  "senior_action": [
+    "rested peacefully",
+    "enjoyed some quiet time",
+    "snuggled down",
+    "dozed off",
+    "dreamt of endless hay",
+    "stayed cozy in bed",
+    "grumbled softly",
+    "enjoyed some gentle pets"
+  ],
+  "sick_feelings": [
+    "tired",
+    "achy",
+    "slow",
+    "weak",
+    "unwell",
+    "groggy"
+  ],
+  "baby_cute": [
+    "tiny",
+    "fluffy",
+    "small",
+    "energetic",
+    "silly",
+    "round"
+  ],
+  "greeting": [
+    "Dear diary,",
+    "Hello!",
+    "Hi there!",
+    "Wheek!"
+  ]
+}
