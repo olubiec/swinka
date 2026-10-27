@@ -329,6 +329,23 @@
    "signal": true
   },
   {
+   "id": "hay_ball_play",
+   "animation": "ball_push",
+   "duration_s": 1.2,
+   "effects": {
+    "mood": 10,
+    "teeth": 5
+   },
+   "conditions": {
+    "item": "hay_ball",
+    "energy_min": 25
+   },
+   "cooldown_s": 900,
+   "satisfies": [
+    "mood"
+   ]
+  },
+  {
    "id": "ball_play",
    "animation": "ball_push",
    "duration_s": 1.2,
@@ -343,7 +360,8 @@
    "cooldown_s": 900,
    "satisfies": [
     "mood"
-   ]
+   ],
+   "base_weight": 0.045
   },
   {
    "id": "tunnel",
@@ -361,7 +379,8 @@
    "cooldown_s": 1200,
    "satisfies": [
     "mood"
-   ]
+   ],
+   "base_weight": 0.06
   },
   {
    "id": "rumblestrut",

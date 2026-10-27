@@ -175,6 +175,145 @@ namespace Cuy.Core.AI
         /// score = sum((1 - need/100)^2 * effect) * random(0.8, 1.2) + base_weight,
         /// taking cooldowns, daily limits, times of day and the day budget into account.
         /// </summary>
+        /// <summary>
+        /// Forces an action to start now if its item condition is met and its cooldown has passed.
+        /// Ignores score, daily budget, and energy minimum. Records cooldown and daily count like a normal choice.
+        /// Returns the ActionDecision if successful, otherwise null.
+        /// </summary>
+        public ActionDecision ForceAction(string actionId)
+        {
+            if (_config == null || _config.Actions == null) return null;
+
+            var action = _config.Actions.Find(a => a.Id == actionId);
+            if (action == null) return null;
+
+            int day = CurrentDay;
+            if (day != _currentDay)
+            {
+                _currentDay = day;
+                _dailyCounts.Clear();
+            }
+
+            // Check item condition
+            if (action.Conditions != null && action.Conditions.ContainsKey("item"))
+            {
+                string item = action.Conditions["item"]?.ToString();
+                if (!string.IsNullOrEmpty(item))
+                {
+                    if (_pet == null || _pet.State == null || _pet.State.Inventory == null) return null;
+                    int count;
+                    _pet.State.Inventory.TryGetValue(item, out count);
+                    if (count <= 0) return null;
+                }
+            }
+
+            // Manual Cooldown Check (shared with Desktop/Home views)
+            if (action.CooldownSeconds.HasValue && action.CooldownSeconds.Value > 0)
+            {
+                if (action.Conditions != null && action.Conditions.ContainsKey("item"))
+                {
+                    string item = action.Conditions["item"]?.ToString();
+                    if (!string.IsNullOrEmpty(item) && _pet != null && _pet.State != null && _pet.State.Stats != null)
+                    {
+                        int lastUnix;
+                        if (_pet.State.Stats.Counters.TryGetValue("toy_last_" + item, out lastUnix))
+                        {
+                            double elapsed = (_pet.Clock.UtcNow - DateTimeOffset.FromUnixTimeSeconds(lastUnix).UtcDateTime).TotalSeconds;
+                            if (elapsed < action.CooldownSeconds.Value)
+                            {
+                                return null;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Setup and return the action
+            double score = 1000.0; // High score for forced action
+
+            // Track repeats in a row
+            if (action.Id == _lastActionId)
+            {
+                _consecutiveCount++;
+            }
+            else
+            {
+                _lastActionId = action.Id;
+                _consecutiveCount = 1;
+            }
+
+            // Track the daily count
+            int currentCount;
+            _dailyCounts.TryGetValue(action.Id, out currentCount);
+            _dailyCounts[action.Id] = currentCount + 1;
+
+            double durSec = SampleRange(action.MinDurationSeconds, action.MaxDurationSeconds);
+            TimeSpan duration = TimeSpan.FromSeconds(durSec);
+
+            // Cooldown
+            if (action.CooldownSeconds.HasValue && action.CooldownSeconds.Value > 0)
+            {
+                _cooldownsUntilSec[action.Id] = _totalSimulatedSeconds + action.CooldownSeconds.Value;
+
+                // Write to global shared cooldown
+                if (action.Conditions != null && action.Conditions.ContainsKey("item"))
+                {
+                    string item = action.Conditions["item"]?.ToString();
+                    if (!string.IsNullOrEmpty(item) && _pet != null && _pet.State != null && _pet.State.Stats != null)
+                    {
+                        _pet.State.Stats.Counters["toy_last_" + item] = (int)new DateTimeOffset(_pet.Clock.UtcNow).ToUnixTimeSeconds();
+                    }
+                }
+            }
+
+            // Movement distance for walks and other moving actions
+            int moveDist = 0;
+            if (action.IsMovement)
+            {
+                moveDist = (int)Math.Round(SampleRange(action.MinDistancePx, action.MaxDistancePx));
+            }
+
+            // Resource use (e.g. hay in the rack)
+            if (action.Consumes != null)
+            {
+                double hayCost;
+                if (action.Consumes.TryGetValue("hay_in_rack", out hayCost))
+                {
+                    HayInRack = Math.Max(0.0, HayInRack - hayCost);
+                }
+            }
+
+            // Track rare behaviours for the report
+            if (_config.DailyBudget != null && _config.DailyBudget.RareBehaviorsPerDay != null && _config.DailyBudget.RareBehaviorsPerDay.ContainsKey(action.Id))
+            {
+                int rCount;
+                _rareBehaviorCounts.TryGetValue(action.Id, out rCount);
+                _rareBehaviorCounts[action.Id] = rCount + 1;
+            }
+
+            string group = ActionDefinition.GetBudgetGroup(action.Id);
+
+            var decision = new ActionDecision(
+                action.Id,
+                action.Animation,
+                duration,
+                moveDist,
+                group,
+                action.Effects,
+                score,
+                action);
+
+            _currentAction = decision;
+            _remainingDuration = duration;
+            _isInterrupted = false;
+            _interruptedReason = null;
+
+            // Apply effects to the needs
+            ApplyEffects(action.Effects);
+
+            return decision;
+        }
+
         public ActionDecision DecideNextAction()
         {
             int day = CurrentDay;
