@@ -20,3 +20,10 @@ Przy ponownym generowaniu wariantu trzeba go podłożyć w katalogu eksportu.
 - Ikony 16×16, kontur `#3a1d17`, 2–4 odcienie na materiał, przezroczyste tło, światło z lewej góry. Kolejność ikon w arkuszu nie może się zmienić (nowe dopisujemy na końcu `icons_16.png`, indeksy w `assets/icons/icons.json`).
 - Świnka: klatka 64×64, podłoga na y=59, patrzy w prawo, ta sama siatka animacji co w `baby/` (16 kolumn × 60 wierszy, plik `spritesheet.png` 1024×3840 + `animations.json` + wersje `_x2`).
 - Junior ma proporcje pośrednie między `baby` (kb=0,78, kh=0,88) i `adult` (1,0, 1,0), kolor jak dorosła ruda, bez cech seniora.
+
+## Wanted later: own icons
+- `soft_pellets` (borrows `pellets`)
+- `warm_house_bed` (borrows `house`)
+- `dental_chew` (borrows `chew_stick`)
+- `vitamin_mix` (borrows `vitamin_drops`)
+- `carrot_top` (borrows `carrot`)

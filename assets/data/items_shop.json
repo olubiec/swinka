@@ -109,6 +109,86 @@
         "sleep_energy_multiplier": 1.3
       },
       "description": "A hanging hammock. Sleep energy +30 % and mood +5 after naps."
+    },
+    {
+      "id": "soft_pellets",
+      "name": "Soft pellets",
+      "category": "food",
+      "price": 6,
+      "icon": "pellets",
+      "animation": "eat_bowl",
+      "effects": {
+        "fullness": 20,
+        "vitamin_c": 5
+      },
+      "description": "Easier to chew.",
+      "stages": [
+        "senior",
+        "legend"
+      ]
+    },
+    {
+      "id": "warm_house_bed",
+      "name": "Warm house bed",
+      "category": "equipment",
+      "price": 300,
+      "permanent": true,
+      "icon": "house",
+      "animation": "sleep_house",
+      "effects": {
+        "energy": 12,
+        "mood": 8
+      },
+      "description": "A very warm bed.",
+      "stages": [
+        "senior",
+        "legend"
+      ]
+    },
+    {
+      "id": "dental_chew",
+      "name": "Dental chew",
+      "category": "chew_stick",
+      "price": 20,
+      "icon": "chew_stick",
+      "animation": "chew_stick",
+      "uses": 3,
+      "effects": {
+        "teeth": 20,
+        "mood": 5
+      },
+      "description": "Good for teeth."
+    },
+    {
+      "id": "vitamin_mix",
+      "name": "Vitamin mix",
+      "category": "care",
+      "price": 10,
+      "icon": "vitamin_drops",
+      "animation": "drink",
+      "daily_limit": 1,
+      "effects": {
+        "vitamin_c": 25
+      },
+      "description": "Mix of vitamins.",
+      "stages": [
+        "senior",
+        "legend"
+      ]
+    },
+    {
+      "id": "carrot_top",
+      "name": "Carrot top",
+      "category": "vegetable",
+      "price": 4,
+      "icon": "carrot",
+      "animation": "eat_treat",
+      "effects": {
+        "vitamin_c": 10,
+        "mood": 2,
+        "fullness": 4
+      },
+      "description": "Green part of carrot."
     }
   ]
 }
