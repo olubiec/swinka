@@ -21,8 +21,21 @@ namespace Cuy.Core
         public int? DailyLimit { get; set; }
         public int? Uses { get; set; }
         public bool OneTime { get; set; }
+        public List<string> Stages { get; set; } = new List<string>();
 
         public bool CanBuy => Price.HasValue && Price.Value >= 0;
+
+        public bool IsAvailableFor(LifeStage stage)
+        {
+            if (Stages == null || Stages.Count == 0) return true;
+            string key = LifeStages.DataKey(stage);
+            foreach (var s in Stages)
+            {
+                if (string.Equals(s, key, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
 
         public double GetEffect(string needName)
         {
