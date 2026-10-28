@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cuy.Core.Care;
 using Cuy.Core.Economy;
+using Cuy.Core.Time;
 using Newtonsoft.Json.Linq;
 
 namespace Cuy.Features
@@ -13,6 +14,23 @@ namespace Cuy.Features
 
         private Dictionary<string, DateTime> _lastShown = new Dictionary<string, DateTime>();
         private CareReminderForm _currentReminder;
+
+        public override void Initialize(BrainController brain)
+        {
+            base.Initialize(brain);
+            var data = CareData.Current;
+            brain.Pet.SetCareTasks(data.Tasks);
+            brain.Pet.SetCareConfig(data.WeightAlert, data.SnoozeMinutes);
+            int n = data.Tasks?.Count ?? 0;
+            if (n == 0)
+            {
+                BrainController.Log("[Calendar] ERROR no care tasks (care.json missing or empty)");
+            }
+            else
+            {
+                BrainController.Log($"[Calendar] loaded {n} care tasks");
+            }
+        }
 
         public override void AddState(IDictionary<string, object> state, BrainController brain)
         {
@@ -91,7 +109,7 @@ namespace Cuy.Features
             var alerts = pet.WeightAlerts().ToList();
 
             // Default snooze minutes if missing
-            var snoozeMinutes = new List<int> { 15, 60, 180 };
+            var snoozeMinutes = CareData.Current.SnoozeMinutes ?? new List<int> { 15, 60, 180 };
 
             state[Id] = new
             {
@@ -113,9 +131,14 @@ namespace Cuy.Features
             switch (type)
             {
                 case "calendar_done":
+                    try
                     {
                         string taskId = (string)message["taskId"];
-                        if (string.IsNullOrEmpty(taskId)) return false;
+                        if (string.IsNullOrEmpty(taskId) || pet.CareTasks.All(t => t.Id != taskId))
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: taskId unknown or missing");
+                            return true;
+                        }
 
                         bool wasDue = pet.MarkCareDone(taskId);
                         if (wasDue)
@@ -127,16 +150,33 @@ namespace Cuy.Features
 
                         if (_currentReminder != null && !_currentReminder.IsDisposed && _currentReminder.Task.Id == taskId)
                         {
+                            _currentReminder.CloseReason = "done";
                             _currentReminder.Close();
                             _currentReminder = null;
                         }
-                        return true;
                     }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log($"[Calendar] handler error: {ex.Message}");
+                    }
+                    return true;
+
                 case "calendar_snooze":
+                    try
                     {
                         string taskId = (string)message["taskId"];
+                        if (string.IsNullOrEmpty(taskId) || pet.CareTasks.All(t => t.Id != taskId))
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: taskId unknown or missing");
+                            return true;
+                        }
+
                         int minutes = (int?)message["minutes"] ?? 15;
-                        if (string.IsNullOrEmpty(taskId)) return false;
+                        if (!CareInput.TrySnoozeMinutes(minutes))
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: minutes invalid");
+                            return true;
+                        }
 
                         pet.SnoozeCare(taskId, minutes);
                         brain.Session.AutoSaver.SaveNow();
@@ -146,9 +186,22 @@ namespace Cuy.Features
                         {
                             _lastShown[taskId] = DateTime.UtcNow.AddMinutes(-20);
                         }
-                        return true;
+
+                        if (_currentReminder != null && !_currentReminder.IsDisposed && _currentReminder.Task.Id == taskId)
+                        {
+                            _currentReminder.CloseReason = $"later {minutes}";
+                            _currentReminder.Close();
+                            _currentReminder = null;
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log($"[Calendar] handler error: {ex.Message}");
+                    }
+                    return true;
+
                 case "calendar_settings":
+                    try
                     {
                         var pigsToken = message["pigs"] as JArray;
                         var tasksToken = message["tasks"] as JArray;
@@ -158,20 +211,9 @@ namespace Cuy.Features
 
                         if (pigsToken != null)
                         {
-                            var newPigs = new List<string>();
-                            foreach (var p in pigsToken)
-                            {
-                                string name = (string)p;
-                                if (!string.IsNullOrWhiteSpace(name))
-                                {
-                                    // Validate 1-16 letters/digits/spaces
-                                    string validName = new string(name.Where(c => char.IsLetterOrDigit(c) || c == ' ').ToArray());
-                                    if (validName.Length > 16) validName = validName.Substring(0, 16);
-                                    if (!string.IsNullOrWhiteSpace(validName))
-                                        newPigs.Add(validName.Trim());
-                                }
-                            }
-                            settings.PigNames = newPigs;
+                            var rawPigs = pigsToken.Select(p => (string)p).ToList();
+                            var cleanPigs = CareInput.CleanPigNames(rawPigs);
+                            settings.PigNames = cleanPigs;
                         }
 
                         if (tasksToken != null)
@@ -179,7 +221,11 @@ namespace Cuy.Features
                             foreach (var tToken in tasksToken)
                             {
                                 string id = (string)tToken["id"];
-                                if (string.IsNullOrEmpty(id)) continue;
+                                if (string.IsNullOrEmpty(id) || pet.CareTasks.All(t => t.Id != id))
+                                {
+                                    BrainController.Log($"[Calendar] ignored {type}: taskId unknown or missing");
+                                    continue;
+                                }
 
                                 if (!settings.TaskOverrides.TryGetValue(id, out var over))
                                 {
@@ -191,44 +237,109 @@ namespace Cuy.Features
                                 if (tToken["time"] != null)
                                 {
                                     string time = (string)tToken["time"];
-                                    // Validate HH:mm
-                                    if (TimeSpan.TryParse(time, out _))
+                                    if (CareInput.TryTime(time, out var cleanTime))
                                     {
-                                        over.Time = time;
+                                        over.Time = cleanTime;
+                                    }
+                                    else
+                                    {
+                                        BrainController.Log($"[Calendar] ignored {type}: time invalid");
                                     }
                                 }
-                                if (tToken["weekday"] != null) over.Weekday = (int)tToken["weekday"];
-                                if (tToken["everyDays"] != null) over.EveryDays = (int)tToken["everyDays"];
+                                if (tToken["weekday"] != null)
+                                {
+                                    int weekday = (int)tToken["weekday"];
+                                    if (CareInput.TryWeekday(weekday))
+                                    {
+                                        over.Weekday = weekday;
+                                    }
+                                    else
+                                    {
+                                        BrainController.Log($"[Calendar] ignored {type}: weekday invalid");
+                                    }
+                                }
+                                if (tToken["everyDays"] != null)
+                                {
+                                    int everyDays = (int)tToken["everyDays"];
+                                    if (CareInput.TryEveryDays(everyDays))
+                                    {
+                                        over.EveryDays = everyDays;
+                                    }
+                                    else
+                                    {
+                                        BrainController.Log($"[Calendar] ignored {type}: everyDays invalid");
+                                    }
+                                }
                             }
                         }
 
                         brain.Session.AutoSaver.SaveNow();
-                        return true;
                     }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log($"[Calendar] handler error: {ex.Message}");
+                    }
+                    return true;
+
                 case "calendar_weight":
+                    try
                     {
                         string pig = (string)message["pig"];
                         int? grams = (int?)message["grams"];
                         string date = (string)message["date"];
 
-                        if (string.IsNullOrWhiteSpace(pig) || !grams.HasValue) return false;
-                        if (grams.Value < 50 || grams.Value > 3000) return false;
-
-                        pet.AddWeight(pig, grams.Value, date);
-                        brain.Session.AutoSaver.SaveNow();
-                        return true;
+                        if (string.IsNullOrWhiteSpace(pig) || !pet.State.Care.Settings.PigNames.Contains(pig))
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: pig unknown");
+                            return true;
+                        }
+                        if (!grams.HasValue || !CareInput.TryGrams(grams.Value))
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: grams invalid");
+                            return true;
+                        }
+                        string cleanDate = null;
+                        if (string.IsNullOrEmpty(date) || CareInput.TryDate(date, pet.Clock.LocalNow().Date, out cleanDate))
+                        {
+                            pet.AddWeight(pig, grams.Value, cleanDate);
+                            brain.Session.AutoSaver.SaveNow();
+                        }
+                        else
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: date invalid");
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log($"[Calendar] handler error: {ex.Message}");
+                    }
+                    return true;
+
                 case "calendar_weight_delete":
+                    try
                     {
                         string pig = (string)message["pig"];
                         string date = (string)message["date"];
 
-                        if (string.IsNullOrWhiteSpace(pig) || string.IsNullOrWhiteSpace(date)) return false;
+                        if (string.IsNullOrWhiteSpace(pig) || !pet.State.Care.Settings.PigNames.Contains(pig))
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: pig unknown");
+                            return true;
+                        }
+                        if (string.IsNullOrWhiteSpace(date))
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: date invalid");
+                            return true;
+                        }
 
                         pet.DeleteWeight(pig, date);
                         brain.Session.AutoSaver.SaveNow();
-                        return true;
                     }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log($"[Calendar] handler error: {ex.Message}");
+                    }
+                    return true;
             }
             return false;
         }
@@ -261,7 +372,7 @@ namespace Cuy.Features
             if (Win32Input.GetIdleTime().TotalMinutes >= 3) return;
             if (FormPet.ActivePet != null)
             {
-                // In FormPet, if TopMost is false due to a fullscreen app, we shouldn't show it.
+                // In FormPet, if TopMost is false due to a fullscreen app, we shouldn't show it. (FormPet.ActivePet.TopMost is a proxy; a later task replaces it with FullscreenDetector)
                 if (!FormPet.ActivePet.TopMost) return;
             }
 

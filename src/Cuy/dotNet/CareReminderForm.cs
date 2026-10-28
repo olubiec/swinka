@@ -14,6 +14,7 @@ namespace Cuy
         private const int WS_EX_TOPMOST = 0x00000008;
 
         public CareTaskDefinition Task { get; }
+        public string CloseReason { get; set; } = "auto-hide";
         private Timer _followTimer;
         private Timer _autoHideTimer;
         private Label _lblTitle;
@@ -199,12 +200,19 @@ namespace Cuy
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
+            BrainController.Log($"[Calendar] card shown: {Task.Id}");
             _followTimer.Start();
             _autoHideTimer.Start();
             UpdatePosition();
 
             _brain?.RequestAnimation("wheek");
             SoundManager.Instance?.PlayWheek("reminder");
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            BrainController.Log($"[Calendar] card closed: {Task.Id} ({CloseReason})");
+            base.OnFormClosed(e);
         }
 
         private void FollowTimer_Tick(object sender, EventArgs e)
@@ -240,6 +248,7 @@ namespace Cuy
 
         private void BtnDone_Click(object sender, EventArgs e)
         {
+            CloseReason = "done";
             if (_brain?.Pet != null)
             {
                 bool wasDue = _brain.Pet.MarkCareDone(Task.Id);
@@ -256,11 +265,13 @@ namespace Cuy
 
         private void BtnLater_Click(object sender, EventArgs e)
         {
+            CloseReason = "later 60";
             SnoozeTask(60);
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
+            CloseReason = "later 15";
             SnoozeTask(15);
         }
 
