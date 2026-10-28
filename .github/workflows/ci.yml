@@ -1,3 +1,4 @@
+# Name must stay `CI`: Jules Loop (.github/workflows/jules-loop.yml) reads this workflow's results.
 # Checks every pull request (Jules PRs included; CI Fixer repairs red checks here): Core tests, JS syntax, Home page smoke test,
 # and (once src/Cuy/Cuy.csproj is SDK-style) a Linux compile of the desktop app.
 name: CI
@@ -6,6 +7,12 @@ on:
   push:
     branches: [main]
     paths-ignore: ['**.md', 'docs/**', 'tasks/**']
+  workflow_dispatch:   # Jules Loop starts CI on main with this when a push did not trigger it
+
+# A newer push to the same branch cancels the older still-running check (fewer wasted minutes).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   core-tests:

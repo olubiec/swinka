@@ -48,11 +48,11 @@ Komendy: `CORE` = `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Rel
 `SMOKE` = `node tools/qa/web-smoke.js`; `JS` = `node --check` na zmienionych plikach.
 
 ## Jak puszczasz falę
-1. Pliki fali są na `main` (PR z plikami zadań). 2. `tools/jules-wave.sh W1` (max 15 naraz; `MAX=15`). 3. Dobrze opisane zadania: bez czekania na plan; ryzykowne
+**Od 28.10.2026 falę puszcza Jules Loop** (`docs/JULES_LOOP.md`): wypchnij `tasks/W<n>-*.md` na `main`, reszta idzie sama. Kroki 2 i 7 poniżej (skrypty) są nieaktualne. 1. Pliki fali są na `main`. 2. (nieaktualne) ~~`tools/jules-wave.sh W1`~~. 3. Dobrze opisane zadania: bez czekania na plan; ryzykowne
 (wspólne pliki, migracje): przejrzyj plan; niejasne: tryb Interactive Plan. 4. Review wg checklisty (CI zielone, diff tylko w „Change”, asercje nietknięte,
 brak nowych zależności, opis PR, screenshot), merge od najmniejszego PR. 5. Poprawki: komentarz w PR (`@jules W <plik>:<linia> dzieje się X, a powinno Y.`),
 czerwone CI naprawia CI Fixer, po 2 rundach nowe zadanie od gałęzi PR, po trzeciej porażce rozbij zadanie. 6. Koniec fali: sesja „Integracja Wn: wszystkie testy
-i build, napraw błędy, zaktualizuj status w docs/PLAN.md”. 7. Wieczorem `tools/jules-backlog.sh` (15 linii z `tasks/BACKLOG.md`). 8. Do Claude wracasz po pliki
+i build, napraw błędy, zaktualizuj status w docs/PLAN.md”. 7. Backlog: wybrane linie z `tasks/BACKLOG.md` przepisz na pliki fali (nie `tools/jules-backlog.sh`). 8. Do Claude wracasz po pliki
 następnej fali (szablon A2) albo gdy błąd jest w koncepcie lub planie.
 
 ## Status (27.10.2026, wieczór)
@@ -62,7 +62,7 @@ następnej fali (szablon A2) albo gdy błąd jest w koncepcie lub planie.
 - Reguła danych (nowa w AGENTS.md): każda tabela danych ma `Current`/`Load`/`LoadDefault` jak `EconomyConfig`; testy używają wstrzykiwanych tabel `Pet`, nie statyków. Nowe zachowania Core są za flagą w `Balance` (`HayRackActive`, `DiaryActive`), włączaną w `GameSession.Open`.
 - Research R1–R20 wdrożony (`RESEARCH.md`, `DECYZJE.md`); rzeczy do sprawdzenia na PC: `TESTY_RECZNE.md`. Windows: nie zbudowano `tools/build.ps1` po falach 2–3 starego planu: zrób to po „Integracji W2”.
 
-## Fale (A1). Pliki zadań W1–W3 gotowe w `tasks/`; W4+ pisze Claude (A2) po integracji W3, z uwzględnieniem stanu repo. Prompty integracyjne: `docs/wave-prompts.md`.
+## Fale (A1). Pliki zadań W1–W3 są w `tasks/plan/` (nieaktywne, stary format `Change:`; przed startem przepisz na format pętli z `docs/JULES_LOOP.md`). W4+ pisze Claude (A2) po integracji W3, z uwzględnieniem stanu repo. Prompty integracyjne: `docs/wave-prompts.md`.
 ### W1 (9; bez zależności; W1-06/07 dotykają innych plików niż reszta)
 | ID | Cel | Zmieniaj | Akceptacja |
 | --- | --- | --- | --- |

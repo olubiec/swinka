@@ -24,8 +24,8 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 
 ## Rules
 - Run tests and build before finishing; open the PR only when the task's verification command passes. If you cannot verify it, do not open the PR: say what blocks you.
-- One task = one branch = one pull request; PR title = `<task id>: <task title>`.
-- Change only the files listed under "Change" in the task (plus new files it asks for). If another file really must change, change the minimum and say why in the PR.
+- One task = one branch = one pull request; PR title = `[<task id>] <task title>` (e.g. `[W2-03] Diary writer`).
+- Change only the files listed in the task's `Zmieniaj:` line (plus `Wymagane:`). The Jules Loop plan guard reverts any other file. If the task is missing a file you need, say so in the PR and stop.
 - Never change or delete an existing test assertion to make a check pass. If an old assertion is wrong, say so in the PR and stop.
 - Libraries only from `docs/PLAN.md`. No new NuGet/npm dependencies. No network calls at runtime in the app (assets are local).
 - Game numbers (prices, rewards, chances, durations, speeds, timings) live in `assets/data/*.json` or `Balance`, not in code. The human tunes them.
@@ -38,6 +38,9 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 - Data tables (JSON in `assets/data/`) follow the `EconomyConfig` pattern: static `Current` (lazy `LoadDefault()`), `Load(string)`, `LoadDefault()` (file candidates, then code defaults, errors logged through `ItemCatalog.ErrorLogger`). A table is useless until something calls its loader: the task must name where. Tests inject tables into `Pet` (e.g. `BondTable`, `HayTable`) and never change statics. Tests find repo files by walking up from `AppContext.BaseDirectory` to the folder with `Cuy.sln` (`RepoFile` helper).
 - New Core behavior that changes numbers is behind a `Balance` flag (default off, switched on in `GameSession.Open`) so existing tests keep their numbers.
 - Use the signatures a task gives exactly; if the real code differs, stop and say so in the PR instead of inventing an alias.
+
+## Jules Loop
+Tasks arrive through the loop (`docs/JULES_LOOP.md`). Its plan guard asks you to revert files outside `Zmieniaj:`/`Wymagane:`, to restore removed assertions, and refuses PRs that touch `.github/workflows/jules-loop.yml` or `scripts/jules-loop/`. Keep the PR title format above; the loop uses it.
 
 ## Prohibited
 - Do not commit secrets or `.env`. Do not run processes that never end (dev server, the game loop) without a timeout.

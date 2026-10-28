@@ -1,0 +1,74 @@
+name: Jules Loop
+
+# Pętla: push promptów (tasks/W*.md) -> Jules -> CI/poprawki -> merge -> fala testów -> CI na main -> następna fala.
+# Zero tokenów Claude: wszystko robi ten workflow + Jules API.
+
+on:
+  push:
+    branches: [main]            # zmień, jeśli domyślna gałąź to nie main
+    paths: ['tasks/W*.md']      # Haiku wypycha pliki fali -> start
+  workflow_run:
+    workflows: ["CI"]           # musi pasować do `name:` Twojego workflow z testami
+    types: [completed]          # CI skończyło -> sprawdź PR-y i main
+  schedule:
+    - cron: '*/30 * * * *'      # siatka bezpieczeństwa (timery, sesje bez PR); zdarzenia budzą pętlę od razu; pomijana, gdy pętla nieaktywna
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'tick | resume | skip | skip-wave'
+        type: choice
+        options: [tick, resume, skip, skip-wave]
+        default: tick
+      arg:
+        description: 'dla skip: ID zadania (np. W2-03)'
+        required: false
+      dry_run:
+        description: 'Tylko sprawdź i wypisz, nic nie uruchamiaj ani nie scalaj'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # zapis pliku stanu projektu (z PAT; bez PAT i bez ochrony gałęzi też zadziała)
+  issues: write
+  pull-requests: write
+  actions: write
+
+# Jeden tick naraz: bez wyścigów o stan.
+concurrency:
+  group: jules-loop
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    # Cron tylko gdy pętla aktywna: pominięte zadanie nie zużywa minut Actions.
+    if: github.event_name != 'schedule' || vars.JULES_LOOP_ACTIVE != 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Jules Loop tick
+        run: node scripts/jules-loop/orchestrator.mjs
+        env:
+          JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
+          # PAT (zalecany): merge i komentarze od Ciebie wyzwalają kolejne workflowy i Julesa.
+          GH_TOKEN: ${{ secrets.LOOP_TOKEN || github.token }}
+          # Powiadomienia z github-actions[bot] + @wzmianka, żeby GitHub wysłał Ci push/mail.
+          NOTIFY_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          LOOP_BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          LOOP_CI_WORKFLOW: ${{ vars.LOOP_CI_WORKFLOW || 'ci.yml' }}
+          LOOP_MAX_CONCURRENT: ${{ vars.LOOP_MAX_CONCURRENT }}
+          LOOP_DAILY_BUDGET: ${{ vars.LOOP_DAILY_BUDGET }}
+          LOOP_FIX_GRACE_MIN: ${{ vars.LOOP_FIX_GRACE_MIN }}
+          LOOP_TEST_WAVE: ${{ vars.LOOP_TEST_WAVE }}
+          LOOP_PLAN_GUARD: ${{ vars.LOOP_PLAN_GUARD }}
+          LOOP_STATE_FILE: ${{ vars.LOOP_STATE_FILE }}
+          LOOP_SCOPE_ALLOW: ${{ vars.LOOP_SCOPE_ALLOW }}
+          LOOP_ACTION: ${{ inputs.action || 'tick' }}
+          LOOP_ACTION_ARG: ${{ inputs.arg }}
+          LOOP_DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
