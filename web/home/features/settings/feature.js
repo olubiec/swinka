@@ -55,41 +55,51 @@
     const elAutostart = document.getElementById('settingsAutostart');
     const radioSize = document.querySelectorAll('input[name="petSize"]');
 
-    elSounds.addEventListener('change', (e) => {
-      if (root.Sound) root.Sound.click();
-      if (window.bridge) window.bridge.send({ type: 'settings_sounds', on: e.target.checked });
-    });
-
-    elMusic.addEventListener('change', (e) => {
-      if (root.Sound) root.Sound.click();
-      if (window.CuyMusic) {
-        window.CuyMusic.setEnabled(e.target.checked);
-      }
-    });
-
-    elVolume.addEventListener('input', (e) => {
-      if (window.CuyMusic) {
-        const val = parseInt(e.target.value, 10) / 100;
-        window.CuyMusic.setVolume(val);
-        if (window.CuyMusic.isEnabled()) {
-          window.CuyMusic.play('menu', { loop: false, volume: val });
-        }
-      }
-    });
-
-    radioSize.forEach(radio => {
-      radio.addEventListener('change', (e) => {
+    if (elSounds) {
+      elSounds.addEventListener('change', (e) => {
         if (root.Sound) root.Sound.click();
-        if (e.target.checked && window.bridge) {
-          window.bridge.send({ type: 'settings_pet_size', size: e.target.value });
+        if (window.bridge) window.bridge.send({ type: 'settings_sounds', on: e.target.checked });
+      });
+    }
+
+    if (elMusic) {
+      elMusic.addEventListener('change', (e) => {
+        if (root.Sound) root.Sound.click();
+        if (window.CuyMusic) {
+          window.CuyMusic.setEnabled(e.target.checked);
         }
       });
-    });
+    }
 
-    elAutostart.addEventListener('change', (e) => {
-      if (root.Sound) root.Sound.click();
-      if (window.bridge) window.bridge.send({ type: 'settings_autostart', on: e.target.checked });
-    });
+    if (elVolume) {
+      elVolume.addEventListener('input', (e) => {
+        if (window.CuyMusic) {
+          const val = parseInt(e.target.value, 10) / 100;
+          window.CuyMusic.setVolume(val);
+          if (window.CuyMusic.isEnabled()) {
+            window.CuyMusic.play('menu', { loop: false, volume: val });
+          }
+        }
+      });
+    }
+
+    if (radioSize) {
+      radioSize.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          if (root.Sound) root.Sound.click();
+          if (e.target.checked && window.bridge) {
+            window.bridge.send({ type: 'settings_pet_size', size: e.target.value });
+          }
+        });
+      });
+    }
+
+    if (elAutostart) {
+      elAutostart.addEventListener('change', (e) => {
+        if (root.Sound) root.Sound.click();
+        if (window.bridge) window.bridge.send({ type: 'settings_autostart', on: e.target.checked });
+      });
+    }
   }
 
   function updateUI(state) {
