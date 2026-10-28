@@ -56,6 +56,6 @@ Actions → Jules Loop → Run workflow: `tick`, `resume`, `skip <ID>`, `skip-wa
 
 - Stan projektu czytasz z `docs/PROJECT_STATE.md`. Nie pytaj o stan, jeśli plik jest aktualny.
 - Nową falę piszesz w formacie powyżej i sprawdzasz przed pushem: każdy plik ma `Zmieniaj:`, zakresy się nie nakładają, zależności są w wcześniejszych falach.
-- Pliki w `tasks/plan/` są nieaktywne i w starym formacie (`Change:`). Przed przeniesieniem do `tasks/` przepisz je na format pętli.
+- Fale W1–W2 (zrobione) leżą w `tasks/done/` i nie startują. Nowa fala = pliki `tasks/W<n>-<nn>-*.md` w formacie pętli, dodane do `main`.
 - `tasks/BACKLOG.md` to surowa lista pomysłów. Wybrane linie przepisujesz na pliki fali; nie uruchamiasz ich skryptem.
 - Nie edytujesz `.github/workflows/jules-loop.yml` ani `scripts/jules-loop/` w zadaniach dla Julesa. Pętla odrzuca PR-y, które to ruszają.
