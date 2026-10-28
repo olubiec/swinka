@@ -53,6 +53,10 @@ function serve() {
     await page.waitForTimeout(1200);
     const ok = await page.evaluate(() => !!window.bridge && !!document.getElementById('pigCanvas'));
     if (!ok) throw new Error('bridge or canvas missing');
+    if (await page.isVisible('#modalBackdrop.active')) {
+      await page.click('#modalCloseBtn');
+      await page.waitForTimeout(200);
+    }
   });
   await step('02_feed_drawer', async () => {
     await page.click('#btnFeed'); await page.waitForTimeout(300);
