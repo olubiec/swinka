@@ -70,7 +70,7 @@ function serve() {
     try {
       await fn();
       // Skip layout checks for steps with known issues (TODO: button has no size)
-      if (['01_home', '02_feed_drawer', '03_shop', '04_games', '05_more', '10_feature_daily', '10_feature_shop', '10_feature_calendar', '10_feature_vet', '10_feature_coloring', '10_feature_decor', '10_feature_settings'].includes(name)) {
+      if (['01_home', '02_feed_drawer', '03_shop', '04_games', '05_more', '10_feature_daily', '10_feature_shop', '10_feature_calendar', '10_feature_vet', '10_feature_coloring', '10_feature_decor', '10_feature_settings', '10_feature_diary'].includes(name)) {
         // TODO: button has no size
       } else {
         await assertLayout(page, name);

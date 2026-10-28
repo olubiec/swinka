@@ -106,6 +106,25 @@
       sounds: true,
       autostart: false
     },
+    diary: [
+      { date: '2026-10-24', text: 'Today was a good day. I ate some carrots.' },
+      { date: '2026-10-23', text: 'I explored the living room. Found a dust bunny.' },
+      { date: '2026-10-22', text: 'Slept a lot. Dreamed of hay.' }
+    ],
+    albumDates: {
+      sniff: '2026-10-20',
+      popcorn: '2026-10-21'
+    },
+    bondNext: {
+      level: 5,
+      id: 'trick_spin',
+      title: 'Learns to spin',
+      pointsToNext: 14
+    },
+    hayRack: {
+      value: 60,
+      max: 100
+    },
     currentAction: 'idle',
     isSleeping: false,
     lastActiveUtc: new Date().toISOString()
