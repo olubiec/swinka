@@ -78,6 +78,10 @@ namespace Cuy
             /// Mute on full screen
             /// </summary>
             public const string MuteFullscreen = "MuteFullscreen";
+            /// <summary>
+            /// Disabled behaviors
+            /// </summary>
+            public const string DisabledBehaviors = "DisabledBehaviors";
 		};
 
 		/// <summary>
@@ -117,6 +121,39 @@ namespace Cuy
                 }
             }
             AppSettings = AppConfiguration.AppSettings.Settings;
+        }
+
+        public IEnumerable<string> GetDisabledBehaviors()
+        {
+            if (AppSettings.AllKeys.Contains(SettingName.DisabledBehaviors) && AppSettings[SettingName.DisabledBehaviors] != null)
+            {
+                string val = AppSettings[SettingName.DisabledBehaviors].Value;
+                if (!string.IsNullOrEmpty(val))
+                {
+                    return val.Split(',');
+                }
+            }
+            return new string[0];
+        }
+
+        public void SetDisabledBehaviors(IEnumerable<string> disabled)
+        {
+            string val = string.Join(",", disabled ?? new string[0]);
+            if (AppSettings.AllKeys.Contains(SettingName.DisabledBehaviors) && AppSettings[SettingName.DisabledBehaviors] != null)
+            {
+                if (AppSettings[SettingName.DisabledBehaviors].Value != val)
+                {
+                    AppSettings[SettingName.DisabledBehaviors].Value = val;
+                    try { Properties.Settings.Default["DisabledBehaviors"] = val; } catch { }
+                    Save();
+                }
+            }
+            else
+            {
+                AppSettings.Add(SettingName.DisabledBehaviors, val);
+                try { Properties.Settings.Default["DisabledBehaviors"] = val; } catch { }
+                Save();
+            }
         }
 
 		/// <summary>

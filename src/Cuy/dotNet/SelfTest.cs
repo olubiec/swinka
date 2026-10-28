@@ -59,6 +59,7 @@ namespace Cuy
                 Lines.Add("     version " + version);
             });
             Check("mouse shake detector", CheckMouseShake);
+            Check("behaviors", CheckBehaviors);
             Check("save folder writable", CheckSaveFolder);
 
             Lines.Add(_failed ? "SELFTEST FAILED" : "SELFTEST OK");
@@ -196,6 +197,20 @@ namespace Cuy
                 if (d.Push(x, 400, 100, t0.AddMilliseconds(i * 33))) hits++;
             }
             if (hits != 0) throw new Exception("straight line flagged");
+        }
+
+        private static void CheckBehaviors()
+        {
+            var host = new Cuy.Behaviors.BehaviorHost();
+            if (!host.DisabledIds.Contains("sample")) throw new Exception("DisabledIds does not contain sample");
+            host.DisabledIds.Remove("sample");
+
+            var ctx = new Cuy.Behaviors.BehaviorContext(
+                null, null, null, s => Cuy.BrainController.Log(s), false, false, a => false
+            );
+            host.Start(ctx);
+            host.Tick(TimeSpan.FromSeconds(0.1));
+            host.Stop();
         }
 
         private static void CheckSaveFolder()

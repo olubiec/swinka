@@ -15,7 +15,7 @@ namespace Cuy.Behaviors
         /// <summary>
         /// The visual pet form. Set by the BehaviorHost.
         /// </summary>
-        public FormPet ActivePet { get; }
+        public FormPet ActivePet { get; internal set; }
 
         /// <summary>
         /// The global brain controller. Set by the BehaviorHost.
@@ -30,12 +30,12 @@ namespace Cuy.Behaviors
         /// <summary>
         /// Whether the pig is currently busy (e.g. script, drag, toss, sulk). Set by the BehaviorHost.
         /// </summary>
-        public bool IsBusy { get; }
+        public bool IsBusy { get; internal set; }
 
         /// <summary>
         /// Whether the Home window is open. Set by the BehaviorHost.
         /// </summary>
-        public bool IsHomeOpen { get; }
+        public bool IsHomeOpen { get; internal set; }
 
         /// <summary>
         /// Requests an animation by name. Returns false and does nothing if a script holds the pig. Set by the BehaviorHost.

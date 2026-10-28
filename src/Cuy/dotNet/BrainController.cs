@@ -34,6 +34,11 @@ namespace Cuy
         private bool _isPhysicsActive;
         private string _physicsReason;
 
+        // Behaviors
+        private Cuy.Behaviors.BehaviorHost _behaviorHost;
+        private Cuy.Behaviors.BehaviorContext _behaviorContext;
+        private DateTime _lastBehaviorErrorTime = DateTime.MinValue;
+
         // User idle state (sleep when the user is idle, via GetLastInputInfo)
         private TimeSpan _idleThreshold = TimeSpan.FromMinutes(10);
         private TimeSpan _currentRealIdleTime;
@@ -239,6 +244,45 @@ namespace Cuy
             if (ScriptAnimation == null) InteractionManager.Instance?.Update(gameElapsed); // no cursor reactions during the intro
 
             Cuy.Features.HomeFeatures.TickAll(gameElapsed, this);
+
+            if (_behaviorHost == null && _session?.Pet != null && FormPet.ActivePet != null)
+            {
+                _behaviorHost = new Cuy.Behaviors.BehaviorHost();
+                var disabled = Program.MyData.GetDisabledBehaviors();
+                foreach (var id in disabled) _behaviorHost.DisabledIds.Add(id);
+
+                bool isBusy = ScriptAnimation != null || _isPhysicsActive || FormPet.ActivePet.CurrentAnimationName == "sulk";
+                _behaviorContext = new Cuy.Behaviors.BehaviorContext(
+                    _session.Pet,
+                    FormPet.ActivePet,
+                    this,
+                    Log,
+                    isBusy,
+                    HomeWindow.IsOpen,
+                    (anim) => { if (ScriptAnimation != null) return false; return ForceAction(anim); }
+                );
+                _behaviorHost.Start(_behaviorContext);
+            }
+
+            if (_behaviorHost != null && realElapsed.TotalSeconds > 0)
+            {
+                _behaviorContext.ActivePet = FormPet.ActivePet;
+                _behaviorContext.IsBusy = ScriptAnimation != null || _isPhysicsActive || FormPet.ActivePet?.CurrentAnimationName == "sulk";
+                _behaviorContext.IsHomeOpen = HomeWindow.IsOpen;
+
+                try
+                {
+                    _behaviorHost.Tick(realElapsed);
+                }
+                catch (Exception ex)
+                {
+                    if ((DateTime.UtcNow - _lastBehaviorErrorTime).TotalSeconds > 60)
+                    {
+                        Log($"[Behavior] host error: {ex.Message}");
+                        _lastBehaviorErrorTime = DateTime.UtcNow;
+                    }
+                }
+            }
 
             bool isFoodActive = FoodManager.Instance != null && FoodManager.Instance.State != FoodInteractionState.None;
             bool isInteractionActive = InteractionManager.Instance != null && InteractionManager.Instance.IsActiveInteraction;
@@ -665,6 +709,7 @@ namespace Cuy
         {
             try
             {
+                try { _behaviorHost?.Stop(); } catch { }
                 FoodManager.Instance?.CancelActiveFood();
                 PoopManager.Instance?.CloseAllVisuals();
                 SoundManager.Instance?.Dispose();
