@@ -208,6 +208,7 @@ namespace Cuy.Core
                 int old = bond.Level;
                 bond.Level++;
                 Raise(LevelUp, new LevelUpEventArgs(old, bond.Level));
+                OnBondLevelUp(bond.Level);
             }
             return allowed;
         }
