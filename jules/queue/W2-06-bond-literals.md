@@ -11,3 +11,7 @@ Steps:
 Verify: `dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true` and `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release` pass.
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Change".
 PR: what was done, decisions and why, how to check by hand; screenshot if the change is visual.
+
+
+Facts (checked on main): `InteractionManager.cs` has exactly one bond-level literal, the startup greeting (`int bondLevel = ...; if (bondLevel >= 3)` in `CheckStartupGreeting`). There is NO `bond >= 7` / `come_when_called` literal anywhere in `src/` (`CallPet()` in `BrainController.cs` delegates to `InteractionManager.CallPet()` without a level check). `come_when_called` is unlocked at level 7 in `assets/data/bond.json` and `BondUnlocks`.
+Decision (do not ask): (1) replace only the greeting check with `pet != null && pet.IsUnlocked("greet_on_start")` and keep the existing log line; (2) do NOT add a new level check to `CallPet()`; the call behavior stays as it is. Mention in the PR that no literal for `come_when_called` was found.
