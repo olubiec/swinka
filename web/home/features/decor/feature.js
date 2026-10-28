@@ -443,7 +443,8 @@
 
         if (window.PigCanvas) {
           const miniRoom = new window.PigCanvas(cvs, st);
-          miniRoom.draw(null, st);
+          miniRoom.updateState(st);
+          miniRoom.render();
         } else {
           ctx.fillStyle = '#9c6636'; ctx.fillRect(0, 0, 240, 96);
           ctx.fillStyle = '#eedb7c'; ctx.fillRect(0, 96, 240, 34);
