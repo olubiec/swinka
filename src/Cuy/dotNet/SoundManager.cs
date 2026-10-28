@@ -64,7 +64,17 @@ namespace Cuy
                 catch (Exception ex) { BrainController.Log("[WARN] SoundManager.SoundsEnabled: " + ex.Message); }
             }
         }
-        public bool MuteOnFullScreen { get; set; } = true;
+        public bool MuteOnFullScreen
+        {
+            get { return _muteOnFullScreen; }
+            set
+            {
+                _muteOnFullScreen = value;
+                try { Program.MyData?.SetMuteFullscreen(value); }
+                catch (Exception ex) { BrainController.Log("[WARN] SoundManager.MuteOnFullScreen: " + ex.Message); }
+            }
+        }
+        private bool _muteOnFullScreen = true;
         public double MaxPitchVariation { get; set; } = PitchCalculator.DefaultVariation;
 
         public QuietHoursConfig QuietHours => _quietHours;
@@ -103,10 +113,32 @@ namespace Cuy
         }
         private float _volumeFallback = 0.8f;
 
+        public void SetQuietHours(bool enabled, TimeSpan start, TimeSpan end)
+        {
+            _quietHours.Enabled = enabled;
+            _quietHours.Start = start;
+            _quietHours.End = end;
+            try
+            {
+                Program.MyData?.SetQuietHours(enabled, start, end);
+            }
+            catch (Exception ex) { BrainController.Log("[WARN] SoundManager.SetQuietHours: " + ex.Message); }
+        }
+
         public SoundManager()
         {
             _instance = this;
-            try { IsMuted = !Program.MyData.GetSoundsEnabled(); }
+            try
+            {
+                IsMuted = !Program.MyData.GetSoundsEnabled();
+
+                Program.MyData.GetQuietHours(out bool qhEnabled, out TimeSpan qhStart, out TimeSpan qhEnd);
+                _quietHours.Enabled = qhEnabled;
+                _quietHours.Start = qhStart;
+                _quietHours.End = qhEnd;
+
+                _muteOnFullScreen = Program.MyData.GetMuteFullscreen();
+            }
             catch (Exception ex) { BrainController.Log("[WARN] SoundManager: " + ex.Message); }
             LoadSounds();
         }

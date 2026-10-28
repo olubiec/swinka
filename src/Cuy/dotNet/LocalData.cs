@@ -62,6 +62,22 @@ namespace Cuy
             /// Sounds on/off-Key
             /// </summary>
 			public const string SoundsEnabled = "SoundsEnabled";
+            /// <summary>
+            /// Quiet hours enabled
+            /// </summary>
+            public const string QuietHoursEnabled = "QuietHoursEnabled";
+            /// <summary>
+            /// Quiet hours start
+            /// </summary>
+            public const string QuietHoursStart = "QuietHoursStart";
+            /// <summary>
+            /// Quiet hours end
+            /// </summary>
+            public const string QuietHoursEnd = "QuietHoursEnd";
+            /// <summary>
+            /// Mute on full screen
+            /// </summary>
+            public const string MuteFullscreen = "MuteFullscreen";
 		};
 
 		/// <summary>
@@ -146,6 +162,91 @@ namespace Cuy
             {
                 Properties.Settings.Default.SoundsEnabled = on;
                 AppSettings[SettingName.SoundsEnabled].Value = on.ToString();
+                Save();
+            }
+        }
+
+        public void GetQuietHours(out bool enabled, out TimeSpan start, out TimeSpan end)
+        {
+            enabled = true;
+            if (AppSettings[SettingName.QuietHoursEnabled] != null)
+            {
+                if (bool.TryParse(AppSettings[SettingName.QuietHoursEnabled].Value, out bool val))
+                {
+                    enabled = val;
+                }
+            }
+
+            start = new TimeSpan(22, 0, 0);
+            if (AppSettings[SettingName.QuietHoursStart] != null)
+            {
+                if (TimeSpan.TryParse(AppSettings[SettingName.QuietHoursStart].Value, out TimeSpan s))
+                {
+                    start = s;
+                }
+            }
+
+            end = new TimeSpan(7, 0, 0);
+            if (AppSettings[SettingName.QuietHoursEnd] != null)
+            {
+                if (TimeSpan.TryParse(AppSettings[SettingName.QuietHoursEnd].Value, out TimeSpan e))
+                {
+                    end = e;
+                }
+            }
+        }
+
+        public void SetQuietHours(bool enabled, TimeSpan start, TimeSpan end)
+        {
+            bool changed = false;
+
+            if (enabled.ToString() != AppSettings[SettingName.QuietHoursEnabled]?.Value)
+            {
+                Properties.Settings.Default["QuietHoursEnabled"] = enabled;
+                if (AppSettings[SettingName.QuietHoursEnabled] != null) AppSettings[SettingName.QuietHoursEnabled].Value = enabled.ToString();
+                changed = true;
+            }
+
+            string sStr = start.ToString(@"hh\:mm");
+            if (sStr != AppSettings[SettingName.QuietHoursStart]?.Value)
+            {
+                Properties.Settings.Default["QuietHoursStart"] = sStr;
+                if (AppSettings[SettingName.QuietHoursStart] != null) AppSettings[SettingName.QuietHoursStart].Value = sStr;
+                changed = true;
+            }
+
+            string eStr = end.ToString(@"hh\:mm");
+            if (eStr != AppSettings[SettingName.QuietHoursEnd]?.Value)
+            {
+                Properties.Settings.Default["QuietHoursEnd"] = eStr;
+                if (AppSettings[SettingName.QuietHoursEnd] != null) AppSettings[SettingName.QuietHoursEnd].Value = eStr;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                Save();
+            }
+        }
+
+        public bool GetMuteFullscreen()
+        {
+            if (AppSettings[SettingName.MuteFullscreen] != null)
+            {
+                if (bool.TryParse(AppSettings[SettingName.MuteFullscreen].Value, out bool on))
+                {
+                    return on;
+                }
+            }
+            return true;
+        }
+
+        public void SetMuteFullscreen(bool on)
+        {
+            if (on.ToString() != AppSettings[SettingName.MuteFullscreen]?.Value)
+            {
+                Properties.Settings.Default["MuteFullscreen"] = on;
+                if (AppSettings[SettingName.MuteFullscreen] != null) AppSettings[SettingName.MuteFullscreen].Value = on.ToString();
                 Save();
             }
         }
