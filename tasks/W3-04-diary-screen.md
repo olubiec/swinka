@@ -1,8 +1,10 @@
 # W3-04: Diary screen in Home (feature module) and mock data for the new state keys
+Zmieniaj: web/home/features/diary/feature.js, web/home/features/diary/feature.css, web/home/features/index.json, web/home/bridge.js
+Wymagane: web/home/features/diary/feature.js
+Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/features/diary/feature.js web/home/bridge.js
+Nie ruszaj: web/home/app.js, tools/qa/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: the player can open "Diary" in the More menu and read the pig's entries; the browser mock provides the new state keys.
 Depends on: W2-02 (strict smoke test) and W2-10 (state keys `diary`, `albumDates`, `bondNext`, `hayRack`; shapes in `docs/contracts.md`) merged. Facts: in the real app the page loads every folder found in `web/home/features` that has a `feature.js` (the list comes from `HomeWindow.cs`); in mock mode it reads `features/index.json`, and the smoke test requires both lists to be equal, so this task adds `diary` to `index.json`. There is no `book` icon in `assets/icons/icons.json`: use `icon-pig-head`.
-Change: new `web/home/features/diary/feature.js`, new `web/home/features/diary/feature.css`, `web/home/features/index.json`, `web/home/bridge.js` (mock state only)
-Do not touch: everything not listed under Change; in particular `AGENTS.md`, `docs/PLAN.md`, `tasks/*`, `web/home/app.js`, `tools/qa/*`, C#.
 Steps:
 1. `feature.js`: `window.CuyHome.registerFeature({ id: 'diary', title: 'Diary', icon: 'icon-pig-head', order: 6, open(container, api) {...}, onState(state) {...} })` (read `features/daily/feature.js` and `features/vet/feature.js` first for the exact shape). The screen shows `api.getState().diary` as small paper cards (cream background `#f7ecd9`, dark border, pixel font from `style.css`), newest first, with the date as a small header on each card (`24 Oct 2026`), entries read-only. Empty or missing list: the text "No entries yet. Come back this evening!". Escape every entry text before it goes into HTML (use `textContent`). A long list scrolls inside the modal body (no page overflow at 420x640).
 2. `feature.css`: only classes prefixed `.diary-`; reuse CSS variables from `style.css`, no new fonts.

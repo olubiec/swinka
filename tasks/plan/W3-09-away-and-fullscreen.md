@@ -1,4 +1,5 @@
 # W3-09: Away mode in Core and a fullscreen detector in the desktop app
+> NIEAKTYWNE: odłożone z W3 (Pet.cs (zmiana z W3-03) — konflikt zakresu). Przed startem przepisz na format pętli i nową falę (W4-xx), patrz docs/JULES_LOOP.md.
 Goal: Core can be told "the player is away" (the pig slows down and makes no mess); the desktop project has a compiling fullscreen detector ready to be hooked up later.
 Depends on: W2-04 (`Pet.ApplyTime` hay hook, merged) so the `ApplyTime` hunk is already settled. Facts: `research/gotowce/src/Cuy/dotNet/Platform/FullscreenDetector.cs` is a ready-made draft (not compiled). The offline-rate decay already exists in `Pet.ApplyTime(..., offline)`; `TryAddPoop` exists.
 Change: new `src/Cuy/dotNet/Platform/FullscreenDetector.cs`, new `src/Cuy.Core/Pet.Away.cs`, `src/Cuy.Core/Pet.cs` (only the two places named in step 3), new `tests/Cuy.Core.Tests/AwayTests.cs`

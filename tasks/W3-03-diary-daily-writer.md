@@ -1,8 +1,10 @@
 # W3-03: The pig writes one diary entry per evening (Core)
+Zmieniaj: src/Cuy.Core/GameState.DayLog.cs, src/Cuy.Core/Pet.Diary.cs, src/Cuy.Core/Pet.cs, src/Cuy.Core/Balance.cs, src/Cuy.Core/GameSession.cs, tests/Cuy.Core.Tests/DiaryDailyTests.cs
+Wymagane: src/Cuy.Core/Pet.Diary.cs, tests/Cuy.Core.Tests/DiaryDailyTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Nie ruszaj: AGENTS.md, docs/PLAN.md, tasks/*, pozostałe pliki src/Cuy.Core/
 Goal: in the real app the pig adds at most one diary entry per local day, in the evening, only for days with activity, from the templates.
 Depends on: W2-03 (`DiaryWriter`, `DiaryContext`, `DayStats`) merged. `Pet.AddDiaryEntry`, `GameState.Diary`, `Pet.GetFavoriteVegetable`, `Pet.IsSick`, `Pet.Count` exist. Flag pattern as in W2-04 (`Balance.HayRackActive`): the new behavior is off in `new Balance()` so existing tests keep their numbers, and switched on in `GameSession.Open`.
-Change: new `src/Cuy.Core/GameState.DayLog.cs`, new `src/Cuy.Core/Pet.Diary.cs`, `src/Cuy.Core/Pet.cs` (one call in `Update`), `src/Cuy.Core/Balance.cs` (two properties), `src/Cuy.Core/GameSession.cs` (one line in `Open`), new `tests/Cuy.Core.Tests/DiaryDailyTests.cs`
-Do not touch: everything not listed under Change; in particular `AGENTS.md`, `docs/PLAN.md`, `tasks/*`. Another task of this wave may later edit other places of `Pet.cs`: keep your diff to your own lines, no reformatting.
 Steps:
 1. `Balance.DiaryActive` (bool, default false; the app turns it on in `GameSession.Open`, next to `HayRackActive`) and `Balance.DiaryWriteHour` (int, default 20; local hour from which the day's entry is written).
 2. `GameState.DayLog.cs` (`partial class GameState`, follow the other `GameState.*.cs`): `DayLogDate` (string, `yyyy-MM-dd`), `DayLogCounters` (`Dictionary<string,int>`, default empty, null-safe), `DiaryLastWrittenDate` (string), `DiaryLastTemplateId` (string). Old saves must load.

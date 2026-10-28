@@ -5,11 +5,12 @@
 ## Status
 
 <!-- STATUS -->
-**Ukończone fale:** brak (pętla wdrożona 28.10.2026) · **Faza pętli:** idle · **Aktualizacja:** 2026-10-28 UTC
-**Stan wyjściowy:** wg `docs/PLAN.md` zintegrowany W1; W2 częściowo (W2-06 scalone); W3 nieruszone. Pliki W1–W3 leżą w `tasks/plan/` i nie są aktywne.
+**Ukończone fale:** W1 (PR #3–#49), W2 bez W2-06 · **Faza pętli:** czeka na start W3 (9 zadań w `tasks/`) · **Aktualizacja:** 2026-10-28 UTC
+**Otwarte poza pętlą:** PR #61 (W2-06, Jules, sprzed pętli) – do decyzji człowieka. **Odłożone:** W3-09, W3-10 w `tasks/plan/` (konflikt zakresów z W3).
 <!-- /STATUS -->
 
 ## Log zmian (najnowsze u góry)
 
 <!-- LOG -->
+- 2026-10-28 · Przebudowa pod pętlę: W3 w formacie `Zmieniaj:`, 9 zadań w `tasks/`; W3-09/W3-10 odłożone; dry-run pętli przeszedł (start W3, brak konfliktów zakresów).
 - 2026-10-28 · Wdrożenie Jules Loop: workflow, orchestrator, `ci.yml` z concurrency i `workflow_dispatch`. Usunięto `jules-dispatch.yml` (omijał pętlę). Fale W1–W3 przeniesione do `tasks/plan/`.

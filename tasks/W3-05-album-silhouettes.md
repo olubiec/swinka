@@ -1,8 +1,10 @@
 # W3-05: Album: silhouettes, first-seen dates and a counter
+Zmieniaj: web/home/app.js, web/home/style.css
+Wymagane: web/home/app.js
+Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/app.js
+Nie ruszaj: web/home/bridge.js, tools/qa/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: the Behaviour Album shows unseen stickers as dark "???" silhouettes, seen ones with name and first-seen date, and a "Collected N / M" counter, without any layout shift.
 Depends on: W2-02 (strict smoke test) and W2-10 (state key `albumDates`) merged. Facts: the album is not a feature module; `openAlbumModal()` and the `STICKERS` list are in `web/home/app.js` (about lines 700-765); `state.album` is a list of animation names (unchanged), `state.albumDates` is `{ "<name>": "yyyy-MM-dd" }` and may be missing (mock state from `localStorage`, old builds). CSS classes `.album-grid`, `.album-card`, `.album-locked`, `.album-sprite` exist in `style.css`.
-Change: `web/home/app.js` (only `openAlbumModal` and, if needed, `STICKERS`), `web/home/style.css` (only the album classes)
-Do not touch: everything not listed under Change; in particular `AGENTS.md`, `docs/PLAN.md`, `tasks/*`, `web/home/bridge.js`, `tools/qa/*`, C#.
 Steps:
 1. Header: "Collected N / M" where M is `STICKERS.length` and N the seen ones (replace the "Stickers found" bar, keep its look).
 2. Unseen card: the same sprite drawn as a silhouette (CSS `filter: brightness(0)`, the existing `.album-locked` already does it: check it works at the current opacity), the name replaced by `???`, the small line "Not seen yet".

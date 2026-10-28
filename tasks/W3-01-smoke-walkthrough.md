@@ -1,8 +1,10 @@
 # W3-01: Smoke test: walk through the whole Home (More menu, album, games, toast, first start)
+Zmieniaj: tools/qa/web-smoke.js
+Wymagane: tools/qa/web-smoke.js
+Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check tools/qa/web-smoke.js
+Nie ruszaj: web/home/*, tools/qa/lib/*, tools/qa/package.json, src/*
 Goal: the smoke test visits every screen a player can reach and fails when one of them breaks, overflows or logs an error.
 Depends on: W2-02 (strict smoke test with `assertLayout`, `ALLOWED_MISSING`) merged. Read `tools/qa/web-smoke.js`, `web/home/app.js` (`CuyHome`, `openAlbumModal`, the More menu around `data-open-feature`) and `web/home/bridge.js` (mock mode) first.
-Change: `tools/qa/web-smoke.js`
-Do not touch: `web/home/*`, `tools/qa/lib/*`, `tools/qa/package.json`, C#. Keep the CLI, the static server, the `step()` helper, the exit codes and the final line `WEB SMOKE OK`.
 Steps:
 1. More menu: open it, assert that it contains one tile per entry of `CuyHome.listFeatures()` plus the Album tile; open every tile in turn (feature screens, Album), screenshot each as `20_more_<id>.png`, close it with `#modalCloseBtn`; `assertLayout` after each.
 2. Minigames hub: open it, assert `window.Minigry.list().length >= 1`; for every registered game start it (use the `Minigry` API as `minigames-api.js` defines it), wait 2 s, assert a `canvas` exists inside the game container and no console error appeared, then end/close it. If starting a game is not possible headless, skip only that game with a printed `SKIP game <id>: <reason>` line and list it in the PR.

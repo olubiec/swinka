@@ -1,4 +1,5 @@
 # W3-10: Spritesheet loader for stage looks
+> NIEAKTYWNE: odłożone z W3 (SelfTest.cs (zmiana z W3-02) — konflikt zakresu). Przed startem przepisz na format pętli i nową falę (W4-xx), patrz docs/JULES_LOOP.md.
 Goal: the desktop app can cut single frames out of a stage spritesheet PNG, and reports clearly when the sheet is missing.
 Depends on: nothing from this wave. Facts: sheets live at `assets/sprites/<stage>/spritesheet.png`, 16 columns, frame index = row * 16 + col, frame size is read from `assets/sprites/<stage>/frames.json` when it exists, else 64x64. Nothing uses the loader yet (hot-swap comes in a later wave).
 Change: new `src/Cuy/dotNet/Graphics/SpriteSheetLoader.cs` (create the folder if it does not exist; if a similar folder already exists use it and say so), new `tests/Cuy.Core.Tests/` is NOT used (desktop code is net48): add the check to `src/Cuy/dotNet/SelfTest.cs` instead

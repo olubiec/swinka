@@ -48,7 +48,7 @@ Komendy: `CORE` = `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Rel
 `SMOKE` = `node tools/qa/web-smoke.js`; `JS` = `node --check` na zmienionych plikach.
 
 ## Jak puszczasz falę
-**Od 28.10.2026 falę puszcza Jules Loop** (`docs/JULES_LOOP.md`): wypchnij `tasks/W<n>-*.md` na `main`, reszta idzie sama. Kroki 2 i 7 poniżej (skrypty) są nieaktualne. 1. Pliki fali są na `main`. 2. (nieaktualne) ~~`tools/jules-wave.sh W1`~~. 3. Dobrze opisane zadania: bez czekania na plan; ryzykowne
+**Od 28.10.2026 falę puszcza Jules Loop** (`docs/JULES_LOOP.md`): wypchnij `tasks/W<n>-*.md` na `main`, reszta idzie sama. Kroki 1–2 i 7 poniżej (skrypty) są nieaktualne. 3. Dobrze opisane zadania: bez czekania na plan; ryzykowne
 (wspólne pliki, migracje): przejrzyj plan; niejasne: tryb Interactive Plan. 4. Review wg checklisty (CI zielone, diff tylko w „Change”, asercje nietknięte,
 brak nowych zależności, opis PR, screenshot), merge od najmniejszego PR. 5. Poprawki: komentarz w PR (`@jules W <plik>:<linia> dzieje się X, a powinno Y.`),
 czerwone CI naprawia CI Fixer, po 2 rundach nowe zadanie od gałęzi PR, po trzeciej porażce rozbij zadanie. 6. Koniec fali: sesja „Integracja Wn: wszystkie testy
@@ -62,7 +62,8 @@ następnej fali (szablon A2) albo gdy błąd jest w koncepcie lub planie.
 - Reguła danych (nowa w AGENTS.md): każda tabela danych ma `Current`/`Load`/`LoadDefault` jak `EconomyConfig`; testy używają wstrzykiwanych tabel `Pet`, nie statyków. Nowe zachowania Core są za flagą w `Balance` (`HayRackActive`, `DiaryActive`), włączaną w `GameSession.Open`.
 - Research R1–R20 wdrożony (`RESEARCH.md`, `DECYZJE.md`); rzeczy do sprawdzenia na PC: `TESTY_RECZNE.md`. Windows: nie zbudowano `tools/build.ps1` po falach 2–3 starego planu: zrób to po „Integracji W2”.
 
-## Fale (A1). Pliki zadań W1–W3 są w `tasks/plan/` (nieaktywne, stary format `Change:`; przed startem przepisz na format pętli z `docs/JULES_LOOP.md`). W4+ pisze Claude (A2) po integracji W3, z uwzględnieniem stanu repo. Prompty integracyjne: `docs/wave-prompts.md`.
+## Fale (A1)
+**Stan 28.10.2026 (wg `gh api pulls`):** W1 zamknięte (PR #3–#49). W2 zrobione poza **W2-06 (PR #61, otwarty, poza pętlą)**. W3: 9 zadań w `tasks/` (format pętli) – aktywna fala pętli: W3-01, 02, 03, 04, 05, 06, 07, 08, 11. **W3-09 i W3-10 odłożone** (`tasks/plan/`): konflikt zakresów z W3 (Pet.cs, SelfTest.cs); startują jako W4 po integracji W3, po przepisaniu na format pętli. W3-11 bez kroku `ci.yml` (pętla nie rusza `.github/workflows/`; krok dodaje człowiek). Prompty integracyjne z `docs/wave-prompts.md` są nieużywane – integrację robi pętla.
 ### W1 (9; bez zależności; W1-06/07 dotykają innych plików niż reszta)
 | ID | Cel | Zmieniaj | Akceptacja |
 | --- | --- | --- | --- |

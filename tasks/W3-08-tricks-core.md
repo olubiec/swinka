@@ -1,8 +1,10 @@
 # W3-08: Tricks: data table and the Core rules for performing a trick
+Zmieniaj: assets/data/tricks.json, src/Cuy.Core/Tricks/TricksConfig.cs, src/Cuy.Core/Pet.Tricks.cs, tests/Cuy.Core.Tests/TricksTests.cs
+Wymagane: assets/data/tricks.json, tests/Cuy.Core.Tests/TricksTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Nie ruszaj: src/Cuy.Core/Pet.cs, src/Cuy.Core/Balance.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Core knows the tricks, when each unlocks (bond level), and whether the pig can perform one now.
 Depends on: W1-06 (`BondUnlocks`, `Pet.IsUnlocked`) merged. Facts: the unlock ids in `assets/data/bond.json` are `trick_spin`, `trick_stand_up`, `trick_popcorn`, `trick_hurdle`; follow the data-table pattern of `EconomyConfig` / `BondUnlocks` (static `Current`, `Load(string)`, `LoadDefault()` with logging through `ItemCatalog.ErrorLogger`, injectable `Pet.TricksTable` so tests never touch statics); tests find files with the `RepoFile` helper. `Pet.Energy`, `Pet.Mood`, `Pet.AddBondPoints`, `Pet.IsSleeping`, `Pet.Count` exist.
-Change: new `assets/data/tricks.json`, new `src/Cuy.Core/Tricks/TricksConfig.cs`, new `src/Cuy.Core/Pet.Tricks.cs`, new `tests/Cuy.Core.Tests/TricksTests.cs`
-Do not touch: everything not listed under Change; in particular `AGENTS.md`, `docs/PLAN.md`, `tasks/*`, `Pet.cs`, `Balance.cs`.
 Steps:
 1. `tricks.json`: `{ "energy_cost": 10, "min_energy": 25, "cooldown_seconds": 30, "bond_points": 2, "mood_gain": 3, "tricks": [ { "id": "spin", "unlock": "trick_spin", "title": "Spin" }, { "id": "stand_up", "unlock": "trick_stand_up", "title": "Stand up" }, { "id": "popcorn", "unlock": "trick_popcorn", "title": "Popcorn jump" }, { "id": "hurdle", "unlock": "trick_hurdle", "title": "Hurdle jump" } ] }` (snake_case keys; load with the same naming strategy as `care.json`).
 2. `TricksConfig`: `Current`, `Load(string json)`, `LoadDefault()`, code defaults identical to the file; invalid entries (empty id, duplicate id) are dropped and logged.

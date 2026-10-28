@@ -1,8 +1,10 @@
 # W3-07: Sound settings in the Settings screen and a ZzFX sound engine
+Zmieniaj: web/home/features/settings/feature.js, web/home/features/settings/feature.css, web/home/sound.js, web/home/lib/zzfx.min.js, THIRD_PARTY_NOTICES.md
+Wymagane: web/home/sound.js, web/home/lib/zzfx.min.js
+Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/sound.js web/home/features/settings/feature.js
+Nie ruszaj: web/home/bridge.js, web/home/index.html, tools/qa/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: the player can set volume, quiet hours and "mute when a fullscreen app runs"; Home sounds come from a small synth library and respect the volume.
 Depends on: W2-09 (desktop state keys `settings.volume`, `settings.quietHours`, `settings.muteFullscreen`, `settings.soundSuppressed` and messages `settings_volume`, `settings_quiet_hours`, `settings_mute_fullscreen`; shapes in `docs/contracts.md`) merged. Facts: `web/home/sound.js` is a Web Audio synth with a global `Sound` object; the Settings feature lives in `web/home/features/settings/`. When `state.settings.volume` is undefined (browser mock, old builds) the defaults are volume 0.7, quiet hours off (22:00-07:00), mute fullscreen on. `bridge.js` is NOT edited here (the mock already ignores unknown messages).
-Change: `web/home/features/settings/feature.js`, `web/home/features/settings/feature.css`, `web/home/sound.js`, new `web/home/lib/zzfx.min.js`, `THIRD_PARTY_NOTICES.md`
-Do not touch: everything not listed under Change; in particular `AGENTS.md`, `docs/PLAN.md`, `tasks/*`, `web/home/bridge.js`, `web/home/index.html` (load ZzFX from `sound.js` with a dynamic `<script>` only if `index.html` has no tag for it: check first and tell in the PR), C#.
 Steps:
 1. Get ZzFX 1.4.0 (npm `zzfx` package or the GitHub repo KilledByAPixel/ZzFX, license MIT) into `web/home/lib/zzfx.min.js`. If it cannot be fetched, STOP and say so in the PR; do not write it from memory.
 2. `sound.js`: keep the `Sound` API unchanged; play through ZzFX with the volume `ZZFX.volume = settings.volume * 0.3`; resume the `AudioContext` on the first `pointerdown` or `keydown` (autoplay policy); nothing plays while `state.settings.soundSuppressed` is true. Missing settings mean the defaults above.
