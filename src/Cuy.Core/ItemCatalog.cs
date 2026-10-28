@@ -138,6 +138,35 @@ namespace Cuy.Core
                                 OneTime = (bool?)tok["one_time"] ?? (bool?)tok["permanent"] ?? false
                             };
 
+                            var stagesArr = tok["stages"] as JArray;
+                            if (stagesArr != null)
+                            {
+                                foreach (var stageTok in stagesArr)
+                                {
+                                    string stageStr = (string)stageTok;
+                                    if (string.IsNullOrEmpty(stageStr)) continue;
+
+                                    bool isValid = false;
+                                    foreach (LifeStage s in Enum.GetValues(typeof(LifeStage)))
+                                    {
+                                        if (string.Equals(LifeStages.DataKey(s), stageStr, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            isValid = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (isValid)
+                                    {
+                                        def.Stages.Add(stageStr.ToLowerInvariant());
+                                    }
+                                    else
+                                    {
+                                        ErrorLogger?.Invoke($"ItemCatalog: Unknown stage '{stageStr}' on item '{id}'");
+                                    }
+                                }
+                            }
+
                             var effectsTok = tok["effects"] as JObject;
                             if (effectsTok != null)
                             {
@@ -171,6 +200,17 @@ namespace Cuy.Core
                 throw new FileNotFoundException("items.json not found", filePath);
             string json = File.ReadAllText(filePath);
             return LoadJson(json);
+        }
+
+        public IEnumerable<ItemDefinition> AvailableFor(LifeStage stage)
+        {
+            foreach (var item in _itemsList)
+            {
+                if (item.IsAvailableFor(stage))
+                {
+                    yield return item;
+                }
+            }
         }
 
         public static ItemCatalog LoadDefault()
