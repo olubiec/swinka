@@ -78,16 +78,18 @@ page (`CuyMusic`, localStorage). Added by F4-07: `volume` (0-100), `quietHours {
 Added by F6-01: `danceToMusic` + `settings_dance { on }`.
 
 ## diary and album – Core: `Diary/DiaryWriter.cs` (task F4-03), UI F4-04
+State keys `diary` and `albumDates` are produced by `ProgressFeature`.
 State keys: `diary: [ { "date": "2026-10-24", "text": "..." } ]` (last 60, newest first) and
-`album: [ { "key": "sniff", "firstSeen": "2026-10-20" } ]` (a bare string means seen, date unknown).
+`album`: list of keys `["sniff"]`, `albumDates`: `{ "sniff": "2026-10-20" }`.
 
 ## bond – Core: `Bond/BondUnlocks.cs` (task F4-05)
-State key `bond`: `{ "level": 4, "points": 61, "pointsToNext": 24, "next": { "level": 5, "title": "..." }, "pointsToday": 12, "dailyLimit": 30 }`.
+State key `bondNext` is produced by `ProgressFeature`.
+State key `bond`: `{ "level": 4, "points": 61, "pointsToday": 12, "maxPointsToday": 30 }`, `bondNext`: `{ "level": 5, "id": "trick_spin", "title": "...", "pointsToNext": 12 }`.
 Unlock ids (`assets/data/bond.json`): approach_cursor 2, greet_on_start 3, trick_spin 5, come_when_called 7, trick_stand_up 9,
 companion 10, trick_popcorn 12, trick_hurdle 15, golden_bowl 20. C# asks `Pet.IsUnlocked(id)`.
 
 ## hayRack – Core: `Pet.Hay.cs` (task F4-06)
-State key `hayRack: { "value": 60, "max": 100 }`. Feeding `hay` refills the rack (`Pet.RefillHay()`).
+State key `hayRack: { "value": 60, "max": 100 }` (produced by `ProgressFeature`). Feeding `hay` refills the rack (`Pet.RefillHay()`).
 
 ## minigames (task F5-04)
 State key `minigames: { "dailyCount": 3, "dailyMax": 10, "highScores": { "veggie_rain": 140 }, "plays": { "veggie_rain": 6 } }`.
