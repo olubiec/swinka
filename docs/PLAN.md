@@ -75,7 +75,7 @@ następnej fali (szablon A2) albo gdy błąd jest w koncepcie lub planie.
 | W1-09 | Loader danych opieki `CareData` | `Care/CareData.cs`, testy | CORE |
 | W1-10 | Walidacja wejść z formularza opieki `CareInput` | `Care/CareInput.cs`, testy | CORE |
 | W1-11 | Nowe rzeczy zależne od etapu (dane) | `items_shop.json`, `items.json`, `BRAKUJACA_GRAFIKA.md`, test | CORE |
-**Integracja W1** (prompt w `docs/wave-prompts.md`), potem **A2-check** (Claude sprawdza, czy W2 nadal pasuje do kodu).
+**Integracja W1** (zrobiona). Sprawdzenia pomyślne: BondUnlocks.Current, HayConfig.Current, CareData.Current (9 tasks), features/index.json. Naprawiono tools/qa/layout.selftest.js (symlink). Potem **A2-check** (Claude sprawdza, czy W2 nadal pasuje do kodu).
 ### W2 (10; wymaga W1)
 | ID | Cel | Zmieniaj | Akceptacja |
 | --- | --- | --- | --- |
