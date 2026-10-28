@@ -189,6 +189,18 @@
         "fullness": 4
       },
       "description": "Green part of carrot."
+    },
+    {
+      "id": "golden_bowl",
+      "name": "Golden bowl",
+      "category": "equipment",
+      "permanent": true,
+      "icon": "trophy",
+      "animation": "eat_bowl",
+      "effects": {
+        "mood": 15
+      },
+      "description": "A gift for a very close friendship."
     }
   ]
 }
