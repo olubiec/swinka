@@ -1,4 +1,4 @@
-Wykonaj to zadanie zgodnie z AGENTS.md (przeczytaj AGENTS.md najpierw). Jedno zadanie = jeden PR; tytuł PR = "<ID>: <tytuł>".
+Wykonaj to zadanie zgodnie z AGENTS.md (przeczytaj AGENTS.md najpierw). Jedno zadanie = jeden PR; tytuł PR = "<ID>: <tytuł>". Nie zadawaj pytań i nie zatrzymuj się. Jeśli coś jest niejasne, wybierz najprostsze rozwiązanie zgodne z plikiem zadania i AGENTS.md, a decyzję opisz w PR-ze w sekcji „Decisions”. Jeśli test nie przechodzi, znajdź przyczynę w kodzie i napraw ją w zakresie „Change”; nie zmieniaj asercji.
 
 # W2-04: Hay rack eats while the game runs and while the PC is off
 Goal: in the real app the pig eats from the hay rack by itself, online and in the offline catch-up, while existing tests keep their numbers.
@@ -15,3 +15,6 @@ Steps:
 Verify: `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release` passes.
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Change".
 PR: what was done, decisions and why, how to check by hand; screenshot if the change is visual.
+
+
+Facts (checked on main): `Pet.ConsumeHay(gameHours, offline)` only ADDS fullness (`ChangeNeed(Need.Satiety, ...)`) and returns the amount eaten; it never sets fullness to 0. `Need.Satiety` is the fullness need. `GameState.HayRack` is the rack stock; a rack of 0 means no eating and normal decay alone lowers fullness. If a test shows fullness at 0, check first that the rack has hay in that test (a fresh game starts with the default from `HayConfig`; old saves or a rack set to 0 will not eat), then the simulated span. Do not change `ConsumeHay` semantics.
