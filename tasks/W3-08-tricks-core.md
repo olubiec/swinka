@@ -2,6 +2,7 @@
 Zmieniaj: assets/data/tricks.json, src/Cuy.Core/Tricks/TricksConfig.cs, src/Cuy.Core/Pet.Tricks.cs, tests/Cuy.Core.Tests/TricksTests.cs
 Wymagane: assets/data/tricks.json, tests/Cuy.Core.Tests/TricksTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/Pet.cs, src/Cuy.Core/Balance.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Core knows the tricks, when each unlocks (bond level), and whether the pig can perform one now.
 Depends on: W1-06 (`BondUnlocks`, `Pet.IsUnlocked`) merged. Facts: the unlock ids in `assets/data/bond.json` are `trick_spin`, `trick_stand_up`, `trick_popcorn`, `trick_hurdle`; follow the data-table pattern of `EconomyConfig` / `BondUnlocks` (static `Current`, `Load(string)`, `LoadDefault()` with logging through `ItemCatalog.ErrorLogger`, injectable `Pet.TricksTable` so tests never touch statics); tests find files with the `RepoFile` helper. `Pet.Energy`, `Pet.Mood`, `Pet.AddBondPoints`, `Pet.IsSleeping`, `Pet.Count` exist.

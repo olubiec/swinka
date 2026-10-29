@@ -2,6 +2,7 @@
 Zmieniaj: web/home/features/achievements/feature.js, web/home/features/achievements/feature.css, web/home/features/index.json
 Wymagane: web/home/features/achievements/feature.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/features/achievements/feature.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/app.js, web/home/bridge.js, web/home/style.css, web/home/features/diary/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: A grid of achievement cards: earned ones coloured with their date, locked ones greyed, hidden ones as "???".
 Depends on: W5-08 (mock key `achievements`) merged; the real state comes from W6-05 in the same wave (same contract). Look at `web/home/features/diary/feature.js` (W3-04) and `features/README.md` for the module pattern.

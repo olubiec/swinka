@@ -2,6 +2,7 @@
 Zmieniaj: web/home/minigames/minigames-api.js, web/home/minigames/minigames.css, web/home/app.js, web/home/style.css, web/home/bridge.js
 Wymagane: web/home/minigames/minigames-api.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/minigames/minigames-api.js web/home/app.js web/home/bridge.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/minigames/veggie-rain.js, web/home/minigames/veggie-memory.js, web/home/minigames/hay-maze.js, web/home/index.html, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The Games hub tells the truth about rewards and shows a clear result after each game.
 Depends on: W7-01 (same wave: it produces the real state, this task builds against the contract below and the mock), W3-06 (`games.json` loader), W5-08 (mock keys) merged.

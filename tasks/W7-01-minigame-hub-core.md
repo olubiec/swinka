@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy.Core/Pet.cs, src/Cuy.Core/GameState.Minigames.cs, src/Cuy.Core/Pet.Minigames.cs, tests/Cuy.Core.Tests/MinigameHubTests.cs, src/Cuy/dotNet/HomeWindow.cs
 Wymagane: src/Cuy.Core/GameState.Minigames.cs, tests/Cuy.Core.Tests/MinigameHubTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release; dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Home can show an honest minigame hub: how many rewarded games are left today, per-game play counts, and exactly what the last game paid.
 Depends on: nothing from earlier waves. The existing rules stay: clovers = min(MaxPerGame, score / PointsPerClover), mood +15 for a rewarded game, +3 over the daily limit, 0 for score 0, daily limit `EconomyConfig.Current.Minigame.RewardedGamesPerDay`.

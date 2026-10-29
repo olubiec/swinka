@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy.Core/GameState.DayLog.cs, src/Cuy.Core/Pet.Diary.cs, src/Cuy.Core/Pet.cs, src/Cuy.Core/Balance.cs, src/Cuy.Core/GameSession.cs, tests/Cuy.Core.Tests/DiaryDailyTests.cs
 Wymagane: src/Cuy.Core/Pet.Diary.cs, tests/Cuy.Core.Tests/DiaryDailyTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: AGENTS.md, docs/PLAN.md, tasks/*, pozostałe pliki src/Cuy.Core/
 Goal: in the real app the pig adds at most one diary entry per local day, in the evening, only for days with activity, from the templates.
 Depends on: W2-03 (`DiaryWriter`, `DiaryContext`, `DayStats`) merged. `Pet.AddDiaryEntry`, `GameState.Diary`, `Pet.GetFavoriteVegetable`, `Pet.IsSick`, `Pet.Count` exist. Flag pattern as in W2-04 (`Balance.HayRackActive`): the new behavior is off in `new Balance()` so existing tests keep their numbers, and switched on in `GameSession.Open`.

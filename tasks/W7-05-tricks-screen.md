@@ -2,6 +2,7 @@
 Zmieniaj: web/home/features/tricks/feature.js, web/home/features/tricks/feature.css, web/home/features/index.json
 Wymagane: web/home/features/tricks/feature.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/features/tricks/feature.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/app.js, web/home/bridge.js, web/home/style.css, web/home/features/achievements/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The player sees all four tricks, which are unlocked, and can ask the pig to perform one.
 Depends on: W5-08 (mock key `tricks`), W6-04 (real state and message), W6-07 (`index.json` already lists `achievements`) merged. Module pattern: see `web/home/features/diary/feature.js` and `features/README.md`.

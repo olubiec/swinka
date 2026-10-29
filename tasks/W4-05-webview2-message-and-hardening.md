@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/HomeWindow.cs
 Wymagane: src/Cuy/dotNet/HomeWindow.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/Features/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: A PC without the WebView2 runtime gets a clear message and keeps a working desktop pig; the Release Home has no browser features a player could trip over.
 Depends on: nothing from earlier waves. Today `SetupWebViewAsync` catches `WebView2RuntimeNotFoundException` only around `CoreWebView2Environment.CreateAsync`, sets `HomeWindow.WebView2Missing`, hides the form and shows `WebView2MissingMessage` (a `go.microsoft.com/fwlink` short link). `IsStatusBarEnabled=false`, `AreDefaultContextMenusEnabled=false` and `AreDevToolsEnabled` (true only in DEBUG) are already set.

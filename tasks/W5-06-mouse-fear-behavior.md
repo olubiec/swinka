@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/Behaviors/MouseFearBehavior.cs
 Wymagane: src/Cuy/dotNet/Behaviors/MouseFearBehavior.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/Platform/MouseShakeMonitor.cs, src/Cuy.Core/Input/MouseShakeDetector.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Shaking the mouse next to the pig startles it; shaking again makes it flee to the screen edge and peek back later. Bond level softens this.
 Depends on: W4-01 (`Pet.IsAway`), W1-06/W2-06 (`Pet.IsUnlocked("approach_cursor")`), W2-05 (`BehaviorHost`) merged. `MouseShakeMonitor.Shaken` and `MouseShakeDetector` (defaults: 6 reversals within 1 s, 900 px/s, within 300 px, debounce 2 s) already exist; do NOT create another detector or change the thresholds.

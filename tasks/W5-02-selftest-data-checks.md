@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/SelfTest.cs
 Wymagane: src/Cuy/dotNet/SelfTest.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/Program.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: `Cuy.exe --selftest` catches broken data and missing files in the package before a player does.
 Depends on: W4-02 (`SpriteSheetLoader`), W4-07 (`achievements.json`), W3-08 (`tricks.json`), W3-06 (`games.json`) merged.

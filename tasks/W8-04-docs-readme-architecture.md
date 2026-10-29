@@ -2,6 +2,7 @@
 Zmieniaj: README.md, ARCHITECTURE.md
 Wymagane: ARCHITECTURE.md
 Weryfikacja: git diff shows only the files listed in "Zmieniaj"
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/*, web/*, docs/PLAN.md, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: A new reader (or agent) gets a correct picture of the code from the two top-level documents.
 Depends on: all earlier waves merged. Read the code you describe; do not describe plans.

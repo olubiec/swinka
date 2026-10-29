@@ -2,6 +2,7 @@
 Zmieniaj: tools/qa/web-smoke.js
 Wymagane: tools/qa/web-smoke.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check tools/qa/web-smoke.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/*, tools/qa/lib/*, tools/qa/package.json, src/*
 Goal: the smoke test visits every screen a player can reach and fails when one of them breaks, overflows or logs an error.
 Depends on: W2-02 (strict smoke test with `assertLayout`, `ALLOWED_MISSING`) merged. Read `tools/qa/web-smoke.js`, `web/home/app.js` (`CuyHome`, `openAlbumModal`, the More menu around `data-open-feature`) and `web/home/bridge.js` (mock mode) first.

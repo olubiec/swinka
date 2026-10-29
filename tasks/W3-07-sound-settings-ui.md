@@ -2,6 +2,7 @@
 Zmieniaj: web/home/features/settings/feature.js, web/home/features/settings/feature.css, web/home/sound.js, web/home/lib/zzfx.min.js, THIRD_PARTY_NOTICES.md
 Wymagane: web/home/sound.js, web/home/lib/zzfx.min.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/sound.js web/home/features/settings/feature.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/bridge.js, web/home/index.html, tools/qa/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: the player can set volume, quiet hours and "mute when a fullscreen app runs"; Home sounds come from a small synth library and respect the volume.
 Depends on: W2-09 (desktop state keys `settings.volume`, `settings.quietHours`, `settings.muteFullscreen`, `settings.soundSuppressed` and messages `settings_volume`, `settings_quiet_hours`, `settings_mute_fullscreen`; shapes in `docs/contracts.md`) merged. Facts: `web/home/sound.js` is a Web Audio synth with a global `Sound` object; the Settings feature lives in `web/home/features/settings/`. When `state.settings.volume` is undefined (browser mock, old builds) the defaults are volume 0.7, quiet hours off (22:00-07:00), mute fullscreen on. `bridge.js` is NOT edited here (the mock already ignores unknown messages).

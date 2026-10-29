@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/Platform/FullscreenDetector.cs, src/Cuy.Core/Pet.Away.cs, src/Cuy.Core/Pet.cs, tests/Cuy.Core.Tests/AwayTests.cs
 Wymagane: src/Cuy/dotNet/Platform/FullscreenDetector.cs, src/Cuy.Core/Pet.Away.cs, tests/Cuy.Core.Tests/AwayTests.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true; dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/BrainController.cs, src/Cuy/dotNet/SoundManager.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Core can be told "the player is away" (the pig slows down and makes no mess); the desktop project has a compiling fullscreen detector that later tasks hook up.
 Depends on: W2-04 (`Pet.ApplyTime` hay hook) merged; W3-03 added one call in `Pet.Update` (leave it alone).

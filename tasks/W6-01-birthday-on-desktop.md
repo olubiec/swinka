@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/BrainController.cs
 Wymagane: src/Cuy/dotNet/BrainController.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/*, assets/data/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: When the pig has a birthday it plays `party`, pops, and says "Happy birthday!" in a bubble.
 Depends on: W5-01 (`Pet.Birthday` reward/cake/diary in Core), W4-08 (`FormPet.ShowStatusMessage`) merged.

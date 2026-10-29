@@ -2,6 +2,7 @@
 Zmieniaj: web/home/minigames/veggie-memory.js, web/home/minigames/games.json
 Wymagane: web/home/minigames/veggie-memory.js, web/home/minigames/games.json
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/minigames/veggie-memory.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/minigames/veggie-rain.js, web/home/minigames/minigames-api.js, web/home/index.html, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: A calm memory game (no time limit) appears in the Games hub through `games.json`.
 Depends on: W3-06 (`games.json` loader) merged. Read `web/home/minigames/veggie-rain.js` first and copy its structure: `root.Minigry.register({ id, name, icon, desc, start })`, the `config` object (`container`, `stageKey`, `updateScore`, `endGame`), `root.MinigryPig.preload/create` for the little pig, Phaser 3.90 pinned locally with `pixelArt: true` and `roundPixels: true` set explicitly.

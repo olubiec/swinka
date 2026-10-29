@@ -2,6 +2,7 @@
 Zmieniaj: tools/package.ps1, tools/package/README.txt
 Wymagane: tools/package.ps1, tools/package/README.txt
 Weryfikacja: tools/package.ps1 parses (pwsh Parser::ParseFile when pwsh is installed; otherwise say in the PR that it was reviewed by eye)
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/*, THIRD_PARTY_NOTICES.md, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The package script refuses a bloated or unsafe ZIP, and the player README explains the finished features.
 Depends on: nothing from earlier waves. `package.ps1` today copies the Release build, `assets`, `web`, `README.txt`, `THIRD_PARTY_NOTICES.md`, runs `--selftest`, zips to `dist/Cuy_v1.zip`, and has no size limit. The released ZIP (`releases/1.0.0`) is 4.8 MB; `assets` is 15 MB.

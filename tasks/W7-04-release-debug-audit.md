@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/ContextMenus.cs, src/Cuy/dotNet/Program.cs, src/Cuy/dotNet/FormPet.cs, src/Cuy/dotNet/BrainController.cs, src/Cuy/dotNet/DebugOverlay.cs, src/Cuy/dotNet/FormDebug.cs, src/Cuy/dotNet/Diagnostics.cs
 Wymagane: src/Cuy/dotNet/ContextMenus.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true; dotnet build src/Cuy/Cuy.csproj -c Debug -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/HomeWindow.cs, src/Cuy/dotNet/SelfTest.cs, web/home/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The Release build contains no F9 overlay, no time multiplier, no diagnostics window and no debug menu items; both Debug and Release still compile.
 Depends on: W4-05 (WebView2 settings) merged. Most guards exist already (`#if DEBUG` in `BrainController`, `FormPet`, `ContextMenus`, `Program`, `Diagnostics`).

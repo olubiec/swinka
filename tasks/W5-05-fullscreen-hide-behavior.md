@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/Behaviors/FullscreenHideBehavior.cs, src/Cuy/dotNet/PoopManager.cs, src/Cuy/dotNet/FoodManager.cs
 Wymagane: src/Cuy/dotNet/Behaviors/FullscreenHideBehavior.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/FormPet.cs, src/Cuy/dotNet/StatusBubble.cs, src/Cuy/dotNet/BrainController.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: When a fullscreen app covers the pig's monitor, the pig walks to the nearest edge and leaves; when it ends, the pig peeks back in.
 Depends on: W4-01 (`FullscreenDetector`, `Pet.SetAway/IsAway`) merged; W2-05 (`BehaviorHost` finds behaviors by reflection, contract `IDesktopBehavior`) merged.

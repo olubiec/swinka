@@ -2,6 +2,7 @@
 Zmieniaj: assets/data/achievements.json, src/Cuy.Core/Achievements/AchievementCatalog.cs, src/Cuy.Core/Achievements/AchievementEvaluator.cs, src/Cuy.Core/GameState.Achievements.cs, src/Cuy.Core/Pet.Achievements.cs, tests/Cuy.Core.Tests/AchievementTests.cs
 Wymagane: assets/data/achievements.json, src/Cuy.Core/Pet.Achievements.cs, tests/Cuy.Core.Tests/AchievementTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/Pet.cs, src/Cuy.Core/Balance.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: About 20 one-time achievements with clover rewards exist in Core. Evaluation is pulled by the app (`Pet.CheckAchievements()`); nothing in `Pet.cs` changes.
 Depends on: W1-06 (bond), W2-03 (diary), W3-08 (tricks) merged. Data-table pattern as `EconomyConfig` / `BondUnlocks` / `TricksConfig`: static `Current`, `Load(string)`, `LoadDefault()`, errors through `ItemCatalog.ErrorLogger`, injectable table on `Pet` so tests never touch statics.

@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/HomeWindow.cs, src/Cuy/dotNet/FoodManager.cs
 Wymagane: src/Cuy/dotNet/HomeWindow.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true; dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Giving hay (from Home or on the desktop) really refills the hay rack, and the cake plays its own animation instead of a plain eat.
 Depends on: W1-07 / W2-04 (hay rack in Core: `Pet.RefillHay()`) merged.

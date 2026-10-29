@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/StartUp.cs, src/Cuy/dotNet/LocalData.cs, src/Cuy/dotNet/Features/SettingsFeature.cs, src/Cuy/dotNet/FormPet.cs
 Wymagane: src/Cuy/dotNet/LocalData.cs, src/Cuy/dotNet/Features/SettingsFeature.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/*, src/Cuy.Core/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The player can pick which screen the pig lives on; the choice survives restarts and a missing monitor falls back to the primary one.
 Depends on: W2-09 / W3-07 (`SettingsFeature` with volume, quiet hours and mute messages) merged. The dropdown UI is built in W7-03 against the contract below.

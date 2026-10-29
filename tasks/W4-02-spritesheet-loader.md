@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/Graphics/SpriteSheetLoader.cs, src/Cuy/dotNet/SelfTest.cs
 Wymagane: src/Cuy/dotNet/Graphics/SpriteSheetLoader.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/FormPet.cs, src/Cuy/dotNet/BrainController.cs, src/Cuy/dotNet/Xml.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The desktop app can cut single frames out of a stage spritesheet PNG and reports clearly when the sheet is missing. W5-03 uses this loader for the hot-swap.
 Depends on: nothing from this wave. W3-02 added a check to `SelfTest.cs` (keep it).

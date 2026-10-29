@@ -2,6 +2,7 @@
 Zmieniaj: tools/qa/web-smoke.js, web/home/features/index.json, web/home/app.js, web/home/style.css
 Wymagane: tools/qa/web-smoke.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check tools/qa/web-smoke.js web/home/app.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/bridge.js, web/home/minigames/*, web/home/features/*/feature.js, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: One smoke run opens every screen and starts every game, and the More grid fits the window.
 Depends on: W6-07 (achievements), W7-05 (tricks), W3-04 (diary), W5-07 (hay maze), W4-06 (veggie memory) merged. W2-02 made the smoke test strict (console errors, 404, layout, `ALLOWED_MISSING`).

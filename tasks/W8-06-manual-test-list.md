@@ -2,6 +2,7 @@
 Zmieniaj: TESTING.md
 Wymagane: TESTING.md
 Weryfikacja: git diff shows only the files listed in "Zmieniaj"
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/*, web/*, TESTY_RECZNE.md, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: One numbered checklist covers the whole game on a clean Windows account.
 Depends on: all earlier waves merged.

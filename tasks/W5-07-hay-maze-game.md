@@ -2,6 +2,7 @@
 Zmieniaj: web/home/minigames/hay-maze.js, web/home/minigames/games.json
 Wymagane: web/home/minigames/hay-maze.js, web/home/minigames/games.json
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/minigames/hay-maze.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/minigames/hay-maze-logic.js, tools/qa/maze-test.js, web/home/minigames/minigames-api.js, web/home/index.html, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: A Phaser minigame where the pig walks a hay-bale maze to a bell pepper, built on the tested generator.
 Depends on: W3-11 (`hay-maze-logic.js`: `HayMazeLogic.generate(width, height, seed)` and `solve(maze)`), W3-06 (`games.json` loader), W4-06 (copy its structure) merged.

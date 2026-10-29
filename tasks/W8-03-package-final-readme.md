@@ -2,6 +2,7 @@
 Zmieniaj: tools/package.ps1, tools/package/README.txt
 Wymagane: tools/package/README.txt
 Weryfikacja: tools/package.ps1 parses (pwsh Parser::ParseFile when pwsh is installed; otherwise say in the PR that it was reviewed by eye)
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The player's README matches the finished game, and the package log shows what went into the ZIP.
 Depends on: W4-04 (size limit, forbidden paths) merged.

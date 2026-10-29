@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/StatusBubble.cs, src/Cuy/dotNet/FormPet.cs
 Wymagane: src/Cuy/dotNet/StatusBubble.cs, src/Cuy/dotNet/FormPet.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/BrainController.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Any desktop code can show a short message above the pig ("Happy birthday!", "Achievement: ...") without touching the needs bubble.
 Depends on: nothing from earlier waves. `FormPet.ShowStatusBubble()` / `HideStatusBubble()` exist and use `StatusBubble.ShowBubble()` / `HideBubble()` (the needs bubble). W6-01 and W6-05 will call the new method.

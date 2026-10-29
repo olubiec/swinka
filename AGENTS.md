@@ -25,8 +25,8 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 ## Rules
 - Run tests and build before finishing; open the PR only when the task's verification command passes. If you cannot verify it, do not open the PR: say what blocks you.
 - One task = one branch = one pull request; PR title = `[<task id>] <task title>` (e.g. `[W2-03] Diary writer`).
-- Change only the files listed in the task's `Zmieniaj:` line (plus `Wymagane:`). The Jules Loop plan guard reverts any other file. If the task is missing a file you need, finish the rest, say so in the PR and do not touch the file.
-- Never change or delete an existing test assertion to make a check pass. If an old assertion is wrong, say so in the PR and stop.
+- Change only the files listed in the task's `Zmieniaj:` line (plus `Wymagane:`). The Jules Loop plan guard reverts any other file. If the task is missing a file you need, finish the rest and record the gap in the PR; do not touch the file.
+- Never change or delete an existing test assertion to make a check pass. If an old assertion is wrong, do not change it: record the conflict and the decision in the PR and finish the task.
 - Libraries only from `docs/PLAN.md`. No new NuGet/npm dependencies. No network calls at runtime in the app (assets are local).
 - Game numbers (prices, rewards, chances, durations, speeds, timings) live in `assets/data/*.json` or `Balance`, not in code. The human tunes them.
 - Never delete or rename save fields in `GameState`; add new ones with safe defaults (old saves must load). Polish ids may appear only in the save migration in `src/Cuy.Core/Save/SaveSystem.cs`.
@@ -37,6 +37,7 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 
 - Data tables (JSON in `assets/data/`) follow the `EconomyConfig` pattern: static `Current` (lazy `LoadDefault()`), `Load(string)`, `LoadDefault()` (file candidates, then code defaults, errors logged through `ItemCatalog.ErrorLogger`). A table is useless until something calls its loader: the task must name where. Tests inject tables into `Pet` (e.g. `BondTable`, `HayTable`) and never change statics. Tests find repo files by walking up from `AppContext.BaseDirectory` to the folder with `Cuy.sln` (`RepoFile` helper).
 - New Core behavior that changes numbers is behind a `Balance` flag (default off, switched on in `GameSession.Open`) so existing tests keep their numbers.
+- Never ask questions and never wait for an answer: nobody replies. For any unclear point, choose the most reasonable option yourself, record the decision and its reason in the PR, and finish the whole task. Do not leave a session waiting for input.
 - Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR and continue (nobody answers questions). Do not invent aliases for old names.
 
 ## Jules Loop

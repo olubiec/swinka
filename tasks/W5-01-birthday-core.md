@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy.Core/Pet.cs, src/Cuy.Core/Pet.Birthday.cs, src/Cuy.Core/Balance.cs, src/Cuy.Core/GameSession.cs, tests/Cuy.Core.Tests/BirthdayTests.cs
 Wymagane: src/Cuy.Core/Pet.Birthday.cs, tests/Cuy.Core.Tests/BirthdayTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: When the pig has a birthday, Core pays the reward from `actions.json`, adds one cake and writes a diary line. Behind a flag so old tests keep their numbers.
 Depends on: W3-03 (flag pattern `Balance.DiaryActive` switched on in `GameSession.Open`), W4-07 not required.

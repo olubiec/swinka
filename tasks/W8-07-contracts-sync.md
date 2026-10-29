@@ -2,6 +2,7 @@
 Zmieniaj: docs/contracts.md
 Wymagane: docs/contracts.md
 Weryfikacja: git diff shows only the files listed in "Zmieniaj"
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/*, web/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: `docs/contracts.md` is the true list of state keys and messages.
 Depends on: all earlier waves merged. Read the C# `AddState` / `HandleMessage` of every feature and `HomeWindow.SendStateToWebView`; the mock in `web/home/bridge.js` must agree.

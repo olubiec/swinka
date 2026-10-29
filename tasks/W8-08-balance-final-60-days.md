@@ -2,6 +2,7 @@
 Zmieniaj: tools/Cuy.Simulator/Program.cs, docs/economy-report.md, assets/data/economy.json, assets/data/bond.json, assets/data/hay.json, assets/data/tricks.json, assets/data/achievements.json, assets/data/items_shop.json, assets/data/items_decor.json, assets/data/simulation.json, tests/Cuy.Core.Tests/
 Wymagane: tools/Cuy.Simulator/Program.cs, docs/economy-report.md
 Weryfikacja: dotnet run --project tools/Cuy.Simulator -- --full; dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The economy, bond growth and life-stage pacing hold up over 60 days with every income source switched on.
 Depends on: all earlier waves merged. `docs/economy-report.md` exists but is empty today.

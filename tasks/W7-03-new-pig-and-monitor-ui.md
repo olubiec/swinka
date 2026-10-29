@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/Features/SettingsFeature.cs, src/Cuy.Core/Save/SaveSystem.cs, web/home/features/settings/feature.js, web/home/features/settings/feature.css, tests/Cuy.Core.Tests/SaveResetTests.cs
 Wymagane: src/Cuy.Core/Save/SaveSystem.cs, web/home/features/settings/feature.js, tests/Cuy.Core.Tests/SaveResetTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release; dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true; node tools/qa/web-smoke.js (wynik: WEB SMOKE OK)
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/app.js, web/home/bridge.js, src/Cuy/dotNet/HomeWindow.cs, src/Cuy/dotNet/Program.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The player can start over safely (the old save is kept) and choose the monitor from the Settings screen.
 Depends on: W6-06 (`settings.monitors`, `settings.monitor`, message `settings_monitor`) and W3-07 (settings UI) merged; mock keys exist since W5-08.

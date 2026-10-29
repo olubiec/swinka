@@ -2,6 +2,7 @@
 Zmieniaj: THIRD_PARTY_NOTICES.md, tests/Cuy.Core.Tests/NoticesTests.cs
 Wymagane: THIRD_PARTY_NOTICES.md, tests/Cuy.Core.Tests/NoticesTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: assets/LICENSES/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: `THIRD_PARTY_NOTICES.md` names every shipped third-party thing, and a test fails when a NuGet package is missing from it.
 Depends on: W3-07 (ZzFX notice) merged; sections 1-13 already exist.

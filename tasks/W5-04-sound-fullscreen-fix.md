@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/SoundManager.cs
 Wymagane: src/Cuy/dotNet/SoundManager.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/Platform/FullscreenDetector.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Sounds are muted for a real fullscreen game, film or presentation, and a click on the desktop no longer counts as fullscreen.
 Depends on: W4-01 (`FullscreenDetector.Check()`) merged.

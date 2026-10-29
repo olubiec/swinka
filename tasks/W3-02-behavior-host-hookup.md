@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/BrainController.cs, src/Cuy/dotNet/LocalData.cs, src/Cuy/dotNet/SelfTest.cs, src/Cuy/dotNet/Behaviors/BehaviorContext.cs
 Wymagane: src/Cuy/dotNet/BrainController.cs, src/Cuy/dotNet/SelfTest.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true; dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/Behaviors/BehaviorHost.cs (jeśli wymaga zmiany: wypisz to w PR i zatrzymaj się), AGENTS.md, docs/PLAN.md, tasks/*
 Goal: behaviors found by `BehaviorHost` start with the app, tick with it and stop with it, and a setting can switch single behaviors off.
 Depends on: W2-05 (`BehaviorHost`, `SampleBehavior`) merged; W1-08 contract (`BehaviorContext`) on main. Read `BrainController.cs` (`Update`, where `HomeFeatures.TickAll` is called, `Close`), `Program.cs` (start order) and `LocalData.cs` first.

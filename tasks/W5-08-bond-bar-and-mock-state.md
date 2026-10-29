@@ -2,6 +2,7 @@
 Zmieniaj: web/home/app.js, web/home/style.css, web/home/bridge.js
 Wymagane: web/home/app.js, web/home/bridge.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/app.js web/home/bridge.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/index.html, web/home/features/*, web/home/minigames/*, tools/qa/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The player sees bond progress to the next unlock under the pig's name, and the browser mock knows every state key later screens need, so W6/W7 screens never touch `bridge.js`.
 Depends on: W2-10 (state keys `bondNext`, `hayRack`, `diary`, `albumDates`) and W3-04 (mock keys for diary and album) merged.

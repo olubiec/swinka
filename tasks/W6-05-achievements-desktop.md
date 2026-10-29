@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/Features/AchievementsFeature.cs
 Wymagane: src/Cuy/dotNet/Features/AchievementsFeature.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true; dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/*, src/Cuy/dotNet/BrainController.cs, src/Cuy/dotNet/HomeWindow.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Achievements are checked while the app runs, the pig announces a new one once, and Home gets the list.
 Depends on: W4-07 (`Pet.CheckAchievements()`, `GetAchievements()`, `AchievementEarned`), W4-08 (`FormPet.ShowStatusMessage`) merged.

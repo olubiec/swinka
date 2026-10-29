@@ -2,6 +2,7 @@
 Zmieniaj: web/home/app.js, web/home/style.css, web/home/index.html
 Wymagane: web/home/app.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/app.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/bridge.js, web/home/features/*, web/home/minigames/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The player sees how full the hay rack is without opening anything.
 Depends on: W5-08 (mock `hayRack` key and the bond bar) merged; W2-10 (`state.hayRack: { value, max }` from `ProgressFeature`) merged.

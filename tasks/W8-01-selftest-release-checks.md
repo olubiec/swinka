@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/SelfTest.cs
 Wymagane: src/Cuy/dotNet/SelfTest.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/ContextMenus.cs, src/Cuy/dotNet/Program.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: `Cuy.exe --selftest` of the Release package proves the gift build has no developer menu items and ships what it needs.
 Depends on: W5-02 (data checks) and W7-04 (debug audit) merged.

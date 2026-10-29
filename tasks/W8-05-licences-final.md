@@ -2,6 +2,7 @@
 Zmieniaj: THIRD_PARTY_NOTICES.md, assets/LICENSES/
 Wymagane: THIRD_PARTY_NOTICES.md
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/*, tests/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: Every third-party thing that ships has a notice and a licence file; nothing is claimed that does not ship.
 Depends on: W4-03 (sections 14-17 and `NoticesTests`) merged.

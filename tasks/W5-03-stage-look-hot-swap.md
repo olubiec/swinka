@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/Xml.cs, src/Cuy/dotNet/StartUp.cs, src/Cuy/dotNet/BrainController.cs, src/Cuy/dotNet/FormPet.cs
 Wymagane: src/Cuy/dotNet/Xml.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/SelfTest.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: When `Pet.StageChanged` fires, the pig on the desktop switches to the sprite sheet of the new stage, keeping position, facing and the current animation.
 Depends on: W4-02 (`SpriteSheetLoader`) merged. W4-08 touched `FormPet.cs` (keep it).

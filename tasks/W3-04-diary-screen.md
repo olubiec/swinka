@@ -2,6 +2,7 @@
 Zmieniaj: web/home/features/diary/feature.js, web/home/features/diary/feature.css, web/home/features/index.json, web/home/bridge.js
 Wymagane: web/home/features/diary/feature.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/features/diary/feature.js web/home/bridge.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/app.js, tools/qa/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: the player can open "Diary" in the More menu and read the pig's entries; the browser mock provides the new state keys.
 Depends on: W2-02 (strict smoke test) and W2-10 (state keys `diary`, `albumDates`, `bondNext`, `hayRack`; shapes in `docs/contracts.md`) merged. Facts: in the real app the page loads every folder found in `web/home/features` that has a `feature.js` (the list comes from `HomeWindow.cs`); in mock mode it reads `features/index.json`, and the smoke test requires both lists to be equal, so this task adds `diary` to `index.json`. There is no `book` icon in `assets/icons/icons.json`: use `icon-pig-head`.

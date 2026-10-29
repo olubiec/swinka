@@ -2,6 +2,7 @@
 Zmieniaj: src/Cuy/dotNet/Features/TricksFeature.cs, src/Cuy/dotNet/ContextMenus.cs, src/Cuy.Core/Pet.Tricks.cs, tests/Cuy.Core.Tests/TricksTests.cs
 Wymagane: src/Cuy/dotNet/Features/TricksFeature.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true; dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/dotNet/HomeWindow.cs, src/Cuy/dotNet/BrainController.cs, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: The pig performs tricks on request from Home or the tray menu, with the right toast when it cannot.
 Depends on: W3-08 (`Pet.TryPerformTrick`, `TrickResult`, `TricksConfig`) merged; `IHomeFeature` classes are found by reflection (`Features/README.md`).
