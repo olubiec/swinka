@@ -219,3 +219,36 @@ The attribution link is shown next to the weather in the Home settings.
 
 - `ourcade/infinite-jumper-template-phaser3` (MIT, https://github.com/ourcade/infinite-jumper-template-phaser3): the Hay Hop game follows its pattern; add its MIT notice here if code is copied (F5-01).
 - NES.css (MIT) and rot.js (BSD-3-Clause): NOT used (decision R1, R10.3); add them here only if that changes.
+
+---
+
+## 14. ZzFX
+
+- Project: https://github.com/KilledByAPixel/ZzFX
+- Author: Frank Force
+- Version: 1.4.0
+- License: MIT License
+
+```
+ZzFX MIT License
+
+Copyright (c) 2019 - Frank Force
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
