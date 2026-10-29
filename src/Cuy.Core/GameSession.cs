@@ -42,6 +42,7 @@ namespace Cuy.Core
             string newPetName = "Cuy")
         {
             if (clock == null) throw new ArgumentNullException(nameof(clock));
+            if (balance == null) balance = new Balance { HayRackActive = true };
             var saveSystem = new SaveSystem(saveDirectory);
             var load = saveSystem.Load();
             var isNewGame = load.State == null;

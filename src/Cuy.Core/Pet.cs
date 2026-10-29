@@ -113,6 +113,8 @@ namespace Cuy.Core
 
         private void ApplyTime(TimeSpan span, bool offline)
         {
+            if (Balance.HayRackActive) ConsumeHay(span.TotalHours, offline);
+
             State.Needs.ApplyTime(span, offline, IsSleeping, Balance);
             if (offline) State.Stats.OfflineHours += span.TotalHours;
             else State.Stats.OnlineHours += span.TotalHours;
