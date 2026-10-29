@@ -46,6 +46,8 @@ namespace Cuy.Core
             var load = saveSystem.Load();
             var isNewGame = load.State == null;
             var state = load.State ?? GameState.CreateNew(newPetName, clock.UtcNow);
+            if (balance == null) balance = new Balance { DiaryActive = true };
+            if (balance == null) { balance = new Balance(); balance.DiaryActive = true; }
             var session = new GameSession(new Pet(state, clock, balance), saveSystem, load);
             if (isNewGame) session.Pet.ApplyNewGameEconomy();
             return session;
