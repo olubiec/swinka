@@ -3,22 +3,28 @@
 
   function render(container) {
     container.innerHTML = `
+
       <div class="settings-panel">
 
         <div class="settings-group">
-          <div class="settings-row">
-            <label for="settingsSounds">Sound effects</label>
-            <input type="checkbox" id="settingsSounds" class="retro-toggle">
-          </div>
-
-          <div class="settings-row">
-            <label for="settingsMusic">Music</label>
-            <input type="checkbox" id="settingsMusic" class="retro-toggle">
-          </div>
-
           <div class="settings-row volume-row">
-            <label for="settingsVolume">Music volume</label>
+            <label for="settingsVolume">Sound volume</label>
             <input type="range" id="settingsVolume" class="retro-range" min="0" max="100" step="1">
+          </div>
+
+          <div class="settings-row">
+            <label for="settingsQuietHours">Quiet hours</label>
+            <input type="checkbox" id="settingsQuietHours" class="retro-toggle">
+          </div>
+          <div class="settings-row time-row" id="quietHoursTimeRow">
+            <input type="time" id="settingsQuietHoursFrom" class="retro-time">
+            <span> - </span>
+            <input type="time" id="settingsQuietHoursTo" class="retro-time">
+          </div>
+
+          <div class="settings-row">
+            <label for="settingsMuteFullscreen">Mute when fullscreen app runs</label>
+            <input type="checkbox" id="settingsMuteFullscreen" class="retro-toggle">
           </div>
         </div>
 
@@ -42,39 +48,48 @@
         </div>
 
         <div class="settings-footer">
-          Cuy 1.0 · music: Juhani Junkala (CC0) · emoji art: Twemoji (CC-BY 4.0)
+          Cuy 1.0 · emoji art: Twemoji (CC-BY 4.0)
         </div>
       </div>
     `;
   }
 
+
   function bindEvents(api) {
-    const elSounds = document.getElementById('settingsSounds');
-    const elMusic = document.getElementById('settingsMusic');
     const elVolume = document.getElementById('settingsVolume');
+    const elQuietHours = document.getElementById('settingsQuietHours');
+    const elQuietHoursFrom = document.getElementById('settingsQuietHoursFrom');
+    const elQuietHoursTo = document.getElementById('settingsQuietHoursTo');
+    const elMuteFullscreen = document.getElementById('settingsMuteFullscreen');
     const elAutostart = document.getElementById('settingsAutostart');
     const radioSize = document.querySelectorAll('input[name="petSize"]');
 
-    elSounds.addEventListener('change', (e) => {
+    elVolume.addEventListener('change', (e) => {
+      const val = parseInt(e.target.value, 10) / 100;
+      if (api.send) api.send('settings_volume', { value: val });
       if (root.Sound) root.Sound.click();
-      if (window.bridge) window.bridge.send({ type: 'settings_sounds', on: e.target.checked });
     });
 
-    elMusic.addEventListener('change', (e) => {
-      if (root.Sound) root.Sound.click();
-      if (window.CuyMusic) {
-        window.CuyMusic.setEnabled(e.target.checked);
+    function updateQuietHours() {
+      if (api.send) {
+        api.send('settings_quiet_hours', {
+          enabled: elQuietHours.checked,
+          from: elQuietHoursFrom.value,
+          to: elQuietHoursTo.value
+        });
       }
-    });
+    }
 
-    elVolume.addEventListener('input', (e) => {
-      if (window.CuyMusic) {
-        const val = parseInt(e.target.value, 10) / 100;
-        window.CuyMusic.setVolume(val);
-        if (window.CuyMusic.isEnabled()) {
-          window.CuyMusic.play('menu', { loop: false, volume: val });
-        }
-      }
+    elQuietHours.addEventListener('change', (e) => {
+      if (root.Sound) root.Sound.click();
+      updateQuietHours();
+    });
+    elQuietHoursFrom.addEventListener('change', updateQuietHours);
+    elQuietHoursTo.addEventListener('change', updateQuietHours);
+
+    elMuteFullscreen.addEventListener('change', (e) => {
+      if (root.Sound) root.Sound.click();
+      if (api.send) api.send('settings_mute_fullscreen', { enabled: e.target.checked });
     });
 
     radioSize.forEach(radio => {
@@ -92,14 +107,34 @@
     });
   }
 
+
   function updateUI(state) {
     if (!state || !state.settings) return;
-
     const s = state.settings;
 
-    const elSounds = document.getElementById('settingsSounds');
-    if (elSounds && typeof s.sounds === 'boolean') {
-      elSounds.checked = s.sounds;
+    const elVolume = document.getElementById('settingsVolume');
+    if (elVolume) {
+      const vol = typeof s.volume === 'number' ? s.volume : 0.7;
+      elVolume.value = Math.round(vol * 100);
+    }
+
+    const elQuietHours = document.getElementById('settingsQuietHours');
+    const elQuietHoursFrom = document.getElementById('settingsQuietHoursFrom');
+    const elQuietHoursTo = document.getElementById('settingsQuietHoursTo');
+
+    if (elQuietHours && s.quietHours) {
+      elQuietHours.checked = !!s.quietHours.enabled;
+      elQuietHoursFrom.value = s.quietHours.from || '22:00';
+      elQuietHoursTo.value = s.quietHours.to || '07:00';
+    } else if (elQuietHours) {
+      elQuietHours.checked = false;
+      elQuietHoursFrom.value = '22:00';
+      elQuietHoursTo.value = '07:00';
+    }
+
+    const elMuteFullscreen = document.getElementById('settingsMuteFullscreen');
+    if (elMuteFullscreen) {
+      elMuteFullscreen.checked = typeof s.muteFullscreen === 'boolean' ? s.muteFullscreen : true;
     }
 
     const elAutostart = document.getElementById('settingsAutostart');
@@ -113,17 +148,6 @@
         radio.checked = true;
       }
     });
-
-    // Local JS settings
-    const elMusic = document.getElementById('settingsMusic');
-    if (elMusic && window.CuyMusic) {
-      elMusic.checked = window.CuyMusic.isEnabled();
-    }
-
-    const elVolume = document.getElementById('settingsVolume');
-    if (elVolume && window.CuyMusic) {
-      elVolume.value = Math.round(window.CuyMusic.getVolume() * 100);
-    }
   }
 
   root.CuyHome.registerFeature({
