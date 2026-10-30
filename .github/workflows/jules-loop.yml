@@ -1,6 +1,6 @@
 name: Jules Loop
 
-# Pętla: push promptów (tasks/W*.md) -> Jules -> CI/poprawki -> merge -> fala testów -> CI na main -> następna fala.
+# Pętla autonomiczna: Jules planuje fale (albo bierze je z tasks/W*.md) -> buduje -> CI/poprawki -> merge -> testy -> CI na main -> kolejna fala, w kółko.
 # Zero tokenów Claude: wszystko robi ten workflow + Jules API.
 
 on:
@@ -8,16 +8,18 @@ on:
     branches: [main]            # zmień, jeśli domyślna gałąź to nie main
     paths: ['tasks/W*.md']      # Haiku wypycha pliki fali -> start
   workflow_run:
-    workflows: ["CI"]           # musi pasować do `name:` Twojego workflow z testami
+    workflows: ["CI", "Agent Run (agy)"]   # CI musi pasować do `name:` Twojego workflow z testami; drugi budzi pętlę po przebiegu agenta
     types: [completed]          # CI skończyło -> sprawdź PR-y i main
+  issue_comment:
+    types: [created]            # polecenia /resume, /skip, /pause... z komentarza w issue pętli (działa z GitHub Mobile)
   schedule:
     - cron: '*/30 * * * *'      # siatka bezpieczeństwa (timery, sesje bez PR); zdarzenia budzą pętlę od razu; pomijana, gdy pętla nieaktywna
   workflow_dispatch:
     inputs:
       action:
-        description: 'tick | resume | skip | skip-wave'
+        description: 'tick | resume | skip | skip-wave | pause | go'
         type: choice
-        options: [tick, resume, skip, skip-wave]
+        options: [tick, resume, skip, skip-wave, pause, go]
         default: tick
       arg:
         description: 'dla skip: ID zadania (np. W2-03)'
@@ -41,7 +43,13 @@ concurrency:
 jobs:
   tick:
     # Cron tylko gdy pętla aktywna: pominięte zadanie nie zużywa minut Actions.
-    if: github.event_name != 'schedule' || vars.JULES_LOOP_ACTIVE != 'false'
+    # Pominięte zadanie nie zużywa minut. Komentarz: tylko polecenie ('/...') od właściciela/współpracownika w issue pętli.
+    if: >-
+      (github.event_name != 'schedule' || vars.JULES_LOOP_ACTIVE != 'false') &&
+      (github.event_name != 'issue_comment' || (
+        contains(github.event.issue.labels.*.name, 'jules-loop') &&
+        startsWith(github.event.comment.body, '/') &&
+        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -61,11 +69,27 @@ jobs:
           NOTIFY_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           LOOP_BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          LOOP_BACKEND: ${{ vars.LOOP_BACKEND }}            # jules (domyślnie) albo agy
+          LOOP_AGENT_WORKFLOW: ${{ vars.LOOP_AGENT_WORKFLOW }}
+          AGY_MODEL: ${{ vars.AGY_MODEL }}
           LOOP_CI_WORKFLOW: ${{ vars.LOOP_CI_WORKFLOW || 'ci.yml' }}
           LOOP_MAX_CONCURRENT: ${{ vars.LOOP_MAX_CONCURRENT }}
           LOOP_DAILY_BUDGET: ${{ vars.LOOP_DAILY_BUDGET }}
           LOOP_FIX_GRACE_MIN: ${{ vars.LOOP_FIX_GRACE_MIN }}
           LOOP_TEST_WAVE: ${{ vars.LOOP_TEST_WAVE }}
+          LOOP_AUTONOMOUS: ${{ vars.LOOP_AUTONOMOUS }}
+          LOOP_PLAN: ${{ vars.LOOP_PLAN }}
+          LOOP_MAX_WAVE_TASKS: ${{ vars.LOOP_MAX_WAVE_TASKS }}
+          LOOP_MAX_SPLIT_DEPTH: ${{ vars.LOOP_MAX_SPLIT_DEPTH }}
+          LOOP_RECOVERY_COOLDOWN_MIN: ${{ vars.LOOP_RECOVERY_COOLDOWN_MIN }}
+          LOOP_COMMENT_BODY: ${{ github.event.comment.body }}
+          LOOP_COMMENT_ID: ${{ github.event.comment.id }}
+          LOOP_AUDIT: ${{ vars.LOOP_AUDIT }}
+          LOOP_INSPIRE: ${{ vars.LOOP_INSPIRE }}
+          LOOP_INSPIRE_DAYS: ${{ vars.LOOP_INSPIRE_DAYS }}
+          LOOP_MERGE_LABEL: ${{ vars.LOOP_MERGE_LABEL }}
+          LOOP_REFRESH: ${{ vars.LOOP_REFRESH }}
+          LOOP_SESSION_TIMEOUT_MIN: ${{ vars.LOOP_SESSION_TIMEOUT_MIN }}
           LOOP_PLAN_GUARD: ${{ vars.LOOP_PLAN_GUARD }}
           LOOP_STATE_FILE: ${{ vars.LOOP_STATE_FILE }}
           LOOP_SCOPE_ALLOW: ${{ vars.LOOP_SCOPE_ALLOW }}
