@@ -63,3 +63,10 @@ Tasks arrive through the loop (`docs/JULES_LOOP.md`). Its plan guard asks you to
 
 ## Lessons from mistakes (add one line per repeated mistake)
 - (empty: the human adds a line when Jules makes the same mistake twice)
+
+<!-- jules-loop:autonomy -->
+## Tryb autonomiczny (Jules Loop)
+- Nikt nie odpowiada na pytania ani nie zatwierdza planów. Nie zadawaj pytań; decyzje podejmuj sam i opisuj je w PR (sekcja "Decyzje").
+- Zadanie ma zająć najwyżej ok. 60 minut. Jeśli będzie dłuższe, zrób największą działającą część i opisz resztę w PR.
+- Zmieniaj tylko pliki z listy "Zmieniaj" z opisu zadania. Nie ruszaj .github/workflows/, scripts/jules-loop/ ani pliku stanu projektu.
+- Nie usuwaj i nie osłabiaj asercji istniejących testów. Uruchom testy i build przed otwarciem PR.
