@@ -1,0 +1,13 @@
+{
+ "energy_cost": 10,
+ "min_energy": 25,
+ "cooldown_seconds": 30,
+ "bond_points": 2,
+ "mood_gain": 3,
+ "tricks": [
+  { "id": "spin", "unlock": "trick_spin", "title": "Spin" },
+  { "id": "stand_up", "unlock": "trick_stand_up", "title": "Stand up" },
+  { "id": "popcorn", "unlock": "trick_popcorn", "title": "Popcorn jump" },
+  { "id": "hurdle", "unlock": "trick_hurdle", "title": "Hurdle jump" }
+ ]
+}
