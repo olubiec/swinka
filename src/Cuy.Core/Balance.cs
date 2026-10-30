@@ -15,6 +15,9 @@ namespace Cuy.Core
         /// <summary>Whether this Balance lets the pig grow. Starts as <see cref="GrowthEnabled"/>; tests of the life stages switch it on.</summary>
         public bool GrowthActive { get; set; } = GrowthEnabled;
 
+        /// <summary>the pig eats from the hay rack; the app turns it on in GameSession.Open</summary>
+        public bool HayRackActive { get; set; } = false;
+
         /// <summary>Need decay per game hour with the computer on (needs table in PLAN.md).</summary>
         public Dictionary<Need, double> DecayPerHour { get; set; } = new Dictionary<Need, double>
         {
