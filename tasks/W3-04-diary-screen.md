@@ -14,3 +14,5 @@ Steps:
 Verify: `node tools/qa/web-smoke.js` prints `WEB SMOKE OK` (the smoke test opens every listed feature, including `diary`); `node --check` on every changed JS file.
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Change".
 PR: what was done, decisions and why, how to check by hand; screenshots of the Diary with entries and with the empty state (Playwright: set `diary` to `[]` through `bridge.js` mock helpers or `page.evaluate`).
+
+> Rozbite automatycznie (2026-10-30): CI nadal czerwone po prośbach o poprawkę. Etapy: W3-04.1, W3-04.2, W3-04.3.
