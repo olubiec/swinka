@@ -1,0 +1,138 @@
+name: Agent Run (agy)
+
+# Uruchamiany WYŁĄCZNIE przez orkiestratora (LOOP_BACKEND=agy), nie ręcznie.
+# Jedna sesja = jeden przebieg: agy edytuje pliki, workflow commituje, wypycha gałąź agy/<sid> i otwiera PR.
+# Poprawki (CI czerwone, konflikty) = kolejny przebieg z mode=amend na tej samej gałęzi.
+run-name: "agy [${{ inputs.sid }}] ${{ inputs.title }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      sid:
+        description: 'ID sesji (nadaje orkiestrator)'
+        required: true
+      mode:
+        description: 'new | amend'
+        required: true
+        default: new
+      title:
+        description: 'Tytuł zadania, np. [W1-01] Dodaj zapis gry'
+        required: true
+      prompt_b64:
+        description: 'Prompt zakodowany base64'
+        required: true
+      model:
+        description: 'Opcjonalna nazwa modelu dla agy (puste = domyślny)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agy-${{ inputs.sid }}
+  cancel-in-progress: false
+
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ fromJSON(vars.AGY_TIMEOUT_MIN || '60') }}
+    env:
+      SID: ${{ inputs.sid }}
+      MODE: ${{ inputs.mode }}
+      TASK_TITLE: ${{ inputs.title }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+    steps:
+      # Bez zapisanych poświadczeń: agent z --dangerously-skip-permissions nie widzi tokenu PAT w .git/config.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Gałąź sesji (nowa albo istniejąca przy mode=amend)
+        env:
+          LOOP_TOKEN: ${{ secrets.LOOP_TOKEN }}
+        run: |
+          set -euo pipefail
+          [ -n "$LOOP_TOKEN" ] || { echo "::error::Brak sekretu LOOP_TOKEN (PAT: contents + pull requests)"; exit 1; }
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$LOOP_TOKEN" | base64 -w0)"
+          BR="agy/${SID}"
+          git config user.name "agy-loop[bot]"
+          git config user.email "agy-loop[bot]@users.noreply.github.com"
+          if git -c http.extraheader="$AUTH" ls-remote --exit-code --heads origin "$BR" >/dev/null 2>&1; then
+            git -c http.extraheader="$AUTH" fetch origin "$BR"
+            git checkout -B "$BR" "origin/$BR"
+          else
+            git checkout -b "$BR"
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Zależności projektu
+        run: |
+          if [ -f package-lock.json ]; then npm ci
+          elif [ -f package.json ]; then npm install
+          fi
+
+      - name: Zainstaluj Antigravity CLI
+        run: |
+          curl -fsSL https://antigravity.google/cli/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Uruchom agenta (klucz Gemini API, bez logowania OAuth)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PROMPT_B64: ${{ inputs.prompt_b64 }}
+          AGY_MODEL: ${{ inputs.model || vars.AGY_MODEL }}
+        run: |
+          set -euo pipefail
+          [ -n "$GEMINI_API_KEY" ] || { echo "::error::Brak sekretu GEMINI_API_KEY"; exit 1; }
+          mkdir -p "$HOME/.gemini/antigravity-cli"
+          printf '{ "modelProvider": "gemini" }\n' > "$HOME/.gemini/antigravity-cli/settings.json"
+
+          SUMMARY="$RUNNER_TEMP/summary.md"
+          {
+            echo "Środowisko: runner CI, repozytorium jest w katalogu bieżącym, nikt nie odpowiada na pytania."
+            echo "NIE wykonuj git commit, git push ani nie otwieraj PR: zrobi to workflow po Twoim zakończeniu."
+            echo "Edytuj pliki i uruchom testy/build. Na końcu zapisz krótki opis zmian (co, decyzje i dlaczego, jak sprawdzić) do pliku: $SUMMARY"
+            if [ "$MODE" = "amend" ]; then echo "To poprawka do istniejącej gałęzi: zmień tylko to, o co prosi poniższa wiadomość."; fi
+            echo
+            printf '%s' "$PROMPT_B64" | base64 -d
+          } > "$RUNNER_TEMP/prompt.md"
+
+          cat > "$RUNNER_TEMP/run-agy.sh" <<'EOS'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          ARGS=(--print --dangerously-skip-permissions)
+          if [ -n "${AGY_MODEL:-}" ]; then ARGS+=(--model "$AGY_MODEL"); fi
+          agy "${ARGS[@]}" -p "$(cat "$RUNNER_TEMP/prompt.md")"
+          EOS
+          chmod +x "$RUNNER_TEMP/run-agy.sh"
+
+          # agy -p bez terminala potrafi nic nie wypisać (znany błąd upstream), więc dajemy mu pseudo-terminal.
+          script -qefc "$RUNNER_TEMP/run-agy.sh" /dev/null
+
+      - name: Commit, push i Pull Request
+        env:
+          LOOP_TOKEN: ${{ secrets.LOOP_TOKEN }}
+          GH_TOKEN: ${{ secrets.LOOP_TOKEN }}
+        run: |
+          set -euo pipefail
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$LOOP_TOKEN" | base64 -w0)"
+          BR="agy/${SID}"
+          git add -A -- . ':!node_modules'
+          if git diff --cached --quiet; then
+            echo "Agent nie zmienił żadnych plików: brak commita (orkiestrator zrestartuje sesję)."
+            exit 0
+          fi
+          git commit -m "${TASK_TITLE}" -m "Sesja agy ${SID} (tryb: ${MODE})"
+          git -c http.extraheader="$AUTH" push -u origin "$BR"
+
+          if [ -z "$(gh pr list --head "$BR" --state open --json number --jq '.[0].number')" ]; then
+            BODY="$RUNNER_TEMP/summary.md"
+            [ -s "$BODY" ] || echo "(agent nie zostawił opisu)" > "$BODY"
+            gh pr create --base "$DEFAULT_BRANCH" --head "$BR" --title "$TASK_TITLE" --body-file "$BODY"
+          fi

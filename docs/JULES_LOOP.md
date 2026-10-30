@@ -1,5 +1,7 @@
 # Jules Loop: jedyna droga zadań do Julesa
 
+> **Wersja v3 (autonomiczna).** Pętla działa w trybie ciągłym: bez `needs-human`, z samodzielnym planowaniem po ostatniej fali (cele w `docs/GOALS.md`), rozbijaniem zadań i korektą następnej fali. Opis: `docs/JAK_TO_DZIALA.md`, instalacja i zmienne: `scripts/jules-loop/README.md`, `scripts/jules-loop/START.md`. Podgląd: `docs/dashboard.html`. Poniższe opisy `needs-human` i ręcznego startu dotyczą trybu `LOOP_AUTONOMOUS=off`.
+
 Każde zadanie dla Julesa idzie przez pętlę: `.github/workflows/jules-loop.yml` + `scripts/jules-loop/orchestrator.mjs` (instalacja i sterowanie: `scripts/jules-loop/README.md`).
 **Nie startuj sesji ręcznie.** `jules remote new`, `tools/jules-wave.sh`, `tools/jules-backlog.sh` i `jules/queue/` omijają strażnika zakresu, limit fali i CI. Te skrypty zostają w repo tylko jako historia.
 
