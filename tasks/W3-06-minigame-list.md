@@ -2,6 +2,7 @@
 Zmieniaj: web/home/index.html, web/home/minigames/minigames-api.js, web/home/minigames/games.json
 Wymagane: web/home/minigames/games.json
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/minigames/minigames-api.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/minigames/veggie-rain.js, tools/qa/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: each minigame is one JS file named in `games.json`; adding a game never edits `index.html` or `minigames-api.js` again.
 Depends on: W2-02 (strict smoke test) merged. Read `web/home/index.html` (script tags around line 252), `web/home/minigames/minigames-api.js` (`register`, the hub rendering, the "More games soon" tile) and `web/home/minigames/veggie-rain.js` first. In the real app the page is served from `https://cuy.home/` or `https://cuy.assets/` (see `minigames-api.js` base path logic); in the browser mock from relative paths.

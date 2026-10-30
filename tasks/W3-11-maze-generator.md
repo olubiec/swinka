@@ -2,6 +2,7 @@
 Zmieniaj: web/home/minigames/hay-maze-logic.js, tools/qa/maze-test.js
 Wymagane: web/home/minigames/hay-maze-logic.js, tools/qa/maze-test.js
 Weryfikacja: node tools/qa/maze-test.js (wynik: MAZE TEST OK); node --check web/home/minigames/hay-maze-logic.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: .github/workflows/* (CI robi człowiek), web/home/index.html, web/home/minigames/games.json, web/home/minigames/minigames-api.js, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: a tested, UI-free maze generator that the Hay Maze game can use later.
 Depends on: nothing. Facts: plain ES2020, no modules bundler; files are loaded with script tags or Node `require`, so use a UMD-style tail (`if (typeof module !== 'undefined') module.exports = ...; else window.HayMazeLogic = ...`). QA scripts live in `tools/qa/` and run in CI from `.github/workflows/ci.yml`.

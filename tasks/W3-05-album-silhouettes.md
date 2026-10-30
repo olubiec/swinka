@@ -2,6 +2,7 @@
 Zmieniaj: web/home/app.js, web/home/style.css
 Wymagane: web/home/app.js
 Weryfikacja: node tools/qa/web-smoke.js (wynik: WEB SMOKE OK); node --check web/home/app.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: web/home/bridge.js, tools/qa/*, src/*, AGENTS.md, docs/PLAN.md, tasks/*
 Goal: the Behaviour Album shows unseen stickers as dark "???" silhouettes, seen ones with name and first-seen date, and a "Collected N / M" counter, without any layout shift.
 Depends on: W2-02 (strict smoke test) and W2-10 (state key `albumDates`) merged. Facts: the album is not a feature module; `openAlbumModal()` and the `STICKERS` list are in `web/home/app.js` (about lines 700-765); `state.album` is a list of animation names (unchanged), `state.albumDates` is `{ "<name>": "yyyy-MM-dd" }` and may be missing (mock state from `localStorage`, old builds). CSS classes `.album-grid`, `.album-card`, `.album-locked`, `.album-sprite` exist in `style.css`.

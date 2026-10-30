@@ -13,4 +13,4 @@ Read AGENTS.md once per session (single source of rules for Claude and Jules). P
 - Log: `%LocalAppData%\Cuy\logs\cuy.log`; save: `%AppData%\Cuy\save.json`
 
 ## Working with Jules
-All Jules work goes through the Jules Loop (`docs/JULES_LOOP.md`). Claude writes the plan and the wave files `tasks/W<n>-<nn>-*.md` in the loop format (`Zmieniaj:` line required), and pushes them to `main`: the loop starts the wave on push. Do not start Jules sessions by hand and do not use `tools/jules-wave.sh`, `tools/jules-backlog.sh` or `jules/queue/`. Read `docs/PROJECT_STATE.md` at session start for the current state.
+All Jules work goes through the Jules Loop (`docs/JULES_LOOP.md`). Claude writes the plan and the wave files `tasks/W<n>-<nn>-*.md` in the loop format (`Zmieniaj:` line required), and pushes them to `main`: the loop starts the wave on push. Do not start Jules sessions by hand and do not use `tools/jules-wave.sh`, `tools/jules-backlog.sh` or `jules/queue/`. Read `docs/PROJECT_STATE.md` (state) and `docs/GOALS.md` (product goals; the loop plans new waves from it once `tasks/` is empty) at session start.

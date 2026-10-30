@@ -1,5 +1,7 @@
 # Prompty do fal (Jules / Claude)
 
+> **NIEAKTUALNE.** Falami, testami i integracją zarządza Jules Loop (`docs/JULES_LOOP.md`). Poniższe prompty (A2-check, integracja, `tools/jules-wave.sh`) zostały zastąpione pętlą; zostają jako archiwum.
+
 Zasada: najpierw PR z plikami zadań na `main`, potem `tools/jules-wave.sh Wn` (max 15 naraz, limit Pro 100 zadań / 24 h).
 Backlog (`tools/jules-backlog.sh`): wieczorem, 15 linii z `tasks/BACKLOG.md`; pozycje dotykające `ci.yml` czekają na scalenie W1-03.
 

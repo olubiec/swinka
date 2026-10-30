@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dziennik pętli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f2ede2; --paper-2: #ebe4d5; --ink: #1c1915; --muted: #766d60; --rule: #d6ccb8;
+    --signal: #cf3f17; --moss: #3d7a4b; --amber: #a86a10; --blue: #2b4c73; --faint: #b5ab98;
+    --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+    --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --grain: .5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #15130f; --paper-2: #1d1a15; --ink: #ece4d2; --muted: #9a907f; --rule: #332e25;
+      --signal: #ff6b3d; --moss: #7fc48e; --amber: #e3aa4d; --blue: #8fb4e3; --faint: #5a5446; --grain: .25;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #15130f; --paper-2: #1d1a15; --ink: #ece4d2; --muted: #9a907f; --rule: #332e25;
+    --signal: #ff6b3d; --moss: #7fc48e; --amber: #e3aa4d; --blue: #8fb4e3; --faint: #5a5446; --grain: .25;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.55 var(--sans);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .4  0 0 0 0 .35  0 0 0 0 .25  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 22px 20px 40px; }
+  a { color: var(--blue); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--blue) 35%, transparent); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: currentColor; }
+  .mono { font-family: var(--mono); }
+  .kicker { font: 500 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+  /* masthead */
+  .mast { display: flex; align-items: center; gap: 14px; padding-bottom: 12px; border-bottom: 2px solid var(--ink); }
+  .mast .title { font: 600 15px/1 var(--serif); letter-spacing: .02em; }
+  .mast .repo { font: 400 12px/1 var(--mono); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .spacer { flex: 1; }
+  .live { display: inline-flex; align-items: center; gap: 8px; font: 500 12px/1 var(--mono); color: var(--muted); white-space: nowrap; }
+  .live i { width: 9px; height: 9px; border-radius: 50%; background: var(--faint); }
+  .live.ok i { background: var(--moss); animation: pulse 2.4s ease-out infinite; }
+  .live.warn i { background: var(--amber); } .live.bad i { background: var(--signal); }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--moss) 55%, transparent); } 70%, 100% { box-shadow: 0 0 0 9px transparent; } }
+  .icon { font: inherit; color: var(--ink); background: none; border: 1px solid var(--rule); width: 34px; height: 34px; cursor: pointer; border-radius: 50%; display: grid; place-items: center; padding: 0; }
+  .icon:hover { border-color: var(--ink); }
+  .icon svg { width: 15px; height: 15px; }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 28px 44px; padding: 30px 0 26px; align-items: end; }
+  .phase { font: 400 clamp(46px, 9.5vw, 92px)/.92 var(--serif); font-variation-settings: "opsz" 144; letter-spacing: -.035em; margin: 10px 0 0; }
+  .phase em { font-style: italic; color: var(--signal); }
+  .wavetag { font: 500 13px/1 var(--mono); color: var(--muted); margin-top: 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .paused { color: var(--amber); border: 1px solid currentColor; padding: 3px 7px; letter-spacing: .08em; text-transform: uppercase; font-size: 11px; }
+  .now { font: 400 clamp(19px, 2.6vw, 24px)/1.3 var(--serif); letter-spacing: -.01em; margin: 10px 0 0; text-wrap: balance; }
+  .nowsub { color: var(--muted); font-size: 13.5px; margin-top: 10px; display: grid; gap: 3px; }
+
+  /* track */
+  .track { display: grid; grid-template-columns: repeat(5, 1fr); margin: 4px 0 30px; position: relative; }
+  .st { position: relative; padding-top: 26px; font: 500 11px/1.25 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); text-align: center; }
+  .st::before { content: ""; position: absolute; top: 8px; left: 0; right: 0; height: 2px; background: var(--rule); }
+  .st:first-child::before { left: 50%; } .st:last-child::before { right: 50%; }
+  .st::after { content: ""; position: absolute; top: 2px; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--paper); border: 2px solid var(--faint); }
+  .st.done { color: var(--ink); } .st.done::before { background: var(--ink); } .st.done::after { background: var(--ink); border-color: var(--ink); }
+  .st.cur { color: var(--signal); font-weight: 500; }
+  .st.cur::after { background: var(--signal); border-color: var(--signal); box-shadow: 0 0 0 5px color-mix(in srgb, var(--signal) 22%, transparent); }
+  .st.cur::before { background: linear-gradient(90deg, var(--ink) 50%, var(--rule) 50%); }
+  .st.done + .st.cur::before { background: linear-gradient(90deg, var(--ink) 50%, var(--rule) 50%); }
+
+  /* figures */
+  .figs { display: grid; grid-template-columns: 1.3fr 1fr; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+  .fig { padding: 16px 20px 18px 0; }
+  .fig + .fig { padding-left: 24px; border-left: 1px solid var(--rule); }
+  .num { font: 400 44px/1 var(--serif); letter-spacing: -.03em; margin: 10px 0 0; font-variant-numeric: tabular-nums; }
+  .num small { font-size: 20px; color: var(--muted); letter-spacing: 0; }
+  .note { color: var(--muted); font-size: 13px; margin-top: 8px; text-wrap: pretty; }
+  .gauge { --p: 0%; height: 14px; margin-top: 12px; background: repeating-linear-gradient(90deg, var(--rule) 0 2px, transparent 2px 6px); position: relative; }
+  .gauge::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--p); background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 6px); transition: width .5s; }
+  .gauge.hot::after { background: repeating-linear-gradient(90deg, var(--signal) 0 2px, transparent 2px 6px); }
+
+  /* sections */
+  section { margin-top: 38px; }
+  .sh { display: flex; align-items: baseline; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--ink); margin-bottom: 4px; flex-wrap: wrap; }
+  .sh h2 { font: 600 22px/1.1 var(--serif); letter-spacing: -.015em; margin: 0; }
+  .sh .kicker { margin-left: auto; }
+  .grp { margin-top: 20px; }
+  .grp h3 { font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0 0 2px; }
+  .row { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 2px 14px; padding: 11px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+  .row .id { font: 500 12px/1.5 var(--mono); color: var(--muted); }
+  .row .ttl { overflow-wrap: anywhere; }
+  .row .ttl b { font-weight: 500; }
+  .row .meta { grid-column: 2 / -1; color: var(--muted); font-size: 12.5px; overflow-wrap: anywhere; }
+  .side { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+  .row .id { white-space: nowrap; }
+  .row .lnk { font: 400 12px/1.5 var(--mono); white-space: nowrap; }
+  .row.kid { margin-left: 22px; border-left: 2px solid var(--rule); padding-left: 14px; grid-template-columns: 56px minmax(0, 1fr) auto; }
+  .stamp { display: inline-flex; align-items: center; gap: 6px; font: 500 11px/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; padding: 4px 7px 3px; border: 1px solid currentColor; color: var(--muted); white-space: nowrap; }
+  .stamp::before { content: ""; width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
+  .stamp.ok { color: var(--moss); } .stamp.info { color: var(--blue); } .stamp.violet { color: var(--amber); }
+  .stamp.warn { color: var(--amber); } .stamp.bad { color: var(--signal); }
+  .stamp.run::before { animation: blink 1.4s steps(2, jump-none) infinite; }
+  @keyframes blink { 50% { opacity: .15; } }
+  .ahead .row { grid-template-columns: 64px minmax(0, 1fr); }
+  .ahead .ttl { font-family: var(--serif); font-size: 16px; }
+  .ahead .goal { display: block; color: var(--muted); font: 400 13px/1.45 var(--sans); }
+
+  /* feed */
+  .tabs { display: flex; gap: 18px; margin: 14px 0 6px; }
+  .tabs button { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 0; cursor: pointer; }
+  .tabs button:hover { color: var(--ink); } .tabs button.on { color: var(--ink); border-bottom-color: var(--signal); }
+  .feed { list-style: none; margin: 0; padding: 0; }
+  .feed li { display: grid; grid-template-columns: 82px 14px minmax(0, 1fr); gap: 0 10px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+  .feed time { font: 400 12px/1.7 var(--mono); color: var(--muted); }
+  .feed .mk { width: 8px; height: 8px; margin-top: 8px; background: var(--faint); }
+  .feed .mk.ok { background: var(--moss); } .feed .mk.bad { background: var(--signal); transform: rotate(45deg); } .feed .mk.info { background: var(--blue); border-radius: 50%; }
+  .feed .x { overflow-wrap: anywhere; }
+  .feed .x strong { font-weight: 600; }
+
+  .banner { margin-top: 18px; padding: 12px 14px; border-left: 3px solid var(--amber); background: var(--paper-2); font-size: 14px; }
+  .banner.bad { border-left-color: var(--signal); }
+  .empty { color: var(--muted); padding: 14px 0; font-family: var(--serif); font-style: italic; }
+  details.settings { margin-top: 16px; font-size: 14px; }
+  details.settings summary { cursor: pointer; font: 500 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 8px 0; }
+  .form { padding: 4px 0 8px; max-width: 520px; }
+  label { display: block; margin-top: 12px; font-size: 13px; color: var(--muted); }
+  input { width: 100%; font: 400 14px/1.4 var(--mono); padding: 9px 10px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); min-height: 40px; border-radius: 0; }
+  input:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+  .btn { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--paper); background: var(--ink); border: 0; padding: 12px 16px; margin-top: 14px; cursor: pointer; }
+  footer { margin-top: 44px; padding-top: 12px; border-top: 1px solid var(--rule); font: 400 11.5px/1.5 var(--mono); color: var(--muted); }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  @media (max-width: 700px) {
+    .wrap { padding: 16px 16px 32px; } .hero { grid-template-columns: 1fr; gap: 6px; padding-top: 22px; }
+    .figs { grid-template-columns: 1fr; } .fig + .fig { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+    .st { font-size: 9.5px; letter-spacing: .02em; } .num { font-size: 38px; }
+    .row, .row.kid { grid-template-columns: 62px minmax(0, 1fr); } .row .side { grid-column: 2; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+    .row .meta { grid-column: 2; } .row.kid { margin-left: 8px; padding-left: 10px; }
+    .mast .title { white-space: nowrap; } .hero .kicker + .now { margin-top: 8px; } .wavetag { margin-bottom: 18px; }
+    .feed li { grid-template-columns: 60px 10px minmax(0, 1fr); } .mast .title { font-size: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <span class="title">Dziennik pętli</span><span class="repo" id="repoName"></span>
+    <span class="spacer"></span>
+    <span class="live" id="live"><i></i><span id="liveText">łączenie…</span></span>
+    <button class="icon" id="refresh" title="Odśwież teraz" aria-label="Odśwież teraz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></button>
+  </header>
+
+  <div id="banner"></div>
+
+  <div class="hero">
+    <div>
+      <div class="kicker">Faza</div>
+      <h1 class="phase" id="phase">…</h1>
+      <div class="wavetag" id="phaseSub"></div>
+    </div>
+    <div>
+      <div class="kicker">Teraz</div>
+      <p class="now" id="now">…</p>
+      <div class="nowsub" id="nowSub"></div>
+    </div>
+  </div>
+
+  <div class="track" id="track" aria-label="Etapy fali"></div>
+
+  <div class="figs">
+    <div class="fig">
+      <div class="kicker">Sesje Julesa, ostatnie 24 h</div>
+      <div class="num" id="quota">…</div>
+      <div class="gauge" id="gauge"></div>
+      <div class="note" id="quotaSub"></div>
+    </div>
+    <div class="fig">
+      <div class="kicker">Ukończone fale</div>
+      <div class="num" id="doneCount">…</div>
+      <div class="note" id="doneSub"></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="sh"><h2>Plan działań</h2><span class="kicker" id="planKick"></span></div>
+    <div id="tasks"></div>
+    <div id="upcoming"></div>
+  </section>
+
+  <section>
+    <div class="sh"><h2>Co zrobił i z jakim efektem</h2></div>
+    <div class="tabs" id="tabs">
+      <button data-f="all" class="on">Wszystko</button><button data-f="done">Scalone i fale</button><button data-f="issue">Problemy</button>
+    </div>
+    <ul class="feed" id="feed"></ul>
+  </section>
+
+  <details class="settings" id="settings">
+    <summary>Ustawienia podglądu</summary>
+    <div class="form">
+      <label for="repoIn">Repozytorium (właściciel/nazwa)</label>
+      <input id="repoIn" placeholder="np. jan/moja-gra" autocomplete="off" autocapitalize="off">
+      <label for="tokIn">Token GitHub (opcjonalny: repo prywatne albo szybsze odświeżanie)</label>
+      <input id="tokIn" type="password" placeholder="github_pat_… (tylko odczyt: Issues, Contents)" autocomplete="off">
+      <p class="note">Token zostaje tylko w tej przeglądarce. Bez niego strona odpytuje GitHuba co 2 minuty, z tokenem co 30 sekund.</p>
+      <button class="btn" id="save">Zapisz i odśwież</button>
+    </div>
+  </details>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var REPO_RE = /^[\w.-]+\/[\w.-]+$/;
+  var store = {
+    get: function (k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { /* tryb prywatny */ } }
+  };
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
+
+  function detectRepo() {
+    var q = new URLSearchParams(location.search).get('repo');
+    if (q && REPO_RE.test(q)) return q;
+    var saved = store.get('jl_repo');
+    if (saved && REPO_RE.test(saved)) return saved;
+    var m = /^([\w-]+)\.github\.io$/.exec(location.hostname);
+    var seg = location.pathname.split('/').filter(Boolean)[0];
+    if (m && seg && !/\.html$/.test(seg)) return m[1] + '/' + seg;
+    return '';
+  }
+  var repo = detectRepo();
+  var token = store.get('jl_token');
+  var filter = 'all';
+  var state = null, upcoming = [], upcomingKey = '', upcomingAt = 0, lastOk = 0, timer = null;
+
+  function gh(path) {
+    var h = { Accept: 'application/vnd.github+json' };
+    if (token) h.Authorization = 'Bearer ' + token;
+    return fetch('https://api.github.com' + path, { headers: h }).then(function (r) {
+      if (!r.ok) { var e = new Error('HTTP ' + r.status); e.status = r.status; e.remaining = r.headers.get('x-ratelimit-remaining'); throw e; }
+      return r.json();
+    });
+  }
+  function ago(ms) {
+    var s = Math.max(0, Math.round((Date.now() - ms) / 1000));
+    if (s < 60) return s + ' s temu';
+    var m = Math.round(s / 60); if (m < 60) return m + ' min temu';
+    var h = Math.floor(m / 60); if (h < 24) return h + ' h ' + (m % 60) + ' min temu';
+    return Math.floor(h / 24) + ' d temu';
+  }
+  function dur(ms) { var m = Math.max(0, Math.round(ms / 60000)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + (m % 60) + ' min'; }
+  function hhmm(ms) { return new Date(ms).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }); }
+  function dayTime(iso) {
+    var d = new Date(iso), today = new Date();
+    var same = d.toDateString() === today.toDateString();
+    return (same ? '' : d.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit' }) + ' ') + hhmm(d.getTime());
+  }
+  var isDone = function (t) { return t.status === 'merged' || t.status === 'skipped' || t.status === 'split'; };
+  var STATUS = {
+    pending: ['oczekuje', ''], running: ['pracuje', 'info run'], pr: ['PR w drodze', 'violet'], merged: ['scalone', 'ok'],
+    skipped: ['porzucone', 'warn'], split: ['rozbite', 'warn'], 'needs-human': ['wymaga człowieka', 'bad']
+  };
+  var SESSION = { QUEUED: 'w kolejce', PLANNING: 'planuje', AWAITING_PLAN_APPROVAL: 'czeka na plan', AWAITING_USER_FEEDBACK: 'zadaje pytanie', IN_PROGRESS: 'koduje', PAUSED: 'wstrzymana', COMPLETED: 'zakończona', FAILED: 'błąd' };
+  var KIND = { plan: 'Planowanie fali', refresh: 'Korekta zadań', build: 'Budowa', test: 'Testy', integrate: 'Integracja' };
+  var PHASES = [['plan', 'Planowanie'], ['refresh', 'Korekta'], ['build', 'Budowa'], ['tests', 'Testy'], ['integrate', 'Integracja']];
+  var PHASE_NAME = { idle: 'Bezczynna', plan: 'Planowanie', refresh: 'Korekta zadań', build: 'Budowa', tests: 'Testy', integrate: 'Integracja' };
+
+  function parseState(issueBody) {
+    var m = /<!-- JULES_LOOP_STATE\n([\s\S]*?)\n-->/.exec(issueBody || '');
+    if (!m) return null;
+    try { return JSON.parse(m[1]); } catch (e) { return null; }
+  }
+  function prLink(n) { return n ? '<a href="https://github.com/' + repo + '/pull/' + Number(n) + '" target="_blank" rel="noopener">#' + Number(n) + '</a>' : ''; }
+  function fmtText(x) {
+    return esc(x).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/#(\d{1,6})\b/g, function (_, n) { return prLink(n); });
+  }
+  function setBanner(html, cls) { $('banner').innerHTML = html ? '<div class="banner ' + (cls || '') + '">' + html + '</div>' : ''; }
+
+  function allTasks(st) {
+    return [].concat(st.tasks || [], st.testTasks || [], (st.integrate && st.integrate.tasks) || [], (st.refresh && st.refresh.tasks) || [], (st.plan && st.plan.tasks) || []);
+  }
+
+  function renderStatus(st) {
+    var phase = st.phase || 'idle';
+    $('phase').innerHTML = '<em>' + esc(PHASE_NAME[phase] || phase) + '</em>';
+    var parts = [];
+    if (st.wave) parts.push('fala W' + st.wave);
+    if (phase === 'plan' && st.plan && st.plan.n) parts.push('W' + st.plan.n);
+    $('phaseSub').innerHTML = (parts.length ? '<span>' + esc(parts.join(' · ')) + '</span>' : '') + (st.paused ? '<span class="paused">pauza</span>' : '');
+
+    var used = (st.startLog || []).filter(function (t) { return t > Date.now() - 864e5; }).length;
+    var budget = (st.meta && st.meta.budget) || 80;
+    $('quota').innerHTML = used + ' <small>/ ' + budget + '</small>';
+    $('gauge').style.setProperty('--p', Math.min(100, Math.round(used / budget * 100)) + '%');
+    $('gauge').className = 'gauge' + (used / budget > 0.85 ? ' hot' : '');
+    $('quotaSub').textContent = 'zostało w budżecie: ' + Math.max(0, budget - used) + (st.quotaBlockedUntil > Date.now() ? ' · pauza limitu do ' + hhmm(st.quotaBlockedUntil) : '');
+
+    var done = st.doneWaves || [];
+    $('doneCount').textContent = String(done.length);
+    $('doneSub').textContent = st.lastWaveSummary || (done.length ? done.map(function (n) { return 'W' + n; }).join(', ') : 'jeszcze żadnej');
+  }
+
+  function renderNow(st) {
+    var phase = st.phase || 'idle', tasks = allTasks(st);
+    var running = tasks.filter(function (t) { return t.status === 'running'; });
+    var prs = tasks.filter(function (t) { return t.status === 'pr'; });
+    var line;
+    if (st.paused) line = '⏸ Pauza: nie startuje nowych zadań ani fal (trwające dokończą pracę).';
+    else if (phase === 'idle') line = st.planBackoffUntil > Date.now() ? '💤 Planowanie nie wyszło; kolejna próba o ' + hhmm(st.planBackoffUntil) + '.' : '💤 Bezczynna; za chwilę zaplanuje kolejną falę.';
+    else if (phase === 'plan') line = '🧭 Jules planuje falę W' + ((st.plan && st.plan.n) || '?') + '.';
+    else if (phase === 'refresh') line = '🔄 Jules aktualizuje zadania fali W' + ((st.refresh && st.refresh.n) || '?') + ' do stanu kodu.';
+    else if (phase === 'build') {
+      var tt = st.tasks || [], d = tt.filter(isDone).length;
+      line = '🏗 Budowa fali W' + st.wave + ': ' + d + ' z ' + tt.length + ' zadań zakończonych.';
+    } else if (phase === 'tests') line = '🧪 Fala testów W' + st.wave + ': Jules dopisuje testy do scalonych zmian.';
+    else if (phase === 'integrate') {
+      var it = (st.integrate && st.integrate.tasks) || [];
+      line = it.length && !it.every(isDone) ? '🔧 Naprawa integracji (próba ' + st.integrate.attempts + ').' : '🔎 Czeka na wynik CI na głównej gałęzi' + (st.integrate && st.integrate.attempts ? ' (po ' + st.integrate.attempts + ' naprawach)' : '') + '.';
+    } else line = esc(phase);
+    $('now').textContent = line.replace(/^\s*[^\p{L}\p{N}]+/u, '');
+    var sub = [];
+    if (running.length) sub.push('Sesje Julesa w toku: ' + running.map(function (t) {
+      return esc(t.id) + (t.startedAt ? ' (' + dur(Date.now() - t.startedAt) + ')' : '');
+    }).join(', '));
+    if (prs.length) sub.push('PR-y czekają na CI lub scalenie: ' + prs.map(function (t) { return prLink(t.prNumber) || esc(t.id); }).join(', '));
+    $('nowSub').innerHTML = sub.map(function (x) { return '<span>' + x + '</span>'; }).join('');
+  }
+
+  function chip(t) {
+    var s = STATUS[t.status] || [t.status, ''];
+    var label = s[0];
+    if (t.status === 'running' && t.sessionState) label += ' · ' + (SESSION[t.sessionState] || t.sessionState.toLowerCase().replace(/_/g, ' '));
+    return '<span class="stamp ' + s[1] + '">' + esc(label) + '</span>';
+  }
+  function taskRow(t) {
+    var meta = [];
+    var fixes = (t.nudges || 0) + (t.planNudges || 0);
+    if (t.status === 'running' && t.startedAt) meta.push('trwa ' + dur(Date.now() - t.startedAt));
+    if (fixes) meta.push('poprawek: ' + fixes);
+    if ((t.after || []).length) meta.push('po: ' + t.after.map(esc).join(', '));
+    if (t.note) meta.push(t.note);
+    var links = [];
+    if (t.prNumber) links.push(prLink(t.prNumber));
+    if (t.sessionUrl && /^https:\/\/jules\.google(\.com)?\//.test(t.sessionUrl)) links.push('<a href="' + esc(t.sessionUrl) + '" target="_blank" rel="noopener">sesja</a>');
+    return '<div class="row' + (t.splitFrom ? ' kid' : '') + '"><span class="id">' + esc(t.id) + '</span><span class="ttl">' + esc(t.title || '') + '</span>' +
+      '<span class="side">' + chip(t) + (links.length ? '<span class="lnk">' + links.join(' · ') + '</span>' : '') + '</span>' +
+      (meta.length ? '<span class="meta">' + esc(meta.join(' · ')) + '</span>' : '') + '</div>';
+  }
+  function renderPlan(st) {
+    var phase = st.phase || 'idle', idx = -1;
+    PHASES.forEach(function (p, i) { if (p[0] === phase) idx = i; });
+    $('track').innerHTML = PHASES.map(function (p, i) {
+      return '<div class="st ' + (idx === i ? 'cur' : idx > i ? 'done' : '') + '">' + p[1] + '</div>';
+    }).join('');
+    var groups = [
+      ['Planowanie fali', (st.plan && st.plan.tasks) || []], ['Korekta zadań', (st.refresh && st.refresh.tasks) || []],
+      ['Budowa' + (st.wave ? ' fali W' + st.wave : ''), st.tasks || []], ['Testy', st.testTasks || []],
+      ['Integracja', (st.integrate && st.integrate.tasks) || []]
+    ].filter(function (g) { return g[1].length; });
+    $('tasks').innerHTML = groups.length ? groups.map(function (g) {
+      var d = g[1].filter(isDone).length;
+      return '<div class="grp"><h3>' + esc(g[0]) + ' · ' + d + '/' + g[1].length + '</h3>' + g[1].map(taskRow).join('') + '</div>';
+    }).join('') : '<div class="empty">Brak aktywnych zadań. Pętla zaraz zaplanuje następną falę.</div>';
+  }
+
+  function renderUpcoming() {
+    if (!upcoming.length) { $('upcoming').innerHTML = ''; return; }
+    $('upcoming').innerHTML = '<div class="ahead">' + upcoming.map(function (w) {
+      return '<div class="grp"><h3>Zapowiedź · fala W' + w.n + ' · ' + w.items.length + ' zadań</h3>' + w.items.map(function (it) {
+        return '<div class="row"><span class="id">' + esc(it.id) + '</span><span class="ttl">' + esc(it.title) + (it.goal ? '<span class="goal">' + esc(it.goal) + '</span>' : '') + '</span></div>';
+      }).join('') + '</div>';
+    }).join('') + '</div>';
+  }
+  function loadUpcoming(st, force) {
+    var done = st.doneWaves || [];
+    var key = done.join(',') + '|' + st.wave + '|' + st.phase;
+    if (!force && key === upcomingKey && Date.now() - upcomingAt < 600000) return Promise.resolve();
+    return gh('/repos/' + repo + '/contents/tasks').then(function (list) {
+      var byWave = {};
+      (Array.isArray(list) ? list : []).forEach(function (f) {
+        var m = /^W(\d+)-([A-Za-z0-9]+)(?:[-_].*)?\.md$/i.exec(f.name);
+        if (!m) return;
+        var n = Number(m[1]);
+        if (done.indexOf(n) >= 0 || n === st.wave) return;
+        (byWave[n] = byWave[n] || []).push({ id: 'W' + n + '-' + m[2], path: f.path || ('tasks/' + f.name) });
+      });
+      var waves = Object.keys(byWave).map(Number).sort(function (a, b) { return a - b; }).slice(0, 3);
+      return Promise.all(waves.map(function (n) {
+        return Promise.all(byWave[n].slice(0, 10).map(function (it) {
+          return fetch('https://raw.githubusercontent.com/' + repo + '/HEAD/' + it.path).then(function (r) { return r.ok ? r.text() : ''; }).catch(function () { return ''; }).then(function (txt) {
+            var t = /^#\s+(.+)$/m.exec(txt), c = /^\s*Cel:\s*(.+)$/im.exec(txt);
+            return { id: it.id, title: t ? t[1] : it.id, goal: c ? c[1] : '' };
+          });
+        })).then(function (items) { return { n: n, items: items }; });
+      }));
+    }).then(function (w) { upcoming = w; upcomingKey = key; upcomingAt = Date.now(); renderUpcoming(); }).catch(function () { /* brak katalogu tasks */ });
+  }
+
+  var GOOD = /^(✅|🏁|📝|📜|🔁)/, BAD = /(🛑|⏭️|✂️|⏱️|⚠️|⛔|⏳)/;
+  function renderFeed(st) {
+    var items = (st.recent || []).slice().sort(function (a, b) { return Date.parse(b.t) - Date.parse(a.t); }).filter(function (r) {
+      if (filter === 'done') return /^(✅|🏁)/.test(r.x);
+      if (filter === 'issue') return BAD.test(r.x);
+      return true;
+    });
+    $('feed').innerHTML = items.length ? items.map(function (r) {
+      var kind = /^(✅|🏁|📝|📜|🔁)/.test(r.x) ? 'ok' : BAD.test(r.x) ? 'bad' : 'info';
+      var txt = r.x.replace(/^\s*[^\p{L}\p{N}*#]+/u, '');
+      return '<li><time>' + esc(dayTime(r.t)) + '</time><span class="mk ' + kind + '"></span><span class="x">' + fmtText(txt) + '</span></li>';
+    }).join('') : '<li><span class="empty">Brak wpisów.</span></li>';
+  }
+
+  function renderAll(st) {
+    renderStatus(st); renderNow(st); renderPlan(st); renderFeed(st); renderUpcoming();
+    var tick = st.lastTickAt ? Date.parse(st.lastTickAt) : 0;
+    var age = tick ? Date.now() - tick : Infinity;
+    var live = $('live');
+    live.className = 'live ' + (age < 45 * 60e3 ? 'ok' : age < 3 * 3600e3 ? 'warn' : 'bad');
+    $('liveText').textContent = tick ? 'ostatni tick ' + ago(tick) : 'brak ticka';
+    $('planKick').textContent = st.wave ? 'fala W' + st.wave : '';
+    $('foot').textContent = 'Odświeżono ' + new Date().toLocaleTimeString('pl-PL') + ' · dane z issue „Jules Loop” w ' + repo;
+  }
+
+  function load(force) {
+    if (!repo) { setBanner('Podaj repozytorium w ustawieniach (np. <b>jan/moja-gra</b>).', 'bad'); $('settings').open = true; return; }
+    $('repoName').textContent = repo;
+    gh('/repos/' + repo + '/issues?labels=jules-loop&state=open&per_page=5').then(function (list) {
+      var issue = (Array.isArray(list) ? list : []).filter(function (i) { return !i.pull_request; })[0];
+      if (!issue) { setBanner('Nie ma jeszcze issue pętli. Pętla utworzy je przy pierwszym ticku (komentarz <b>/tick</b> lub uruchomienie workflow).', ''); return null; }
+      var st = parseState(issue.body);
+      if (!st) { setBanner('Nie umiem odczytać stanu pętli z issue #' + Number(issue.number) + '.', 'bad'); return null; }
+      setBanner('');
+      state = st; lastOk = Date.now();
+      renderAll(st);
+      return loadUpcoming(st, force);
+    }).catch(function (e) {
+      if (e.status === 403 || e.status === 429) setBanner('Limit zapytań GitHuba wyczerpany. Dodaj token w ustawieniach albo poczekaj. Pokazuję ostatnie dane.', '');
+      else if (e.status === 404) setBanner('Nie widzę repozytorium <b>' + esc(repo) + '</b>. Jeśli jest prywatne, dodaj token w ustawieniach.', 'bad');
+      else setBanner('Nie udało się pobrać danych (' + esc(e.message) + '). Pokazuję ostatnie dane.', '');
+      if (state) renderAll(state);
+    });
+  }
+  function schedule() {
+    clearInterval(timer);
+    timer = setInterval(function () { if (!document.hidden) load(false); }, token ? 30000 : 120000);
+  }
+
+  $('refresh').onclick = function () { load(true); };
+  $('tabs').onclick = function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    filter = b.getAttribute('data-f');
+    Array.prototype.forEach.call($('tabs').children, function (x) { x.classList.toggle('on', x === b); });
+    if (state) renderFeed(state);
+  };
+  $('save').onclick = function () {
+    var r = $('repoIn').value.trim(), t = $('tokIn').value.trim();
+    if (r && !REPO_RE.test(r)) { setBanner('Repozytorium ma mieć postać właściciel/nazwa.', 'bad'); return; }
+    if (r) { repo = r; store.set('jl_repo', r); }
+    token = t; store.set('jl_token', t);
+    $('settings').open = false; state = null; upcomingKey = ''; schedule(); load(true);
+  };
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - lastOk > 20000) load(false); });
+  setInterval(function () { if (state && state.lastTickAt) renderNow(state), $('liveText').textContent = 'ostatni tick ' + ago(Date.parse(state.lastTickAt)); }, 15000);
+
+  $('repoIn').value = repo; $('tokIn').value = token;
+  schedule(); load(true);
+})();
+</script>
+</body>
+</html>

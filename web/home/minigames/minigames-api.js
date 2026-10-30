@@ -218,13 +218,16 @@
       const allDisplayGames = this.getAllGames().map((g) => ({
         id: g.id, name: g.name, icon: g.icon || '🎮', desc: g.desc || '', available: true
       }));
-      allDisplayGames.push({
-        id: 'more-games-soon',
-        name: 'More games soon',
-        icon: '🎮',
-        desc: 'New minigames are on the way.',
-        available: false
-      });
+
+      if (this.games.size < 4) {
+        allDisplayGames.push({
+          id: 'more-games-soon',
+          name: 'More games soon',
+          icon: '🎮',
+          desc: 'New minigames are on the way.',
+          available: false
+        });
+      }
 
       let html = `
         <div class="minigames-root">
@@ -249,9 +252,11 @@
             <div class="minigames-card-content">
               <div class="minigames-card-title">${g.name}</div>
               <div class="minigames-card-desc">${g.desc}</div>
+              ${isReady ? `
               <div class="minigames-card-meta">
                 <span class="minigames-record-badge">🏆 Record: ${record} pts</span>
               </div>
+              ` : ''}
             </div>
             <div>
               ${isReady
@@ -569,5 +574,31 @@
   const manager = new MinigryManager();
   root.Minigry = manager;
   root.MinigryPig = MinigryPig;
+
+  // Load games.json and append minigame scripts
+  const gamesJsonUrl = 'minigames/games.json';
+
+  fetch(gamesJsonUrl)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(async files => {
+      for (const file of files) {
+        await new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = `minigames/${file}`;
+          script.onload = resolve;
+          script.onerror = () => {
+            console.warn(`[Minigames] Failed to load ${file}`);
+            resolve(); // Skip missing game
+          };
+          document.body.appendChild(script);
+        });
+      }
+    })
+    .catch(err => {
+      console.warn(`[Minigames] Failed to fetch games.json: ${err.message}`);
+    });
 
 })(typeof window !== 'undefined' ? window : this);

@@ -733,9 +733,35 @@
       { id: 'party', name: 'Birthday party', row: 58, frame: 2 }
   ];
 
+  function formatShortDate(dateStr) {
+    if (!dateStr) return null;
+    const parts = dateStr.split('-');
+    if (parts.length < 3) return null;
+    const m = parseInt(parts[1], 10);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return parseInt(parts[2], 10) + ' ' + (months[m - 1] || '');
+  }
+
   function openAlbumModal() {
     const state = window.bridge ? window.bridge.getState() : null;
-    const seen = new Set((state && state.album) || ['idle', 'sniff']);
+    const seen = new Set();
+    const seenDates = {};
+    if (state && state.album) {
+      state.album.forEach(item => {
+        if (typeof item === 'string') {
+          seen.add(item);
+        } else if (item && item.key) {
+          seen.add(item.key);
+          if (item.firstSeen) seenDates[item.key] = item.firstSeen;
+        }
+      });
+    } else {
+      seen.add('idle');
+      seen.add('sniff');
+    }
+    if (state && state.albumDates) {
+      Object.assign(seenDates, state.albumDates);
+    }
     const isWebView = !!(window.chrome && window.chrome.webview);
     const stage = (state && state.stageKey) || 'baby';
     const folder = (stage === 'junior') ? 'baby' : stage;
@@ -744,17 +770,24 @@
 
     let html = `
       <div style="background:#2b1712; color:#fffdf8; padding:5px 8px; border-radius:4px; font-weight:700;">
-        Stickers found: ${unlockedCount} / ${STICKERS.length}
+        Collected ${unlockedCount} / ${STICKERS.length}
       </div>
       <div class="album-grid">
     `;
     STICKERS.forEach((st) => {
       const ok = seen.has(st.id);
+      const dateStr = seenDates[st.id];
+      const shortDate = formatShortDate(dateStr);
+      let subText = 'Not seen yet';
+      if (ok) {
+        subText = shortDate ? `First seen: ${shortDate}` : 'Seen';
+      }
+
       html += `
         <div class="album-card ${ok ? '' : 'album-locked'}">
           <span class="album-sprite" style="background-image:url('${sheet}'); background-position:${-st.frame * 48}px ${-st.row * 48}px;"></span>
           <b>${ok ? st.name : '???'}</b>
-          <small style="color:#6e6a5c;">${ok ? 'Found!' : 'Not seen yet'}</small>
+          <small style="color:#6e6a5c;">${subText}</small>
         </div>
       `;
     });

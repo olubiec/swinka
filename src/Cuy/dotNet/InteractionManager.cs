@@ -289,7 +289,7 @@ namespace Cuy
             var pet = BrainController.Instance?.Pet;
             int bondLevel = pet?.State?.Bond?.Level ?? 1;
 
-            if (bondLevel >= 3)
+            if (pet != null && pet.IsUnlocked("greet_on_start"))
             {
                 _petForm.PlayAnimationByName("greet");
                 BrainController.Log(string.Format(

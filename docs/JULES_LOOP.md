@@ -1,5 +1,7 @@
 # Jules Loop: jedyna droga zadań do Julesa
 
+> **Wersja v3 (autonomiczna).** Pętla działa w trybie ciągłym: bez `needs-human`, z samodzielnym planowaniem po ostatniej fali (cele w `docs/GOALS.md`), rozbijaniem zadań i korektą następnej fali. Opis: `docs/JAK_TO_DZIALA.md`, instalacja i zmienne: `scripts/jules-loop/README.md`, `scripts/jules-loop/START.md`. Podgląd: `docs/dashboard.html`. Poniższe opisy `needs-human` i ręcznego startu dotyczą trybu `LOOP_AUTONOMOUS=off`.
+
 Każde zadanie dla Julesa idzie przez pętlę: `.github/workflows/jules-loop.yml` + `scripts/jules-loop/orchestrator.mjs` (instalacja i sterowanie: `scripts/jules-loop/README.md`).
 **Nie startuj sesji ręcznie.** `jules remote new`, `tools/jules-wave.sh`, `tools/jules-backlog.sh` i `jules/queue/` omijają strażnika zakresu, limit fali i CI. Te skrypty zostają w repo tylko jako historia.
 
@@ -56,6 +58,6 @@ Actions → Jules Loop → Run workflow: `tick`, `resume`, `skip <ID>`, `skip-wa
 
 - Stan projektu czytasz z `docs/PROJECT_STATE.md`. Nie pytaj o stan, jeśli plik jest aktualny.
 - Nową falę piszesz w formacie powyżej i sprawdzasz przed pushem: każdy plik ma `Zmieniaj:`, zakresy się nie nakładają, zależności są w wcześniejszych falach.
-- Pliki w `tasks/plan/` są nieaktywne i w starym formacie (`Change:`). Przed przeniesieniem do `tasks/` przepisz je na format pętli.
+- Fale W1–W2 (zrobione) leżą w `tasks/done/` i nie startują. Nowa fala = pliki `tasks/W<n>-<nn>-*.md` w formacie pętli, dodane do `main`.
 - `tasks/BACKLOG.md` to surowa lista pomysłów. Wybrane linie przepisujesz na pliki fali; nie uruchamiasz ich skryptem.
 - Nie edytujesz `.github/workflows/jules-loop.yml` ani `scripts/jules-loop/` w zadaniach dla Julesa. Pętla odrzuca PR-y, które to ruszają.
