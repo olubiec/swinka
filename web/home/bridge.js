@@ -106,6 +106,25 @@
       sounds: true,
       autostart: false
     },
+    diary: [
+      { date: "2026-10-24", text: "Entry 1" },
+      { date: "2026-10-23", text: "Entry 2" },
+      { date: "2026-10-22", text: "Entry 3" }
+    ],
+    albumDates: {
+      sniff: "2026-10-20",
+      play: "2026-10-21"
+    },
+    bondNext: {
+      level: 5,
+      id: 'trick_spin',
+      title: 'Learns to spin',
+      pointsToNext: 14
+    },
+    hayRack: {
+      value: 60,
+      max: 100
+    },
     currentAction: 'idle',
     isSleeping: false,
     lastActiveUtc: new Date().toISOString()
