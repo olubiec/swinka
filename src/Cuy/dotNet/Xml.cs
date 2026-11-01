@@ -605,5 +605,60 @@ namespace Cuy
             }
             return sprites;
         }
+
+        /// <summary>
+        /// Rebuilds sprites for a given life stage, keeping scale and animation definitions.
+        /// Returns false and logs [WARN] if the stage sheet is missing or size differs.
+        /// </summary>
+        public bool ReloadStageSprites(string stageKey)
+        {
+            try
+            {
+                var frames = SpriteSheetLoader.Load(stageKey);
+                if (frames == null || frames.Length == 0)
+                {
+                    BrainController.Log("[WARN] Xml.ReloadStageSprites: missing frames for stage " + stageKey);
+                    return false;
+                }
+
+                if (frames[0].Width != 64 || frames[0].Height != 64)
+                {
+                    BrainController.Log("[WARN] Xml.ReloadStageSprites: unexpected frame size " + frames[0].Width + "x" + frames[0].Height + " for stage " + stageKey);
+                    return false;
+                }
+
+                var newSprites = new List<Bitmap>(frames.Length);
+                for (int i = 0; i < frames.Length; i++)
+                {
+                    var src = frames[i];
+                    var bmp = new Bitmap(spriteWidth, spriteHeight, src.PixelFormat);
+                    using (var g = Graphics.FromImage(bmp))
+                    {
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                        g.DrawImage(src, new Rectangle(0, 0, spriteWidth, spriteHeight), new Rectangle(0, 0, src.Width, src.Height), GraphicsUnit.Pixel);
+                    }
+                    newSprites.Add(bmp);
+                }
+
+                var oldSprites = sprites;
+                sprites = newSprites;
+
+                // Dispose old bitmaps after swap
+                if (oldSprites != null)
+                {
+                    foreach (var s in oldSprites)
+                    {
+                        try { s?.Dispose(); } catch { }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] Xml.ReloadStageSprites: " + ex.Message);
+                return false;
+            }
+        }
     }
 }

@@ -91,6 +91,7 @@
       pellets: 5
     },
     poops: 2,             // Poops in the run
+    // Minigames contract: { records: object, dailyRewardedCount: number, dailyMax: number, plays: object, lastResult: object|null }
     minigames: {
       records: {
         'veggie_rain': 0,
@@ -99,12 +100,26 @@
         'memory': 0
       },
       dailyRewardedDate: new Date().toISOString().slice(0, 10),
-      dailyRewardedCount: 0
+      dailyRewardedCount: 0,
+      dailyMax: 10,
+      plays: {
+        'veggie_rain': 0,
+        'popcorn': 0,
+        'hay_maze': 0,
+        'memory': 0
+      },
+      lastResult: null
     },
+    // Settings contract: { petSize, sounds, autostart, monitors: [ { index, name, width, height, primary } ], monitor: number }
     settings: {
       petSize: 'small',
       sounds: true,
-      autostart: false
+      autostart: false,
+      monitors: [
+        { index: 0, name: 'Display 1', width: 1920, height: 1080, primary: true },
+        { index: 1, name: 'Display 2', width: 1920, height: 1080, primary: false }
+      ],
+      monitor: 0
     },
     diary: [
       { date: "2026-10-24", text: "Entry 1" },
@@ -115,16 +130,36 @@
       sniff: "2026-10-20",
       play: "2026-10-21"
     },
+    // Bond next contract: { level: number, id: string, title: string, pointsToNext: number } | null
     bondNext: {
       level: 5,
       id: 'trick_spin',
       title: 'Learns to spin',
       pointsToNext: 14
     },
+    // Hay rack contract: { value: number, max: number }
     hayRack: {
       value: 60,
       max: 100
     },
+    // Tricks contract: [ { id: string, title: string, unlocked: boolean, unlockLevel: number, readyIn: number } ]
+    tricks: [
+      { id: 'spin', title: 'Spin', unlocked: true, unlockLevel: 5, readyIn: 0 },
+      { id: 'stand_up', title: 'Stand Up', unlocked: true, unlockLevel: 9, readyIn: 0 },
+      { id: 'popcorn', title: 'Popcorn', unlocked: false, unlockLevel: 12, readyIn: 0 },
+      { id: 'hurdle', title: 'Hurdle Jump', unlocked: false, unlockLevel: 15, readyIn: 0 }
+    ],
+    // Achievements contract: [ { id: string, title: string, text: string, category: string, reward: number, earned: boolean, date: string|null, hidden: boolean } ]
+    achievements: [
+      { id: 'first_meal', title: 'First Meal', text: 'Feed your guinea pig for the first time.', category: 'care', reward: 50, earned: true, date: '2026-10-22T10:00:00Z', hidden: false },
+      { id: 'first_pet', title: 'Gentle Touch', text: 'Pet your guinea pig for the first time.', category: 'social', reward: 50, earned: true, date: '2026-10-23T11:00:00Z', hidden: false },
+      { id: 'first_game', title: 'Game On', text: 'Play your first minigame.', category: 'play', reward: 50, earned: true, date: '2026-10-24T12:00:00Z', hidden: false },
+      { id: 'clean_home', title: 'Tidy Habitat', text: 'Clean up 10 poops.', category: 'care', reward: 60, earned: false, date: null, hidden: false },
+      { id: 'stage_junior', title: 'Growing Up', text: 'Reach the Junior life stage.', category: 'growth', reward: 100, earned: false, date: null, hidden: false },
+      { id: 'bond_friend', title: 'True Friends', text: 'Reach bond level 5.', category: 'social', reward: 100, earned: false, date: null, hidden: false },
+      { id: 'ten_games', title: 'Arcade Champion', text: 'Play 10 minigames.', category: 'play', reward: 120, earned: false, date: null, hidden: false },
+      { id: 'stage_legend', title: 'Living Legend', text: 'Reach the Legend life stage.', category: 'growth', reward: 200, earned: false, date: null, hidden: true }
+    ],
     currentAction: 'idle',
     isSleeping: false,
     lastActiveUtc: new Date().toISOString()
@@ -292,6 +327,17 @@
       }
       if (!state.minigames.records) state.minigames.records = {};
       if (typeof state.minigames.dailyRewardedCount !== 'number') state.minigames.dailyRewardedCount = 0;
+      if (typeof state.minigames.dailyMax !== 'number') state.minigames.dailyMax = 10;
+      if (!state.minigames.plays) state.minigames.plays = { 'veggie_rain': 0, 'popcorn': 0, 'hay_maze': 0, 'memory': 0 };
+      if (state.minigames.lastResult === undefined) state.minigames.lastResult = null;
+      if (!state.tricks) state.tricks = JSON.parse(JSON.stringify(defaultMockState.tricks));
+      if (!state.achievements) state.achievements = JSON.parse(JSON.stringify(defaultMockState.achievements));
+      if (!state.settings) state.settings = {};
+      if (!state.settings.monitors) state.settings.monitors = JSON.parse(JSON.stringify(defaultMockState.settings.monitors));
+      if (typeof state.settings.monitor !== 'number') state.settings.monitor = 0;
+      if (!state.hayRack) state.hayRack = { value: 60, max: 100 };
+      if (!state.bond) state.bond = { level: 4, points: 46, pointsToday: 6, maxPointsToday: 15 };
+      if (state.bondNext === undefined) state.bondNext = { level: 5, id: 'trick_spin', title: 'Learns to spin', pointsToNext: 14 };
 
       // Health as in Cuy.Core.Needs.Health: 0.5 * avg + 0.5 * min
       const vals = [
@@ -636,6 +682,34 @@
         case 'settings_autostart': {
           if (!s.settings) s.settings = {};
           s.settings.autostart = action.on;
+          break;
+        }
+
+        case 'settings_monitor': {
+          if (!s.settings) s.settings = {};
+          s.settings.monitor = typeof action.index === 'number' ? action.index : 0;
+          break;
+        }
+
+        case 'trick': {
+          const trickId = action.id;
+          if (s.tricks) {
+            const tr = s.tricks.find(t => t.id === trickId);
+            if (tr) {
+              tr.readyIn = 30;
+            }
+          }
+          s.currentAction = trickId === 'spin' ? 'spin' : 'popcorn';
+          setTimeout(() => {
+            if (window.CuyHome && window.CuyHome.api) {
+              const cbs = this.messageListeners.get('toast');
+              if (cbs) {
+                cbs.forEach(cb => {
+                  try { cb({ type: 'toast', text: `Cuy performed ${trickId}!` }); } catch (e) {}
+                });
+              }
+            }
+          }, 50);
           break;
         }
 

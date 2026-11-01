@@ -54,6 +54,22 @@ namespace Cuy
         public IReadOnlyList<PoopForm> ActivePoops => _activePoops;
         public IReadOnlyList<PoopForm> ActiveBobki => _activePoops;
 
+        public void HideAll()
+        {
+            foreach (var p in _activePoops)
+            {
+                try { p?.Hide(); } catch { }
+            }
+        }
+
+        public void ShowAll()
+        {
+            foreach (var p in _activePoops)
+            {
+                try { p?.Show(); } catch { }
+            }
+        }
+
         /// <summary>
         /// Called on every update step in BrainController.Update().
         /// </summary>

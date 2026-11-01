@@ -42,13 +42,11 @@ namespace Cuy.Core
             string newPetName = "Cuy")
         {
             if (clock == null) throw new ArgumentNullException(nameof(clock));
-            if (balance == null) balance = new Balance { HayRackActive = true };
+            if (balance == null) balance = new Balance { HayRackActive = true, DiaryActive = true, BirthdayRewardsActive = true }; else { balance.HayRackActive = true; balance.DiaryActive = true; balance.BirthdayRewardsActive = true; }
             var saveSystem = new SaveSystem(saveDirectory);
             var load = saveSystem.Load();
             var isNewGame = load.State == null;
             var state = load.State ?? GameState.CreateNew(newPetName, clock.UtcNow);
-            if (balance == null) balance = new Balance { DiaryActive = true };
-            if (balance == null) { balance = new Balance(); balance.DiaryActive = true; }
             var session = new GameSession(new Pet(state, clock, balance), saveSystem, load);
             if (isNewGame) session.Pet.ApplyNewGameEconomy();
             return session;

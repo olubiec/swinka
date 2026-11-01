@@ -86,7 +86,7 @@ namespace Cuy
             /// <summary>
             /// Xml class. Xml parser and functionality are stored here.
             /// </summary>
-        readonly Xml Xml;
+        public Xml Xml { get; private set; }
             /// <summary>
             /// If the pet is in dragging mode (user is holding the pet with the mouse)
             /// </summary>
@@ -756,6 +756,31 @@ namespace Cuy
             }
             imageList1.Images.Add(im);
             
+        }
+
+        public void ReplaceSprites(IList<Bitmap> newSprites)
+        {
+            if (this.IsDisposed || newSprites == null || newSprites.Count == 0) return;
+            if (this.InvokeRequired)
+            {
+                try { this.BeginInvoke(new Action(() => ReplaceSprites(newSprites))); } catch { }
+                return;
+            }
+
+            try
+            {
+                imageList1.Images.Clear();
+                foreach (var s in newSprites)
+                {
+                    imageList1.Images.Add(s);
+                }
+                flippedSprites.Clear();
+                Invalidate();
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] FormPet.ReplaceSprites: " + ex.Message);
+            }
         }
 
         private Screen CurrentScreen

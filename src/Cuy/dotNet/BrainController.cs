@@ -65,6 +65,7 @@ namespace Cuy
                 Log("[WARN] save.json was damaged or missing. Loaded save.bak instead. " + _session.LoadResult.MainError);
             }
             _session.Start();
+            _session.Pet.StageChanged += OnPetStageChanged;
 
             _brain = Brain.CreateDefault(_session.Pet);
 
@@ -95,6 +96,35 @@ namespace Cuy
                     SoundManager.Instance?.PlayWheek("critical_hunger");
                 }
             };
+        }
+
+        private void OnPetStageChanged(object sender, StageChangedEventArgs e)
+        {
+            try
+            {
+                string oldStage = e.OldStage.ToString();
+                string newStage = e.NewStage.ToString();
+                string stageKey = Cuy.Core.LifeStages.DataKey(e.NewStage);
+
+                var anyPet = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                var xml = anyPet?.Xml;
+                if (xml != null)
+                {
+                    bool reloaded = xml.ReloadStageSprites(stageKey);
+                    if (reloaded)
+                    {
+                        foreach (var petForm in FormPet.AllPets.ToArray())
+                        {
+                            petForm.ReplaceSprites(xml.sprites);
+                        }
+                        Log($"[Stage] {oldStage} -> {newStage}, sheet reloaded");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("[WARN] BrainController.OnPetStageChanged: " + ex.Message);
+            }
         }
 
         public static void Initialize(double initialMultiplier = 1.0)
@@ -817,5 +847,6 @@ namespace Cuy
             }
             return TimeSpan.Zero;
         }
+
     }
 }

@@ -282,7 +282,20 @@
 
     // Bond
     if (elements.bondIndicator && state.bond) {
-      elements.bondIndicator.textContent = `❤️ Bond: Lv. ${state.bond.level}`;
+      const b = state.bond;
+      const next = state.bondNext;
+      let pct = 100;
+      let subText = 'all unlocked';
+      if (next && typeof next.pointsToNext === 'number') {
+        const total = (b.points || 0) + next.pointsToNext;
+        pct = total > 0 ? Math.min(100, Math.max(0, Math.round(((b.points || 0) / total) * 100))) : 0;
+        subText = `next: ${next.title || next.id} (${next.pointsToNext} pts)`;
+      }
+      elements.bondIndicator.innerHTML = `
+        <div class="bond-header">❤️ Bond: Lv. ${b.level}</div>
+        <div class="bond-bar-track"><div class="bond-bar-fill" style="width: ${pct}%"></div></div>
+        <div class="bond-sub">${subText}</div>
+      `;
     }
 
     // Clovers (currency)

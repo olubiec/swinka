@@ -78,6 +78,9 @@ namespace Cuy.Core
         public int BondStep { get; set; } = 15;
 
         public bool DiaryActive { get; set; } = false;
+
+        /// <summary>When true, celebrating birthdays grants clovers, cake, and writes to diary.</summary>
+        public bool BirthdayRewardsActive { get; set; } = false;
         public int DiaryWriteHour { get; set; } = 20;
 
         public static Balance CreateDefault()

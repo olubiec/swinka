@@ -230,37 +230,9 @@ namespace Cuy
             return null;
         }
 
-        // ---- Full-screen detection (Win32 API) -------------------------------
+        // ---- Full-screen detection (FullscreenDetector) ----------------------
 
-        private enum QUERY_USER_NOTIFICATION_STATE
-        {
-            QUNS_NOT_PRESENT = 1,
-            QUNS_BUSY = 2,
-            QUNS_RUNNING_D3D_FULL_SCREEN = 3,
-            QUNS_PRESENTATION_MODE = 4,
-            QUNS_ACCEPTS_NOTIFICATIONS = 5,
-            QUNS_QUIET_TIME = 6,
-            QUNS_APP = 7
-        }
-
-        [DllImport("shell32.dll", SetLastError = false)]
-        private static extern int SHQueryUserNotificationState(out QUERY_USER_NOTIFICATION_STATE pquns);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
+        private bool? _loggedLastFullScreenResult = null;
 
         public bool IsFullScreenOrBusy()
         {
@@ -275,47 +247,18 @@ namespace Cuy
 
             try
             {
-                // 1. Check the user notification state in the Windows shell
-                int hr = SHQueryUserNotificationState(out var state);
-                if (hr == 0) // S_OK
+                var check = Cuy.Platform.FullscreenDetector.Check();
+                isFs = check.IsFullscreen;
+                if (!_loggedLastFullScreenResult.HasValue || _loggedLastFullScreenResult.Value != isFs)
                 {
-                    if (state == QUERY_USER_NOTIFICATION_STATE.QUNS_BUSY ||
-                        state == QUERY_USER_NOTIFICATION_STATE.QUNS_RUNNING_D3D_FULL_SCREEN ||
-                        state == QUERY_USER_NOTIFICATION_STATE.QUNS_PRESENTATION_MODE)
-                    {
-                        isFs = true;
-                    }
-                }
-
-                // 2. Fallback: check whether the foreground window covers the whole screen
-                if (!isFs)
-                {
-                    IntPtr fgHwnd = GetForegroundWindow();
-                    if (fgHwnd != IntPtr.Zero)
-                    {
-                        if (GetWindowRect(fgHwnd, out var rct))
-                        {
-                            var primary = Screen.PrimaryScreen;
-                            if (primary != null)
-                            {
-                                int w = rct.Right - rct.Left;
-                                int h = rct.Bottom - rct.Top;
-                                if (w >= primary.Bounds.Width && h >= primary.Bounds.Height &&
-                                    rct.Left <= primary.Bounds.Left && rct.Top <= primary.Bounds.Top)
-                                {
-                                    // Make sure it is not our own pig window
-                                    var activePet = FormPet.ActivePet;
-                                    if (activePet == null || fgHwnd != activePet.Handle)
-                                    {
-                                        isFs = true;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    _loggedLastFullScreenResult = isFs;
+                    BrainController.Log($"[Sound] fullscreen={isFs} ({check.Reason})");
                 }
             }
-            catch (Exception ex) { BrainController.Log("[WARN] SoundManager.IsFullScreenOrBusy: " + ex.Message); }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] SoundManager.IsFullScreenOrBusy: " + ex.Message);
+            }
 
             _lastFullScreenResult = isFs;
             return isFs;

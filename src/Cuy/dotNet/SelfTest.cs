@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -53,12 +54,16 @@ namespace Cuy
                 }
             });
             Check("sounds", CheckSounds);
-            Check("WebView2", () =>
-            {
-                string version = CoreWebView2Environment.GetAvailableBrowserVersionString();
-                if (string.IsNullOrEmpty(version)) throw new Exception("runtime not installed");
-                Lines.Add("     version " + version);
-            });
+            Check("data json", CheckDataJson);
+            Check("item ids", CheckItemIds);
+            Check("core data tables", CheckCoreDataTables);
+            Check("music", CheckMusic);
+            Check("coloring", CheckColoring);
+            Check("features", CheckFeatures);
+            Check("games", CheckGames);
+            Check("icon indexes", CheckIconIndexes);
+            Check("stage sheets", CheckStageSheets);
+            CheckWebView2();
             Check("mouse shake detector", CheckMouseShake);
             Check("behaviors", CheckBehaviors);
             Check("save folder writable", CheckSaveFolder);
@@ -66,6 +71,11 @@ namespace Cuy
             Lines.Add(_failed ? "SELFTEST FAILED" : "SELFTEST OK");
             Output();
             return _failed ? 1 : 0;
+        }
+
+        private static void Warn(string name, string message)
+        {
+            Lines.Add("WARN " + name + ": " + message);
         }
 
         private static void Check(string name, Action test)
@@ -239,6 +249,192 @@ namespace Cuy
             string probe = Path.Combine(dir, "selftest.tmp");
             File.WriteAllText(probe, "ok");
             File.Delete(probe);
+        }
+
+        private static void CheckWebView2()
+        {
+            try
+            {
+                string version = CoreWebView2Environment.GetAvailableBrowserVersionString();
+                if (string.IsNullOrEmpty(version))
+                {
+                    Warn("WebView2", "runtime not installed (Home will not open)");
+                }
+                else
+                {
+                    Lines.Add("PASS WebView2");
+                    Lines.Add("     version " + version);
+                }
+            }
+            catch (Exception)
+            {
+                Warn("WebView2", "runtime not installed (Home will not open)");
+            }
+        }
+
+        private static void CheckDataJson()
+        {
+            string dataDir = Path.Combine(_assets, "data");
+            if (!Directory.Exists(dataDir)) throw new Exception("data dir missing");
+            foreach (var f in Directory.GetFiles(dataDir, "*.json"))
+            {
+                try
+                {
+                    JToken.Parse(File.ReadAllText(f));
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(Path.GetFileName(f) + ": " + ex.Message);
+                }
+            }
+        }
+
+        private static void CheckItemIds()
+        {
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            string[] files = { "items.json", "items_shop.json", "items_decor.json" };
+            foreach (var file in files)
+            {
+                string path = Path.Combine(_assets, "data", file);
+                if (!File.Exists(path)) continue;
+                var root = JObject.Parse(File.ReadAllText(path));
+                var items = root["items"] as JArray;
+                if (items == null) continue;
+                foreach (var it in items)
+                {
+                    string id = (string)it["id"];
+                    if (string.IsNullOrEmpty(id)) continue;
+                    if (!seen.Add(id))
+                        throw new Exception("duplicate item id: " + id + " in " + file);
+                }
+            }
+        }
+
+        private static void CheckCoreDataTables()
+        {
+            if (Cuy.Core.Care.CareData.LoadDefault() == null) throw new Exception("care data failed to load");
+            if (Cuy.Core.Economy.EconomyConfig.LoadDefault() == null) throw new Exception("economy config failed to load");
+            if (new Cuy.Core.Health.HealthSystem() == null) throw new Exception("health data failed to load");
+            if (Cuy.Core.BondUnlocks.LoadDefault() == null) throw new Exception("bond unlocks failed to load");
+            if (Cuy.Core.Hay.HayConfig.LoadDefault() == null) throw new Exception("hay config failed to load");
+            if (Cuy.Core.TricksConfig.LoadDefault() == null) throw new Exception("tricks config failed to load");
+            if (Cuy.Core.Achievements.AchievementCatalog.LoadDefault() == null) throw new Exception("achievements catalog failed to load");
+            if (Cuy.Core.Diary.DiaryWriter.LoadDefault() == null) throw new Exception("diary writer failed to load");
+        }
+
+        private static void CheckMusic()
+        {
+            string tracksPath = Path.Combine(_assets, "music", "tracks.json");
+            if (!File.Exists(tracksPath)) throw new Exception("tracks.json missing");
+            var arr = JArray.Parse(File.ReadAllText(tracksPath));
+            foreach (var token in arr)
+            {
+                string rel = (string)token["file"];
+                if (string.IsNullOrEmpty(rel)) throw new Exception("track missing file property");
+                string fullPath = Path.Combine(_assets, rel.Replace('/', Path.DirectorySeparatorChar));
+                if (!File.Exists(fullPath)) throw new Exception("missing music file: " + rel);
+                var fi = new FileInfo(fullPath);
+                if (fi.Length <= 10 * 1024) throw new Exception("music file under 10 KB: " + rel);
+            }
+        }
+
+        private static void CheckColoring()
+        {
+            string idxPath = Path.Combine(_assets, "coloring", "index.json");
+            if (!File.Exists(idxPath)) throw new Exception("coloring index.json missing");
+            var root = JObject.Parse(File.ReadAllText(idxPath));
+            var packs = root["packs"] as JArray;
+            if (packs == null) throw new Exception("no packs array");
+            foreach (var p in packs)
+            {
+                string packId = (string)p["id"];
+                int count = (int)p["count"];
+                string packFile = Path.Combine(_assets, "coloring", packId + ".json");
+                if (!File.Exists(packFile)) throw new Exception("missing pack file: " + packId + ".json");
+                var packRoot = JObject.Parse(File.ReadAllText(packFile));
+                var pictures = packRoot["pictures"] as JArray;
+                if (pictures == null || pictures.Count != count)
+                    throw new Exception("picture count mismatch in pack " + packId);
+                foreach (var pic in pictures)
+                {
+                    int w = (int)pic["w"];
+                    int h = (int)pic["h"];
+                    string cells = (string)pic["cells"];
+                    if (cells == null || cells.Length != w * h)
+                        throw new Exception("cells length mismatch in picture " + (string)pic["id"]);
+                }
+            }
+        }
+
+        private static void CheckFeatures()
+        {
+            string rootDir = Path.GetFullPath(Path.Combine(_assets, ".."));
+            string featuresDir = Path.Combine(rootDir, "web", "home", "features");
+            if (!Directory.Exists(featuresDir)) return;
+            string idxFile = Path.Combine(featuresDir, "index.json");
+            if (!File.Exists(idxFile)) throw new Exception("features/index.json missing");
+            var ids = JArray.Parse(File.ReadAllText(idxFile)).Select(t => (string)t).ToList();
+            var dirs = Directory.GetDirectories(featuresDir).Select(Path.GetFileName).ToList();
+            foreach (var d in dirs)
+            {
+                if (!File.Exists(Path.Combine(featuresDir, d, "feature.js")))
+                    throw new Exception("missing feature.js in " + d);
+            }
+            if (ids.Count != dirs.Count || ids.Except(dirs).Any())
+                throw new Exception("feature ids mismatch between index.json and directories");
+        }
+
+        private static void CheckGames()
+        {
+            string rootDir = Path.GetFullPath(Path.Combine(_assets, ".."));
+            string gamesJson = Path.Combine(rootDir, "web", "home", "minigames", "games.json");
+            if (!File.Exists(gamesJson)) return;
+            var arr = JArray.Parse(File.ReadAllText(gamesJson));
+            foreach (var t in arr)
+            {
+                string f = (string)t;
+                string fullPath = Path.Combine(rootDir, "web", "home", "minigames", f);
+                if (!File.Exists(fullPath)) throw new Exception("missing minigame file: " + f);
+            }
+        }
+
+        private static void CheckIconIndexes()
+        {
+            string iconsJson = Path.Combine(_assets, "icons", "icons.json");
+            string iconsPng = Path.Combine(_assets, "icons", "icons_16.png");
+            if (!File.Exists(iconsJson) || !File.Exists(iconsPng)) return;
+            var root = JObject.Parse(File.ReadAllText(iconsJson));
+            var icons = root["icons"] as JObject;
+            if (icons == null) throw new Exception("no icons object");
+            using (var bmp = new Bitmap(iconsPng))
+            {
+                int cols = bmp.Width / 16;
+                int rows = bmp.Height / 16;
+                int maxIdx = cols * rows;
+                foreach (var prop in icons.Properties())
+                {
+                    int idx = (int)prop.Value;
+                    if (idx < 0 || idx >= maxIdx)
+                        throw new Exception("icon " + prop.Name + " index " + idx + " out of bounds (" + maxIdx + ")");
+                }
+            }
+        }
+
+        private static void CheckStageSheets()
+        {
+            string[] stages = { "baby", "junior", "adult", "senior", "legend" };
+            int expectedCount = -1;
+            foreach (var s in stages)
+            {
+                var frames = SpriteSheetLoader.Load(s);
+                if (frames == null || frames.Length == 0)
+                    throw new Exception("failed to load frames for stage " + s);
+                if (expectedCount == -1) expectedCount = frames.Length;
+                else if (frames.Length != expectedCount)
+                    throw new Exception("frame count mismatch for stage " + s + ": " + frames.Length + " vs " + expectedCount);
+                if (frames[0].Width != 64 || frames[0].Height != 64)
+                    throw new Exception("frame size mismatch for stage " + s + ": " + frames[0].Width + "x" + frames[0].Height);
+            }
         }
     }
 }

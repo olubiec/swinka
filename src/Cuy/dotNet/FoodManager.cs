@@ -41,6 +41,17 @@ namespace Cuy
         public FoodItemForm ActiveFood => _activeFood;
         public FoodInteractionState State => _state;
 
+        public void HideAll()
+        {
+            try { _activeFood?.Hide(); } catch { }
+        }
+
+        public void ShowAll()
+        {
+            try { _activeFood?.Show(); } catch { }
+        }
+
+
         public FoodManager(BrainController controller)
         {
             _instance = this;

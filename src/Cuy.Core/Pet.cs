@@ -139,9 +139,14 @@ namespace Cuy.Core
         private void CheckBirthdays()
         {
             int years = Age.Years;
+            int rewarded = 0;
+            _cakeAddedThisCall = false;
             while (State.BirthdaysCelebrated < years)
             {
                 State.BirthdaysCelebrated++;
+                bool reward = rewarded < 3;
+                if (reward) rewarded++;
+                GrantBirthday(State.BirthdaysCelebrated, reward);
                 Raise(Birthday, new BirthdayEventArgs(State.BirthdaysCelebrated));
             }
         }
