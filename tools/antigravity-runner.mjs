@@ -291,6 +291,40 @@ function printStatus() {
   }
 }
 
+// Batch finish and merge entire wave
+async function finishWave(wavePrefix) {
+  log(`Starting batch verification and merge for Wave ${wavePrefix}...`);
+  const tasks = getActiveTasks().filter(t => t.id.startsWith(wavePrefix));
+  if (tasks.length === 0) {
+    logWarn(`No active tasks found for wave ${wavePrefix}`);
+    return;
+  }
+
+  // 1. Run all tests
+  const testsOk = await runTests();
+  if (!testsOk) {
+    logErr(`Tests failed for Wave ${wavePrefix}. Aborting merge.`);
+    process.exit(1);
+  }
+
+  // 2. Move task files to tasks/done/
+  if (!fs.existsSync(TASKS_DONE_DIR)) fs.mkdirSync(TASKS_DONE_DIR, { recursive: true });
+  for (const t of tasks) {
+    const src = path.join(TASKS_DIR, t.filename);
+    const dest = path.join(TASKS_DONE_DIR, t.filename);
+    if (fs.existsSync(src)) {
+      fs.renameSync(src, dest);
+    }
+  }
+
+  // 3. Git commit & push
+  sh('git add -A');
+  const commitMsg = `[${wavePrefix}] Complete Wave ${wavePrefix} (${tasks.length} tasks)`;
+  sh(`git commit -m "${commitMsg}" --allow-empty`);
+  sh('git push origin main');
+  logOk(`Wave ${wavePrefix} verified, committed and pushed to origin main.`);
+}
+
 // CLI handler
 async function main() {
   const args = process.argv.slice(2);
@@ -301,6 +335,13 @@ async function main() {
   } else if (cmd === 'test' || cmd === 'verify') {
     const ok = await runTests();
     process.exit(ok ? 0 : 1);
+  } else if (cmd === 'finish-wave') {
+    const wavePrefix = args[1];
+    if (!wavePrefix) {
+      logErr('Please specify wave prefix, e.g. finish-wave W4');
+      process.exit(1);
+    }
+    await finishWave(wavePrefix);
   } else if (cmd === 'guard') {
     const taskId = args[1];
     const tasks = getActiveTasks();
