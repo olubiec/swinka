@@ -24,6 +24,9 @@ foreach ($name in "assets", "web") {
 
 Copy-Item (Join-Path $PSScriptRoot "package\README.txt") $out
 Copy-Item (Join-Path $root "THIRD_PARTY_NOTICES.md") $out
+if (Test-Path (Join-Path $PSScriptRoot "apply-update.cmd")) {
+    Copy-Item (Join-Path $PSScriptRoot "apply-update.cmd") $out
+}
 
 # Validation before zipping
 $requiredItems = @(

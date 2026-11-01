@@ -2,6 +2,23 @@
 
 A pixel art guinea pig for the Windows desktop. It walks on the taskbar and on windows, has needs like a Pou-style pet, and grows up at the pace of a real guinea pig. A gift project, built with AI agents.
 
+---
+
+## 🚀 Pobierz & Instalacja / Download & Auto-Update
+
+### 📥 Szybka instalacja (Windows):
+1. **Pobierz najnowszą wersję**: Przejdź do sekcji [GitHub Releases](https://github.com/olubiec/swinka/releases) i pobierz `Cuy_v1.zip` lub skorzystaj z instalatora w folderze [`installer/`](installer/).
+2. **Uruchomienie**:
+   - Możesz uruchomić plik [`installer/Cuy-Installer.cmd`](installer/Cuy-Installer.cmd), który automatycznie zainstaluje grę w `%LocalAppData%\Programs\Cuy` i utworzy skrót na Pulpicie.
+   - Lub po prostu wypakuj `Cuy_v1.zip` i uruchom `Cuy.exe` bezpośrednio (wersja portable).
+
+### 🔄 Automatyczne aktualizacje przez internet (Auto-Updater):
+- **Automatyczne wykrywanie:** Po połączeniu z internetem Cuy automatycznie sprawdza nowe wersje w repozytorium GitHub (`olubiec/swinka`) co 4 godziny oraz na żądanie w zakładce **Settings**.
+- **Instalacja 1-kliknięciem:** Gdy pojawi się nowa wersja, w panelu **Settings -> Game Updates** wyświetli się plakietka **`NEW`**. Kliknięcie **Update & Restart** pobiera aktualizację w tle, podmienia pliki i ponownie uruchamia grę.
+- **Bezpieczeństwo zapisu:** Wszystkie stany gry, imię świnki, postępy, zdjęcia w albumie oraz zebrane koniczynki są bezpiecznie przechowywane w `%AppData%\Cuy\` i **nigdy nie są kasowane** przy aktualizacjach.
+
+---
+
 | What | Where |
 | --- | --- |
 | Concept, waves and status | `docs/CONCEPT.md`, `docs/PLAN.md` |
@@ -13,6 +30,7 @@ A pixel art guinea pig for the Windows desktop. It walks on the taskbar and on w
 | Desktop app (C#, .NET Framework 4.8, based on eSheep, MIT) | `src/Cuy/` |
 | Game logic (.NET Standard 2.0) and tests (.NET 9) | `src/Cuy.Core/`, `tests/Cuy.Core.Tests/` |
 | Home window, feature modules and minigames (HTML/JS) | `web/home/` |
+| Installer & Auto-Update tools | `installer/` |
 | Build, packaging and QA automation tools | `tools/` |
 | Licences | `THIRD_PARTY_NOTICES.md`, `assets/LICENSES/` |
 
