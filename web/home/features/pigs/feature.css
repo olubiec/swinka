@@ -1,0 +1,114 @@
+.feature-pigs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 6px;
+}
+
+.pigs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--c-wood-light);
+  border: 3px solid var(--c-contour-dark);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.pigs-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--c-contour-dark);
+}
+
+.btn-adopt-pig {
+  background: var(--c-leaf);
+  color: var(--c-white);
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+.btn-adopt-pig:hover:not(:disabled) {
+  background: var(--c-leaf-dark);
+}
+
+.pigs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.pig-card {
+  background: var(--c-cream);
+  border: 3px solid var(--c-contour-dark);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.pig-card.pig-active {
+  border-color: var(--c-leaf-dark);
+  box-shadow: 0 0 0 2px var(--c-leaf);
+}
+
+.pig-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pig-card-name {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--c-contour-dark);
+}
+
+.pig-card-breed {
+  font-size: 10px;
+  color: var(--c-wood-dark);
+  text-transform: capitalize;
+}
+
+.pig-card-portrait {
+  padding: 6px;
+  background: var(--c-wood-light);
+  border: 2px solid var(--c-contour-dark);
+  border-radius: 6px;
+}
+
+.pig-card-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+.pig-trait-badge {
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid var(--c-contour-dark);
+  text-transform: capitalize;
+}
+
+.pig-trait-badge.discovered {
+  background: var(--c-orange-light);
+  color: var(--c-contour-dark);
+}
+
+.pig-trait-badge.secret {
+  background: var(--c-cream-dark);
+  color: #777;
+}
+
+.btn-toggle-active {
+  font-size: 10px;
+  padding: 4px 8px;
+}
+

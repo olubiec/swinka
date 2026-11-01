@@ -46,7 +46,9 @@ namespace Cuy
         IntPtr hookTaskbarId = IntPtr.Zero; // not used
         NativeMethods.RECT currentWindowSize;
 
+        public static System.Collections.Generic.List<FormPet> AllPets { get; } = new System.Collections.Generic.List<FormPet>();
         public static FormPet ActivePet { get; private set; }
+        public Cuy.Core.Pigs.PigProfile Profile { get; set; }
         public IntPtr CurrentHwndWindow => hwndWindow;
         public bool IsFacingLeft => spritesFlipped;
         internal NativeMethods.RECT CurrentWindowRect => currentWindowSize;
@@ -212,7 +214,11 @@ namespace Cuy
                 }
             }
             UseSmoothMovements = Program.MyData.GetSmoothMovements();
-            if (Name.IndexOf("child") < 0) ActivePet = this;
+            if (Name.IndexOf("child") < 0)
+            {
+                ActivePet = this;
+                if (!AllPets.Contains(this)) AllPets.Add(this);
+            }
             _brain = BrainController.Instance;
             HookBrainEvents();
             InitBubbleInteraction();
@@ -1958,7 +1964,8 @@ namespace Cuy
 
         private void Form2_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (ActivePet == this) ActivePet = null;
+            AllPets.Remove(this);
+            if (ActivePet == this) ActivePet = AllPets.Count > 0 ? AllPets[0] : null;
             if(!IsDisposed) Dispose();
         }
 

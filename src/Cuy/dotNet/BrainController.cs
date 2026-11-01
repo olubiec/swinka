@@ -51,6 +51,7 @@ namespace Cuy
 
         public event Action<double> MultiplierChanged;
         public event Action<string> AnimationRequested;
+        public System.Collections.Generic.List<FormPet> ActivePets => FormPet.AllPets;
 
         public BrainController(double initialMultiplier = 1.0)
         {

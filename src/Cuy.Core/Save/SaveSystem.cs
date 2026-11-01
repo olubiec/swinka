@@ -270,6 +270,7 @@ namespace Cuy.Core.Save
                 }
                 state.Version = 2;
             }
+            state.EnsureRosterInitialized();
         }
 
         /// <summary>Version 1 used Polish item ids; this is the only place they may appear in code.</summary>
