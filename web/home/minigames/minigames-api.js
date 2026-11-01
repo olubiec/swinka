@@ -210,9 +210,19 @@
       this.rootElement = container;
       this.stopCurrentGame();
 
-      const dailyCount = this.getDailyCount();
       const state = root.bridge ? root.bridge.getState() : null;
+      const mgState = state?.minigames || {};
+      const dailyCount = mgState.dailyRewardedCount || 0;
+      const dailyMax = mgState.dailyMax || 10;
+      const records = mgState.records || {};
+      const plays = mgState.plays || {};
       const clovers = state?.clovers ?? 0;
+      const isLimitReached = dailyCount >= dailyMax;
+
+      let dotsHtml = '';
+      for (let i = 0; i < dailyMax; i++) {
+        dotsHtml += `<span class="minigames-dot ${i < dailyCount ? 'filled' : ''}">🍀</span>`;
+      }
 
       // Registered games, then one disabled tile for the games still to come
       const allDisplayGames = this.getAllGames().map((g) => ({
@@ -234,16 +244,22 @@
           <div class="minigames-select-screen">
             <div class="minigames-status-bar">
               <span class="minigames-status-clovers">🍀 Clovers: <b>${clovers}</b></span>
-              <span class="minigames-daily-limit" title="At most 10 rewarded games per day">
-                Rewards today: <b>${dailyCount}/10</b>
-              </span>
+              <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                <div class="minigames-dots" title="At most ${dailyMax} rewarded games per day">
+                  ${dotsHtml}
+                </div>
+                <span class="minigames-daily-limit" style="font-size:11px; margin-top:2px;">
+                  Rewards today: <b>${dailyCount}/${dailyMax}</b>
+                </span>
+              </div>
             </div>
 
             <div class="minigames-grid">
       `;
 
       allDisplayGames.forEach((g) => {
-        const record = this.getRecord(g.id);
+        const record = records[g.id] || this.getRecord(g.id);
+        const playCount = plays[g.id] || 0;
         const isReady = g.available;
 
         html += `
@@ -255,7 +271,9 @@
               ${isReady ? `
               <div class="minigames-card-meta">
                 <span class="minigames-record-badge">🏆 Record: ${record} pts</span>
+                <span class="minigames-plays-badge">Plays: ${playCount}</span>
               </div>
+              ${isLimitReached ? '<div class="minigames-limit-note">Over the daily limit: only a little mood</div>' : ''}
               ` : ''}
             </div>
             <div>
@@ -281,7 +299,33 @@
         btn.addEventListener('click', () => {
           const gameId = btn.dataset.startGame;
           if (root.Sound) root.Sound.click();
-          this.start(gameId, { container });
+
+          const gameDef = this.games.get(gameId);
+          let seen = false;
+          try {
+            seen = localStorage.getItem('cuy_minigame_seen_' + gameId) === 'true';
+          } catch (e) {}
+
+          if (!seen && gameDef) {
+            const rootEl = container.querySelector('.minigames-root') || container;
+            const hint = document.createElement('div');
+            hint.className = 'minigames-hint-overlay';
+            hint.innerHTML = `
+              <div class="minigames-hint-card">
+                <div class="minigames-hint-title">${gameDef.name}</div>
+                <div class="minigames-hint-desc">${gameDef.desc || ''}</div>
+                <button class="minigames-btn-play" id="btnHintStart">Start</button>
+              </div>
+            `;
+            rootEl.appendChild(hint);
+            hint.querySelector('#btnHintStart').addEventListener('click', () => {
+              try { localStorage.setItem('cuy_minigame_seen_' + gameId, 'true'); } catch (e) {}
+              hint.remove();
+              this.start(gameId, { container });
+            });
+          } else {
+            this.start(gameId, { container });
+          }
         });
       });
     }
@@ -482,31 +526,72 @@
       this.stopCurrentGame();
       if (window.CuyMusic) window.CuyMusic.play('menu', { volume: 0.6 });
 
-      // Save the result through the bridge to GameState
-      let result = null;
-      if (root.bridge && typeof root.bridge.submitMinigameResult === 'function') {
-        result = root.bridge.submitMinigameResult(gameId, score);
-      } else {
-        const prevRecord = this.getRecord(gameId);
-        result = {
-          points: score,
-          clovers: this.calculateClovers(score),
-          record: Math.max(prevRecord, score),
-          nowyRekord: score > prevRecord
-        };
-      }
-
-      if (root.Sound) {
-        if (result.nowyRekord) root.Sound.fanfare();
-        else root.Sound.click();
+      // Notify the bridge
+      if (root.bridge) {
+        root.bridge.send({ type: 'minigame_result', gameId, score });
       }
 
       const overlay = document.getElementById('minigamesGameOverOverlay');
-      if (overlay) {
-        const dailyCount = this.getDailyCount();
-        const limitReached = dailyCount >= 10 && result.clovers === 0;
-        // Same rule as Cuy.Core: +15 for a rewarded game, +3 after the daily limit, nothing for 0 points
-        const moodGain = score <= 0 ? 0 : (limitReached ? 3 : 15);
+      if (!overlay) {
+        if (typeof resolvePromise === 'function') resolvePromise({ score });
+        return;
+      }
+
+      overlay.classList.add('active');
+
+      const renderCard = (res) => {
+        if (!res) {
+          overlay.innerHTML = `
+            <div class="minigames-gameover-card">
+              <div class="minigames-gameover-header">🏆 RESULT</div>
+              <div class="minigames-saving">Saving...</div>
+            </div>
+          `;
+          return;
+        }
+
+        const isNewRecord = !!res.isNewRecord;
+        if (root.Sound) {
+          if (isNewRecord) root.Sound.fanfare();
+          else root.Sound.click();
+        }
+
+        const state = root.bridge ? root.bridge.getState() : null;
+        const mgState = state?.minigames || {};
+        const dailyCount = mgState.dailyRewardedCount || 0;
+        const dailyMax = mgState.dailyMax || 10;
+        const limitReached = dailyCount >= dailyMax && !res.rewarded;
+        const recordVal = mgState.records?.[gameId] || score;
+
+        let rewardRowsHtml = '';
+        if (typeof res.clovers === 'number') {
+          rewardRowsHtml += `
+            <div class="minigames-reward-row">
+              <span>Clover reward:</span>
+              <span class="minigames-reward-pill pill-clovers">
+                ${res.clovers > 0 ? `+${res.clovers} 🍀` : (limitReached ? '0 🍀 (limit)' : '0 🍀')}
+              </span>
+            </div>
+          `;
+        }
+
+        if (typeof res.mood === 'number') {
+          rewardRowsHtml += `
+            <div class="minigames-reward-row">
+              <span>Pig mood:</span>
+              <span class="minigames-reward-pill pill-mood">+${res.mood} 💖</span>
+            </div>
+          `;
+        }
+
+        rewardRowsHtml += `
+          <div class="minigames-daily-note">
+            ${limitReached
+              ? `Daily limit of ${dailyMax} rewarded games reached. Points and records are still saved!`
+              : `Rewarded games today: ${dailyCount}/${dailyMax}`
+            }
+          </div>
+        `;
 
         overlay.innerHTML = `
           <div class="minigames-gameover-card">
@@ -514,43 +599,23 @@
 
             <div class="minigames-score-box">
               <span class="minigames-score-label">Points earned</span>
-              <span class="minigames-score-val">${result.points}</span>
+              <span class="minigames-score-val">${res.score}</span>
             </div>
 
-            ${result.nowyRekord
+            ${isNewRecord
               ? `<div class="minigames-record-banner">🌟 NEW RECORD! 🌟</div>`
-              : `<div style="font-size:12px; color:#6e6a5c;">Your record: <b>${result.record} pts</b></div>`
+              : `<div style="font-size:12px; color:#6e6a5c;">Your record: <b>${recordVal} pts</b></div>`
             }
 
-            <div class="minigames-rewards-container">
-              <div class="minigames-reward-row">
-                <span>Clover reward:</span>
-                <span class="minigames-reward-pill pill-clovers">
-                  ${result.clovers > 0 ? `+${result.clovers} 🍀` : (limitReached ? '0 🍀 (limit)' : '0 🍀')}
-                </span>
-              </div>
-              <div class="minigames-reward-row">
-                <span>Pig mood:</span>
-                <span class="minigames-reward-pill pill-mood">+${moodGain} 💖</span>
-              </div>
-              <div class="minigames-daily-note">
-                ${limitReached
-                  ? 'Daily limit of 10 rewarded games reached. Points and records are still saved!'
-                  : `Rewarded games today: ${dailyCount}/10`
-                }
-              </div>
-            </div>
+            ${rewardRowsHtml ? `<div class="minigames-rewards-container">${rewardRowsHtml}</div>` : ''}
 
             <div class="minigames-gameover-actions">
               <button class="minigames-btn-replay" id="minigamesBtnReplay">🔄 Play again</button>
-              <button class="minigames-btn-menu" id="minigamesBtnGameOverMenu">📋 Game list</button>
+              <button class="minigames-btn-menu" id="minigamesBtnGameOverMenu">📋 Back</button>
             </div>
           </div>
         `;
 
-        overlay.classList.add('active');
-
-        // Game over button handlers
         document.getElementById('minigamesBtnReplay')?.addEventListener('click', () => {
           if (root.Sound) root.Sound.click();
           this.start(gameId, { container });
@@ -560,13 +625,30 @@
           if (root.Sound) root.Sound.click();
           this.renderSelectScreen(container);
         });
+      };
+
+      const curState = root.bridge ? root.bridge.getState() : null;
+      const lastRes = curState?.minigames?.lastResult;
+      if (lastRes && lastRes.gameId === gameId && lastRes.score === score) {
+        renderCard(lastRes);
+      } else {
+        renderCard(null);
+        let unbind = null;
+        const onStateUpdate = (st) => {
+          const lr = st?.minigames?.lastResult;
+          if (lr && lr.gameId === gameId) {
+            if (unbind) unbind();
+            renderCard(lr);
+          }
+        };
+        if (root.bridge?.onState) {
+          unbind = root.bridge.onState(onStateUpdate);
+        }
       }
 
       if (typeof resolvePromise === 'function') {
-        resolvePromise(result);
+        resolvePromise({ score });
       }
-
-      return result;
     }
   }
 

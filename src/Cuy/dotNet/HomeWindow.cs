@@ -564,7 +564,18 @@ namespace Cuy
                         {
                             records = highScores,
                             dailyRewardedDate = state.MinigamesDailyDate ?? DateTime.UtcNow.ToString("yyyy-MM-dd"),
-                            dailyRewardedCount = state.MinigamesDailyCount
+                            dailyRewardedCount = state.MinigamesDailyCount,
+                            dailyMax = Cuy.Core.Economy.EconomyConfig.Current.Minigame.RewardedGamesPerDay,
+                            plays = state.MinigamePlays ?? new Dictionary<string, int>(),
+                            lastResult = pet.LastMinigameResult != null ? new
+                            {
+                                gameId = pet.LastMinigameResult.GameId,
+                                score = pet.LastMinigameResult.Score,
+                                clovers = pet.LastMinigameResult.Clovers,
+                                mood = pet.LastMinigameResult.Mood,
+                                isNewRecord = pet.LastMinigameResult.IsNewRecord,
+                                rewarded = pet.LastMinigameResult.Rewarded
+                            } : null
                         }
                     },
                     { "currentAction", brain.CurrentAction?.AnimationName ?? "idle" },

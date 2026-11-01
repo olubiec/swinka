@@ -1,0 +1,141 @@
+/*
+ * feature.css for Tricks screen
+ * Pixel style matching style.css retro variables
+ */
+
+.feature-tricks .tricks-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-family: 'Pixelify Sans', 'Press Start 2P', monospace;
+  color: var(--c-wood-dark, #2b1712);
+}
+
+.feature-tricks .tricks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--c-wood, #cca576);
+  border: 3px solid var(--c-contour-dark, #2b1712);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.feature-tricks .tricks-header-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c-contour-dark, #2b1712);
+}
+
+.feature-tricks .tricks-bond-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  background: var(--c-cream, #f8eddd);
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+.feature-tricks .tricks-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feature-tricks .trick-card {
+  background: var(--c-cream, #f8eddd);
+  border: 3px solid var(--c-contour-dark, #2b1712);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 0 var(--c-contour-dark, #2b1712);
+}
+
+.feature-tricks .trick-card.locked {
+  background: #ded7ce;
+  opacity: 0.85;
+}
+
+.feature-tricks .trick-card-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.feature-tricks .trick-icon {
+  font-size: 26px;
+  line-height: 1;
+  width: 32px;
+  text-align: center;
+}
+
+.feature-tricks .trick-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.feature-tricks .trick-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-contour-dark, #2b1712);
+}
+
+.feature-tricks .trick-desc {
+  font-size: 11px;
+  color: var(--c-contour, #4a2d1d);
+  line-height: 1.25;
+}
+
+.feature-tricks .trick-card-bottom {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.feature-tricks .trick-btn {
+  background: var(--c-leaf, #69b34c);
+  color: #fff;
+  border: 2px solid var(--c-contour-dark, #2b1712);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--c-contour-dark, #2b1712);
+  text-shadow: 1px 1px 0 var(--c-contour-dark, #2b1712);
+}
+
+.feature-tricks .trick-btn:hover:not(:disabled) {
+  background: var(--c-leaf-dark, #4d8c34);
+}
+
+.feature-tricks .trick-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 0 0;
+}
+
+.feature-tricks .trick-btn:disabled {
+  background: var(--c-wood-light, #deb078);
+  color: var(--c-contour-dark, #2b1712);
+  text-shadow: none;
+  opacity: 0.75;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.feature-tricks .trick-lock-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #7d6b5c;
+  font-weight: 700;
+}

@@ -43,6 +43,17 @@ namespace Cuy
                 {
                     return 60.0;
                 }
+                if (arg.StartsWith("clock="))
+                {
+                    string val = arg.Substring("clock=".Length);
+                    if (double.TryParse(val, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsed))
+                        return parsed;
+                }
+                if ((arg == "--clock" || arg == "-clock" || arg == "/clock") && i + 1 < args.Length)
+                {
+                    if (double.TryParse(args[i + 1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double parsed))
+                        return parsed;
+                }
                 if (arg.StartsWith("speed="))
                 {
                     string val = arg.Substring("speed=".Length);

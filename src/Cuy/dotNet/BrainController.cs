@@ -699,7 +699,9 @@ namespace Cuy
 
         // ---- Telemetry and the F9 overlay (test tool, disabled in Release) -----
 
+        #if DEBUG
         private DebugOverlay _overlayForm;
+#endif
 
         public void ToggleOverlay()
         {

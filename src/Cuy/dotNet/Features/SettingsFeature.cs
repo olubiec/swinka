@@ -313,6 +313,27 @@ namespace Cuy.Features
                 return true;
             }
 
+            if (type == "settings_reset_confirmed")
+            {
+                BrainController.Log("[Settings] Reset confirmed by user.");
+                var saveSystem = brain?.Session?.SaveSystem ?? new Cuy.Core.Save.SaveSystem();
+                saveSystem.RequestReset();
+                HomeWindow.PostToPage(new { type = "toast", text = "Cuy closes now. Start it again to meet your new pig." });
+
+                Task.Run(async () =>
+                {
+                    await Task.Delay(1500).ConfigureAwait(false);
+                    try
+                    {
+                        BrainController.Instance?.Close();
+                    }
+                    catch (Exception ex) { BrainController.Log("[WARN] Settings.Reset close: " + ex.Message); }
+                    Program.Mainthread?.KillPets(true);
+                });
+
+                return true;
+            }
+
             return false;
         }
 

@@ -44,6 +44,7 @@ namespace Cuy.Core.Save
         public const string BackupFileName = "save.bak";
         public const string TempFileName = "save.json.tmp";
         public const string CorruptFileName = "save.corrupt.json";
+        public const string ResetMarkerFileName = "reset.pending";
 
         private static readonly UTF8Encoding Utf8NoBom = new UTF8Encoding(false);
         private readonly object _lock = new object();
@@ -108,6 +109,55 @@ namespace Cuy.Core.Save
         public string Directory { get; }
         public string SavePath { get { return Path.Combine(Directory, FileName); } }
         public string BackupPath { get { return Path.Combine(Directory, BackupFileName); } }
+        public string ResetMarkerPath { get { return Path.Combine(Directory, ResetMarkerFileName); } }
+
+        public void RequestReset()
+        {
+            lock (_lock)
+            {
+                System.IO.Directory.CreateDirectory(Directory);
+                File.WriteAllText(ResetMarkerPath, DateTime.UtcNow.ToString("o"), Utf8NoBom);
+                ItemCatalog.ErrorLogger?.Invoke("[Reset] Reset requested; marker created.");
+            }
+        }
+
+        public void ResetKeepingBackup()
+        {
+            lock (_lock)
+            {
+                string timestamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
+                string backupFile = Path.Combine(Directory, $"save.reset-{timestamp}.bak");
+                int counter = 1;
+                while (File.Exists(backupFile))
+                {
+                    backupFile = Path.Combine(Directory, $"save.reset-{timestamp}_{counter++}.bak");
+                }
+
+                if (File.Exists(SavePath))
+                {
+                    File.Move(SavePath, backupFile);
+                    ItemCatalog.ErrorLogger?.Invoke($"[Reset] Moved save.json to {backupFile}");
+                }
+
+                if (File.Exists(BackupPath))
+                {
+                    string bakBackupFile = Path.Combine(Directory, $"save.bak.reset-{timestamp}.bak");
+                    int bakCounter = 1;
+                    while (File.Exists(bakBackupFile))
+                    {
+                        bakBackupFile = Path.Combine(Directory, $"save.bak.reset-{timestamp}_{bakCounter++}.bak");
+                    }
+                    File.Move(BackupPath, bakBackupFile);
+                    ItemCatalog.ErrorLogger?.Invoke($"[Reset] Moved save.bak to {bakBackupFile}");
+                }
+
+                if (File.Exists(ResetMarkerPath))
+                {
+                    File.Delete(ResetMarkerPath);
+                    ItemCatalog.ErrorLogger?.Invoke("[Reset] Removed reset.pending marker.");
+                }
+            }
+        }
         private string TempPath { get { return Path.Combine(Directory, TempFileName); } }
         private string CorruptPath { get { return Path.Combine(Directory, CorruptFileName); } }
 
@@ -187,6 +237,12 @@ namespace Cuy.Core.Save
         {
             lock (_lock)
             {
+                if (File.Exists(ResetMarkerPath))
+                {
+                    ResetKeepingBackup();
+                    return new LoadResult { Source = LoadSource.None, State = null };
+                }
+
                 var result = new LoadResult();
                 GameState state;
                 string error;

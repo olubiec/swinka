@@ -234,3 +234,51 @@
   color: var(--c-contour-dark);
   margin-top: 10px;
 }
+
+/* Retro select for monitors */
+.feature-settings .retro-select {
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--c-contour-dark);
+  background: var(--c-cream);
+  border: 2px solid var(--c-contour-dark);
+  border-radius: 4px;
+  padding: 4px 8px;
+  outline: none;
+  max-width: 200px;
+}
+
+/* Reset Pig section */
+.feature-settings .settings-btn.btn-danger {
+  background: var(--c-red, #e8564c);
+  color: var(--c-white, #fff);
+  text-shadow: 1px 1px 0 var(--c-contour-dark);
+}
+
+.feature-settings .settings-btn.btn-danger:hover:not(:disabled) {
+  background: #c93b32;
+}
+
+.feature-settings .reset-confirm-box {
+  background: var(--c-cream, #f8eddd);
+  border: 2px solid var(--c-red, #e8564c);
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 0 var(--c-contour-dark);
+}
+
+.feature-settings .reset-confirm-text {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--c-contour-dark);
+  font-weight: 700;
+}
+
+.feature-settings .reset-confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

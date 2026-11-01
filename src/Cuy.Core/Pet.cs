@@ -427,6 +427,26 @@ namespace Cuy.Core
             // (otherwise starting and instantly ending games would be a free mood boost).
             if (score > 0) ChangeNeed(Need.Mood, rewardedGame ? 15.0 : 3.0);
 
+            if (State.MinigamePlays.TryGetValue(gameId, out int plays))
+            {
+                State.MinigamePlays[gameId] = plays + 1;
+            }
+            else
+            {
+                State.MinigamePlays[gameId] = 1;
+            }
+
+            double moodGain = score > 0 ? (rewardedGame ? 15.0 : 3.0) : 0.0;
+            LastMinigameResult = new MinigameResult
+            {
+                GameId = gameId,
+                Score = score,
+                Clovers = cloversAwarded,
+                Mood = moodGain,
+                IsNewRecord = isNewRecord,
+                Rewarded = rewardedGame
+            };
+
             Count("minigames_played");
             Count("minigame_" + gameId);
 

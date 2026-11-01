@@ -601,15 +601,17 @@
           const score = typeof action.score === 'number' ? action.score : (action.points || 0);
           
           if (!s.minigames) {
-            s.minigames = { records: {}, dailyRewardedDate: '', dailyRewardedCount: 0 };
+            s.minigames = { records: {}, dailyRewardedDate: '', dailyRewardedCount: 0, dailyMax: 10, plays: {}, lastResult: null };
           }
           if (!s.minigames.records) s.minigames.records = {};
+          if (!s.minigames.plays) s.minigames.plays = {};
 
           const prevRecord = s.minigames.records[gameId] || 0;
           const isRecord = score > prevRecord;
           if (isRecord) {
             s.minigames.records[gameId] = score;
           }
+          s.minigames.plays[gameId] = (s.minigames.plays[gameId] || 0) + 1;
 
           // Limit of 10 rewarded games per day
           const today = new Date().toISOString().slice(0, 10);
@@ -618,9 +620,10 @@
             s.minigames.dailyRewardedCount = 0;
           }
 
+          const dailyMax = typeof s.minigames.dailyMax === 'number' ? s.minigames.dailyMax : 10;
+          const isRewarded = s.minigames.dailyRewardedCount < dailyMax;
           let cloversAwarded = 0;
-          if (s.minigames.dailyRewardedCount < 10) {
-            // clovers = min(40, points / 10)
+          if (isRewarded) {
             cloversAwarded = Math.min(40, Math.max(0, Math.floor(score / 10)));
             if (cloversAwarded > 0) {
               s.clovers = (s.clovers || 0) + cloversAwarded;
@@ -628,8 +631,20 @@
             s.minigames.dailyRewardedCount++;
           }
 
-          // Mood +15 after a game
-          n.mood = Math.min(100, Math.round(((n.mood || 0) + 15) * 10) / 10);
+          const moodGain = score > 0 ? (isRewarded ? 15 : 3) : 0;
+          if (moodGain > 0) {
+            n.mood = Math.min(100, Math.round(((n.mood || 0) + moodGain) * 10) / 10);
+          }
+
+          s.minigames.lastResult = {
+            gameId,
+            score,
+            clovers: cloversAwarded,
+            mood: moodGain,
+            isNewRecord: isRecord,
+            rewarded: isRewarded
+          };
+
           s.currentAction = 'popcorn';
           break;
         }
