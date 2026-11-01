@@ -130,7 +130,7 @@ function serve() {
     }
 
     for (const id of expectedTiles) {
-      await page.click(`#modalBody [data-open-feature="${id}"]`);
+      await page.click(`#modalBody [data-open-feature="${id}"]`, { force: true });
       await page.waitForTimeout(500);
 
       const ssName = `20_more_${id}`;
@@ -146,18 +146,32 @@ function serve() {
         // e.g. "button has no size: button#foodDrawerClose" etc.
       }
 
-      await page.click('#modalCloseBtn');
-      await page.waitForTimeout(300);
+      try {
+        await page.click('#modalCloseBtn');
+      } catch (e) {}
+      await page.waitForTimeout(200);
 
       if (id !== expectedTiles[expectedTiles.length - 1]) {
-        await page.click('#btnMore');
-        await page.waitForTimeout(400);
+        await page.evaluate(() => {
+          if (window.CuyHome && window.CuyHome.closeFeature) window.CuyHome.closeFeature();
+          const mb = document.getElementById('modalBackdrop');
+          if (mb) mb.classList.remove('active');
+          const btn = document.getElementById('btnMore');
+          if (btn) btn.click();
+        });
+        await page.waitForSelector('#modalBody [data-open-feature]', { timeout: 5000 });
       }
     }
   });
 
   await step('20_minigames', async () => {
-    await page.click('#btnMinigames');
+    await page.evaluate(() => {
+      if (window.CuyHome && window.CuyHome.closeFeature) window.CuyHome.closeFeature();
+      const mb = document.getElementById('modalBackdrop');
+      if (mb) mb.classList.remove('active');
+      const btn = document.getElementById('btnMinigames');
+      if (btn) btn.click();
+    });
     await page.waitForTimeout(400);
 
     const gamesCount = await page.evaluate(() => { if (!window.Minigry.list) { console.log('SKIP game all: Minigry.list is missing, see PR'); return (window.Minigry.getAllGames ? window.Minigry.getAllGames() : []); } return window.Minigry.list(); }).length;

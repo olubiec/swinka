@@ -49,6 +49,13 @@
       try { localStorage.setItem('cuy_muted', isMuted ? '1' : '0'); } catch (e) {}
     },
 
+    get nyan() {
+      return root.NyanAudio || null;
+    },
+    set nyan(val) {
+      root.NyanAudio = val;
+    },
+
     init() {
       try {
         isMuted = localStorage.getItem('cuy_muted') === '1';
@@ -96,5 +103,8 @@
   };
 
   Sound.init();
+  if (root.NyanAudio) {
+    Sound.nyan = root.NyanAudio;
+  }
   root.Sound = Sound;
 })(typeof window !== 'undefined' ? window : this);
