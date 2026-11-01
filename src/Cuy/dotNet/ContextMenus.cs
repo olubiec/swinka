@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Drawing;
 using System.IO;
@@ -60,6 +61,12 @@ namespace Cuy
             playMenuItem.DropDownOpening += (s, e) => PopulatePlaySubmenu(playMenuItem);
             PopulatePlaySubmenu(playMenuItem);
             menu.Items.Add(playMenuItem);
+
+            // Tricks submenu
+            var tricksMenuItem = new ToolStripMenuItem("Tricks");
+            tricksMenuItem.DropDownOpening += (s, e) => PopulateTricksSubmenu(tricksMenuItem);
+            PopulateTricksSubmenu(tricksMenuItem);
+            menu.Items.Add(tricksMenuItem);
 
             menu.Items.Add(new ToolStripSeparator());
 
@@ -165,6 +172,43 @@ namespace Cuy
         public static void OpenHomeWindow()
         {
             HomeWindow.ShowHome();
+        }
+
+        public static void PopulateTricksSubmenu(ToolStripMenuItem tricksMenu)
+        {
+            tricksMenu.DropDownItems.Clear();
+            var brain = BrainController.Instance;
+            var pet = brain?.Pet;
+            if (pet == null) return;
+
+            var tricks = pet.GetTricks().ToList();
+            if (tricks.Count == 0)
+            {
+                var emptyItem = new ToolStripMenuItem("No tricks available") { Enabled = false };
+                tricksMenu.DropDownItems.Add(emptyItem);
+                return;
+            }
+
+            foreach (var trick in tricks)
+            {
+                string label = trick.Unlocked
+                    ? trick.Title
+                    : string.Format("{0} (Bond Lv. {1})", trick.Title, trick.UnlockLevel);
+
+                ToolStripMenuItem item = new ToolStripMenuItem(label);
+                item.Enabled = trick.Unlocked;
+                if (trick.Unlocked)
+                {
+                    item.Click += (s, e) =>
+                    {
+                        if (BrainController.Instance != null)
+                        {
+                            Cuy.Features.TricksFeature.PerformTrick(trick.Id, BrainController.Instance);
+                        }
+                    };
+                }
+                tricksMenu.DropDownItems.Add(item);
+            }
         }
 
         public static void PopulatePlaySubmenu(ToolStripMenuItem playMenu)

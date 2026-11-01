@@ -494,10 +494,10 @@ namespace Cuy
             // Turn towards the food
             petForm.SetFacing(food.Location.X < petForm.PositionX);
 
-            // Animation: "eat" for hay, "eat_treat" for vegetables and treats
-            string anim = (string.Equals(food.ItemId, "hay", StringComparison.OrdinalIgnoreCase))
-                ? "eat"
-                : (food.ItemDef?.Animation ?? "eat_treat");
+            // Animation: use item def Animation if set (e.g. cake -> party), else eat / eat_treat
+            string anim = !string.IsNullOrEmpty(food.ItemDef?.Animation)
+                ? food.ItemDef.Animation
+                : (string.Equals(food.ItemId, "hay", StringComparison.OrdinalIgnoreCase) ? "eat" : "eat_treat");
 
             petForm.PlayAnimationByName(anim);
 
@@ -544,6 +544,11 @@ namespace Cuy
             // Bond (+1 point) and statistics
             _controller.Pet.AddBondPoints(1);
             _controller.Pet.RecordFoodEaten(foodId);
+            if (string.Equals(foodId, "hay", StringComparison.OrdinalIgnoreCase))
+            {
+                _controller.Pet.RefillHay();
+                _controller.Pet.Count("hay_refills");
+            }
 
             BrainController.Log(string.Format(
                 "[Feeding] Ate {0}. Fullness: {1:0.#}%, Vit. C: {2:0.#}%, Mood: {3:0.#}%. Total feedings: {4}.",

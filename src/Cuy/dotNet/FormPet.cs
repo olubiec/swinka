@@ -205,12 +205,20 @@ namespace Cuy
             Visible = false;            // Is invisible at beginning (we don't know where this sprite should be positioned)
             Opacity = 0.0;
             Screen[] screens = Screen.AllScreens;
-            for (var s = 0; s < screens.Length; s++)
+            int savedMonitor = Program.MyData != null ? Program.MyData.GetMonitor() : -1;
+            if (savedMonitor >= 0 && savedMonitor < screens.Length)
             {
-                if (screens[s].Primary)
+                DisplayIndex = savedMonitor;
+            }
+            else
+            {
+                for (var sIdx = 0; sIdx < screens.Length; sIdx++)
                 {
-                    DisplayIndex = s;
-                    break;
+                    if (screens[sIdx].Primary)
+                    {
+                        DisplayIndex = sIdx;
+                        break;
+                    }
                 }
             }
             UseSmoothMovements = Program.MyData.GetSmoothMovements();
@@ -783,7 +791,7 @@ namespace Cuy
             }
         }
 
-        private Screen CurrentScreen
+        public Screen CurrentScreen
         {
             get
             {
@@ -916,6 +924,24 @@ namespace Cuy
             /// <remarks>
             /// Kill, Sync, Drag, Fall, Toss, "Fall Soft" and "Fall Hard" are "Key-names" in the XML file. If you use one of them, this program will automatically run the animation linked to this names.
             /// </remarks>
+        public void MoveToScreen(Screen targetScreen)
+        {
+            if (targetScreen == null) targetScreen = Screen.PrimaryScreen;
+            var screens = Screen.AllScreens;
+            int idx = Array.IndexOf(screens, targetScreen);
+            if (idx >= 0) DisplayIndex = idx;
+
+            Rectangle wa = targetScreen.WorkingArea;
+            int x = Math.Max(wa.Left + 50, Math.Min((int)PositionX, wa.Right - Width - 50));
+            int y = wa.Bottom - Height - (int)OffsetY;
+
+            PositionX = x;
+            PositionY = y;
+            Location = new Point(x, wa.Bottom - Height);
+            ResetMotion();
+            BrainController.Log($"[Monitor] pig on {targetScreen.DeviceName}");
+        }
+
         public void Sync()
         {
             if (Animations.AnimationSync > 1)

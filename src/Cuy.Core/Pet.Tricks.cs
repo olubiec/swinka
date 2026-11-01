@@ -19,6 +19,8 @@ namespace Cuy.Core
         public string Id { get; set; }
         public string Title { get; set; }
         public bool Unlocked { get; set; }
+        public int UnlockLevel { get; set; }
+        public int ReadyIn { get; set; }
     }
 
     public partial class Pet
@@ -39,14 +41,31 @@ namespace Cuy.Core
             }
         }
 
+        public int TrickReadyInSeconds(string id)
+        {
+            var config = TricksTable;
+            var now = Clock.UtcNow;
+            var elapsed = (now - _lastTrickTime).TotalSeconds;
+            if (elapsed >= config.CooldownSeconds) return 0;
+            return (int)Math.Ceiling(config.CooldownSeconds - elapsed);
+        }
+
         public IEnumerable<TrickInfo> GetTricks()
         {
             var config = TricksTable;
-            return config.Tricks.Select(t => new TrickInfo
+            var bondTable = BondTable;
+            return config.Tricks.Select(t =>
             {
-                Id = t.Id,
-                Title = t.Title,
-                Unlocked = IsUnlocked(t.Unlock)
+                var unlockEntry = bondTable?.Levels?.FirstOrDefault(l => string.Equals(l.Id, "trick_" + t.Id, StringComparison.OrdinalIgnoreCase));
+                int unlockLvl = unlockEntry != null ? unlockEntry.Level : 0;
+                return new TrickInfo
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    Unlocked = IsUnlocked(t.Unlock),
+                    UnlockLevel = unlockLvl,
+                    ReadyIn = TrickReadyInSeconds(t.Id)
+                };
             });
         }
 

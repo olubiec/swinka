@@ -38,6 +38,7 @@ namespace Cuy
             /// Pet-Scaling-Key
             /// </summary>
             public const string PetScale = "Scale";
+            public const string Monitor = "Monitor";
             /// <summary>
             /// Multiscreen-Key
             /// </summary>
@@ -317,6 +318,49 @@ namespace Cuy
             int defaultScale = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height >= 900 ? 2 : 1;
             SetScale(defaultScale);
             return defaultScale;
+        }
+
+        public int GetMonitor()
+        {
+            if (AppSettings.AllKeys.Contains(SettingName.Monitor) && AppSettings[SettingName.Monitor] != null)
+            {
+                if (int.TryParse(AppSettings[SettingName.Monitor].Value, out int idx))
+                {
+                    return idx;
+                }
+            }
+
+            int primaryIdx = 0;
+            var screens = System.Windows.Forms.Screen.AllScreens;
+            for (int i = 0; i < screens.Length; i++)
+            {
+                if (screens[i].Primary)
+                {
+                    primaryIdx = i;
+                    break;
+                }
+            }
+            SetMonitor(primaryIdx);
+            return primaryIdx;
+        }
+
+        public void SetMonitor(int index)
+        {
+            if (AppSettings.AllKeys.Contains(SettingName.Monitor) && AppSettings[SettingName.Monitor] != null)
+            {
+                if (AppSettings[SettingName.Monitor].Value != index.ToString())
+                {
+                    AppSettings[SettingName.Monitor].Value = index.ToString();
+                    try { Properties.Settings.Default["Monitor"] = index; } catch { }
+                    Save();
+                }
+            }
+            else
+            {
+                AppSettings.Add(SettingName.Monitor, index.ToString());
+                try { Properties.Settings.Default["Monitor"] = index; } catch { }
+                Save();
+            }
         }
 
         /// <summary>

@@ -152,5 +152,26 @@ namespace Cuy.Core.Tests
             var result3 = pet.TryPerformTrick("spin");
             Assert.Equal(TrickResult.Ok, result3);
         }
+        [Fact]
+        public void TrickReadyInSeconds_ReturnsRemainingCooldown()
+        {
+            var clock = new ManualClock(new DateTime(2025, 1, 1, 12, 0, 0, DateTimeKind.Utc));
+            var pet = new Pet(new GameState(), clock, Balance.CreateDefault());
+            pet.State.Bond.Level = 20;
+            pet.State.Needs.Energy = 100;
+
+            Assert.Equal(0, pet.TrickReadyInSeconds("spin"));
+
+            var res = pet.TryPerformTrick("spin");
+            Assert.Equal(TrickResult.Ok, res);
+
+            Assert.Equal(30, pet.TrickReadyInSeconds("spin"));
+
+            clock.Advance(TimeSpan.FromSeconds(10));
+            Assert.Equal(20, pet.TrickReadyInSeconds("spin"));
+
+            clock.Advance(TimeSpan.FromSeconds(20));
+            Assert.Equal(0, pet.TrickReadyInSeconds("spin"));
+        }
     }
 }

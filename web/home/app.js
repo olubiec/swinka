@@ -29,6 +29,8 @@
 
     // Action buttons
     btnFeed: document.getElementById('btnFeed'),
+    hayRackMini: document.getElementById('hayRackMini'),
+    hayRackMiniFill: document.getElementById('hayRackMiniFill'),
     btnClean: document.getElementById('btnClean'),
     btnCall: document.getElementById('btnCall'),
     btnShop: document.getElementById('btnShop'),
@@ -301,6 +303,25 @@
     // Clovers (currency)
     if (elements.cloverCount) {
       elements.cloverCount.textContent = state.clovers ?? 0;
+    }
+
+    // Hay rack indicator on Feed button
+    if (elements.hayRackMini && elements.hayRackMiniFill) {
+      if (state.hayRack && typeof state.hayRack.value === 'number' && state.hayRack.max > 0) {
+        elements.hayRackMini.style.display = 'block';
+        const frac = Math.max(0, Math.min(1, state.hayRack.value / state.hayRack.max));
+        const pct = Math.round(frac * 100);
+        elements.hayRackMiniFill.style.width = pct + '%';
+        if (frac < 0.25) {
+          elements.hayRackMiniFill.classList.add('low');
+          elements.hayRackMini.title = 'Hay rack is almost empty';
+        } else {
+          elements.hayRackMiniFill.classList.remove('low');
+          elements.hayRackMini.title = `Hay rack: ${state.hayRack.value}/${state.hayRack.max}`;
+        }
+      } else {
+        elements.hayRackMini.style.display = 'none';
+      }
     }
 
     // Overall health

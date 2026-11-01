@@ -194,6 +194,8 @@ namespace Cuy
                 
                     // Start the animation of the pet
                 pets[petCount].Play(true);
+                var curSc = pets[petCount].CurrentScreen;
+                BrainController.Log($"[Monitor] pig on {curSc.DeviceName}");
                 petCount++;
             }
             else

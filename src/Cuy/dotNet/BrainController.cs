@@ -66,6 +66,7 @@ namespace Cuy
             }
             _session.Start();
             _session.Pet.StageChanged += OnPetStageChanged;
+            _session.Pet.Birthday += OnPetBirthday;
 
             _brain = Brain.CreateDefault(_session.Pet);
 
@@ -96,6 +97,32 @@ namespace Cuy
                     SoundManager.Instance?.PlayWheek("critical_hunger");
                 }
             };
+        }
+
+        private DateTime _lastHandledBirthdayTime = DateTime.MinValue;
+
+        private void OnPetBirthday(object sender, BirthdayEventArgs e)
+        {
+            try
+            {
+                Log($"[Birthday] year {e.Years}");
+                if (HomeWindow.IsOpen) return;
+
+                var now = DateTime.UtcNow;
+                if ((now - _lastHandledBirthdayTime).TotalSeconds < 5.0) return;
+
+                var petForm = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                if (petForm != null && (petForm.ScriptHoldsPosition || petForm.IsDragging || petForm.IsTossing)) return;
+
+                _lastHandledBirthdayTime = now;
+                RequestAnimation("party");
+                SoundManager.Instance?.PlayPopcorn();
+                petForm?.ShowStatusMessage("Happy birthday!", 4000);
+            }
+            catch (Exception ex)
+            {
+                Log("[Birthday] Error in birthday handler: " + ex.Message);
+            }
         }
 
         private void OnPetStageChanged(object sender, StageChangedEventArgs e)

@@ -41,6 +41,23 @@ namespace Cuy.Features
                 settings["soundSuppressed"] = SoundManager.Instance.IsSoundSuppressed(out _);
             }
 
+            var screens = System.Windows.Forms.Screen.AllScreens;
+            var monitorList = new List<object>();
+            for (int i = 0; i < screens.Length; i++)
+            {
+                var sc = screens[i];
+                monitorList.Add(new
+                {
+                    index = i,
+                    name = sc.DeviceName,
+                    width = sc.Bounds.Width,
+                    height = sc.Bounds.Height,
+                    primary = sc.Primary
+                });
+            }
+            settings["monitors"] = monitorList;
+            settings["monitor"] = Program.MyData.GetMonitor();
+
             state["settings"] = settings;
 
             var update = new Dictionary<string, object>

@@ -750,6 +750,11 @@ namespace Cuy
 
             pet.AddBondPoints(1);
             pet.Count("feedings");
+            if (string.Equals(def.Id, "hay", StringComparison.OrdinalIgnoreCase))
+            {
+                pet.RefillHay();
+                pet.Count("hay_refills");
+            }
             if (!def.IsUnlimited)
             {
                 pet.Count(def.Id);
@@ -760,7 +765,8 @@ namespace Cuy
                 pet.RecordTreat(def.Id);
             }
 
-            brain.RequestAnimation(def.IsUnlimited ? "eat" : "eat_treat");
+            string anim = !string.IsNullOrEmpty(def.Animation) ? def.Animation : (def.IsUnlimited ? "eat" : "eat_treat");
+            brain.RequestAnimation(anim);
             BrainController.Log("[HomeWindow] Fed " + def.Id + ".");
             brain.Session.AutoSaver.SaveNow();
         }

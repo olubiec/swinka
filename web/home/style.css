@@ -562,6 +562,27 @@ body.webview-mode .game-device {
 .btn-feed {
   background: #f8c278;
 }
+
+.hay-rack-mini {
+  width: 36px;
+  height: 4px;
+  background: var(--c-cream-dark);
+  border: 1px solid var(--c-contour-dark);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 1px;
+}
+
+.hay-rack-mini-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--c-hay-shadow);
+  transition: width 0.2s ease;
+}
+
+.hay-rack-mini-fill.low {
+  background: var(--c-red);
+}
 .btn-clean {
   background: #b2dbf5;
 }
