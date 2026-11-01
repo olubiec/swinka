@@ -9,42 +9,16 @@ echo.
 
 set "TARGET_DIR=%LOCALAPPDATA%\Programs\Cuy"
 if not exist "%TARGET_DIR%\Cuy.exe" (
-    if exist "%~dp0..\Cuy.exe" set "TARGET_DIR=%~dp0..\"
+    if exist "%~dp0..\Cuy.exe" set "TARGET_DIR=%~dp0.."
     if exist "%~dp0Cuy.exe" set "TARGET_DIR=%~dp0"
 )
+if "%TARGET_DIR:~-1%"=="\" set "TARGET_DIR=%TARGET_DIR:~0,-1%"
 
 echo Cel aktualizacji: %TARGET_DIR%
 
 echo.
-echo Sprawdzanie najnowszej wersji na GitHub (olubiec/swinka)...
-powershell -NoProfile -Command "
-try {
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
-    $rel = Invoke-RestMethod -Uri 'https://api.github.com/repos/olubiec/swinka/releases/latest' -Headers @{'User-Agent'='Cuy-Updater'};
-    Write-Host ('Najnowsza wersja online: ' + $rel.tag_name);
-    $asset = $rel.assets | Where-Object { $_.name -like '*.zip' } | Select-Object -First 1;
-    if ($asset) {
-        $zipUrl = $asset.browser_download_url;
-        Write-Host ('Pobieranie paczki z: ' + $zipUrl);
-        $tempZip = Join-Path $env:TEMP 'CuyUpdate\update.zip';
-        New-Item -ItemType Directory -Path (Split-Path $tempZip) -Force | Out-Null;
-        Invoke-WebRequest -Uri $zipUrl -OutFile $tempZip;
-        Write-Host 'Wypakowywanie aktualizacji...';
-        Expand-Archive -Path $tempZip -DestinationPath '%TARGET_DIR%' -Force;
-        Remove-Item $tempZip -Force;
-        Write-Host 'Aktualizacja zakonczona sukcesem!';
-    } else {
-        Write-Host 'Brak spakowanego archiwum w Release.';
-    }
-} catch {
-    Write-Host ('Blad podczas pobierania aktualizacji: ' + $_.Exception.Message);
-    if (Test-Path '%~dp0..\dist\Cuy_v1.zip') {
-        Write-Host 'Uzywanie lokalnego archiwum dist/Cuy_v1.zip...';
-        Expand-Archive -Path '%~dp0..\dist\Cuy_v1.zip' -DestinationPath '%TARGET_DIR%' -Force;
-        Write-Host 'Zaktualizowano z pliku lokalnego!';
-    }
-}
-"
+echo Pobieranie najnowszej wersji z GitHub Releases...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ProgressPreference = 'SilentlyContinue'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $tmpZip = Join-Path $env:TEMP 'Cuy_Update.zip'; try { (New-Object System.Net.WebClient).DownloadFile('https://github.com/olubiec/swinka/releases/download/v1.0.0/Cuy_v1.zip', $tmpZip); Write-Host 'Wypakowywanie aktualizacji...'; Expand-Archive -Path $tmpZip -DestinationPath '%TARGET_DIR%' -Force; if(Test-Path '%TARGET_DIR%\Cuy_v1\Cuy.exe'){ Get-ChildItem '%TARGET_DIR%\Cuy_v1\*' | Move-Item -Destination '%TARGET_DIR%' -Force; Remove-Item '%TARGET_DIR%\Cuy_v1' -Recurse -Force }; Remove-Item $tmpZip -Force; Write-Host 'Aktualizacja zakonczona sukcesem!' } catch { Write-Host 'Blad podczas aktualizacji: ' $_.Exception.Message }"
 
 echo.
 echo =======================================================

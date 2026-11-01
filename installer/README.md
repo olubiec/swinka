@@ -32,3 +32,4 @@ Gra posiada wbudowany, automatyczny system sprawdzania i pobierania aktualizacji
    - Po pobraniu archiwum skrypt `apply-update.cmd` podmienia pliki programu i ponownie uruchamia Cuy.
 3. **Bezpieczeństwo danych i stan zapisu:**
    - Twój postęp, imię świnki, poziom więzi, odblokowane sztuczki i koniczynki są zapisywane w `%AppData%\Cuy\save.json` – aktualizacja programu **nigdy nie kasuje ani nie modyfikuje Twoich zapisów**.
+

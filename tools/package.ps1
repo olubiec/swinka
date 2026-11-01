@@ -53,7 +53,7 @@ if (Test-Path $selftestFile) { Get-Content $selftestFile | Write-Host }
 if ($proc.ExitCode -eq 1) { Write-Host "PACKAGE STOPPED: self-test failed"; exit 1 }
 
 $zip = Join-Path $dist "Cuy_v1.zip"
-Compress-Archive -Path $out -DestinationPath $zip
+Compress-Archive -Path (Join-Path $out "*") -DestinationPath $zip -Force
 
 # Check size
 $zipLength = (Get-Item $zip).Length
