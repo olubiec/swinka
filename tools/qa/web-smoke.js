@@ -230,6 +230,67 @@ function serve() {
     if (!gone) throw new Error('Toast is still visible after 4s');
   });
 
+  await step('25_features_mock_state', async () => {
+    await page.evaluate(() => {
+      const s = window.bridge.getState();
+      s.bond = { level: 3, points: 50, pointsToday: 10 };
+      s.diary = [
+        { date: '2026-10-25', text: 'Played in the hay!' },
+        { date: '2026-10-24', text: 'Loved the bell pepper treat.' },
+        { date: '2026-10-23', text: 'Learned to spin today.' }
+      ];
+      s.achievements = [
+        { id: 'first_popcorn', title: 'First Popcorn', text: 'Jumped with joy', category: 'play', reward: 10, earned: true, date: '2026-10-23' },
+        { id: 'feed_5', title: 'Good Appetite', text: 'Ate 5 times', category: 'care', reward: 10, earned: true, date: '2026-10-24' },
+        { id: 'bond_2', title: 'Best Friends', text: 'Reached bond level 2', category: 'social', reward: 20, earned: true, date: '2026-10-25' },
+        { id: 'trick_master', title: 'Trick Master', text: 'Perform 20 tricks', category: 'play', reward: 50, earned: false }
+      ];
+      s.tricks = [
+        { id: 'spin', title: 'Spin', unlocked: true, unlockLevel: 2, readyIn: 0 },
+        { id: 'stand_up', title: 'Stand Up', unlocked: true, unlockLevel: 3, readyIn: 0 },
+        { id: 'popcorn', title: 'Popcorn Jump', unlocked: false, unlockLevel: 4, readyIn: 0 },
+        { id: 'hurdle_jump', title: 'Hurdle Jump', unlocked: false, unlockLevel: 5, readyIn: 0 }
+      ];
+      window.bridge.broadcastState();
+    });
+
+    // 1. Open diary
+    await page.evaluate(() => window.CuyHome.openFeature('diary'));
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: path.join(OUT, '25_diary.png') });
+    await page.evaluate(() => window.CuyHome.closeFeature && window.CuyHome.closeFeature());
+    await page.waitForTimeout(200);
+
+    // 2. Open achievements
+    await page.evaluate(() => window.CuyHome.openFeature('achievements'));
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: path.join(OUT, '25_achievements.png') });
+    await page.evaluate(() => window.CuyHome.closeFeature && window.CuyHome.closeFeature());
+    await page.waitForTimeout(200);
+
+    // 3. Open tricks
+    await page.evaluate(() => {
+      window._sentTrick = null;
+      const origSend = window.bridge.send;
+      window.bridge.send = function(msg) {
+        if (msg && msg.type === 'trick') window._sentTrick = msg;
+        if (origSend) origSend.call(this, msg);
+      };
+      window.CuyHome.openFeature('tricks');
+    });
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: path.join(OUT, '25_tricks.png') });
+
+    // Click unlocked trick 'spin' and assert message sent
+    await page.click('button[data-trick-id="spin"]');
+    await page.waitForTimeout(200);
+    const sent = await page.evaluate(() => window._sentTrick);
+    if (!sent || sent.id !== 'spin') throw new Error('Expected trick message for spin, got: ' + JSON.stringify(sent));
+
+    await page.evaluate(() => window.CuyHome.closeFeature && window.CuyHome.closeFeature());
+    await page.waitForTimeout(200);
+  });
+
   await step('30_firststart', async () => {
     const newPage = await browser.newPage({ viewport: { width: 420, height: 640 } });
     await newPage.addInitScript(() => {
@@ -257,9 +318,11 @@ function serve() {
 
     const welcomeVisible = await newPage.evaluate(() => {
       const w = document.getElementById('welcome');
-      return w && !w.hidden;
+      const mb = document.getElementById('modalBackdrop');
+      const isFeatureOpen = mb && mb.classList.contains('active');
+      return w && !w.hidden && !isFeatureOpen;
     });
-    if (!welcomeVisible) throw new Error('Welcome naming dialog not visible');
+    if (!welcomeVisible) throw new Error('Welcome naming dialog not visible or feature modal is open over it');
 
     await newPage.evaluate(() => {
       if (window.bridge && window.bridge.isMock) {
@@ -292,6 +355,25 @@ function serve() {
     if (titleText !== 'TestPig') throw new Error(`Expected pet name to be TestPig, got ${titleText}`);
 
     await newPage.close();
+  });
+
+  await step('35_release_safety', async () => {
+    const relPage = await browser.newPage({ viewport: { width: 420, height: 640 } });
+    await relPage.addInitScript(() => {
+      window.chrome = { webview: { postMessage: () => {} } };
+    });
+    await relPage.goto(base + '/web/home/index.html');
+    await relPage.evaluate(() => document.body.classList.add('webview-mode'));
+    await relPage.waitForTimeout(600);
+
+    const devTestVisible = await relPage.evaluate(() => {
+      const btn = document.getElementById('btnDevTest');
+      if (!btn) return false;
+      const style = window.getComputedStyle(btn);
+      return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+    });
+    if (devTestVisible) throw new Error('#btnDevTest is visible in release WebView2 mode');
+    await relPage.close();
   });
 
   await browser.close();

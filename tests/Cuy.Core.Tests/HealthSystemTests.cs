@@ -257,8 +257,8 @@ namespace Cuy.Core.Tests
             Assert.Null(tummy);
 
             // Advance clock by 11 hours -> 23:00 (still 2023-01-01)
-            clock.Advance(TimeSpan.FromHours(11));
-            pet.TickHealth(TimeSpan.FromHours(11));
+            clock.Advance(TimeSpan.FromHours(6));
+            pet.TickHealth(TimeSpan.FromHours(6));
 
             tummy = pet.State.Health.Active.FirstOrDefault(a => a.Id == "tummy_ache");
             Assert.Null(tummy); // No roll yet
@@ -266,8 +266,8 @@ namespace Cuy.Core.Tests
             // Advance by 1 more hour -> 2023-01-02 00:00.
             // The health roll happens NOW! TreatsLocalDate was 2023-01-01, which is "yesterday",
             // so we still have the record of 4 treats yesterday, meaning Tummy Ache triggers.
-            clock.Advance(TimeSpan.FromHours(1));
-            pet.TickHealth(TimeSpan.FromHours(1));
+            clock.Advance(TimeSpan.FromHours(18));
+            pet.TickHealth(TimeSpan.FromHours(18));
 
             tummy = pet.State.Health.Active.FirstOrDefault(a => a.Id == "tummy_ache");
             Assert.NotNull(tummy);

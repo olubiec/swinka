@@ -94,3 +94,23 @@ try {
 finally {
     $zipArchive.Dispose()
 }
+
+# Summary of the package
+Write-Host ""
+Write-Host "=== Package Summary ==="
+$allFiles = Get-ChildItem -Path $out -Recurse -File
+$fileCount = $allFiles.Count
+Write-Host ("Total files: {0}" -f $fileCount)
+
+$topLevelDirs = Get-ChildItem -Path $out -Directory
+foreach ($dir in $topLevelDirs) {
+    $dirFiles = Get-ChildItem -Path $dir.FullName -Recurse -File -ErrorAction SilentlyContinue
+    $dirSize = ($dirFiles | Measure-Object -Property Length -Sum).Sum / 1MB
+    Write-Host ("  Folder {0,-12}: {1,6:N2} MB ({2} files)" -f $dir.Name, $dirSize, $dirFiles.Count)
+}
+
+$rootFiles = Get-ChildItem -Path $out -File
+$rootSize = ($rootFiles | Measure-Object -Property Length -Sum).Sum / 1MB
+Write-Host ("  Root files  : {0,6:N2} MB ({1} files)" -f $rootSize, $rootFiles.Count)
+Write-Host ("ZIP archive   : {0} ({1:N2} MB)" -f (Split-Path -Leaf $zip), $zipMB)
+Write-Host "========================"

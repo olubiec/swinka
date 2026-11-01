@@ -15,12 +15,23 @@ Start
    Click the little head icon next to the clock to open or close its Home.
 
 Features in Home
+- Diary records daily moments and milestones automatically every evening.
+- Behaviour Album collects stickers for every cute action your pig performs.
+- Birthday celebrations occur with treats, music, and popcorn jumping every year.
+- Bond & Tricks grow together: unlock and perform Spin, Stand Up, Popcorn, and Hurdle Jump.
+- Achievements reward clovers across care, growth, social bonding, and playtime.
+- Minigames (Veggie Rain, Veggie Memory, Hay Maze) let you play and earn daily clovers.
 - Care calendar reminders keep daily routines easy (Done / Later).
 - Vet clinic lets you diagnose ailments and administer medicines.
 - Colouring book offers retro pixel-art guinea pig coloring pages.
 - Shop and decorations provide toys, houses and treats for your pet.
 - Daily gift rewards you with clovers every single day.
-- Settings let you customize music, pig size, and sound effects.
+- Settings include master volume, quiet hours, muting during fullscreen, and pig size.
+- Multi-monitor choice lets you decide which display your pig walks on.
+- Start a new pig anytime from Settings (your old pig save is safely backed up).
+
+Fullscreen and Desktop Behaviour
+- When a game or movie goes fullscreen, Cuy quietly stays out of your way and mutes sound effects.
 
 Requirements
 Cuy requires the Microsoft Edge WebView2 runtime. Windows 11 has it built-in, most Windows 10 PCs have it already.

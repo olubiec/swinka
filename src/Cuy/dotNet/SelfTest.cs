@@ -1,3 +1,4 @@
+using System.Windows.Forms;
 using System.Linq;
 using System;
 using System.Collections.Generic;
@@ -67,6 +68,12 @@ namespace Cuy
             Check("mouse shake detector", CheckMouseShake);
             Check("behaviors", CheckBehaviors);
             Check("save folder writable", CheckSaveFolder);
+#if !DEBUG
+            Check("release menu", CheckReleaseMenu);
+#else
+            Lines.Add("PASS release menu (skipped in Debug)");
+#endif
+            Check("runtime files", CheckRuntimeFiles);
 
             Lines.Add(_failed ? "SELFTEST FAILED" : "SELFTEST OK");
             Output();
@@ -390,12 +397,63 @@ namespace Cuy
             string gamesJson = Path.Combine(rootDir, "web", "home", "minigames", "games.json");
             if (!File.Exists(gamesJson)) return;
             var arr = JArray.Parse(File.ReadAllText(gamesJson));
-            foreach (var t in arr)
+            var fileList = arr.Select(t => (string)t).ToList();
+            string[] required = { "veggie-rain.js", "veggie-memory.js", "hay-maze.js" };
+            foreach (var req in required)
             {
-                string f = (string)t;
+                if (!fileList.Contains(req))
+                    throw new Exception("games.json does not list required minigame: " + req);
+            }
+            foreach (var f in fileList)
+            {
                 string fullPath = Path.Combine(rootDir, "web", "home", "minigames", f);
                 if (!File.Exists(fullPath)) throw new Exception("missing minigame file: " + f);
             }
+        }
+
+#if !DEBUG
+        private static void CheckReleaseMenu()
+        {
+            var menu = new ContextMenus().Create();
+            string[] forbidden = { "clock", "debug", "diagnostics", "test" };
+            void CheckItem(ToolStripItem item)
+            {
+                string text = item.Text ?? "";
+                foreach (var f in forbidden)
+                {
+                    if (text.IndexOf(f, StringComparison.OrdinalIgnoreCase) >= 0)
+                        throw new Exception("forbidden text in menu item: " + text);
+                }
+                if (item is ToolStripMenuItem tsmi)
+                {
+                    foreach (ToolStripItem sub in tsmi.DropDownItems)
+                    {
+                        CheckItem(sub);
+                    }
+                }
+            }
+            foreach (ToolStripItem item in menu.Items)
+            {
+                CheckItem(item);
+            }
+        }
+#endif
+
+        private static void CheckRuntimeFiles()
+        {
+            string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            string jsonDll = Path.Combine(exeDir, "Newtonsoft.Json.dll");
+            string naudioDll = Path.Combine(exeDir, "NAudio.dll");
+            if (!File.Exists(jsonDll)) throw new Exception("Newtonsoft.Json.dll missing next to exe");
+            if (!File.Exists(naudioDll)) throw new Exception("NAudio.dll missing next to exe");
+
+            string readme = Path.Combine(exeDir, "README.txt");
+            string notices = Path.Combine(exeDir, "THIRD_PARTY_NOTICES.md");
+            string licenses = Path.Combine(exeDir, "assets", "LICENSES");
+
+            if (!File.Exists(readme)) Warn("runtime files", "README.txt missing next to exe");
+            if (!File.Exists(notices)) Warn("runtime files", "THIRD_PARTY_NOTICES.md missing next to exe");
+            if (!Directory.Exists(licenses)) Warn("runtime files", "assets\\LICENSES folder missing next to exe");
         }
 
         private static void CheckIconIndexes()

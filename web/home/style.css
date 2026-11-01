@@ -863,10 +863,24 @@ body.webview-mode .game-device {
 }
 
 /* Shop item grid */
-.shop-grid, .album-grid, .games-grid {
+.shop-grid, .games-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+}
+
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.album-grid .shop-item {
+  padding: 6px 4px;
+}
+
+.album-grid .shop-name {
+  font-size: 11px;
 }
 
 .shop-item, .game-item {

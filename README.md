@@ -4,17 +4,17 @@ A pixel art guinea pig for the Windows desktop. It walks on the taskbar and on w
 
 | What | Where |
 | --- | --- |
-| Concept, current plan, waves and status (Polish) | `docs/CONCEPT.md`, `docs/PLAN.md` (old master plan: `PLAN.md`) |
-| Rules for AI agents (Claude, Jules) | `AGENTS.md`, `CLAUDE.md` |
-| Jules tasks: one file = one task; evening backlog | `tasks/`, `tasks/BACKLOG.md`, `tools/jules-wave.sh`, `setup.sh` |
+| Concept, waves and status | `docs/CONCEPT.md`, `docs/PLAN.md` |
+| Rules for AI agents (Antigravity, Jules) | `AGENTS.md`, `docs/JULES_LOOP.md` |
+| Tasks: active and completed tasks | `tasks/`, `tasks/done/` |
 | Home message and state contracts | `docs/contracts.md` |
-| Architecture | `ARCHITECTURE.md` |
-| Art (60 animations x 7 variants, icons), sounds and game data | `assets/` |
+| Architecture and system design | `ARCHITECTURE.md` |
+| Art (sprites for all 5 stages, icons), sounds, music and data | `assets/` |
 | Desktop app (C#, .NET Framework 4.8, based on eSheep, MIT) | `src/Cuy/` |
-| Game logic (.NET Standard 2.0) and tests | `src/Cuy.Core/`, `tests/` |
-| Home window and minigames (HTML/JS) | `web/home/` |
-| Build, packaging and art tools | `tools/` |
-| Licences | `THIRD_PARTY_NOTICES.md` |
+| Game logic (.NET Standard 2.0) and tests (.NET 9) | `src/Cuy.Core/`, `tests/Cuy.Core.Tests/` |
+| Home window, feature modules and minigames (HTML/JS) | `web/home/` |
+| Build, packaging and QA automation tools | `tools/` |
+| Licences | `THIRD_PARTY_NOTICES.md`, `assets/LICENSES/` |
 
 Build and test: `powershell -ExecutionPolicy Bypass -File tools/build.ps1`. Manual release checklist: `TESTING.md`.
 
@@ -40,4 +40,3 @@ download page is https://developer.microsoft.com/microsoft-edge/webview2/ (choos
 The optional weather reactions use the free Open-Meteo API and its geocoding (GeoNames). Weather data by [Open-Meteo.com](https://open-meteo.com/), licensed
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); the link is shown next to the weather in Settings. The free API may be used for non-commercial purposes
 only: Cuy is a free gift and must not be sold or monetised while it uses it. Only the city name and its coordinates are sent. See `THIRD_PARTY_NOTICES.md`.
-
