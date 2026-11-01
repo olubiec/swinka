@@ -49,14 +49,22 @@ function sh(cmd, options = {}) {
 
 function getActiveTasks() {
   if (!fs.existsSync(TASKS_DIR)) return [];
+  const waveOrder = ['W-UPD', 'W-NYAN', 'W-MULTI', 'W4', 'W5', 'W6', 'W7', 'W8'];
   return fs.readdirSync(TASKS_DIR)
-    .filter(f => /^W\d+-\d+-.*\.md$/.test(f))
+    .filter(f => /^W.*\.md$/.test(f))
     .sort((a, b) => {
-      const matchA = a.match(/^W(\d+)-(\d+)/);
-      const matchB = b.match(/^W(\d+)-(\d+)/);
-      const waveDiff = parseInt(matchA[1], 10) - parseInt(matchB[1], 10);
-      if (waveDiff !== 0) return waveDiff;
-      return parseInt(matchA[2], 10) - parseInt(matchB[2], 10);
+      const getWave = (name) => {
+        for (const w of waveOrder) {
+          if (name.startsWith(w)) return w;
+        }
+        return name.split('-')[0];
+      };
+      const wA = getWave(a);
+      const wB = getWave(b);
+      const idxA = waveOrder.indexOf(wA);
+      const idxB = waveOrder.indexOf(wB);
+      if (idxA !== -1 && idxB !== -1 && idxA !== idxB) return idxA - idxB;
+      return a.localeCompare(b);
     })
     .map(parseTaskFile);
 }
