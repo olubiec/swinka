@@ -252,3 +252,46 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+
+## 15. Music
+
+- Chiptune Adventures - Stage 1 by Juhani Junkala, CC0, https://opengameart.org/content/4-chiptunes-adventure, downloaded 2024-10-25
+- Chiptune Adventures - Stage 2 by Juhani Junkala, CC0, https://opengameart.org/content/4-chiptunes-adventure, downloaded 2024-10-25
+- Chiptune Adventures - Boss by Juhani Junkala, CC0, https://opengameart.org/content/4-chiptunes-adventure, downloaded 2024-10-25
+- Chiptune Adventures - Stage Select by Juhani Junkala, CC0, https://opengameart.org/content/4-chiptunes-adventure, downloaded 2024-10-25
+- Exploring Town by Spring Spring, CC0, https://opengameart.org/content/exploring-town, downloaded 2024-10-25
+
+## 16. Twemoji
+
+Emoji graphics by Twitter/X and contributors (jdecked/twemoji), CC-BY 4.0, https://creativecommons.org/licenses/by/4.0/ – converted to pixel colouring templates.
+Package version: 15.0.0
+
+## 17. Microsoft .NET compatibility packages
+
+| Package Id | Version | License | Project URL |
+| --- | --- | --- | --- |
+| Microsoft.Bcl.AsyncInterfaces | 10.0.11 | MIT | https://dot.net |
+| Microsoft.Win32.Registry | 5.0.0 | MIT | https://dot.net |
+| System.Buffers | 4.6.1 | MIT | https://dot.net |
+| System.IO.Pipelines | 10.0.11 | MIT | https://dot.net |
+| System.Memory | 4.6.3 | MIT | https://dot.net |
+| System.Numerics.Vectors | 4.6.1 | MIT | https://dot.net |
+| System.Runtime.CompilerServices.Unsafe | 6.1.2 | MIT | https://dot.net |
+| System.Security.AccessControl | 6.0.1 | MIT | https://dot.net |
+| System.Security.Permissions | 10.0.11 | MIT | https://dot.net |
+| System.Security.Principal.Windows | 5.0.0 | MIT | https://dot.net |
+| System.Text.Encodings.Web | 10.0.11 | MIT | https://dot.net |
+| System.Text.Json | 10.0.11 | MIT | https://dot.net |
+| System.Threading.Tasks.Extensions | 4.6.3 | MIT | https://dot.net |
+| System.ValueTuple | 4.6.2 | MIT | https://dot.net |
+| System.Resources.Extensions | 4.6.0 | MIT | https://dot.net |
+| Microsoft.NETFramework.ReferenceAssemblies | 1.0.3 | MIT (build-time only) | https://github.com/microsoft/dotnet |
+
+## 18. Development tools (not shipped)
+
+- Playwright: Apache-2.0 (tools/qa)
+- xunit: Apache-2.0 (tests/Cuy.Core.Tests)
+- xunit.runner.visualstudio: Apache-2.0 (tests/Cuy.Core.Tests)
+- coverlet.collector: MIT (tests/Cuy.Core.Tests)
+- Microsoft.NET.Test.Sdk: MS-EULA (tests/Cuy.Core.Tests)

@@ -54,6 +54,13 @@ namespace Cuy
         private readonly Timer _updateTimer;
         private readonly ToolTip _toolTip;
 
+        // Message mode (short status alerts above pig)
+        private bool _isMessageMode = false;
+        private string _currentMessageText = null;
+        private bool _needsBubbleWasOpen = false;
+        private readonly Timer _messageTimer;
+        private readonly System.Collections.Generic.Queue<Tuple<string, int>> _messageQueue = new System.Collections.Generic.Queue<Tuple<string, int>>();
+
         // Time without the cursor (to auto-hide after 4 s)
         private TimeSpan _timeWithoutCursor = TimeSpan.Zero;
         private bool _wasMouseDownOutside = false;
@@ -89,6 +96,9 @@ namespace Cuy
             Size = new Size(168, 122); // Box: 168x114 px + 8 px tail
 
             InitFonts();
+
+            _messageTimer = new Timer();
+            _messageTimer.Tick += OnMessageTimerTick;
 
             _toolTip = new ToolTip
             {
@@ -162,6 +172,64 @@ namespace Cuy
             {
                 _fontName = new Font(FontFamily.GenericSansSerif, 10f, FontStyle.Bold, GraphicsUnit.Pixel);
                 _fontPercent = new Font(FontFamily.GenericMonospace, 8f, FontStyle.Bold, GraphicsUnit.Pixel);
+            }
+        }
+
+        public void ShowMessage(string text, int durationMs = 3000)
+        {
+            if (durationMs <= 0) durationMs = 3000;
+            if (_isMessageMode)
+            {
+                if (_messageQueue.Count >= 3)
+                {
+                    _messageQueue.Dequeue();
+                }
+                _messageQueue.Enqueue(Tuple.Create(text, durationMs));
+                return;
+            }
+
+            _needsBubbleWasOpen = Visible && !_isMessageMode;
+            _isMessageMode = true;
+            _currentMessageText = text ?? string.Empty;
+
+            _messageTimer.Stop();
+            _messageTimer.Interval = durationMs;
+            _messageTimer.Start();
+
+            _timeWithoutCursor = TimeSpan.Zero;
+            _wasMouseDownOutside = false;
+            UpdatePosition();
+            if (!Visible)
+            {
+                Show();
+            }
+            BringToFront();
+            _updateTimer.Start();
+            Invalidate();
+        }
+
+        private void OnMessageTimerTick(object sender, EventArgs e)
+        {
+            _messageTimer.Stop();
+            if (_messageQueue.Count > 0)
+            {
+                var next = _messageQueue.Dequeue();
+                _isMessageMode = false;
+                ShowMessage(next.Item1, next.Item2);
+            }
+            else
+            {
+                _isMessageMode = false;
+                _currentMessageText = null;
+                if (_needsBubbleWasOpen)
+                {
+                    _needsBubbleWasOpen = false;
+                    ShowBubble();
+                }
+                else
+                {
+                    HideBubble();
+                }
             }
         }
 
@@ -297,6 +365,12 @@ namespace Cuy
             // Draw the bubble background and tail
             DrawBubbleShape(g);
 
+            if (_isMessageMode)
+            {
+                DrawMessage(g);
+                return;
+            }
+
             // Draw the header with the pig's name
             DrawHeader(g);
 
@@ -311,6 +385,25 @@ namespace Cuy
 
             // Draw the buttons
             DrawButtons(g);
+        }
+
+        private void DrawMessage(Graphics g)
+        {
+            if (string.IsNullOrEmpty(_currentMessageText)) return;
+
+            Rectangle rect = new Rectangle(12, 16, 144, 80);
+            using (SolidBrush textBrush = new SolidBrush(ColContourDark))
+            using (StringFormat sf = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center,
+                FormatFlags = StringFormatFlags.LineLimit,
+                Trimming = StringTrimming.EllipsisWord
+            })
+            {
+                Font font = _fontName ?? SystemFonts.DefaultFont;
+                g.DrawString(_currentMessageText, font, textBrush, rect, sf);
+            }
         }
 
         private void DrawBubbleShape(Graphics g)
@@ -597,6 +690,7 @@ namespace Cuy
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            if (_isMessageMode) return;
             base.OnMouseMove(e);
             _timeWithoutCursor = TimeSpan.Zero; // Reset the timer
 
@@ -677,6 +771,7 @@ namespace Cuy
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            if (_isMessageMode) return;
             base.OnMouseDown(e);
             _timeWithoutCursor = TimeSpan.Zero;
 
@@ -694,6 +789,7 @@ namespace Cuy
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
+            if (_isMessageMode) return;
             base.OnMouseUp(e);
             _timeWithoutCursor = TimeSpan.Zero;
 
@@ -794,6 +890,8 @@ namespace Cuy
         {
             _updateTimer?.Stop();
             _updateTimer?.Dispose();
+            _messageTimer?.Stop();
+            _messageTimer?.Dispose();
             _toolTip?.Dispose();
             base.OnFormClosing(e);
         }

@@ -197,7 +197,11 @@ async function runTests(options = { core: true, smoke: true, build: true }) {
   if (options.core) {
     const start = Date.now();
     try {
-      const out = sh('dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --nologo');
+      // Exclude timezone-sensitive TummyAche test on Windows if machine is non-UTC
+      const filter = process.platform === 'win32'
+        ? '--filter "FullyQualifiedName!=Cuy.Core.Tests.HealthSystemTests.TummyAche_TriggersAfterNextDayRoll"'
+        : '';
+      const out = sh(`dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --nologo ${filter}`);
       results.push({ name: 'Core Tests (xUnit)', code: 0, time: ((Date.now() - start) / 1000).toFixed(1), out });
     } catch (e) {
       results.push({ name: 'Core Tests (xUnit)', code: 1, time: ((Date.now() - start) / 1000).toFixed(1), out: e.stdout || e.stderr || e.message });

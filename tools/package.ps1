@@ -15,9 +15,6 @@ New-Item -ItemType Directory -Path $out | Out-Null
 robocopy $release $out /E /XF *.pdb *.xml *.config.bak /XD logs /NFL /NDL /NJH /NJS /NP | Out-Null
 if ($LASTEXITCODE -ge 8) { Write-Host "PACKAGE STOPPED: copy failed"; exit 1 }
 
-# WebView2Loader.dll is in runtimes\win-x64\native\ etc., but WebView2 package on .NET Framework expects it next to the exe or in runtimes folder.
-# The SDK style project puts runtimes/ folder in bin/Release, so it gets copied by robocopy.
-
 # assets/ and web/ must be inside.
 foreach ($name in "assets", "web") {
     if (-not (Test-Path (Join-Path $out $name))) {
@@ -28,6 +25,23 @@ foreach ($name in "assets", "web") {
 Copy-Item (Join-Path $PSScriptRoot "package\README.txt") $out
 Copy-Item (Join-Path $root "THIRD_PARTY_NOTICES.md") $out
 
+# Validation before zipping
+$requiredItems = @(
+    (Join-Path $out "assets\LICENSES"),
+    (Join-Path $out "THIRD_PARTY_NOTICES.md"),
+    (Join-Path $out "Cuy.exe"),
+    (Join-Path $out "Newtonsoft.Json.dll"),
+    (Join-Path $out "NAudio.dll"),
+    (Join-Path $out "assets"),
+    (Join-Path $out "web")
+)
+foreach ($req in $requiredItems) {
+    if (-not (Test-Path $req)) {
+        Write-Host "PACKAGE STOPPED: required item missing from package: $req"
+        exit 1
+    }
+}
+
 # Self-test the packed copy.
 $selftestFile = Join-Path $env:TEMP "cuy-selftest.txt"
 if (Test-Path $selftestFile) { Remove-Item $selftestFile }
@@ -37,4 +51,46 @@ if ($proc.ExitCode -eq 1) { Write-Host "PACKAGE STOPPED: self-test failed"; exit
 
 $zip = Join-Path $dist "Cuy_v1.zip"
 Compress-Archive -Path $out -DestinationPath $zip
-Write-Host ("ZIP OK: {0} ({1:N1} MB)" -f $zip, ((Get-Item $zip).Length / 1MB))
+
+# Check size
+$zipLength = (Get-Item $zip).Length
+$zipMB = $zipLength / 1MB
+Write-Host ("ZIP OK: {0} ({1:N1} MB)" -f $zip, $zipMB)
+if ($zipMB -gt 80) {
+    Write-Host "PACKAGE STOPPED: zip larger than 80 MB"
+    exit 1
+}
+
+# Inspect ZIP entries for forbidden paths and file extensions
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$zipArchive = [System.IO.Compression.ZipFile]::OpenRead($zip)
+try {
+    $forbiddenExtensions = @('.pdb', '.cs', '.csproj', '.sln')
+    $forbiddenFolders = @('jules/', 'tools/', 'tests/', 'tasks/', 'docs/', 'research/')
+    foreach ($entry in $zipArchive.Entries) {
+        $fullName = $entry.FullName.Replace('\', '/')
+        # Strip top-level package folder name if present
+        if ($fullName -match '^[^/]+/(.*)$') {
+            $inner = $matches[1]
+        } else {
+            $inner = $fullName
+        }
+
+        foreach ($ext in $forbiddenExtensions) {
+            if ($inner.EndsWith($ext, [StringComparison]::OrdinalIgnoreCase)) {
+                Write-Host "PACKAGE STOPPED: forbidden file in zip: $fullName"
+                exit 1
+            }
+        }
+
+        foreach ($folder in $forbiddenFolders) {
+            if ($inner.StartsWith($folder, [StringComparison]::OrdinalIgnoreCase)) {
+                Write-Host "PACKAGE STOPPED: forbidden directory in zip: $fullName"
+                exit 1
+            }
+        }
+    }
+}
+finally {
+    $zipArchive.Dispose()
+}

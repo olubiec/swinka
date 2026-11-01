@@ -42,6 +42,7 @@ namespace Cuy
             Check("items.json", () => ParseData("items.json"));
             Check("actions animations", CheckActionAnimations);
             Check("sprite sheets", CheckSpriteSheets);
+            Check("spritesheet", CheckSpriteSheetLoader);
             Check("icons.json", () => ParseIcons());
             Check("icons_16.png", () =>
             {
@@ -134,6 +135,24 @@ namespace Cuy
                 if (name != null && !known.Contains(name)) missing.Add(name);
             }
             if (missing.Count > 0) throw new Exception("missing in baby/animations.json: " + string.Join(", ", missing));
+        }
+
+                private static void CheckSpriteSheetLoader()
+        {
+            var missing = SpriteSheetLoader.Load("nonexistent_stage_xyz");
+            if (missing != null) throw new Exception("expected null for nonexistent stage");
+
+            string[] stages = { "baby", "junior", "adult", "senior", "legend" };
+            foreach (var s in stages)
+            {
+                string sheetPath = Path.Combine(_assets, "sprites", s, "spritesheet.png");
+                if (File.Exists(sheetPath))
+                {
+                    var frames = SpriteSheetLoader.Load(s);
+                    if (frames == null || frames.Length == 0 || frames[0] == null)
+                        throw new Exception("failed to load frames for stage " + s);
+                }
+            }
         }
 
         private static void CheckSpriteSheets()

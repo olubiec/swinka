@@ -601,6 +601,41 @@ namespace Cuy
             SetNewAnimation(Animations.AnimationFall);
         }
 
+        public void ShowStatusMessage(string text, int durationMs = 3000)
+        {
+            if (Name.IndexOf("child") >= 0) return;
+            if (this.IsDisposed) return;
+            if (text == null) text = string.Empty;
+            if (text.Length > 60) text = text.Substring(0, 60);
+
+            if (this.InvokeRequired)
+            {
+                try
+                {
+                    this.BeginInvoke(new Action(() => ShowStatusMessage(text, durationMs)));
+                }
+                catch (Exception ex)
+                {
+                    BrainController.Log("[WARN] FormPet.ShowStatusMessage: " + ex.Message);
+                }
+                return;
+            }
+
+            try
+            {
+                if (_statusBubble == null || _statusBubble.IsDisposed)
+                {
+                    _statusBubble = new StatusBubble(this);
+                }
+                BrainController.Log("[Bubble] " + text);
+                _statusBubble.ShowMessage(text, durationMs);
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] FormPet.ShowStatusMessage: " + ex.Message);
+            }
+        }
+
         public void ShowStatusBubble()
         {
             if (Name.IndexOf("child") >= 0) return;

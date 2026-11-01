@@ -1,0 +1,24 @@
+{
+  "achievements": [
+    { "id": "first_meal", "title": "First Meal", "text": "Feed your guinea pig for the first time.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "feedings", "atLeast": 1 }, "reward": 50 },
+    { "id": "full_belly", "title": "Gourmet Piggy", "text": "Feed your pig 50 times.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "feedings", "atLeast": 50 }, "reward": 100 },
+    { "id": "first_pet", "title": "Gentle Touch", "text": "Pet your guinea pig for the first time.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "pets", "atLeast": 1 }, "reward": 50 },
+    { "id": "hundred_pets", "title": "Cuddle Master", "text": "Pet your pig 100 times.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "pets", "atLeast": 100 }, "reward": 150 },
+    { "id": "clean_home", "title": "Tidy Habitat", "text": "Clean up 10 poops.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "poops_collected", "atLeast": 10 }, "reward": 60 },
+    { "id": "poop_collector", "title": "Clean Freak", "text": "Clean up 50 poops from the desk.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "poops_collected", "atLeast": 50 }, "reward": 120 },
+    { "id": "shopper", "title": "Window Shopper", "text": "Purchase your first item in the shop.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "purchases", "atLeast": 1 }, "reward": 50 },
+    { "id": "big_spender", "title": "Big Spender", "text": "Purchase 30 items in the shop.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "purchases", "atLeast": 30 }, "reward": 200 },
+    { "id": "first_game", "title": "Game On", "text": "Play your first minigame.", "category": "play", "hidden": false, "rule": { "kind": "counter", "name": "minigames_played", "atLeast": 1 }, "reward": 50 },
+    { "id": "ten_games", "title": "Arcade Champion", "text": "Play 10 minigames.", "category": "play", "hidden": false, "rule": { "kind": "counter", "name": "minigames_played", "atLeast": 10 }, "reward": 120 },
+    { "id": "first_diary", "title": "Dear Diary", "text": "Record your first diary memory.", "category": "growth", "hidden": false, "rule": { "kind": "diary_entries", "name": "diary", "atLeast": 1 }, "reward": 50 },
+    { "id": "ten_diary", "title": "Memoirist", "text": "Collect 10 diary entries.", "category": "growth", "hidden": false, "rule": { "kind": "diary_entries", "name": "diary", "atLeast": 10 }, "reward": 150 },
+    { "id": "stage_junior", "title": "Growing Up", "text": "Reach the Junior life stage.", "category": "growth", "hidden": false, "rule": { "kind": "stage", "name": "stage", "atLeast": 1 }, "reward": 100 },
+    { "id": "stage_adult", "title": "Prime of Life", "text": "Reach the Adult life stage.", "category": "growth", "hidden": false, "rule": { "kind": "stage", "name": "stage", "atLeast": 2 }, "reward": 150 },
+    { "id": "stage_senior", "title": "Wise Elder", "text": "Reach the Senior life stage.", "category": "growth", "hidden": false, "rule": { "kind": "stage", "name": "stage", "atLeast": 3 }, "reward": 200 },
+    { "id": "stage_legend", "title": "Living Legend", "text": "Reach the Legend life stage.", "category": "growth", "hidden": true, "rule": { "kind": "stage", "name": "stage", "atLeast": 4 }, "reward": 200 },
+    { "id": "bond_friend", "title": "True Friends", "text": "Reach bond level 5.", "category": "social", "hidden": false, "rule": { "kind": "bond_level", "name": "bond", "atLeast": 5 }, "reward": 100 },
+    { "id": "bond_family", "title": "Soul Mates", "text": "Reach bond level 10.", "category": "social", "hidden": false, "rule": { "kind": "bond_level", "name": "bond", "atLeast": 10 }, "reward": 200 },
+    { "id": "first_trick", "title": "Clever Cuy", "text": "Perform your first learned trick.", "category": "play", "hidden": false, "rule": { "kind": "counter", "name": "tricks_performed", "atLeast": 1 }, "reward": 60 },
+    { "id": "daily_trio", "title": "Active Day", "text": "Play 3 minigames in a single day.", "category": "play", "hidden": false, "rule": { "kind": "minigames_today", "name": "daily_minigames", "atLeast": 3 }, "reward": 100 }
+  ]
+}

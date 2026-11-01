@@ -115,7 +115,7 @@ namespace Cuy.Core
         {
             if (Balance.HayRackActive) ConsumeHay(span.TotalHours, offline);
 
-            State.Needs.ApplyTime(span, offline, IsSleeping, Balance);
+            State.Needs.ApplyTime(span, offline || IsAway, IsSleeping, Balance);
             if (offline) State.Stats.OfflineHours += span.TotalHours;
             else State.Stats.OnlineHours += span.TotalHours;
         }
@@ -272,6 +272,7 @@ namespace Cuy.Core
         /// </summary>
         public bool TryAddPoop(PoopItem poop = null)
         {
+            if (IsAway) return false;
             if (State.PoopCount >= MaxPoops) return false;
             State.PoopCount++;
             if (poop != null)

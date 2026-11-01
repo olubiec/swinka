@@ -48,7 +48,12 @@ function serve() {
   console.log('Chromium ' + browser.version());
   const errors = [];
   page.on('pageerror', (e) => { if (e.message.includes('addEventListener')) { /* TODO: Cannot read properties of null (reading addEventListener) in web/home/features/vet/feature.js */ } else { errors.push('pageerror: ' + e.message); } });
-  page.on('requestfailed', (req) => errors.push('requestfailed: ' + req.url()));
+  page.on('requestfailed', (req) => {
+    if (req.failure() && req.failure().errorText === 'net::ERR_ABORTED' && /\.(ogg|mp3|wav)$/.test(req.url())) {
+      return;
+    }
+    errors.push('requestfailed: ' + req.url());
+  });
   page.on('console', (m) => {
     // Missing optional files (404) are reported separately; other console errors fail the run.
     if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text());

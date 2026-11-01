@@ -286,18 +286,28 @@ namespace Cuy
                 try
                 {
                     env = await CoreWebView2Environment.CreateAsync(null, userDataFolder);
+                    BrainController.Log("[HomeWindow] CoreWebView2Environment created. Initialising the control...");
+                    await _webView.EnsureCoreWebView2Async(env);
+                    BrainController.Log("[HomeWindow] EnsureCoreWebView2Async done.");
                 }
                 catch (WebView2RuntimeNotFoundException)
                 {
                     WebView2Missing = true;
+                    BrainController.Log("[WebView2] runtime missing");
                     BrainController.Log("[ERROR] Home: the WebView2 runtime is not installed.");
                     this.Hide();
                     MessageBox.Show(WebView2MissingMessage, "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
-                BrainController.Log("[HomeWindow] CoreWebView2Environment created. Initialising the control...");
-                await _webView.EnsureCoreWebView2Async(env);
-                BrainController.Log("[HomeWindow] EnsureCoreWebView2Async done.");
+                catch (Exception ex)
+                {
+                    WebView2Missing = true;
+                    BrainController.Log("[WebView2] runtime missing");
+                    BrainController.Log("[ERROR] Home: failed to initialise WebView2: " + ex.Message);
+                    this.Hide();
+                    MessageBox.Show(WebView2MissingMessage, "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
 
                 _webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 _webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
@@ -305,7 +315,20 @@ namespace Cuy
                 _webView.CoreWebView2.Settings.AreDevToolsEnabled = true;
 #else
                 _webView.CoreWebView2.Settings.AreDevToolsEnabled = false;
+                try { _webView.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = false; }
+                catch (Exception) { BrainController.Log("[WebView2] setting AreBrowserAcceleratorKeysEnabled failed"); }
 #endif
+                try { _webView.CoreWebView2.Settings.IsZoomControlEnabled = false; }
+                catch (Exception) { BrainController.Log("[WebView2] setting IsZoomControlEnabled failed"); }
+
+                try { _webView.CoreWebView2.Settings.IsPinchZoomEnabled = false; }
+                catch (Exception) { BrainController.Log("[WebView2] setting IsPinchZoomEnabled failed"); }
+
+                try { _webView.CoreWebView2.Settings.IsSwipeNavigationEnabled = false; }
+                catch (Exception) { BrainController.Log("[WebView2] setting IsSwipeNavigationEnabled failed"); }
+
+                try { _webView.CoreWebView2.Settings.IsGeneralAutofillEnabled = false; }
+                catch (Exception) { BrainController.Log("[WebView2] setting IsGeneralAutofillEnabled failed"); }
 
                 string homeDir = ResolveHomePath();
                 string assetsDir = ResolveAssetsPath();
