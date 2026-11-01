@@ -8,3 +8,4 @@ Steps:
    - Grid of adopted pigs: portrait, breed, discovered traits, active toggle.
    - Adoption button to spend clovers on adopting a new random pig.
 2. Add `"pigs"` to `web/home/features/index.json`.
+

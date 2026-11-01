@@ -10,3 +10,4 @@ Steps:
 2. In `FormPet.cs`:
    - Accept specific `PigProfile` to configure window properties.
    - Proximity check: when distance between pet 1 and pet 2 is < 80px, trigger mutual sniff or popcorn hop.
+

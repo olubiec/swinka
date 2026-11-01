@@ -1,6 +1,8 @@
 (function(root) {
   'use strict';
 
+  let prevUpdateStatus = null;
+
   function render(container) {
     container.innerHTML = `
 
@@ -47,6 +49,24 @@
           </div>
         </div>
 
+        <div class="settings-group update-group">
+          <div class="settings-row update-header-row">
+            <span class="settings-group-title">Game Updates</span>
+            <span class="update-badge" id="settingsUpdateBadge" style="display: none;">NEW</span>
+          </div>
+
+          <div class="settings-row update-version-row">
+            <span class="update-current-version" id="settingsCurrentVersion">Cuy v1.0.0</span>
+          </div>
+
+          <div class="update-status-msg" id="settingsUpdateStatus" style="display: none;"></div>
+
+          <div class="update-actions">
+            <button type="button" class="settings-btn" id="btnCheckUpdate">Check for updates</button>
+            <button type="button" class="settings-btn btn-apply-update" id="btnApplyUpdate" style="display: none;">Update &amp; Restart</button>
+          </div>
+        </div>
+
         <div class="settings-footer">
           Cuy 1.0 · emoji art: Twemoji (CC-BY 4.0)
         </div>
@@ -63,6 +83,16 @@
     const elMuteFullscreen = document.getElementById('settingsMuteFullscreen');
     const elAutostart = document.getElementById('settingsAutostart');
     const radioSize = document.querySelectorAll('input[name="petSize"]');
+    const elBtnCheckUpdate = document.getElementById('btnCheckUpdate');
+    const elBtnApplyUpdate = document.getElementById('btnApplyUpdate');
+
+    function sendMsg(msg) {
+      if (window.bridge && typeof window.bridge.send === 'function') {
+        window.bridge.send(msg);
+      } else if (api && typeof api.send === 'function') {
+        api.send(msg);
+      }
+    }
 
     elVolume.addEventListener('change', (e) => {
       const val = parseInt(e.target.value, 10) / 100;
@@ -105,12 +135,78 @@
       if (root.Sound) root.Sound.click();
       if (window.bridge) window.bridge.send({ type: 'settings_autostart', on: e.target.checked });
     });
+
+    if (elBtnCheckUpdate) {
+      elBtnCheckUpdate.addEventListener('click', () => {
+        if (root.Sound) root.Sound.click();
+        sendMsg({ type: 'check_update' });
+
+        // In mock browser mode (no WebView2 C# host):
+        if (!window.chrome || !window.chrome.webview) {
+          const elStatus = document.getElementById('settingsUpdateStatus');
+          if (elStatus) {
+            elStatus.style.display = 'block';
+            elStatus.textContent = 'Checking for updates...';
+          }
+          elBtnCheckUpdate.disabled = true;
+
+          setTimeout(() => {
+            elBtnCheckUpdate.disabled = false;
+            if (window.bridge && window.bridge.currentState) {
+              window.bridge.currentState.update = {
+                available: true,
+                version: '1.1.0',
+                currentVersion: '1.0.0',
+                status: 'available',
+                downloading: false,
+                notes: 'Performance improvements and bug fixes.'
+              };
+              window.bridge.broadcastState();
+            }
+          }, 600);
+        }
+      });
+    }
+
+    if (elBtnApplyUpdate) {
+      elBtnApplyUpdate.addEventListener('click', () => {
+        if (root.Sound) root.Sound.click();
+        sendMsg({ type: 'apply_update' });
+
+        // In mock browser mode:
+        if (!window.chrome || !window.chrome.webview) {
+          elBtnApplyUpdate.disabled = true;
+          const elStatus = document.getElementById('settingsUpdateStatus');
+          if (elStatus) {
+            elStatus.style.display = 'block';
+            elStatus.textContent = 'Downloading update...';
+          }
+
+          setTimeout(() => {
+            if (window.bridge && window.bridge.currentState) {
+              window.bridge.currentState.update = {
+                available: true,
+                version: '1.1.0',
+                currentVersion: '1.0.0',
+                status: 'ready',
+                downloading: false,
+                notes: ''
+              };
+              window.bridge.broadcastState();
+              if (typeof window.bridge.dispatchMessage === 'function') {
+                window.bridge.dispatchMessage({ type: 'toast', text: 'Update downloaded! Ready to restart.' });
+              }
+            }
+          }, 800);
+        }
+      });
+    }
   }
 
 
   function updateUI(state) {
-    if (!state || !state.settings) return;
-    const s = state.settings;
+    if (!state) return;
+    const s = state.settings || {};
 
     const elVolume = document.getElementById('settingsVolume');
     if (elVolume) {
@@ -148,6 +244,66 @@
         radio.checked = true;
       }
     });
+
+    // Game Updates UI
+    const update = state.update || (state.settings && state.settings.update) || null;
+    const currentVer = (update && update.currentVersion) || '1.0.0';
+    const elCurrentVersion = document.getElementById('settingsCurrentVersion');
+    if (elCurrentVersion) {
+      const formatted = currentVer.startsWith('v') ? currentVer : 'v' + currentVer;
+      elCurrentVersion.textContent = 'Cuy ' + formatted;
+    }
+
+    const elBadge = document.getElementById('settingsUpdateBadge');
+    const elStatus = document.getElementById('settingsUpdateStatus');
+    const elBtnCheck = document.getElementById('btnCheckUpdate');
+    const elBtnApply = document.getElementById('btnApplyUpdate');
+
+    if (update && update.available) {
+      const newVer = update.version ? (update.version.startsWith('v') ? update.version : 'v' + update.version) : '';
+      if (elBadge) elBadge.style.display = 'inline-block';
+      if (elBtnApply) {
+        elBtnApply.style.display = 'inline-block';
+        elBtnApply.textContent = newVer ? 'Update to ' + newVer + ' (Restart)' : 'Update & Restart';
+        elBtnApply.disabled = !!update.downloading;
+      }
+      if (elStatus) {
+        elStatus.style.display = 'block';
+        if (update.status === 'downloading' || update.downloading) {
+          elStatus.textContent = 'Downloading update...';
+        } else if (update.status === 'ready') {
+          elStatus.textContent = 'Update downloaded! Ready to restart.';
+        } else {
+          elStatus.textContent = newVer ? 'New version available: ' + newVer : 'New version available!';
+        }
+      }
+    } else {
+      if (elBadge) elBadge.style.display = 'none';
+      if (elBtnApply) elBtnApply.style.display = 'none';
+      if (elStatus) {
+        if (update && update.status === 'checking') {
+          elStatus.style.display = 'block';
+          elStatus.textContent = 'Checking for updates...';
+        } else if (update && update.status === 'up_to_date') {
+          elStatus.style.display = 'block';
+          elStatus.textContent = 'Your game is up to date!';
+        } else {
+          elStatus.style.display = 'none';
+        }
+      }
+    }
+
+    if (elBtnCheck) {
+      elBtnCheck.disabled = !!(update && update.status === 'checking');
+    }
+
+    // Trigger toast notification when update is downloaded and ready to apply
+    if (update && update.status === 'ready' && prevUpdateStatus !== 'ready') {
+      if (window.bridge && typeof window.bridge.dispatchMessage === 'function') {
+        window.bridge.dispatchMessage({ type: 'toast', text: 'Update downloaded! Ready to restart.' });
+      }
+    }
+    prevUpdateStatus = update ? update.status : null;
   }
 
   root.CuyHome.registerFeature({

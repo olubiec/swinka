@@ -14,3 +14,4 @@ Steps:
    - Waits for Cuy process PID to exit (`waitfor /T 1` or powershell loop).
    - Extracts zip using PowerShell `Expand-Archive -Force` into the app directory (preserving user save data in %AppData%).
    - Relaunches `Cuy.exe` and deletes temp files.
+

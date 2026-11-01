@@ -9,3 +9,4 @@ Steps:
    - `updateNyan(state, input, dt)`: apply gravity (vy += g * dt), flap thrust on space/click (vy = -jumpForce), spawn treats (parsley=10pts, carrot=20pts) and cosmic obstacles.
    - Collision detection (AABB) between pig bounding box and obstacles/treats.
 2. Write unit tests in `tests/nyan-cuy-test.js` validating gravity, flap thrust, score accumulation and game over conditions.
+

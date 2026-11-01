@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Cuy.Core;
 
@@ -8,6 +11,12 @@ namespace Cuy.Features
     public class SettingsFeature : HomeFeatureBase
     {
         public override string Id => "settings";
+
+        private static bool _updateAvailable = false;
+        private static string _updateVersion = "1.0.0";
+        private static string _updateStatus = "idle";
+        private static string _updateNotes = "";
+        private static bool _updateDownloading = false;
 
         public override void AddState(IDictionary<string, object> state, BrainController brain)
         {
@@ -33,6 +42,17 @@ namespace Cuy.Features
             }
 
             state["settings"] = settings;
+
+            var update = new Dictionary<string, object>
+            {
+                { "available", _updateAvailable },
+                { "version", _updateVersion },
+                { "currentVersion", "1.0.0" },
+                { "status", _updateStatus },
+                { "notes", _updateNotes },
+                { "downloading", _updateDownloading }
+            };
+            state["update"] = update;
         }
 
         public override bool HandleMessage(string type, JObject message, BrainController brain)
@@ -113,6 +133,166 @@ namespace Cuy.Features
                 {
                     SoundManager.Instance.MuteOnFullScreen = on.Value;
                 }
+                return true;
+            }
+            if (type == "check_update" || type == "settings_check_update")
+            {
+                if (message != null && (message["mock"]?.ToObject<bool>() == true || message["force_available"]?.ToObject<bool>() == true))
+                {
+                    _updateAvailable = true;
+                    _updateVersion = "1.1.0";
+                    _updateNotes = "Performance improvements and bug fixes.";
+                    _updateStatus = "available";
+                    HomeWindow.NotifyStateChanged();
+                    return true;
+                }
+
+                _updateStatus = "checking";
+                HomeWindow.NotifyStateChanged();
+
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        Type checkerType = null;
+                        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                        {
+                            checkerType = asm.GetType("Cuy.Core.Platform.UpdateChecker") ?? asm.GetType("Cuy.Platform.UpdateChecker");
+                            if (checkerType != null) break;
+                        }
+
+                        if (checkerType != null)
+                        {
+                            var method = checkerType.GetMethod("CheckForUpdateAsync", new[] { typeof(string) })
+                                      ?? checkerType.GetMethod("CheckForUpdateAsync", new[] { typeof(string), typeof(string) });
+                            if (method != null)
+                            {
+                                object taskObj = method.GetParameters().Length == 1
+                                    ? method.Invoke(null, new object[] { "1.0.0" })
+                                    : method.Invoke(null, new object[] { "1.0.0", "olubiec/swinka" });
+
+                                if (taskObj is Task task)
+                                {
+                                    await task.ConfigureAwait(false);
+                                    var propResult = task.GetType().GetProperty("Result");
+                                    object info = propResult?.GetValue(task);
+                                    if (info != null)
+                                    {
+                                        bool isNewer = (bool)(info.GetType().GetProperty("IsNewer")?.GetValue(info) ?? false);
+                                        string ver = (string)(info.GetType().GetProperty("Version")?.GetValue(info) ?? "1.0.0");
+                                        string notes = (string)(info.GetType().GetProperty("ReleaseNotes")?.GetValue(info) ?? "");
+                                        _updateAvailable = isNewer;
+                                        _updateVersion = ver;
+                                        _updateNotes = notes;
+                                        _updateStatus = isNewer ? "available" : "up_to_date";
+                                        HomeWindow.NotifyStateChanged();
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Fallback check:
+                        try
+                        {
+                            using (var client = new HttpClient())
+                            {
+                                client.DefaultRequestHeaders.Add("User-Agent", "Cuy-Pet");
+                                client.Timeout = TimeSpan.FromSeconds(5);
+                                var resp = await client.GetAsync("https://api.github.com/repos/olubiec/swinka/releases/latest").ConfigureAwait(false);
+                                if (resp.IsSuccessStatusCode)
+                                {
+                                    string content = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
+                                    var json = JObject.Parse(content);
+                                    string tag = json["tag_name"]?.ToString() ?? "1.0.0";
+                                    string cleanTag = tag.TrimStart('v');
+                                    if (cleanTag != "1.0.0")
+                                    {
+                                        _updateAvailable = true;
+                                        _updateVersion = tag;
+                                        _updateNotes = json["body"]?.ToString() ?? "";
+                                        _updateStatus = "available";
+                                    }
+                                    else
+                                    {
+                                        _updateAvailable = false;
+                                        _updateVersion = "1.0.0";
+                                        _updateStatus = "up_to_date";
+                                    }
+                                }
+                                else
+                                {
+                                    _updateAvailable = false;
+                                    _updateStatus = "up_to_date";
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            BrainController.Log("[Settings] Check update fallback: " + ex.Message);
+                            _updateAvailable = false;
+                            _updateStatus = "up_to_date";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log("[Settings] Check update error: " + ex.Message);
+                        _updateAvailable = false;
+                        _updateStatus = "idle";
+                    }
+                    finally
+                    {
+                        HomeWindow.NotifyStateChanged();
+                    }
+                });
+
+                return true;
+            }
+            if (type == "apply_update" || type == "settings_apply_update")
+            {
+                _updateDownloading = true;
+                _updateStatus = "downloading";
+                HomeWindow.NotifyStateChanged();
+
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        Type applierType = null;
+                        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                        {
+                            applierType = asm.GetType("Cuy.Platform.UpdateApplier") ?? asm.GetType("Cuy.dotNet.Platform.UpdateApplier");
+                            if (applierType != null) break;
+                        }
+
+                        if (applierType != null)
+                        {
+                            var applyMethod = applierType.GetMethod("ApplyAndRestart");
+                            if (applyMethod != null)
+                            {
+                                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                                applyMethod.Invoke(null, new object[] { baseDir });
+                            }
+                        }
+                        else
+                        {
+                            await Task.Delay(1000).ConfigureAwait(false);
+                        }
+
+                        _updateDownloading = false;
+                        _updateStatus = "ready";
+                        HomeWindow.NotifyStateChanged();
+                        HomeWindow.PostToPage(new { type = "toast", text = "Update downloaded! Ready to restart." });
+                    }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log("[Settings] Apply update error: " + ex.Message);
+                        _updateDownloading = false;
+                        _updateStatus = "available";
+                        HomeWindow.NotifyStateChanged();
+                    }
+                });
+
                 return true;
             }
 

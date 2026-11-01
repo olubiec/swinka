@@ -8,3 +8,4 @@ Steps:
    - `Id` (GUID string), `Name`, `Breed` (smooth, rosette, peruvian, chubby, skinny), `PaletteId` (tricolor, dutch, agouti, albino, cinnamon), `Traits` (List<string>), `DiscoveredTraits` (HashSet<string>).
    - Helper methods: `DiscoverTrait(string trait)`, `IsTraitDiscovered(string trait)`.
 2. Add unit tests in `PigCollectionTests.cs` verifying serialization, defaults and traits discovery.
+

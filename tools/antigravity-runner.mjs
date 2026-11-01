@@ -72,8 +72,8 @@ function getActiveTasks() {
 function parseTaskFile(filename) {
   const fullPath = path.join(TASKS_DIR, filename);
   const content = fs.readFileSync(fullPath, 'utf8');
-  const matchId = filename.match(/^(W\d+-\d+)/);
-  const id = matchId ? matchId[1] : filename;
+  const matchId = filename.match(/^((?:W-[A-Z]+|W\d+)-\d+)/);
+  const id = matchId ? matchId[1] : filename.replace(/\.md$/, '');
   const titleMatch = content.match(/^#\s*(.*?)$/m);
   const title = titleMatch ? titleMatch[1].trim() : filename;
 
@@ -268,7 +268,7 @@ function printStatus() {
 
   const waves = {};
   for (const t of tasks) {
-    const wave = t.id.split('-')[0];
+    const wave = t.id.startsWith('W-') ? t.id.split('-').slice(0, 2).join('-') : t.id.split('-')[0];
     waves[wave] = waves[wave] || [];
     waves[wave].push(t);
   }

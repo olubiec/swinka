@@ -9,3 +9,4 @@ Steps:
    - Distinctive 8-bit synthesized guinea pig "Wheek-Wheek" sound triggered on flap and treat pickup.
    - Mute/volume toggle respecting global sound settings (`state.settings.sounds`).
 2. Provide clean `startMusic()`, `stopMusic()`, `playWheek()`, and `playCrunch()` API functions.
+

@@ -12,3 +12,4 @@ Steps:
    - Add "Game Updates" section with current version text and "Check for updates" button.
    - When update available: display green badge with "Update to vX.X.X (Restart)" button.
    - Show toast notification in Home when update is downloaded and ready to apply.
+

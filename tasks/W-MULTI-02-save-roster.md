@@ -10,3 +10,4 @@ Steps:
 2. In `SaveSystem.cs`:
    - When loading older saves lacking `Roster`, auto-generate initial profile from existing `Pet.Name` and default look.
 3. Unit tests in `PigSaveTests.cs` verifying round-trip JSON serialization and backwards compatibility with version 2/3 saves.
+
