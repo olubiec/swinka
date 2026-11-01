@@ -31,6 +31,12 @@ namespace Cuy
 
         private Image GetSprite(int index)
         {
+            // Front-facing symmetrical sprites (front_idle, front_look 352-356, front_happy) must never be flipped
+            if ((index >= 336 && index <= 356) || (index >= 373 && index <= 380))
+            {
+                return imageList1.Images[index];
+            }
+
             if (!spritesFlipped) return imageList1.Images[index];
             Image image;
             if (!flippedSprites.TryGetValue(index, out image))

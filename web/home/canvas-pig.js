@@ -433,6 +433,7 @@
             this.toyPlaying = null;
             this.currentAnim = 'idle';
             this.animTimer = 0;
+            this.ballX = 150;
           }
         }
       }
@@ -604,20 +605,18 @@
       if (!this.iconsImg || !this.iconsImg.naturalWidth) return;
       const f = 119; // floor y
 
-      // house: icon 8, 3x (48px)
-      if (this.inventory.house) {
-        // icon 8 in a 16x16 grid -> col 8 (sx = 128)
+      // house: icon 8, 3x (48px) - hide during house enter/exit animation because sprite contains the house
+      if (this.inventory.house && (!this.toyPlaying || !this.toyPlaying.startsWith('house'))) {
         ctx.drawImage(this.iconsImg, 8 * 16, 0, 16, 16, 42, f - 48, 48, 48);
       }
 
-      // tunnel: icon 7, 3x (48px)
-      if (this.inventory.tunnel) {
-        // right edge at sceneWidth - 8 -> x = 240 - 8 - 48 = 184
+      // tunnel: icon 7, 3x (48px) - hide during tunnel animation because sprite contains the tunnel
+      if (this.inventory.tunnel && (!this.toyPlaying || !this.toyPlaying.startsWith('tunnel'))) {
         ctx.drawImage(this.iconsImg, 7 * 16, 0, 16, 16, this.sceneWidth - 8 - 48, f - 48, 48, 48);
       }
 
-      // ball: icon 6, 2x (32px)
-      if (this.inventory.ball) {
+      // ball: icon 6, 2x (32px) - hide during ball push animation because sprite contains the pushed ball
+      if (this.inventory.ball && this.toyPlaying !== 'ball') {
         ctx.drawImage(this.iconsImg, 6 * 16, 0, 16, 16, this.ballX, f - 32, 32, 32);
       }
     }
