@@ -637,6 +637,16 @@ def render_front(**kw):
         if p['back']:
             mat = np.where(((lx - cx) ** 2 / 30 + (ly - byc + 2) ** 2 / 40) < 1, MAT['ZT'], MAT['ZR'])
             mat = np.where((ly < byc - 3) & (np.abs(lx - cx) < 5), MAT['ZM'], mat)
+        if STYLE['named'] or STYLE['breed'] != 'smooth':
+            # the same model-space coat as the side and yaw views: the chest/rump faces the camera (u = depth), w = screen lateral
+            wm = (u if p['back'] else -u)
+            um = np.sqrt(np.clip(1 - v * v - u * u, 0, 1)) * (-1.0 if p['back'] else 1.0)
+            if STYLE['named']:
+                mat = named_body_mat(um, v, wm)
+            b = b + FUR.delta(um * 17 * kb, v * 10.5 * kb, wm * 13.5 * kb, STYLE['breed'], 3 if not STYLE['named'] else 3 + len(STYLE['named'])) * (1.0 - 0.5 * (v > 0.5))
+            wk_ = STYLE['named'] if STYLE['named'] in WH.WHORLS else ('rosette' if STYLE['breed'] == 'rosette' else None)
+            if wk_:
+                b = b + 0.5 * WH.field(wk_, um, v, wm)[0]
         c.hash = (np.floor(lx).astype(int) * 7 + np.floor(ly).astype(int) * 13 + (np.floor(lx).astype(int) * np.floor(ly).astype(int)) % 5) % 11
         c.put_mat(body, mat, level(b))
         for fx0 in (cx - 7 * kb * p['sx'], cx + (4 * kb) * p['sx']):
@@ -669,6 +679,15 @@ def render_front(**kw):
     hmat[ly < hyc - 4.6 * kh] = MAT['ZH']
     hmat[muzzle] = MAT['ZN2']
     hmat[blaze] = MAT['ZN1']
+    if STYLE['named']:
+        # head frame of the yaw renderer: xh = depth (the face points at the camera), yh down, zh lateral (+z = screen left from the front)
+        fhu = (lx - hxc) / (11 * kh)
+        fhv = (ly - hyc) / (9.3 * kh)
+        depth = np.sqrt(np.clip(1 - fhu ** 2 - fhv ** 2, 0, 1))
+        if p['back']:
+            hmat = named_head_mat(-10.0 * depth, fhv * 8.5, fhu * 10.0)
+        else:
+            hmat = named_head_mat(10.0 * depth, fhv * 8.5, -fhu * 10.0)
     if STYLE['senior'] and not p['back']:
         dith = ((XX.astype(int) + YY.astype(int)) % 2) == 0
         ring = ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 8.2 * kh, 5.6 * kh) & ~muzzle & ~blaze & (dith | ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 6.6 * kh, 4.4 * kh))

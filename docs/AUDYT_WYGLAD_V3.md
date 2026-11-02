@@ -36,3 +36,8 @@ Stan na 2026-11-02. Plan: `docs/PLAN_WYGLAD_V3.md`, research: `docs/RESEARCH_WYG
 
 ## Kontrakt dla kodu (poza zakresem grafiki)
 Loader musi znać `assets/sprites/pigs/pigs.json` (arkusz per świnka, bez `palettes.json`) obok `breeds.json`; reszta kontraktów T1-T10 w `docs/PLAN_GRAFIK_V2.md`.
+
+## Poprawka spójności pozycji (po uwadze właściciela)
+- Przyczyna przesuwania się łat: widoki z przodu i z tyłu (`render_front`) miały własny, osobny podział na strefy. Teraz każdy renderer (bok, obrót, przód, tył) bierze wzór z tych samych funkcji w przestrzeni modelu (`coatgen.body_slots`, `head_slots`), sierść i wiry też.
+- Kuki: usunięta złota plamka (złote promienie rozetki). Wir zostaje jako delikatny cień/światło.
+- Kontrola: przegląd wszystkich 60 animacji Kukiego i Neda (pierwsze klatki dorosłych): rozmieszczenie łat jest spójne.

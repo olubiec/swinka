@@ -135,8 +135,6 @@ def body_slots(pid, u, v, w):
         front = sm(ub - 0.20, ub + 0.20, sw)
         patch = 1 - sm(0.85, 1.25, np.hypot((sw + 0.27) / 0.36, pw / 1.15))    # ginger hip patch on the back (rosettes sit here)
         out = pick(np.maximum(front, patch), s, phi, 0, 1)
-        _, ray, core = WH.field('kuki', u, v, w)
-        out = np.where((ray | core) & (out == 1), 3, out)           # gold rays of the rosettes on the dark flank
     elif pid == 'glen':
         streak = (pw > 0.95) & (pw < 1.55) & (np.abs(sw - 0.10 - 0.12 * (pw - 1.2)) < 0.030)
         out = np.where(streak, 1, 0)
