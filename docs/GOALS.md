@@ -22,3 +22,5 @@ Cuy: pikselowa świnka morska na pulpicie Windowsa (okno Pulpit + okno Domek), p
 
 ## Inspiracje (opcjonalnie)
 Inspiracje: desktop pet pixel art javascript
+
+Visual work is done by Claude Code per docs/VISUAL_WAVES.md; the loop must not plan visual or asset tasks.
