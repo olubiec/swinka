@@ -1,0 +1,255 @@
+{
+ "note": "Farm numbers, tuned by the human; code only reads them (loader: Cuy.Core.World.FarmConfig). Time is real minutes; offline time counts. Design: docs/WORLD.md section 4.",
+ "version": 1,
+ "start_plots": 4,
+ "plot_packs": [
+  {
+   "plots": 4,
+   "cost": 150
+  },
+  {
+   "plots": 4,
+   "cost": 300
+  },
+  {
+   "plots": 4,
+   "cost": 500
+  },
+  {
+   "plots": 4,
+   "cost": 800
+  },
+  {
+   "plots": 4,
+   "cost": 1200
+  }
+ ],
+ "orchard_slots": [
+  {
+   "cost": 100
+  },
+  {
+   "cost": 150
+  },
+  {
+   "cost": 200
+  },
+  {
+   "cost": 300
+  }
+ ],
+ "water": {
+  "time_cut_percent": 20,
+  "cans": [
+   {
+    "id": "can_1",
+    "plots_per_use": 1,
+    "cost": 0
+   },
+   {
+    "id": "can_2",
+    "plots_per_use": 4,
+    "cost": 120
+   },
+   {
+    "id": "sprinkler",
+    "auto_daily": true,
+    "cost": 500
+   }
+  ]
+ },
+ "great_harvest": {
+  "chance_percent": 10,
+  "extra_yield": 1
+ },
+ "overripe_never_spoils": true,
+ "starter_seeds": {
+  "seed_dandelion": 2,
+  "seed_cilantro": 2,
+  "seed_parsley": 2
+ },
+ "forbidden_foods": [
+  "onion",
+  "garlic",
+  "leek",
+  "potato",
+  "tomato_leaf",
+  "rhubarb",
+  "avocado",
+  "chocolate",
+  "mushroom",
+  "raw_beans",
+  "iceberg_lettuce"
+ ],
+ "crops": [
+  {
+   "id": "dandelion",
+   "item": "dandelion",
+   "kind": "annual",
+   "seed_item": "seed_dandelion",
+   "seed_price": 3,
+   "grow_minutes": 60,
+   "yield": 2,
+   "sell_price": 3,
+   "unlock_harvests": 0
+  },
+  {
+   "id": "cilantro",
+   "item": "cilantro",
+   "kind": "annual",
+   "seed_item": "seed_cilantro",
+   "seed_price": 3,
+   "grow_minutes": 90,
+   "yield": 2,
+   "sell_price": 4,
+   "unlock_harvests": 0
+  },
+  {
+   "id": "parsley",
+   "item": "parsley",
+   "kind": "annual",
+   "seed_item": "seed_parsley",
+   "seed_price": 4,
+   "grow_minutes": 150,
+   "yield": 2,
+   "sell_price": 4,
+   "unlock_harvests": 0
+  },
+  {
+   "id": "basil",
+   "item": "basil",
+   "kind": "annual",
+   "seed_item": "seed_basil",
+   "seed_price": 3,
+   "grow_minutes": 120,
+   "yield": 2,
+   "sell_price": 3,
+   "unlock_harvests": 8
+  },
+  {
+   "id": "romaine_lettuce",
+   "item": "romaine_lettuce",
+   "kind": "annual",
+   "seed_item": "seed_romaine_lettuce",
+   "seed_price": 3,
+   "grow_minutes": 180,
+   "yield": 3,
+   "sell_price": 3,
+   "unlock_harvests": 12
+  },
+  {
+   "id": "cucumber",
+   "item": "cucumber",
+   "kind": "annual",
+   "seed_item": "seed_cucumber",
+   "seed_price": 2,
+   "grow_minutes": 240,
+   "yield": 3,
+   "sell_price": 2,
+   "unlock_harvests": 16
+  },
+  {
+   "id": "kale",
+   "item": "kale",
+   "kind": "annual",
+   "seed_item": "seed_kale",
+   "seed_price": 4,
+   "grow_minutes": 240,
+   "yield": 2,
+   "sell_price": 5,
+   "unlock_harvests": 20
+  },
+  {
+   "id": "zucchini",
+   "item": "zucchini",
+   "kind": "annual",
+   "seed_item": "seed_zucchini",
+   "seed_price": 3,
+   "grow_minutes": 300,
+   "yield": 3,
+   "sell_price": 3,
+   "unlock_harvests": 30
+  },
+  {
+   "id": "bell_pepper",
+   "item": "bell_pepper",
+   "kind": "annual",
+   "seed_item": "seed_bell_pepper",
+   "seed_price": 5,
+   "grow_minutes": 360,
+   "yield": 2,
+   "sell_price": 6,
+   "unlock_harvests": 40
+  },
+  {
+   "id": "carrot",
+   "item": "carrot",
+   "kind": "annual",
+   "seed_item": "seed_carrot",
+   "seed_price": 3,
+   "grow_minutes": 480,
+   "yield": 2,
+   "sell_price": 4,
+   "unlock_harvests": 50
+  },
+  {
+   "id": "cherry_tomato",
+   "item": "cherry_tomato",
+   "kind": "annual",
+   "seed_item": "seed_cherry_tomato",
+   "seed_price": 4,
+   "grow_minutes": 420,
+   "yield": 3,
+   "sell_price": 4,
+   "unlock_harvests": 60
+  },
+  {
+   "id": "strawberry",
+   "item": "strawberry",
+   "kind": "perennial",
+   "seed_item": "sapling_strawberry",
+   "seed_price": 60,
+   "grow_minutes": 480,
+   "yield": 2,
+   "sell_price": 7,
+   "unlock_harvests": 25,
+   "max_stock": 4
+  },
+  {
+   "id": "apple",
+   "item": "apple",
+   "kind": "perennial",
+   "seed_item": "sapling_apple",
+   "seed_price": 100,
+   "grow_minutes": 720,
+   "yield": 3,
+   "sell_price": 4,
+   "unlock_harvests": 45,
+   "max_stock": 6
+  },
+  {
+   "id": "blueberry",
+   "item": "blueberry",
+   "kind": "perennial",
+   "seed_item": "sapling_blueberry",
+   "seed_price": 80,
+   "grow_minutes": 600,
+   "yield": 3,
+   "sell_price": 6,
+   "unlock_harvests": 70,
+   "max_stock": 6
+  },
+  {
+   "id": "pear",
+   "item": "pear",
+   "kind": "perennial",
+   "seed_item": "sapling_pear",
+   "seed_price": 140,
+   "grow_minutes": 900,
+   "yield": 3,
+   "sell_price": 5,
+   "unlock_harvests": 100,
+   "max_stock": 6
+  }
+ ]
+}

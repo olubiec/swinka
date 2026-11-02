@@ -1,0 +1,140 @@
+{
+ "note": "Places of the world. Costs in clovers; the human tunes them. Design: docs/WORLD.md sections 2-3.",
+ "version": 1,
+ "places": [
+  {
+   "id": "house",
+   "name": "House",
+   "unlocked_at_start": true,
+   "rooms": [
+    {
+     "id": "salon",
+     "name": "Living room",
+     "unlocked_at_start": true,
+     "levels": [
+      {
+       "cols": 12,
+       "rows": 7,
+       "cost": 0
+      },
+      {
+       "cols": 16,
+       "rows": 8,
+       "cost": 400
+      },
+      {
+       "cols": 20,
+       "rows": 9,
+       "cost": 900
+      }
+     ]
+    },
+    {
+     "id": "bedroom",
+     "name": "Bedroom",
+     "cost": 350,
+     "levels": [
+      {
+       "cols": 10,
+       "rows": 6,
+       "cost": 0
+      },
+      {
+       "cols": 14,
+       "rows": 7,
+       "cost": 500
+      }
+     ]
+    },
+    {
+     "id": "playroom",
+     "name": "Playroom",
+     "cost": 500,
+     "levels": [
+      {
+       "cols": 12,
+       "rows": 7,
+       "cost": 0
+      },
+      {
+       "cols": 16,
+       "rows": 8,
+       "cost": 700
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "garden",
+   "name": "Garden",
+   "cost": 300,
+   "requires": [],
+   "levels": [
+    {
+     "cols": 16,
+     "rows": 9,
+     "cost": 0
+    },
+    {
+     "cols": 20,
+     "rows": 10,
+     "cost": 350
+    }
+   ]
+  },
+  {
+   "id": "farm",
+   "name": "Farm",
+   "cost": 450,
+   "requires": [
+    "garden"
+   ],
+   "welcome_items": {
+    "seed_dandelion": 2,
+    "seed_cilantro": 2,
+    "seed_parsley": 2
+   }
+  },
+  {
+   "id": "park",
+   "name": "Park",
+   "cost": 900,
+   "requires": [
+    "garden"
+   ],
+   "levels": [
+    {
+     "cols": 24,
+     "rows": 12,
+     "cost": 0
+    },
+    {
+     "cols": 30,
+     "rows": 14,
+     "cost": 1200
+    }
+   ]
+  },
+  {
+   "id": "market",
+   "name": "Market",
+   "unlocked_at_start": true
+  }
+ ],
+ "grid": {
+  "wall_rows": 2,
+  "note": "top rows of a room are wall (wall layer); the rest is floor (floor and ground layers). Outdoor places have no wall rows."
+ },
+ "comfort": {
+  "cap": 100,
+  "mood_decay_reduction_at_cap": 0.15,
+  "note": "sum of item comfort over house, garden and park, capped; slows mood decay only, never touches clovers"
+ },
+ "walk": {
+  "per_day": 3,
+  "mood": 6,
+  "min_comfort_garden": 10,
+  "note": "a pig strolls in the garden or park; mood only, no clovers"
+ }
+}

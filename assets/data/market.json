@@ -1,0 +1,45 @@
+{
+ "note": "The guinea pig market. Numbers tuned by the human; code only reads them (loader: Cuy.Core.World.MarketConfig). Design: docs/WORLD.md section 5.",
+ "version": 1,
+ "unlocked_at_start": true,
+ "daily_sales_cap_clovers": 40,
+ "full_price_units_per_item": 6,
+ "over_quota_steps": [
+  {
+   "until_units": 12,
+   "factor": 0.5
+  },
+  {
+   "until_units": 999,
+   "factor": 0.25
+  }
+ ],
+ "price_wiggle_percent": 15,
+ "restock_hour_local": 6,
+ "special_offers": {
+  "slots": 3,
+  "discount_percent": 20,
+  "pool": [
+   "decor",
+   "seed",
+   "toy"
+  ]
+ },
+ "stall_upgrades": [
+  {
+   "id": "big_stall",
+   "extra_special_slots": 2,
+   "cost": 400
+  }
+ ],
+ "orders": {
+  "per_day": 3,
+  "reward_factor": 1.4,
+  "counts_toward_sales_cap": true,
+  "unlock_harvests": 30
+ },
+ "invariants": {
+  "sell_price_max_share_of_buy": 0.739,
+  "note": "sell*(1+wiggle) must stay below buy*(1-wiggle): no loop earns clovers from buying and selling"
+ }
+}

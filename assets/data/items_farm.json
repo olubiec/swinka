@@ -1,0 +1,226 @@
+{
+ "note": "Seeds, saplings and extra crops of the farm. Format as items.json; loaded together with it. Design: docs/WORLD.md.",
+ "items": [
+  {
+   "id": "cilantro",
+   "name": "Cilantro",
+   "category": "vegetable",
+   "price": 8,
+   "icon": "cilantro",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 6,
+    "vitamin_c": 14,
+    "mood": 3
+   },
+   "description": "Fragrant and rich in vitamin C."
+  },
+  {
+   "id": "basil",
+   "name": "Basil",
+   "category": "vegetable",
+   "price": 7,
+   "icon": "basil",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 5,
+    "vitamin_c": 8,
+    "mood": 5
+   },
+   "description": "A fragrant leaf, pigs love the smell."
+  },
+  {
+   "id": "romaine_lettuce",
+   "name": "Romaine lettuce",
+   "category": "vegetable",
+   "price": 7,
+   "icon": "romaine_lettuce",
+   "animation": "eat_big",
+   "effects": {
+    "fullness": 8,
+    "vitamin_c": 6,
+    "mood": 3
+   },
+   "description": "Crunchy and juicy."
+  },
+  {
+   "id": "zucchini",
+   "name": "Zucchini",
+   "category": "vegetable",
+   "price": 7,
+   "icon": "zucchini",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 7,
+    "vitamin_c": 5,
+    "mood": 4
+   },
+   "description": "Mild and watery."
+  },
+  {
+   "id": "cherry_tomato",
+   "name": "Cherry tomato",
+   "category": "treat",
+   "price": 9,
+   "icon": "cherry_tomato",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 4,
+    "vitamin_c": 10,
+    "mood": 6
+   },
+   "description": "Only the fruit, only a little: once a day.",
+   "daily_limit": 1
+  },
+  {
+   "id": "blueberry",
+   "name": "Blueberries",
+   "category": "treat",
+   "price": 14,
+   "icon": "blueberry",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 3,
+    "vitamin_c": 6,
+    "mood": 10
+   },
+   "description": "Tiny and sweet: once a day.",
+   "daily_limit": 1
+  },
+  {
+   "id": "pear",
+   "name": "Pear",
+   "category": "treat",
+   "price": 12,
+   "icon": "pear",
+   "animation": "eat_treat",
+   "effects": {
+    "fullness": 6,
+    "vitamin_c": 4,
+    "mood": 8
+   },
+   "description": "Sweet and juicy: once a day.",
+   "daily_limit": 1
+  },
+  {
+   "id": "seed_dandelion",
+   "name": "Dandelion seeds",
+   "category": "seed",
+   "price": 3,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_cilantro",
+   "name": "Cilantro seeds",
+   "category": "seed",
+   "price": 3,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_parsley",
+   "name": "Parsley seeds",
+   "category": "seed",
+   "price": 4,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_basil",
+   "name": "Basil seeds",
+   "category": "seed",
+   "price": 3,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_romaine_lettuce",
+   "name": "Romaine lettuce seeds",
+   "category": "seed",
+   "price": 3,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_cucumber",
+   "name": "Cucumber seeds",
+   "category": "seed",
+   "price": 2,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_kale",
+   "name": "Kale seeds",
+   "category": "seed",
+   "price": 4,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_zucchini",
+   "name": "Zucchini seeds",
+   "category": "seed",
+   "price": 3,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_bell_pepper",
+   "name": "Bell pepper seeds",
+   "category": "seed",
+   "price": 5,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_carrot",
+   "name": "Carrot seeds",
+   "category": "seed",
+   "price": 3,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "seed_cherry_tomato",
+   "name": "Cherry tomato seeds",
+   "category": "seed",
+   "price": 4,
+   "icon": "seed",
+   "description": "Plant on the farm."
+  },
+  {
+   "id": "sapling_strawberry",
+   "name": "Strawberry sapling",
+   "category": "seed",
+   "price": 60,
+   "icon": "sapling",
+   "description": "Grows in the orchard and bears fruit again and again."
+  },
+  {
+   "id": "sapling_apple",
+   "name": "Apple sapling",
+   "category": "seed",
+   "price": 100,
+   "icon": "sapling",
+   "description": "Grows in the orchard and bears fruit again and again."
+  },
+  {
+   "id": "sapling_blueberry",
+   "name": "Blueberry sapling",
+   "category": "seed",
+   "price": 80,
+   "icon": "sapling",
+   "description": "Grows in the orchard and bears fruit again and again."
+  },
+  {
+   "id": "sapling_pear",
+   "name": "Pear sapling",
+   "category": "seed",
+   "price": 140,
+   "icon": "sapling",
+   "description": "Grows in the orchard and bears fruit again and again."
+  }
+ ]
+}

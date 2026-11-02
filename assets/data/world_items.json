@@ -1,0 +1,599 @@
+{
+ "note": "Placeable items of the house, garden, park and farm (grid footprint w x h, price in clovers, comfort points). The existing slot items in items_decor.json become placeable through the migration (docs/WORLD.md section 2.4). Sprites come from the art track (S0-S5) and fall back to a Twemoji glyph until then.",
+ "version": 1,
+ "layers": [
+  "ground",
+  "floor",
+  "wall"
+ ],
+ "items": [
+  {
+   "id": "sofa_cosy",
+   "name": "Cosy sofa",
+   "place": [
+    "house"
+   ],
+   "w": 3,
+   "h": 2,
+   "price": 260,
+   "comfort": 6,
+   "layer": "floor",
+   "icon": "sofa_cosy"
+  },
+  {
+   "id": "armchair",
+   "name": "Armchair",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 160,
+   "comfort": 4,
+   "layer": "floor",
+   "icon": "armchair"
+  },
+  {
+   "id": "bookshelf",
+   "name": "Bookshelf",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 3,
+   "price": 180,
+   "comfort": 3,
+   "layer": "floor",
+   "icon": "bookshelf"
+  },
+  {
+   "id": "side_table",
+   "name": "Side table",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 60,
+   "comfort": 1,
+   "layer": "floor",
+   "icon": "side_table"
+  },
+  {
+   "id": "cushion_big",
+   "name": "Big cushion",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 45,
+   "comfort": 3,
+   "layer": "floor",
+   "icon": "cushion_big"
+  },
+  {
+   "id": "toy_basket",
+   "name": "Toy basket",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 70,
+   "comfort": 2,
+   "layer": "floor",
+   "icon": "toy_basket"
+  },
+  {
+   "id": "hay_bar_wood",
+   "name": "Wooden hay bar",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": 110,
+   "comfort": 2,
+   "layer": "floor",
+   "icon": "hay_bar_wood"
+  },
+  {
+   "id": "window_sun",
+   "name": "Sunny window",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 130,
+   "comfort": 3,
+   "layer": "wall",
+   "icon": "window_sun"
+  },
+  {
+   "id": "curtains_dots",
+   "name": "Dotted curtains",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 90,
+   "comfort": 2,
+   "layer": "wall",
+   "icon": "curtains_dots"
+  },
+  {
+   "id": "wall_clock",
+   "name": "Wall clock",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 50,
+   "comfort": 1,
+   "layer": "wall",
+   "icon": "wall_clock"
+  },
+  {
+   "id": "shelf_small",
+   "name": "Small shelf",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": 70,
+   "comfort": 1,
+   "layer": "wall",
+   "icon": "shelf_small"
+  },
+  {
+   "id": "hanging_planter",
+   "name": "Hanging planter",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 65,
+   "comfort": 2,
+   "layer": "wall",
+   "icon": "hanging_planter"
+  },
+  {
+   "id": "fairy_lights",
+   "name": "Fairy lights",
+   "place": [
+    "house"
+   ],
+   "w": 3,
+   "h": 1,
+   "price": 95,
+   "comfort": 3,
+   "layer": "wall",
+   "icon": "fairy_lights"
+  },
+  {
+   "id": "cosy_nook",
+   "name": "Cosy nook",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 210,
+   "comfort": 5,
+   "layer": "floor",
+   "icon": "cosy_nook"
+  },
+  {
+   "id": "fence_wood",
+   "name": "Wooden fence",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 12,
+   "comfort": 0,
+   "layer": "floor",
+   "icon": "fence_wood"
+  },
+  {
+   "id": "hedge",
+   "name": "Hedge",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 25,
+   "comfort": 1,
+   "layer": "floor",
+   "icon": "hedge"
+  },
+  {
+   "id": "flowerbed_tulip",
+   "name": "Tulip bed",
+   "place": [
+    "garden"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": 55,
+   "comfort": 3,
+   "layer": "floor",
+   "icon": "flowerbed_tulip"
+  },
+  {
+   "id": "flowerbed_daisy",
+   "name": "Daisy bed",
+   "place": [
+    "garden"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": 55,
+   "comfort": 3,
+   "layer": "floor",
+   "icon": "flowerbed_daisy"
+  },
+  {
+   "id": "bush_berry",
+   "name": "Berry bush",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 70,
+   "comfort": 2,
+   "layer": "floor",
+   "icon": "bush_berry"
+  },
+  {
+   "id": "tree_small",
+   "name": "Small tree",
+   "place": [
+    "garden"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 140,
+   "comfort": 4,
+   "layer": "floor",
+   "icon": "tree_small"
+  },
+  {
+   "id": "pond_small",
+   "name": "Small pond",
+   "place": [
+    "garden"
+   ],
+   "w": 3,
+   "h": 2,
+   "price": 220,
+   "comfort": 6,
+   "layer": "floor",
+   "icon": "pond_small"
+  },
+  {
+   "id": "bench_wood",
+   "name": "Garden bench",
+   "place": [
+    "garden"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": 90,
+   "comfort": 3,
+   "layer": "floor",
+   "icon": "bench_wood"
+  },
+  {
+   "id": "bird_bath",
+   "name": "Bird bath",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 100,
+   "comfort": 3,
+   "layer": "floor",
+   "icon": "bird_bath"
+  },
+  {
+   "id": "path_stone",
+   "name": "Stone path",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 8,
+   "comfort": 0,
+   "layer": "ground",
+   "icon": "path_stone"
+  },
+  {
+   "id": "lantern_garden",
+   "name": "Garden lantern",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 75,
+   "comfort": 2,
+   "layer": "floor",
+   "icon": "lantern_garden"
+  },
+  {
+   "id": "arch_rose",
+   "name": "Rose arch",
+   "place": [
+    "garden"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": 160,
+   "comfort": 4,
+   "layer": "floor",
+   "icon": "arch_rose"
+  },
+  {
+   "id": "sandbox_pig",
+   "name": "Dust bath corner",
+   "place": [
+    "garden"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 120,
+   "comfort": 5,
+   "layer": "floor",
+   "icon": "sandbox_pig"
+  },
+  {
+   "id": "pigloo_garden",
+   "name": "Garden hideout",
+   "place": [
+    "garden"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 190,
+   "comfort": 5,
+   "layer": "floor",
+   "icon": "pigloo_garden"
+  },
+  {
+   "id": "memory_corner",
+   "name": "Memory corner",
+   "place": [
+    "garden"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 0,
+   "comfort": 0,
+   "layer": "floor",
+   "icon": "memory_corner",
+   "free": true,
+   "requires": "memorial_pig",
+   "note": "flowers and a small stone with the names of the pigs in memorial mode"
+  },
+  {
+   "id": "fountain",
+   "name": "Fountain",
+   "place": [
+    "park"
+   ],
+   "w": 3,
+   "h": 3,
+   "price": 420,
+   "comfort": 7,
+   "layer": "floor",
+   "icon": "fountain"
+  },
+  {
+   "id": "tree_big",
+   "name": "Big oak",
+   "place": [
+    "park"
+   ],
+   "w": 3,
+   "h": 3,
+   "price": 300,
+   "comfort": 6,
+   "layer": "floor",
+   "icon": "tree_big"
+  },
+  {
+   "id": "gazebo",
+   "name": "Gazebo",
+   "place": [
+    "park"
+   ],
+   "w": 4,
+   "h": 3,
+   "price": 520,
+   "comfort": 8,
+   "layer": "floor",
+   "icon": "gazebo"
+  },
+  {
+   "id": "bridge_wood",
+   "name": "Wooden bridge",
+   "place": [
+    "park"
+   ],
+   "w": 4,
+   "h": 2,
+   "price": 340,
+   "comfort": 5,
+   "layer": "floor",
+   "icon": "bridge_wood"
+  },
+  {
+   "id": "lamp_post",
+   "name": "Lamp post",
+   "place": [
+    "park"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 110,
+   "comfort": 2,
+   "layer": "floor",
+   "icon": "lamp_post"
+  },
+  {
+   "id": "picnic_blanket",
+   "name": "Picnic blanket",
+   "place": [
+    "park"
+   ],
+   "w": 3,
+   "h": 2,
+   "price": 130,
+   "comfort": 5,
+   "layer": "floor",
+   "icon": "picnic_blanket"
+  },
+  {
+   "id": "statue_pig",
+   "name": "Pig statue",
+   "place": [
+    "park"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 380,
+   "comfort": 6,
+   "layer": "floor",
+   "icon": "statue_pig"
+  },
+  {
+   "id": "flower_arch",
+   "name": "Flower arch",
+   "place": [
+    "park"
+   ],
+   "w": 3,
+   "h": 1,
+   "price": 240,
+   "comfort": 5,
+   "layer": "floor",
+   "icon": "flower_arch"
+  },
+  {
+   "id": "pond_big",
+   "name": "Lake",
+   "place": [
+    "park"
+   ],
+   "w": 5,
+   "h": 3,
+   "price": 600,
+   "comfort": 9,
+   "layer": "floor",
+   "icon": "pond_big"
+  },
+  {
+   "id": "tunnel_playground",
+   "name": "Play tunnel",
+   "place": [
+    "park"
+   ],
+   "w": 3,
+   "h": 2,
+   "price": 260,
+   "comfort": 6,
+   "layer": "floor",
+   "icon": "tunnel_playground"
+  },
+  {
+   "id": "bench_park",
+   "name": "Park bench",
+   "place": [
+    "park"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": 100,
+   "comfort": 3,
+   "layer": "floor",
+   "icon": "bench_park"
+  },
+  {
+   "id": "path_cobble",
+   "name": "Cobble path",
+   "place": [
+    "park"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 10,
+   "comfort": 0,
+   "layer": "ground",
+   "icon": "path_cobble"
+  },
+  {
+   "id": "scarecrow",
+   "name": "Scarecrow",
+   "place": [
+    "farm"
+   ],
+   "w": 1,
+   "h": 2,
+   "price": 120,
+   "comfort": 2,
+   "layer": "floor",
+   "icon": "scarecrow"
+  },
+  {
+   "id": "fence_farm",
+   "name": "Farm fence",
+   "place": [
+    "farm"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 10,
+   "comfort": 0,
+   "layer": "floor",
+   "icon": "fence_farm"
+  },
+  {
+   "id": "wheelbarrow",
+   "name": "Wheelbarrow",
+   "place": [
+    "farm"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": 80,
+   "comfort": 1,
+   "layer": "floor",
+   "icon": "wheelbarrow"
+  },
+  {
+   "id": "signpost",
+   "name": "Signpost",
+   "place": [
+    "farm"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 40,
+   "comfort": 1,
+   "layer": "floor",
+   "icon": "signpost"
+  }
+ ]
+}
