@@ -45,17 +45,20 @@ COATS = {
                 'rust':   [hx('f4cc98'), hx('e2ae74'), hx('c28c54'), hx('966a42')]},
 }
 import patterns as PT
+import coatgen as CG
 STYLE = dict(kb=1.0, kh=1.0, kx=1.0, coat='ruda', senior=False, gold=False, breed='smooth', build='normal',
-             pattern=PT.DEFAULT_PATTERN, palette=PT.DEFAULT_PALETTE, master=True)
+             pattern=PT.DEFAULT_PATTERN, palette=PT.DEFAULT_PALETTE, master=True, named=None)
 
-def set_style(age='adult', coat='ruda', breed='smooth', build='normal', pattern=None, palette=None, master=None):
+def set_style(age='adult', coat='ruda', breed='smooth', build='normal', pattern=None, palette=None, master=None, named=None):
     """breed: smooth/teddy/rosette/peruvian (legacy 'chubby'/'skinny' are builds). master=True renders the zone-coded sheet."""
     if breed in ('chubby', 'skinny'):
         build, breed = breed, 'smooth'
+    if named:
+        master = False
     if master is None:
         master = pattern is None and palette is None
     STYLE.update(kb=1.0, kh=1.0, kx=1.0, coat=coat, senior=False, gold=False, breed=breed, build=build,
-                 pattern=pattern or PT.DEFAULT_PATTERN, palette=palette or PT.DEFAULT_PALETTE, master=master)
+                 pattern=pattern or PT.DEFAULT_PATTERN, palette=palette or PT.DEFAULT_PALETTE, master=master, named=named)
     if age == 'baby':
         STYLE.update(kb=0.78, kh=0.88)
     elif age == 'junior':
@@ -72,6 +75,8 @@ def set_style(age='adult', coat='ruda', breed='smooth', build='normal', pattern=
         STYLE.update(kb=STYLE['kb'] * 0.92, kh=STYLE['kh'] * 0.96)
 
 def eyec():
+    if STYLE['named']:
+        return hx(CG.EYES[STYLE['named']])
     if STYLE['master']:
         return EYE
     e = PT.PALETTES[STYLE['palette']].get('eye')
@@ -101,7 +106,28 @@ WHISK_OLD = np.array([255, 255, 255, 255], np.uint8)
 SHADOW = np.array([70, 45, 30, 70], np.uint8)
 ZMAT = ['Z' + z for z in PT.ZONES]
 MATN = ['orange', 'white', 'rust', 'pink', 'grey', 'wood', 'blue', 'fabric', 'red', 'cream', 'gold', 'hay', 'leaf', 'carrot'] + ZMAT
+QMAT = ['Q0', 'Q1', 'Q2', 'Q3']
+MATN = MATN + QMAT
 MAT = {n: i for i, n in enumerate(MATN)}
+QIDX = np.array([MAT[q] for q in QMAT])
+
+
+def named_col(slot, lv):
+    r = CG.RAMPS[STYLE['named']][slot]
+    if STYLE['senior']:
+        r = PT.fade_ramp(r)
+    return np.array(list(r[lv]) + [255], np.uint8)
+
+
+def named_body_mat(u, v, w=None):
+    """Material indices of the named pig's coat at body-model coordinates (w = visible-side depth when None)."""
+    if w is None:
+        w = np.sqrt(np.clip(1 - u * u - v * v, 0, 1))
+    return QIDX[CG.body_slots(STYLE['named'], u, v, w)]
+
+
+def named_head_mat(xh, yh, zh):
+    return QIDX[CG.head_slots(STYLE['named'], xh, yh, zh)]
 
 YY, XX = np.mgrid[0:S, 0:S].astype(float)
 XX += 0.5
@@ -164,7 +190,12 @@ class Canvas:
         for mi, mn in enumerate(MATN):
             for lv in range(4):
                 m = (self.mat == mi) & (self.lvl == lv)
-                if mn in ZMAT:
+                if mn in QMAT:
+                    if m.any():
+                        img[m] = named_col(int(mn[1]), lv)
+                elif mn in ZMAT and STYLE['named']:
+                    img[m] = named_col(CG.NZ[STYLE['named']][mn], lv)
+                elif mn in ZMAT:
                     z = mn[1:]
                     img[m] = zone_col(z, lv)
                     if lv < 3:
@@ -205,6 +236,11 @@ class Canvas:
 def body_zones(u, v, w=None):
     """Zone material per pixel from body-model coordinates: u forward (-1..1), v down (-1 top..1 belly), w lateral (3D only)."""
     z = lambda n: MAT['Z' + n]
+    u = np.asarray(u, float)
+    v = np.asarray(v, float)
+    ww = np.sqrt(np.clip(1 - u * u - v * v, 0, 1)) if w is None else np.asarray(w, float)
+    u = u + 0.07 * CG.fbm(u * 2.4 + v * 1.3, v * 2.1 + 3.0, np.abs(ww) * 1.5, 5)   # organic zone borders (same warp for every coat)
+    v = v + 0.06 * CG.fbm(u * 2.0 + 7.0, v * 2.6, np.abs(ww) * 1.7, 9)
     mat = np.full(np.shape(u), z('M'))
     mat[u > 0.30] = z('S')
     mat[u < -0.50] = z('R')
@@ -333,6 +369,8 @@ def render_side(**kw):
         b = b + 0.17 * np.where((ix + iy) % 2 == 0, 1.0, -1.0)
     c.hash = (ix * 7 + iy * 13 + (ix * iy) % 5) % 11    # speckle source fixed to the body (local coordinates, no shimmer)
     mat = body_zones(u, np.minimum(v, 0.5) if breed == 'peruvian' else v)   # long hair covers the belly colour
+    if STYLE['named']:
+        mat = named_body_mat(u, v)
 
     # głowa (czaszka + pyszczek)
     if breed == 'teddy':   # broad head, short blunt muzzle
@@ -354,6 +392,8 @@ def render_side(**kw):
     hmat[hdy_ < -2.6] = MAT['ZH']              # crown above the eye line
     hmat[n2] = MAT['ZN2']
     hmat[blaze] = MAT['ZN1']
+    if STYLE['named']:
+        hmat = named_head_mat(hdx_, hdy_, 10.0 * np.sqrt(np.clip(1 - hu ** 2 - hv ** 2, 0, 1)))
     if STYLE['senior']:
         dith = ((XX.astype(int) + YY.astype(int)) % 2) == 0
         muz = ((lx - hxc) / kh > 1.0) & ((ly - hyc) / kh > -2.0) & ~blaze

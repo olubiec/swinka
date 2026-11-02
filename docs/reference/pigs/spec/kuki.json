@@ -5,8 +5,9 @@
  "hair": "medium-long shaggy abyssinian coat, rough, strands visible, ragged outline; ridges between whorls stand up",
  "proportions": "normal body, head about 1/3 of the body length, ginger part clearly smaller than the dark part when seen from the side",
  "layout": [
+  "TOP VIEW (kuki_03): four bands along the body: ginger head+shoulders, a DARK band across the back behind the shoulders, a GINGER patch over the hips (this is where the two rosettes sit, lit gold), a dark brown rump/tail end; dark flanks run along the sides under the ginger patch",
   "ginger (orange-gold) head, neck, shoulders and chest",
-  "transition ginger -> dark brown is a soft ticked gradient over the mid-back, not a line (mixed hairs), ginger tips lie over the dark base",
+  "bands blend in soft ticked gradients (mixed hairs, ginger tips lie over the dark base), not hard lines",
   "dark brown / black-brown rump and hind flanks with golden-tipped hairs",
   "TWO large rosettes on the rump: one on the hip (upper), one lower on the rump, each a bright radial starburst with a light centre point and rays 12-20 px long at photo scale",
   "ridge of upright hair between the two whorls and along the spine",
@@ -14,6 +15,8 @@
  ],
  "checklist": [
   "ginger head and shoulders",
+  "dark band behind the shoulders (top view)",
+  "ginger hip patch carrying the rosettes",
   "soft gradient ginger->dark (no hard edge)",
   "dark brown rump with gold tips",
   "two bright rosettes on the rump",
@@ -224,35 +227,35 @@
    ]
   },
   "blaze_white": {
-   "photo": "kuki_02_rosettes",
+   "photo": "kuki_03_topdown",
    "rect": [
-    338,
-    92,
-    400,
-    150
+    161,
+    336,
+    220,
+    350
    ],
    "ramp": [
-    "#ded3c0",
-    "#d9cbb9",
-    "#d2c0a9",
-    "#af894c"
+    "#e0d6c3",
+    "#d8c9b6",
+    "#d1c2ad",
+    "#aaa57e"
    ],
    "palette": [
     {
-     "hex": "#dbcebd",
-     "share": 0.64
+     "hex": "#d3c5b0",
+     "share": 0.4
     },
     {
-     "hex": "#a46619",
+     "hex": "#e6decb",
+     "share": 0.3
+    },
+    {
+     "hex": "#5f6528",
      "share": 0.15
     },
     {
-     "hex": "#576528",
-     "share": 0.11
-    },
-    {
-     "hex": "#c1ab7d",
-     "share": 0.09
+     "hex": "#a29e74",
+     "share": 0.14
     }
    ]
   },
@@ -284,10 +287,135 @@
      "share": 0.12
     }
    ]
+  },
+  "ginger_shoulders": {
+   "photo": "kuki_03_topdown",
+   "rect": [
+    80,
+    376,
+    242,
+    483
+   ],
+   "ramp": [
+    "#b27a26",
+    "#a36a20",
+    "#89551d",
+    "#673a13"
+   ],
+   "palette": [
+    {
+     "hex": "#ab721e",
+     "share": 0.43
+    },
+    {
+     "hex": "#76471c",
+     "share": 0.27
+    },
+    {
+     "hex": "#3d1f0e",
+     "share": 0.18
+    },
+    {
+     "hex": "#c4a381",
+     "share": 0.12
+    }
+   ]
+  },
+  "dark_band": {
+   "photo": "kuki_03_topdown",
+   "rect": [
+    97,
+    500,
+    270,
+    545
+   ],
+   "ramp": [
+    "#432b16",
+    "#321f10",
+    "#26160d",
+    "#1f1009"
+   ],
+   "palette": [
+    {
+     "hex": "#1b0f08",
+     "share": 0.38
+    },
+    {
+     "hex": "#2c1b10",
+     "share": 0.26
+    },
+    {
+     "hex": "#442b17",
+     "share": 0.25
+    },
+    {
+     "hex": "#634424",
+     "share": 0.11
+    }
+   ]
+  },
+  "ginger_hip_patch": {
+   "photo": "kuki_03_topdown",
+   "rect": [
+    80,
+    585,
+    270,
+    655
+   ],
+   "ramp": [
+    "#a0681c",
+    "#8b5416",
+    "#703e12",
+    "#542a0c"
+   ],
+   "palette": [
+    {
+     "hex": "#ae7722",
+     "share": 0.27
+    },
+    {
+     "hex": "#432009",
+     "share": 0.25
+    },
+    {
+     "hex": "#8f5615",
+     "share": 0.25
+    },
+    {
+     "hex": "#673912",
+     "share": 0.23
+    }
+   ]
+  },
+  "dark_tail_end": {
+   "photo": "kuki_03_topdown",
+   "rect": [
+    54,
+    720,
+    270,
+    830
+   ],
+   "ramp": [
+    "#332117",
+    "#2a1a12",
+    "#25150f",
+    "#20120d"
+   ],
+   "palette": [
+    {
+     "hex": "#291912",
+     "share": 0.95
+    },
+    {
+     "hex": "#543822",
+     "share": 0.05
+    }
+   ]
   }
  },
  "photos": [
-  "kuki_02_rosettes"
+  "kuki_02_rosettes",
+  "kuki_03_topdown"
  ],
  "note": "Colours are sampled from the photos: they include the lighting of each photo (warm/dark), so they are a guide for hue and relation, not exact targets. Ramps are 4 Lab-averaged lightness bands, light -> dark."
 }

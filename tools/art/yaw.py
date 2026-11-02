@@ -105,6 +105,8 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
     hb = _hit(bx, by, 0.0, brx, bry, brz, th, px, pe_top=2.0, pe_bot=2.5, pw=2.0)
     inside, D, loc, n, un = hb
     mb = body_zones(un[0], np.minimum(un[1], 0.5) if STYLE['breed'] == 'peruvian' else un[1], un[2])
+    if STYLE['named']:
+        mb = pig.named_body_mat(un[0], un[1], un[2])
     take = put('body', hb, mb)
     # head ------------------------------------------------------------------------------
     hh = _hit(hxc, hyc, 0.0, hrx, hry, hrz, th, px)
@@ -115,6 +117,8 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
         return head_zone(xh, yh, zh)
 
     def head_zone(xh, yh, zh):
+        if STYLE['named']:
+            return pig.named_head_mat(xh, yh, zh)
         out = np.full((S, S), MAT['ZC'])
         out[yh < -2.6] = MAT['ZH']
         blaze = (xh > 4.2 - 0.75 * yh) & (np.abs(zh) < 5.2)

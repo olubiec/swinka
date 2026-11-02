@@ -11,7 +11,7 @@ Ograniczenia:
 - Zdjęcie `racuch_03_scale_848g` nie jest w specyfikacji (możliwa druga świnka).
 
 Odkrycia, które zmieniają obecne sprite'y:
-- **Kuki:** przejście ruda -> ciemny brąz to miękki gradient z mieszanych włosów, nie linia; dwie duże rozetki na zadzie z jasnym punktem środkowym i promieniami; grzbiet włosa między nimi.
+- **Kuki:** z góry (nowe zdjęcie `kuki_03_topdown`) cztery pasy: ruda głowa i barki, CIEMNY pas za barkami, RUDA łata na biodrach (tu siedzą dwie rozetki, złote w świetle), ciemny brąz zadu; przejścia to miękkie gradienty z mieszanych włosów, nie linie.
 - **Ned:** brąz obejmuje uszy, oczy, boki głowy aż do szyi i pas na karku/barkach, biała jest łysina, policzki i broda; "serce" ledwo widać (domysł).
 - **Racuch:** czarne siodło to szeroki pas przez środek grzbietu z falistym brzegiem, nie plama; biały czubek zadu; czarna plama za okiem.
 - **James:** czysty szary pieprz i sól (jasne włosy równomiernie), ciemny pyszczek, bez łat.
