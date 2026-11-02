@@ -33,13 +33,21 @@ COATS = {
                      'rust':   [hx('55555f'), hx('3a3a43'), hx('282830'), hx('18181d')]},
     'agouti': {'orange': [hx('c4ab84'), hx('9a8260'), hx('745f44'), hx('4e3f2c')],
                'rust':   [hx('94775a'), hx('745a40'), hx('56422e'), hx('382a1c')]},
+    'tricolor': {'rust':   [hx('4b3f45'), hx('35292f'), hx('251c22'), hx('170f14')]},
+    'dutch': {'orange': [hx('94603f'), hx('774a30'), hx('5c3724'), hx('412517')],
+              'rust':   [hx('6c3a26'), hx('552c1c'), hx('401f14'), hx('2b140c')]},
+    'albino': {'orange': [hx('fdf6ea'), hx('f1e3cc'), hx('dcc9ab'), hx('bba88a')],
+               'rust':   [hx('ffeae0'), hx('f4d4c8'), hx('deb2a8'), hx('bf8e88')],
+               'eye': hx('c2283a')},
+    'cinnamon': {'orange': [hx('d58a52'), hx('b86d3e'), hx('94532f'), hx('6c3a22')],
+                 'rust':   [hx('a65634'), hx('85412a'), hx('672f1e'), hx('481f14')]},
     'kremowa': {'orange': [hx('fff3d6'), hx('f8dfb2'), hx('e6c48e'), hx('c49e66')],
                 'rust':   [hx('f4cc98'), hx('e2ae74'), hx('c28c54'), hx('966a42')]},
 }
-STYLE = dict(kb=1.0, kh=1.0, coat='ruda', senior=False, gold=False)
+STYLE = dict(kb=1.0, kh=1.0, coat='ruda', senior=False, gold=False, breed='smooth')
 
-def set_style(age='adult', coat='ruda'):
-    STYLE.update(kb=1.0, kh=1.0, coat=coat, senior=False, gold=False)
+def set_style(age='adult', coat='ruda', breed='smooth'):
+    STYLE.update(kb=1.0, kh=1.0, coat=coat, senior=False, gold=False, breed=breed)
     if age == 'baby':
         STYLE.update(kb=0.78, kh=0.88)
     elif age == 'junior':
@@ -48,6 +56,10 @@ def set_style(age='adult', coat='ruda'):
         STYLE.update(senior=True)
     elif age == 'legend':
         STYLE.update(senior=True, gold=True)
+
+def eyec():
+    return COATS.get(STYLE['coat'], {}).get('eye', EYE)
+
 
 def ramp(name):
     return COATS.get(STYLE['coat'], {}).get(name, RAMP[name])
@@ -298,14 +310,14 @@ def render_side(**kw):
     # oko
     EX, EY = fwd(hxc + 0.6 * kh, hyc - 3.0 * kh)
     eyes = {
-        'open':   (['.EE.', 'EEHE', 'EEEE', '.EE.'], {'E': EYE, 'H': HL}),
-        'look':   (['HEE', 'EEE', 'EEE'], {'E': EYE, 'H': HL}),
-        'wide':   (['.EE.', 'EHHE', 'EHEE', 'EEEE', '.EE.'], {'E': EYE, 'H': HL}),
-        'half':   (['....', 'OOOO', 'EEHE', '.EE.'], {'E': EYE, 'H': HL, 'O': OUT}),
+        'open':   (['.EE.', 'EEHE', 'EEEE', '.EE.'], {'E': eyec(), 'H': HL}),
+        'look':   (['HEE', 'EEE', 'EEE'], {'E': eyec(), 'H': HL}),
+        'wide':   (['.EE.', 'EHHE', 'EHEE', 'EEEE', '.EE.'], {'E': eyec(), 'H': HL}),
+        'half':   (['....', 'OOOO', 'EEHE', '.EE.'], {'E': eyec(), 'H': HL, 'O': OUT}),
         'closed': (['....', '....', 'OOOO', '....'], {'O': OUT}),
         'happy':  (['....', '.OO.', 'O..O', '....'], {'O': OUT}),
         'squeeze': (['O..', '.OO', 'O..'], {'O': OUT}),
-        'sad':    (['....', 'OO..', 'EEHE', '.EE.'], {'E': EYE, 'H': HL, 'O': OUT}),
+        'sad':    (['....', 'OO..', 'EEHE', '.EE.'], {'E': eyec(), 'H': HL, 'O': OUT}),
         'none':   ([], {}),
     }
     pat, cm = eyes[p['eye']]
@@ -485,11 +497,11 @@ def render_front(**kw):
 
     # oczy
     eyes = {
-        'open':   (['.EE.', 'EEHE', 'EEEE', '.EE.'], {'E': EYE, 'H': HL}),
-        'half':   (['....', 'OOOO', 'EEHE', '.EE.'], {'E': EYE, 'H': HL, 'O': OUT}),
+        'open':   (['.EE.', 'EEHE', 'EEEE', '.EE.'], {'E': eyec(), 'H': HL}),
+        'half':   (['....', 'OOOO', 'EEHE', '.EE.'], {'E': eyec(), 'H': HL, 'O': OUT}),
         'closed': (['....', '....', 'OOOO', '....'], {'O': OUT}),
         'happy':  (['....', '.OO.', 'O..O', '....'], {'O': OUT}),
-        'wide':   (['.EE.', 'EHHE', 'EHEE', 'EEEE', '.EE.'], {'E': EYE, 'H': HL}),
+        'wide':   (['.EE.', 'EHHE', 'EHEE', 'EEEE', '.EE.'], {'E': eyec(), 'H': HL}),
     }
     pat, cm = eyes[p['eye']]
     for side in (-1, 1):
