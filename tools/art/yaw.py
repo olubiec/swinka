@@ -107,7 +107,7 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
     foot_y = FLOOR - 2.2
     for (fxo, fz) in ((-12 * kb, -7.0), (-9 * kb, 7.0), (8 * kb, -7.0), (11 * kb, 7.0)):
         h = _hit(bx + fxo, foot_y, fz * kb * (0.9 if build in ('lean', 'skinny') else 1.0), 2.4, 1.5, 2.0, th, px)
-        put('foot', h, MAT['pink'])
+        put('foot', h, MAT['FT'])
     # body ------------------------------------------------------------------------------
     hb = _hit(bx, by, 0.0, brx, bry, brz, th, px, pe_top=2.0, pe_bot=2.5, pw=2.0)
     inside, D, loc, n, un = hb

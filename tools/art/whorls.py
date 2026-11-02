@@ -13,7 +13,12 @@ WHORLS = {
 }
 
 
-def _local(centre, sd, P, rx=NOM):
+def tangent(centre, sd, P, rx=NOM):
+    """Tangent-plane coordinates (a forward, b round the body) of points P relative to the surface point `centre` = (u, phi, ...)."""
+    return _local(centre, sd, P, rx, xy=True)
+
+
+def _local(centre, sd, P, rx=NOM, xy=False):
     cu, phi, R, nsp, tw = centre
     r = np.sqrt(max(1 - cu * cu, 0.0))
     C = np.array([cu * rx[0], -r * np.cos(phi) * rx[1], sd * r * np.sin(phi) * rx[2]])
@@ -25,6 +30,8 @@ def _local(centre, sd, P, rx=NOM):
     d = P - C[:, None, None] if P.ndim == 3 else P - C
     a = d[0] * e1[0] + d[1] * e1[1] + d[2] * e1[2]
     b = d[0] * e2[0] + d[1] * e2[1] + d[2] * e2[2]
+    if xy:
+        return a, b
     return np.hypot(a, b), np.arctan2(b, a)
 
 

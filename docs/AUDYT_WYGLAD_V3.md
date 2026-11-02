@@ -19,9 +19,9 @@ Stan na 2026-11-02. Plan: `docs/PLAN_WYGLAD_V3.md`, research: `docs/RESEARCH_WYG
 | --- | --- | --- |
 | Racuch | dobra | siodło, biały czubek, łysina i plama przy uchu czytelne; siodło tylko na grzbiecie (zdjęcie z góry pokazuje szerszy pas) |
 | Kuki | dobra | ruda przód, ciemny zad, dwie złote rozetki rozpoznawalne; ruda łata na biodrach i ciemny pas z góry słabo widoczne z boku; granica ruda/ciemna wciąż dość pionowa mimo miękkiego dithera |
-| Glen | dobra | czarna bryła czyta się po połysku i kępach, rudy pasek w uchu i smuga na boku; wiry tylko jako połysk |
-| James | średnia+ | szary roan bez łat, ciemny pyszczek; brak kręconych wąsów (rex) |
-| Ned | średnia+ | brąz na uszach, oczach i barkach, biały pysk; "serce" praktycznie niewidoczne, brązowy kark/szyja mogłyby sięgać dalej |
+| Glen | dobra | czarna bryła czyta się po połysku i kępach, rudy pasek w uchu i smuga na boku, czarne łapki (poprawka po uwadze właściciela); wiry tylko jako połysk |
+| James | dobra | jednolity szary na ciele i pyszczku (poprawka po uwadze właściciela), sierść tylko fakturą; brak kręconych wąsów (rex) |
+| Ned | dobra | brąz na uszach, oczach i barkach, biały pysk; serce po jednej stronie grzbietu, ukośnie (poprawka po uwadze właściciela), przy 64 px czyta się jako ukośna plama w kształcie serca |
 
 ## Nie zrobione / słabe
 - **A4:** kręcone wąsy rexa, osobne kształty głów per rasa.

@@ -96,15 +96,29 @@ RAMPS = {
                rp('fffdf8', 'f6ece0', 'dfcfbf', 'bfa89a'),  # 2 white
                rp('f7ac52', 'e18c32', 'bf6b23', '8f4a17')],
 }
+FEET = {'glen': rp('3c3f47', '2b2d34', '1c1d22', '111216')}   # Glen has black paws (the others keep pink feet)
 EYES = {'ned': '2b1712', 'kuki': '24140f', 'glen': '17161a', 'james': '23201e', 'racuch': '211611'}
 # what every unconverted zone material becomes in a named coat (legs, ears, back views ...)
 NZ = {
     'ned': dict(ZC=1, ZH=1, ZN1=0, ZN2=0, ZL=0, ZS=0, ZM=0, ZR=0, ZT=0, ZB=0, ZX1=2, ZX2=0, ZX3=1),
     'kuki': dict(ZC=0, ZH=0, ZN1=2, ZN2=2, ZL=1, ZS=0, ZM=1, ZR=1, ZT=1, ZB=1, ZX1=1, ZX2=1, ZX3=0),
     'glen': dict(ZC=0, ZH=0, ZN1=0, ZN2=0, ZL=0, ZS=0, ZM=0, ZR=0, ZT=0, ZB=0, ZX1=0, ZX2=0, ZX3=1),
-    'james': dict(ZC=2, ZH=0, ZN1=2, ZN2=2, ZL=2, ZS=0, ZM=0, ZR=0, ZT=0, ZB=0, ZX1=0, ZX2=0, ZX3=2),
+    'james': dict(ZC=0, ZH=0, ZN1=0, ZN2=0, ZL=0, ZS=0, ZM=0, ZR=0, ZT=0, ZB=0, ZX1=0, ZX2=0, ZX3=0),
     'racuch': dict(ZC=1, ZH=0, ZN1=2, ZN2=2, ZL=0, ZS=0, ZM=1, ZR=0, ZT=2, ZB=0, ZX1=1, ZX2=1, ZX3=1),
 }
+
+
+def heart_mask(u, v, w, centre=(-0.40, 0.85), size=5.4, angle=40.0):
+    """Ned's heart: on ONE side of the back (the +w side = the side facing the camera in the side view), slanted by `angle` degrees.
+    Drawn in the tangent plane of the surface at `centre` (u, phi); implicit heart curve (x^2+y^2-1)^3 - x^2 y^3 < 0."""
+    u, v, w = np.asarray(u, float), np.asarray(v, float), np.asarray(w, float)
+    P = np.stack([u * WH.NOM[0], v * WH.NOM[1], w * WH.NOM[2]])
+    a, b = WH.tangent(centre + (0, 0, 0), 1, P)
+    t = np.radians(angle)
+    x = (a * np.cos(t) + b * np.sin(t)) / size
+    y = (-a * np.sin(t) + b * np.cos(t)) / size
+    near = np.hypot(a, b) < size * 1.8
+    return near & (w > 0) & ((x * x + y * y - 1) ** 3 - x * x * y ** 3 < 0)
 
 
 def body_slots(pid, u, v, w):
@@ -115,12 +129,11 @@ def body_slots(pid, u, v, w):
         # chocolate shoulder cap behind the head (dark on top, fading down the flank) and a small low-contrast heart on the rump
         cap = sm(0.22, 0.46, sw) * (1 - sm(0.95, 1.5, pw))
         out = pick(cap, s, phi, 1, 0)
-        heart = ((((sw + 0.52) / 0.15) ** 2 + (pw / 0.5) ** 2) < 1) | (((sw + 0.60) / 0.07) ** 2 + (pw / 0.2) ** 2 < 1)
-        out = np.where(heart & (out == 0), 2, out)
+        out = np.where(heart_mask(u, v, w) & (out == 0), 1, out)
     elif pid == 'kuki':
-        ub = 0.34 - 0.29 * sm(0.7, 1.25, pw)                    # front (ginger) ends further back on the flank than on the back
-        front = sm(ub - 0.16, ub + 0.16, sw)
-        patch = 1 - sm(0.82, 1.18, np.hypot((sw + 0.27) / 0.30, pw / 1.05) * 1.0)    # ginger hip patch on the back (rosettes sit here)
+        ub = 0.34 - 0.29 * sm(0.7, 1.25, pw) + 0.09 * np.sin(pw * 3.2 + 1.0)                    # front (ginger) ends further back on the flank than on the back
+        front = sm(ub - 0.20, ub + 0.20, sw)
+        patch = 1 - sm(0.85, 1.25, np.hypot((sw + 0.27) / 0.36, pw / 1.15))    # ginger hip patch on the back (rosettes sit here)
         out = pick(np.maximum(front, patch), s, phi, 0, 1)
         _, ray, core = WH.field('kuki', u, v, w)
         out = np.where((ray | core) & (out == 1), 3, out)           # gold rays of the rosettes on the dark flank
@@ -130,14 +143,9 @@ def body_slots(pid, u, v, w):
         _, ray, core = WH.field('glen', u, v, w)
         out = np.where((ray | core) & ~streak, 3, out)
     elif pid == 'james':
-        dens = 0.55 - 0.15 * sm(0.5, 2.4, phi) + 0.06 * fbm(s * 4, phi * 3, 0.5, 5)      # light hairs: denser on the back
-        i = np.floor(s * 8.5).astype(int)          # clumps of about 2 px: salt and pepper without the static
-        j = np.floor(phi * 7).astype(int)
-        rnd = (_h(i, j, 3, 77) + 1) / 2
-        fine = (_h(np.floor(s * 17).astype(int), np.floor(phi * 14).astype(int), 4, 78) + 1) / 2
-        out = np.where((rnd < dens * 0.8) | (fine < 0.07), 1, 0)
+        out = np.zeros(np.shape(s), int)       # James is one even grey: the coat texture comes from the fur strokes only
     elif pid == 'racuch':
-        edge = 1.70 + 0.14 * fbm(s * 3.0, 0.0, 2.0, 61) + 0.05 * np.sin(s * 7)           # wavy lower edge of the saddle
+        edge = 1.95 + 0.14 * fbm(s * 3.0, 0.0, 2.0, 61) + 0.05 * np.sin(s * 7)           # wavy lower edge of the saddle
         fr, rr = 0.30 + 0.06 * (pw - 0.8), -0.38 - 0.06 * (pw - 0.8)                       # slightly slanted front/rear edges
         saddle = sm(rr - 0.02, rr + 0.04, sw) * (1 - sm(fr - 0.04, fr + 0.02, sw)) * (1 - sm(edge - 0.1, edge + 0.1, pw))
         out = pick(saddle, s, phi, 1, 0)
@@ -164,10 +172,7 @@ def head_slots(pid, xh, yh, zh):
     elif pid == 'glen':
         out = np.zeros(np.shape(xh), int)
     elif pid == 'james':
-        face = (xh + n > 1.2) & (yh > -2.0)
-        ticks = (_h(np.floor(xh * 2).astype(int), np.floor(yh * 2).astype(int), np.floor(zh * 2).astype(int), 91) + 1) / 2 < 0.32
-        out = np.where(face, 2, np.where(ticks, 1, 0))
-        out = np.where(face & (xh < 2.4) & ticks, 0, out)
+        out = np.zeros(np.shape(xh), int)      # same grey on the face: no dark muzzle
     elif pid == 'racuch':
         patch = (((xh + 1.2) / 4.4) ** 2 + ((yh + 0.8) / 3.6) ** 2 + (zh / 7.5) ** 2) < 1
         blaze = ((zh < 1.2 + 0.18 * (xh + 4)) & (yh < 2.2) & (xh > 1.0 + n)) | ((xh + n > 3.2 - 0.4 * yh) & (yh < 0.5) & (zh < 3.2))

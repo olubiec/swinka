@@ -107,7 +107,7 @@ WHISK = np.array([255, 246, 232, 190], np.uint8)
 WHISK_OLD = np.array([255, 255, 255, 255], np.uint8)
 SHADOW = np.array([70, 45, 30, 70], np.uint8)
 ZMAT = ['Z' + z for z in PT.ZONES]
-MATN = ['orange', 'white', 'rust', 'pink', 'grey', 'wood', 'blue', 'fabric', 'red', 'cream', 'gold', 'hay', 'leaf', 'carrot'] + ZMAT
+MATN = ['orange', 'white', 'rust', 'pink', 'grey', 'wood', 'blue', 'fabric', 'red', 'cream', 'gold', 'hay', 'leaf', 'carrot', 'FT'] + ZMAT
 QMAT = ['Q0', 'Q1', 'Q2', 'Q3']
 MATN = MATN + QMAT
 MAT = {n: i for i, n in enumerate(MATN)}
@@ -126,6 +126,12 @@ def named_body_mat(u, v, w=None):
     if w is None:
         w = np.sqrt(np.clip(1 - u * u - v * v, 0, 1))
     return QIDX[CG.body_slots(STYLE['named'], u, v, w)]
+
+
+def FR(i):
+    """Foot / paw ramp: pink, except pigs with dark feet (coatgen.FEET)."""
+    f = CG.FEET.get(STYLE['named']) if STYLE['named'] else None
+    return np.array(list(f[i]) + [255], np.uint8) if f is not None else RAMP['pink'][i]
 
 
 def named_head_mat(xh, yh, zh):
@@ -192,7 +198,10 @@ class Canvas:
         for mi, mn in enumerate(MATN):
             for lv in range(4):
                 m = (self.mat == mi) & (self.lvl == lv)
-                if mn in QMAT:
+                if mn == 'FT':
+                    if m.any():
+                        img[m] = FR(lv)
+                elif mn in QMAT:
                     if m.any():
                         img[m] = named_col(int(mn[1]), lv)
                 elif mn in ZMAT and STYLE['named']:
@@ -352,8 +361,8 @@ def render_side(**kw):
             leg = capsule(fx0 + 1.0, top, fx0 + 1.2, fy0 + 0.5, 1.05 if STYLE['build'] == 'skinny' else 1.35)
             c.put_mat(leg, MAT['ZL'], 2 if far else 1)
         X, Y = fwd(fx0 + 0.5, fy0 + 0.5)
-        col = RAMP['pink'][2 if far else 1]
-        toe = RAMP['pink'][3 if far else 2]
+        col = FR(2 if far else 1)
+        toe = FR(3 if far else 2)
         c.stamp(foot_pat, X, Y, {'P': col})
         c.put_px(X + 2, Y + 1, toe)
 
@@ -502,20 +511,20 @@ def render_side(**kw):
             arm = capsule(sx0, sy0, px1 - 0.6, py1 + 0.4, 1.5)
             c.put_mat(arm, MAT['ZL'], 1 + k)
             paw = ell(px1, py1, 1.6, 1.3)
-            c.put_mat(paw, MAT['pink'], 1 + k)
+            c.put_mat(paw, MAT['FT'], 1 + k)
     if p['arms']:   # przednie łapki przy piersi (stanie na tylnych łapkach)
         for k, (ax, ay) in enumerate(p['arms']):
             sx0, sy0 = bx + brx * 0.55 - k * 2, by + 1
             arm = capsule(sx0, sy0, sx0 + ax, sy0 + ay, 1.4)
             c.put_mat(arm, MAT['ZL'], 1 + k)
-            c.put_mat(ell(sx0 + ax + 0.4, sy0 + ay + 0.6, 1.5, 1.2), MAT['pink'], 1 + k)
+            c.put_mat(ell(sx0 + ax + 0.4, sy0 + ay + 0.6, 1.5, 1.2), MAT['FT'], 1 + k)
 
     if p['back_out']:   # tylne łapki wyciągnięte do tyłu (upał), przyczepione do tułowia
         for k in (1, 0):
             hipx, hipy = bx - brx * 0.62, by + bry * 0.55 - k * 0.8
             fx1, fy1 = bx - brx - 4.5 + k * 1.5, FLOOR - 2.0 - p['lift'] - k * 0.5
             c.put_mat(capsule(hipx, hipy, fx1 + 1.2, fy1, 1.6), MAT['ZL'], 2 if k else 1)
-            c.put_mat(ell(fx1, fy1, 1.8, 1.1), MAT['pink'], 2 if k else 1)
+            c.put_mat(ell(fx1, fy1, 1.8, 1.1), MAT['FT'], 2 if k else 1)
     if p['scratch'] is not None:   # tylna łapka drapie za uchem
         sdx, sdy = p['scratch']
         hipx, hipy = bx - brx * 0.3, by + bry * 0.45
@@ -529,9 +538,9 @@ def render_side(**kw):
         c.put_mat(rim, MAT['ZL'], 3)
         tu, tv = (lx - hipx) / 5.0, (ly - hipy) / 4.0
         c.put_mat(thigh | shin, MAT['ZL'], np.where(level(-(0.42 * tu + 0.88 * tv)) == 0, 0, 1))
-        c.put_mat(foot, MAT['pink'], 1)
+        c.put_mat(foot, MAT['FT'], 1)
         X, Y = fwd(fx1 + 1, fy1)
-        c.put_px(X, Y, RAMP['pink'][3])
+        c.put_px(X, Y, FR(3))
     if p['hat']:
         X, Y = fwd(hxc - 0.5 * kh, hyc - hry - 6.0)
         c.stamp(['...Y...', '..YYY..', '...R...', '..RRR..', '..BBB..', '.RRRRR.', 'BBBBBBB'], X - 3, Y,
@@ -631,8 +640,8 @@ def render_front(**kw):
         c.hash = (np.floor(lx).astype(int) * 7 + np.floor(ly).astype(int) * 13 + (np.floor(lx).astype(int) * np.floor(ly).astype(int)) % 5) % 11
         c.put_mat(body, mat, level(b))
         for fx0 in (cx - 7 * kb * p['sx'], cx + (4 * kb) * p['sx']):
-            c.stamp(['PPP', 'PPP'], int(fx0), FLOOR - 2 + int(oy), {'P': RAMP['pink'][1]})
-            c.put_px(int(fx0) + 1, FLOOR - 1 + int(oy), RAMP['pink'][2])
+            c.stamp(['PPP', 'PPP'], int(fx0), FLOOR - 2 + int(oy), {'P': FR(1)})
+            c.put_px(int(fx0) + 1, FLOOR - 1 + int(oy), FR(2))
         if STYLE['breed'] == 'peruvian':   # hair skirt down to the floor, hides the feet
             ixx = np.floor(lx).astype(int)
             hem = FLOOR - 2.0 - ((ixx % 3) == 0) * 0.9
@@ -715,7 +724,7 @@ def render_front(**kw):
         c.fx.append(f)
     if p['paws_edge']:
         for fx0 in (int(cx) - 9, int(cx) + 5):
-            c.fx.append((['.PP.', 'PPPP'], fx0, S - 3, {'P': RAMP['pink'][1], '_o': OUT}))
+            c.fx.append((['.PP.', 'PPPP'], fx0, S - 3, {'P': FR(1), '_o': OUT}))
     img = c.finish(shift=int(p['cy']))
     if p['clip'] is not None:
         img[p['clip']:] = 0

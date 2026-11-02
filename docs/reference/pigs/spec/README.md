@@ -16,3 +16,9 @@ Odkrycia, które zmieniają obecne sprite'y:
 - **Racuch:** czarne siodło to szeroki pas przez środek grzbietu z falistym brzegiem, nie plama; biały czubek zadu; czarna plama za okiem.
 - **James:** czysty szary pieprz i sól (jasne włosy równomiernie), ciemny pyszczek, bez łat.
 - **Glen:** całkiem czarny, bryłę widać tylko po kępach i połysku; rudy pasek w uchu i smuga na boku.
+
+## Poprawki właściciela (2026-11-02)
+- **Ned:** serduszko jest po jednej stronie grzbietu, ułożone ukosem (ok. 40 stopni).
+- **James:** jednolity szary, także pyszczek (bez ciemnej buzi).
+- **Glen:** czarne łapki.
+Specyfikacje JSON zaktualizowane (`ref_spec.py`).
