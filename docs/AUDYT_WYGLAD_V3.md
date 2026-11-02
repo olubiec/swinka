@@ -41,3 +41,4 @@ Loader musi znać `assets/sprites/pigs/pigs.json` (arkusz per świnka, bez `pale
 - Przyczyna przesuwania się łat: widoki z przodu i z tyłu (`render_front`) miały własny, osobny podział na strefy. Teraz każdy renderer (bok, obrót, przód, tył) bierze wzór z tych samych funkcji w przestrzeni modelu (`coatgen.body_slots`, `head_slots`), sierść i wiry też.
 - Kuki: usunięta złota plamka (złote promienie rozetki). Wir zostaje jako delikatny cień/światło.
 - Kontrola: przegląd wszystkich 60 animacji Kukiego i Neda (pierwsze klatki dorosłych): rozmieszczenie łat jest spójne.
+- `verify_palettes` po tej poprawce: TOTAL DIFFERENCES 0 (tylko kształt `smooth_normal`, jak wcześniej).
