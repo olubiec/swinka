@@ -55,7 +55,14 @@ czerwone CI naprawia CI Fixer, po 2 rundach nowe zadanie od gałęzi PR, po trze
 i build, napraw błędy, zaktualizuj status w docs/PLAN.md”. 7. Backlog: wybrane linie z `tasks/BACKLOG.md` przepisz na pliki fali (nie `tools/jules-backlog.sh`). 8. Do Claude wracasz po pliki
 następnej fali (szablon A2) albo gdy błąd jest w koncepcie lub planie.
 
-## Status (27.10.2026, wieczór)
+## Status aktualny (2026-11-02, wieczór)
+- **Jules, fale W1-W8: zrobione** (69 zadań w `tasks/done/` + 12 starszych `W-*`; kod w repo). CI na `main` zielone (Core, kompilacja aplikacji, składnia JS/JSON, smoke Domku). Lokalnie w tej sesji przeszły też: layout self-test, web-smoke, anim-test, palette-test, minigame-fit-check, maze-test i kontrola 43 folderów arkuszy.
+- **W9 (10 zadań) i W10-01: zastąpione.** Zrobiły to ręcznie fale wizualne V4-V6 (`docs/VISUAL_LOG.md`); pliki przeniesione do `tasks/done/`, żeby pętla ich nie powtórzyła.
+- **Grafika (Claude Code, poza Julesem):** V0-V8 i G0-G8 zrobione; wygląd V3 wg commitów: A0-A3 i A5/A6 wykonane (pięć świnek ma osobne arkusze w `assets/sprites/pigs/<id>/<etap>/`), zostają A4, A7 (opcja) i A8 (`docs/PLAN_WYGLAD_V3.md`).
+- **Nowe: stado z kolekcji (Ned, Kuki, Glen, James, Racuch)** w falach **W11-W15** (26 zadań), projekt i ekonomia: `docs/NAMED_PIGS.md`, dane: `assets/data/pigs_named.json`. W11 (5 zadań) leży w `tasks/` i czeka na start; W12-W15 rozpisuję przed ich startem.
+- **Pętla Julesa jest wyłączona ręcznie** (`jules-loop.yml` = disabled_manually): żadna fala nie ruszy, dopóki w Actions nie klikniesz "Enable workflow". Otwarty PR #75 (W3-04.1, diary) jest sprzed wyłączenia i czeka na decyzję.
+
+## Status historyczny (27.10.2026, wieczór)
 - Zrobione i scalone: fale 0–1 starego planu, F2-01, F2-03..F2-11 (w tym **F2-07 zabawki**), F3-02, F3-04, F3-05, **PR #32** (W1-01 karta przypomnienia + W1-02 stan kalendarza + W2-01 tick; scalone, ale z lukami).
 - Luki po PR #32: dane opieki (`care.json`) nie są nigdzie wczytywane, wiadomości z JS nie są walidowane, brak mapowania snake_case. Naprawiają W1-09, W1-10 i przepisane W2-01 (stare pliki w `tasks/done/`).
 - Nadal nie istnieje: tabele więzi i siana jako ładowane dane (W1-06/07), pamiętnik, host zachowań, ekran pamiętnika, filtr etapów, dźwięk w ustawieniach.
@@ -160,8 +167,55 @@ następnej fali (szablon A2) albo gdy błąd jest w koncepcie lub planie.
 | W8-07 | Kontrakty zgodne z kodem | `docs/contracts.md` |
 | W8-08 | Strojenie: symulacja 60 dni | `tools/Cuy.Simulator/Program.cs`, `docs/economy-report.md`, dane, testy |
 Integrację (testy wygenerowane `T<n>-xx`, scalenie, wpis w `PROJECT_STATE.md`) robi pętla. Człowiek: test na Windowsie, krok `maze-test` w `ci.yml`, ZIP z `tools/package.ps1`. Velopack tylko po Twoim „yes, Velopack”.
-### W9 (opcjonalna, po 2.0; NIE rozpisana)
+### W9-W10 (zastąpione przez fale wizualne V4-V6; pliki w `tasks/done/`)
+Dawne zadania W9 (dopasowanie gier, portret karty, sprite-check) i W10-01 wykonały ręcznie V4-V6. Poniżej zostają opcjonalne pomysły z pierwotnej W9.
+### Opcjonalne po 2.0 (NIE rozpisane)
 Hay Hop, towarzysz, pogoda z Open-Meteo (jedyne użycie internetu: wymaga Twojej zgody), taniec do muzyki, wygląd etapów w Domku. Claude rozpisuje pliki dopiero po Twojej decyzji. Stare prompty: `docs/archive/jules-F-tasks/`.
+
+## Stado z kolekcji: Ned, Kuki, Glen, James, Racuch (W11-W15)
+Pełny projekt (kolejność wejścia, mnożniki każdej świnki, ekonomia, niezmienniki testów, tryb pamięci, pytania do właściciela): `docs/NAMED_PIGS.md`. Skrót: start Kuki (2 lata) i Ned (maluch); James dnia 95,7, Glen dnia 104,4, Racuch dnia 130,4; wiek liczony osobno dla każdej świnki; potrzeby wspólne; mnożniki z `pigs_named.json` uśredniane po aktywnych świnkach i obcięte do 0,5-1,5; limity ekonomii bez zmian. Wszystkie nowe zachowania Core są za flagami `Balance` (`PerPigAgeActive`, `PigModifiersActive`, `ArrivalsActive`), włączanymi dopiero w W15-01.
+### W11 Fundamenty (5; bez zależności; głównie nowe pliki i dane) - pliki w `tasks/`
+| ID | Cel | Zmieniaj | Akceptacja |
+| --- | --- | --- | --- |
+| W11-01 | Loader `pigs_named.json` (`Current`/`Load`/`LoadDefault`) | `Pigs/NamedPigCatalog.cs`, test | CORE |
+| W11-02 | Pola życia w `PigProfile` (`NamedId`, `BornAtUtc`, `ArrivedAtUtc`, `Memorial`) i `PigLife` (wiek/etap per świnka) | `Pigs/PigProfile.cs`, `Pigs/PigLife.cs`, test | CORE |
+| W11-03 | `PigModifiers`: osiem mnożników, średnia, obcięcie | `Pigs/PigModifiers.cs`, test | CORE |
+| W11-04 | Flagi `Balance` (wszystkie wyłączone) | `Balance.cs`, test | CORE |
+| W11-05 | Osiągnięcia `new_friend` (50) i `full_house` (150) | `achievements.json`, test | CORE |
+### W12 Logika Core (3; wymaga W11) - pliki piszę przed startem
+| ID | Cel | Zmieniaj (główne) | Akceptacja |
+| --- | --- | --- | --- |
+| W12-01 | `ArrivalChecker`: czysty, idempotentny, łańcuch James → Glen → Racuch, wiele przybyć po offline | `Pigs/ArrivalChecker.cs`, test | CORE |
+| W12-02 | `Pet.ActiveModifiers`: średnia aktywnych świnek (flaga) | `Pet.PigModifiers.cs`, test | CORE |
+| W12-03 | Wiek i etap aktywnej świnki w `Pet` (flaga `PerPigAgeActive`) | `Pet.cs`, `Pet.PigAge.cs`, test | CORE |
+### W13 Integracja Core (5; wymaga W12)
+| ID | Cel | Zmieniaj (główne) | Akceptacja |
+| --- | --- | --- | --- |
+| W13-01 | Mnożniki w `Brain`: activity, joy_weight, wheek_rate | `AI/Brain.cs`, test | CORE |
+| W13-02 | Mnożnik appetite w zużyciu siana | `Pet.Hay.cs`, test | CORE |
+| W13-03 | Przybycia w `Pet`: paczka powitalna, pamiętnik, licznik `pigs_arrived`, zdarzenie `PigArrived` | `Pet.Arrivals.cs`, `Pet.cs` (2 linie), `Events.cs`, test | CORE |
+| W13-04 | Nowa gra: Kuki + Ned; migracja starych zapisów | `GameState.Pigs.cs`, `Save/SaveSystem.cs`, test | CORE |
+| W13-05 | `PigsFeature`: stan wiek/etap/mnożniki/zablokowane, `max_adopted` | `Features/PigsFeature.cs`, `pigs.json` | BUILD + CORE |
+### W14 Pulpit i Home (8; wymaga W13)
+| ID | Cel | Zmieniaj (główne) | Akceptacja |
+| --- | --- | --- | --- |
+| W14-01 | `bond_gain` i `minigame_score` w `Pet` | `Pet.cs`, test | CORE |
+| W14-02 | Etap każdej świnki zamiast jednego globalnego; wypieczone arkusze `pigs/<id>/` (C#) | `Graphics/PigLook.cs`, `Xml.cs` | BUILD |
+| W14-03 | Przybycie na pulpicie: toast, nowy pet, `peek` | `BrainController.cs` | BUILD |
+| W14-04 | Tempo bobków wg `poop_rate` | `PoopManager.cs` | BUILD |
+| W14-05 | Płochliwość wg `startle` | `Behaviors/MouseFearBehavior.cs` | BUILD |
+| W14-06 | My Pigs: wiek, etap, cechy, zablokowane sylwetki, tryb pamięci | `features/pigs/feature.js`, `feature.css` | SMOKE |
+| W14-07 | Mock stanu z pięcioma świnkami i toast powitalny | `bridge.js`, `app.js` | SMOKE |
+| W14-08 | Resolver arkuszy w Home: wypieczone `pigs/<id>/`, potem rasa + paleta | `lib/sprites.js` | SMOKE |
+### W15 Domknięcie (5; wymaga W14) → funkcja włączona
+| ID | Cel | Zmieniaj (główne) | Akceptacja |
+| --- | --- | --- | --- |
+| W15-01 | Włączenie flag w `GameSession.Open` | `GameSession.cs`, test | CORE |
+| W15-02 | Oś czasu i niezmienniki ekonomii (Symulator + test + raport) | `tools/Cuy.Simulator/Program.cs`, `docs/economy-report.md`, test | CORE |
+| W15-03 | Smoke My Pigs z pięcioma świnkami | `tools/qa/web-smoke.js` | SMOKE |
+| W15-04 | `contracts.md` i kroki ręczne na Windowsie | `docs/contracts.md`, `TESTY_RECZNE.md` | git diff |
+| W15-05 | `SelfTest`: `pigs_named.json` i arkusze wszystkich etapów | `SelfTest.cs` | BUILD |
+Człowiek: test na Windowsie po W14 i po W15; decyzje z `docs/NAMED_PIGS.md` sekcja 7; włączenie pętli.
 
 ## Mapa starych zadań
 F2-02→PR #32 (W1-01,W1-02,W2-01 stare) + W1-09,W1-10,W2-01 · F2-07→zrobione · F3-01→W1-03,W1-04,W2-02,W3-01,W7-06 · F3-03→W4-01..W4-04,W7-07,W7-08 · F4-01→W4-07,W5-01,W5-02 · F4-02→W4-06,W6-01,W6-02 ·

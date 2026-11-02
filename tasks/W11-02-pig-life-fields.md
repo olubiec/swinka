@@ -1,0 +1,15 @@
+# W11-02: Life fields on PigProfile and per-pig age helper
+Zmieniaj: src/Cuy.Core/Pigs/PigProfile.cs, src/Cuy.Core/Pigs/PigLife.cs, tests/Cuy.Core.Tests/PigLifeTests.cs
+Wymagane: src/Cuy.Core/Pigs/PigLife.cs, tests/Cuy.Core.Tests/PigLifeTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/pigs_named.json, src/Cuy.Core/Save/SaveSystem.cs, src/Cuy.Core/Pet.cs
+Goal: Every pig profile can carry its own birth moment, origin and memorial flag, and a pure helper turns them into that pig's age and life stage.
+Depends on: nothing (wave start).
+Facts: Today the whole roster shares one life (`GameState.BirthDateUtc`, `Pet.Age`, `Pet.Stage`). `PigAge.FromBirth(birthUtc, nowUtc, pigDaysPerRealDay)` and `LifeStages.FromPigDays` exist in `LifeStage.cs`; 1 real day = `Balance.PigDaysPerRealDay` (21) pig days. Save rule (AGENTS.md): never delete or rename save fields, add new ones with safe defaults; old saves must load. `PigProfile` is serialized with Newtonsoft, so new properties with defaults need no migration.
+Steps:
+1. `PigProfile`: add `string NamedId { get; set; }` (null = adopted or random pig), `DateTime? BornAtUtc { get; set; }` (null = use the game's `BirthDateUtc`), `DateTime? ArrivedAtUtc { get; set; }`, `bool Memorial { get; set; }` (false). Keep every existing member and the `CreateRandom` behavior unchanged.
+2. New static class `Cuy.Core.Pigs.PigLife`: `static DateTime BornAtFor(DateTime arrivalUtc, double startAgeYears, double pigDaysPerRealDay)` = arrival minus `startAgeYears * LifeStages.DaysPerYear / pigDaysPerRealDay` real days; `static PigAge AgeOf(PigProfile pig, DateTime nowUtc, double pigDaysPerRealDay, DateTime fallbackBirthUtc)` (uses `BornAtUtc ?? fallbackBirthUtc`); `static LifeStage StageOf(PigProfile pig, DateTime nowUtc, double pigDaysPerRealDay, DateTime fallbackBirthUtc)` (a memorial pig is always `LifeStage.Legend`). Null profile: return age of the fallback.
+3. Tests (`PigLifeTests.cs`): a pig born by `BornAtFor(now, 2.0, 21)` is 2 years old (`Years == 2`) and `Adult`; with start age 1.2 it is `Adult`; at 0 it is `Baby`, and exactly 1 real day later `Junior`; 4.0 years gives `Senior`, 8.0 gives `Legend`; a pig without `BornAtUtc` uses the fallback; a memorial pig is `Legend` at age 0; JSON round trip of a profile keeps the four new fields; JSON of an old profile (only `Id`, `Name`, `Breed`, `PaletteId`, `Traits`) loads with `NamedId == null`, `BornAtUtc == null`, `ArrivedAtUtc == null`, `Memorial == false`.
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.

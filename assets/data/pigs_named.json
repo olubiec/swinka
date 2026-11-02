@@ -1,0 +1,78 @@
+{
+ "note": "The five named pigs of the collection. Numbers here are tuned by the human; code only reads them (loader: Cuy.Core.Pigs.NamedPigCatalog). Unknown fields are ignored. Design: docs/NAMED_PIGS.md.",
+ "version": 1,
+ "welcome": { "clovers": 50, "items": { "bell_pepper": 2, "parsley": 2 } },
+ "modifier_limits": { "min": 0.5, "max": 1.5 },
+ "modifier_keys": {
+  "appetite": "hay and fullness consumption",
+  "poop_rate": "how often droppings appear (interval = base / value)",
+  "activity": "weight of walking and exploring actions against resting ones",
+  "bond_gain": "bond points from petting and care",
+  "minigame_score": "score multiplier before points are turned into clovers (daily and per-game caps still apply)",
+  "wheek_rate": "how often it wheeks when a need is low",
+  "startle": "mouse-fear sensitivity (threshold is divided by this value)",
+  "joy_weight": "weight of popcorn, dance, zoomies and beaming actions"
+ },
+ "pigs": [
+  {
+   "id": "kuki",
+   "name": "Kuki",
+   "look": { "breed": "rosette_normal", "palette_id": "two_tone.ginger", "pattern": "two_tone", "palette": "ginger" },
+   "start_age_years": 2.0,
+   "arrival": { "at_start": true },
+   "traits": [],
+   "blurb": "Friendly and calm. Gets along with everybody.",
+   "weight_g": null,
+   "modifiers": { "appetite": 1.0, "poop_rate": 1.0, "activity": 1.0, "bond_gain": 1.0, "minigame_score": 1.0, "wheek_rate": 1.0, "startle": 1.0, "joy_weight": 1.0 },
+   "memorial": false
+  },
+  {
+   "id": "ned",
+   "name": "Ned",
+   "look": { "breed": "teddy_chubby", "palette_id": "bicolor_head.chocolate", "pattern": "bicolor_head", "palette": "chocolate" },
+   "start_age_years": 0.0,
+   "arrival": { "at_start": true },
+   "traits": ["sleepyhead", "glutton", "explorer"],
+   "blurb": "Lazy, curious and always hungry.",
+   "weight_g": null,
+   "modifiers": { "appetite": 1.3, "poop_rate": 1.5, "activity": 0.85, "bond_gain": 1.0, "minigame_score": 1.0, "wheek_rate": 1.0, "startle": 1.0, "joy_weight": 1.0 },
+   "memorial": false
+  },
+  {
+   "id": "james",
+   "name": "James",
+   "look": { "breed": "teddy_normal", "palette_id": "roan.slate", "pattern": "roan", "palette": "slate" },
+   "start_age_years": 0.0,
+   "arrival": { "after": "kuki", "source_age_years": 7.5 },
+   "traits": ["vocal", "skittish"],
+   "blurb": "Loud and jumpy, but strong.",
+   "weight_g": 928,
+   "modifiers": { "appetite": 1.0, "poop_rate": 1.0, "activity": 1.0, "bond_gain": 0.7, "minigame_score": 1.2, "wheek_rate": 1.5, "startle": 1.5, "joy_weight": 1.0 },
+   "memorial": false
+  },
+  {
+   "id": "glen",
+   "name": "Glen",
+   "look": { "breed": "rosette_lean", "palette_id": "self.black", "pattern": "self", "palette": "black" },
+   "start_age_years": 1.2,
+   "arrival": { "after": "james", "source_age_years": 0.5 },
+   "traits": ["cuddly"],
+   "blurb": "Quiet and cuddly. Eats little and rarely rushes.",
+   "weight_g": null,
+   "modifiers": { "appetite": 0.7, "poop_rate": 0.8, "activity": 0.6, "bond_gain": 1.25, "minigame_score": 1.0, "wheek_rate": 1.0, "startle": 1.0, "joy_weight": 1.0 },
+   "memorial": false
+  },
+  {
+   "id": "racuch",
+   "name": "Racuch",
+   "look": { "breed": "smooth_chubby", "palette_id": "saddle.ginger", "pattern": "saddle", "palette": "ginger" },
+   "start_age_years": 0.0,
+   "arrival": { "after": "ned", "source_age_years": 7.5 },
+   "traits": ["popcorning", "glutton"],
+   "blurb": "Round, cheerful and always on the move.",
+   "weight_g": 1032,
+   "modifiers": { "appetite": 1.2, "poop_rate": 1.2, "activity": 1.3, "bond_gain": 1.0, "minigame_score": 1.0, "wheek_rate": 1.0, "startle": 1.0, "joy_weight": 1.5 },
+   "memorial": false
+  }
+ ]
+}
