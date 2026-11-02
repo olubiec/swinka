@@ -81,3 +81,6 @@ Definition of done:
 4. No borrowed icons, no emoji as UI icons.
 5. Minigames and screens have no clipped or inconsistent elements.
 6. All automated checks green and the Windows desktop walk-through passed.
+
+## V9-V15 (second round, 2026-11-02)
+Rotation, real breeds and build, pattern-based coats, light ageing, the named collection (Ned, Kuki, Glen, James, Racuch) and the decor shop: see `docs/PLAN_WIZUALNY_V2.md`. Same rules as above. Decisions 1-2 of this file are superseded where the plan says so (coats become pattern + palette, `chubby`/`skinny` become a build axis).
