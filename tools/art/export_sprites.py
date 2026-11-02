@@ -11,12 +11,12 @@ from pig import S, FLOOR
 DESC = {'baby': 'Baby', 'junior': 'Junior', 'adult': 'Adult (ginger)', 'senior': 'Senior', 'legend': 'Legend'}
 
 
-def write_variant(folder, age, coat='ruda', breed='smooth', desc=None, descriptions=None, build='normal', pattern=None, palette=None, master=None):
-    A, sheet = sheets.render(age, coat, breed, build, pattern, palette, master)
+def write_variant(folder, age, coat='ruda', breed='smooth', desc=None, descriptions=None, build='normal', pattern=None, palette=None, master=None, named=None):
+    A, sheet = sheets.render(age, coat, breed, build, pattern, palette, master, named)
     os.makedirs(folder, exist_ok=True)
     if descriptions is None:
         descriptions = {n: A[n]['opis'] for n in A}
-    meta = {'variant': os.path.basename(folder) if (breed, build) == ('smooth', 'normal') else breed + '_' + build + '_' + age,
+    meta = {'variant': os.path.basename(folder) if (breed, build) == ('smooth', 'normal') else (named or breed + '_' + build) + '_' + age,
             'description': desc or DESC.get(age, age), 'frame_size': [S, S], 'floor_y': FLOOR, 'facing': 'right', 'animations': {}}
     for r, n in enumerate(A):
         meta['animations'][n] = {'row': r, 'frames': len(A[n]['frames']), 'fps': sheets.fps_for(age, n, A[n]['fps']),

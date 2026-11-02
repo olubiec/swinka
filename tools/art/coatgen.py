@@ -3,6 +3,7 @@ head: xh forward, yh down, zh lateral in head units), not of a flat zone grid. E
 dithered with a threshold fixed to the surface (no shimmer in animation or in the turn).
 The five named pigs have their own slots Q0..Q3 and ramps; patterns are drawn after the photos in docs/reference/pigs/spec/."""
 import numpy as np
+import whorls as WH
 
 # ---------------------------------------------------------------- noise (value noise 3D, hashed lattice, numpy only)
 def _h(ix, iy, iz, seed):
@@ -121,9 +122,13 @@ def body_slots(pid, u, v, w):
         front = sm(ub - 0.16, ub + 0.16, sw)
         patch = 1 - sm(0.82, 1.18, np.hypot((sw + 0.27) / 0.30, pw / 1.05) * 1.0)    # ginger hip patch on the back (rosettes sit here)
         out = pick(np.maximum(front, patch), s, phi, 0, 1)
+        _, ray, core = WH.field('kuki', u, v, w)
+        out = np.where((ray | core) & (out == 1), 3, out)           # gold rays of the rosettes on the dark flank
     elif pid == 'glen':
         streak = (pw > 0.95) & (pw < 1.55) & (np.abs(sw - 0.10 - 0.12 * (pw - 1.2)) < 0.030)
         out = np.where(streak, 1, 0)
+        _, ray, core = WH.field('glen', u, v, w)
+        out = np.where((ray | core) & ~streak, 3, out)
     elif pid == 'james':
         dens = 0.55 - 0.15 * sm(0.5, 2.4, phi) + 0.06 * fbm(s * 4, phi * 3, 0.5, 5)      # light hairs: denser on the back
         i = np.floor(s * 17).astype(int)
@@ -142,7 +147,7 @@ def body_slots(pid, u, v, w):
 
 def head_slots(pid, xh, yh, zh):
     xh, yh, zh = np.asarray(xh, float), np.asarray(yh, float), np.abs(np.asarray(zh, float))
-    n = fbm(xh * 0.35, yh * 0.35, zh * 0.35, 90 + len(pid)) * 0.9
+    n = fbm(xh * 0.35, yh * 0.35, zh * 0.35, 90 + len(pid)) * (0.45 if pid == 'ned' else 0.9)
     out = np.zeros(np.shape(xh), int)
     if pid == 'ned':
         # white: muzzle, cheeks in front of the eye, chin, narrow blaze widening towards the nose. Brown: crown, ears, eye ring, back of the head

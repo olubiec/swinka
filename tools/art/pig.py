@@ -46,6 +46,8 @@ COATS = {
 }
 import patterns as PT
 import coatgen as CG
+import fur as FUR
+import whorls as WH
 STYLE = dict(kb=1.0, kh=1.0, kx=1.0, coat='ruda', senior=False, gold=False, breed='smooth', build='normal',
              pattern=PT.DEFAULT_PATTERN, palette=PT.DEFAULT_PALETTE, master=True, named=None)
 
@@ -207,6 +209,19 @@ class Canvas:
         img[m] = self.pig[m]
         ol = dil(self.fill) & ~self.fill
         img[ol] = outline if outline is not None else (RAMP['gold'][2] if STYLE['gold'] else OUT)
+        if STYLE['named'] and outline is None and not STYLE['gold']:
+            # selective outline: the outline takes a dark version of the neighbouring fur colour (warm brown on white, near black on black)
+            f = self.fill
+            acc = np.zeros((S, S, 3))
+            cnt = np.zeros((S, S))
+            for dy_, dx_ in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                sh = np.roll(np.roll(f, dy_, 0), dx_, 1)
+                col = np.roll(np.roll(img[:, :, :3].astype(float), dy_, 0), dx_, 1)
+                acc += col * sh[..., None]
+                cnt += sh
+            mean = acc / np.maximum(cnt, 1)[..., None]
+            sel = ol & (cnt > 0)
+            img[sel, :3] = np.clip(0.50 * mean[sel] + 0.50 * OUT[:3].astype(float) * 0.9, 0, 255).astype(np.uint8)
         # wąsy / nakładki bez konturu
         a = self.over[:, :, 3] > 0
         wm = a & ((img[:, :, 3] == 0) | (img[:, :, 3] < 255))
@@ -365,8 +380,14 @@ def render_side(**kw):
         ring1 = dil(body) & ~body
         body = body | (ring1 & safe & (hs7 < 2) & (v < 0.2)) | (ring1 & safe & (hs7 < 3) & (u < -0.5))
     b = -(0.42 * u + 0.88 * v)
-    if breed == 'teddy':      # fur texture: dithered shade boundaries
-        b = b + 0.17 * np.where((ix + iy) % 2 == 0, 1.0, -1.0)
+    if breed != 'smooth' or STYLE['named']:   # fur strokes fixed to the body (model coordinates, same as in the yaw frames)
+        wz = np.sqrt(np.clip(1 - u * u - v * v, 0, 1)) * 13.5 * kb
+        b = b + FUR.delta(u * brx, v * bry, wz, breed, 3 if not STYLE['named'] else 3 + len(STYLE['named'])) * (1.0 - 0.5 * (v > 0.5))
+    wkey = STYLE['named'] if STYLE['named'] in WH.WHORLS else ('rosette' if breed == 'rosette' else None)
+    if wkey:       # rosettes: rays round a bright centre and a ridge between the whorls (model coordinates)
+        b = b + 0.5 * WH.field(wkey, u, v, np.sqrt(np.clip(1 - u * u - v * v, 0, 1)))[0]
+    top = body & ~np.roll(body, 1, axis=0)       # rim light on the upper silhouette (light from the top left): readable black fur
+    b = np.where(top & (u < 0.8), np.maximum(b, 0.62), b)
     c.hash = (ix * 7 + iy * 13 + (ix * iy) % 5) % 11    # speckle source fixed to the body (local coordinates, no shimmer)
     mat = body_zones(u, np.minimum(v, 0.5) if breed == 'peruvian' else v)   # long hair covers the belly colour
     if STYLE['named']:
@@ -405,18 +426,6 @@ def render_side(**kw):
     occl = dil(dil(head)) & body & ~head
     lv = np.where(occl, np.maximum(lv, 2), lv)
     c.put_mat(body, mat, lv)
-    if STYLE['breed'] == 'rosette':
-        # rosettes: a dark whorl point with light radial hair tips (starburst), fixed to the body (local coordinates)
-        for (su, sv, rr) in ((-0.62, -0.30, 4.8), (-0.56, 0.26, 4.2), (0.28, -0.38, 3.6)):
-            cxs, cys = bx + su * brx, by + sv * bry
-            dd = np.hypot(lx - cxs, ly - cys)
-            ang = np.arctan2(ly - cys, lx - cxs)
-            spokes = (dd > 1.1) & (dd < rr) & (np.cos(6.0 * (ang + dd * 0.25)) > 0.45)
-            core = dd <= 1.1
-            vis = body & ~head
-            c.lvl[spokes & vis] = 0
-            c.lvl[core & vis] = 3
-
     # dalekie ucho (za głową)
     ey = hyc - hry + 2.6 * kh - p['ear']
     exx = hxc - 4.6 * kh - p['ear_back']
@@ -424,6 +433,9 @@ def render_side(**kw):
     c.put_mat(far_ear & ~head, MAT['ZC'], 2)
 
     # głowa
+    if breed != 'smooth' or STYLE['named']:
+        hz = 10.0 * np.sqrt(np.clip(1 - hu ** 2 - hv ** 2, 0, 1))
+        hb = hb + 0.6 * FUR.delta(hdx_, hdy_, hz, breed, 11 + len(STYLE['named'] or ''))
     hl = level(hb)
     body_only = body & ~head
     left_nb = np.zeros_like(body_only); left_nb[:, 1:] = body_only[:, :-1]

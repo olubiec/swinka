@@ -4,6 +4,8 @@ body gets real volume while it turns (no 'sheet of paper'). Yaw 0 = side view fa
 import math
 import numpy as np
 import pig
+import fur as FUR
+import whorls as WH
 from pig import S, FLOOR, YY, XX, MAT, STYLE, RAMP, OUT, EYE, HL, WHISK, Canvas, level, dil, body_zones, hx
 
 
@@ -89,6 +91,11 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
         m = mat if not callable(mat) else mat(loc, un)
         MATIDX[take] = np.broadcast_to(m, (S, S))[take]
         b = _shade(n)
+        wk = STYLE['named'] if STYLE['named'] in WH.WHORLS else ('rosette' if STYLE['breed'] == 'rosette' else None)
+        if name == 'body' and wk:
+            b = b + 0.5 * WH.field(wk, un[0], un[1], un[2])[0]
+        if name == 'body' and (STYLE['breed'] != 'smooth' or STYLE['named']):
+            b = b + FUR.delta(loc[0], loc[1], loc[2], STYLE['breed'], 3 if not STYLE['named'] else 3 + len(STYLE['named']))
         lv = level(b) if force_lv is None else np.full((S, S), force_lv)
         LV[take] = lv[take]
         for k in range(3):
@@ -178,20 +185,6 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
     occl = dil(dil(headmask)) & body_front & ~headmask
     LV = np.where(occl, np.maximum(LV, 2), LV)
     cv.put_mat(vis, np.where(vis, MATIDX, 0), LV)
-    if STYLE['breed'] == 'rosette':   # starbursts on the flanks (model coordinates, both sides)
-        tkb, locb, unb = parts['body']
-        xl, yl, zl = locb
-        for (su, sv, rr) in ((-0.62, -0.30, 4.8), (-0.56, 0.26, 4.2), (0.28, -0.38, 3.6)):
-            for sd in (1, -1):
-                dx, dy = xl - su * brx, yl - sv * bry
-                dd = np.hypot(dx, dy)
-                ang = np.arctan2(dy, dx)
-                flank = tkb & (OWNER == 'body') & (zl * sd > 0.35 * brz)
-                spokes = flank & (dd > 1.1) & (dd < rr) & (np.cos(6.0 * (ang + dd * 0.25)) > 0.45)
-                core = flank & (dd <= 1.1)
-                LV[spokes] = 0
-                LV[core] = 3
-        cv.lvl[:] = np.where(vis, LV, 0)
     # shadow
     if shadow > 0.05:
         sw = (abs(c) * (brx + 8.0) + abs(s) * brz) * 0.95 * shadow

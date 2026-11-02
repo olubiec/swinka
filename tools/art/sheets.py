@@ -9,9 +9,9 @@ SLOW = {'walk', 'run', 'popcorn', 'follow', 'flee', 'greet', 'hurdle', 'spin', '
         'house_enter', 'house_exit', 'come_called', 'dance'}
 
 
-def render(age='adult', coat='ruda', breed='smooth', build='normal', pattern=None, palette=None, master=None):
+def render(age='adult', coat='ruda', breed='smooth', build='normal', pattern=None, palette=None, master=None, named=None):
     """Returns (A, sheet) where A is the anims dict (name -> frames/fps/loop/opis) and sheet an RGBA ndarray."""
-    pig.set_style(age, coat, breed, build, pattern, palette, master)
+    pig.set_style(age, coat, breed, build, pattern, palette, master, named)
     import anims, anims2, anims3
     importlib.reload(anims)
     importlib.reload(anims2)
