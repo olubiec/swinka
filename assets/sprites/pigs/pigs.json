@@ -1,0 +1,66 @@
+{
+ "version": 1,
+ "note": "Baked sheets of the five named pigs (own colours, not remapped by palettes.json). Folder = pigs/<id>/<stage>/.",
+ "pigs": {
+  "ned": {
+   "breed": "teddy",
+   "build": "chubby",
+   "stages": [
+    "baby",
+    "junior",
+    "adult",
+    "senior",
+    "legend"
+   ],
+   "eye": "#2b1712"
+  },
+  "kuki": {
+   "breed": "rosette",
+   "build": "normal",
+   "stages": [
+    "baby",
+    "junior",
+    "adult",
+    "senior",
+    "legend"
+   ],
+   "eye": "#24140f"
+  },
+  "glen": {
+   "breed": "rosette",
+   "build": "lean",
+   "stages": [
+    "baby",
+    "junior",
+    "adult",
+    "senior",
+    "legend"
+   ],
+   "eye": "#17161a"
+  },
+  "james": {
+   "breed": "teddy",
+   "build": "normal",
+   "stages": [
+    "baby",
+    "junior",
+    "adult",
+    "senior",
+    "legend"
+   ],
+   "eye": "#23201e"
+  },
+  "racuch": {
+   "breed": "smooth",
+   "build": "chubby",
+   "stages": [
+    "baby",
+    "junior",
+    "adult",
+    "senior",
+    "legend"
+   ],
+   "eye": "#211611"
+  }
+ }
+}

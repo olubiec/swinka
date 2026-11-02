@@ -88,7 +88,7 @@ RAMPS = {
              rp('9a9aa2', '7a7a83', '5c5c64', '404046'),    # 2 grey feet
              rp('7a8296', '555b6b', '3b3e49', '25272f')],   # 3 sheen highlight
     'james': [rp('9aa0a8', '787e87', '5a5f68', '3f434b'),   # 0 grey base
-              rp('c4c9d0', 'a6abb3', '878c95', '676c75'),   # 1 light ticks (one step lighter than the base)
+              rp('b4bac2', '979da6', '7a808a', '5d626c'),   # 1 light ticks (one step lighter than the base)
               rp('5c5f67', '444750', '2f3138', '1d1e23'),   # 2 dark muzzle / legs
               rp('b4b9bf', '979ca4', '767b84', '585c65')],
     'racuch': [rp('f7ac52', 'e18c32', 'bf6b23', '8f4a17'),  # 0 ginger
@@ -131,10 +131,11 @@ def body_slots(pid, u, v, w):
         out = np.where((ray | core) & ~streak, 3, out)
     elif pid == 'james':
         dens = 0.55 - 0.15 * sm(0.5, 2.4, phi) + 0.06 * fbm(s * 4, phi * 3, 0.5, 5)      # light hairs: denser on the back
-        i = np.floor(s * 17).astype(int)
-        j = np.floor(phi * 14).astype(int)
+        i = np.floor(s * 8.5).astype(int)          # clumps of about 2 px: salt and pepper without the static
+        j = np.floor(phi * 7).astype(int)
         rnd = (_h(i, j, 3, 77) + 1) / 2
-        out = np.where(rnd < dens, 1, 0)
+        fine = (_h(np.floor(s * 17).astype(int), np.floor(phi * 14).astype(int), 4, 78) + 1) / 2
+        out = np.where((rnd < dens * 0.8) | (fine < 0.07), 1, 0)
     elif pid == 'racuch':
         edge = 1.70 + 0.14 * fbm(s * 3.0, 0.0, 2.0, 61) + 0.05 * np.sin(s * 7)           # wavy lower edge of the saddle
         fr, rr = 0.30 + 0.06 * (pw - 0.8), -0.38 - 0.06 * (pw - 0.8)                       # slightly slanted front/rear edges

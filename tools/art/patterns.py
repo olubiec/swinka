@@ -79,6 +79,12 @@ PATTERNS = {
     'saddle': pat(H='K', S='A', M='K', R='A', T='W', B='A', L='A'),
     'two_tone': pat(M='B', R='B', T='B', B='B', L='A'),
     'self': pat(N1='A', N2='A', B='A', L='A', X2='B', X3='B'),
+    # patterns after the breed descriptions (docs/RESEARCH_WYGLAD_V3.md): mixed hairs and patches
+    'brindle': pat(M='A', N1='A', N2='K', B='A', L='K', tick='K'),                 # black and red hairs mixed, no ticking pattern
+    'magpie': pat(M='K', S='K', R='K', T='K', H='K', C='K', N1='W', N2='W', B='K', L='K', tick='W'),   # black with white hairs anywhere + blaze
+    'tortoiseshell': pat(H='B', C='A', S='B', M='A', R='B', T='A', B='A', L='B', N1='A', N2='B'),      # red and black patches
+    'belt': pat(M='W', S='A', R='A', T='A', H='A', C='A', B='W', L='W', X1='W', X2='W'),               # white belt round the middle
+    'blaze_only': pat(M='A', S='A', R='A', T='A', B='A', L='A', N1='W', N2='W', X1='A', X2='A', X3='A'),  # self colour with a white blaze and muzzle
 }
 DEFAULT_PATTERN = 'tricolor'
 DEFAULT_PALETTE = 'ginger'

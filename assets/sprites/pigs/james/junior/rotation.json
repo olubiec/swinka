@@ -1,0 +1,21 @@
+{
+ "note": "Strips that share the row of a host animation (frame units, valid for x1 and x2 sheets). Not part of animations.json.",
+ "strips": {
+  "turn_smooth": {
+   "row": 23,
+   "col": 4,
+   "frames": 8,
+   "fps": 14,
+   "loop": false,
+   "description": "Smooth turn from side to front, 8 frames (Home)"
+  },
+  "idle_34": {
+   "row": 23,
+   "col": 12,
+   "frames": 4,
+   "fps": 6,
+   "loop": true,
+   "description": "Curious three-quarter pose: breath, nose, ear (Home)"
+  }
+ }
+}

@@ -18,6 +18,8 @@ PROFILE = {
 
 def delta(xl, yl, zl, breed, seed=3, whorl=None):
     cell, L, duty, amp, curl = PROFILE[breed]
+    if breed == 'teddy' and seed == 3 + len('james'):   # James: rough rex coat, finer and calmer than the teddy fuzz
+        amp = amp * 0.6
     if amp <= 0.06:
         return np.zeros(np.shape(xl))
     cy = np.floor(yl / cell).astype(np.int64)
