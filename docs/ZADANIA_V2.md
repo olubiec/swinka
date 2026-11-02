@@ -4,24 +4,15 @@ Do kontekstu: `docs/PLAN_WIZUALNY_V2.md` (diagnoza, decyzje, ryzyka), `docs/refe
 
 Wykonawca: **C** = Claude Code (grafika, narzędzia `tools/art`, dane graficzne), **L** = tor kodu rozgrywki (Jules Loop po zatwierdzeniu albo Claude). Rozmiar: S ≤ 2 h, M ≤ 0,5 dnia, L ≤ 1 dzień.
 
-## A. Harmonogram odblokowań (ustalenia właściciela)
+## A. Harmonogram odblokowań (ustalenia właściciela, wersja poprawiona)
 - Start gry: **Kuki** i **Ned**.
-- **James** (mały, baby) pojawia się "przez Kukiego" niedługo przed tym, jak Kuki zostaje legendą.
-- **Racuch** (mały, baby) pojawia się "przez Neda" niedługo przed tym, jak Ned zostaje legendą, mniej więcej gdy James ma 2 lata.
-- **Glen**: brak ustaleń. Domyślnie (do potwierdzenia): pojawia się jako maluch niedługo przed tym, jak James zostaje legendą (ten sam wzorzec łańcucha). Do zmiany jedną liczbą w danych.
+- **James** (baby) pojawia się "przez Kukiego" niedługo przed jego legendą.
+- **Glen** pojawia się pół roku (wieku świnki) po Jamesie jako ok. 1,2-letni dorosły.
+- **Racuch** (baby) pojawia się "przez Neda" niedługo przed jego legendą, mniej więcej gdy James ma 2 lata.
+- "Kuki i James ten sam wiek mniej więcej": zapisane jako uwaga o realnym wieku, bez wpływu na grę (do potwierdzenia).
+Przeliczenie: 1 dzień realny = 21 dni świnki, legend od 8 lat = ok. 139 dni realnych. Kuki startuje jako 2-latek (żeby Racuch pasował do Neda), Ned jako baby: James ok. dnia 96, Glen ok. dnia 105 (0,5 roku świnki = ok. 9 dni realnych później), Racuch ok. dnia 130, Kuki legend ok. dnia 104, Ned legend ok. dnia 139. Liczby żyją w danych (`arrival`, `startAgeYears`).
 
-Przeliczenie (z kodu: 1 dzień realny = 21 dni świnki, rok = 365,25 dnia, senior od 4 lat, legend od 8 lat = 139 dni realnych):
-| Zdarzenie | Wiek świnki | Dzień realny od startu |
-| --- | --- | --- |
-| Ned startuje jako baby (wiek 0) | 0 | 0 |
-| Kuki startuje jako dorosły (wiek 2 lata; wynika z reguły "Racuch ≈ gdy James ma 2 lata", bo Kuki musi być o 2 lata starszy od Neda) | 2 lata | 0 |
-| James się pojawia (Kuki ma 7,5 roku, "niedługo przed legendą") | Kuki 7,5 r. | ok. 96 |
-| Kuki zostaje legendą | Kuki 8 r. | ok. 104 |
-| James ma 2 lata | James 2 r. | ok. 131 |
-| Racuch się pojawia (Ned ma 7,5 roku) | Ned 7,5 r. | ok. 130 |
-| Ned zostaje legendą | Ned 8 r. | ok. 139 |
-| Glen (domyślnie, James 7,5 r.) | James 7,5 r. | ok. 227 |
-Wartości w danych jako `arrival: { "after": "kuki", "atAgeYears": 7.5 }`, wiek startowy jako `startAgeYears`. Jeśli chcesz, żeby Kuki też startował jako baby, wtedy Ned musi wystartować 2 lata później albo Racuch zależy od wieku Jamesa 2 lata (dzień ok. 131) i nie od wieku Neda: do zdecydowania, domyślnie jak w tabeli.
+**Zakres:** sekcja B (kod) nie jest zadaniem Claude'a; jest uchwalona jako kontrakt w `docs/PLAN_GRAFIK_V2.md` sekcja 2 do wykonania przez innych. Sekcja C (grafika) zastąpiona przez `docs/PLAN_GRAFIK_V2.md`.
 
 ## B. Tor L: życie każdej świnki i odblokowania (kod)
 Znalezisko: `PigProfile` nie ma wieku. Cała kolekcja dzieli jedno życie (`Pet.Stage`, `State.Age`). Żeby Kuki był prawie legendą, a James niemowlakiem, potrzebny jest wiek per świnka.
