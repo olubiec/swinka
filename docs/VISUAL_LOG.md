@@ -82,3 +82,6 @@ Checks: `web-smoke`, `minigame-fit-check`, `anim-test`, `palette-test`, `maze-te
 - **Ageing (G4):** senior = light colour fade + grey muzzle, legend = peak look + gold outline + sparkles.
 - **Collection (G5):** Ned, Kuki, Glen, James, Racuch looks in `docs/reference/pigs/looks.json`, photo | sprite sheets in `docs/album/compare/`.
 - Checks: `check_sprites.py` (all folders), `anim-test`, `palette-test`.
+
+## 2026-11-02 Plan wyglądu V3
+Owner: wygląd świnek słaby (łaty, układ kolorów, sierść, rozetki). Napisany plan fal A0-A8 w `docs/PLAN_WYGLAD_V3.md`: analiza wzorców, silnik maści w przestrzeni tekstury, silnik sierści, rozetki, głowy, pięć świnek, maści generyczne, portrety, zamknięcie. Wykonanie w kolejnych sesjach.
