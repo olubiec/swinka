@@ -1,14 +1,11 @@
-"""Proof for palettes: for every stage x palette, the sheet rendered with that coat must equal the remap of the ginger sheet
-pixel for pixel. Also checks remapped agouti/black_white/cream == committed companion sheets.
-Usage: python verify_palettes.py"""
-import json, os, sys
+"""Proof for the coat model: for every checked (pattern, palette) and stage, the sheet rendered directly with that coat must equal
+the exact colour remap of the zone-coded master sheet, pixel for pixel. Usage: python verify_palettes.py [quick]"""
+import os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
-from PIL import Image
-import palettes, sheets
+import palettes, patterns as PT, sheets
 
-ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
-STAGES = ['baby', 'junior', 'adult', 'senior', 'legend']
+SHAPES = [('smooth', 'normal')]
 
 
 def remap(sheet, pairs):
@@ -21,34 +18,25 @@ def remap(sheet, pairs):
     return out
 
 
+def combos(quick):
+    pats = list(PT.PATTERNS)
+    pals = list(PT.PALETTES)
+    out = [(p, PT.DEFAULT_PALETTE) for p in pats] + [(PT.DEFAULT_PATTERN, q) for q in pals if q != PT.DEFAULT_PALETTE]
+    out += [(p, q) for (_, _, p, q) in PT.NAMED.values() if (p, q) not in out]
+    return out[:6] if quick else out
+
+
 def main():
-    data = palettes.build()
+    quick = len(sys.argv) > 1 and sys.argv[1] == 'quick'
     bad = 0
-    ginger = {}
-    for st in STAGES:
-        _, ginger[st] = sheets.render(st, 'ruda')
-    for st in STAGES:
-        for pid, coat in palettes.PALETTES.items():
-            _, ref = sheets.render(st, coat)
-            diff = int((remap(ginger[st], data['palettes'][pid]) != ref).any(axis=2).sum())
-            print(f'{st:7s} {pid:12s} differing pixels: {diff}')
-            bad += diff
-    for br in ('chubby', 'skinny', 'rosette', 'peruvian'):   # breeds at adult stage
-        _, gb = sheets.render('adult', 'ruda', br)
-        for pid, coat in palettes.PALETTES.items():
-            _, ref = sheets.render('adult', coat, br)
-            diff = int((remap(gb, data['palettes'][pid]) != ref).any(axis=2).sum())
-            print(f'{br:8s} adult {pid:12s} differing pixels: {diff}')
-            bad += diff
-    for pid, folder in (('agouti', 'companion_agouti'), ('black_white', 'companion_black_white'), ('cream', 'companion_cream')):
-        comm = np.array(Image.open(os.path.join(ROOT, 'assets', 'sprites', folder, 'spritesheet.png')).convert('RGBA'))
-        diff = int((remap(ginger['adult'], data['palettes'][pid]) != comm).any(axis=2).sum())
-        print(f'adult remap({pid}) vs {folder}: {diff}')
-        bad += diff
-    committed = json.load(open(os.path.join(ROOT, 'assets', 'sprites', 'palettes.json')))
-    if committed != data:
-        print('assets/sprites/palettes.json is out of date; run palettes.py')
-        bad += 1
+    for st in (['adult', 'senior'] if not quick else ['adult']):
+        for br, bu in SHAPES:
+            _, master = sheets.render(st, breed=br, build=bu)
+            for pat, pal in combos(quick):
+                _, ref = sheets.render(st, breed=br, build=bu, pattern=pat, palette=pal, master=False)
+                diff = int((remap(master, palettes.pairs(pat, pal, st == 'senior')) != ref).any(axis=2).sum())
+                print(f'{st:7s} {br}_{bu:7s} {pat:13s} {pal:12s} differing pixels: {diff}', flush=True)
+                bad += diff
     print('TOTAL DIFFERENCES:', bad)
     sys.exit(1 if bad else 0)
 

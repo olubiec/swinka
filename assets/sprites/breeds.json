@@ -1,26 +1,85 @@
 {
+ "version": 2,
  "default": "smooth",
- "note": "breed -> folder holding <stage>/spritesheet.png etc. smooth uses the root stage folders",
+ "note": "id -> folder holding <stage>/spritesheet.png etc. smooth uses the root stage folders. Shapes are breed x build; legacy ids map to shapes. Sheets are zone-coded masters, coats come from palettes.json (patterns x palettes).",
+ "adoptable": [
+  "smooth_normal",
+  "smooth_chubby",
+  "smooth_lean",
+  "teddy_normal",
+  "teddy_chubby",
+  "rosette_normal",
+  "rosette_lean",
+  "peruvian_normal"
+ ],
  "breeds": {
+  "smooth_normal": {
+   "folder": "",
+   "breed": "smooth",
+   "build": "normal",
+   "description": "Smooth normal"
+  },
+  "smooth_chubby": {
+   "folder": "breeds/smooth_chubby",
+   "breed": "smooth",
+   "build": "chubby",
+   "description": "Smooth chubby"
+  },
+  "smooth_lean": {
+   "folder": "breeds/smooth_lean",
+   "breed": "smooth",
+   "build": "lean",
+   "description": "Smooth lean"
+  },
+  "teddy_normal": {
+   "folder": "breeds/teddy_normal",
+   "breed": "teddy",
+   "build": "normal",
+   "description": "Teddy normal"
+  },
+  "teddy_chubby": {
+   "folder": "breeds/teddy_chubby",
+   "breed": "teddy",
+   "build": "chubby",
+   "description": "Teddy chubby"
+  },
+  "rosette_normal": {
+   "folder": "breeds/rosette_normal",
+   "breed": "rosette",
+   "build": "normal",
+   "description": "Rosette normal"
+  },
+  "rosette_lean": {
+   "folder": "breeds/rosette_lean",
+   "breed": "rosette",
+   "build": "lean",
+   "description": "Rosette lean"
+  },
+  "peruvian_normal": {
+   "folder": "breeds/peruvian_normal",
+   "breed": "peruvian",
+   "build": "normal",
+   "description": "Peruvian normal"
+  },
+  "chubby": {
+   "folder": "breeds/smooth_chubby",
+   "description": "Legacy id, same sheets as smooth_chubby"
+  },
+  "skinny": {
+   "folder": "breeds/smooth_lean",
+   "description": "Legacy id, same sheets as smooth_lean"
+  },
+  "rosette": {
+   "folder": "breeds/rosette_normal",
+   "description": "Legacy id, same sheets as rosette_normal"
+  },
+  "peruvian": {
+   "folder": "breeds/peruvian_normal",
+   "description": "Legacy id, same sheets as peruvian_normal"
+  },
   "smooth": {
    "folder": "",
    "description": "Smooth"
-  },
-  "chubby": {
-   "folder": "breeds/chubby",
-   "description": "Chubby"
-  },
-  "skinny": {
-   "folder": "breeds/skinny",
-   "description": "Skinny"
-  },
-  "rosette": {
-   "folder": "breeds/rosette",
-   "description": "Rosette"
-  },
-  "peruvian": {
-   "folder": "breeds/peruvian",
-   "description": "Peruvian"
   }
  }
 }

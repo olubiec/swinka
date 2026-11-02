@@ -700,7 +700,7 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
-  --icon-count: 107; /* total icons */
+  --icon-count: 120; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
@@ -824,6 +824,19 @@ body.webview-mode .game-device {
 .icon-pause { --i: 104; }
 .icon-play { --i: 105; }
 .icon-golden-bowl { --i: 106; }
+.icon-pattern-tricolor { --i: 107; }
+.icon-pattern-dutch { --i: 108; }
+.icon-pattern-himalayan { --i: 109; }
+.icon-pattern-roan { --i: 110; }
+.icon-pattern-bicolor-head { --i: 111; }
+.icon-pattern-saddle { --i: 112; }
+.icon-pattern-two-tone { --i: 113; }
+.icon-pattern-self { --i: 114; }
+.icon-hide { --i: 115; }
+.icon-fence { --i: 116; }
+.icon-feeder { --i: 117; }
+.icon-bedding { --i: 118; }
+.icon-trait-skittish { --i: 119; }
 
 
 /* ==========================================================================

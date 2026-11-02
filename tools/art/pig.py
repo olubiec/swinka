@@ -44,10 +44,18 @@ COATS = {
     'kremowa': {'orange': [hx('fff3d6'), hx('f8dfb2'), hx('e6c48e'), hx('c49e66')],
                 'rust':   [hx('f4cc98'), hx('e2ae74'), hx('c28c54'), hx('966a42')]},
 }
-STYLE = dict(kb=1.0, kh=1.0, coat='ruda', senior=False, gold=False, breed='smooth')
+import patterns as PT
+STYLE = dict(kb=1.0, kh=1.0, kx=1.0, coat='ruda', senior=False, gold=False, breed='smooth', build='normal',
+             pattern=PT.DEFAULT_PATTERN, palette=PT.DEFAULT_PALETTE, master=True)
 
-def set_style(age='adult', coat='ruda', breed='smooth'):
-    STYLE.update(kb=1.0, kh=1.0, coat=coat, senior=False, gold=False, breed=breed)
+def set_style(age='adult', coat='ruda', breed='smooth', build='normal', pattern=None, palette=None, master=None):
+    """breed: smooth/teddy/rosette/peruvian (legacy 'chubby'/'skinny' are builds). master=True renders the zone-coded sheet."""
+    if breed in ('chubby', 'skinny'):
+        build, breed = breed, 'smooth'
+    if master is None:
+        master = pattern is None and palette is None
+    STYLE.update(kb=1.0, kh=1.0, kx=1.0, coat=coat, senior=False, gold=False, breed=breed, build=build,
+                 pattern=pattern or PT.DEFAULT_PATTERN, palette=palette or PT.DEFAULT_PALETTE, master=master)
     if age == 'baby':
         STYLE.update(kb=0.78, kh=0.88)
     elif age == 'junior':
@@ -55,19 +63,34 @@ def set_style(age='adult', coat='ruda', breed='smooth'):
     elif age == 'senior':
         STYLE.update(senior=True)
     elif age == 'legend':
-        STYLE.update(senior=True, gold=True)
-    if breed == 'chubby':
+        STYLE.update(gold=True)      # peak look (adult colours and body) + gold outline, sparkles are added in sheets.render
+    if build == 'chubby':
         STYLE.update(kb=STYLE['kb'] * 1.07, kh=STYLE['kh'] * 1.05)   # plus 5% extra body height in render_side
-    elif breed == 'skinny':
+    elif build == 'lean':
+        STYLE.update(kb=STYLE['kb'] * 0.9, kh=STYLE['kh'] * 0.97, kx=1.09)   # long and slim
+    elif build == 'skinny':
         STYLE.update(kb=STYLE['kb'] * 0.92, kh=STYLE['kh'] * 0.96)
 
 def eyec():
-    return COATS.get(STYLE['coat'], {}).get('eye', EYE)
+    if STYLE['master']:
+        return EYE
+    e = PT.PALETTES[STYLE['palette']].get('eye')
+    return np.array(list(e) + [255], np.uint8) if e is not None else EYE
 
 
 def ramp(name):
-    return COATS.get(STYLE['coat'], {}).get(name, RAMP[name])
-coat_ramp = ramp   # alias: render_side has a local variable named ramp
+    if name in ZMAT:
+        return None
+    return RAMP[name]
+
+
+def zone_col(zname, lv, tick=False):
+    """Colour (RGBA) of zone `zname` at shade `lv` for the current style (master code colours or the real coat)."""
+    if STYLE['master']:
+        c = PT.master_colour(zname, lv, tick)
+    else:
+        c = PT.zone_ramp(STYLE['pattern'], STYLE['palette'], zname, STYLE['senior'], tick)[lv]
+    return np.array(list(c) + [255], np.uint8)
 OUT = hx('3a1d17')
 EYE = hx('2b1712')
 HL = hx('ffffff')
@@ -76,7 +99,8 @@ TOOTH = hx('fffaf0')
 WHISK = np.array([255, 246, 232, 190], np.uint8)
 WHISK_OLD = np.array([255, 255, 255, 255], np.uint8)
 SHADOW = np.array([70, 45, 30, 70], np.uint8)
-MATN = ['orange', 'white', 'rust', 'pink', 'grey', 'wood', 'blue', 'fabric', 'red', 'cream', 'gold', 'hay', 'leaf', 'carrot']
+ZMAT = ['Z' + z for z in PT.ZONES]
+MATN = ['orange', 'white', 'rust', 'pink', 'grey', 'wood', 'blue', 'fabric', 'red', 'cream', 'gold', 'hay', 'leaf', 'carrot'] + ZMAT
 MAT = {n: i for i, n in enumerate(MATN)}
 
 YY, XX = np.mgrid[0:S, 0:S].astype(float)
@@ -103,6 +127,13 @@ class Canvas:
         self.under = np.zeros((S, S, 4), np.uint8)   # cień
         self.fx = []                                 # (pattern, x, y, colmap) po konturze
         self.over = np.zeros((S, S, 4), np.uint8)    # wąsy itd. bez konturu
+        self.hash = (np.arange(S)[None, :] * 7 + np.arange(S)[:, None] * 13) % 11   # speckle source (renderers set local coords)
+
+    def zpx(self, x, y, zone, lv):
+        if 0 <= x < S and 0 <= y < S:
+            self.mat[y, x] = MAT['Z' + zone]
+            self.lvl[y, x] = lv
+            self.fill[y, x] = True
 
     def put_mat(self, mask, mat, lvl):
         """mat: int array or scalar, lvl: int array or scalar"""
@@ -133,7 +164,14 @@ class Canvas:
         for mi, mn in enumerate(MATN):
             for lv in range(4):
                 m = (self.mat == mi) & (self.lvl == lv)
-                img[m] = ramp(mn)[lv]
+                if mn in ZMAT:
+                    z = mn[1:]
+                    img[m] = zone_col(z, lv)
+                    if lv < 3:
+                        tk = m & (self.hash == 0)
+                        img[tk] = zone_col(z, lv, True)
+                else:
+                    img[m] = RAMP[mn][lv]
         m = self.mat == -2
         img[m] = self.pig[m]
         ol = dil(self.fill) & ~self.fill
@@ -164,6 +202,25 @@ class Canvas:
         return img
 
 
+def body_zones(u, v, w=None):
+    """Zone material per pixel from body-model coordinates: u forward (-1..1), v down (-1 top..1 belly), w lateral (3D only)."""
+    z = lambda n: MAT['Z' + n]
+    mat = np.full(np.shape(u), z('M'))
+    mat[u > 0.30] = z('S')
+    mat[u < -0.50] = z('R')
+    mat[u < -0.76] = z('T')
+    mat[(v > 0.52) & (u < 0.55)] = z('B')
+    if w is None:
+        heart = ((u + 0.27) / 0.17) ** 2 + ((v + 0.68) / 0.22) ** 2 < 1
+        stripe = (u > 0.0) & (u < 0.28) & (v > 0.02) & (v < 0.2)
+    else:
+        heart = (v < -0.4) & (((u + 0.27) / 0.17) ** 2 + (w / 0.3) ** 2 < 1)
+        stripe = (u > 0.0) & (u < 0.28) & (v > 0.02) & (v < 0.2) & (np.abs(w) > 0.4)
+    mat[heart & (mat == z('M'))] = z('X1')
+    mat[stripe & (mat == z('M'))] = z('X2')
+    return mat
+
+
 # --------------------------------------------------------------------------- pozy z boku
 DEF = dict(
     bx=29.0, brx=17.0, bry=10.5, lift=0.0,       # tułów; lift = wysokość nad podłogą
@@ -185,15 +242,13 @@ def render_side(**kw):
     p.update(kw)
     c = Canvas()
     kb, kh = STYLE['kb'], STYLE['kh']
-    bx, brx, bry = p['bx'], p['brx'] * kb, p['bry'] * kb
-    if STYLE['breed'] == 'chubby':
+    bx, brx, bry = p['bx'], p['brx'] * kb * STYLE['kx'], p['bry'] * kb
+    if STYLE['build'] == 'chubby':
         brx = min(brx, 20.5)   # keep the widest poses (heat_flop) inside the 64 px frame
         bx -= 0.0 if p['back_out'] else 1.0
         bry *= 1.05            # rounder, taller belly (total body height x1.12 of the stage value)
-    if STYLE['senior']:
-        bry *= 0.93            # lower, sagging back line
     by = FLOOR - 1.5 - bry - p['lift']
-    hxc, hyc = bx + p['hdx'] * (1.0 if STYLE['breed'] == 'chubby' else kb), by + p['hdy'] * kb + (1.0 * kb if STYLE['senior'] else 0.0)
+    hxc, hyc = bx + p['hdx'] * (1.0 if STYLE['build'] == 'chubby' else kb), by + p['hdy'] * kb
     hrx, hry = p['hrx'] * kh, p['hry'] * kh
     pivx, pivy = bx + p['piv'] * kb, FLOOR - 1.0 - p['lift']
     a = math.radians(p['rot'])
@@ -243,8 +298,8 @@ def render_side(**kw):
         fy0 = fbot - 1 + feet[i][1] - p['feet_hidden']
         if p['legs']:
             top = by + bry - 3
-            leg = capsule(fx0 + 1.0, top, fx0 + 1.2, fy0 + 0.5, 1.05 if STYLE['breed'] == 'skinny' else 1.35)
-            c.put_mat(leg, MAT['orange'], 2 if far else 1)
+            leg = capsule(fx0 + 1.0, top, fx0 + 1.2, fy0 + 0.5, 1.05 if STYLE['build'] == 'skinny' else 1.35)
+            c.put_mat(leg, MAT['ZL'], 2 if far else 1)
         X, Y = fwd(fx0 + 0.5, fy0 + 0.5)
         col = RAMP['pink'][2 if far else 1]
         toe = RAMP['pink'][3 if far else 2]
@@ -257,37 +312,48 @@ def render_side(**kw):
     # tułów
     u = (lx - bx) / brx
     v = (ly - by) / bry
-    pw = np.where(v > 0, 2.3 if STYLE['breed'] == 'chubby' else 2.7, 2.0)
+    pw = np.where(v > 0, 2.3 if STYLE['build'] == 'chubby' else 2.7, 2.0)
     body = (np.abs(u) ** pw + np.abs(v) ** pw) <= 1.0
+    ix, iy = np.floor(lx).astype(int), np.floor(ly).astype(int)
+    hs7 = (ix * 5 + iy * 11 + (ix * iy) % 7) % 7      # fur noise fixed to the body
+    breed = STYLE['breed']
+    safe = (XX > 3) & (XX < S - 3) & (YY > 3) & (YY < S - 3)   # fur tufts must not touch the frame border
     if p['fluff']:
         tuft = dil(body) & ~body & (v < 0.3) & (((XX + 2 * YY).astype(int) % 4) == 0)
         body = body | tuft
+    if breed == 'teddy':      # dense fuzzy coat: ragged 1 px tufts all round, stronger on the back and rump
+        ring1 = dil(body) & ~body
+        body = body | (ring1 & safe & (hs7 < 3) & (v < 0.7))
+        body = body | (ring1 & safe & (hs7 < 2) & (v >= 0.7) & (u > -0.6) & (u < 0.5))
+    elif breed == 'rosette':  # tousled coat: sticking tufts on the back and rump
+        ring1 = dil(body) & ~body
+        body = body | (ring1 & safe & (hs7 < 2) & (v < 0.2)) | (ring1 & safe & (hs7 < 3) & (u < -0.5))
     b = -(0.42 * u + 0.88 * v)
-    mat = np.full((S, S), MAT['orange'])
-    band = (np.abs(u - 0.08) < 0.16)
-    belly = (v > 0.55) & (u > -0.45)
-    chest = (u > 0.5) & (v > -0.1)
-    rump = ((u + 0.78) ** 2 / 0.09 + (v + 0.25) ** 2 / 0.3) < 1
-    mat[band | belly | chest] = MAT['white']
-    mat[rump & ~band] = MAT['rust']
-    if STYLE['senior']:
-        # faded coat: pale speckles on the back and patches, fixed to the body (local coordinates, no shimmer)
-        ix, iy = np.floor(lx).astype(int), np.floor(ly).astype(int)
-        hsh = (ix * 7 + iy * 13 + (ix * iy) % 5) % 11
-        fade = (((hsh == 0) & (v < 0.1)) | ((v < -0.5) & (u > -0.6) & (((ix + iy) % 2) == 0))) & (mat != MAT['white'])
-        mat[fade] = MAT['cream']
-        mat[(hsh == 3) & rump & ~band & ~fade] = MAT['orange']
+    if breed == 'teddy':      # fur texture: dithered shade boundaries
+        b = b + 0.17 * np.where((ix + iy) % 2 == 0, 1.0, -1.0)
+    c.hash = (ix * 7 + iy * 13 + (ix * iy) % 5) % 11    # speckle source fixed to the body (local coordinates, no shimmer)
+    mat = body_zones(u, np.minimum(v, 0.5) if breed == 'peruvian' else v)   # long hair covers the belly colour
 
     # głowa (czaszka + pyszczek)
-    head = ell(hxc, hyc, hrx, hry) | ell(hxc + 5.5 * kh, hyc + 2.6 * kh, 5.0 * kh, 4.6 * kh)
+    if breed == 'teddy':   # broad head, short blunt muzzle
+        head = ell(hxc, hyc, hrx * 1.04, hry * 1.02) | ell(hxc + 4.6 * kh, hyc + 2.6 * kh, 4.6 * kh, 4.4 * kh)
+    else:
+        head = ell(hxc, hyc, hrx, hry) | ell(hxc + 5.5 * kh, hyc + 2.6 * kh, 5.0 * kh, 4.6 * kh)
+    if breed in ('teddy', 'rosette'):
+        hr1 = dil(head) & ~head
+        head = head | (hr1 & safe & (hs7 < 2) & (ly < hyc + 3 * kh) & (lx < hxc + 5 * kh))
     if STYLE['breed'] == 'rosette':   # small crest on top of the head
         head = head | ell(hxc + 1.5 * kh, hyc - hry - 0.1 * kh, 3.4 * kh, 2.0 * kh)
     hu = (lx - hxc) / hrx
     hv = (ly - hyc) / hry
     hb = -(0.42 * hu + 0.88 * hv) + 0.1
-    hmat = np.full((S, S), MAT['orange'])
-    blaze = (lx - hxc) / kh > (4.2 - 0.75 * (ly - hyc) / kh)
-    hmat[blaze] = MAT['white']
+    hdx_, hdy_ = (lx - hxc) / kh, (ly - hyc) / kh
+    blaze = hdx_ > (4.2 - 0.75 * hdy_)
+    n2 = (hdx_ > 2.4) & (hdy_ > 1.4) & ~blaze
+    hmat = np.full((S, S), MAT['ZC'])          # face incl. the eye region
+    hmat[hdy_ < -2.6] = MAT['ZH']              # crown above the eye line
+    hmat[n2] = MAT['ZN2']
+    hmat[blaze] = MAT['ZN1']
     if STYLE['senior']:
         dith = ((XX.astype(int) + YY.astype(int)) % 2) == 0
         muz = ((lx - hxc) / kh > 1.0) & ((ly - hyc) / kh > -2.0) & ~blaze
@@ -300,23 +366,22 @@ def render_side(**kw):
     lv = np.where(occl, np.maximum(lv, 2), lv)
     c.put_mat(body, mat, lv)
     if STYLE['breed'] == 'rosette':
-        # swirl tufts: dark ring with a gap plus a light centre, fixed to the body (local coordinates)
-        for (su, sv, rr) in ((-0.32, -0.42, 3.0), (0.45, -0.48, 2.8), (-0.3, 0.1, 2.4)):
+        # rosettes: a dark whorl point with light radial hair tips (starburst), fixed to the body (local coordinates)
+        for (su, sv, rr) in ((-0.62, -0.30, 4.8), (-0.56, 0.26, 4.2), (0.28, -0.38, 3.6)):
             cxs, cys = bx + su * brx, by + sv * bry
             dd = np.hypot(lx - cxs, ly - cys)
             ang = np.arctan2(ly - cys, lx - cxs)
-            ring = (dd >= rr * 0.45) & (dd < rr) & (np.abs(((ang - dd * 0.9) + math.pi) % (2 * math.pi) - math.pi) > 0.7)
-            ctr = dd < rr * 0.45
-            ring &= body & ~head & (mat != MAT['white'])
-            ctr &= body & ~head & (mat != MAT['white'])
-            c.put_mat(ring, MAT['orange'], 3)
-            c.put_mat(ctr, MAT['orange'], 0)
+            spokes = (dd > 1.1) & (dd < rr) & (np.cos(6.0 * (ang + dd * 0.25)) > 0.45)
+            core = dd <= 1.1
+            vis = body & ~head
+            c.lvl[spokes & vis] = 0
+            c.lvl[core & vis] = 3
 
     # dalekie ucho (za głową)
     ey = hyc - hry + 2.6 * kh - p['ear']
     exx = hxc - 4.6 * kh - p['ear_back']
     far_ear = ell(exx + 4.2 * kh, ey - 1.6 * kh, 2.8 * kh, 2.0 * kh, -15)
-    c.put_mat(far_ear & ~head, MAT['rust'], 2)
+    c.put_mat(far_ear & ~head, MAT['ZC'], 2)
 
     # głowa
     hl = level(hb)
@@ -331,9 +396,10 @@ def render_side(**kw):
     ear = ell(exx, ey, 4.0 * kh, 2.6 * kh, 18)
     inner = ell(exx + 0.9 * kh, ey - 0.5 * kh, 2.2 * kh, 1.0 * kh, 18)
     rim = dil(ear) & ~ear & head
-    c.put_mat(rim, MAT['rust'], 3)
+    c.put_mat(rim, MAT['ZC'], 3)
     ev = (ly - ey) / 2.5
-    c.put_mat(ear, MAT['rust'], level(-ev * 0.9))
+    c.put_mat(ear, MAT['ZC'], level(-ev * 0.9))
+    c.put_mat(ear & (np.abs(ly - ey - 0.4) < 0.7) & (lx > exx - 1.5), MAT['ZX3'], 2)
     c.put_mat(inner & ear, MAT['pink'], 2)
 
     # rumieniec
@@ -361,7 +427,7 @@ def render_side(**kw):
     if STYLE['breed'] == 'peruvian' and p['eye'] != 'none':   # fringe falling over the eyes
         for k, (dxk, hk) in enumerate(((-1, 1), (0, 2), (1, 2), (2, 2), (3, 1), (4, 1))):
             for hh in range(-1, hk):
-                c.put_px(EX + dxk, EY + hh - 1 + (1 if p['eye'] == 'wide' else 0), coat_ramp('orange')[3 if (k + hh) % 2 else 2])
+                c.zpx(EX + dxk, EY + hh - 1 + (1 if p['eye'] == 'wide' else 0), 'H', 3 if (k + hh) % 2 else 2)
 
     # nos i pyszczek
     NX, NY = fwd(hxc + 9.2 * kh, hyc + 0.6 * kh - p['nose'])
@@ -382,21 +448,21 @@ def render_side(**kw):
             sx0, sy0 = hxc + 3.5 * kh - k * 1.5, hyc + 7.0 * kh
             px1, py1 = hxc + 9.2 * kh + pdx, hyc + 0.6 * kh + pdy
             arm = capsule(sx0, sy0, px1 - 0.6, py1 + 0.4, 1.5)
-            c.put_mat(arm, MAT['orange'] if not STYLE['senior'] else MAT['orange'], 1 + k)
+            c.put_mat(arm, MAT['ZL'], 1 + k)
             paw = ell(px1, py1, 1.6, 1.3)
             c.put_mat(paw, MAT['pink'], 1 + k)
     if p['arms']:   # przednie łapki przy piersi (stanie na tylnych łapkach)
         for k, (ax, ay) in enumerate(p['arms']):
             sx0, sy0 = bx + brx * 0.55 - k * 2, by + 1
             arm = capsule(sx0, sy0, sx0 + ax, sy0 + ay, 1.4)
-            c.put_mat(arm, MAT['orange'], 1 + k)
+            c.put_mat(arm, MAT['ZL'], 1 + k)
             c.put_mat(ell(sx0 + ax + 0.4, sy0 + ay + 0.6, 1.5, 1.2), MAT['pink'], 1 + k)
 
     if p['back_out']:   # tylne łapki wyciągnięte do tyłu (upał), przyczepione do tułowia
         for k in (1, 0):
             hipx, hipy = bx - brx * 0.62, by + bry * 0.55 - k * 0.8
             fx1, fy1 = bx - brx - 4.5 + k * 1.5, FLOOR - 2.0 - p['lift'] - k * 0.5
-            c.put_mat(capsule(hipx, hipy, fx1 + 1.2, fy1, 1.6), MAT['orange'], 2 if k else 1)
+            c.put_mat(capsule(hipx, hipy, fx1 + 1.2, fy1, 1.6), MAT['ZL'], 2 if k else 1)
             c.put_mat(ell(fx1, fy1, 1.8, 1.1), MAT['pink'], 2 if k else 1)
     if p['scratch'] is not None:   # tylna łapka drapie za uchem
         sdx, sdy = p['scratch']
@@ -408,9 +474,9 @@ def render_side(**kw):
         foot = ell(fx1, fy1, 2.2, 1.4, -40)
         leg = thigh | shin | foot
         rim = dil(leg) & ~leg & c.fill
-        c.put_mat(rim, MAT['orange'], 3)
+        c.put_mat(rim, MAT['ZL'], 3)
         tu, tv = (lx - hipx) / 5.0, (ly - hipy) / 4.0
-        c.put_mat(thigh | shin, MAT['orange'], np.where(level(-(0.42 * tu + 0.88 * tv)) == 0, 0, 1))
+        c.put_mat(thigh | shin, MAT['ZL'], np.where(level(-(0.42 * tu + 0.88 * tv)) == 0, 0, 1))
         c.put_mat(foot, MAT['pink'], 1)
         X, Y = fwd(fx1 + 1, fy1)
         c.put_px(X, Y, RAMP['pink'][3])
@@ -433,7 +499,7 @@ def render_side(**kw):
         hem = FLOOR - 2.0 - p['lift'] - raise_ - ((ix % 3) == 0) * 0.9
         skirt = (np.abs(u) < 0.93 - 0.06 * np.clip((ly - by) / bry - 1.0, 0, 2)) & (ly > by + bry * 0.55) & (ly <= hem)
         sk_lv = np.where(ly > hem - 1.3, 3, np.where((ix % 2) == 0, 1, 2))
-        c.put_mat(skirt, MAT['orange'], sk_lv)
+        c.put_mat(skirt, body_zones(u, np.full_like(v, 0.1)), sk_lv)
 
     # siano / jedzenie w pyszczku
     if p['hay']:
@@ -506,9 +572,11 @@ def render_front(**kw):
         v = (ly - byc) / bry
         body = u ** 2 + v ** 2 <= 1
         b = -(0.35 * u + 0.9 * v)
-        mat = np.where((np.abs(lx - cx) < 6.5 * kb) & (ly > byc - 2) & (not p['back']), MAT['white'], MAT['orange'])
+        mat = np.where((np.abs(lx - cx) < 6.5 * kb) & (ly > byc - 2) & (not p['back']), MAT['ZB'], MAT['ZS'])
         if p['back']:
-            mat = np.where(((lx - cx) ** 2 / 30 + (ly - byc + 2) ** 2 / 40) < 1, MAT['rust'], mat)
+            mat = np.where(((lx - cx) ** 2 / 30 + (ly - byc + 2) ** 2 / 40) < 1, MAT['ZT'], MAT['ZR'])
+            mat = np.where((ly < byc - 3) & (np.abs(lx - cx) < 5), MAT['ZM'], mat)
+        c.hash = (np.floor(lx).astype(int) * 7 + np.floor(ly).astype(int) * 13 + (np.floor(lx).astype(int) * np.floor(ly).astype(int)) % 5) % 11
         c.put_mat(body, mat, level(b))
         for fx0 in (cx - 7 * kb * p['sx'], cx + (4 * kb) * p['sx']):
             c.stamp(['PPP', 'PPP'], int(fx0), FLOOR - 2 + int(oy), {'P': RAMP['pink'][1]})
@@ -517,14 +585,14 @@ def render_front(**kw):
             ixx = np.floor(lx).astype(int)
             hem = FLOOR - 2.0 - ((ixx % 3) == 0) * 0.9
             skirt = (np.abs(lx - cx) < 12.6 * kb) & (ly > byc + bry * 0.35) & (ly <= hem) & (u ** 2 + ((ly - byc) / bry - 0.4) ** 2 <= 1.6)
-            c.put_mat(skirt, MAT['orange'], np.where(ly > hem - 1.3, 3, np.where((ixx % 2) == 0, 1, 2)))
+            c.put_mat(skirt, MAT['ZS'], np.where(ly > hem - 1.3, 3, np.where((ixx % 2) == 0, 1, 2)))
 
     # uszy (za głową)
     for side in (-1, 1):
         ex, ey = hxc + side * 10.0 * kh, hyc - 6.5 * kh - p['ear'] * (1 if side == 1 else 0.5)
         ear = ell(ex, ey, 3.8 * kh, 2.7 * kh, side * 28)
         inner = ell(ex - side * 0.3, ey + 0.4, 2.1 * kh, 1.4 * kh, side * 28)
-        c.put_mat(ear, MAT['rust'], level(-(ly - ey) / 2.7))
+        c.put_mat(ear, MAT['ZC'], level(-(ly - ey) / 2.7))
         if not p['back']:
             c.put_mat(inner & ear, MAT['pink'], 2)
 
@@ -536,14 +604,17 @@ def render_front(**kw):
     hb = -(0.35 * hu + 0.9 * hv) + 0.15
     blaze = np.abs(lx - hxc - lkx * 0.3) < (1.2 + np.maximum(ly - (hyc - 9 * kh), 0) * 0.28)
     muzzle = ell(hxc + lkx * 0.4, hyc + 5.0 * kh, 5.6 * kh, 3.6 * kh)
-    hmat = np.where(blaze | muzzle, MAT['white'], MAT['orange'])
+    hmat = np.full((S, S), MAT['ZC'])
+    hmat[ly < hyc - 4.6 * kh] = MAT['ZH']
+    hmat[muzzle] = MAT['ZN2']
+    hmat[blaze] = MAT['ZN1']
     if STYLE['senior'] and not p['back']:
         dith = ((XX.astype(int) + YY.astype(int)) % 2) == 0
         ring = ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 8.2 * kh, 5.6 * kh) & ~muzzle & ~blaze & (dith | ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 6.6 * kh, 4.4 * kh))
         brows = ell(hxc - 5.6 * kh, hyc - 6.2 * kh, 3.2, 1.4) | ell(hxc + 5.6 * kh, hyc - 6.2 * kh, 3.2, 1.4)
         hmat = np.where(ring | brows, MAT['grey'], hmat)
     if p['back']:
-        hmat = np.full((S, S), MAT['orange'])
+        hmat = np.full((S, S), MAT['ZH'])
     hl = level(hb)
     c.put_mat(head, hmat, hl)
     if p['back']:
@@ -570,8 +641,7 @@ def render_front(**kw):
         if STYLE['breed'] == 'peruvian':   # fringe over the eyes
             for k in range(-1, 5):
                 for hh in range(-1, 1 + (k in (1, 2))):
-                    c.put_px(ex + (k if side == 1 else 3 - k), ey + hh - (1 if p['eye'] == 'wide' else 0),
-                             coat_ramp('orange')[3 if (k + hh) % 2 else 2])
+                    c.zpx(ex + (k if side == 1 else 3 - k), ey + hh - (1 if p['eye'] == 'wide' else 0), 'H', 3 if (k + hh) % 2 else 2)
         if p['blush']:
             c.stamp(['BB'], int(round(hxc + side * 6.5 * kh - 1)), int(round(hyc + 2.5 * kh)), {'B': RAMP['pink'][1]})
     nx = int(round(hxc - 1 + lkx * 0.8))

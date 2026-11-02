@@ -726,6 +726,71 @@ def get_new_icons():
         c.put_px(7, 4, R['gold'][0])
     I['golden_bowl'] = _icon(golden_bowl)
 
+    # ------------------------------------------------------------------ G6: coat pattern swatches, shop slots, skittish
+    import patterns as _PT
+
+    def pattern_icon(pattern, palette):
+        def draw(c):
+            body, ub, vb = E(7.2, 9.4, 6.0, 4.4)
+            head, uh, vh = E(12.6, 7.6, 3.0, 3.0)
+            zones_arr = np.full(XX.shape, 'M', dtype=object)
+            zones_arr[ub > 0.3] = 'S'
+            zones_arr[ub < -0.45] = 'R'
+            zones_arr[ub < -0.72] = 'T'
+            zones_arr[(vb > 0.55)] = 'B'
+            hz = np.full(XX.shape, 'C', dtype=object)
+            hz[vh < -0.45] = 'H'
+            hz[(uh > 0.35) & (vh > -0.2)] = 'N2'
+            hz[(uh > 0.2) & (np.abs(vh) < 0.5)] = 'N1'
+            lvb, lvh = shade(ub, vb), shade(uh, vh)
+            for k in range(4):
+                for z in _PT.ZONES:
+                    col = np.array(list(_PT.zone_ramp(pattern, palette, z)[k]) + [255], np.uint8)
+                    _paint(c, body & ~head & (zones_arr == z) & (lvb == k), col)
+                    _paint(c, head & (hz == z) & (lvh == k), col)
+            if pattern == 'bicolor_head':   # heart-ish mark on the back
+                _paint(c, rect(5, 6, 8, 7) & body, np.array(list(_PT.zone_ramp(pattern, palette, 'X1')[1]) + [255], np.uint8))
+            c.put_px(13, 6, EYE)
+        return draw
+    for pt, pl in (('tricolor', 'ginger'), ('dutch', 'chestnut'), ('himalayan', 'black'), ('roan', 'slate'), ('bicolor_head', 'chocolate'),
+                   ('saddle', 'ginger'), ('two_tone', 'ginger'), ('self', 'black')):
+        I['pattern_' + pt] = _icon(pattern_icon(pt, pl))
+
+    def hide(c):   # stack of logs, end view
+        for (cx, cy) in ((4.6, 11.4), (8.2, 11.4), (11.8, 11.4), (6.4, 7.6), (10.0, 7.6), (8.2, 3.9)):
+            m, u, v = E(cx, cy, 2.0, 2.0)
+            c.put_mat(m, MAT['wood'], shade(u, v))
+            c.put_px(int(cx), int(cy), R['wood'][0])
+    I['hide'] = _icon(hide)
+
+    def fence(c):   # wire panel
+        for x in (2, 5, 8, 11, 14):
+            c.put_mat(rect(x, 2, x + 1, 14), MAT['grey'], 3)
+        for y in (3, 8, 13):
+            c.put_mat(rect(2, y, 15, y + 1), MAT['grey'], 3)
+    I['fence'] = _icon(fence)
+
+    def feeder(c):   # blue ceramic bowl with pellets
+        c.put_mat(E(8, 7.2, 4.2, 1.6)[0], MAT['hay'], 2)
+        bowl = rect(2, 7, 14, 9) | (E(8, 9.0, 6.0, 4.6)[0] & (YY >= 8))
+        c.put_mat(bowl, MAT['blue'], np.where(YY < 9, 0, np.where(YY < 11, 1, 2)))
+        c.put_mat(rect(5, 13, 11, 14), MAT['blue'], 3)
+    I['feeder'] = _icon(feeder)
+
+    def bedding(c):   # folded fleece with stripes
+        m = E(8, 9.5, 7.0, 4.4)[0]
+        u = (XX - 8) / 7.0
+        v = (YY - 9.5) / 4.4
+        c.put_mat(m, MAT['fabric'], np.where(np.sin(XX * 0.9) > 0.1, 0, 1) + (v > 0.4))
+        c.put_mat(m & (v > 0.7), MAT['fabric'], 3)
+    I['bedding'] = _icon(bedding)
+
+    def trait_skittish(c):   # startled eye with a spike
+        c.stamp(['..hhh..', '.hHHHh.', 'hHwwwHh', 'hHwEEHh', 'hHwEEHh', '.hHHHh.', '..hhh..'], 4, 6,
+                {'H': R['pink'][0], 'h': R['pink'][3], 'w': R['white'][0], 'E': hx('2b1712')})
+        c.stamp(['.#.', '.##', '##.', '.#.'], 7, 0, {'#': R['gold'][1]}, True)
+    I['trait_skittish'] = _icon(trait_skittish)
+
     return I
 
 def main(assets_dir):
@@ -750,7 +815,9 @@ def main(assets_dir):
         'coat_tricolor', 'coat_dutch', 'coat_agouti', 'coat_albino', 'coat_cinnamon',
         'stage_baby', 'stage_junior', 'stage_adult', 'stage_senior', 'stage_legend', 'sound_on', 'sound_off', 'gear', 'sparkle',
         'flame', 'warning', 'check', 'star', 'replay', 'back_arrow', 'album_book', 'gamepad',
-        'trick_spin', 'trick_stand_up', 'trick_hurdle', 'trick_popcorn', 'heart', 'heart_empty', 'pause', 'play', 'golden_bowl'
+        'trick_spin', 'trick_stand_up', 'trick_hurdle', 'trick_popcorn', 'heart', 'heart_empty', 'pause', 'play', 'golden_bowl',
+        'pattern_tricolor', 'pattern_dutch', 'pattern_himalayan', 'pattern_roan', 'pattern_bicolor_head', 'pattern_saddle', 'pattern_two_tone',
+        'pattern_self', 'hide', 'fence', 'feeder', 'bedding', 'trait_skittish'
     ]
 
     new_icons_funcs = get_new_icons()

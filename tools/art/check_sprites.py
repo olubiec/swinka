@@ -22,16 +22,24 @@ def check(folder, ref=None):
     an = j['animations']
     if len(an) != 60: errs.append(f'{len(an)} animations')
     if sum(v['frames'] for v in an.values()) != 592: errs.append('frame total != 592')
+    rp = os.path.join(folder, 'rotation.json')
+    strips = json.load(open(rp, encoding='utf-8'))['strips'] if os.path.exists(rp) else {}
     if j2['frame_size'] != [128, 128] or j2['floor_y'] != 118: errs.append('x2 json header')
-    for n, v in an.items():
-        r = v['row']
-        if ref and (ref['animations'][n]['row'], ref['animations'][n]['frames']) != (r, v['frames']): errs.append(f'{n}: table differs from reference')
-        for i in range(16):
-            fr = a[r * 64:(r + 1) * 64, i * 64:(i + 1) * 64]
+    occ = {}
+    for n, v in list(an.items()) + list(strips.items()):
+        occ.setdefault(v['row'], set()).update(range(v.get('col', 0), v.get('col', 0) + v['frames']))
+    for n, v in list(an.items()) + list(strips.items()):
+        r, c0 = v['row'], v.get('col', 0)
+        if ref and n in ref['animations'] and (ref['animations'][n]['row'], ref['animations'][n]['frames']) != (r, v['frames']): errs.append(f'{n}: table differs from reference')
+        for k in range(16):
+            fr = a[r * 64:(r + 1) * 64, k * 64:(k + 1) * 64]
             op = fr[..., 3] > 0
-            if i >= v['frames']:
-                if op.any(): errs.append(f'{n}[{i}] has pixels beyond frames')
+            if k not in occ[r]:
+                if op.any(): errs.append(f'{n}[{k}] has pixels beyond frames')
                 continue
+            if not (c0 <= k < c0 + v['frames']):
+                continue
+            i = k - c0
             if not op.any():
                 if (n, i) not in ALLOW_EMPTY: errs.append(f'{n}[{i}] empty')
                 continue

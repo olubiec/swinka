@@ -1,0 +1,64 @@
+{
+ "note": "Look of the five named pigs (graphics). Sheets: shape = breed_build, coat = pattern.palette in palettes.json (senior: add @senior).",
+ "pigs": {
+  "ned": {
+   "breed": "teddy",
+   "build": "chubby",
+   "pattern": "bicolor_head",
+   "palette": "chocolate",
+   "photos": [
+    "ned_01_topdown",
+    "ned_02_front"
+   ],
+   "traits": "lazy, glutton, poops a lot, chubby, curious",
+   "detail": "white body, chocolate head and ears, narrow white blaze with pink nose, heart on the lower back, teddy fuzz"
+  },
+  "kuki": {
+   "breed": "rosette",
+   "build": "normal",
+   "pattern": "two_tone",
+   "palette": "ginger",
+   "photos": [
+    "kuki_01_parsley_back",
+    "kuki_02_rosettes"
+   ],
+   "traits": "friendly, calm, neutral",
+   "detail": "ginger front, dark brown rump and flanks, rosettes on the rump and shoulders, white blaze, pink ears"
+  },
+  "glen": {
+   "breed": "rosette",
+   "build": "lean",
+   "pattern": "self",
+   "palette": "black",
+   "photos": [
+    "glen_01_rosette_black"
+   ],
+   "traits": "barely moves, calm, cuddly, lean, eats little",
+   "detail": "black, shaggy, lean, rust streak on the flank, rosettes"
+  },
+  "james": {
+   "breed": "teddy",
+   "build": "normal",
+   "pattern": "roan",
+   "palette": "slate",
+   "photos": [
+    "james_01_scale_928g"
+   ],
+   "traits": "skittish, loud, strong",
+   "detail": "slate grey roan (light speckles), dark muzzle and feet, rough teddy coat, strong build"
+  },
+  "racuch": {
+   "breed": "smooth",
+   "build": "chubby",
+   "pattern": "saddle",
+   "palette": "ginger",
+   "photos": [
+    "racuch_01_scale_1032g",
+    "racuch_02_dill",
+    "racuch_03_scale_848g"
+   ],
+   "traits": "chubby, active, calm, funny",
+   "detail": "ginger, black cap and saddle, white blaze and muzzle, white rump tip, smooth coat, chubby"
+  }
+ }
+}

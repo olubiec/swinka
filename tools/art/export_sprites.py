@@ -11,16 +11,20 @@ from pig import S, FLOOR
 DESC = {'baby': 'Baby', 'junior': 'Junior', 'adult': 'Adult (ginger)', 'senior': 'Senior', 'legend': 'Legend'}
 
 
-def write_variant(folder, age, coat='ruda', breed='smooth', desc=None, descriptions=None):
-    A, sheet = sheets.render(age, coat, breed)
+def write_variant(folder, age, coat='ruda', breed='smooth', desc=None, descriptions=None, build='normal', pattern=None, palette=None, master=None):
+    A, sheet = sheets.render(age, coat, breed, build, pattern, palette, master)
     os.makedirs(folder, exist_ok=True)
     if descriptions is None:
         descriptions = {n: A[n]['opis'] for n in A}
-    meta = {'variant': os.path.basename(folder) if breed == 'smooth' else breed + '_' + age,
+    meta = {'variant': os.path.basename(folder) if (breed, build) == ('smooth', 'normal') else breed + '_' + build + '_' + age,
             'description': desc or DESC.get(age, age), 'frame_size': [S, S], 'floor_y': FLOOR, 'facing': 'right', 'animations': {}}
     for r, n in enumerate(A):
         meta['animations'][n] = {'row': r, 'frames': len(A[n]['frames']), 'fps': sheets.fps_for(age, n, A[n]['fps']),
                                  'loop': A[n]['loop'], 'description': descriptions.get(n, A[n]['opis'])}
+    rot = {'note': 'Strips that share the row of a host animation (frame units, valid for x1 and x2 sheets). Not part of animations.json.',
+           'strips': {n: {'row': list(A).index(x['host']), 'col': x['col'], 'frames': len(x['frames']), 'fps': sheets.fps_for(age, n, x['fps']),
+                          'loop': x['loop'], 'description': x['opis']} for n, x in sheets.EXTRA().items()}}
+    json.dump(rot, open(os.path.join(folder, 'rotation.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     Image.fromarray(sheet, 'RGBA').save(os.path.join(folder, 'spritesheet.png'), optimize=True)
     x2 = Image.fromarray(sheet, 'RGBA').resize((sheet.shape[1] * 2, sheet.shape[0] * 2), Image.NEAREST)
     x2.save(os.path.join(folder, 'spritesheet_x2.png'), optimize=True)

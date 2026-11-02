@@ -107,6 +107,19 @@
   "heart_empty": 103,
   "pause": 104,
   "play": 105,
-  "golden_bowl": 106
+  "golden_bowl": 106,
+  "pattern_tricolor": 107,
+  "pattern_dutch": 108,
+  "pattern_himalayan": 109,
+  "pattern_roan": 110,
+  "pattern_bicolor_head": 111,
+  "pattern_saddle": 112,
+  "pattern_two_tone": 113,
+  "pattern_self": 114,
+  "hide": 115,
+  "fence": 116,
+  "feeder": 117,
+  "bedding": 118,
+  "trait_skittish": 119
  }
 }
