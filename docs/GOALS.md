@@ -18,7 +18,7 @@ Cuy: pikselowa świnka morska na pulpicie Windowsa (okno Pulpit + okno Domek), p
 - Nie dodawaj instalatora, płatności, kont online, telemetrii, portu na ESP32 ani trybu deweloperskiego w paczce dla gracza.
 - Nie zmieniaj formatu `save.json` bez migracji.
 - Nie dodawaj zależności spoza `docs/PLAN.md`; nie usuwaj ani nie zmieniaj istniejących asercji.
-- Nie ruszaj `assets/` binarnych ani `Resources/animations.xml`.
+- Nie ruszaj `Resources/animations.xml`. Pliki binarne w `assets/` zmienia tylko Claude Code w falach wizualnych (`docs/VISUAL_WAVES.md`); pętla nie planuje zadań wizualnych ani zadań na assets.
 
 ## Inspiracje (opcjonalnie)
 Inspiracje: desktop pet pixel art javascript

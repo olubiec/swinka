@@ -14,3 +14,6 @@ Read AGENTS.md once per session (single source of rules for Claude and Jules). P
 
 ## Working with Jules
 All Jules work goes through the Jules Loop (`docs/JULES_LOOP.md`). Claude writes the plan and the wave files `tasks/W<n>-<nn>-*.md` in the loop format (`Zmieniaj:` line required), and pushes them to `main`: the loop starts the wave on push. Do not start Jules sessions by hand and do not use `tools/jules-wave.sh`, `tools/jules-backlog.sh` or `jules/queue/`. Read `docs/PROJECT_STATE.md` (state) and `docs/GOALS.md` (product goals; the loop plans new waves from it once `tasks/` is empty) at session start.
+
+## Visual work
+Sprites, breeds, coats, icons, animations and screen graphics are done by Claude Code in waves V0-V8 (`docs/VISUAL_WAVES.md`, log in `docs/VISUAL_LOG.md`). Those files are in `docs/`, not `tasks/`, so the Jules Loop does not start them. For this work the "do not read assets binaries" rule is lifted: render contact sheets into a scratch folder and look at them.

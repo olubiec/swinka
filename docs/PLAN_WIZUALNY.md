@@ -73,21 +73,13 @@ Dekoracje i tło Home (`drawHabitat`, `items_decor`), strony do kolorowania (9 p
 Wniosek: sprite'y i ikony powstają **proceduralnie w skryptach** (tak jest dotąd), więc najlepiej projektuje je Claude, a wdraża Jules. Modele graficzne tylko do konceptów.
 
 ## 6. Kolejność fal
-- **W9 (wypchnięta):** P1-P4 (tymczasowo), P6, P7.
-- **W10:** test przycisku Finish (W10-01), Hay Maze sprite (P5), przegląd G5 (bez kodu), tabela A4.
-- **W11:** G1 podmiana palet + A2 senior; akceptacja wariantów przez Ciebie.
-- **W12:** G3 ikony, G2 chubby/skinny/rosette.
-- **W13:** decyzja o peruvian; test desktopu na Windowsie (A6).
+Wykonuje Claude Code wg `docs/VISUAL_WAVES.md` (fale V0-V8). Jules robi tylko W9 i W10-01 z `tasks/`.
 
 ## 7. Definicja "temat wizualny zamknięty"
-1. `tools/qa/sprite-check.js` i `minigame-fit-check.js` zielone w CI.
-2. Każda z 60 animacji odtwarza się w Home i ma przypisane zachowanie albo adnotację "nieużywana".
-3. Każda rasa i umaszczenie widoczne na karcie świnki, w Home i na pulpicie.
-4. Zero ikon pożyczonych; zero emoji jako ikon UI.
-5. Przegląd wizualny G5 bez otwartych uwag.
-6. Test ręczny pulpitu z `TESTING.md` (kroki 2-6, 28, 34-37) przeszedł na Windowsie.
+Patrz `docs/VISUAL_WAVES.md`, sekcja V8.
 
-## 8. Decyzje do podjęcia
-1. Palety w czasie działania (rekomendowane) czy osobne arkusze?
-2. Peruvian: odłożyć, uproszczona nakładka czy pełna animacja?
-3. Czy senior ma być wyraźnie postarzony (rekomendowane)?
+## 8. Decyzje (podjęte 2026-11-02)
+1. Palety w czasie działania (podmiana kolorów), pięć umaszczeń.
+2. Rasy jako osobne arkusze; peruvian w wersji uproszczonej (grzywka i spódnica z włosów w rendererze ciała).
+3. Senior wyraźnie postarzony.
+4. Grafikę rysuje Claude Code skryptami w `tools/art`, bez modeli graficznych.
