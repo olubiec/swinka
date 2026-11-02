@@ -37,7 +37,7 @@
     let html = `
       <div class="feature-shop-header">
         <span>Your clovers:</span>
-        <b class="feature-shop-balance"><span class="pixel-icon icon-clover"></span> ${clovers} 🍀</b>
+        <b class="feature-shop-balance"><span class="pixel-icon icon-clover"></span> ${clovers}</b>
       </div>
 
       <div class="feature-shop-tabs">
@@ -77,7 +77,7 @@
             <div class="pixel-icon x1_5 ${it.icon || 'icon-' + it.id.replace(/_/g, '-')}"></div>
             <b>${it.name}</b>
             <small class="feature-shop-desc">${it.description}</small>
-            <span class="feature-shop-price">${it.price} 🍀</span>
+            <span class="feature-shop-price">${it.price} <span class="pixel-icon icon-clover"></span></span>
             <button class="feature-shop-btn" data-buy="${it.id}" ${!canAfford ? 'disabled' : ''}>
               ${btnText}
             </button>

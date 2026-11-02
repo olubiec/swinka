@@ -103,7 +103,7 @@
             const canAffordTreatment = clovers >= (cond.price || 0);
             html += `
               <button class="game-btn" data-action="treat" data-id="${cond.id}" ${canAffordTreatment ? '' : 'disabled'}>
-                <span class="pixel-icon icon-clover"></span> Treat – ${cond.price} 🍀
+                <span class="pixel-icon icon-clover"></span> Treat – ${cond.price}
               </button>
               ${!canAffordTreatment ? `<div class="feature-vet-error">Not enough clovers</div>` : ''}
             `;
@@ -113,7 +113,7 @@
             if (cond.doseDueToday) {
               html += `<button class="game-btn" data-action="dose" data-id="${cond.id}"><span class="pixel-icon icon-medicine"></span> Give today's dose</button>`;
             } else {
-              html += `<div class="feature-vet-dose-done">Next dose tomorrow ✓</div>`;
+              html += `<div class="feature-vet-dose-done">Next dose tomorrow <span class="pixel-icon icon-check"></span></div>`;
             }
           } else {
             // Treated, waiting for cure condition (cureHint shown above)
@@ -129,7 +129,7 @@
             </div>
             <div class="feature-vet-card-actions">
               <button class="game-btn" id="btn-vet-checkup" ${canAffordCheckup ? '' : 'disabled'}>
-                <span class="pixel-icon icon-clover"></span> Check-up – ${vetState.checkupPrice} 🍀
+                <span class="pixel-icon icon-clover"></span> Check-up – ${vetState.checkupPrice}
               </button>
               ${!canAffordCheckup ? `<div class="feature-vet-error">Not enough clovers</div>` : ''}
             </div>

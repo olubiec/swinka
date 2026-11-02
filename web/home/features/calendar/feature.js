@@ -112,7 +112,7 @@
               <span class="fc-task-title">${task.title}</span>
               <span class="fc-task-time">${timeText}</span>
             </div>
-            ${task.streak ? `<span class="fc-task-streak">🔥 x${task.streak}</span>` : ''}
+            ${task.streak ? `<span class="fc-task-streak"><span class="pixel-icon icon-flame"></span> x${task.streak}</span>` : ''}
           </div>
           <div class="fc-task-text">${task.text || ''}</div>
           ${task.due ? `
@@ -277,7 +277,7 @@
 
     if (state.alerts && state.alerts.length > 0) {
         state.alerts.forEach(a => {
-            html += `<div class="fc-alert">⚠️ ${a}</div>`;
+            html += `<div class="fc-alert"><span class="pixel-icon icon-warning"></span> ${a}</div>`;
         });
     }
 

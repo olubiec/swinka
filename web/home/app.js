@@ -278,7 +278,7 @@
     if (elements.stageBadge) {
       const stageName = state.stageName || 'Baby';
       const stageKey = state.stageKey || 'adult';
-      elements.stageBadge.textContent = getStageIcon(stageKey) + ' ' + stageName;
+      elements.stageBadge.innerHTML = getStageIcon(stageKey) + ' ' + stageName;
       elements.stageBadge.className = `stage-badge stage-${stageKey}`;
     }
 
@@ -294,7 +294,7 @@
         subText = `next: ${next.title || next.id} (${next.pointsToNext} pts)`;
       }
       elements.bondIndicator.innerHTML = `
-        <div class="bond-header">❤️ Bond: Lv. ${b.level}</div>
+        <div class="bond-header"><span class="pixel-icon icon-heart"></span> Bond: Lv. ${b.level}</div>
         <div class="bond-bar-track"><div class="bond-bar-fill" style="width: ${pct}%"></div></div>
         <div class="bond-sub">${subText}</div>
       `;
@@ -358,12 +358,12 @@
 
   function getStageIcon(key) {
     switch (key) {
-      case 'baby': return '🌿';
-      case 'junior': return '🌾';
-      case 'adult': return '🥕';
-      case 'senior': return '👑';
-      case 'legend': return '⭐';
-      default: return '🐾';
+      case 'baby': return '<span class="pixel-icon icon-stage-baby"></span>';
+      case 'junior': return '<span class="pixel-icon icon-stage-junior"></span>';
+      case 'adult': return '<span class="pixel-icon icon-stage-adult"></span>';
+      case 'senior': return '<span class="pixel-icon icon-stage-senior"></span>';
+      case 'legend': return '<span class="pixel-icon icon-stage-legend"></span>';
+      default: return '<span class="pixel-icon icon-stage-baby"></span>';
     }
   }
 
@@ -476,7 +476,7 @@
       if (window.Sound) window.Sound.sweep();
       if (canvasPig) {
         canvasPig.playAnim('happy', 2500);
-        canvasPig.showBubble('All clean and fresh! ✨', 2500);
+        canvasPig.showBubble('All clean and fresh!', 2500);
         canvasPig.spawnHeart(canvasPig.pigX + 32, canvasPig.pigY + 20);
       }
 
@@ -490,7 +490,7 @@
       if (window.Sound) window.Sound.wheek();
       if (canvasPig) {
         canvasPig.playAnim('greet', 3000);
-        canvasPig.showBubble('WHEEEE! I\'m here! ❤️', 2800);
+        canvasPig.showBubble('WHEEEE! I\'m here!', 2800);
         for (let i = 0; i < 3; i++) {
           setTimeout(() => {
             canvasPig.spawnHeart(canvasPig.pigX + 20 + Math.random() * 25, canvasPig.pigY + 15);
@@ -569,7 +569,7 @@
 
   function updateSoundButtonUI() {
     if (!elements.btnSound || !window.Sound) return;
-    elements.btnSound.textContent = window.Sound.isMuted ? '🔇' : '🔊';
+    elements.btnSound.innerHTML = window.Sound.isMuted ? '<span class="pixel-icon icon-sound-off"></span>' : '<span class="pixel-icon icon-sound-on"></span>';
     elements.btnSound.title = window.Sound.isMuted ? 'Turn sounds on' : 'Mute sounds';
   }
 
@@ -725,7 +725,7 @@
 
   // Modal Minigier
   function openMinigamesModal() {
-    openModal('🎮 Games', '');
+    openModal('Games', '');
     if (window.Minigry && elements.modalBody) {
       window.Minigry.renderSelectScreen(elements.modalBody);
     }
@@ -827,7 +827,7 @@
       `;
     });
     html += `</div>`;
-    openModal('📖 Behaviour Album', html);
+    openModal('Behaviour Album', html);
   }
 
   // Developer test dialog / mock tester
@@ -859,7 +859,7 @@
         <div class="test-row">
           <label>Clovers:</label>
           <div style="display:flex; gap:4px;">
-            <button class="test-btn" id="testAddClovers">+50 🍀</button>
+            <button class="test-btn" id="testAddClovers">+50 <span class="pixel-icon icon-clover"></span></button>
           </div>
         </div>
 
@@ -869,7 +869,7 @@
       </div>
     `;
 
-    openModal('⚙️ Test Panel (mock)', html);
+    openModal('Test Panel (mock)', html);
 
     // Test click handlers
     document.getElementById('testLow')?.addEventListener('click', () => {

@@ -106,10 +106,11 @@
       card.className = `trick-card ${t.unlocked ? 'unlocked' : 'locked'}`;
 
       const iconMap = {
-        spin: '🔄',
-        stand_up: '🧍',
-        popcorn: '🍿',
-        hurdle_jump: '🏃'
+        spin: '<span class="pixel-icon icon-trick-spin x2"></span>',
+        stand_up: '<span class="pixel-icon icon-trick-stand-up x2"></span>',
+        popcorn: '<span class="pixel-icon icon-trick-popcorn x2"></span>',
+        hurdle_jump: '<span class="pixel-icon icon-trick-hurdle x2"></span>',
+        hurdle: '<span class="pixel-icon icon-trick-hurdle x2"></span>'
       };
 
       const title = formatTrickTitle(t.id, t.title);
@@ -135,7 +136,7 @@
 
       card.innerHTML = `
         <div class="trick-card-top">
-          <div class="trick-icon">${iconMap[t.id] || '✨'}</div>
+          <div class="trick-icon">${iconMap[t.id] || '<span class="pixel-icon icon-sparkle x2"></span>'}</div>
           <div class="trick-info">
             <div class="trick-title">${title}</div>
             <div class="trick-desc">${desc}</div>

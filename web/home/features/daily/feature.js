@@ -27,7 +27,7 @@ window.CuyHome.registerFeature({
       <div class="daily-view">
         <div class="daily-icon"><span class="pixel-icon icon-gift x2"></span></div>
         <div style="font-size: 16px; margin-bottom: 8px;">Day ${dailyState.streak} in a row!</div>
-        <div class="daily-amount">+${dailyState.amount} 🍀</div>
+        <div class="daily-amount">+${dailyState.amount} <span class="pixel-icon icon-clover"></span></div>
         <div class="daily-streak-container">
           ${streakHtml}
         </div>

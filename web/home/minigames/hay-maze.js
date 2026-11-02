@@ -28,6 +28,7 @@
       }
 
       preload() {
+        root.MinigryPig.preload(this, config.stageKey || 'adult');
         this.load.spritesheet('icons16', iconsUrl(), { frameWidth: 16, frameHeight: 16 });
       }
 
@@ -150,40 +151,35 @@
         const ox = this.offsetX;
         const oy = this.offsetY;
 
-        // Floor
-        g.fillStyle(0x3e5927, 1);
-        g.fillRect(ox, oy, w * cs, h * cs);
+        // Floor: two greens in a checker, like a mown meadow
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            g.fillStyle((x + y) % 2 === 0 ? 0x3e5927 : 0x466430, 1);
+            g.fillRect(ox + x * cs, oy + y * cs, cs, cs);
+          }
+        }
 
-        // Walls (hay bales)
-        g.lineStyle(2, 0x8a621e, 1);
-        g.fillStyle(0xd4a03e, 1);
+        // Walls: hay bales drawn pixel-style (dark edge, straw body, light top edge, straw ticks)
+        const T = 4;
+        const bale = (rx, ry, rw, rh, horizontal) => {
+          g.fillStyle(0x6f7a34, 1); g.fillRect(rx, ry, rw, rh);                 // outline / shadow
+          g.fillStyle(0xcdb556, 1); g.fillRect(rx + 1, ry + 1, rw - 2, rh - 2); // body
+          g.fillStyle(0xeedb7c, 1);                                             // light edge (top / left)
+          if (horizontal) g.fillRect(rx + 1, ry + 1, rw - 2, 1); else g.fillRect(rx + 1, ry + 1, 1, rh - 2);
+          g.fillStyle(0x99903d, 1);                                             // straw ticks
+          if (horizontal) { for (let k = 3; k < rw - 2; k += 4) g.fillRect(rx + k, ry + 2, 1, 1); }
+          else { for (let k = 3; k < rh - 2; k += 4) g.fillRect(rx + 2, ry + k, 1, 1); }
+        };
 
         for (let y = 0; y < h; y++) {
           for (let x = 0; x < w; x++) {
             const cell = this.maze.cells[y][x];
             const px = ox + x * cs;
             const py = oy + y * cs;
-
-            // North wall
-            if (!cell.n) {
-              g.fillRect(px, py, cs, 2);
-              g.strokeRect(px, py, cs, 2);
-            }
-            // West wall
-            if (!cell.w) {
-              g.fillRect(px, py, 2, cs);
-              g.strokeRect(px, py, 2, cs);
-            }
-            // East boundary
-            if (!cell.e && x === w - 1) {
-              g.fillRect(px + cs - 2, py, 2, cs);
-              g.strokeRect(px + cs - 2, py, 2, cs);
-            }
-            // South boundary
-            if (!cell.s && y === h - 1) {
-              g.fillRect(px, py + cs - 2, cs, 2);
-              g.strokeRect(px, py + cs - 2, cs, 2);
-            }
+            if (!cell.n) bale(px - 1, py - 2, cs + 2, T, true);
+            if (!cell.w) bale(px - 2, py - 1, T, cs + 2, false);
+            if (!cell.e && x === w - 1) bale(px + cs - 2, py - 1, T, cs + 2, false);
+            if (!cell.s && y === h - 1) bale(px - 1, py + cs - 2, cs + 2, T, true);
           }
         }
       }
@@ -225,30 +221,12 @@
         const px = this.offsetX + this.pigCell.x * this.cellSize + this.cellSize / 2;
         const py = this.offsetY + this.pigCell.y * this.cellSize + this.cellSize / 2;
 
-        const pigContainer = this.add.container(px, py);
-        this.levelGroup.add(pigContainer);
-
-        // Draw cute 12x8 pixel pig
-        const g = this.add.graphics();
-        // Body (ginger 0xd98c3a)
-        g.fillStyle(0xd98c3a, 1);
-        g.fillRect(-6, -4, 10, 8);
-        // Ears (darker brown 0xb86928)
-        g.fillStyle(0xb86928, 1);
-        g.fillRect(-4, -5, 2, 2);
-        g.fillRect(-4, 3, 2, 2);
-        // Eye (dark 0x2b1712)
-        g.fillStyle(0x2b1712, 1);
-        g.fillRect(1, -2, 1, 1);
-        // Nose (pink 0xe8a29a)
-        g.fillStyle(0xe8a29a, 1);
-        g.fillRect(4, -1, 2, 2);
-
-        pigContainer.add(g);
-        const targetScale = Math.max(0.7, (this.cellSize * 0.75) / 12);
-        pigContainer.setScale(targetScale);
-
-        this.pig = pigContainer;
+        // The real pig sheet (breed, stage and coat of the active pig), scaled so the body fits one maze cell
+        const spr = root.MinigryPig.create(this, px, py);
+        spr.setOrigin(0.5, 0.72);
+        spr.setScale(Math.max(0.3, (this.cellSize * 1.3) / 64));
+        this.levelGroup.add(spr);
+        this.pig = spr;
       }
 
       update() {
@@ -343,6 +321,7 @@
           this.pig.setScale(Math.abs(this.pig.scaleX), this.pig.scaleY);
         }
 
+        if (this.pig.anims) this.pig.play('pig_run', true);
         this.tweens.add({
           targets: this.pig,
           x: targetPixelX,
@@ -352,6 +331,7 @@
             this.pigCell = { x: tx, y: ty };
             this.checkCellEvents();
             this.isMoving = false;
+            if (this.pig.anims && !this.moveQueue.length) this.pig.play('pig_idle', true);
             if (onDone) onDone();
           }
         });
@@ -392,6 +372,8 @@
       width: W,
       height: H,
       parent: config.container,
+      // the 360x290 canvas is fitted into the narrower .minigames-canvas-wrapper; FIT keeps pointer input mapped
+      scale: { mode: root.Phaser.Scale.FIT, autoCenter: root.Phaser.Scale.CENTER_BOTH },
       pixelArt: true,
       roundPixels: true,
       backgroundColor: '#4a6b2f',
@@ -402,7 +384,7 @@
   root.Minigry.register({
     id: 'hay_maze',
     name: 'Hay Maze',
-    icon: '🌀',
+    icon: 'game-hay-maze',
     desc: 'Guide your guinea pig through the hay maze to the bell pepper!',
     start: start
   });

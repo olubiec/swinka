@@ -55,7 +55,8 @@
 
         // HUD
         const style = { fontFamily: 'monospace', fontSize: '14px', color: '#fffdf8', stroke: '#2b1712', strokeThickness: 3 };
-        this.heartsText = this.add.text(8, 6, '', style).setDepth(10);
+        // three heart sprites (icons_16.png: heart 102, heart_empty 103)
+        this.heartIcons = [0, 1, 2].map((i) => this.add.image(16 + i * 18, 14, 'icons16', 102).setDepth(10));
         this.timeText = this.add.text(W - 8, 6, '', style).setOrigin(1, 0).setDepth(10);
         this.updateHud();
 
@@ -138,7 +139,7 @@
       }
 
       updateHud() {
-        this.heartsText.setText('♥'.repeat(Math.max(0, hearts)) + '♡'.repeat(Math.max(0, 3 - hearts)));
+        this.heartIcons.forEach((h, i) => h.setFrame(i < hearts ? 102 : 103));
         this.timeText.setText(timeLeft + ' s');
       }
 
@@ -178,6 +179,8 @@
       width: W,
       height: H,
       parent: config.container,
+      // the 360x290 canvas is fitted into the narrower .minigames-canvas-wrapper; FIT keeps pointer input mapped
+      scale: { mode: root.Phaser.Scale.FIT, autoCenter: root.Phaser.Scale.CENTER_BOTH },
       pixelArt: true,
       backgroundColor: '#9c6636',
       physics: { default: 'arcade', arcade: { gravity: { y: 0 } } },
@@ -188,7 +191,7 @@
   root.Minigry.register({
     id: 'veggie_rain',
     name: 'Veggie Rain',
-    icon: '🥕',
+    icon: 'game-veggie-rain',
     desc: 'Catch the veggies! Onions and chocolate are bad for guinea pigs.',
     start: start
   });

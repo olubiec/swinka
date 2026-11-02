@@ -47,7 +47,7 @@ function serve() {
   const page = await browser.newPage({ viewport: { width: 420, height: 640 } });
   console.log('Chromium ' + browser.version());
   const errors = [];
-  page.on('pageerror', (e) => { if (e.message.includes('addEventListener')) { /* TODO: Cannot read properties of null (reading addEventListener) in web/home/features/vet/feature.js */ } else { errors.push('pageerror: ' + e.message); } });
+  page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); });
   page.on('requestfailed', (req) => {
     if (req.failure() && req.failure().errorText === 'net::ERR_ABORTED' && /\.(ogg|mp3|wav)$/.test(req.url())) {
       return;

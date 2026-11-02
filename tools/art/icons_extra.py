@@ -552,6 +552,170 @@ def get_new_icons():
     I['coat_albino'] = _icon(swatch('albino', band=False, dark=False, eye=_pig.COATS['albino']['eye']))
     I['coat_cinnamon'] = _icon(swatch('cinnamon', band=True, dark=True))
 
+    # ------------------------------------------------------------------ V6: icons that replace emoji in the UI
+    def pat(c, rows, x, y, cmap, outline=True):
+        c.stamp(rows, x, y, cmap, outline)
+
+    def stage_baby(c):   # milk bottle
+        pat(c, ['..cc..', '..CC..', '.bbbb.', 'bwwwwb', 'bwwwwb', 'bwwwwb', 'bwwwwb', '.bbbb.'], 5, 3,
+            {'c': R['pink'][1], 'C': R['pink'][2], 'b': R['blue'][1], 'w': R['white'][0]})
+        c.put_px(6, 7, R['blue'][0]); c.put_px(6, 8, R['blue'][0])
+    I['stage_baby'] = _icon(stage_baby)
+
+    def stage_junior(c):   # sprout
+        for (cx, cy, rx, ry, rot, lv) in ((5.2, 6.2, 3.3, 1.9, 35, 1), (10.8, 5.2, 3.3, 1.9, -35, 0)):
+            m, u, v = E(cx, cy, rx, ry, rot)
+            c.put_mat(m, MAT['leaf'], shade(u, v, 0.1 * lv))
+        c.put_mat(rect(7, 6, 9, 13), MAT['leaf'], np.where(XX < 8, 1, 2))
+        c.put_mat(E(8, 13.5, 4.6, 1.6)[0], MAT['wood'], 2)
+    I['stage_junior'] = _icon(stage_junior)
+
+    def stage_adult(c):   # flower
+        for (px, py) in ((8, 4.5), (11.2, 7), (4.8, 7), (6, 10.6), (10, 10.6)):
+            m, u, v = E(px, py, 2.4, 2.4)
+            c.put_mat(m, MAT['pink'], shade(u, v))
+        c.put_mat(E(8, 8, 2.2, 2.2)[0], MAT['gold'], 1)
+        c.put_px(7, 7, R['gold'][0])
+    I['stage_adult'] = _icon(stage_adult)
+
+    def stage_senior(c):   # round glasses
+        for cxg in (4.6, 11.4):
+            ring, u, v = E(cxg, 8.5, 3.4, 3.4)
+            inner, _, _ = E(cxg, 8.5, 2.0, 2.0)
+            c.put_mat(ring & ~inner, MAT['wood'], 1)
+            c.put_mat(inner, MAT['blue'], 0)
+        c.put_mat(rect(7.5, 8, 8.5, 9), MAT['wood'], 1)
+        c.put_px(1, 6, R['wood'][1]); c.put_px(14, 6, R['wood'][1])
+    I['stage_senior'] = _icon(stage_senior)
+
+    def stage_legend(c):   # crown
+        pat(c, ['G..G..G', 'GG.GG.GG', 'GGGGGGGG', 'GgGgGgGG', 'GGGGGGGG', 'dddddddd'], 4, 5,
+            {'G': R['gold'][1], 'g': R['red'][1], 'd': R['gold'][2]})
+        c.put_px(4, 5, R['gold'][0]); c.put_px(7, 5, R['gold'][0]); c.put_px(10, 5, R['gold'][0])
+    I['stage_legend'] = _icon(stage_legend)
+
+    def sound_on(c):
+        pat(c, ['...aa', '..aaa', 'aaaaa', 'aaaaa', '..aaa', '...aa'], 2, 5, {'a': R['grey'][2]})
+        for (x, y) in ((9, 6), (10, 7), (10, 8), (9, 9)):
+            c.put_px(x, y, R['blue'][2], False)
+        for (x, y) in ((11, 4), (12, 5), (12, 6), (12, 7), (12, 8), (12, 9), (11, 10)):
+            c.put_px(x, y, R['blue'][1], False)
+    I['sound_on'] = _icon(sound_on)
+
+    def sound_off(c):
+        pat(c, ['...aa', '..aaa', 'aaaaa', 'aaaaa', '..aaa', '...aa'], 2, 5, {'a': R['grey'][2]})
+        for k in range(5):
+            c.put_px(9 + k, 5 + k, R['red'][1], False); c.put_px(13 - k, 5 + k, R['red'][1], False)
+    I['sound_off'] = _icon(sound_off)
+
+    def gear(c):
+        m, u, v = E(8, 8, 5.2, 5.2)
+        teeth = np.zeros_like(m)
+        for ang in range(0, 360, 45):
+            tx, ty = 8 + 5.6 * np.cos(np.radians(ang)), 8 + 5.6 * np.sin(np.radians(ang))
+            teeth |= E(tx, ty, 1.5, 1.5)[0]
+        hole, _, _ = E(8, 8, 2.1, 2.1)
+        c.put_mat((m | teeth) & ~hole, MAT['grey'], shade(u, v))
+    I['gear'] = _icon(gear)
+
+    def sparkle(c):
+        pat(c, ['...G...', '...G...', '..GGG..', 'GGGWGGG', '..GGG..', '...G...', '...G...'], 4, 4, {'G': R['gold'][1], 'W': R['gold'][0]})
+        c.put_px(2, 3, R['gold'][0]); c.put_px(13, 12, R['gold'][0]); c.put_px(12, 2, R['gold'][1])
+    I['sparkle'] = _icon(sparkle)
+
+    def flame(c):
+        pat(c, ['...r...', '..rr...', '..rrr.r', '.rrrrrr', 'rrooorr', 'rroyyor', 'rooyyor', '.rooor.'], 4, 4,
+            {'r': R['red'][1], 'o': R['carrot'][1], 'y': R['gold'][0]})
+    I['flame'] = _icon(flame)
+
+    def warning(c):
+        tri = (YY >= 2) & (YY < 14) & (np.abs(XX - 8) <= (YY - 2) * 0.55 + 0.5)
+        c.put_mat(tri, MAT['gold'], np.where(XX < 8, 1, 2))
+        c.stamp(['d', 'd', 'd', '.', 'd'], 8, 6, {'d': OUT}, False)
+    I['warning'] = _icon(warning)
+
+    def check(c):
+        pat(c, ['......g', '.....gg', 'g...gg.', 'gg.gg..', '.ggg...', '..g....'], 3, 5, {'g': R['leaf'][2]})
+        for (x, y) in ((9, 5), (8, 6), (7, 7), (6, 8)):
+            c.put_px(x, y, R['leaf'][1], False)
+    I['check'] = _icon(check)
+
+    def star(c):
+        pat(c, ['...G...', '...G...', 'GGGGGGG', '.GGGGG.', '..GGG..', '.GG.GG.', '.G...G.'], 4, 4, {'G': R['gold'][1]})
+        c.put_px(7, 6, R['gold'][0]); c.put_px(6, 7, R['gold'][0])
+    I['star'] = _icon(star)
+
+    def replay(c):
+        ring, u, v = E(8, 8, 5.2, 5.2)
+        inner, _, _ = E(8, 8, 3.0, 3.0)
+        gap = (XX > 8) & (YY < 8) & (YY > 6.2)
+        c.put_mat(ring & ~inner & ~gap, MAT['blue'], shade(u, v))
+        pat(c, ['bbb', '.bb', '..b'], 9, 3, {'b': R['blue'][2]}, False)
+        c.put_px(11, 5, R['blue'][2])
+    I['replay'] = _icon(replay)
+
+    def back_arrow(c):
+        pat(c, ['..a....', '.aa....', 'aaaaaaa', 'aaaaaaa', '.aa....', '..a....'], 4, 5, {'a': R['grey'][2]})
+    I['back_arrow'] = _icon(back_arrow)
+
+    def album_book(c):
+        c.put_mat(rect(3, 3, 13, 14), MAT['red'], np.where(XX < 4.5, 2, np.where(XX < 8, 1, 0)))
+        c.put_mat(rect(5, 4, 12, 13), MAT['cream'], np.where(XX < 6, 1, 0))
+        for yy in (6, 8, 10):
+            c.put_mat(rect(7, yy, 11, yy + 1), MAT['grey'], 2)
+    I['album_book'] = _icon(album_book)
+
+    def gamepad(c):
+        body, u, v = E(8, 9, 6.6, 4.2)
+        c.put_mat(body, MAT['blue'], shade(u, v))
+        c.put_mat(rect(3.5, 8.5, 7.5, 9.5) | rect(5, 7, 6, 11), MAT['grey'], 3)
+        c.put_px(10, 8, R['red'][1]); c.put_px(12, 9, R['gold'][1]); c.put_px(11, 10, R['leaf'][1])
+    I['gamepad'] = _icon(gamepad)
+
+    def trick_spin(c):
+        ring, u, v = E(8, 8, 5.6, 5.6)
+        inner, _, _ = E(8, 8, 3.6, 3.6)
+        gap = (XX > 8) & (YY > 7) & (YY < 9.2)
+        c.put_mat(ring & ~inner & ~gap, MAT['blue'], shade(u, v))
+        pat(c, ['bbb', 'bb.', 'b..'], 11, 8, {'b': R['blue'][2]}, False)
+        m, pu, pv = E(8, 8, 2.0, 1.5)
+        c.put_mat(m, MAT['orange'], shade(pu, pv))
+    I['trick_spin'] = _icon(trick_spin)
+
+    def trick_stand_up(c):
+        m, u, v = E(8, 9.2, 3.6, 5.2)
+        c.put_mat(m, MAT['orange'], shade(u, v))
+        c.put_mat(E(8, 11, 2.0, 3.0)[0], MAT['white'], 1)
+        c.put_mat(E(5.4, 4.2, 1.5, 1.5)[0], MAT['rust'], 2); c.put_mat(E(10.6, 4.2, 1.5, 1.5)[0], MAT['rust'], 2)
+        c.put_px(6, 6, EYE); c.put_px(10, 6, EYE); c.put_px(8, 7, R['pink'][1])
+        c.put_px(3, 9, R['pink'][1]); c.put_px(13, 9, R['pink'][1])
+    I['trick_stand_up'] = _icon(trick_stand_up)
+
+    def trick_hurdle(c):
+        c.put_mat(rect(3, 7, 4, 14), MAT['wood'], 2); c.put_mat(rect(12, 7, 13, 14), MAT['wood'], 2)
+        c.put_mat(rect(3, 6, 13, 8), MAT['red'], 1); c.put_mat(rect(3, 10, 13, 12), MAT['cream'], 1)
+    I['trick_hurdle'] = _icon(trick_hurdle)
+
+    I['trick_popcorn'] = _icon(trait_popcorning)
+
+    def heart(c):
+        pat(c, ['.hh.hh.', 'hHHhHHh', 'hHHHHHh', 'hHHHHHh', '.hHHHh.', '..hHh..', '...h...'], 4, 4, {'H': R['red'][1], 'h': R['red'][2]})
+        c.put_px(5, 5, R['red'][0]); c.put_px(6, 5, R['red'][0]); c.put_px(5, 6, R['red'][0])
+    I['heart'] = _icon(heart)
+
+    def heart_empty(c):
+        pat(c, ['.hh.hh.', 'h..h..h', 'h.....h', 'h.....h', '.h...h.', '..h.h..', '...h...'], 4, 4, {'h': R['red'][2]})
+    I['heart_empty'] = _icon(heart_empty)
+
+    def pause(c):
+        c.put_mat(rect(4, 3, 7.5, 13), MAT['blue'], np.where(XX < 5.5, 0, 1)); c.put_mat(rect(9, 3, 12.5, 13), MAT['blue'], np.where(XX < 10.5, 0, 1))
+    I['pause'] = _icon(pause)
+
+    def play(c):
+        tri = (XX >= 4) & (XX < 13) & (np.abs(YY - 8) <= (13 - XX) * 0.62)
+        c.put_mat(tri, MAT['leaf'], np.where(YY < 8, 0, 1))
+    I['play'] = _icon(play)
+
     return I
 
 def main(assets_dir):
@@ -573,7 +737,10 @@ def main(assets_dir):
         'soft_pellets', 'warm_house_bed', 'dental_chew', 'vitamin_mix', 'carrot_top',
         'trait_cuddly', 'trait_glutton', 'trait_explorer', 'trait_sleepyhead', 'trait_popcorning', 'trait_vocal',
         'game_veggie_rain', 'game_nyan_cuy', 'game_veggie_memory', 'game_hay_maze',
-        'coat_tricolor', 'coat_dutch', 'coat_agouti', 'coat_albino', 'coat_cinnamon'
+        'coat_tricolor', 'coat_dutch', 'coat_agouti', 'coat_albino', 'coat_cinnamon',
+        'stage_baby', 'stage_junior', 'stage_adult', 'stage_senior', 'stage_legend', 'sound_on', 'sound_off', 'gear', 'sparkle',
+        'flame', 'warning', 'check', 'star', 'replay', 'back_arrow', 'album_book', 'gamepad',
+        'trick_spin', 'trick_stand_up', 'trick_hurdle', 'trick_popcorn', 'heart', 'heart_empty', 'pause', 'play'
     ]
 
     new_icons_funcs = get_new_icons()

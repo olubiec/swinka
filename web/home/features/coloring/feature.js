@@ -221,7 +221,7 @@
                <div class="pack-title">${pack.title}</div>
                ${isUnlocked
                   ? `<div class="pack-count">? / ${pack.count}</div>`
-                  : `<div class="pack-lock">🔒 ${pack.price} 🍀 ${this.store.isMock && pack.price > 0 ? '(test mode)' : ''}</div>`
+                  : `<div class="pack-lock"><span class="pixel-icon icon-padlock"></span> ${pack.price} <span class="pixel-icon icon-clover"></span> ${this.store.isMock && pack.price > 0 ? '(test mode)' : ''}</div>`
                }
             </div>
          </div>`;
@@ -274,7 +274,8 @@
          });
       });
 
-      this.container.querySelector('.play-level').addEventListener('click', async () => {
+      const playLevelBtn = this.container.querySelector('.play-level');
+      if (playLevelBtn) playLevelBtn.addEventListener('click', async () => {
          // Auto play logic N
          const packOrder = ['guinea_pigs', 'food_and_toys'];
          let allPacks = [...packOrder];
@@ -748,7 +749,7 @@
           html += `
           <div class="palette-chip ${isSelected ? 'selected' : ''} ${isDone ? 'done' : ''}" data-idx="${i}">
              <div class="chip-circle" style="background: ${color};">
-                ${isDone ? '✔️' : (i + 1)}
+                ${isDone ? '<span class="pixel-icon icon-check"></span>' : (i + 1)}
              </div>
              <div class="chip-ring" style="background: conic-gradient(#fff ${pct}%, transparent ${pct}%);"></div>
           </div>

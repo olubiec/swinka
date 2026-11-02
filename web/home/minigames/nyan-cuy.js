@@ -130,7 +130,8 @@
           stroke: '#050819',
           strokeThickness: 3
         };
-        this.scoreText = this.add.text(10, 8, '✨ 0', hudStyle).setDepth(25);
+        this.add.image(18, 16, 'icons16', 89).setDepth(25); // sparkle (icons_16.png index 89)
+        this.scoreText = this.add.text(30, 8, '0', hudStyle).setDepth(25);
         this.hintText = this.add.text(W / 2, H - 22, 'SPACE / CLICK to flap!', {
           fontFamily: 'monospace',
           fontSize: '11px',
@@ -260,7 +261,7 @@
 
         score += pts;
         if (config.updateScore) config.updateScore(score);
-        this.scoreText.setText(`✨ ${score}`);
+        this.scoreText.setText(`${score}`);
 
         if (root.NyanAudio && typeof root.NyanAudio.playCrunch === 'function') {
           root.NyanAudio.playCrunch();
@@ -344,7 +345,7 @@
           .setStrokeStyle(2, 0xffd23f)
           .setDepth(40);
 
-        const title = this.add.text(W / 2, H / 2 - 75, '✨ GAME OVER ✨', {
+        const title = this.add.text(W / 2, H / 2 - 75, 'GAME OVER', {
           fontFamily: 'monospace', fontSize: '18px', color: '#ffd23f', fontStyle: 'bold'
         }).setOrigin(0.5).setDepth(41);
 
@@ -356,7 +357,7 @@
           fontFamily: 'monospace', fontSize: '13px', color: '#aaccff'
         }).setOrigin(0.5).setDepth(41);
 
-        const cloversMsg = this.add.text(W / 2, H / 2 + 10, `Clovers: +${clovers} 🍀`, {
+        const cloversMsg = this.add.text(W / 2, H / 2 + 10, `Clovers: +${clovers}`, {
           fontFamily: 'monospace', fontSize: '13px', color: '#44dd88'
         }).setOrigin(0.5).setDepth(41);
 
@@ -365,7 +366,7 @@
           .setStrokeStyle(1, 0x88ee66)
           .setInteractive({ useHandCursor: true })
           .setDepth(41);
-        const txtReplay = this.add.text(W / 2 - 60, H / 2 + 55, '🔄 Play Again', {
+        const txtReplay = this.add.text(W / 2 - 60, H / 2 + 55, 'Play Again', {
           fontFamily: 'monospace', fontSize: '11px', color: '#ffffff'
         }).setOrigin(0.5).setDepth(42);
 
@@ -379,7 +380,7 @@
           .setStrokeStyle(1, 0xdd6666)
           .setInteractive({ useHandCursor: true })
           .setDepth(41);
-        const txtExit = this.add.text(W / 2 + 60, H / 2 + 55, '✕ Exit', {
+        const txtExit = this.add.text(W / 2 + 60, H / 2 + 55, 'Exit', {
           fontFamily: 'monospace', fontSize: '11px', color: '#ffffff'
         }).setOrigin(0.5).setDepth(42);
 
@@ -504,6 +505,8 @@
       width: W,
       height: H,
       parent: config.container,
+      // the 360x290 canvas is fitted into the narrower .minigames-canvas-wrapper; FIT keeps pointer input mapped
+      scale: { mode: root.Phaser.Scale.FIT, autoCenter: root.Phaser.Scale.CENTER_BOTH },
       pixelArt: true,
       roundPixels: true,
       backgroundColor: '#090d24',
@@ -518,7 +521,7 @@
   root.Minigry.register({
     id: 'nyan_cuy',
     name: 'Nyan Cuy',
-    icon: '✨',
+    icon: 'game-nyan-cuy',
     desc: 'Fly through space leaving a rainbow trail! Wheek at the stars!',
     start: start
   });

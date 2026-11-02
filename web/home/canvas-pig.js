@@ -281,7 +281,7 @@
 
     pet() {
       this.playAnim('purr_pet', 3000);
-      this.showBubble('Purr... ❤️', 2500);
+      this.showBubble('Purr...', 2500);
       if (root.Sound) root.Sound.wheek();
       
       // Emit hearts
@@ -489,7 +489,7 @@
             this.playAnim('idle', 1000);
           } else if (r < 0.95) {
             this.playAnim('popcorn', 2000);
-            this.showBubble('Popcorn! ✨', 2000);
+            this.showBubble('Popcorn!', 2000);
             if (root.Sound) root.Sound.wheek();
           }
         }
@@ -536,9 +536,11 @@
       // Wait, the spec says: "a layer may set scene.skipDefaultWall = true... read these flags before drawing the defaults".
       // Let's first scan z < 0 layers to set flags:
       const zNegLayers = this.layers.filter(l => l.z < 0);
+      // Only skip a default when that decor slot is really equipped; otherwise the room would be left empty.
+      const equipped = (this.lastState && this.lastState.decor && this.lastState.decor.equipped) || {};
       zNegLayers.forEach(l => {
-        if (l.name === 'wallpaper') scene.skipDefaultWall = true;
-        if (l.name === 'floor') scene.skipDefaultFloor = true;
+        if (l.name === 'wallpaper' && equipped.wallpaper) scene.skipDefaultWall = true;
+        if (l.name === 'floor' && equipped.floor) scene.skipDefaultFloor = true;
       });
 
       // --- 1. RUN / ROOM BACKGROUND (pixel art habitat) ---

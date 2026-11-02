@@ -238,7 +238,7 @@
           this.hudText.setText(`Level ${currentLevel + 1}/4   Score: ${score}`);
 
           // Floating heart
-          const heart = this.add.text((firstCard.x + secondCard.x) / 2, (firstCard.y + secondCard.y) / 2, '❤️', { fontSize: '16px' });
+          const heart = this.add.image((firstCard.x + secondCard.x) / 2, (firstCard.y + secondCard.y) / 2, 'icons16', 102).setScale(1.5);
           this.tweens.add({
             targets: heart,
             y: heart.y - 30,
@@ -293,6 +293,8 @@
       width: W,
       height: H,
       parent: config.container,
+      // the 360x290 canvas is fitted into the narrower .minigames-canvas-wrapper; FIT keeps pointer input mapped
+      scale: { mode: root.Phaser.Scale.FIT, autoCenter: root.Phaser.Scale.CENTER_BOTH },
       pixelArt: true,
       roundPixels: true,
       backgroundColor: '#8b5a2b',
@@ -303,7 +305,7 @@
   root.Minigry.register({
     id: 'veggie_memory',
     name: 'Veggie Memory',
-    icon: '🃏',
+    icon: 'game-veggie-memory',
     desc: 'Calm card-matching pairs. No rush, exercise your memory!',
     start: start
   });

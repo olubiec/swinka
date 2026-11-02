@@ -700,7 +700,7 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
-  --icon-count: 81; /* total icons */
+  --icon-count: 106; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
@@ -798,6 +798,31 @@ body.webview-mode .game-device {
 .icon-coat-agouti { --i: 78; }
 .icon-coat-albino { --i: 79; }
 .icon-coat-cinnamon { --i: 80; }
+.icon-stage-baby { --i: 81; }
+.icon-stage-junior { --i: 82; }
+.icon-stage-adult { --i: 83; }
+.icon-stage-senior { --i: 84; }
+.icon-stage-legend { --i: 85; }
+.icon-sound-on { --i: 86; }
+.icon-sound-off { --i: 87; }
+.icon-gear { --i: 88; }
+.icon-sparkle { --i: 89; }
+.icon-flame { --i: 90; }
+.icon-warning { --i: 91; }
+.icon-check { --i: 92; }
+.icon-star { --i: 93; }
+.icon-replay { --i: 94; }
+.icon-back-arrow { --i: 95; }
+.icon-album-book { --i: 96; }
+.icon-gamepad { --i: 97; }
+.icon-trick-spin { --i: 98; }
+.icon-trick-stand-up { --i: 99; }
+.icon-trick-hurdle { --i: 100; }
+.icon-trick-popcorn { --i: 101; }
+.icon-heart { --i: 102; }
+.icon-heart-empty { --i: 103; }
+.icon-pause { --i: 104; }
+.icon-play { --i: 105; }
 
 
 /* ==========================================================================

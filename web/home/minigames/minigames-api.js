@@ -232,19 +232,19 @@
 
       let dotsHtml = '';
       for (let i = 0; i < dailyMax; i++) {
-        dotsHtml += `<span class="minigames-dot ${i < dailyCount ? 'filled' : ''}">🍀</span>`;
+        dotsHtml += `<span class="minigames-dot ${i < dailyCount ? 'filled' : ''}"><span class="pixel-icon icon-clover"></span></span>`;
       }
 
       // Registered games, then one disabled tile for the games still to come
       const allDisplayGames = this.getAllGames().map((g) => ({
-        id: g.id, name: g.name, icon: g.icon || '🎮', desc: g.desc || '', available: true
+        id: g.id, name: g.name, icon: g.icon || 'gamepad', desc: g.desc || '', available: true
       }));
 
       if (this.games.size < 4) {
         allDisplayGames.push({
           id: 'more-games-soon',
           name: 'More games soon',
-          icon: '🎮',
+          icon: 'gamepad',
           desc: 'New minigames are on the way.',
           available: false
         });
@@ -254,7 +254,7 @@
         <div class="minigames-root">
           <div class="minigames-select-screen">
             <div class="minigames-status-bar">
-              <span class="minigames-status-clovers">🍀 Clovers: <b>${clovers}</b></span>
+              <span class="minigames-status-clovers"><span class="pixel-icon icon-clover"></span> Clovers: <b>${clovers}</b></span>
               <div style="display:flex; flex-direction:column; align-items:flex-end;">
                 <div class="minigames-dots" title="At most ${dailyMax} rewarded games per day">
                   ${dotsHtml}
@@ -275,13 +275,13 @@
 
         html += `
           <div class="minigames-card ${isReady ? '' : 'minigames-card-disabled'}">
-            <div class="minigames-card-icon">${g.icon}</div>
+            <div class="minigames-card-icon"><span class="pixel-icon icon-${g.icon} x2"></span></div>
             <div class="minigames-card-content">
               <div class="minigames-card-title">${g.name}</div>
               <div class="minigames-card-desc">${g.desc}</div>
               ${isReady ? `
               <div class="minigames-card-meta">
-                <span class="minigames-record-badge">🏆 Record: ${record} pts</span>
+                <span class="minigames-record-badge"><span class="pixel-icon icon-trophy"></span> Record: ${record} pts</span>
                 <span class="minigames-plays-badge">Plays: ${playCount}</span>
               </div>
               ${isLimitReached ? '<div class="minigames-limit-note">Over the daily limit: only a little mood</div>' : ''}
@@ -375,12 +375,12 @@
               <!-- Gameplay HUD -->
               <div class="minigames-hud">
                 <span class="minigames-hud-title">
-                  <span>${gameDef.icon || '🐹'}</span>
+                  <span class="pixel-icon icon-${gameDef.icon || 'gamepad'}"></span>
                   <span>${gameDef.name}</span>
                 </span>
                 <span class="minigames-hud-score" id="minigamesLiveScore">Points: 0</span>
                 <div class="minigames-hud-controls">
-                  <button class="minigames-hud-btn" id="minigamesBtnPause" type="button" title="Pause">⏸️</button>
+                  <button class="minigames-hud-btn" id="minigamesBtnPause" type="button" title="Pause"><span class="pixel-icon icon-pause"></span></button>
                   <button class="minigames-hud-btn" id="minigamesBtnBack" type="button" title="Back to the menu">✕</button>
                 </div>
               </div>
@@ -393,11 +393,11 @@
               <!-- Pause overlay -->
               <div class="minigames-pause-overlay" id="minigamesPauseOverlay">
                 <div class="minigames-pause-card">
-                  <div class="minigames-pause-title">⏸️ PAUSED</div>
+                  <div class="minigames-pause-title"><span class="pixel-icon icon-pause"></span> PAUSED</div>
                   <div class="minigames-pause-sub">Take a little break with your pig!</div>
                   <div class="minigames-pause-actions">
-                    <button class="minigames-btn-play" id="minigamesBtnResume">▶ Resume</button>
-                    <button class="minigames-btn-locked" id="minigamesBtnQuit">✕ Quit</button>
+                    <button class="minigames-btn-play" id="minigamesBtnResume"><span class="pixel-icon icon-play"></span> Resume</button>
+                    <button class="minigames-btn-locked" id="minigamesBtnQuit">Quit</button>
                   </div>
                 </div>
               </div>
@@ -556,7 +556,7 @@
         if (!res) {
           overlay.innerHTML = `
             <div class="minigames-gameover-card">
-              <div class="minigames-gameover-header">🏆 RESULT</div>
+              <div class="minigames-gameover-header"><span class="pixel-icon icon-trophy"></span> RESULT</div>
               <div class="minigames-saving">Saving...</div>
             </div>
           `;
@@ -582,7 +582,7 @@
             <div class="minigames-reward-row">
               <span>Clover reward:</span>
               <span class="minigames-reward-pill pill-clovers">
-                ${res.clovers > 0 ? `+${res.clovers} 🍀` : (limitReached ? '0 🍀 (limit)' : '0 🍀')}
+                ${res.clovers > 0 ? `+${res.clovers} <span class="pixel-icon icon-clover"></span>` : (limitReached ? '0 <span class="pixel-icon icon-clover"></span> (limit)' : '0 <span class="pixel-icon icon-clover"></span>')}
               </span>
             </div>
           `;
@@ -592,7 +592,7 @@
           rewardRowsHtml += `
             <div class="minigames-reward-row">
               <span>Pig mood:</span>
-              <span class="minigames-reward-pill pill-mood">+${res.mood} 💖</span>
+              <span class="minigames-reward-pill pill-mood">+${res.mood} <span class="pixel-icon icon-heart"></span></span>
             </div>
           `;
         }
@@ -608,7 +608,7 @@
 
         overlay.innerHTML = `
           <div class="minigames-gameover-card">
-            <div class="minigames-gameover-header">🏆 RESULT</div>
+            <div class="minigames-gameover-header"><span class="pixel-icon icon-trophy"></span> RESULT</div>
 
             <div class="minigames-score-box">
               <span class="minigames-score-label">Points earned</span>
@@ -616,15 +616,15 @@
             </div>
 
             ${isNewRecord
-              ? `<div class="minigames-record-banner">🌟 NEW RECORD! 🌟</div>`
+              ? `<div class="minigames-record-banner">NEW RECORD!</div>`
               : `<div style="font-size:12px; color:#6e6a5c;">Your record: <b>${recordVal} pts</b></div>`
             }
 
             ${rewardRowsHtml ? `<div class="minigames-rewards-container">${rewardRowsHtml}</div>` : ''}
 
             <div class="minigames-gameover-actions">
-              <button class="minigames-btn-replay" id="minigamesBtnReplay">🔄 Play again</button>
-              <button class="minigames-btn-menu" id="minigamesBtnGameOverMenu">📋 Back</button>
+              <button class="minigames-btn-replay" id="minigamesBtnReplay"><span class="pixel-icon icon-replay"></span> Play again</button>
+              <button class="minigames-btn-menu" id="minigamesBtnGameOverMenu"><span class="pixel-icon icon-back-arrow"></span> Back</button>
             </div>
           </div>
         `;
