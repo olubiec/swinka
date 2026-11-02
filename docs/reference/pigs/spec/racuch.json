@@ -1,0 +1,287 @@
+{
+ "id": "racuch",
+ "breed": "smooth",
+ "build": "chubby",
+ "hair": "short smooth shiny coat lying flat, straight whiskers",
+ "proportions": "chubby, long rounded body (1032 g photo), head clearly narrower than the body from above",
+ "layout": [
+  "ginger (orange) front half and flanks",
+  "black saddle: a broad band across the middle of the back from the shoulders to the hips, top edge wavy, wider on the back than on the flank, does not reach the belly",
+  "white tip on the very end of the rump",
+  "small black patch on the side of the head behind the eye (round the ear); white blaze from the forehead to the nose, white chin",
+  "second photo: the black on the back appears as a dark cap above the ginger when seen from the side"
+ ],
+ "checklist": [
+  "ginger front and flanks",
+  "black saddle band (wavy edge)",
+  "white rump tip",
+  "black patch round the ear/behind the eye",
+  "white blaze + chin",
+  "smooth flat coat",
+  "chubby long body"
+ ],
+ "confidence": "medium: photos 1 and 2 may be two pigs (photo 3, 848 g, is not mapped); the saddle is certain, the head patch is from the top photo",
+ "regions": {
+  "ginger_back": {
+   "photo": "racuch_01_scale_1032g",
+   "rect": [
+    270,
+    150,
+    370,
+    220
+   ],
+   "ramp": [
+    "#9a6737",
+    "#946131",
+    "#8e5c2b",
+    "#865626"
+   ],
+   "palette": [
+    {
+     "hex": "#8e5c2b",
+     "share": 0.49
+    },
+    {
+     "hex": "#9f6c3c",
+     "share": 0.33
+    },
+    {
+     "hex": "#784e22",
+     "share": 0.16
+    },
+    {
+     "hex": "#3d2913",
+     "share": 0.03
+    }
+   ]
+  },
+  "ginger_flank": {
+   "photo": "racuch_01_scale_1032g",
+   "rect": [
+    440,
+    340,
+    560,
+    430
+   ],
+   "ramp": [
+    "#b07b49",
+    "#a77341",
+    "#9d6b39",
+    "#906131"
+   ],
+   "palette": [
+    {
+     "hex": "#a77340",
+     "share": 0.35
+    },
+    {
+     "hex": "#916232",
+     "share": 0.27
+    },
+    {
+     "hex": "#ba8552",
+     "share": 0.24
+    },
+    {
+     "hex": "#764c21",
+     "share": 0.13
+    }
+   ]
+  },
+  "black_band": {
+   "photo": "racuch_01_scale_1032g",
+   "rect": [
+    250,
+    290,
+    390,
+    400
+   ],
+   "ramp": [
+    "#3b3429",
+    "#332c21",
+    "#2b2419",
+    "#211910"
+   ],
+   "palette": [
+    {
+     "hex": "#2a2318",
+     "share": 0.63
+    },
+    {
+     "hex": "#171108",
+     "share": 0.24
+    },
+    {
+     "hex": "#4d463b",
+     "share": 0.13
+    }
+   ]
+  },
+  "black_head": {
+   "photo": "racuch_01_scale_1032g",
+   "rect": [
+    515,
+    465,
+    595,
+    520
+   ],
+   "ramp": [
+    "#2c2218",
+    "#20170d",
+    "#170f07",
+    "#120a03"
+   ],
+   "palette": [
+    {
+     "hex": "#130b04",
+     "share": 0.53
+    },
+    {
+     "hex": "#261d13",
+     "share": 0.28
+    },
+    {
+     "hex": "#3e3327",
+     "share": 0.15
+    },
+    {
+     "hex": "#64411f",
+     "share": 0.04
+    }
+   ]
+  },
+  "blaze_white": {
+   "photo": "racuch_02_dill",
+   "rect": [
+    238,
+    505,
+    290,
+    575
+   ],
+   "ramp": [
+    "#e7d3b1",
+    "#c5a886",
+    "#9b6c40",
+    "#5e4025"
+   ],
+   "palette": [
+    {
+     "hex": "#f8ebc9",
+     "share": 0.27
+    },
+    {
+     "hex": "#392719",
+     "share": 0.27
+    },
+    {
+     "hex": "#c8ad8c",
+     "share": 0.24
+    },
+    {
+     "hex": "#956436",
+     "share": 0.22
+    }
+   ]
+  },
+  "rump_white": {
+   "photo": "racuch_01_scale_1032g",
+   "rect": [
+    200,
+    195,
+    230,
+    255
+   ],
+   "ramp": [
+    "#f4e2c7",
+    "#efdec2",
+    "#ebd9be",
+    "#e7d1b1"
+   ],
+   "palette": [
+    {
+     "hex": "#f5e4ca",
+     "share": 0.8
+    },
+    {
+     "hex": "#dbbd98",
+     "share": 0.15
+    },
+    {
+     "hex": "#ab8862",
+     "share": 0.05
+    }
+   ]
+  },
+  "ginger_body": {
+   "photo": "racuch_02_dill",
+   "rect": [
+    340,
+    430,
+    540,
+    600
+   ],
+   "ramp": [
+    "#a77442",
+    "#996839",
+    "#916132",
+    "#895a2d"
+   ],
+   "palette": [
+    {
+     "hex": "#9a6839",
+     "share": 0.37
+    },
+    {
+     "hex": "#86582c",
+     "share": 0.34
+    },
+    {
+     "hex": "#b5814e",
+     "share": 0.24
+    },
+    {
+     "hex": "#603e1c",
+     "share": 0.05
+    }
+   ]
+  },
+  "black_cap": {
+   "photo": "racuch_02_dill",
+   "rect": [
+    420,
+    368,
+    535,
+    418
+   ],
+   "ramp": [
+    "#593d21",
+    "#2b1c0f",
+    "#1b120a",
+    "#160e07"
+   ],
+   "palette": [
+    {
+     "hex": "#1a1109",
+     "share": 0.62
+    },
+    {
+     "hex": "#4c341f",
+     "share": 0.18
+    },
+    {
+     "hex": "#7b5025",
+     "share": 0.18
+    },
+    {
+     "hex": "#e4d3bb",
+     "share": 0.03
+    }
+   ]
+  }
+ },
+ "photos": [
+  "racuch_01_scale_1032g",
+  "racuch_02_dill"
+ ],
+ "note": "Colours are sampled from the photos: they include the lighting of each photo (warm/dark), so they are a guide for hue and relation, not exact targets. Ramps are 4 Lab-averaged lightness bands, light -> dark."
+}

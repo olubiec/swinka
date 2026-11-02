@@ -1,0 +1,145 @@
+{
+ "id": "glen",
+ "breed": "rosette",
+ "build": "lean",
+ "hair": "long, shaggy, tousled black coat; tufts stand up at the rump and over the back; hair on the face swept back",
+ "proportions": "lean and small, short body held low, head narrow; silhouette dominated by the tufts",
+ "layout": [
+  "all black (no white anywhere), slight blue-grey sheen on the tops of the hairs",
+  "a short ginger stripe inside the ear and a thin ginger streak down the flank behind the shoulder",
+  "grey feet with a pink toe, dark eye with a small light glint",
+  "rosette whorls on the rump and shoulder show only as swirls of hair direction and standing tufts (no colour difference)"
+ ],
+ "checklist": [
+  "black coat with visible fur structure (blue-grey sheen)",
+  "tufts standing up on the rump and back",
+  "ginger ear stripe",
+  "ginger flank streak",
+  "grey feet",
+  "lean small body",
+  "whorl swirl visible in the hair direction"
+ ],
+ "confidence": "high (one photo, dark; structure read from the highlights)",
+ "regions": {
+  "black_body": {
+   "photo": "glen_01_rosette_black",
+   "rect": [
+    440,
+    340,
+    560,
+    450
+   ],
+   "ramp": [
+    "#2d2e32",
+    "#232325",
+    "#1a1a1b",
+    "#121212"
+   ],
+   "palette": [
+    {
+     "hex": "#101010",
+     "share": 0.69
+    },
+    {
+     "hex": "#323336",
+     "share": 0.21
+    },
+    {
+     "hex": "#4a4d50",
+     "share": 0.1
+    }
+   ]
+  },
+  "black_head": {
+   "photo": "glen_01_rosette_black",
+   "rect": [
+    350,
+    410,
+    420,
+    500
+   ],
+   "ramp": [
+    "#1a1c1e",
+    "#151718",
+    "#111313",
+    "#0d0f0f"
+   ],
+   "palette": [
+    {
+     "hex": "#0e1010",
+     "share": 0.91
+    },
+    {
+     "hex": "#303235",
+     "share": 0.08
+    },
+    {
+     "hex": "#6e7174",
+     "share": 0.01
+    }
+   ]
+  },
+  "ear_ginger": {
+   "photo": "glen_01_rosette_black",
+   "rect": [
+    552,
+    370,
+    580,
+    410
+   ],
+   "ramp": [
+    "#3e2f24",
+    "#29221e",
+    "#201c19",
+    "#1d1815"
+   ],
+   "palette": [
+    {
+     "hex": "#231e1b",
+     "share": 0.65
+    },
+    {
+     "hex": "#3f3025",
+     "share": 0.22
+    },
+    {
+     "hex": "#554437",
+     "share": 0.13
+    }
+   ]
+  },
+  "black_back": {
+   "photo": "glen_01_rosette_black",
+   "rect": [
+    520,
+    250,
+    620,
+    320
+   ],
+   "ramp": [
+    "#151515",
+    "#0f0f0f",
+    "#0d0d0d",
+    "#0b0b0b"
+   ],
+   "palette": [
+    {
+     "hex": "#0d0d0d",
+     "share": 0.93
+    },
+    {
+     "hex": "#767770",
+     "share": 0.04
+    },
+    {
+     "hex": "#373936",
+     "share": 0.03
+    }
+   ]
+  }
+ },
+ "photos": [
+  "glen_01_rosette_black"
+ ],
+ "note": "Colours are sampled from the photos: they include the lighting of each photo (warm/dark), so they are a guide for hue and relation, not exact targets. Ramps are 4 Lab-averaged lightness bands, light -> dark."
+}

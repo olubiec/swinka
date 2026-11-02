@@ -1,0 +1,126 @@
+{
+ "id": "james",
+ "breed": "teddy",
+ "build": "normal",
+ "hair": "rex-like: rough, dense, short curls tight to the body, tousled; curly whiskers",
+ "proportions": "strong, long body (928 g), broad shoulders, head blunt",
+ "layout": [
+  "grey agouti/roan: dark grey base with light grey-white hairs mixed evenly all over (salt and pepper), denser light hairs on the back and flanks",
+  "darker grey muzzle and face, almost charcoal nose and lower legs",
+  "no patches at all, no white zones, light ticking only",
+  "pink-brown ear, dark eye"
+ ],
+ "checklist": [
+  "even salt-and-pepper grey with light ticks",
+  "dark muzzle and legs",
+  "rough tousled outline",
+  "no patches",
+  "strong long body"
+ ],
+ "confidence": "medium-high (single top photo; face/ear details from the lower left of the photo only)",
+ "regions": {
+  "grey_body": {
+   "photo": "james_01_scale_928g",
+   "rect": [
+    390,
+    310,
+    640,
+    430
+   ],
+   "ramp": [
+    "#484136",
+    "#3d362c",
+    "#342d23",
+    "#2a231a"
+   ],
+   "palette": [
+    {
+     "hex": "#312a20",
+     "share": 0.34
+    },
+    {
+     "hex": "#443e33",
+     "share": 0.32
+    },
+    {
+     "hex": "#1d170e",
+     "share": 0.19
+    },
+    {
+     "hex": "#60594e",
+     "share": 0.14
+    }
+   ]
+  },
+  "grey_dark": {
+   "photo": "james_01_scale_928g",
+   "rect": [
+    110,
+    500,
+    300,
+    640
+   ],
+   "ramp": [
+    "#524a3f",
+    "#453e33",
+    "#3b3329",
+    "#30281e"
+   ],
+   "palette": [
+    {
+     "hex": "#352e24",
+     "share": 0.34
+    },
+    {
+     "hex": "#4c4439",
+     "share": 0.33
+    },
+    {
+     "hex": "#696155",
+     "share": 0.17
+    },
+    {
+     "hex": "#1d170f",
+     "share": 0.17
+    }
+   ]
+  },
+  "grey_light": {
+   "photo": "james_01_scale_928g",
+   "rect": [
+    470,
+    330,
+    600,
+    420
+   ],
+   "ramp": [
+    "#484137",
+    "#3d362c",
+    "#332c22",
+    "#292218"
+   ],
+   "palette": [
+    {
+     "hex": "#302920",
+     "share": 0.35
+    },
+    {
+     "hex": "#453e34",
+     "share": 0.33
+    },
+    {
+     "hex": "#1c160d",
+     "share": 0.19
+    },
+    {
+     "hex": "#625b50",
+     "share": 0.14
+    }
+   ]
+  }
+ },
+ "photos": [
+  "james_01_scale_928g"
+ ],
+ "note": "Colours are sampled from the photos: they include the lighting of each photo (warm/dark), so they are a guide for hue and relation, not exact targets. Ramps are 4 Lab-averaged lightness bands, light -> dark."
+}

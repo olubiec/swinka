@@ -88,3 +88,6 @@ Owner: wygląd świnek słaby (łaty, układ kolorów, sierść, rozetki). Napis
 
 ## 2026-11-02 Research do planu V3
 `docs/RESEARCH_WYGLAD_V3.md`: gotowce wizualne i techniczne (standardy ras, wzory, fur 2001, hue shifting, sel-out, dithering, potoki 3D, CIEDE2000), wdrożone w `docs/PLAN_WYGLAD_V3.md`. Kluczowe zmiany planu: wzór łat w 3D zamiast tekstury z szwem, rozetka = wir + grzebienie, dither w przestrzeni modelu, bez zewnętrznych bibliotek (tylko numpy + Pillow). Bez wykonania.
+
+## 2026-11-02 A0 analiza wzorców (done)
+`tools/art/colorlab.py` (sRGB<->Lab, CIEDE2000 zweryfikowany na parach Sharmy, k-means w Lab), `tools/art/ref_spec.py`, `docs/reference/pigs/spec/` (specyfikacja, lista cech, rampy kolorów regionów, zdjęcia z regionami). Odkrycia: miękki gradient u Kukiego, pas siodła u Racucha, brąz Neda sięga szyi, James bez łat, Glen czarny z bryłą tylko w kępach.

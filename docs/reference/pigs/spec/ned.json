@@ -1,0 +1,307 @@
+{
+ "id": "ned",
+ "breed": "teddy",
+ "build": "chubby",
+ "hair": "short dense teddy fuzz standing off the body, soft; straight whiskers; fluffy outline, no long tufts",
+ "proportions": "very round from above (about 1.5:1), big round head with short blunt muzzle, no visible neck",
+ "layout": [
+  "white (cream) body and rump, no mark on the flanks",
+  "chocolate brown covers the ears, the ring round the eyes, the sides of the head down to the neck and a band across the nape/shoulders (darker on top)",
+  "white blaze: narrow at the forehead, widening over the muzzle, white cheeks below the eye and chin",
+  "small dark smudge on the lower back / rump (the \"heart\"), only seen from above, low contrast",
+  "pink ears (rose ears, folded back), pink nose, dark eye"
+ ],
+ "checklist": [
+  "white body",
+  "brown ears + eye ring + side of head",
+  "brown nape band over shoulders",
+  "white blaze widening to the muzzle",
+  "white cheeks and chin",
+  "pink nose",
+  "pink ears",
+  "dark mark on the lower back",
+  "round chubby silhouette",
+  "fluffy short coat"
+ ],
+ "confidence": "high for the front, medium for the back (the top photo is under-exposed; the heart is a guess)",
+ "regions": {
+  "white_body": {
+   "photo": "ned_02_front",
+   "rect": [
+    170,
+    300,
+    370,
+    520
+   ],
+   "ramp": [
+    "#d2ccba",
+    "#c4bdac",
+    "#b2ac9b",
+    "#979082"
+   ],
+   "palette": [
+    {
+     "hex": "#d3ccba",
+     "share": 0.5
+    },
+    {
+     "hex": "#a7a191",
+     "share": 0.31
+    },
+    {
+     "hex": "#6a5c4e",
+     "share": 0.1
+    },
+    {
+     "hex": "#21140d",
+     "share": 0.09
+    }
+   ]
+  },
+  "white_face": {
+   "photo": "ned_02_front",
+   "rect": [
+    420,
+    450,
+    610,
+    640
+   ],
+   "ramp": [
+    "#dcd6cc",
+    "#c6beb5",
+    "#aaa299",
+    "#91867d"
+   ],
+   "palette": [
+    {
+     "hex": "#ded9ce",
+     "share": 0.41
+    },
+    {
+     "hex": "#aea69c",
+     "share": 0.3
+    },
+    {
+     "hex": "#83766c",
+     "share": 0.23
+    },
+    {
+     "hex": "#352924",
+     "share": 0.06
+    }
+   ]
+  },
+  "brown_head": {
+   "photo": "ned_02_front",
+   "rect": [
+    310,
+    440,
+    400,
+    600
+   ],
+   "ramp": [
+    "#58493e",
+    "#33241b",
+    "#1f1108",
+    "#150904"
+   ],
+   "palette": [
+    {
+     "hex": "#160b05",
+     "share": 0.5
+    },
+    {
+     "hex": "#38281e",
+     "share": 0.21
+    },
+    {
+     "hex": "#625247",
+     "share": 0.15
+    },
+    {
+     "hex": "#918b81",
+     "share": 0.14
+    }
+   ]
+  },
+  "brown_top": {
+   "photo": "ned_02_front",
+   "rect": [
+    400,
+    345,
+    560,
+    400
+   ],
+   "ramp": [
+    "#7f7269",
+    "#68564b",
+    "#56443a",
+    "#47382d"
+   ],
+   "palette": [
+    {
+     "hex": "#46362c",
+     "share": 0.48
+    },
+    {
+     "hex": "#6f6359",
+     "share": 0.29
+    },
+    {
+     "hex": "#a49b92",
+     "share": 0.19
+    },
+    {
+     "hex": "#784638",
+     "share": 0.04
+    }
+   ]
+  },
+  "ear_pink": {
+   "photo": "ned_02_front",
+   "rect": [
+    325,
+    445,
+    375,
+    480
+   ],
+   "ramp": [
+    "#694f42",
+    "#4b3528",
+    "#36140b",
+    "#250803"
+   ],
+   "palette": [
+    {
+     "hex": "#72584b",
+     "share": 0.34
+    },
+    {
+     "hex": "#300f07",
+     "share": 0.26
+    },
+    {
+     "hex": "#170502",
+     "share": 0.23
+    },
+    {
+     "hex": "#493326",
+     "share": 0.16
+    }
+   ]
+  },
+  "nose_pink": {
+   "photo": "ned_02_front",
+   "rect": [
+    505,
+    568,
+    580,
+    598
+   ],
+   "ramp": [
+    "#9f8378",
+    "#94786c",
+    "#8a6d62",
+    "#7d5f54"
+   ],
+   "palette": [
+    {
+     "hex": "#92766a",
+     "share": 0.39
+    },
+    {
+     "hex": "#795a50",
+     "share": 0.28
+    },
+    {
+     "hex": "#ac9086",
+     "share": 0.25
+    },
+    {
+     "hex": "#482420",
+     "share": 0.08
+    }
+   ]
+  },
+  "brown_nape": {
+   "photo": "ned_01_topdown",
+   "rect": [
+    330,
+    450,
+    520,
+    560
+   ],
+   "ramp": [
+    "#0e0b07",
+    "#0c0905",
+    "#0a0704",
+    "#080602"
+   ],
+   "palette": [
+    {
+     "hex": "#080603",
+     "share": 0.98
+    },
+    {
+     "hex": "#29241e",
+     "share": 0.02
+    }
+   ]
+  },
+  "white_back": {
+   "photo": "ned_01_topdown",
+   "rect": [
+    240,
+    620,
+    580,
+    880
+   ],
+   "ramp": [
+    "#6a6054",
+    "#62584d",
+    "#5b5146",
+    "#544a3f"
+   ],
+   "palette": [
+    {
+     "hex": "#645a4e",
+     "share": 0.86
+    },
+    {
+     "hex": "#443b31",
+     "share": 0.14
+    }
+   ]
+  },
+  "blaze_white": {
+   "photo": "ned_01_topdown",
+   "rect": [
+    365,
+    265,
+    430,
+    340
+   ],
+   "ramp": [
+    "#756b61",
+    "#70665c",
+    "#6a6057",
+    "#645a50"
+   ],
+   "palette": [
+    {
+     "hex": "#6b6158",
+     "share": 0.97
+    },
+    {
+     "hex": "#362e28",
+     "share": 0.03
+    }
+   ]
+  }
+ },
+ "photos": [
+  "ned_01_topdown",
+  "ned_02_front"
+ ],
+ "note": "Colours are sampled from the photos: they include the lighting of each photo (warm/dark), so they are a guide for hue and relation, not exact targets. Ramps are 4 Lab-averaged lightness bands, light -> dark."
+}
