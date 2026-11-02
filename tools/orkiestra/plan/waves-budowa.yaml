@@ -1,0 +1,71 @@
+# Plan budowy samego orkiestra w formacie waves.yaml.
+# Fale 1–4 wykonujesz ręcznie w Antigravity (patrz PLAN.md §5), bo skryptu jeszcze nie ma.
+# Od fali 5 możesz użyć gotowego narzędzia:  orkiestra run --plan plan/waves-budowa.yaml --wave w5
+version: 1
+waves:
+  - id: w1
+    tasks:
+      - id: T1-1
+        title: "Szkielet + kontrakty"
+        files: ["pyproject.toml", ".gitignore", ".github/workflows/ci.yml", "orkiestra/__init__.py", "orkiestra/templates/__init__.py", "orkiestra/models.py", "orkiestra/errors.py", "tests/test_models.py"]
+        prompt_file: zadania/T1.1.md
+        test_command: 'python -m pytest tests/test_models.py'
+  - id: w2
+    tasks:
+      - id: T2-1
+        title: "Plan (waves.yaml)"
+        files: ["orkiestra/plan.py", "tests/test_plan.py", "examples/waves.example.yaml"]
+        prompt_file: zadania/T2.1.md
+        test_command: 'python -m pytest tests/test_plan.py'
+      - id: T2-2
+        title: "Config + stan"
+        files: ["orkiestra/config.py", "orkiestra/state.py", "tests/test_config.py", "tests/test_state.py", "orkiestra.toml.example"]
+        prompt_file: zadania/T2.2.md
+        test_command: 'python -m pytest tests/test_config.py tests/test_state.py'
+      - id: T2-3
+        title: "Prompty"
+        files: ["orkiestra/prompts.py", "orkiestra/templates/task_prompt.md", "tests/test_prompts.py"]
+        prompt_file: zadania/T2.3.md
+        test_command: 'python -m pytest tests/test_prompts.py'
+  - id: w3
+    tasks:
+      - id: T3-1
+        title: "Git"
+        files: ["orkiestra/gitops.py", "tests/test_gitops.py", "tests/conftest.py"]
+        prompt_file: zadania/T3.1.md
+        test_command: 'python -m pytest tests/test_gitops.py'
+      - id: T3-2
+        title: "Agent agy"
+        files: ["orkiestra/agent.py", "tests/test_agent.py", "tests/fakes/fake_agy.py"]
+        prompt_file: zadania/T3.2.md
+        test_command: 'python -m pytest tests/test_agent.py'
+      - id: T3-3
+        title: "GitHub"
+        files: ["orkiestra/github.py", "tests/test_github.py"]
+        prompt_file: zadania/T3.3.md
+        test_command: 'python -m pytest tests/test_github.py'
+  - id: w4
+    tasks:
+      - id: T4-1
+        title: "Runner (serce)"
+        files: ["orkiestra/runner.py", "tests/test_runner.py"]
+        prompt_file: zadania/T4.1.md
+        test_command: 'python -m pytest tests/test_runner.py'
+        # model: "<slug Pro z agy models>"   # T4.1 jest najtrudniejsze
+      - id: T4-2
+        title: "CLI + raport"
+        files: ["orkiestra/cli.py", "orkiestra/__main__.py", "orkiestra/report.py", "orkiestra/templates/ci_workflow.yml", "tests/test_cli.py", "tests/test_report.py"]
+        prompt_file: zadania/T4.2.md
+        test_command: 'python -m pytest tests/test_cli.py tests/test_report.py'
+  - id: w5
+    tasks:
+      - id: T5-1
+        title: "Test E2E + poprawki"
+        files: ["tests/test_e2e.py", "orkiestra/*.py"]
+        prompt_file: zadania/T5.1.md
+        test_command: 'python -m pytest tests/test_e2e.py'
+      - id: T5-2
+        title: "Dokumentacja"
+        files: ["README.md", "docs/USAGE.md", "docs/PISANIE_PLANU.md", "examples/smoke.yaml"]
+        prompt_file: zadania/T5.2.md
+        test_command: 'python -c "import yaml; yaml.safe_load(open(''examples/smoke.yaml''))"'

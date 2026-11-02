@@ -1,0 +1,91 @@
+version: 1
+waves:
+  - id: w-qa-tools
+    tasks:
+      - id: check-css-vars
+        title: "Dodaj skrypt check-css-vars.js"
+        files: ["tools/qa/check-css-vars.js"]
+        test_command: "node tools/qa/check-css-vars.js"
+        prompt: |
+          Create tools/qa/check-css-vars.js in pure Node.js (ESM, no external dependencies).
+          The script should:
+          1. Read web/home/style.css and find all defined CSS variable names (--something).
+          2. Scan all CSS and JS files under web/home/ (e.g. style.css, canvas-pig.js, features/**/*.css, features/**/*.js).
+          3. Extract all usages of var(--variable-name).
+          4. Check if every used variable is defined in style.css or locally.
+          5. If valid, print 'CSS VARS OK' and exit code 0. If unknown variables are found, log them and exit code 1.
+
+      - id: check-icons
+        title: "Dodaj skrypt check-icons.js"
+        files: ["tools/qa/check-icons.js"]
+        test_command: "node tools/qa/check-icons.js"
+        prompt: |
+          Create tools/qa/check-icons.js in pure Node.js (ESM, no external dependencies).
+          The script should:
+          1. Read assets/icons/icons.json and get all icon names/keys.
+          2. Scan web/home/**/*.html, web/home/**/*.js, web/home/**/*.css for class icon-<id>.
+          3. Verify every icon-<id> exists in assets/icons/icons.json.
+          4. If all icons match, print 'ICONS OK' and exit code 0. If missing, log them and exit code 1.
+
+  - id: w-compat-tests
+    tasks:
+      - id: save-compat
+        title: "Dodaj testy zgodności zapisów SaveCompatTests"
+        files: ["tests/Cuy.Core.Tests/SaveCompatTests.cs"]
+        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~SaveCompatTests"
+        prompt: |
+          Create tests/Cuy.Core.Tests/SaveCompatTests.cs.
+          In this file, test loading legacy save JSON states through SaveSystem.
+          Verify default values for newer fields introduced in recent waves.
+          Do NOT modify production code in src/Cuy.Core.
+
+      - id: a11y-check
+        title: "Dodaj skrypt a11y-check.js"
+        files: ["tools/qa/a11y-check.js"]
+        test_command: "node tools/qa/a11y-check.js"
+        prompt: |
+          Create tools/qa/a11y-check.js using Playwright (already in package.json/tools/qa).
+          In a 420x640 window, verify buttons and input controls have accessible names (aria-label, title, or innerText).
+          Check tab order. Print 'A11Y OK' and exit code 0 on success.
+
+  - id: w-validation-tests
+    tasks:
+      - id: data-validation
+        title: "Dodaj testy walidacji danych DataValidationTests"
+        files: ["tests/Cuy.Core.Tests/DataValidationTests.cs"]
+        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~DataValidationTests"
+        prompt: |
+          Create tests/Cuy.Core.Tests/DataValidationTests.cs.
+          Ensure that every JSON file in assets/data/*.json parses successfully,
+          item and need IDs conform to canonical IDs in AGENTS.md,
+          and every item has an icon in assets/icons/icons.json.
+          Do not modify data files.
+
+      - id: no-polish-ids
+        title: "Dodaj test NoPolishIdsTests"
+        files: ["tests/Cuy.Core.Tests/NoPolishIdsTests.cs"]
+        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~NoPolishIdsTests"
+        prompt: |
+          Create tests/Cuy.Core.Tests/NoPolishIdsTests.cs.
+          Verify that Polish identifiers (from docs/NAMES.md) appear only in Save/SaveSystem.cs
+          and nowhere else in src/Cuy.Core or src/Cuy.
+
+  - id: w-perf-tests
+    tasks:
+      - id: brain-perf
+        title: "Dodaj test wydajności pętli decyzji BrainPerfTests"
+        files: ["tests/Cuy.Core.Tests/BrainPerfTests.cs"]
+        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~BrainPerfTests"
+        prompt: |
+          Create tests/Cuy.Core.Tests/BrainPerfTests.cs.
+          Execute 10,000 ticks of Brain with ManualClock and a fixed Random seed.
+          Assert execution time is under 2.0 seconds and no exceptions are thrown.
+          Do not modify production code.
+
+      - id: sim-determinism
+        title: "Dodaj test deterministyczności symulatora"
+        files: ["tests/Cuy.Core.Tests/SimulationDeterminismTests.cs"]
+        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~SimulationDeterminismTests"
+        prompt: |
+          Create tests/Cuy.Core.Tests/SimulationDeterminismTests.cs.
+          Run a 30-day simulation twice using the same seed and assert identical outcomes.

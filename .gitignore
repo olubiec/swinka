@@ -16,3 +16,5 @@ __pycache__/
 *.orig
 *.bak
 *.rej
+.orkiestra/
+.orkiestra-result.json

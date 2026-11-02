@@ -1,0 +1,45 @@
+# Konfiguracja orkiestry (orkiestra.toml)
+
+[project]
+# Gałąź bazowa, z której startują zadania i do której trafiają merge'e
+base_branch = "main"
+# Nazwa zdalnego repozytorium git
+remote = "origin"
+# Domyślna komenda testów uruchamiana po zadaniu
+test_command = "pytest -q"
+# Tryb scalania: "github" (PR) lub "local"
+merge_mode = "github"
+
+[agent]
+# Komenda uruchamiająca agenta Antigravity
+cmd = ["agy"]
+# slug z "agy models", np. model Flash; puste = domyślny model agy
+model = ""
+# Limit czasu pojedynczego uruchomienia agenta (minuty)
+timeout_minutes = 20
+# Pomijanie pytań o uprawnienia agenta
+skip_permissions = true
+# Dodawanie katalogu worktree do agenta (add-dir)
+add_dir = true
+# Format wyjścia agenta: "json" lub "text"
+output_format = "json"
+# Uruchamianie agenta w pseudoterminalu (PTY)
+use_pty = false
+# Dodatkowe argumenty przekazywane agentowi
+extra_args = []
+
+[run]
+# Maksymalna liczba zadań uruchamianych równolegle
+max_parallel = 3
+# Maksymalna liczba prób na zadanie
+max_attempts = 2
+# Czas oczekiwania po wyczerpaniu limitu (minuty)
+quota_wait_minutes = 30
+# Limit czasu oczekiwania na CI (minuty)
+ci_timeout_minutes = 30
+# Katalog z worktree (względem katalogu repozytorium)
+worktree_dir = "../.orkiestra-worktrees"
+# Katalog ze stanem uruchomienia (względem katalogu repozytorium)
+state_dir = ".orkiestra"
+# Zatrzymanie fali po pierwszym nieudanym zadaniu
+stop_on_failure = true

@@ -1,0 +1,53 @@
+# Przykładowy plan orkiestry: mała aplikacja CLI "todo".
+# version: wersja formatu planu (obecnie zawsze 1).
+version: 1
+
+# waves: lista fal. Fale wykonują się po kolei; zadania w jednej fali -- równolegle,
+# dlatego ich wzorce plików (files) nie mogą się na siebie nakładać.
+waves:
+  - id: w1                     # unikalny identyfikator fali
+    tasks:
+      - id: todo-storage       # unikalny identyfikator zadania w całym planie
+        title: "Warstwa przechowywania zadań"   # krótki tytuł (używany w PR)
+        # files: wzorce glob plików, które agent wolno zmieniać
+        files: ["todo/storage.py", "tests/test_storage.py"]
+        # prompt: pełna instrukcja dla agenta (alternatywnie prompt_file)
+        prompt: |
+          Utwórz moduł todo/storage.py do przechowywania zadań w pliku JSON.
+          Zaimplementuj klasę TodoStorage z konstruktorem przyjmującym ścieżkę pliku.
+          Metody: add(text) -> int, list() -> list[dict], done(item_id), remove(item_id).
+          Każdy element ma pola: id (int), text (str), done (bool).
+          Brakujący plik traktuj jak pustą listę; zapis wykonuj atomowo.
+          Dodaj testy pytest w tests/test_storage.py z użyciem tmp_path.
+          Nie zmieniaj żadnych innych plików.
+        # test_command: opcjonalna komenda testów uruchamiana po zadaniu
+        test_command: "pytest -q tests/test_storage.py"
+        # timeout_minutes: opcjonalny limit czasu agenta (liczba >= 1)
+        timeout_minutes: 20
+
+      - id: todo-format
+        title: "Formatowanie wyjścia"
+        files: ["todo/formatting.py", "tests/test_formatting.py"]
+        # model: opcjonalny model agenta dla tego zadania
+        # model: "gemini-pro"
+        prompt: |
+          Utwórz moduł todo/formatting.py z funkcją format_items(items) -> str.
+          items to lista słowników z polami id, text, done.
+          Każdy element w osobnej linii: "[x] 1 tekst" lub "[ ] 2 tekst".
+          Dla pustej listy zwróć napis "Brak zadań.".
+          Dodaj testy pytest w tests/test_formatting.py.
+          Nie zmieniaj żadnych innych plików.
+
+  - id: w2
+    tasks:
+      - id: todo-cli
+        title: "Interfejs wiersza poleceń"
+        files: ["todo/cli.py", "todo/__main__.py", "tests/test_cli.py"]
+        # prompt_file zamiast prompt: ścieżka względem katalogu tego pliku
+        prompt: |
+          Zbuduj CLI w todo/cli.py oparte o argparse, uruchamiane przez python -m todo.
+          Podkomendy: add TEKST, list, done ID, rm ID.
+          Użyj TodoStorage z todo/storage.py (plik domyślnie ~/.todo.json, opcja --file).
+          Wyjście listy generuj funkcją format_items z todo/formatting.py.
+          Dodaj todo/__main__.py wywołujące main().
+          Napisz testy w tests/test_cli.py, wywołując main() z listą argumentów.
