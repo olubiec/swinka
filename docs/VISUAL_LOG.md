@@ -85,3 +85,6 @@ Checks: `web-smoke`, `minigame-fit-check`, `anim-test`, `palette-test`, `maze-te
 
 ## 2026-11-02 Plan wyglądu V3
 Owner: wygląd świnek słaby (łaty, układ kolorów, sierść, rozetki). Napisany plan fal A0-A8 w `docs/PLAN_WYGLAD_V3.md`: analiza wzorców, silnik maści w przestrzeni tekstury, silnik sierści, rozetki, głowy, pięć świnek, maści generyczne, portrety, zamknięcie. Wykonanie w kolejnych sesjach.
+
+## 2026-11-02 Research do planu V3
+`docs/RESEARCH_WYGLAD_V3.md`: gotowce wizualne i techniczne (standardy ras, wzory, fur 2001, hue shifting, sel-out, dithering, potoki 3D, CIEDE2000), wdrożone w `docs/PLAN_WYGLAD_V3.md`. Kluczowe zmiany planu: wzór łat w 3D zamiast tekstury z szwem, rozetka = wir + grzebienie, dither w przestrzeni modelu, bez zewnętrznych bibliotek (tylko numpy + Pillow). Bez wykonania.
