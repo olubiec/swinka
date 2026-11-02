@@ -1,0 +1,25 @@
+# Konfiguracja orkiestry dla projektu Cuy
+[project]
+base_branch = "main"
+remote = "origin"
+test_command = "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --nologo"
+merge_mode = "local"
+
+[agent]
+cmd = ["agy"]
+model = ""
+timeout_minutes = 20
+skip_permissions = true
+add_dir = false
+output_format = "json"
+use_pty = false
+extra_args = []
+
+[run]
+max_parallel = 2
+max_attempts = 2
+quota_wait_minutes = 30
+ci_timeout_minutes = 30
+worktree_dir = "../.orkiestra-worktrees"
+state_dir = ".orkiestra"
+stop_on_failure = true

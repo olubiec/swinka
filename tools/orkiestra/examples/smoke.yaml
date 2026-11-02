@@ -1,0 +1,13 @@
+# Test dymny: uruchom `orkiestra run --plan examples/smoke.yaml`
+# (najpierw `orkiestra validate --plan examples/smoke.yaml`). Zadanie tworzy plik SMOKE.md.
+version: 1
+waves:
+  - id: smoke
+    tasks:
+      - id: smoke-file
+        title: "Plik testowy"
+        files: ["SMOKE.md"]
+        test_command: "python -c \"import pathlib,sys; sys.exit(0 if 'orkiestra smoke OK' in pathlib.Path('SMOKE.md').read_text() else 1)\""
+        prompt: |
+          Create the file SMOKE.md in the repository root containing exactly one line: orkiestra smoke OK
+          Do nothing else.

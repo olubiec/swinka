@@ -1,0 +1,1 @@
+https://github.com/apokamo/kaji @ e575851b263da41e66157adb81eea8e596864285 (wybrane pliki, Apache-2.0)

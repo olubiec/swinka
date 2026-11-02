@@ -1,0 +1,544 @@
+<!-- mcp-name: io.github.rhishi99/agy-headless-bridge -->
+
+<div align="center">
+
+# agy-headless-bridge
+
+### Call the Google **Antigravity CLI** (`agy`) headlessly — and actually get output back.
+
+Codename **PtyGravity** · pty + antiGravity
+
+[![PyPI](https://img.shields.io/pypi/v/agy-headless-bridge.svg?color=7c5cff)](https://pypi.org/project/agy-headless-bridge/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/agy-headless-bridge.svg?color=22d3ee)](https://pypi.org/project/agy-headless-bridge/)
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-listed-7c5cff)](https://registry.modelcontextprotocol.io/v0/servers?search=agy-headless-bridge)
+[![tests](https://github.com/rhishi99/agy-headless-bridge/actions/workflows/test.yml/badge.svg)](https://github.com/rhishi99/agy-headless-bridge/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-7c5cff.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.9%2B-22d3ee.svg)](https://www.python.org)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%E2%9C%93%20%C2%B7%20POSIX%20%28beta%29-34d399.svg)]()
+
+📖 **[Architecture & docs → rhishi99.github.io/agy-headless-bridge](https://rhishi99.github.io/agy-headless-bridge/)**
+
+</div>
+
+---
+
+## TL;DR — the problem, before & after
+
+`agy -p "<prompt>"` prints **nothing** when its stdout is not a real terminal.
+So calling it from a subprocess, an MCP server, CI, or another coding agent
+(Claude Code, Codex, …) returns an empty string and exit `0` — silently. This
+package gives `agy` a fresh pseudo-terminal so it emits normally, then cleans
+the output.
+
+```mermaid
+flowchart TB
+    subgraph B["❌ BEFORE — agy -p from any non-TTY caller"]
+        direction TB
+        a1["subprocess · MCP · CI · agent"] --> a2["agy -p &quot;prompt&quot;"]
+        a2 --> a3["stdout gated by isatty()"]
+        a3 --> a4["(empty string)<br/>exit 0 · no error · no output"]
+    end
+    subgraph A["✅ AFTER — through agy-headless-bridge"]
+        direction TB
+        b1["subprocess · MCP · CI · agent"] --> b2["run(prompt)"]
+        b2 --> b3["allocate fresh pseudo-terminal"]
+        b3 --> b4["agy -p &quot;prompt&quot;<br/>isatty() == True"]
+        b4 --> b5["clean() strips ANSI/TUI"]
+        b5 --> b6["clean text ✓"]
+    end
+
+    classDef bad fill:#2a1313,stroke:#f87171,color:#ffd9d9;
+    classDef good fill:#0f2a1e,stroke:#34d399,color:#d7ffe9;
+    class a1,a2,a3,a4 bad;
+    class b1,b2,b3,b4,b5,b6 good;
+```
+
+```python
+# ❌ The problem — plain subprocess
+import subprocess
+r = subprocess.run(["agy", "-p", "say hi"], capture_output=True, text=True)
+print(r.stdout)          # '' — prints nothing, exit 0
+
+# ✅ The fix
+from agy_headless_bridge import run
+print(run("say hi"))     # 'Hi! How can I help?'
+```
+
+Three entry points around one core:
+
+| Entry point | Invoke | Use for |
+|---|---|---|
+| **Library** | `from agy_headless_bridge import run` | embedding agy in Python |
+| **CLI** | `agy-bridge "prompt"` | shell scripts, quick calls |
+| **MCP server** | `python -m agy_headless_bridge.mcp_server` | letting an agent call agy as a tool |
+
+---
+
+## The problem in detail — upstream bug [#76]
+
+`agy` gates its stdout on `isatty()`. The instant stdout isn't a terminal, it
+goes silent — no output, no error, exit `0`:
+
+```console
+$ agy -p "say hi" | cat
+$            # empty. exit 0. nothing.
+```
+
+The common `winpty agy -p "..."` workaround needs a terminal that **already
+exists**, so it still fails from any automated / non-TTY caller.
+
+> [!NOTE]
+> **Newer agy releases fixed this upstream:** `agy -p "..." | cat` printed
+> normally on agy 1.2.11 (Windows, checked Sep 2026). The bridge still earns its
+> place there. It works on older agy builds. It kills a hung run on an idle
+> timer and keeps partial output. It turns a failed exit or a spent quota into a
+> typed error (`AgyExitError` / `AgyQuotaError`). It strips TUI noise, and it
+> ships a dependency-free MCP server.
+
+## The fix — give agy a tty it didn't ask for
+
+Allocate a **brand-new** pseudo-terminal (one that needs no parent tty) and
+attach `agy` to it. Same code path on every OS — only the pty allocator differs.
+
+```mermaid
+flowchart TD
+    A["Caller — non-TTY<br/>Claude Code · MCP · subprocess · CI"] -->|"prompt"| B{{"run(prompt)"}}
+    B --> C["find_agy()<br/>$AGY_PATH → PATH → OS defaults"]
+    C --> D{"sys.platform?"}
+    D -->|"win32"| E["pywinpty<br/>PtyProcess.spawn"]
+    D -->|"posix"| F["stdlib pty<br/>os.openpty + Popen"]
+    E --> G(["fresh pseudo-terminal"])
+    F --> G
+    G --> H["agy -p prompt<br/>isatty == True → emits"]
+    H -->|"raw bytes + ANSI/TUI chrome"| I["clean()<br/>strip CSI/OSC · collapse \r repaints · drop spinner glyphs"]
+    I -->|"clean text"| A
+```
+
+| Platform | pty backend | Status |
+|---|---|---|
+| **Windows** | ConPTY via [`pywinpty`] (`PtyProcess`) | ✅ verified (agy 1.0.6) |
+| **Linux / macOS** | stdlib [`pty`] (`os.openpty` + `subprocess.Popen`) | ⚠️ pty mechanics verified on Linux CI; real `agy` round-trip **not yet verified on POSIX hardware** |
+
+> [!TIP]
+> **Linux/macOS users wanted.** The pty mechanics (the `os.openpty` + `Popen` plumbing) are verified on Linux CI via a stub, but nobody has confirmed the real `agy` round-trip on bare-metal Linux or macOS yet.
+> If you're on POSIX: `pip install agy-headless-bridge`, try it, and
+> [tell us how it went](https://github.com/rhishi99/agy-headless-bridge/issues/new/choose) — pass or fail. PRs welcome.
+
+> **Why not just the existing `agy` Claude Code plugins?** They wrap `agy` for
+> *triggering* (slash commands, model selection) but still call `agy -p`
+> directly — so in any headless context they hit this exact empty-output bug.
+> This package fixes the I/O layer they're missing. **Use both together.**
+
+---
+
+## Prerequisites
+
+Before installing this bridge you need:
+
+1. **Python 3.9+** — `python --version`.
+2. **The Antigravity CLI (`agy`)**, installed and **authenticated**:
+   - Install: <https://antigravity.google/cli>
+   - Authenticate once interactively (`agy` opens a browser OAuth flow), or set
+     `ANTIGRAVITY_API_KEY` in your environment if you use an API key.
+   - Verify it runs *in a real terminal*: `agy -p "say hi"` should print a reply.
+     (On older agy builds it prints nothing from a pipe. That's the bug this
+     package was built to fix.)
+3. **Windows only:** `pywinpty` (installed automatically as a dependency).
+   POSIX uses the stdlib `pty` module — nothing extra.
+
+> This package does **not** install or authenticate `agy`, and does not bundle
+> any credentials. It only spawns the `agy` already on your machine.
+
+---
+
+## Install
+
+Requires **Python 3.9+**.
+
+```bash
+pip install agy-headless-bridge          # pywinpty auto-installs on Windows only
+```
+
+From source:
+
+```bash
+git clone https://github.com/rhishi99/agy-headless-bridge
+cd agy-headless-bridge
+pip install -e .
+```
+
+The bridge locates the binary via, in order: `$AGY_PATH` → `agy` on `PATH` →
+OS default install paths.
+
+### As a Claude Code plugin
+
+This repo is also a Claude Code plugin (`.claude-plugin/plugin.json` +
+`.mcp.json`). Installing it registers one local stdio MCP server, `antigravity`.
+
+What the plugin runs and fetches:
+
+- **Fetches:** nothing from PyPI for this package — the plugin runs the source
+  shipped in the plugin itself. On first start `uv run --frozen` (from
+  [uv](https://docs.astral.sh/uv/)) builds a virtualenv inside the plugin's
+  install directory from the committed `uv.lock`. The only runtime dependency is
+  `pywinpty`, on Windows only.
+- **Runs:** `agy-mcp-server` from that source. Each tool call spawns the
+  `agy` binary already on your machine inside a pseudo-terminal (ConPTY on
+  Windows, `pty` on POSIX), passes your prompt to it, and returns the cleaned
+  text output. `agy` itself contacts Google's Antigravity service using your
+  own `agy` login or `ANTIGRAVITY_API_KEY`.
+- **Tools:** `agy_ask` and `agy_research`. By default `agy_ask` adds the
+  server's working directory (your project) to agy's workspace, so agy can
+  read it; pass `workspace: "none"` to opt out. agy can edit files or run
+  commands only if `agy_ask` is called with `skip_permissions: true` *and*
+  the server was started with `AGY_BRIDGE_ALLOW_SKIP_PERMISSIONS=1`; the
+  plugin does not set that variable.
+- **Does not:** install or authenticate `agy`, bundle credentials, open
+  network ports, or send data anywhere other than through the `agy` you run.
+
+Requirements: `uv` on `PATH` and an installed, authenticated `agy` (see
+Prerequisites). Local MCP servers load in Claude Code and in Cowork sessions
+running on your computer; claude.ai chat ignores them.
+
+---
+
+## Usage
+
+### Library
+
+```python
+from agy_headless_bridge import (
+    run, AgyExitError, AgyNotFoundError, AgyQuotaError, AgyTimeoutError,
+)
+
+try:
+    # For a CODING task, pass the repo so agy can see it — the library `run()`
+    # is a thin primitive and does NOT auto-add a workspace (the CLI/MCP layers
+    # do). Without add_dirs, agy -p runs blind in its own scratch workspace.
+    print(run("Summarize this repo", add_dirs=["."], timeout=600))
+except AgyTimeoutError as exc:
+    print("timed out; partial so far:\n", exc.partial)  # resume with `agy -c`
+except AgyQuotaError as exc:                  # subclass of AgyExitError
+    print("quota spent; retry in", exc.reset_seconds, "s")  # None if unknown
+except AgyExitError as exc:
+    print(f"agy failed (exit {exc.returncode}):\n{exc.output}")
+except AgyNotFoundError:
+    print("install agy first")
+```
+
+`run(prompt, timeout=None, agy_path=None, *, add_dirs=None, model=None,
+idle_timeout=None, extra_args=None, skip_permissions=False) -> str` raises:
+
+- `AgyNotFoundError` if the binary is missing.
+- `AgyTimeoutError`, carrying `.partial`, on the idle or hard timeout.
+- `AgyQuotaError`, carrying `.reset_seconds` parsed from agy's message, when agy
+  exits non-zero with a quota or rate-limit message.
+- `AgyExitError`, carrying `.returncode` and `.output`, on any other non-zero
+  exit, such as an unknown `--model`.
+- `ValueError` on an empty prompt, or a timeout that is not a finite number
+  >= 1 (checked before agy starts).
+
+It returns `""` only if agy genuinely emitted nothing. `add_dirs` → agy
+`--add-dir`; `model` → `--model`. The `timeout` is the absolute ceiling
+(default 900 s); `idle_timeout` ends a run that has gone silent for that many
+seconds (default 300 s). `agy -p` prints nothing until its answer is ready, so
+**when you pass `timeout` and no `idle_timeout`, the idle bound becomes
+`timeout`**: a longer budget would be useless if the idle timer still fired at
+300 s.
+
+`cap_output(text, max_chars)` keeps a long reply out of a calling model's
+context: past `max_chars` it returns the reply's last `SUMMARY:` block (or its
+tail) plus the path of a temp file holding the full text. Append
+`BRIEF_INSTRUCTION` to the prompt to make agy end with that block.
+
+`skip_permissions=True` passes `--dangerously-skip-permissions`. Headless agy
+cannot answer tool-approval prompts, so without it agy **silently declines every
+file edit and command and still exits 0**. With it, agy acts unattended inside
+`add_dirs`. Opt in only for trusted prompts.
+
+To get the CLI/MCP "default to cwd for coding, none for research" behaviour in
+your own code, use `resolve_add_dirs(explicit, use_cwd_default=...)`.
+
+### CLI
+
+```bash
+agy-bridge "reply with exactly: OK"
+python -m agy_headless_bridge "reply with exactly: OK"   # equivalent
+
+# Coding task: the current directory is auto-added to agy's workspace, so agy
+# sees your repo with no extra flags.
+agy-bridge "Find and fix the off-by-one in the parser"
+
+# Research / Q&A that needs no repo — opt out of the cwd default:
+agy-bridge --no-workspace "Explain idle timeouts in process supervision"
+
+# Add more dirs, pick a model, widen the limits for a big task:
+agy-bridge --add-dir ../shared-lib --model gemini-3-pro \
+    --timeout 1800 --idle-timeout 180 "Refactor X to match the shared lib"
+
+# Long reply, short printout: agy ends with a SUMMARY: block, and only that is
+# printed when the reply passes 4000 chars (full text saved to a temp file):
+agy-bridge --no-workspace --brief --max-chars 4000 --timeout 840 "Research X"
+```
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `--add-dir DIR` | cwd (auto) | Add a dir to agy's workspace (repeatable). |
+| `--no-workspace` | off | Don't auto-add cwd (use for research / Q&A). |
+| `--model NAME` | agy default | agy `--model`. |
+| `--timeout SECS` | `900` | Hard ceiling (absolute wall). |
+| `--idle-timeout SECS` | `300`, or `--timeout` when given | Kill after this many seconds of no output. |
+| `--brief` | off | Ask agy to end with a `SUMMARY:` block. |
+| `--max-chars N` | `0` (no cap) | Print at most N chars: the `SUMMARY:` block (or the tail) and the path of the full text. |
+| `--skip-permissions` | off | Let agy edit files / run commands unattended (`--dangerously-skip-permissions`). |
+
+**Exit codes:** `0` success · agy's own code when agy fails (its message is
+printed) · `75` quota / rate limit spent (retry later) · `1` timeout or no
+output · `2` bad `--timeout` / `--idle-timeout` · `127` agy not found.
+
+### MCP server
+
+```bash
+claude mcp add --transport stdio antigravity -- agy-mcp-server
+```
+
+`agy-mcp-server` is the console-script entry point `pip install` puts on your
+`PATH` — it's bound to the exact interpreter you installed the package with,
+so it sidesteps the "wrong `python`" problem below entirely. Prefer it over
+`python -m agy_headless_bridge.mcp_server`, especially on Windows.
+
+<details>
+<summary>Alternative: invoke via <code>python -m</code></summary>
+
+```bash
+claude mcp add --transport stdio antigravity -- \
+    python -m agy_headless_bridge.mcp_server
+```
+
+> **Windows:** use `py -3.11` (the [Python Launcher]) instead of `python` in the
+> command above. Bare `python` can resolve to the wrong interpreter or the
+> Windows Store stub, which surfaces as an `-32000` MCP connection error. See
+> [Troubleshooting](#troubleshooting--faq).
+
+</details>
+
+The server speaks JSON-RPC stdio directly (no MCP SDK dependency) and routes
+every call through the pty bridge.
+
+**Tool schema** (what an agent — or you, integrating manually — sees):
+
+| Tool | Argument | Type | Required | Description |
+|---|---|---|---|---|
+| `agy_ask` | `prompt` | string | ✅ | one-shot prompt sent to agy |
+| `agy_ask` | `workspace` | `"auto"`\|`"none"` | | `auto` (default) adds the server's cwd so agy sees the repo; `none` for research / Q&A |
+| `agy_ask` | `add_dir` | string[] | | explicit dirs for agy's workspace (overrides the `workspace` default) |
+| `agy_ask` | `model` | string | | agy `--model` |
+| `agy_ask` | `timeout` | number | | hard timeout override, seconds; also lifts the idle bound to match |
+| `agy_ask`, `agy_research` | `brief` | boolean | | default `true`: agy ends with a `SUMMARY:` block, returned alone when the reply is long |
+| `agy_ask`, `agy_research` | `max_chars` | integer | | cap on returned text (default `AGY_BRIDGE_MAX_CHARS` or 4000; `0` = no cap); past it the full reply is saved to a file named in the result |
+| `agy_ask` | `skip_permissions` | boolean | | let agy edit files / run commands unattended. **Refused unless the server was started with `AGY_BRIDGE_ALLOW_SKIP_PERMISSIONS=1`**, because the caller is itself a model |
+| `agy_research` | `query` | string | ✅ | wrapped as a deep-research prompt for agy (never attaches a workspace) |
+| `agy_research` | `model`, `timeout` | string, number | | as for `agy_ask`; `timeout` defaults to the 900 s ceiling and is also the idle bound, since research is silent for minutes |
+
+**Response shape** — a standard MCP `tools/call` result; the answer is the text
+content:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": { "content": [ { "type": "text", "text": "<agy's cleaned answer>" } ] }
+}
+```
+
+Failures are still a readable `text` reply rather than a JSON-RPC error, but the
+result also carries `"isError": true` so the client can tell them apart from an
+answer:
+
+- **Timeout:** whatever agy produced before the kill, then an
+  `[agy-mcp] TIMEOUT: ...; resume with 'agy -c'` note, so partial work isn't lost.
+- **Quota spent:** agy's message, then `[agy-mcp] QUOTA: ...; resets in ~Ns`.
+- **Anything else:** agy's message (if any), then `[agy-mcp] ERROR: ...`. This
+  covers agy missing, a non-zero exit and bad arguments.
+
+---
+
+## Use cases & wiring it into your AI coding tools
+
+The whole point: let **one** AI coding tool delegate work to **Gemini via
+Antigravity**, headlessly. Common setups:
+
+| Use case | How |
+|---|---|
+| Claude Code asks Gemini for a second opinion / diff review | MCP server → `agy_ask` tool |
+| A CI step runs an `agy` prompt and captures the answer | `agy-bridge "..."` in the workflow |
+| A Python pipeline fans work out to agy | `from agy_headless_bridge import run` |
+| Codex / any MCP-capable agent delegates to agy | register the same MCP server |
+| Cron / scheduled job summarizes logs via agy | `agy-bridge` in the script |
+
+### Wire into Claude Code
+
+Register the MCP server, then prompt Claude to use it:
+
+```bash
+claude mcp add --transport stdio antigravity -- agy-mcp-server
+```
+
+> **Prompt to Claude Code:**
+> *"Use the `agy_ask` tool to ask Antigravity to review this function for edge
+> cases, then summarize its findings for me."*
+
+If you also want slash-command triggering and model selection, pair this bridge
+with the community `antigravity-cc` Claude Code plugin — that handles the
+`/agy:*` commands and Gemini/Claude model swap; this handles the headless I/O.
+
+### Wire into Codex (or any MCP client)
+
+Add the server to the client's MCP config:
+
+```json
+{
+  "mcpServers": {
+    "antigravity": {
+      "command": "python",
+      "args": ["-m", "agy_headless_bridge.mcp_server"]
+    }
+  }
+}
+```
+
+> **Prompt to the agent:**
+> *"Call `agy_research` with the query 'idiomatic error handling in Rust' and
+> turn the result into a checklist."*
+
+### Use from a shell / CI script
+
+```bash
+ANSWER="$(agy-bridge 'Summarize the key risk in this diff in one sentence.')"
+echo "$ANSWER"
+```
+
+---
+
+## Configuration
+
+| Env var | Default | Meaning |
+|---|---|---|
+| `AGY_PATH` | auto-detect | Absolute path to the `agy` binary |
+| `AGY_BRIDGE_TIMEOUT` | `900` | Hard ceiling (absolute wall), in seconds |
+| `AGY_BRIDGE_IDLE_TIMEOUT` | `300` | Kill after this many seconds of no output from agy (a caller's `timeout` overrides it) |
+| `AGY_BRIDGE_MAX_CHARS` | `4000` | MCP server: cap on returned text; `0` = no cap |
+| `AGY_BRIDGE_ALLOW_SKIP_PERMISSIONS` | unset | Set to `1` on the MCP server to allow the `skip_permissions` tool argument |
+
+---
+
+## How `clean()` works
+
+`agy`'s pty output is a TUI stream, not plain text. `clean()` removes **ANSI
+escapes** (CSI/OSC — colors, cursor moves), **`\r` repaints** (a spinner
+overwrites one line; only the final paint is kept), and **box-drawing / spinner
+glyphs** (`╭─╮ │ ⠋⠙⠹`) — leaving just the model's answer.
+
+What comes off the pty vs. what you get back:
+
+```text
+RAW (off the pty)                          CLEANED (returned to you)
+─────────────────────────────────────     ─────────────────────────
+⠋ thinking…\r⠙ thinking…\r\x1b[2K          A closure is a function that
+\x1b[32m╭─────────────╮\x1b[0m              captures variables from the
+\x1b[32m│\x1b[0m A closure is a function     scope where it was defined.
+that captures variables from the
+scope where it was defined.
+\x1b[32m╰─────────────╯\x1b[0m
+```
+
+---
+
+## Troubleshooting / FAQ
+
+**`pip install` fails on Windows building `pywinpty`** — `pywinpty` is a native
+extension. If pip tries to build from source and errors with a compiler/`cl.exe`
+message, install the **Microsoft C++ Build Tools** (or use a Python where a
+prebuilt `pywinpty` wheel exists — recent CPython on Windows has them). Upgrade
+pip first: `python -m pip install -U pip`.
+
+**`-32000` MCP connection error on Windows (interpreter mismatch)** — bare
+`python` in the `claude mcp add` command can resolve to the wrong interpreter or
+the Windows Store stub, so the spawned server can't import the package and the
+connection fails. Use the [Python Launcher] instead — register the server with
+`py -3.11` (matching the Python where you installed the package) in place of
+`python`. To confirm where the package actually landed, run
+`pip show agy-headless-bridge` and check the `Location:` field; if it points to a
+different Python than Claude Code spawns, that mismatch is the cause.
+
+**`AgyNotFoundError`** — the bridge can't find `agy`. Set `AGY_PATH` to the
+absolute path of the binary, or make sure `agy` is on your `PATH`
+(`agy --version` should work in your shell).
+
+**Empty string returned** — agy produced no output. Confirm it works in a real
+terminal first: `agy -p "say hi"`. If that's also empty, the problem is agy/auth,
+not the bridge. Re-authenticate (`agy` interactively) or check
+`ANTIGRAVITY_API_KEY`.
+
+**`AgyTimeoutError`** — agy hit a limit. Two triggers: the **hard ceiling**
+(`AGY_BRIDGE_TIMEOUT`, default 900s) and the **idle timeout**
+(`AGY_BRIDGE_IDLE_TIMEOUT`, default 300s — fires when agy emits nothing for that
+long; a caller's own `timeout` replaces it, because `agy -p` stays silent until
+it answers). The error carries `.partial` (whatever agy produced first), and the CLI
+prints it before exiting. Widen the limits for long prompts:
+`AGY_BRIDGE_TIMEOUT=1800 agy-bridge "..."`, `--timeout 1800`, or
+`run(prompt, timeout=1800)`. To continue a run that timed out,
+resume the agy session directly with `agy -c`.
+
+**agy stalls until the idle timeout, then times out on what looks like a
+normal prompt** — this bridge never writes to agy's stdin, so if agy pauses
+mid-run to ask for interactive approval (e.g. "allow this tool call?"), the
+prompt sits unanswered and the run silently stalls until the idle timeout
+kills it. This is currently the most common way a run hangs. Configure `agy`
+itself to auto-approve (check `agy --help` / its settings for a
+non-interactive/auto-approve flag) before delegating tasks that involve tool
+use, or expect the idle timeout to eventually fire and surface `.partial`.
+
+**Pseudo-terminal allocation fails** — rare. On Windows it means `pywinpty`
+isn't importable (reinstall it). On POSIX it means the system is out of pty
+slots or `pty.openpty()` is denied (containers with no `/dev/pts`); run with a
+real pty available.
+
+**Garbled / partial output** — open an
+[issue](https://github.com/rhishi99/agy-headless-bridge/issues/new) with the OS,
+Python + agy version, and the raw output; `clean()` may need another glyph rule.
+
+## Development & CI
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+Unit tests (cleaning, arg validation, binary discovery) always run. The live
+`agy` round-trip test **auto-skips** when `agy` isn't installed — so CI runners
+(which don't have `agy`) stay green and never need credentials. CI runs on
+Windows + Linux across Python 3.9 and 3.12.
+
+---
+
+## Scope, non-goals & disclaimer
+
+- **Model selection** (Gemini Pro / Flash / Claude inside agy) is *not* handled
+  here — it's an `agy` `settings.json` concern, covered by the `antigravity-cc`
+  plugin. Pair the two.
+- Does **not** install or authenticate `agy`, and ships **no credentials**.
+- Automating any vendor CLI may interact with that vendor's terms / rate limits.
+  You are responsible for using `agy` within Google's terms of service. This
+  project only changes *how stdout is captured* — it does not bypass auth,
+  quotas, or any access control.
+- Not affiliated with Google. *Antigravity* and *agy* are Google products.
+
+## License
+
+[MIT](LICENSE).
+
+[#76]: https://antigravity.google/cli
+[`pywinpty`]: https://github.com/andfoy/pywinpty
+[`pty`]: https://docs.python.org/3/library/pty.html
+[Python Launcher]: https://docs.python.org/3/using/windows.html#python-launcher-for-windows

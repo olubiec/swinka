@@ -1,0 +1,20 @@
+{
+  "name": "agy-mcp-codex",
+  "version": "1.0.0",
+  "description": "A local MCP bridge that lets Codex delegate tasks to Google Antigravity CLI.",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --check server.mjs && node test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BerryUIKI/AGY_MCP_CODEX.git"
+  },
+  "keywords": ["antigravity", "codex", "mcp", "agent", "cli"]
+}
