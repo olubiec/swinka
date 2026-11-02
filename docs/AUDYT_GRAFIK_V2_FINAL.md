@@ -13,7 +13,7 @@ Kryteria z `docs/PLAN_GRAFIK_V2.md` sekcja 6 i dowody.
 | 7 | `check_sprites.py` i testy rozmiarów zielone, paczka poniżej 25 MB przyrostu | spełnione | `check_sprites.py`: 0 błędów dla 43 folderów; `assets/sprites` 22 MB (było 12 MB, przyrost 10 MB), atlas dekoracji 60 KB |
 
 ## Weryfikacja
-- `tools/art/verify_palettes.py`: arkusz renderowany bezpośrednio z parą (wzór, paleta) == remap arkusza głównego, piksel w piksel. Wynik pełnego przebiegu (adult i senior, wszystkie 8 wzorów i 10 palet w osi i pary kolekcji): `docs/VISUAL_LOG.md`/log poniżej.
+- `tools/art/verify_palettes.py`: arkusz renderowany bezpośrednio z parą (wzór, paleta) == remap arkusza głównego, piksel w piksel. Pełny przebieg (adult i senior, wszystkie 8 wzorów, 10 palet i pary kolekcji, kształt smooth_normal): TOTAL DIFFERENCES 0.
 - `tools/qa/palette-test.js`: OK (99 identyfikatorów, kompanioni identyczni z remapem).
 - `tools/qa/anim-test.js`: OK (60 animacji x 5 etapów; `animations.json` bez zmian, dodatkowe paski w `rotation.json`).
 - `tools/qa/web-smoke.js`: OK.
