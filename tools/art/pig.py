@@ -69,6 +69,7 @@ HL = hx('ffffff')
 MOUTH = hx('7a2c2c')
 TOOTH = hx('fffaf0')
 WHISK = np.array([255, 246, 232, 190], np.uint8)
+WHISK_OLD = np.array([255, 255, 255, 255], np.uint8)
 SHADOW = np.array([70, 45, 30, 70], np.uint8)
 MATN = ['orange', 'white', 'rust', 'pink', 'grey', 'wood', 'blue', 'fabric', 'red', 'cream', 'gold', 'hay', 'leaf', 'carrot']
 MAT = {n: i for i, n in enumerate(MATN)}
@@ -180,8 +181,10 @@ def render_side(**kw):
     c = Canvas()
     kb, kh = STYLE['kb'], STYLE['kh']
     bx, brx, bry = p['bx'], p['brx'] * kb, p['bry'] * kb
+    if STYLE['senior']:
+        bry *= 0.93            # lower, sagging back line
     by = FLOOR - 1.5 - bry - p['lift']
-    hxc, hyc = bx + p['hdx'] * kb, by + p['hdy'] * kb
+    hxc, hyc = bx + p['hdx'] * kb, by + p['hdy'] * kb + (1.0 * kb if STYLE['senior'] else 0.0)
     hrx, hry = p['hrx'] * kh, p['hry'] * kh
     pivx, pivy = bx + p['piv'] * kb, FLOOR - 1.0 - p['lift']
     a = math.radians(p['rot'])
@@ -258,6 +261,13 @@ def render_side(**kw):
     rump = ((u + 0.78) ** 2 / 0.09 + (v + 0.25) ** 2 / 0.3) < 1
     mat[band | belly | chest] = MAT['white']
     mat[rump & ~band] = MAT['rust']
+    if STYLE['senior']:
+        # faded coat: pale speckles on the back and patches, fixed to the body (local coordinates, no shimmer)
+        ix, iy = np.floor(lx).astype(int), np.floor(ly).astype(int)
+        hsh = (ix * 7 + iy * 13 + (ix * iy) % 5) % 11
+        fade = (((hsh == 0) & (v < 0.1)) | ((v < -0.5) & (u > -0.6) & (((ix + iy) % 2) == 0))) & (mat != MAT['white'])
+        mat[fade] = MAT['cream']
+        mat[(hsh == 3) & rump & ~band & ~fade] = MAT['orange']
 
     # głowa (czaszka + pyszczek)
     head = ell(hxc, hyc, hrx, hry) | ell(hxc + 5.5 * kh, hyc + 2.6 * kh, 5.0 * kh, 4.6 * kh)
@@ -269,8 +279,9 @@ def render_side(**kw):
     hmat[blaze] = MAT['white']
     if STYLE['senior']:
         dith = ((XX.astype(int) + YY.astype(int)) % 2) == 0
-        grey = ((lx - hxc) / kh > 2.0) & ((ly - hyc) / kh > -1.0) & ~blaze & dith
-        brow = ell(hxc + 1.6 * kh, hyc - 5.2 * kh, 2.2 * kh, 0.9 * kh) & dith
+        muz = ((lx - hxc) / kh > 1.0) & ((ly - hyc) / kh > -2.0) & ~blaze
+        grey = muz & ((((lx - hxc) / kh > 3.2) & ((ly - hyc) / kh > 0.6)) | dith)
+        brow = ell(hxc + 1.6 * kh, hyc - 5.0 * kh, 3.0 * kh, 1.3 * kh)
         hmat[grey | brow] = MAT['grey']
 
     lv = level(b)
@@ -410,7 +421,7 @@ def render_side(**kw):
         for (ox, oy) in [(1, -1 - w), (2, -1 - w), (3, -2 - w), (1, 1), (2, 1 + w), (3, 2 + w)]:
             X, Y = WX + ox, WY + oy
             if 0 <= X < S and 0 <= Y < S:
-                c.over[Y, X] = WHISK
+                c.over[Y, X] = WHISK_OLD if STYLE['senior'] else WHISK
 
     for f in p['fx']:
         c.fx.append(f)
@@ -483,8 +494,8 @@ def render_front(**kw):
     hmat = np.where(blaze | muzzle, MAT['white'], MAT['orange'])
     if STYLE['senior'] and not p['back']:
         dith = ((XX.astype(int) + YY.astype(int)) % 2) == 0
-        ring = ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 7.0 * kh, 4.6 * kh) & ~muzzle & ~blaze & dith
-        brows = (ell(hxc - 5.6 * kh, hyc - 6.2 * kh, 2.4, 1.0) | ell(hxc + 5.6 * kh, hyc - 6.2 * kh, 2.4, 1.0)) & dith
+        ring = ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 8.2 * kh, 5.6 * kh) & ~muzzle & ~blaze & (dith | ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 6.6 * kh, 4.4 * kh))
+        brows = ell(hxc - 5.6 * kh, hyc - 6.2 * kh, 3.2, 1.4) | ell(hxc + 5.6 * kh, hyc - 6.2 * kh, 3.2, 1.4)
         hmat = np.where(ring | brows, MAT['grey'], hmat)
     if p['back']:
         hmat = np.full((S, S), MAT['orange'])

@@ -27,3 +27,16 @@ Przy ponownym generowaniu wariantu trzeba go podłożyć w katalogu eksportu.
 - `dental_chew` (borrows `chew_stick`)
 - `vitamin_mix` (borrows `vitamin_drops`)
 - `carrot_top` (borrows `carrot`)
+
+## Visual waves status (docs/VISUAL_WAVES.md, log in docs/VISUAL_LOG.md)
+| Wave | Status |
+| --- | --- |
+| V0 baseline | done |
+| V1 coats (palettes.json, JS/C# remap, verify_palettes) | done |
+| V2 senior/legend look old | done |
+| V3 breeds | open |
+| V4 wire breeds and palettes | open |
+| V5 own icons | open |
+| V6 screens and minigames review | open |
+| V7 animation closure | open |
+| V8 final acceptance | open |
