@@ -63,3 +63,9 @@ Defect list (severity) and what was done:
 | 9 | low | Coloring page grid threw `null.addEventListener` when the modal closed during a render (was hidden by web-smoke) | guard in `coloring/feature.js`; the swallow in `web-smoke.js` removed (it was mislabelled as a vet bug) |
 Reviewed and left as is: Nyan Cuy (night sky with rainbow trail and pixel icons from the sheet; a deliberate different theme, consistent pixel style), Veggie Rain and Veggie Memory (wood and tablecloth, fine once fitted), the 9 colouring packs (silhouette thumbnails readable, no broken pages), app icon (consistent at 256/32/16), Settings and update area, installer (text-only `.cmd` scripts, no graphics).
 Checks: `web-smoke`, `minigame-fit-check`, `anim-test`, `palette-test`, `maze-test` all OK.
+
+## V7 Animation closure (2026-11-02)
+- `docs/ANIMATIONS.md`: all 60 animations with the real trigger (from `actions.json`, event table, C# `RequestAnimation` calls, items, tricks), platforms and status. Only `tunnel_wiggle` is "unused by design" (geometry mismatch, reason in the doc).
+- New Brain actions (data only, `assets/data/actions.json`): `following` (follow), `sleeping_together` (sleep_together), `chirping` (chirp; daily limit 0 for adult+), `dancing` (dance), `yawning` (yawn), `beaming` (front_happy). Companion ones need a companion. Core tests: 342 passed.
+- Loop/transition review: `sleep_house` house geometry aligned with `house_enter` (all 28 sheets regenerated); other joins checked frame by frame, `peek` empty frames documented as intentional.
+- Windows checks (eye tracking, tricks, sleep, peek, two pigs): not possible in this session; listed as VIS-06..VIS-09 in `TESTY_RECZNE.md`.
