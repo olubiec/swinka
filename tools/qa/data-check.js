@@ -72,8 +72,9 @@ need(farm.start_plots + farm.plot_packs.reduce((a, p) => a + p.plots, 0) === 24,
 
 // ---- market ----
 need(market.daily_sales_cap_clovers > 0 && market.daily_sales_cap_clovers <= 60, 'sales cap out of 1..60');
-let prev = 0;
-for (const s of market.over_quota_steps) { need(s.until_units > prev && s.factor > 0 && s.factor < 1, 'over_quota_steps'); prev = s.until_units; }
+const dm = market.demand;
+need(dm && dm.drop_per_unit > 0 && dm.drop_per_unit <= 0.2 && dm.recover_per_day > 0 && dm.recover_per_day <= 0.5 && dm.floor > 0 && dm.floor < 1, 'demand parameters invalid');
+need(dm && dm.recover_per_day / dm.drop_per_unit >= 0.5 && dm.recover_per_day / dm.drop_per_unit <= 4, 'sustainable units per crop per day (recover/drop) out of 0.5..4');
 need(market.price_wiggle_percent <= 20, 'wiggle too large');
 
 // ---- places and placeables ----

@@ -20,19 +20,19 @@
       {
        "cols": 16,
        "rows": 8,
-       "cost": 400
+       "cost": 530
       },
       {
        "cols": 20,
        "rows": 9,
-       "cost": 900
+       "cost": 1200
       }
      ]
     },
     {
      "id": "bedroom",
      "name": "Bedroom",
-     "cost": 350,
+     "cost": 470,
      "levels": [
       {
        "cols": 10,
@@ -42,14 +42,14 @@
       {
        "cols": 14,
        "rows": 7,
-       "cost": 500
+       "cost": 660
       }
      ]
     },
     {
      "id": "playroom",
      "name": "Playroom",
-     "cost": 500,
+     "cost": 660,
      "levels": [
       {
        "cols": 12,
@@ -59,7 +59,7 @@
       {
        "cols": 16,
        "rows": 8,
-       "cost": 700
+       "cost": 930
       }
      ]
     }
@@ -68,7 +68,7 @@
   {
    "id": "garden",
    "name": "Garden",
-   "cost": 300,
+   "cost": 400,
    "requires": [],
    "levels": [
     {
@@ -79,14 +79,14 @@
     {
      "cols": 20,
      "rows": 10,
-     "cost": 350
+     "cost": 470
     }
    ]
   },
   {
    "id": "farm",
    "name": "Farm",
-   "cost": 450,
+   "cost": 600,
    "requires": [
     "garden"
    ],
@@ -99,7 +99,7 @@
   {
    "id": "park",
    "name": "Park",
-   "cost": 900,
+   "cost": 1200,
    "requires": [
     "garden"
    ],
@@ -112,7 +112,7 @@
     {
      "cols": 30,
      "rows": 14,
-     "cost": 1200
+     "cost": 1600
     }
    ]
   },

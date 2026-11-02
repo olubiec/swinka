@@ -5,37 +5,37 @@
  "plot_packs": [
   {
    "plots": 4,
-   "cost": 150
+   "cost": 200
   },
   {
    "plots": 4,
-   "cost": 300
+   "cost": 400
   },
   {
    "plots": 4,
-   "cost": 500
+   "cost": 660
   },
   {
    "plots": 4,
-   "cost": 800
+   "cost": 1060
   },
   {
    "plots": 4,
-   "cost": 1200
+   "cost": 1600
   }
  ],
  "orchard_slots": [
   {
-   "cost": 100
-  },
-  {
-   "cost": 150
+   "cost": 130
   },
   {
    "cost": 200
   },
   {
-   "cost": 300
+   "cost": 270
+  },
+  {
+   "cost": 400
   }
  ],
  "water": {
@@ -49,12 +49,12 @@
    {
     "id": "can_2",
     "plots_per_use": 4,
-    "cost": 120
+    "cost": 150
    },
    {
     "id": "sprinkler",
     "auto_daily": true,
-    "cost": 500
+    "cost": 650
    }
   ]
  },

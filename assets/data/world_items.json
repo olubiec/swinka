@@ -15,7 +15,7 @@
    ],
    "w": 3,
    "h": 2,
-   "price": 260,
+   "price": 320,
    "comfort": 6,
    "layer": "floor",
    "icon": "sofa_cosy"
@@ -28,7 +28,7 @@
    ],
    "w": 2,
    "h": 2,
-   "price": 160,
+   "price": 200,
    "comfort": 4,
    "layer": "floor",
    "icon": "armchair"
@@ -41,7 +41,7 @@
    ],
    "w": 2,
    "h": 3,
-   "price": 180,
+   "price": 220,
    "comfort": 3,
    "layer": "floor",
    "icon": "bookshelf"
@@ -54,7 +54,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 60,
+   "price": 75,
    "comfort": 1,
    "layer": "floor",
    "icon": "side_table"
@@ -67,7 +67,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 45,
+   "price": 55,
    "comfort": 3,
    "layer": "floor",
    "icon": "cushion_big"
@@ -80,7 +80,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 70,
+   "price": 90,
    "comfort": 2,
    "layer": "floor",
    "icon": "toy_basket"
@@ -93,7 +93,7 @@
    ],
    "w": 2,
    "h": 1,
-   "price": 110,
+   "price": 140,
    "comfort": 2,
    "layer": "floor",
    "icon": "hay_bar_wood"
@@ -106,7 +106,7 @@
    ],
    "w": 2,
    "h": 2,
-   "price": 130,
+   "price": 160,
    "comfort": 3,
    "layer": "wall",
    "icon": "window_sun"
@@ -119,7 +119,7 @@
    ],
    "w": 2,
    "h": 2,
-   "price": 90,
+   "price": 110,
    "comfort": 2,
    "layer": "wall",
    "icon": "curtains_dots"
@@ -132,7 +132,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 50,
+   "price": 60,
    "comfort": 1,
    "layer": "wall",
    "icon": "wall_clock"
@@ -145,7 +145,7 @@
    ],
    "w": 2,
    "h": 1,
-   "price": 70,
+   "price": 90,
    "comfort": 1,
    "layer": "wall",
    "icon": "shelf_small"
@@ -158,7 +158,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 65,
+   "price": 80,
    "comfort": 2,
    "layer": "wall",
    "icon": "hanging_planter"
@@ -171,7 +171,7 @@
    ],
    "w": 3,
    "h": 1,
-   "price": 95,
+   "price": 120,
    "comfort": 3,
    "layer": "wall",
    "icon": "fairy_lights"
@@ -184,7 +184,7 @@
    ],
    "w": 2,
    "h": 2,
-   "price": 210,
+   "price": 260,
    "comfort": 5,
    "layer": "floor",
    "icon": "cosy_nook"
@@ -197,7 +197,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 12,
+   "price": 15,
    "comfort": 0,
    "layer": "floor",
    "icon": "fence_wood"
@@ -210,7 +210,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 25,
+   "price": 30,
    "comfort": 1,
    "layer": "floor",
    "icon": "hedge"
@@ -223,7 +223,7 @@
    ],
    "w": 2,
    "h": 1,
-   "price": 55,
+   "price": 70,
    "comfort": 3,
    "layer": "floor",
    "icon": "flowerbed_tulip"
@@ -236,7 +236,7 @@
    ],
    "w": 2,
    "h": 1,
-   "price": 55,
+   "price": 70,
    "comfort": 3,
    "layer": "floor",
    "icon": "flowerbed_daisy"
@@ -249,7 +249,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 70,
+   "price": 90,
    "comfort": 2,
    "layer": "floor",
    "icon": "bush_berry"
@@ -262,7 +262,7 @@
    ],
    "w": 2,
    "h": 2,
-   "price": 140,
+   "price": 180,
    "comfort": 4,
    "layer": "floor",
    "icon": "tree_small"
@@ -275,7 +275,7 @@
    ],
    "w": 3,
    "h": 2,
-   "price": 220,
+   "price": 280,
    "comfort": 6,
    "layer": "floor",
    "icon": "pond_small"
@@ -288,7 +288,7 @@
    ],
    "w": 2,
    "h": 1,
-   "price": 90,
+   "price": 110,
    "comfort": 3,
    "layer": "floor",
    "icon": "bench_wood"
@@ -301,7 +301,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 100,
+   "price": 120,
    "comfort": 3,
    "layer": "floor",
    "icon": "bird_bath"
@@ -314,7 +314,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 8,
+   "price": 10,
    "comfort": 0,
    "layer": "ground",
    "icon": "path_stone"
@@ -327,7 +327,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 75,
+   "price": 95,
    "comfort": 2,
    "layer": "floor",
    "icon": "lantern_garden"
@@ -340,7 +340,7 @@
    ],
    "w": 2,
    "h": 1,
-   "price": 160,
+   "price": 200,
    "comfort": 4,
    "layer": "floor",
    "icon": "arch_rose"
@@ -353,7 +353,7 @@
    ],
    "w": 2,
    "h": 2,
-   "price": 120,
+   "price": 150,
    "comfort": 5,
    "layer": "floor",
    "icon": "sandbox_pig"
@@ -366,7 +366,7 @@
    ],
    "w": 2,
    "h": 2,
-   "price": 190,
+   "price": 240,
    "comfort": 5,
    "layer": "floor",
    "icon": "pigloo_garden"
@@ -395,7 +395,7 @@
    ],
    "w": 3,
    "h": 3,
-   "price": 420,
+   "price": 520,
    "comfort": 7,
    "layer": "floor",
    "icon": "fountain"
@@ -408,7 +408,7 @@
    ],
    "w": 3,
    "h": 3,
-   "price": 300,
+   "price": 380,
    "comfort": 6,
    "layer": "floor",
    "icon": "tree_big"
@@ -421,7 +421,7 @@
    ],
    "w": 4,
    "h": 3,
-   "price": 520,
+   "price": 650,
    "comfort": 8,
    "layer": "floor",
    "icon": "gazebo"
@@ -434,7 +434,7 @@
    ],
    "w": 4,
    "h": 2,
-   "price": 340,
+   "price": 420,
    "comfort": 5,
    "layer": "floor",
    "icon": "bridge_wood"
@@ -447,7 +447,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 110,
+   "price": 140,
    "comfort": 2,
    "layer": "floor",
    "icon": "lamp_post"
@@ -460,7 +460,7 @@
    ],
    "w": 3,
    "h": 2,
-   "price": 130,
+   "price": 160,
    "comfort": 5,
    "layer": "floor",
    "icon": "picnic_blanket"
@@ -473,7 +473,7 @@
    ],
    "w": 2,
    "h": 2,
-   "price": 380,
+   "price": 480,
    "comfort": 6,
    "layer": "floor",
    "icon": "statue_pig"
@@ -486,7 +486,7 @@
    ],
    "w": 3,
    "h": 1,
-   "price": 240,
+   "price": 300,
    "comfort": 5,
    "layer": "floor",
    "icon": "flower_arch"
@@ -499,7 +499,7 @@
    ],
    "w": 5,
    "h": 3,
-   "price": 600,
+   "price": 750,
    "comfort": 9,
    "layer": "floor",
    "icon": "pond_big"
@@ -512,7 +512,7 @@
    ],
    "w": 3,
    "h": 2,
-   "price": 260,
+   "price": 320,
    "comfort": 6,
    "layer": "floor",
    "icon": "tunnel_playground"
@@ -525,7 +525,7 @@
    ],
    "w": 2,
    "h": 1,
-   "price": 100,
+   "price": 120,
    "comfort": 3,
    "layer": "floor",
    "icon": "bench_park"
@@ -551,7 +551,7 @@
    ],
    "w": 1,
    "h": 2,
-   "price": 120,
+   "price": 150,
    "comfort": 2,
    "layer": "floor",
    "icon": "scarecrow"
@@ -577,7 +577,7 @@
    ],
    "w": 2,
    "h": 1,
-   "price": 80,
+   "price": 100,
    "comfort": 1,
    "layer": "floor",
    "icon": "wheelbarrow"
@@ -590,7 +590,7 @@
    ],
    "w": 1,
    "h": 1,
-   "price": 40,
+   "price": 50,
    "comfort": 1,
    "layer": "floor",
    "icon": "signpost"
