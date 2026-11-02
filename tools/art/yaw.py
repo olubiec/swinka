@@ -72,7 +72,8 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
     hdx = 13.5 * (1.0 if build == 'chubby' else kb)
     t = min(1.0, deg / 90.0)
     hxc, hyc = bx + hdx, by - 5.0 * kb + 1.2 * t * t   # head hangs a little lower in front of the chest when facing us
-    hrx, hry, hrz = 9.5 * kh, (8.5 + 0.8 * t * t) * kh, (10.0 + 1.6 * t * t) * kh   # the face is broader and taller seen from the front
+    HW, MZ, MZR, MW = pig.head_prof()
+    hrx, hry, hrz = 9.5 * kh, (8.5 + 0.8 * t * t) * kh, (10.0 + 1.6 * t * t) * kh * HW   # the face is broader and taller seen from the front
     px = bx + 4.0                                  # pivot: middle of the pig
     # the whole pig drifts so that it stays centred while the long axis turns towards the viewer
     cv = Canvas()
@@ -117,7 +118,7 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
     take = put('body', hb, mb)
     # head ------------------------------------------------------------------------------
     hh = _hit(hxc, hyc, 0.0, hrx, hry, hrz, th, px)
-    hm = _hit(hxc + 5.5 * kh, hyc + 2.6 * kh, 0.0, 5.2 * kh, 4.6 * kh, 5.2 * kh, th, px)
+    hm = _hit(hxc + 5.5 * kh * MZ, hyc + 2.6 * kh, 0.0, 5.2 * MZR * kh, 4.6 * kh, 5.2 * MW * kh, th, px)
 
     def head_mat(loc_, un_):
         xh, yh, zh = loc_[0] / kh, loc_[1] / kh, loc_[2] / kh
@@ -138,7 +139,7 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
         return out
     # muzzle ellipsoid has its own local frame: convert to head frame
     def muz_mat(loc_, un_):
-        return head_zone(loc_[0] / kh + 5.5, loc_[1] / kh + 2.6, loc_[2] / kh)
+        return head_zone(loc_[0] / kh + 5.5 * MZ, loc_[1] / kh + 2.6, loc_[2] / kh)
     put('head', hh, head_mat)
     put('muzzle', hm, muz_mat)
     if STYLE['breed'] == 'rosette':

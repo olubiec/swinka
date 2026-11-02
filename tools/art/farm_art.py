@@ -37,7 +37,7 @@ def leafy(name, stage):
     return finish(im)
 
 def vine(name, stage):
-    fruit = dict(cucumber='darkgreen', zucchini='green', bell_pepper='red', cherry_tomato='red')[name]
+    fruit = dict(cucumber='lime', zucchini='yellow', bell_pepper='red', cherry_tomato='red')[name]
     im = Im(16, 16); soil_mound(im, 15, 5)
     h = 4 + stage * 2.5
     im.line(8, 14, 8, round(14 - h), C('darkgreen')); im.line(9, 14, 9, round(14 - h), C('green'))

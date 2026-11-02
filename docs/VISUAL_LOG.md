@@ -101,3 +101,4 @@ Sierść (`fur.py`), rozetki (`whorls.py`), obrys selektywny, arkusze pięciu ś
 
 ## Paczka finalna (2.11.2026)
 Plan: `docs/PLAN_PACZKA_FINAL.md`. Zrobione F1 (portrety, James rex, bez R2/R5), F2 ikony 120-160, F3 farma, F4 45 przedmiotów, F5 tła i kafelki, F6 podgląd. Testy: check_sprites, anim-test, palette-test, web-smoke OK. assets/ 51 MB.
+Drugi przebieg: R2 profile głów wg rasy, R5 mocniejsze wiry, arkusze przeliczone, altana i uprawy poprawione. Testy OK.

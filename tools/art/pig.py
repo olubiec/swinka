@@ -51,6 +51,11 @@ import whorls as WH
 STYLE = dict(kb=1.0, kh=1.0, kx=1.0, coat='ruda', senior=False, gold=False, breed='smooth', build='normal',
              pattern=PT.DEFAULT_PATTERN, palette=PT.DEFAULT_PALETTE, master=True, named=None)
 
+# head profile per breed: (head width, muzzle offset, muzzle depth radius, muzzle width), shared by the side, yaw and front renderers
+HEADS = {'smooth': (1.0, 1.0, 1.0, 1.0), 'teddy': (1.06, 0.82, 0.85, 1.12), 'rosette': (0.98, 1.04, 1.0, 0.92), 'peruvian': (0.95, 1.14, 1.05, 0.90)}
+def head_prof():
+    return HEADS.get(STYLE['breed'], HEADS['smooth'])
+
 def set_style(age='adult', coat='ruda', breed='smooth', build='normal', pattern=None, palette=None, master=None, named=None):
     """breed: smooth/teddy/rosette/peruvian (legacy 'chubby'/'skinny' are builds). master=True renders the zone-coded sheet."""
     if breed in ('chubby', 'skinny'):
@@ -403,10 +408,9 @@ def render_side(**kw):
         mat = named_body_mat(u, v)
 
     # głowa (czaszka + pyszczek)
-    if breed == 'teddy':   # broad head, short blunt muzzle
-        head = ell(hxc, hyc, hrx * 1.04, hry * 1.02) | ell(hxc + 4.6 * kh, hyc + 2.6 * kh, 4.6 * kh, 4.4 * kh)
-    else:
-        head = ell(hxc, hyc, hrx, hry) | ell(hxc + 5.5 * kh, hyc + 2.6 * kh, 5.0 * kh, 4.6 * kh)
+    HW, MZ, MZR, MW = head_prof()
+    hs_ = 1.04 if breed == 'teddy' else 1.0
+    head = ell(hxc, hyc, hrx * hs_, hry * (1.02 if breed == 'teddy' else 1.0)) | ell(hxc + 5.5 * kh * MZ, hyc + 2.6 * kh, 5.0 * kh * MZR, 4.6 * kh)
     if breed in ('teddy', 'rosette'):
         hr1 = dil(head) & ~head
         head = head | (hr1 & safe & (hs7 < 2) & (ly < hyc + 3 * kh) & (lx < hxc + 5 * kh))
@@ -675,14 +679,15 @@ def render_front(**kw):
         if not p['back']:
             c.put_mat(inner & ear, MAT['pink'], 2)
 
-    head = ell(hxc, hyc, 11.6 * kh, 9.3 * kh)
+    HW, MZ, MZR, MW = head_prof()
+    head = ell(hxc, hyc, 11.6 * HW * kh, 9.3 * kh)
     if STYLE['breed'] == 'rosette':
         head = head | ell(hxc + 0.5, hyc - 9.4 * kh, 4.0 * kh, 2.0 * kh)
-    hu = (lx - hxc) / (11.6 * kh)
+    hu = (lx - hxc) / (11.6 * HW * kh)
     hv = (ly - hyc) / (9.3 * kh)
     hb = np.maximum(-(0.35 * hu + 0.9 * hv) + 0.15, -0.2)      # no darkest rim under the chin (it read as a smile)
     blaze = np.abs(lx - hxc - lkx * 0.3) < (1.2 + np.maximum(ly - (hyc - 9 * kh), 0) * 0.28)
-    muzzle = ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 5.2 * kh, 3.4 * kh)
+    muzzle = ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 5.2 * MW * kh, 3.4 * kh)
     hmat = np.full((S, S), MAT['ZC'])
     hmat[ly < hyc - 4.6 * kh] = MAT['ZH']
     hmat[muzzle] = MAT['ZN2']
@@ -692,9 +697,9 @@ def render_front(**kw):
         # the exact surface of yaw.render_yaw(90): head ellipsoid (9.5, 9.3, 11.6) and muzzle ellipsoid (5.2, 4.6, 5.2) at (5.5, 2.6, 0)
         lat = (lx - hxc) / kh
         yh = (ly - hyc) / kh
-        xh_h = 9.5 * np.sqrt(np.clip(1 - (lat / 11.6) ** 2 - (yh / 9.3) ** 2, 0, 1))
-        rm = 1 - (lat / 5.2) ** 2 - ((yh - 2.6) / 4.6) ** 2
-        xh_m = np.where(rm > 0, 5.5 + 5.2 * np.sqrt(np.clip(rm, 0, 1)), -1e9)
+        xh_h = 9.5 * np.sqrt(np.clip(1 - (lat / (11.6 * HW)) ** 2 - (yh / 9.3) ** 2, 0, 1))
+        rm = 1 - (lat / (5.2 * MW)) ** 2 - ((yh - 2.6) / 4.6) ** 2
+        xh_m = np.where(rm > 0, 5.5 * MZ + 5.2 * MZR * np.sqrt(np.clip(rm, 0, 1)), -1e9)
         xh = np.maximum(xh_h, xh_m)
         if p['back']:
             hmat = named_head_mat(-xh_h, yh, lat)

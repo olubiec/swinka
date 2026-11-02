@@ -7,7 +7,7 @@ import coatgen as CG
 
 NOM = (17.0, 10.5, 13.5)         # nominal body radii (px), only to convert normalised distances to pixels
 WHORLS = {
-    'rosette': [(0.38, 1.15, 5.6, 7, 0.05), (-0.30, 0.95, 6.8, 8, 0.05), (-0.68, 1.45, 5.8, 7, 0.05)],
+    'rosette': [(0.38, 1.15, 6.2, 7, 0.05), (-0.30, 0.95, 7.4, 8, 0.05), (-0.68, 1.45, 6.4, 7, 0.05)],
     'kuki': [(-0.30, 0.90, 8.6, 11, 0.07), (-0.58, 1.55, 8.0, 10, 0.07)],
     'glen': [(-0.45, 0.95, 6.4, 8, 0.05), (0.16, 1.15, 5.2, 7, 0.05)],
 }
@@ -82,5 +82,5 @@ def field(key, u, v, w):
                 dif = di - dj
                 d = np.where(near & (np.abs(dif) < 0.7) & ~core, -1.2, np.where(near & (dif > 0.7) & (dif < 1.7) & ~core, np.maximum(d, 0.6), d))
     if key == 'rosette':
-        d = d * 1.7      # generic coats have no colour change in the whorls: the light has to carry them
+        d = d * 2.6      # generic coats have no colour change in the whorls: the light has to carry them
     return d, ray, core

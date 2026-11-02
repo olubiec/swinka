@@ -172,8 +172,12 @@ def _():
     im = new(4, 3)
     for x in (6, 54): box(im, x, 18, x + 4, 46, 'white')
     box(im, 6, 40, 58, 46, 'wood')
-    for i in range(14): im.rect(32 - 4 - i * 2, 16 - i, 32 + 4 + i * 2, 17 - i, C('red') if i % 2 == 0 else C('white'))
-    im.rect(8, 18, 56, 20, C('white')); blob(im, 32, 3, 2, 2, 'gold'); return im
+    for i in range(15):
+        y = 3 + i; half = 6 + i * 2
+        for x in range(32 - half, 32 + half):
+            im.px(x, y, C('red') if ((x - 32 + 64) // 4) % 2 == 0 else C('white'))
+    im.rect(2, 18, 62, 21, C('dbrown'))
+    im.rect(8, 18, 56, 20, C('white')); blob(im, 32, 2, 2, 2, 'gold'); return im
 @it('park', 'bridge_wood', 4, 2)
 def _():
     im = new(4, 2)

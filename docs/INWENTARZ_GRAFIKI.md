@@ -28,11 +28,12 @@ Spis tego, co jest w `assets/`, i tego, czego brakuje. Liczby sprawdzone skrypte
 | Targ: 2 stragany, tablica zleceń, 3 tabliczki | 6 | `assets/world/market/` |
 | Podgląd wszystkiego | 13 plików | `docs/album/podglad/` (`tools/art/podglad.py`) |
 
+## Domknięte w drugim przebiegu
+Głowy wg rasy (R2): profil głowy (szerokość, długość i szerokość pyska) per rasa we wszystkich widokach (`HEADS` w `pig.py`). Wiry generyczne (R5): mocniejsze i większe. Altana w parku i kontrast ogórka i cukinii poprawione.
+
 ## Nadal brak
 | Co | Uwagi |
 |---|---|
-| Głowy wg rasy (R2) | nadal wspólna głowa dla wszystkich kształtów |
-| Wzmocnienie wirów generycznych (R5) | niezrobione |
 | Prawdziwe wąsy kędzierzawe (R1) | James ma nakrapianie sierści, wąsy bez zmian |
 | Ucho Glena z rdzawą smugą | |
 Sprite'y świata są pierwszą wersją i wymagają przeglądu w grze (kod wczytujący `assets/world/` to kontrakt, nie moja część).
