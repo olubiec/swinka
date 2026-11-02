@@ -233,6 +233,23 @@ Pełny projekt (zasady, mapa miejsc, edytor siatki, komfort, farma i rośliny, t
 | **W22** Domknięcie (6) | flagi włączone, symulacja 60 dni z niezmiennikami, smoke czterech ekranów, testy ręczne, `SelfTest`, rozmiar zapisu | funkcja włączona | W21 |
 Grafika (Claude Code, poza Julesem): S0 podłoże i tła, S1 rośliny, S2 meble domu, S3 ogród i farma, S4 park, S5 targ i audyt (`docs/WORLD.md` pkt 8). Zapasowe glify pozwalają fali W20 działać przed gotową grafiką. Człowiek: test na Windowsie po W20 i W22, decyzje z `docs/WORLD.md` pkt 10.
 
+## Podpięcie grafiki w grze (fala G, po W14 i W20)
+Grafika jest gotowa w `assets/` (kontrakt plików: `docs/KONTRAKT_ASSETOW.md`, spis: `docs/INWENTARZ_GRAFIKI.md`). Gra używa jej dopiero po tych zadaniach; do tego czasu rysuje glify zapasowe. Zadania wchodzą do istniejących fal (te same pliki `Zmieniaj`), osobnych plików w `tasks/` nie ma, bo pisze je człowiek lub Claude tuż przed startem fali (zasada z W16-W22).
+
+| ID | Cel | Zmieniaj (główne) | Fala | Akceptacja |
+| --- | --- | --- | --- | --- |
+| G1 | Portrety 128 px na ekranie Moje świnki i w ofercie adopcji (`portraits/<id>.png`, glif zapasowy gdy brak) | `features/pigs/feature.js`, `feature.css` | w W14-06 | SMOKE |
+| G2 | Odtwarzanie obrotu w Home: `turn_smooth` przy zmianie kierunku, `idle_34` jako poza ciekawości (T5); na pulpicie klatki 0-3 wiersza 23 | `canvas-pig.js`, `lib/sprites.js`, `Graphics/*` | po W14-08 | SMOKE + BUILD |
+| G3 | Wczytanie `assets/world/atlas.json`, `tiles.json`, `farm/farm.json`: jeden loader obrazów z cache i glifem zapasowym (reguła z W20-02) | nowy `lib/world-assets.js` | przed W20-02 | SMOKE |
+| G4 | Rysowanie przedmiotów w siatce pokoju, ogrodu i parku z `atlas.json` (kotwica dół-środek, warstwy ground/floor/wall); tapeta i podłoga z kafelków `wall_*`/`floor_*` | `features/rooms/feature.js`, `features/garden/feature.js` | w W20-02, W20-04 | SMOKE |
+| G5 | Tła ogrodu i parku wg pory dnia (rano, dzień, wieczór, noc), woda z 4 klatek, płot łączony maską | `features/garden/feature.js` | w W20-04 | SMOKE |
+| G6 | Farma: grządki (`bed_empty`/`bed_wet`), klatki wzrostu upraw i drzewek, animacja podlewania i błysk wielkiego zbioru, tło farmy | `features/farm/feature.js` | w W20-05 | SMOKE |
+| G7 | Targ: tło, stragany (podstawowy i duży), tablica zleceń, tabliczki promocji | `features/market/feature.js`, `orders.js` | w W20-06, W20-07 | SMOKE |
+| G8 | Ikony 120-160: klasy `.icon-*` (dodane), użycie w pasku miejsc, edytorze, farmie, ofertach i trybie pamięci | `app.js`, `features/*` | w W20-01..W20-07 | SMOKE |
+| G9 | Wypieczone arkusze `pigs/<id>/` w C# (pulpit) i `pigs.json` (T9) | `Graphics/PigLook.cs`, `Xml.cs` | W14-02 (jest w planie) | BUILD |
+| G10 | Kontrola plików: skrypt `tools/qa/check-assets.js` (każdy id z `world_items.json`, `farm.json`, `pigs_named.json` ma plik; każda klasa `icon-*` ma wpis w `icons.json`) plus krok w `SelfTest` | `tools/qa/check-assets.js`, `SelfTest.cs` | W16 lub W22-05 | SMOKE + BUILD |
+Poza kodem: rysunek 3 starych animacji z `Resources/animations.xml` zostaje jak jest; po wdrożeniu G1-G8 człowiek ogląda wszystkie ekrany w grze, a Claude poprawia grafikę na podstawie zrzutów (nowa mała fala S6).
+
 ## Mapa starych zadań
 F2-02→PR #32 (W1-01,W1-02,W2-01 stare) + W1-09,W1-10,W2-01 · F2-07→zrobione · F3-01→W1-03,W1-04,W2-02,W3-01,W7-06 · F3-03→W4-01..W4-04,W7-07,W7-08 · F4-01→W4-07,W5-01,W5-02 · F4-02→W4-06,W6-01,W6-02 ·
 F4-03→W1-05,W2-03,W3-03 · F4-04→W3-04,W3-05,W4-05 · F4-05→W1-06,W2-06,W2-08,W5-04 · F4-06→W1-07,W2-04,W5-03,W6-02,W6-03 · F4-07→W3-08,W4-08 · F4-08→W2-09,W3-07 ·
