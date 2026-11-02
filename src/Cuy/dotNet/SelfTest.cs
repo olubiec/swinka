@@ -64,6 +64,8 @@ namespace Cuy
             Check("games", CheckGames);
             Check("icon indexes", CheckIconIndexes);
             Check("stage sheets", CheckStageSheets);
+            Check("breed sheets", CheckBreedSheets);
+            Check("palettes", CheckPalettes);
             CheckWebView2();
             Check("mouse shake detector", CheckMouseShake);
             Check("behaviors", CheckBehaviors);
@@ -454,6 +456,40 @@ namespace Cuy
             if (!File.Exists(readme)) Warn("runtime files", "README.txt missing next to exe");
             if (!File.Exists(notices)) Warn("runtime files", "THIRD_PARTY_NOTICES.md missing next to exe");
             if (!Directory.Exists(licenses)) Warn("runtime files", "assets\\LICENSES folder missing next to exe");
+        }
+
+        private static void CheckBreedSheets()
+        {
+            string[] breeds = { "smooth", "chubby", "skinny", "rosette", "peruvian" };
+            string[] stages = { "baby", "junior", "adult", "senior", "legend" };
+            foreach (var breed in breeds)
+            {
+                foreach (var stage in stages)
+                {
+                    string path = Path.Combine(_assets, "sprites", SpriteSheetLoader.SheetFolder(stage, breed), "spritesheet.png");
+                    if (!File.Exists(path)) throw new Exception("missing " + breed + "/" + stage);
+                    using (var bmp = new Bitmap(path))
+                    {
+                        if (bmp.Width != 1024 || bmp.Height != 3840)
+                            throw new Exception(breed + "/" + stage + " is " + bmp.Width + "x" + bmp.Height + ", expected 1024x3840");
+                    }
+                }
+            }
+        }
+
+        private static void CheckPalettes()
+        {
+            var table = PaletteRemap.Table;
+            string[] ids = { "tricolor", "dutch", "agouti", "albino", "cinnamon" };
+            using (var probe = new Bitmap(4, 4))
+            {
+                foreach (var id in ids)
+                {
+                    if (!table.Has(id)) throw new Exception("palette missing: " + id);
+                    using (var remapped = PaletteRemap.Apply(probe, id)) { }
+                }
+                using (var remapped = PaletteRemap.Apply(probe, "no-such-palette")) { }
+            }
         }
 
         private static void CheckIconIndexes()

@@ -53,7 +53,7 @@
       }
       ctx.putImageData(img, 0, 0);
     }
-    per[id] = canvas;
+    if (Object.keys(data.palettes).length > 0) per[id] = canvas; // do not cache before the palette table has loaded
     return canvas;
   }
 

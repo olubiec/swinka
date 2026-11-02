@@ -21,26 +21,36 @@
      * @param {string} [basePath]
      */
     static preload(scene, stageKey = 'adult', basePath = null) {
-      const isWebView = window.chrome && window.chrome.webview;
-      const defaultBase = isWebView
-        ? 'https://cuy.assets/sprites/'
-        : (location.pathname.includes('/minigames')
-            ? '../../../assets/sprites/'
-            : '../../assets/sprites/');
-      const p = basePath || defaultBase;
-      const files = {
-        baby: 'baby/spritesheet.png',
-        junior: 'baby/spritesheet.png', // no junior sprites yet
-        adult: 'adult/spritesheet.png',
-        senior: 'senior/spritesheet.png',
-        legend: 'legend/spritesheet.png'
-      };
-      const file = files[stageKey] || files.adult;
-
-      scene.load.spritesheet('pig_sheet', p + file, {
+      const look = MinigryPig.look || { breed: 'smooth', paletteId: 'tricolor' };
+      const S = root.CuySprites;
+      const base = basePath ? basePath.replace(/sprites\/?$/, '') : null;
+      scene.load.spritesheet('pig_sheet', S.path(look.breed, stageKey, base), {
         frameWidth: 64,
         frameHeight: 64
       });
+    }
+
+    /** Sets the breed and coat palette of the active pig for the next game (call before the scenes preload). */
+    static setLook(breed, paletteId) {
+      MinigryPig.look = { breed: root.CuySprites.normBreed(breed), paletteId: paletteId };
+    }
+
+    /**
+     * Replaces the loaded (ginger) 'pig_sheet' texture with the palette-remapped canvas of the active pig.
+     * Must run before the animations are created.
+     */
+    static applyLook(scene) {
+      const look = MinigryPig.look;
+      if (!look || !root.CuyPalette || scene.textures.get('pig_sheet').__looked) return;
+      try {
+        const tex = scene.textures.get('pig_sheet');
+        const canvas = root.CuyPalette.apply(tex.getSourceImage(), look.paletteId);
+        scene.textures.remove('pig_sheet');
+        const t = scene.textures.addSpriteSheet('pig_sheet', canvas, { frameWidth: 64, frameHeight: 64 });
+        if (t) t.__looked = true;
+      } catch (e) {
+        console.error('[minigames] pig palette: ' + e);
+      }
     }
 
     /**
@@ -52,6 +62,7 @@
      * @param {Phaser.Scene} scene 
      */
     static createAnimations(scene) {
+      MinigryPig.applyLook(scene);
       const anims = scene.anims;
       const key = 'pig_sheet';
 
@@ -430,6 +441,7 @@
           width: 360,
           height: 290,
           stageKey: state?.stageKey || 'adult',
+          pigLook: root.CuySprites.activePig(state),
           onTimeLeft: (s) => {
             if (s === 15 && window.CuyMusic) window.CuyMusic.play('games_boss');
           },
@@ -452,6 +464,7 @@
 
         // Start the specific minigame implementation
         try {
+          root.MinigryPig.setLook(gameConfig.pigLook.breed, gameConfig.pigLook.paletteId);
           this.activeGame = gameDef.start(gameConfig);
           // If a Phaser.Game instance was returned, remember it
           if (this.activeGame instanceof Phaser.Game) {

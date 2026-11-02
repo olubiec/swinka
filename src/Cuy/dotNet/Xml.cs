@@ -607,6 +607,38 @@ namespace Cuy
         }
 
         /// <summary>
+        /// Scaled sprite list for one breed + stage + coat palette (same scale as the loaded sheet). Returns null and logs on failure.
+        /// Does not touch this.sprites: each pet applies its own list with FormPet.ReplaceSprites.
+        /// </summary>
+        public IList<Bitmap> BuildStageSprites(string stageKey, string breed, string paletteId)
+        {
+            try
+            {
+                var frames = SpriteSheetLoader.Load(stageKey, breed, paletteId);
+                if (frames == null || frames.Length == 0) return null;
+                if (frames[0].Width != 64 || frames[0].Height != 64) return null;
+                var list = new List<Bitmap>(frames.Length);
+                foreach (var src in frames)
+                {
+                    var bmp = new Bitmap(spriteWidth, spriteHeight, src.PixelFormat);
+                    using (var g = Graphics.FromImage(bmp))
+                    {
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                        g.DrawImage(src, new Rectangle(0, 0, spriteWidth, spriteHeight), new Rectangle(0, 0, src.Width, src.Height), GraphicsUnit.Pixel);
+                    }
+                    list.Add(bmp);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] Xml.BuildStageSprites: " + ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Rebuilds sprites for a given life stage, keeping scale and animation definitions.
         /// Returns false and logs [WARN] if the stage sheet is missing or size differs.
         /// </summary>

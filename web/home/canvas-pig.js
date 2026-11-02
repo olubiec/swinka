@@ -11,32 +11,72 @@
 (function (root) {
   'use strict';
 
-  // Animation definitions (from animations.json)
+  // Animation definitions (all 60 rows of animations.json, identical for every stage and breed)
   const ANIM_DEFS = {
-    idle:        { row: 0,  frames: 16, fps: 8,  loop: true,  description: "Sitting" },
-    sniff:       { row: 1,  frames: 12, fps: 12, loop: true,  description: "Sniffing" },
-    walk:        { row: 2,  frames: 8,  fps: 10, loop: true,  description: "Walking" },
-    run:         { row: 3,  frames: 6,  fps: 14, loop: true,  description: "Running" },
-    popcorn:     { row: 4,  frames: 12, fps: 14, loop: false, description: "Popcorning!" },
-    eat:         { row: 5,  frames: 12, fps: 10, loop: true,  description: "Eating hay" },
-    eat_treat:   { row: 6,  frames: 10, fps: 10, loop: true,  description: "Munching a treat" },
-    scratch:     { row: 7,  frames: 16, fps: 14, loop: false, description: "Scratching behind the ear" },
-    lie_down:    { row: 8,  frames: 6,  fps: 8,  loop: false, description: "Lying down" },
-    sleep:       { row: 9,  frames: 16, fps: 5,  loop: true,  description: "Sleeping" },
-    doze:        { row: 10, frames: 8,  fps: 4,  loop: true,  description: "Dozing" },
-    wake_up:     { row: 11, frames: 12, fps: 8,  loop: false, description: "Waking up" },
-    yawn:        { row: 12, frames: 8,  fps: 8,  loop: false, description: "Yawning" },
-    happy:       { row: 17, frames: 8,  fps: 10, loop: true,  description: "Content" },
-    poop:        { row: 36, frames: 10, fps: 8,  loop: false, description: "Poop" },
-    purr_pet:    { row: 40, frames: 8,  fps: 10, loop: true,  description: "Purring while petted" },
-    greet:       { row: 44, frames: 14, fps: 10, loop: false, description: "Greeting" },
-    come_called: { row: 45, frames: 10, fps: 10, loop: false, description: "Coming when called" },
-    house_enter: { row: 48, frames: 13, fps: 10, loop: false, description: "Enter house" },
-    house_exit:  { row: 49, frames: 13, fps: 10, loop: false, description: "Exit house" },
-    tunnel_in:   { row: 50, frames: 15, fps: 12, loop: false, description: "Enter tunnel" },
-    tunnel_out:  { row: 52, frames: 10, fps: 12, loop: false, description: "Exit tunnel" },
-    ball_push:   { row: 53, frames: 12, fps: 10, loop: false, description: "Push ball" }
+    idle: { row: 0, frames: 16, fps: 8, loop: true, description: "Sitting calmly: breathing, twitching nose, ear flick" },
+    sniff: { row: 1, frames: 12, fps: 12, loop: true, description: "Sniffing: head up, nose and whiskers twitch" },
+    walk: { row: 2, frames: 8, fps: 10, loop: true, description: "Walking: small steps, body low, slight sway" },
+    run: { row: 3, frames: 6, fps: 14, loop: true, description: "Running / zoomies: stretched body, gallop" },
+    popcorn: { row: 4, frames: 12, fps: 14, loop: false, description: "Popcorning: happy jump with a twist and a kick" },
+    eat: { row: 5, frames: 12, fps: 10, loop: true, description: "Eating hay: chewing, a strand pulled into the mouth" },
+    eat_treat: { row: 6, frames: 10, fps: 10, loop: true, description: "Munching a vegetable: happy chewing" },
+    scratch: { row: 7, frames: 16, fps: 14, loop: false, description: "Scratching behind the ear with a hind paw" },
+    lie_down: { row: 8, frames: 6, fps: 8, loop: false, description: "Lying down on the belly" },
+    sleep: { row: 9, frames: 16, fps: 5, loop: true, description: "Sleeping: slow breathing, 'zzz'" },
+    doze: { row: 10, frames: 8, fps: 4, loop: true, description: "Dozing with half-open eyes" },
+    wake_up: { row: 11, frames: 12, fps: 8, loop: false, description: "Getting up, stretching and yawning (teeth showing)" },
+    yawn: { row: 12, frames: 8, fps: 8, loop: false, description: "Stretching with a yawn" },
+    startle: { row: 13, frames: 3, fps: 12, loop: false, description: "Startle: jump, eyes wide open" },
+    freeze: { row: 14, frames: 8, fps: 10, loop: true, description: "Frozen with fear, slight trembling" },
+    wheek: { row: 15, frames: 10, fps: 10, loop: false, description: "Wheeking 'wheee!': asking for food" },
+    dance: { row: 16, frames: 16, fps: 8, loop: true, description: "Dancing to music: swaying and nodding to the beat" },
+    happy: { row: 17, frames: 8, fps: 10, loop: true, description: "Content: half-closed eyes, a heart" },
+    held: { row: 18, frames: 8, fps: 10, loop: true, description: "Picked up with the mouse: legs dangle and paddle" },
+    fall: { row: 19, frames: 4, fps: 10, loop: true, description: "Falling: paws spread" },
+    land: { row: 20, frames: 8, fps: 12, loop: false, description: "Landing: squash, bounce, shake" },
+    front_idle: { row: 21, frames: 12, fps: 8, loop: true, description: "Looking at you: breathing, nose, ear" },
+    front_look: { row: 22, frames: 5, fps: 1, loop: false, description: "Cursor tracking: 0=left 1=right 2=up 3=down 4=centre" },
+    turn: { row: 23, frames: 4, fps: 10, loop: false, description: "Turning from side view to front" },
+    peek: { row: 24, frames: 12, fps: 8, loop: false, description: "Peeking from behind the screen edge and hiding" },
+    front_happy: { row: 25, frames: 8, fps: 8, loop: true, description: "Joy (front view)" },
+    drink: { row: 26, frames: 10, fps: 8, loop: true, description: "Drinking from the bottle: head up, licks the spout, bubbles in the bottle" },
+    chew_stick: { row: 27, frames: 10, fps: 10, loop: true, description: "Chewing a stick: wears down teeth, shavings fall" },
+    dig_hay: { row: 28, frames: 12, fps: 10, loop: false, description: "Digging in hay: dives in, strands fly, comes out with hay in the mouth" },
+    chin_rub: { row: 29, frames: 8, fps: 8, loop: true, description: "Scent marking: rubs the chin along the floor, stretching" },
+    eat_bowl: { row: 30, frames: 12, fps: 10, loop: true, description: "Eating pellets from a bowl" },
+    eat_big: { row: 31, frames: 12, fps: 10, loop: true, description: "Tugging a big lettuce leaf and chewing" },
+    beg: { row: 32, frames: 14, fps: 10, loop: false, description: "Begging for a treat: stands on hind legs, nose working" },
+    stand_up: { row: 33, frames: 14, fps: 8, loop: false, description: "Trick: stands up and looks around" },
+    sad: { row: 34, frames: 12, fps: 4, loop: true, description: "Sad: head low, ears back, sits hunched" },
+    sick: { row: 35, frames: 8, fps: 6, loop: true, description: "Sick: ruffled fur, half-closed eyes, trembling" },
+    poop: { row: 36, frames: 10, fps: 8, loop: false, description: "Poop: squats, leaves a poop and walks on" },
+    shiver: { row: 37, frames: 8, fps: 14, loop: true, description: "Cold: shivering, ruffled, hunched" },
+    heat_flop: { row: 38, frames: 8, fps: 5, loop: true, description: "Heat: lies flat with hind legs stretched back" },
+    sleep_house: { row: 39, frames: 8, fps: 4, loop: true, description: "Sleeping in the house: only the nose sticks out" },
+    purr_pet: { row: 40, frames: 8, fps: 10, loop: true, description: "Purring when petted: relaxes, eyes squinted, hearts" },
+    chatter: { row: 41, frames: 8, fps: 12, loop: true, description: "Annoyed: teeth chattering, ears back" },
+    rumble: { row: 42, frames: 12, fps: 8, loop: true, description: "Rumblestrut: hip sway with a rumble (courtship, dominance)" },
+    flee: { row: 43, frames: 6, fps: 16, loop: true, description: "Fleeing: full speed, ears back, dust from the paws" },
+    greet: { row: 44, frames: 14, fps: 10, loop: false, description: "Greeting: ears up, 'wheee!' and a happy jump" },
+    come_called: { row: 45, frames: 10, fps: 10, loop: false, description: "Coming when called: ears up, looks at you and starts running" },
+    spin: { row: 46, frames: 8, fps: 10, loop: true, description: "Trick: spins in place" },
+    hurdle: { row: 47, frames: 9, fps: 12, loop: false, description: "Agility: jumps over an obstacle (the game moves the pig over it)" },
+    house_enter: { row: 48, frames: 13, fps: 10, loop: false, description: "Goes into the house (house on the right, pig disappears inside)" },
+    house_exit: { row: 49, frames: 13, fps: 10, loop: false, description: "Comes out of the house (house on the left)" },
+    tunnel_in: { row: 50, frames: 15, fps: 12, loop: false, description: "Runs into the tunnel (tunnel on the right), then the tunnel moves" },
+    tunnel_wiggle: { row: 51, frames: 8, fps: 10, loop: true, description: "Pig in the tunnel: a bulge moves along the tunnel" },
+    tunnel_out: { row: 52, frames: 10, fps: 12, loop: false, description: "Runs out of the tunnel (tunnel on the left)" },
+    ball_push: { row: 53, frames: 12, fps: 10, loop: false, description: "Pushes the ball with the nose and follows it" },
+    nose_touch: { row: 54, frames: 8, fps: 8, loop: true, description: "Nose to nose with another pig (two pigs facing each other)" },
+    groom_other: { row: 55, frames: 8, fps: 10, loop: true, description: "Grooming the other pig's fur" },
+    follow: { row: 56, frames: 8, fps: 10, loop: true, description: "Following the other pig (same as walk)" },
+    sleep_together: { row: 57, frames: 8, fps: 4, loop: true, description: "Sleeping cuddled up to the other pig (head stretched out, flat)" },
+    party: { row: 58, frames: 12, fps: 8, loop: true, description: "Birthday: party hat, celery cake and confetti" },
+    chirp: { row: 59, frames: 8, fps: 8, loop: true, description: "Chirping: high, quiet sound (typical for babies)" }
   };
+
+  // Senior and legend sheets play these slower (same factor as tools/art/sheets.py).
+  const SLOW_ANIMS = new Set(['walk', 'run', 'popcorn', 'follow', 'flee', 'greet', 'hurdle', 'spin', 'ball_push', 'tunnel_in', 'tunnel_out', 'house_enter', 'house_exit', 'come_called', 'dance']);
 
   const FRAME_SIZE = 64;
 
@@ -111,40 +151,23 @@
     initAssets() {
       const isWebView = window.chrome && window.chrome.webview;
       const assetsBase = isWebView ? 'https://cuy.assets/' : '../../assets/';
-      const stageFiles = {
-        baby: assetsBase + 'sprites/baby/spritesheet.png',
-        junior: assetsBase + 'sprites/baby/spritesheet.png', // no junior sprites yet
-        adult: assetsBase + 'sprites/adult/spritesheet.png',
-        senior: assetsBase + 'sprites/senior/spritesheet.png',
-        legend: assetsBase + 'sprites/legend/spritesheet.png'
-      };
 
-      let pending = Object.keys(stageFiles).length + 1;
-      const onDone = () => {
-        pending--;
-        if (pending <= 0) {
-          this.showBubble('Ready!', 2000);
-        }
-      };
+      // Sheets come from CuySprites (breed + stage, palette remap). Start with the current look and baby as fallback.
+      this.breed = 'smooth';
+      this.paletteId = 'tricolor';
+      const onLoad = () => { this.isLoaded = true; this.showBubble('Ready!', 2000); };
+      const first = window.CuySprites.image(this.breed, this.stageKey);
+      first.addEventListener('load', onLoad);
+      if (window.CuySprites.loaded(first)) onLoad();
+      window.CuySprites.image('smooth', 'baby');
+      window.CuySprites.init();
+
       const loadImage = (src) => {
         const img = new Image();
-        img.onload = () => {
-          // The pet is drawn as soon as any sheet is usable; no need to wait for the rest.
-          this.isLoaded = true;
-          onDone();
-        };
-        img.onerror = () => {
-          console.error('[canvas-pig] Failed to load image: ' + src);
-          onDone();
-        };
+        img.onerror = () => { console.error('[canvas-pig] Failed to load image: ' + src); };
         img.src = src;
         return img;
       };
-
-      Object.entries(stageFiles).forEach(([key, src]) => {
-        this.sheets[key] = loadImage(src);
-      });
-
       this.iconsImg = loadImage(assetsBase + 'icons/icons_16.png');
     }
 
@@ -316,13 +339,13 @@
       if (!state) return;
       this.lastState = state;
       if (state.stageKey) {
-        if (!this.sheets[state.stageKey]) {
-          console.error('[canvas-pig] No sprite sheet for stage "' + state.stageKey + '", using baby');
-          this.stageKey = 'baby';
-        } else {
-          this.stageKey = state.stageKey;
-        }
+        this.stageKey = window.CuySprites.normStage(state.stageKey);
       }
+      // The active pig decides breed and coat palette.
+      const look = window.CuySprites.activePig(state);
+      this.breed = look.breed;
+      this.paletteId = look.paletteId;
+      this.activePig = look;
       if (typeof state.poops === 'number') {
         this.poopCount = state.poops;
       }
@@ -348,7 +371,7 @@
 
     update(dt) {
       // Update the animation frame
-      const def = ANIM_DEFS[this.currentAnim] || ANIM_DEFS.idle;
+      const def = this.defFor(this.currentAnim);
       const frameDuration = 1000 / def.fps;
       this.frameAcc += dt;
 
@@ -680,15 +703,22 @@
       }
     }
 
-    // Sheet for the current stage; falls back to baby, then to any sheet that loaded.
+    // Sheet (palette applied) for the active pig's breed and stage; falls back to smooth, then to baby while loading.
     usableSheet() {
-      const ok = (img) => img && img.complete && img.naturalWidth > 0;
-      if (ok(this.sheets[this.stageKey])) return this.sheets[this.stageKey];
-      if (ok(this.sheets.baby)) return this.sheets.baby;
-      for (const key of Object.keys(this.sheets)) {
-        if (ok(this.sheets[key])) return this.sheets[key];
+      const S = window.CuySprites;
+      return S.sheet(this.breed, this.stageKey, this.paletteId)
+        || S.sheet('smooth', this.stageKey, this.paletteId)
+        || S.sheet(this.breed, 'baby', this.paletteId)
+        || S.sheet('smooth', 'baby', this.paletteId);
+    }
+
+    // Animation definition with the senior/legend slowdown applied.
+    defFor(animName) {
+      const def = ANIM_DEFS[animName] || ANIM_DEFS.idle;
+      if ((this.stageKey === 'senior' || this.stageKey === 'legend') && SLOW_ANIMS.has(animName)) {
+        return Object.assign({}, def, { fps: Math.max(1, Math.round(def.fps * 0.8)) });
       }
-      return null;
+      return def;
     }
 
     startToyWalk(toyName, targetX) {
@@ -726,7 +756,7 @@
         return;
       }
 
-      const def = ANIM_DEFS[this.currentAnim] || ANIM_DEFS.idle;
+      const def = this.defFor(this.currentAnim);
       const sx = (this.currentFrame % def.frames) * FRAME_SIZE;
       const sy = def.row * FRAME_SIZE;
 

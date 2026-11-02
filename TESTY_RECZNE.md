@@ -98,3 +98,17 @@ Na czystej VM (Windows 10 lub 11, migawka przed testem).
 | VET-02 | Weryfikacja wieku etapów życia | Etapy z PetMD (nowonarodzona 0–1 mies., młoda 1–6, dorosła 6 mies.–4 lata, senior 4+) nie są źródłem weterynaryjnym (R8.4); nazwy etapów gry mogą się różnić | |
 | CI-01 | Uruchom `Cuy.exe --selftest` na PC i porównaj wypisaną wersję WebView2 z wersją Chromium w logu CI (smoke test wypisuje `Chromium <wersja>`, Playwright 1.56.1 = 141.0.7390.37) | Otwórz każdą funkcję Domku na PC i porównaj z zrzutami z CI; zapisz różnice (R20.4: autoplay, czcionki, DPI, `localStorage` nie są potwierdzone) | |
 | DPI-01 | Skalowanie ekranu 125/150 % i dwa monitory: otwórz Domek, przeciągnij okno między monitorami | Układ Domku bez przycięć, świnka i potrząśnięcie działają po obu stronach (R20.4: DPI w WebView2 niezweryfikowane) | |
+
+## 7. Wygląd świnek: rasy, umaszczenia, animacje (fale wizualne V1-V7)
+
+| ID | Krok | Oczekiwany wynik | Wpisz wynik |
+| --- | --- | --- | --- |
+| VIS-01 | `tools/build.ps1`, potem `Cuy.exe --selftest` | Wszystkie PASS, w tym „breed sheets” i „palettes” | |
+| VIS-02 | Domek -> Więcej -> My Pigs: karta każdej świnki | Portret to klatka idle jej rasy i umaszczenia; podpis „rasa · umaszczenie”; odznaki cech z ikonami | |
+| VIS-03 | Adoptuj nową świnkę (80 koniczyn), przełącz „Bring to Desk” dla dwóch świnek | Dwie aktywne; na pulpicie dodaj drugie zwierzę (menu) - każde wygląda jak jego karta | |
+| VIS-04 | Pulpit: skala 1x, 1.5x i 2x, zwierzęta różnych ras na pasku zadań | Ostre piksele, stopy na linii podłogi, peruwiańska spódnica nie ucięta | |
+| VIS-05 | Pulpit: każda rasa, etap senior i legend | Senior wyraźnie starszy (siwe brwi, szron na grzbiecie, niższy grzbiet), legend ze złotym konturem | |
+| VIS-06 | Pulpit: spanie w domku (house_enter -> sleep_house -> house_exit) | Domek nie skacze między animacjami | |
+| VIS-07 | Pulpit: tunel (tunnel_in -> tunnel_out), upadek (fall -> land), lie_down -> sleep | Bez skoków i błysków; tunnel_wiggle nie jest używany | |
+| VIS-08 | Pulpit: kursor blisko świnki 1-3 s (front_look 5 klatek), sztuczki: spin, stand up, popcorn, hurdle | Oczy śledzą kursor, sztuczki grają raz i wracają do idle | |
+| VIS-09 | Pulpit z towarzyszem: poczekaj na following / sleeping_together / nose_touch / grooming_other | Animacje pojawiają się rzadko (cooldowny w `assets/data/actions.json`) | |

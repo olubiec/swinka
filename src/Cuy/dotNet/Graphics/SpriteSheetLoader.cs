@@ -56,18 +56,39 @@ namespace Cuy
 
         public static Bitmap[] Load(string stage)
         {
+            return Load(stage, "smooth", null);
+        }
+
+        /// <summary>Folder (relative to assets/sprites) of a breed's sheet for a stage. Smooth uses the stage folder itself.</summary>
+        public static string SheetFolder(string stage, string breed)
+        {
+            if (string.IsNullOrEmpty(breed) || string.Equals(breed, "smooth", StringComparison.OrdinalIgnoreCase)) return stage;
+            return Path.Combine("breeds", breed.ToLowerInvariant(), stage);
+        }
+
+        /// <summary>
+        /// Frames of a breed + stage sheet with a coat palette applied (paletteId null = ginger as drawn, no remap).
+        /// Unknown breeds fall back to smooth, unknown palettes to the default palette. Cached per breed/stage/palette.
+        /// </summary>
+        public static Bitmap[] Load(string stage, string breed, string paletteId)
+        {
             if (string.IsNullOrEmpty(stage)) return null;
 
-            if (_cache.TryGetValue(stage, out var cached))
+            string folder = SheetFolder(stage, breed);
+            if (!File.Exists(Path.Combine(AssetsSpritesDir, folder, "spritesheet.png"))) folder = stage;
+            string palette = paletteId == null ? null : PaletteRemap.Table.Normalize(paletteId);
+            string key = palette == null ? folder : folder + "|" + palette;
+
+            if (_cache.TryGetValue(key, out var cached))
             {
                 return cached;
             }
 
             lock (_lock)
             {
-                if (_cache.TryGetValue(stage, out cached)) return cached;
+                if (_cache.TryGetValue(key, out cached)) return cached;
 
-                string sheetPath = Path.Combine(AssetsSpritesDir, stage, "spritesheet.png");
+                string sheetPath = Path.Combine(AssetsSpritesDir, folder, "spritesheet.png");
                 if (!File.Exists(sheetPath))
                 {
                     if (!_loggedMissing.Contains(stage))
@@ -82,13 +103,15 @@ namespace Cuy
                 {
                     byte[] bytes = File.ReadAllBytes(sheetPath);
                     using (var ms = new MemoryStream(bytes))
-                    using (var masterBmp = new Bitmap(ms))
+                    using (var loadedBmp = new Bitmap(ms))
+                    using (var masterBmp = palette == null ? null : PaletteRemap.Apply(loadedBmp, palette))
                     {
+                        var master = masterBmp ?? loadedBmp;
                         var size = FrameSize(stage);
                         int frameW = size.Width;
                         int frameH = size.Height;
                         int cols = 16;
-                        int rows = masterBmp.Height / frameH;
+                        int rows = master.Height / frameH;
                         int totalFrames = cols * rows;
 
                         var frames = new Bitmap[totalFrames];
@@ -101,13 +124,13 @@ namespace Cuy
                                 var frame = new Bitmap(frameW, frameH, PixelFormat.Format32bppArgb);
                                 using (var g = System.Drawing.Graphics.FromImage(frame))
                                 {
-                                    g.DrawImage(masterBmp, new Rectangle(0, 0, frameW, frameH), rect, GraphicsUnit.Pixel);
+                                    g.DrawImage(master, new Rectangle(0, 0, frameW, frameH), rect, GraphicsUnit.Pixel);
                                 }
                                 frames[idx] = frame;
                             }
                         }
 
-                        _cache[stage] = frames;
+                        _cache[key] = frames;
                         return frames;
                     }
                 }

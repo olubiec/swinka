@@ -84,7 +84,7 @@
       }
 
       preload() {
-        const stage = config.stageKey === 'junior' ? 'baby' : (config.stageKey || 'adult');
+        const stage = config.stageKey || 'adult';
         root.MinigryPig.preload(this, stage);
         this.load.spritesheet('icons16', iconsUrl(), { frameWidth: 16, frameHeight: 16 });
       }

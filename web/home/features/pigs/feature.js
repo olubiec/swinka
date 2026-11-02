@@ -13,11 +13,11 @@
       <div class="feature-pigs-container">
         <div class="pigs-header">
           <div class="pigs-stats">
-            <span>🍀 Clovers: <b>${clovers}</b></span>
+            <span><span class="pixel-icon icon-clover"></span> Clovers: <b>${clovers}</b></span>
             <span>Active on desk: <b>${activeIds.length}/2</b></span>
           </div>
           <button type="button" class="game-btn btn-adopt-pig" id="btnAdoptPig" ${clovers < 80 ? 'disabled' : ''}>
-            Adopt new pig (80 🍀)
+            Adopt (80 <span class="pixel-icon icon-clover"></span>)
           </button>
         </div>
 
@@ -28,17 +28,17 @@
       const isActive = activeIds.includes(pig.id);
       const traitsList = (pig.traits || []).map(t => {
         const isDiscovered = (pig.discoveredTraits || []).includes(t);
-        return `<span class="pig-trait-badge ${isDiscovered ? 'discovered' : 'secret'}">${isDiscovered ? t : '???'}</span>`;
+        return `<span class="pig-trait-badge ${isDiscovered ? 'discovered' : 'secret'}">${isDiscovered ? `<span class="pixel-icon icon-trait-${t}"></span> ${t}` : '???'}</span>`;
       }).join(' ');
 
       html += `
         <div class="pig-card ${isActive ? 'pig-active' : ''}" data-pig-id="${pig.id}">
           <div class="pig-card-header">
             <span class="pig-card-name">${pig.name}</span>
-            <span class="pig-card-breed">${pig.breed || 'smooth'}</span>
+            <span class="pig-card-breed"><span class="pixel-icon icon-coat-${pig.paletteId || 'tricolor'}"></span> ${pig.breed || 'smooth'} · ${pig.paletteId || 'tricolor'}</span>
           </div>
           <div class="pig-card-portrait">
-            <span class="pixel-icon icon-house x2"></span>
+            <canvas class="pig-card-canvas" data-breed="${pig.breed || 'smooth'}" data-palette="${pig.paletteId || 'tricolor'}" aria-label="${pig.name}"></canvas>
           </div>
           <div class="pig-card-traits">
             ${traitsList || '<span class="pig-trait-badge secret">???</span>'}
@@ -58,6 +58,12 @@
     `;
 
     container.innerHTML = html;
+
+    // Portraits: idle frame of each pig (its breed, the current life stage and its coat palette)
+    const stageKey = (state && state.stageKey) || 'adult';
+    container.querySelectorAll('.pig-card-canvas').forEach(cv => {
+      root.CuySprites.drawPortrait(cv, cv.dataset.breed, stageKey, cv.dataset.palette, 2);
+    });
 
     // Handle Adopt
     const btnAdopt = container.querySelector('#btnAdoptPig');

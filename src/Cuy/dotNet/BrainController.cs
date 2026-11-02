@@ -142,7 +142,7 @@ namespace Cuy
                     {
                         foreach (var petForm in FormPet.AllPets.ToArray())
                         {
-                            petForm.ReplaceSprites(xml.sprites);
+                            PigLook.Apply(petForm, xml, stageKey);
                         }
                         Log($"[Stage] {oldStage} -> {newStage}, sheet reloaded");
                     }

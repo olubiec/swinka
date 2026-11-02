@@ -10,10 +10,10 @@ namespace Cuy
     /// <summary>Applies a coat palette (exact colour match, fully opaque pixels only) to a ginger sprite sheet.</summary>
     public static class PaletteRemap
     {
-        private static Palettes _palettes;
+        private static Cuy.Core.Pigs.Palettes _palettes;
         private static readonly object _lock = new object();
 
-        public static Palettes Palettes
+        public static Cuy.Core.Pigs.Palettes Table
         {
             get
             {
@@ -33,7 +33,7 @@ namespace Cuy
                             }
                             if (json != null) break;
                         }
-                        _palettes = json != null ? Palettes.Parse(json) : Palettes.Parse("{\"palettes\":{}}");
+                        _palettes = json != null ? Cuy.Core.Pigs.Palettes.Parse(json) : Cuy.Core.Pigs.Palettes.Parse("{\"palettes\":{}}");
                     }
                     return _palettes;
                 }
@@ -43,10 +43,10 @@ namespace Cuy
         /// <summary>Returns a new bitmap with the palette applied. Unknown ids use the default palette.</summary>
         public static Bitmap Apply(Bitmap source, string paletteId)
         {
-            return Apply(source, Palettes.Get(paletteId));
+            return Apply(source, Table.Get(paletteId));
         }
 
-        public static Bitmap Apply(Bitmap source, Palettes.Pair[] pairs)
+        public static Bitmap Apply(Bitmap source, Cuy.Core.Pigs.Palettes.Pair[] pairs)
         {
             var map = new Dictionary<int, int>();
             foreach (var p in pairs) map[p.From] = p.To;

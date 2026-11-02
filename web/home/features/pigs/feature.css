@@ -112,3 +112,22 @@
   padding: 4px 8px;
 }
 
+
+.pig-card-canvas {
+  display: block;
+  width: 96px;
+  height: 96px;
+  image-rendering: pixelated;
+}
+
+.pig-trait-badge .pixel-icon {
+  margin-right: 2px;
+}
+
+.pig-card-breed .pixel-icon {
+  margin-right: 3px;
+}
+
+.btn-adopt-pig {
+  white-space: nowrap;
+}

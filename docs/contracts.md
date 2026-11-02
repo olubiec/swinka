@@ -197,3 +197,15 @@ Message `settings_city { city }` (empty = off).
 
 ## generic
 Page message `{ type: 'toast', text }` → the page shows a small pixel toast for 2.5 s (implemented in `app.js`).
+
+## pigs (My Pigs, breed and coat) – Core: `GameState.Pigs.cs`, `PigProfile`, `Palettes`; C#: `PigsFeature.cs`, `PigLook.cs`
+State keys `roster` and `activePigIds` (published by `PigsFeature`):
+```json
+{ "roster": [ { "id": "ab12", "name": "Piko", "breed": "smooth|chubby|skinny|rosette|peruvian",
+                "paletteId": "tricolor|dutch|agouti|albino|cinnamon", "traits": ["cuddly"], "discoveredTraits": ["cuddly"] } ],
+  "activePigIds": ["ab12"] }
+```
+Messages: `adopt_pig` (C# takes the price from `assets/data/pigs.json`, never from JS), `toggle_pig_active { pigId }` (max 2 active, at least 1).
+Sheets: `(breed, stage) -> assets/sprites/<stage>/spritesheet.png` for `smooth`, `assets/sprites/breeds/<breed>/<stage>/spritesheet.png` otherwise (`assets/sprites/breeds.json`).
+The sheets are drawn in ginger; the coat is a runtime exact-colour remap from `assets/sprites/palettes.json` (`web/home/lib/palette.js`, `PaletteRemap.cs`).
+Unknown breed -> `smooth`, unknown palette -> `tricolor`. Web: `CuySprites.sheet(breed, stage, paletteId)`, `CuySprites.activePig(state)`. Desktop: `PigLook.Apply(pet, xml, stageKey)` gives each `FormPet` the look of its own `PigProfile`.

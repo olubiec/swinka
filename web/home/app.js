@@ -796,10 +796,11 @@
     if (state && state.albumDates) {
       Object.assign(seenDates, state.albumDates);
     }
-    const isWebView = !!(window.chrome && window.chrome.webview);
+    // Album sprites use the active pig's stage, breed and coat palette.
     const stage = (state && state.stageKey) || 'baby';
-    const folder = (stage === 'junior') ? 'baby' : stage;
-    const sheet = (isWebView ? 'https://cuy.assets/' : '../../assets/') + 'sprites/' + folder + '/spritesheet.png';
+    const look = window.CuySprites.activePig(state);
+    const palSheet = window.CuySprites.sheet(look.breed, stage, look.paletteId);
+    const sheet = palSheet ? palSheet.toDataURL() : window.CuySprites.path(look.breed, stage);
     const unlockedCount = STICKERS.filter((st) => seen.has(st.id)).length;
 
     let html = `

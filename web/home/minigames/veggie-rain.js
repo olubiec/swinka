@@ -34,7 +34,7 @@
       constructor() { super('VeggieRain'); }
 
       preload() {
-        root.MinigryPig.preload(this, config.stageKey === 'junior' ? 'baby' : config.stageKey);
+        root.MinigryPig.preload(this, config.stageKey || 'adult');
         this.load.spritesheet('icons16', iconsUrl(), { frameWidth: 16, frameHeight: 16 });
       }
 

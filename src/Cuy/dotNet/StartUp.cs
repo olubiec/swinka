@@ -187,6 +187,9 @@ namespace Cuy
                 {
                     newSheep.AddImage(sprite);
                 }
+                // each pet looks like its own pig (breed + coat palette of its profile)
+                newSheep.Profile = PigLook.ProfileForSlot(petCount);
+                PigLook.Apply(newSheep, xml, PigLook.CurrentStageKey());
                 pets[petCount] = newSheep;
                 pets[petCount].Show(xml.spriteWidth, xml.spriteHeight);
                 AddDebugInfo(DEBUG_TYPE.info, "new pet...");
