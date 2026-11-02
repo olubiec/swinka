@@ -195,7 +195,7 @@
       "name": "Golden bowl",
       "category": "equipment",
       "permanent": true,
-      "icon": "trophy",
+      "icon": "golden_bowl",
       "animation": "eat_bowl",
       "effects": {
         "mood": 15

@@ -716,6 +716,16 @@ def get_new_icons():
         c.put_mat(tri, MAT['leaf'], np.where(YY < 8, 0, 1))
     I['play'] = _icon(play)
 
+    def golden_bowl(c):
+        bowl, u, v = E(8, 8.5, 6.4, 5.4)
+        bowl &= (YY >= 7)
+        c.put_mat(bowl, MAT['gold'], shade(u, v))
+        c.put_mat(rect(1.5, 6.4, 14.5, 8), MAT['gold'], 0)
+        c.put_px(5, 10, R['gold'][0]); c.put_px(4, 9, R['gold'][0])
+        c.put_mat(E(8, 5.6, 3.6, 1.6)[0], MAT['hay'], 1)
+        c.put_px(7, 4, R['gold'][0])
+    I['golden_bowl'] = _icon(golden_bowl)
+
     return I
 
 def main(assets_dir):
@@ -740,7 +750,7 @@ def main(assets_dir):
         'coat_tricolor', 'coat_dutch', 'coat_agouti', 'coat_albino', 'coat_cinnamon',
         'stage_baby', 'stage_junior', 'stage_adult', 'stage_senior', 'stage_legend', 'sound_on', 'sound_off', 'gear', 'sparkle',
         'flame', 'warning', 'check', 'star', 'replay', 'back_arrow', 'album_book', 'gamepad',
-        'trick_spin', 'trick_stand_up', 'trick_hurdle', 'trick_popcorn', 'heart', 'heart_empty', 'pause', 'play'
+        'trick_spin', 'trick_stand_up', 'trick_hurdle', 'trick_popcorn', 'heart', 'heart_empty', 'pause', 'play', 'golden_bowl'
     ]
 
     new_icons_funcs = get_new_icons()

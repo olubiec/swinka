@@ -700,7 +700,7 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
-  --icon-count: 106; /* total icons */
+  --icon-count: 107; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
@@ -823,6 +823,7 @@ body.webview-mode .game-device {
 .icon-heart-empty { --i: 103; }
 .icon-pause { --i: 104; }
 .icon-play { --i: 105; }
+.icon-golden-bowl { --i: 106; }
 
 
 /* ==========================================================================

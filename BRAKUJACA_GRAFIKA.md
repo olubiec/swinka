@@ -32,7 +32,7 @@ The five borrowed item icons now have their own: `soft_pellets`, `warm_house_bed
 | V2 senior/legend look old | done |
 | V3 breeds (chubby, skinny, rosette, peruvian x 5 stages, `assets/sprites/breeds/`, `breeds.json`) | done |
 | V4 wire breeds and palettes (web + C#; desktop run needs Windows) | done |
-| V5 own icons (45 new, indexes 61-105, wired into the UI) | done |
+| V5 own icons (46 new, indexes 61-106, wired into the UI) | done |
 | V6 screens and minigames review | done |
 | V7 animation closure (`docs/ANIMATIONS.md`) | done |
-| V8 final acceptance | open |
+| V8 final acceptance (`docs/AUDYT_WIZUALNY_FINAL.md`; Windows walk-through left to the human) | done except Windows |

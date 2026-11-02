@@ -106,6 +106,7 @@
   "heart": 102,
   "heart_empty": 103,
   "pause": 104,
-  "play": 105
+  "play": 105,
+  "golden_bowl": 106
  }
 }
