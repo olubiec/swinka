@@ -372,6 +372,186 @@ def get_new_icons():
         c.mat[ring] = -2
     I['badge_social'] = _icon(badge_social)
 
+    # ------------------------------------------------------------------ V5: own icons (items, traits, games, coats)
+    R = RAMP
+
+    def cm_of(*names_lv):
+        return {ch: R[n][lv] for ch, (n, lv) in names_lv}
+
+    def soft_pellets(c):
+        bowl, u, v = E(8, 10.5, 6.2, 4.2)
+        bowl &= (YY >= 9.5)
+        c.put_mat(bowl, MAT['blue'], shade(u, v))
+        c.put_mat(rect(2, 9, 14, 10.4), MAT['blue'], 0)
+        for (px, py) in ((5, 6), (8, 5), (11, 6), (6.5, 8), (9.5, 8)):
+            m, pu, pv = E(px, py, 2.0, 1.7)
+            c.put_mat(m, MAT['orange'], shade(pu, pv, 0.1))
+        c.put_px(7, 4, R['cream'][0]); c.put_px(4, 5, R['cream'][0])
+    I['soft_pellets'] = _icon(soft_pellets)
+
+    def warm_house_bed(c):
+        cush, u, v = E(8, 11, 6.4, 3.2)
+        c.put_mat(cush, MAT['fabric'], shade(u, v))
+        pil, pu, pv = E(5.5, 8.6, 3.0, 2.0, -10)
+        c.put_mat(pil, MAT['cream'], shade(pu, pv))
+        blan, bu, bv = E(10.5, 9.4, 3.6, 2.4, 10)
+        c.put_mat(blan, MAT['red'], shade(bu, bv))
+        c.stamp(['.rr.rr.', 'rrrrrrr', 'rrrrrrr', '.rrrrr.', '..rrr..', '...r...'], 5, 0,
+                {'r': R['red'][1]})
+        c.put_px(6, 1, R['red'][0])
+    I['warm_house_bed'] = _icon(warm_house_bed)
+
+    def dental_chew(c):
+        c.stamp(['.WW.......WW.', 'WWWC.....CWWD', 'WWCCCWbWCCCDD', 'WCCCDDbDDCCCD', '.CCD.....CDD.', '..D.......D..'], 1, 5,
+                {'W': R['cream'][0], 'C': R['cream'][1], 'D': R['cream'][2], 'b': R['blue'][1]})
+        c.put_px(11, 3, R['white'][0]); c.put_px(10, 4, R['white'][0]); c.put_px(12, 4, R['white'][0]); c.put_px(11, 5 - 0, R['white'][0]) if False else None
+    I['dental_chew'] = _icon(dental_chew)
+
+    def vitamin_mix(c):
+        jar = rect(4, 5, 12, 14)
+        c.put_mat(jar, MAT['blue'], np.where(XX < 6, 0, np.where(XX < 10, 1, 2)))
+        c.put_mat(rect(5, 3, 11, 5), MAT['wood'], 1)
+        c.put_mat(rect(6, 6, 10, 7), MAT['blue'], 0)
+        for (px, py, col) in ((6, 9, R['red'][1]), (9, 8, R['gold'][1]), (7, 12, R['leaf'][1]), (10, 11, R['orange'][1]), (8, 10, R['red'][0])):
+            c.put_px(px, py, col)
+    I['vitamin_mix'] = _icon(vitamin_mix)
+
+    def carrot_top(c):
+        for (cx, cy, rx, ry, rot) in ((5.5, 6, 2.0, 4.6, 25), (8, 5, 1.8, 4.9, 0), (10.5, 6, 2.0, 4.6, -25)):
+            m, u, v = E(cx, cy, rx, ry, rot)
+            c.put_mat(m, MAT['leaf'], shade(u, v, 0.05))
+        c.put_mat(E(8, 11.5, 3.3, 2.0)[0], MAT['carrot'], 1)
+        c.put_mat(rect(6, 12, 10, 14) & E(8, 12, 3, 3)[0], MAT['carrot'], 2)
+        c.put_px(7, 11, R['carrot'][0]); c.put_px(8, 3, R['leaf'][0])
+    I['carrot_top'] = _icon(carrot_top)
+
+    # --- traits
+    def trait_cuddly(c):
+        c.stamp(['.hhh.hhh.', 'hHHHhHHHh', 'hHHHHHHHh', 'hHHHHHHHh', '.hHHHHHh.', '..hHHHh..', '...hHh...', '....h....'], 3, 4,
+                {'H': R['red'][1], 'h': R['red'][2]})
+        c.put_px(5, 5, R['red'][0]); c.put_px(6, 5, R['red'][0]); c.put_px(5, 6, R['red'][0])
+        c.put_px(11, 3, R['pink'][0]); c.put_px(3, 3, R['pink'][1])
+    I['trait_cuddly'] = _icon(trait_cuddly)
+
+    def trait_glutton(c):
+        bowl, u, v = E(8, 9.5, 6.2, 4.6)
+        bowl &= (YY >= 9)
+        c.put_mat(bowl, MAT['red'], shade(u, v))
+        c.put_mat(rect(2, 8.4, 14, 9.9), MAT['red'], 0)
+        m1, u1, v1 = E(5.5, 6.2, 2.3, 2.2); m2, u2, v2 = E(8.5, 5.4, 2.4, 2.4); m3, u3, v3 = E(11, 6.6, 2.1, 2.0)
+        c.put_mat(m1, MAT['leaf'], shade(u1, v1)); c.put_mat(m2, MAT['carrot'], shade(u2, v2)); c.put_mat(m3, MAT['gold'], shade(u3, v3))
+        c.put_px(8, 12, R['red'][0])
+    I['trait_glutton'] = _icon(trait_glutton)
+
+    def trait_explorer(c):
+        m, u, v = E(8, 8, 6.3, 6.3)
+        c.put_mat(m, MAT['gold'], shade(u, v))
+        inner, iu, iv = E(8, 8, 4.4, 4.4)
+        c.put_mat(inner, MAT['cream'], shade(iu, iv, 0.5))
+        for k in range(1, 5):
+            c.put_px(8 + k, 8 - k, R['red'][1]) if k < 4 else None
+        c.stamp(['.r.', 'rrr', '.r.'], 9, 5, {'r': R['red'][1]}, False)
+        c.stamp(['.b.', 'bbb', '.b.'], 5, 9, {'b': R['blue'][2]}, False)
+        c.put_px(8, 8, OUT)
+        c.put_px(8, 2, R['gold'][0])
+    I['trait_explorer'] = _icon(trait_explorer)
+
+    def trait_sleepyhead(c):
+        m, u, v = E(8, 9, 5.8, 5.8)
+        cut, _, _ = E(11, 7.3, 5.2, 5.2)
+        moon = m & ~cut
+        c.put_mat(moon, MAT['gold'], shade(u, v))
+        c.stamp(['bbb', '..b', '.b.', 'bbb'], 10, 2, {'b': R['blue'][1]})
+        c.put_px(12, 11, R['gold'][0]); c.put_px(4, 4, R['gold'][0])
+    I['trait_sleepyhead'] = _icon(trait_sleepyhead)
+
+    def trait_popcorning(c):
+        cup = rect(4, 10, 12, 15)
+        c.put_mat(cup, MAT['red'], np.where(((XX.astype(int)) % 2) == 0, 1, 0))
+        c.put_mat(rect(4, 10, 12, 11), MAT['red'], 2)
+        for (px, py, rx) in ((5.5, 7.5, 2.4), (8.5, 5.8, 2.7), (11, 7.8, 2.3), (7, 9, 1.8)):
+            m, pu, pv = E(px, py, rx, rx)
+            c.put_mat(m, MAT['cream'], shade(pu, pv))
+        c.put_px(3, 3, R['gold'][1]); c.put_px(13, 3, R['gold'][1]); c.put_px(8, 2, R['gold'][0])
+    I['trait_popcorning'] = _icon(trait_popcorning)
+
+    def trait_vocal(c):
+        bub, u, v = E(8, 7, 6.4, 5.2)
+        c.put_mat(bub, MAT['cream'], shade(u, v, 0.4))
+        c.stamp(['bb', '.b'], 4, 11, {'b': R['cream'][1]})
+        for (x, h) in ((4, 1), (6, 3), (8, 5), (10, 3), (12, 1)):
+            for y in range(7 - h // 2 - 1 + 1, 7 + h // 2 + 2):
+                c.put_px(x, y, R['blue'][2], False)
+    I['trait_vocal'] = _icon(trait_vocal)
+
+    # --- minigame icons
+    def game_veggie_rain(c):
+        _cloud(c, dy=-2, dark=True)
+        m, u, v = E(8, 11.5, 2.0, 3.8, -25)
+        c.put_mat(m, MAT['carrot'], shade(u, v))
+        c.put_mat(E(9.6, 8.4, 1.4, 1.6)[0], MAT['leaf'], 1)
+        for (x, y) in ((3, 10), (13, 9), (4, 14)):
+            c.put_px(x, y, R['blue'][1]); c.put_px(x, y + 1, R['blue'][1])
+    I['game_veggie_rain'] = _icon(game_veggie_rain)
+
+    def game_nyan_cuy(c):
+        cols = [R['red'][1], R['carrot'][1], R['gold'][1], R['leaf'][1], R['blue'][1]]
+        for i, col in enumerate(cols[:4]):
+            for x in range(1, 8):
+                _paint(c, (XX.astype(int) == x) & (YY.astype(int) == 4 + i * 2 - (1 if (x % 2) else 0)), col); _paint(c, (XX.astype(int) == x) & (YY.astype(int) == 5 + i * 2 - (1 if (x % 2) else 0)), col)
+        body, u, v = E(10, 8, 4.6, 3.8)
+        c.put_mat(body, MAT['orange'], shade(u, v))
+        c.put_mat(E(8.5, 4.8, 1.3, 1.3)[0], MAT['rust'], 2)
+        c.put_px(11, 7, EYE); c.put_px(14, 8, R['pink'][1])
+        c.put_px(8, 12, R['pink'][1]); c.put_px(12, 12, R['pink'][1])
+    I['game_nyan_cuy'] = _icon(game_nyan_cuy)
+
+    def game_veggie_memory(c):
+        c.put_mat(rect(1, 4, 8, 14), MAT['blue'], np.where(XX < 3, 0, np.where(XX < 6, 1, 2)))
+        c.stamp(['.b.', 'b.b', '..b', '.b.', '...', '.b.'], 3, 5, {'b': R['cream'][0]}, False)
+        c.put_mat(rect(8, 2, 15, 12), MAT['cream'], np.where(XX < 10, 0, 1))
+        m, u, v = E(11.5, 8, 1.5, 3.4, -25)
+        c.put_mat(m, MAT['carrot'], shade(u, v))
+        c.put_px(12, 4, R['leaf'][1]); c.put_px(11, 4, R['leaf'][2])
+    I['game_veggie_memory'] = _icon(game_veggie_memory)
+
+    def game_hay_maze(c):
+        sq = rect(1, 1, 15, 15)
+        c.put_mat(sq, MAT['hay'], np.where((XX.astype(int) + YY.astype(int)) % 2 == 0, 1, 0))
+        walls = rect(1, 5, 11, 6.5) | rect(5, 9, 15, 10.5) | rect(10, 5, 11.5, 10.5) | rect(1, 12, 9, 13.5)
+        c.put_mat(walls & sq, MAT['wood'], 2)
+        c.put_px(3, 3, R['orange'][1]); c.put_px(4, 3, R['orange'][1]); c.put_px(13, 13, R['red'][1])
+    I['game_hay_maze'] = _icon(game_hay_maze)
+
+    # --- coat swatches (circle with the main patches of the coat)
+    import pig as _pig
+
+    def coat_ramp(key, ramp_name):
+        return _pig.COATS[key].get(ramp_name, _pig.RAMP[ramp_name])
+
+    def swatch(coat_key, band=True, dark=True, eye=None):
+        def draw(c):
+            m, u, v = E(8, 8, 6.4, 6.4)
+            lv = shade(u, v)
+            orange, rust, white = coat_ramp(coat_key, 'orange'), coat_ramp(coat_key, 'rust'), R['white']
+            for k in range(4):
+                _paint(c, m & (lv == k), orange[k])
+            if band:
+                for k in range(4):
+                    _paint(c, m & (np.abs(XX - 8.2) < 1.5) & (lv == k), white[k])
+            if dark:
+                pm = m & (E(5.2, 8.8, 2.4, 3.0)[0])
+                for k in range(4):
+                    _paint(c, pm & (lv == k), rust[k])
+            if eye is not None:
+                c.put_px(11, 6, eye)
+        return draw
+    I['coat_tricolor'] = _icon(swatch('tricolor'))
+    I['coat_dutch'] = _icon(swatch('dutch', band=True, dark=False))
+    I['coat_agouti'] = _icon(swatch('agouti', band=False, dark=True))
+    I['coat_albino'] = _icon(swatch('albino', band=False, dark=False, eye=_pig.COATS['albino']['eye']))
+    I['coat_cinnamon'] = _icon(swatch('cinnamon', band=True, dark=True))
+
     return I
 
 def main(assets_dir):
@@ -389,7 +569,11 @@ def main(assets_dir):
         'gift', 'palette', 'music_note',
         'weather_clear', 'weather_cloudy', 'weather_fog', 'weather_rain', 'weather_snow', 'weather_storm',
         'padlock', 'trophy',
-        'badge_care', 'badge_play', 'badge_growth', 'badge_social'
+        'badge_care', 'badge_play', 'badge_growth', 'badge_social',
+        'soft_pellets', 'warm_house_bed', 'dental_chew', 'vitamin_mix', 'carrot_top',
+        'trait_cuddly', 'trait_glutton', 'trait_explorer', 'trait_sleepyhead', 'trait_popcorning', 'trait_vocal',
+        'game_veggie_rain', 'game_nyan_cuy', 'game_veggie_memory', 'game_hay_maze',
+        'coat_tricolor', 'coat_dutch', 'coat_agouti', 'coat_albino', 'coat_cinnamon'
     ]
 
     new_icons_funcs = get_new_icons()

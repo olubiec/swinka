@@ -700,7 +700,7 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
-  --icon-count: 61; /* total icons */
+  --icon-count: 81; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
@@ -778,6 +778,26 @@ body.webview-mode .game-device {
 .icon-badge-play { --i: 58; }
 .icon-badge-growth { --i: 59; }
 .icon-badge-social { --i: 60; }
+.icon-soft-pellets { --i: 61; }
+.icon-warm-house-bed { --i: 62; }
+.icon-dental-chew { --i: 63; }
+.icon-vitamin-mix { --i: 64; }
+.icon-carrot-top { --i: 65; }
+.icon-trait-cuddly { --i: 66; }
+.icon-trait-glutton { --i: 67; }
+.icon-trait-explorer { --i: 68; }
+.icon-trait-sleepyhead { --i: 69; }
+.icon-trait-popcorning { --i: 70; }
+.icon-trait-vocal { --i: 71; }
+.icon-game-veggie-rain { --i: 72; }
+.icon-game-nyan-cuy { --i: 73; }
+.icon-game-veggie-memory { --i: 74; }
+.icon-game-hay-maze { --i: 75; }
+.icon-coat-tricolor { --i: 76; }
+.icon-coat-dutch { --i: 77; }
+.icon-coat-agouti { --i: 78; }
+.icon-coat-albino { --i: 79; }
+.icon-coat-cinnamon { --i: 80; }
 
 
 /* ==========================================================================

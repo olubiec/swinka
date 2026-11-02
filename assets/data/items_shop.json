@@ -115,7 +115,7 @@
       "name": "Soft pellets",
       "category": "food",
       "price": 6,
-      "icon": "pellets",
+      "icon": "soft_pellets",
       "animation": "eat_bowl",
       "effects": {
         "fullness": 20,
@@ -133,7 +133,7 @@
       "category": "equipment",
       "price": 300,
       "permanent": true,
-      "icon": "house",
+      "icon": "warm_house_bed",
       "animation": "sleep_house",
       "effects": {
         "energy": 12,
@@ -150,7 +150,7 @@
       "name": "Dental chew",
       "category": "chew_stick",
       "price": 20,
-      "icon": "chew_stick",
+      "icon": "dental_chew",
       "animation": "chew_stick",
       "uses": 3,
       "effects": {
@@ -164,7 +164,7 @@
       "name": "Vitamin mix",
       "category": "care",
       "price": 10,
-      "icon": "vitamin_drops",
+      "icon": "vitamin_mix",
       "animation": "drink",
       "daily_limit": 1,
       "effects": {
@@ -181,7 +181,7 @@
       "name": "Carrot top",
       "category": "vegetable",
       "price": 4,
-      "icon": "carrot",
+      "icon": "carrot_top",
       "animation": "eat_treat",
       "effects": {
         "vitamin_c": 10,

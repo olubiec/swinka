@@ -61,6 +61,26 @@
   "badge_care": 57,
   "badge_play": 58,
   "badge_growth": 59,
-  "badge_social": 60
+  "badge_social": 60,
+  "soft_pellets": 61,
+  "warm_house_bed": 62,
+  "dental_chew": 63,
+  "vitamin_mix": 64,
+  "carrot_top": 65,
+  "trait_cuddly": 66,
+  "trait_glutton": 67,
+  "trait_explorer": 68,
+  "trait_sleepyhead": 69,
+  "trait_popcorning": 70,
+  "trait_vocal": 71,
+  "game_veggie_rain": 72,
+  "game_nyan_cuy": 73,
+  "game_veggie_memory": 74,
+  "game_hay_maze": 75,
+  "coat_tricolor": 76,
+  "coat_dutch": 77,
+  "coat_agouti": 78,
+  "coat_albino": 79,
+  "coat_cinnamon": 80
  }
 }

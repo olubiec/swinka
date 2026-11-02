@@ -21,12 +21,8 @@ Przy ponownym generowaniu wariantu trzeba go podłożyć w katalogu eksportu.
 - Świnka: klatka 64×64, podłoga na y=59, patrzy w prawo, ta sama siatka animacji co w `baby/` (16 kolumn × 60 wierszy, plik `spritesheet.png` 1024×3840 + `animations.json` + wersje `_x2`).
 - Junior ma proporcje pośrednie między `baby` (kb=0,78, kh=0,88) i `adult` (1,0, 1,0), kolor jak dorosła ruda, bez cech seniora.
 
-## Wanted later: own icons
-- `soft_pellets` (borrows `pellets`)
-- `warm_house_bed` (borrows `house`)
-- `dental_chew` (borrows `chew_stick`)
-- `vitamin_mix` (borrows `vitamin_drops`)
-- `carrot_top` (borrows `carrot`)
+## Own icons (V5, done)
+The five borrowed item icons now have their own: `soft_pellets`, `warm_house_bed`, `dental_chew`, `vitamin_mix`, `carrot_top` (indexes 61-65), plus trait icons (66-71), game icons (72-75) and coat swatches (76-80). Wiring of trait, game and coat icons into screens happens in V4/V6.
 
 ## Visual waves status (docs/VISUAL_WAVES.md, log in docs/VISUAL_LOG.md)
 | Wave | Status |
@@ -36,7 +32,7 @@ Przy ponownym generowaniu wariantu trzeba go podłożyć w katalogu eksportu.
 | V2 senior/legend look old | done |
 | V3 breeds (chubby, skinny, rosette, peruvian x 5 stages, `assets/sprites/breeds/`, `breeds.json`) | done |
 | V4 wire breeds and palettes | open |
-| V5 own icons | open |
+| V5 own icons (20 new, indexes 61-80) | done (screen wiring in V4/V6) |
 | V6 screens and minigames review | open |
 | V7 animation closure | open |
 | V8 final acceptance | open |
