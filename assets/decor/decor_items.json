@@ -1,0 +1,525 @@
+{
+ "note": "Proposed shop entries for the new decor (not merged into items_decor.json: slots hide/fence/feeder/bedding and look.atlas need renderer support).",
+ "items": [
+  {
+   "id": "wallpaper_hay_meadow",
+   "name": "Hay meadow wallpaper",
+   "category": "decor",
+   "price": 150,
+   "icon": "wallpaper",
+   "one_time": true,
+   "slot": "wallpaper",
+   "description": "Soft hay stripes and sunflowers.",
+   "look": {
+    "atlas": "wallpaper_hay_meadow"
+   }
+  },
+  {
+   "id": "wallpaper_brick",
+   "name": "Brick wallpaper",
+   "category": "decor",
+   "price": 150,
+   "icon": "wallpaper",
+   "one_time": true,
+   "slot": "wallpaper",
+   "description": "Warm brick wall.",
+   "look": {
+    "atlas": "wallpaper_brick"
+   }
+  },
+  {
+   "id": "wallpaper_wood_panels",
+   "name": "Wood panel wallpaper",
+   "category": "decor",
+   "price": 150,
+   "icon": "wallpaper",
+   "one_time": true,
+   "slot": "wallpaper",
+   "description": "Warm wooden boards.",
+   "look": {
+    "atlas": "wallpaper_wood_panels"
+   }
+  },
+  {
+   "id": "wallpaper_forest",
+   "name": "Forest wallpaper",
+   "category": "decor",
+   "price": 150,
+   "icon": "wallpaper",
+   "one_time": true,
+   "slot": "wallpaper",
+   "description": "Leafy green forest.",
+   "look": {
+    "atlas": "wallpaper_forest"
+   }
+  },
+  {
+   "id": "wallpaper_cosy_stripes",
+   "name": "Cosy stripes wallpaper",
+   "category": "decor",
+   "price": 150,
+   "icon": "wallpaper",
+   "one_time": true,
+   "slot": "wallpaper",
+   "description": "Cream and brown stripes.",
+   "look": {
+    "atlas": "wallpaper_cosy_stripes"
+   }
+  },
+  {
+   "id": "wallpaper_winter",
+   "name": "Winter wallpaper",
+   "category": "decor",
+   "price": 150,
+   "icon": "wallpaper",
+   "one_time": true,
+   "slot": "wallpaper",
+   "description": "Snowy fir trees.",
+   "look": {
+    "atlas": "wallpaper_winter"
+   }
+  },
+  {
+   "id": "floor_grey_laminate",
+   "name": "Grey laminate floor",
+   "category": "decor",
+   "price": 120,
+   "icon": "floor",
+   "one_time": true,
+   "slot": "floor",
+   "description": "Grey wood-look planks, like the real one.",
+   "look": {
+    "atlas": "floor_grey_laminate"
+   }
+  },
+  {
+   "id": "floor_dark_hardwood",
+   "name": "Dark hardwood floor",
+   "category": "decor",
+   "price": 120,
+   "icon": "floor",
+   "one_time": true,
+   "slot": "floor",
+   "description": "Dark wooden planks.",
+   "look": {
+    "atlas": "floor_dark_hardwood"
+   }
+  },
+  {
+   "id": "floor_stone_tiles",
+   "name": "Stone tile floor",
+   "category": "decor",
+   "price": 120,
+   "icon": "floor",
+   "one_time": true,
+   "slot": "floor",
+   "description": "Grey stone tiles.",
+   "look": {
+    "atlas": "floor_stone_tiles"
+   }
+  },
+  {
+   "id": "floor_straw",
+   "name": "Straw floor",
+   "category": "decor",
+   "price": 120,
+   "icon": "floor",
+   "one_time": true,
+   "slot": "floor",
+   "description": "A floor of golden straw.",
+   "look": {
+    "atlas": "floor_straw"
+   }
+  },
+  {
+   "id": "floor_cardboard",
+   "name": "Cardboard floor",
+   "category": "decor",
+   "price": 120,
+   "icon": "floor",
+   "one_time": true,
+   "slot": "floor",
+   "description": "Corrugated cardboard.",
+   "look": {
+    "atlas": "floor_cardboard"
+   }
+  },
+  {
+   "id": "floor_wool_mat",
+   "name": "Wool mat floor",
+   "category": "decor",
+   "price": 120,
+   "icon": "floor",
+   "one_time": true,
+   "slot": "floor",
+   "description": "A grey knitted mat, like the cosy one at home.",
+   "look": {
+    "atlas": "floor_wool_mat"
+   }
+  },
+  {
+   "id": "bed_fleece_brown",
+   "name": "Brown fleece bed",
+   "category": "decor",
+   "price": 90,
+   "icon": "bedding",
+   "one_time": true,
+   "slot": "bedding",
+   "description": "Soft brown fleece with folds.",
+   "look": {
+    "atlas": "bed_fleece_brown"
+   }
+  },
+  {
+   "id": "bed_fleece_grey",
+   "name": "Grey fleece bed",
+   "category": "decor",
+   "price": 90,
+   "icon": "bedding",
+   "one_time": true,
+   "slot": "bedding",
+   "description": "Soft grey fleece with folds.",
+   "look": {
+    "atlas": "bed_fleece_grey"
+   }
+  },
+  {
+   "id": "bed_aspen",
+   "name": "Aspen shavings",
+   "category": "decor",
+   "price": 90,
+   "icon": "bedding",
+   "one_time": true,
+   "slot": "bedding",
+   "description": "A deep layer of aspen shavings.",
+   "look": {
+    "atlas": "bed_aspen"
+   }
+  },
+  {
+   "id": "bed_hay_pile",
+   "name": "Hay pile",
+   "category": "decor",
+   "price": 90,
+   "icon": "bedding",
+   "one_time": true,
+   "slot": "bedding",
+   "description": "A cosy pile of fresh hay.",
+   "look": {
+    "atlas": "bed_hay_pile"
+   }
+  },
+  {
+   "id": "hide_log_stack",
+   "name": "Log stack",
+   "category": "decor",
+   "price": 240,
+   "icon": "hide",
+   "one_time": true,
+   "slot": "hide",
+   "description": "A stack of bark logs with a gap to hide in.",
+   "look": {
+    "atlas": "hide_log_stack"
+   }
+  },
+  {
+   "id": "hide_willow_tunnel",
+   "name": "Willow tunnel",
+   "category": "decor",
+   "price": 220,
+   "icon": "hide",
+   "one_time": true,
+   "slot": "hide",
+   "description": "A woven willow tunnel.",
+   "look": {
+    "atlas": "hide_willow_tunnel"
+   }
+  },
+  {
+   "id": "hide_cardboard_box",
+   "name": "Cardboard box",
+   "category": "decor",
+   "price": 180,
+   "icon": "hide",
+   "one_time": true,
+   "slot": "hide",
+   "description": "A cardboard box with a doorway.",
+   "look": {
+    "atlas": "hide_cardboard_box"
+   }
+  },
+  {
+   "id": "hide_fleece_sack",
+   "name": "Fleece sack",
+   "category": "decor",
+   "price": 190,
+   "icon": "hide",
+   "one_time": true,
+   "slot": "hide",
+   "description": "A soft fleece hideout.",
+   "look": {
+    "atlas": "hide_fleece_sack"
+   }
+  },
+  {
+   "id": "hide_igloo",
+   "name": "Igloo",
+   "category": "decor",
+   "price": 230,
+   "icon": "hide",
+   "one_time": true,
+   "slot": "hide",
+   "description": "A cosy igloo made of soft blocks.",
+   "look": {
+    "atlas": "hide_igloo"
+   }
+  },
+  {
+   "id": "hide_wooden_house",
+   "name": "Wooden house",
+   "category": "decor",
+   "price": 260,
+   "icon": "hide",
+   "one_time": true,
+   "slot": "hide",
+   "description": "A wooden house with a window and a door.",
+   "look": {
+    "atlas": "hide_wooden_house"
+   }
+  },
+  {
+   "id": "fence_wire_black",
+   "name": "Black wire fence",
+   "category": "decor",
+   "price": 140,
+   "icon": "fence",
+   "one_time": true,
+   "slot": "fence",
+   "description": "A black wire pen panel.",
+   "look": {
+    "atlas": "fence_wire_black"
+   }
+  },
+  {
+   "id": "fence_wire_white",
+   "name": "White wire fence",
+   "category": "decor",
+   "price": 140,
+   "icon": "fence",
+   "one_time": true,
+   "slot": "fence",
+   "description": "A white wire pen panel.",
+   "look": {
+    "atlas": "fence_wire_white"
+   }
+  },
+  {
+   "id": "fence_picket",
+   "name": "Picket fence",
+   "category": "decor",
+   "price": 140,
+   "icon": "fence",
+   "one_time": true,
+   "slot": "fence",
+   "description": "A little white picket fence.",
+   "look": {
+    "atlas": "fence_picket"
+   }
+  },
+  {
+   "id": "feeder_bowl_blue",
+   "name": "Blue ceramic bowl",
+   "category": "decor",
+   "price": 70,
+   "icon": "feeder",
+   "one_time": true,
+   "slot": "feeder",
+   "description": "A blue ceramic bowl full of pellets.",
+   "look": {
+    "atlas": "feeder_bowl_blue"
+   }
+  },
+  {
+   "id": "feeder_hay_rack",
+   "name": "Hay rack",
+   "category": "decor",
+   "price": 90,
+   "icon": "feeder",
+   "one_time": true,
+   "slot": "feeder",
+   "description": "A wire rack stuffed with hay.",
+   "look": {
+    "atlas": "feeder_hay_rack"
+   }
+  },
+  {
+   "id": "feeder_wicker_basket",
+   "name": "Wicker basket",
+   "category": "decor",
+   "price": 90,
+   "icon": "feeder",
+   "one_time": true,
+   "slot": "feeder",
+   "description": "A wicker basket of treats.",
+   "look": {
+    "atlas": "feeder_wicker_basket"
+   }
+  },
+  {
+   "id": "feeder_water_bottle",
+   "name": "Water bottle",
+   "category": "decor",
+   "price": 100,
+   "icon": "feeder",
+   "one_time": true,
+   "slot": "feeder",
+   "description": "A bottle with a metal ball tip.",
+   "look": {
+    "atlas": "feeder_water_bottle"
+   }
+  },
+  {
+   "id": "feeder_veggie_dish",
+   "name": "Veggie dish",
+   "category": "decor",
+   "price": 110,
+   "icon": "feeder",
+   "one_time": true,
+   "slot": "feeder",
+   "description": "A dish with carrot slices and greens.",
+   "look": {
+    "atlas": "feeder_veggie_dish"
+   }
+  },
+  {
+   "id": "rug_knit_round",
+   "name": "Knit round rug",
+   "category": "decor",
+   "price": 80,
+   "icon": "rug",
+   "one_time": true,
+   "slot": "rug",
+   "description": "A knitted oval rug.",
+   "look": {
+    "atlas": "rug_knit_round"
+   }
+  },
+  {
+   "id": "rug_plaid",
+   "name": "Plaid rug",
+   "category": "decor",
+   "price": 80,
+   "icon": "rug",
+   "one_time": true,
+   "slot": "rug",
+   "description": "A red and green plaid rug.",
+   "look": {
+    "atlas": "rug_plaid"
+   }
+  },
+  {
+   "id": "rug_paws",
+   "name": "Paw print rug",
+   "category": "decor",
+   "price": 80,
+   "icon": "rug",
+   "one_time": true,
+   "slot": "rug",
+   "description": "A beige rug with paw prints.",
+   "look": {
+    "atlas": "rug_paws"
+   }
+  },
+  {
+   "id": "plant_dandelion",
+   "name": "Dandelion pot",
+   "category": "decor",
+   "price": 60,
+   "icon": "plant",
+   "one_time": true,
+   "slot": "plant",
+   "description": "A pot with a bright dandelion.",
+   "look": {
+    "atlas": "plant_dandelion"
+   }
+  },
+  {
+   "id": "plant_parsley",
+   "name": "Parsley pot",
+   "category": "decor",
+   "price": 60,
+   "icon": "plant",
+   "one_time": true,
+   "slot": "plant",
+   "description": "Curly parsley in a pot.",
+   "look": {
+    "atlas": "plant_parsley"
+   }
+  },
+  {
+   "id": "plant_wheatgrass",
+   "name": "Wheatgrass tray",
+   "category": "decor",
+   "price": 60,
+   "icon": "plant",
+   "one_time": true,
+   "slot": "plant",
+   "description": "A tray of fresh wheatgrass.",
+   "look": {
+    "atlas": "plant_wheatgrass"
+   }
+  },
+  {
+   "id": "lamp_fairy_lights",
+   "name": "Fairy lights",
+   "category": "decor",
+   "price": 140,
+   "icon": "lamp",
+   "one_time": true,
+   "slot": "lamp",
+   "description": "A string of warm fairy lights.",
+   "look": {
+    "atlas": "lamp_fairy_lights"
+   }
+  },
+  {
+   "id": "lamp_desk",
+   "name": "Desk lamp",
+   "category": "decor",
+   "price": 140,
+   "icon": "lamp",
+   "one_time": true,
+   "slot": "lamp",
+   "description": "A small desk lamp.",
+   "look": {
+    "atlas": "lamp_desk"
+   }
+  },
+  {
+   "id": "picture_hay_field",
+   "name": "Hay field picture",
+   "category": "decor",
+   "price": 100,
+   "icon": "picture_frame",
+   "one_time": true,
+   "slot": "picture",
+   "description": "A golden hay field.",
+   "look": {
+    "atlas": "picture_hay_field"
+   }
+  },
+  {
+   "id": "picture_pig_family",
+   "name": "Pig family picture",
+   "category": "decor",
+   "price": 100,
+   "icon": "picture_frame",
+   "one_time": true,
+   "slot": "picture",
+   "description": "A portrait of three little pigs.",
+   "look": {
+    "atlas": "picture_pig_family"
+   }
+  }
+ ]
+}
