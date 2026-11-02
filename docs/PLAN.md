@@ -59,7 +59,7 @@ następnej fali (szablon A2) albo gdy błąd jest w koncepcie lub planie.
 - **Jules, fale W1-W8: zrobione** (69 zadań w `tasks/done/` + 12 starszych `W-*`; kod w repo). CI na `main` zielone (Core, kompilacja aplikacji, składnia JS/JSON, smoke Domku). Lokalnie w tej sesji przeszły też: layout self-test, web-smoke, anim-test, palette-test, minigame-fit-check, maze-test i kontrola 43 folderów arkuszy.
 - **W9 (10 zadań) i W10-01: zastąpione.** Zrobiły to ręcznie fale wizualne V4-V6 (`docs/VISUAL_LOG.md`); pliki przeniesione do `tasks/done/`, żeby pętla ich nie powtórzyła.
 - **Grafika (Claude Code, poza Julesem):** V0-V8 i G0-G8 zrobione; wygląd V3 wg commitów: A0-A3 i A5/A6 wykonane (pięć świnek ma osobne arkusze w `assets/sprites/pigs/<id>/<etap>/`), zostają A4, A7 (opcja) i A8 (`docs/PLAN_WYGLAD_V3.md`).
-- **Nowe: stado z kolekcji (Ned, Kuki, Glen, James, Racuch)** w falach **W11-W15** (27 zadań), projekt i ekonomia: `docs/NAMED_PIGS.md`, dane: `assets/data/pigs_named.json`. Para Kuki + Ned do adopcji naraz po aktualizacji, James/Glen/Racuch jako oferty adopcji z czasem (90/105/130 dni, 100 koniczynek), losowy próg Legend dla każdej świnki, tryb pamięci dla wszystkich pięciu. W11 (5 zadań) leży w `tasks/` i czeka na start; W12-W15 rozpisuję przed ich startem.
+- **Nowe: stado z kolekcji (Ned, Kuki, Glen, James, Racuch)** w falach **W11-W15** (28 zadań), projekt i ekonomia: `docs/NAMED_PIGS.md`, dane: `assets/data/pigs_named.json`. Para Kuki + Ned do adopcji naraz po aktualizacji, James/Glen/Racuch jako oferty adopcji z czasem (90/105/130 dni, 100 koniczynek), losowy próg Legend dla każdej świnki, tryb pamięci dla wszystkich pięciu. W11 (5 zadań) leży w `tasks/` i czeka na start; W12-W15 rozpisuję przed ich startem.
 - **Nowe: świat (dom, ogród, park, farma, targ)** w falach **W16-W22** (48 zadań) i grafice S0-S5: projekt, ekonomia i niezmienniki w `docs/WORLD.md`, dane w `assets/data/{places,world_items,farm,market,items_farm}.json`, kontrola `node tools/qa/data-check.js`. Pliki zadań W16-W22 piszę tuż przed startem każdej fali (nie leżą w `tasks/`, żeby żadna pętla ich nie podjęła przedwcześnie).
 - **Pętla:** pętla Julesa jest wyłączona ręcznie (`jules-loop.yml` = disabled_manually): żadna fala nie ruszy, dopóki w Actions nie klikniesz "Enable workflow". Nowa pętla (Antigravity) jest wdrażana osobno; do jej uruchomienia niczego nie włączamy. Otwarty PR #75 (W3-04.1, diary) jest sprzed wyłączenia i czeka na decyzję.
 
@@ -183,20 +183,21 @@ Pełny projekt (kolejność wejścia, mnożniki każdej świnki, ekonomia, niezm
 | W11-03 | `PigModifiers`: osiem mnożników, średnia, obcięcie | `Pigs/PigModifiers.cs`, test | CORE |
 | W11-04 | Flagi `Balance` (wszystkie wyłączone) | `Balance.cs`, test | CORE |
 | W11-05 | Osiągnięcia `new_friend` (50), `full_house` (150) i `forever_family` (50, tryb pamięci) | `achievements.json`, test | CORE |
-### W12 Logika Core (4; wymaga W11) - pliki piszę przed startem
+### W12 Logika Core (5; wymaga W11) - pliki piszę przed startem
 | ID | Cel | Zmieniaj (główne) | Akceptacja |
 | --- | --- | --- | --- |
 | W12-01 | `OfferChecker`: czysty, idempotentny, zegar ofert (James, Glen, Racuch), wiele ofert po offline | `Pigs/OfferChecker.cs`, test | CORE |
 | W12-02 | `Pet.ActiveModifiers`: średnia aktywnych świnek (flaga) | `Pet.PigModifiers.cs`, test | CORE |
 | W12-03 | Wiek i etap aktywnej świnki w `Pet` (flaga `PerPigAgeActive`, próg Legend z profilu) | `Pet.cs`, `Pet.PigAge.cs`, test | CORE |
 | W12-04 | `LegendRoll`: losowanie progu Legend z zakresu świnki (wstrzykiwany `Random`) | `Pigs/LegendRoll.cs`, test | CORE |
+| W12-05 | Pola stanu ofert i adopcji (`OffersStartUtc`, adopted/offered, `Memorial`) w `GameState.Pigs` | `GameState.Pigs.cs`, test | CORE |
 ### W13 Integracja Core (5; wymaga W12)
 | ID | Cel | Zmieniaj (główne) | Akceptacja |
 | --- | --- | --- | --- |
 | W13-01 | Mnożniki w `Brain`: activity, joy_weight, wheek_rate | `AI/Brain.cs`, test | CORE |
 | W13-02 | Mnożnik appetite w zużyciu siana | `Pet.Hay.cs`, test | CORE |
 | W13-03 | Adopcja z oferty w `Pet`: koszt, paczka, pamiętnik, licznik `pigs_arrived`, losowanie Legend, tryb pamięci (`SetMemorial`), zdarzenia `OfferUnlocked`/`PigAdopted` | `Pet.Adoption.cs`, `Pet.cs` (2 linie), `Events.cs`, test | CORE |
-| W13-04 | Migracja zapisów (`OffersStartUtc`, nowe pola) i nowa gra z ofertą pary | `GameState.Pigs.cs`, `Save/SaveSystem.cs`, test | CORE |
+| W13-04 | Migracja zapisów i nowa gra z ofertą pary (korzysta z pól z W12-05) | `GameState.Pigs.cs`, test | CORE |
 | W13-05 | `PigsFeature`: stan wiek/etap/mnożniki/oferty/tryb pamięci, `max_adopted` | `Features/PigsFeature.cs`, `pigs.json` | BUILD + CORE |
 ### W14 Pulpit i Home (8; wymaga W13)
 | ID | Cel | Zmieniaj (główne) | Akceptacja |

@@ -58,3 +58,7 @@ The five borrowed item icons now have their own: `soft_pellets`, `warm_house_bed
 | Five new generic patterns | done | `palettes.json` ids `brindle.*`, `magpie.*`, `tortoiseshell.*`, `belt.*`, `blaze_only.*` |
 | Curly rex whiskers, per-breed heads, 128 px portraits, new pattern icons | not done | audit |
 | Code that loads `pigs.json` | **not done** (outside graphics) | - |
+
+
+## Still to draw (queue)
+Full list with sizes, counts and file names: `docs/GRAFIKA_KOLEJKA.md` (waves R, S0-S5). Includes the unfinished A4 (curly rex whiskers, per-breed heads), A7 portraits, 5 pattern icons, world items (45), farm plants and icons, place backgrounds.

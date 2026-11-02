@@ -121,18 +121,18 @@ Część świnek z kolekcji nie żyje naprawdę. Gra pozostaje zgodna z zasadą 
 | Zadania W9 (10) i W10-01 | zastąpione przez V4-V6 (zrobione ręcznie); przeniesione do `tasks/done/` |
 | Pętla Julesa | workflow `jules-loop.yml` **wyłączony ręcznie**; start fali wymaga włączenia go w Actions (Enable workflow) |
 
-### 6.2 Fale Julesa do zrobienia: 5 fal, 27 zadań
+### 6.2 Fale Julesa do zrobienia: 5 fal, 28 zadań
 Zasady fal bez zmian (1 zadanie = 1 zachowanie, 1-4 pliki, brak nakładania `Zmieniaj`, zależne zadania w następnej fali). Pliki fal W12-W15 piszę tuż przed ich startem (krok A2), po sprawdzeniu zgodności z kodem po poprzedniej fali; W11 jest gotowa w `tasks/`.
 
 | Fala | Zadania | Co wdraża | Wymaga |
 | --- | --- | --- | --- |
 | **W11** Fundamenty (5) | 01 `NamedPigCatalog` (loader `pigs_named.json`) · 02 pola życia w `PigProfile` + `PigLife` (wiek/etap per świnka) · 03 `PigModifiers` (średnia, obcięcie) · 04 flagi `Balance` (`PerPigAgeActive`, `PigModifiersActive`, `ArrivalsActive`) · 05 osiągnięcia `new_friend`, `full_house` | tylko nowe pliki i dane, nic nie zmienia zachowania gry | nic |
-| **W12** Logika Core (4) | 01 `OfferChecker` (czysty, idempotentny, zegar ofert) · 02 `Pet.ActiveModifiers` · 03 wiek i etap per aktywna świnka w `Pet` (próg Legend z profilu) · 04 `LegendRoll` (losowanie progu Legend, wstrzykiwany `Random`) | silnik ofert, dostawca mnożników, wiek per świnka (za flagami) | W11 |
+| **W12** Logika Core (5) | 01 `OfferChecker` (czysty, idempotentny, zegar ofert) · 02 `Pet.ActiveModifiers` · 03 wiek i etap per aktywna świnka w `Pet` (próg Legend z profilu) · 04 `LegendRoll` (losowanie progu Legend, wstrzykiwany `Random`) · 05 pola stanu ofert i adopcji | silnik ofert, dostawca mnożników, wiek per świnka (za flagami) | W11 |
 | **W13** Integracja Core (5) | 01 mnożniki w `Brain` (activity, joy, wheek) · 02 appetite w `Pet.Hay` · 03 adopcja świnki z oferty w `Pet` (koszt, paczka, pamiętnik, licznik, zdarzenie, losowanie Legend) + tryb pamięci (`SetMemorial`, adopcja w pamięci, osiągnięcie `forever_family`) · 04 migracja zapisów (`OffersStartUtc`, nowe pola) i nowa gra z ofertą pary · 05 `PigsFeature` (stan: wiek, etap, mnożniki, oferty, tryb pamięci; `max_adopted`) | rozgrywka kolekcji w Core | W11-W12 |
 | **W14** Pulpit i Home (8) | 01 `bond_gain` i `minigame_score` w `Pet` · 02 `PigLook` + `Xml` (etap każdej świnki i wypieczone arkusze `pigs/<id>/`, C#) · 03 `BrainController` (nowa oferta: toast; adopcja: nowy pet, `peek`) · 04 `PoopManager` (poop_rate) · 05 `MouseFearBehavior` (startle) · 06 ekran My Pigs i adopcji (wiek, etap, cechy, oferty, "Adopt both", tryb pamięci) · 07 mock stanu z ofertami i toast powitalny (`bridge.js`, `app.js`) · 08 resolver arkuszy w Home (`lib/sprites.js`: wypieczone arkusze, potem rasa + paleta) | to, co widzi i czuje gracz | W13 |
 | **W15** Domknięcie (5) | 01 `GameSession.Open` włącza flagi (uruchomienie funkcji) · 02 oś czasu i niezmienniki ekonomii (Symulator, test, `economy-report.md`) · 03 smoke My Pigs z pięcioma świnkami · 04 `contracts.md` i `TESTY_RECZNE.md` · 05 `SelfTest` (pigs_named.json, arkusze wszystkich etapów) | włączenie i dowody | W14 |
 
-Pętla sama dodaje po każdej fali zadania testowe `T<n>` i w razie potrzeby integracyjne `I<n>`, więc realnie będzie nieco więcej sesji niż 27 (limit 100 na dobę nie jest zagrożony). Granice (po stronie człowieka): test na Windowsie po W14 i W15 (dwie świnki w różnym wieku, oferta adopcji, tryb pamięci, tempo bobków, płochliwość Jamesa) oraz odbiór wyglądu pięciu świnek po A5.
+Pętla sama dodaje po każdej fali zadania testowe `T<n>` i w razie potrzeby integracyjne `I<n>`, więc realnie będzie nieco więcej sesji niż 28 (limit 100 na dobę nie jest zagrożony). Granice (po stronie człowieka): test na Windowsie po W14 i W15 (dwie świnki w różnym wieku, oferta adopcji, tryb pamięci, tempo bobków, płochliwość Jamesa) oraz odbiór wyglądu pięciu świnek po A5.
 
 ### 6.3 Zależność od grafiki (Claude Code, nie Jules)
 - A5 wydało pięć **osobnych wypieczonych arkuszy** (`assets/sprites/pigs/<id>/<etap>/`). Reguła wyboru arkusza: profil z `NamedId`, którego folder istnieje, bierze arkusz własny i **nie** przemapowuje palety; wszystkie inne świnki (adoptowane) jak dziś: kształt + paleta. Wdrażają to W14-02 (C#) i W14-08 (Home); dane `pigs_named.json` zostają jako zapas (`look`), gdy folderu brak.

@@ -1,0 +1,15 @@
+# W14-06: My Pigs: age, stage, traits, adoption offers, memorial mode
+Zmieniaj: web/home/features/pigs/feature.js, web/home/features/pigs/feature.css
+Wymagane: web/home/features/pigs/feature.js
+Weryfikacja: node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/*, AGENTS.md, docs/*, tasks/*, web/home/bridge.js, web/home/app.js
+Goal: The My Pigs screen shows each pig's age and stage, the adoption offers (with 'Adopt both'), and a memorial switch.
+Depends on: W13 merged (state and messages from PigsFeature).
+Facts: State shape (PigsFeature): `roster[]` with `namedId`, `ageYears`, `stage`, `memorial`, `blurb`, `modifiers`, `traits`, `discoveredTraits`; `offers[]` with `id`, `name`, `unlocked`, `daysLeft`, `cost`, `group`, `adopted`, `look`, `blurb`, `traits`. Messages to send: `adopt_named {id, memorial}`, `adopt_group {id}`, `set_memorial {pigId, on}`, existing `adopt_pig`, `toggle_pig_active`. UI text is English. Follow the existing feature module style (look at the current file and `web/home/features/README.md`). Layout must pass `layoutProblems` in the smoke test at the usual window sizes. Portraits: use the pig's sprite via `lib/sprites.js` (no new images). Use the existing padlock icon for locked offers. Memorial text: 'Forever in the family', never words about death. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
+Steps:
+1. Cards: name, stage badge, age ('2.3 years'), blurb, discovered traits as in the current UI ('???' for undiscovered; pigs without traits show the blurb instead), memorial toggle with a one-line confirmation before switching on.
+2. Offers section: unlocked offers show 'Adopt (100)' and 'Adopt in memory (free)'; locked ones show the days left and the padlock; a starter group shows one 'Adopt both' button when both are unadopted. Disabled states when clovers are insufficient (state `clovers` is already in the page state).
+3. Keep keyboard focus order sensible and labels on buttons (`aria-label`).
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.

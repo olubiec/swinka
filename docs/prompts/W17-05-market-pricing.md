@@ -1,0 +1,14 @@
+# W17-05: MarketPricing: demand meter, wiggle, cap, quotes
+Zmieniaj: src/Cuy.Core/World/MarketPricing.cs, tests/Cuy.Core.Tests/MarketPricingTests.cs
+Wymagane: src/Cuy.Core/World/MarketPricing.cs, tests/Cuy.Core.Tests/MarketPricingTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*
+Goal: A pure engine quotes and executes sales and purchases with the demand meter and the daily cap.
+Depends on: W16 merged (MarketConfig, MarketState, FarmConfig).
+Facts: Design: docs/WORLD.md section 5.2 and the simulator `tools/qa/economy-sim.js` (read its sell loop for the intended behaviour). Unit price = `sell_price * (1 + wiggle(date, itemId)) * demand[item]`, wiggle deterministic in -15..+15 percent from the local date string and item id; demand starts at 1.0, each sold unit lowers it by `drop_per_unit` (floor `floor`), each new day raises it by `recover_per_day` (max 1.0). The **total** of one sale is rounded down once (never per unit). The daily cap (30) limits clovers paid per day; a sale that would exceed it pays only up to the cap and sells only as many units as fit; the rest stays with the player. Purchases use the item's `Price` (no wiggle, no cap). Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
+Steps:
+1. `static class MarketPricing`: `void NewDay(MarketState state, string localDate, MarketConfig cfg)` (recovers demand, clears `SoldToday` and `SalesToday` when the date changes), `SaleQuote Quote(MarketState, MarketConfig, CropDefinition crop, int count, string localDate)` returning units that fit, total clovers, new demand; `SaleQuote Sell(...)` applying it to the state; `static double Wiggle(string localDate, string itemId, MarketConfig cfg)`; `int CapLeft(MarketState, MarketConfig)`.
+2. Tests: the first unit of a fresh crop pays `floor(sell_price * (1+wiggle))`; selling 10 units lowers demand to 0.05 at the floor and the total is rounded once; a new day raises demand by 0.1; the wiggle is the same for the same date and item and always within +-15 percent; the cap stops a large sale and reports fewer units; after the cap `CapLeft` is 0 and `Quote` returns 0 units; `SaleQuote` for 0 or negative counts is empty.
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.

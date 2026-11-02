@@ -1,0 +1,14 @@
+# W16-06: GameState.World: saved state of the world
+Zmieniaj: src/Cuy.Core/GameState.World.cs, src/Cuy.Core/World/WorldState.cs, tests/Cuy.Core.Tests/WorldStateTests.cs
+Wymagane: src/Cuy.Core/World/WorldState.cs, tests/Cuy.Core.Tests/WorldStateTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, src/Cuy.Core/Save/SaveSystem.cs
+Goal: The save has a World state with safe defaults for places, rooms, owned items, farm, market and tools.
+Depends on: W15 merged.
+Facts: Save rule: only add fields with safe defaults; follow `GameState.Decor.cs` for a lazily created state property. Shape (docs/WORLD.md section 7): `WorldState { Dictionary<string,int> PlaceLevels (place id -> level, absent = locked); HashSet<string> RoomsUnlocked; Dictionary<string,RoomLayout> Rooms; Dictionary<string,int> OwnedItems (world item id -> count); FarmState Farm; MarketState Market; }` with `RoomLayout { string Wallpaper; string Floor; List<PlacedItem> Items }`, `PlacedItem { string Uid; string ItemId; int X; int Y; bool Flip }`, `FarmState { List<PlotState> Plots (null = empty slot); List<OrchardState> Orchard; int PlotsOwned; int OrchardSlots; string CanId; bool Sprinkler; string LastWaterDate }`, `PlotState { string CropId; DateTime PlantedUtc; bool Watered; }`, `OrchardState { string CropId; DateTime NextUtc; int Stock; }`, `MarketState { string DayLocalDate; Dictionary<string,int> SoldToday; double SalesToday; Dictionary<string,double> Demand; int StallLevel; List<OrderState> Orders; }` with `OrderState { string CropId; int Count; bool Done; }`. All collections non-null after access; `Version` int = 1. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
+Steps:
+1. Create the types and the `GameState.World` property (lazy, null-safe, like `Decor`).
+2. Tests: new state has empty collections; JSON round trip keeps a state with one placed item, one plot, one order; JSON of an old save without `World` loads and `World` is usable; setting any collection to null in JSON gives empty collections on access; `PlotsOwned` and `OrchardSlots` default to 0.
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.
