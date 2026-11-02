@@ -45,3 +45,21 @@ Log of waves V0-V8 (`docs/VISUAL_WAVES.md`), newest at the bottom.
 
 ### Correction to V0/V1/V4 notes: the C# does compile here
 `apt-get install dotnet-sdk-8.0` works in this session (apt is reachable, dot.net is not). With it: `dotnet test` (tests project temporarily retargeted from net9.0 to net8.0, reverted) = **342 passed, 0 failed** including the new `PaletteTests`; and the whole WinForms project compiles with 0 errors (checked with a throw-away csproj copy that replaces `UseWindowsForms` by plain System.Windows.Forms/System.Drawing references, because the Ubuntu SDK lacks the WindowsDesktop targets). Still impossible here: running `Cuy.exe`, `--selftest`, and any desktop walk-through (no Windows).
+
+## V6 Screens, scenes and minigames review (2026-11-02)
+Method: own Playwright screenshots (scratch, not committed) of the Home screen, all 11 features, the games hub, the four games at 420x640, the decor items, coloring packs and the app icon.
+
+Defect list (severity) and what was done:
+| # | Sev | Defect | Fix |
+| --- | --- | --- | --- |
+| 1 | high | All 4 games: 360 px canvas in a 320 px wrapper, HUD text and `[ Finish ]` clipped | Phaser `scale.mode = FIT` + `CENTER_BOTH` in all four `Phaser.Game` configs; `tools/qa/minigame-fit-check.js` (FIT OK) |
+| 2 | high | Home room: the floor was empty/dark whenever no floor decor was equipped (the decor layers always set `skipDefaultFloor/Wall`) | `canvas-pig.js` skips the defaults only for equipped slots |
+| 3 | high | Wall pictures and lamps were drawn in the top 34 px that the Home canvas crops (invisible); heart rug invisible | moved picture to y=46, lamp to (150, 36); redrew the heart rug |
+| 4 | high | Emoji used as UI icons everywhere (header, stage badge, bond, features, hub, results, in-game HUDs) | 25 new 16x16 icons (stage_*, sound_on/off, gear, sparkle, flame, warning, check, star, replay, back_arrow, album_book, gamepad, trick_*, heart, heart_empty, pause, play) and all UI strings switched to `pixel-icon`; bubbles lost their emoji; Phaser HUDs use sprites from `icons16` (hearts, sparkle) |
+| 5 | med | Games hub showed emoji tiles | hub uses `game_*` icons |
+| 6 | med | Tricks screen used emoji | `trick_*` icons |
+| 7 | med | My Pigs: Adopt button text broke across lines | nowrap, shorter label |
+| 8 | med | Hay Maze: pig was a 12x8 rectangle, walls thin lines | real pig sheet sprite (breed, stage, palette of the active pig, run/idle animation); hay-bale walls (dark edge, straw body, light edge, ticks) and a checkered meadow floor |
+| 9 | low | Coloring page grid threw `null.addEventListener` when the modal closed during a render (was hidden by web-smoke) | guard in `coloring/feature.js`; the swallow in `web-smoke.js` removed (it was mislabelled as a vet bug) |
+Reviewed and left as is: Nyan Cuy (night sky with rainbow trail and pixel icons from the sheet; a deliberate different theme, consistent pixel style), Veggie Rain and Veggie Memory (wood and tablecloth, fine once fitted), the 9 colouring packs (silhouette thumbnails readable, no broken pages), app icon (consistent at 256/32/16), Settings and update area, installer (text-only `.cmd` scripts, no graphics).
+Checks: `web-smoke`, `minigame-fit-check`, `anim-test`, `palette-test`, `maze-test` all OK.

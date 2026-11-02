@@ -187,14 +187,20 @@
         ctx.ellipse(cx, cy, 30, 6, 0, 0, Math.PI * 2);
         ctx.fill();
       } else if (look.type === 'heart') {
+        // flattened heart: two lobes and a point, seen on the floor
         ctx.fillStyle = '#d94c59';
-        ctx.translate(cx, cy - 2);
-        ctx.scale(1, 0.35);
         ctx.beginPath();
-        ctx.moveTo(0, 15);
-        ctx.bezierCurveTo(0, 15, 30, -15, 0, -30);
-        ctx.bezierCurveTo(-30, -15, 0, 15, 0, 15);
+        ctx.ellipse(cx - 11, cy - 3, 13, 7, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx + 11, cy - 3, 13, 7, 0, 0, Math.PI * 2);
         ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(cx - 23, cy - 1);
+        ctx.lineTo(cx + 23, cy - 1);
+        ctx.lineTo(cx, cy + 10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#ee7c86';
+        ctx.fillRect(cx - 17, cy - 7, 6, 2);
       }
       ctx.restore();
     });
@@ -206,7 +212,7 @@
       if (!look) return;
 
       const px = 109;
-      const py = 16;
+      const py = 46; // the Home canvas crops the top ~34 px of the 130 px scene, keep wall decor below that
       const pw = 22;
       const ph = 16;
 
@@ -300,8 +306,8 @@
       const look = getLook(eq);
       if (!look) return;
 
-      const lx = 20;
-      const ly = 10;
+      const lx = 150;
+      const ly = 36; // visible part of the wall starts at about y=34; away from the hay rack
       const hr = new Date().getHours();
       const isEvening = hr >= 18 || hr < 7;
 
