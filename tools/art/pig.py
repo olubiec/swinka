@@ -587,7 +587,10 @@ def render_side(**kw):
     if p['whisk'] >= 0:
         WX, WY = fwd(hxc + 10.5 * kh, hyc + 2.0 * kh)
         w = p['whisk']
-        for (ox, oy) in [(1, -1 - w), (2, -1 - w), (3, -2 - w), (1, 1), (2, 1 + w), (3, 2 + w)]:
+        wl = [(1, -1 - w), (2, -1 - w), (3, -2 - w), (1, 1), (2, 1 + w), (3, 2 + w)]
+        if STYLE['named'] == 'james':    # rex: curly whiskers, the tips curl back
+            wl = [(1, -1 - w), (2, -2 - w), (3, -2 - w), (4, -1 - w), (1, 1), (2, 2 + w), (3, 2 + w), (4, 1 + w)]
+        for (ox, oy) in wl:
             X, Y = WX + ox, WY + oy
             if 0 <= X < S and 0 <= Y < S:
                 c.over[Y, X] = WHISK_OLD if STYLE['senior'] else WHISK
@@ -757,7 +760,10 @@ def render_front(**kw):
     # wąsy
     for side in (-1, 1):
         bxw = nx + (4 if side == 1 else -3)
-        for k, (ox, oy) in enumerate([(0, 1), (1, 1), (2, 0), (0, 3), (1, 3), (2, 4)]):
+        wl = [(0, 1), (1, 1), (2, 0), (0, 3), (1, 3), (2, 4)]
+        if STYLE['named'] == 'james':
+            wl = wl + [(3, 1), (3, 3)]
+        for k, (ox, oy) in enumerate(wl):
             X, Y = bxw + side * ox, ny + oy
             if 0 <= X < S and 0 <= Y < S:
                 c.over[Y, X] = WHISK

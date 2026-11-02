@@ -700,7 +700,7 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
-  --icon-count: 120; /* total icons */
+  --icon-count: 161; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
@@ -837,6 +837,47 @@ body.webview-mode .game-device {
 .icon-feeder { --i: 117; }
 .icon-bedding { --i: 118; }
 .icon-trait-skittish { --i: 119; }
+.icon-pattern-brindle { --i: 120; }
+.icon-pattern-magpie { --i: 121; }
+.icon-pattern-tortoiseshell { --i: 122; }
+.icon-pattern-belt { --i: 123; }
+.icon-pattern-blaze-only { --i: 124; }
+.icon-candle { --i: 125; }
+.icon-gift-offer { --i: 126; }
+.icon-paw-walk { --i: 127; }
+.icon-pair-pigs { --i: 128; }
+.icon-place-house { --i: 129; }
+.icon-place-garden { --i: 130; }
+.icon-place-park { --i: 131; }
+.icon-place-farm { --i: 132; }
+.icon-place-market { --i: 133; }
+.icon-can-water { --i: 134; }
+.icon-sprinkler { --i: 135; }
+.icon-shovel { --i: 136; }
+.icon-seed-bag { --i: 137; }
+.icon-basket { --i: 138; }
+.icon-stall { --i: 139; }
+.icon-order-scroll { --i: 140; }
+.icon-comfort-heart { --i: 141; }
+.icon-demand-meter { --i: 142; }
+.icon-cap-coin { --i: 143; }
+.icon-undo { --i: 144; }
+.icon-redo { --i: 145; }
+.icon-flip { --i: 146; }
+.icon-trash { --i: 147; }
+.icon-grid { --i: 148; }
+.icon-lock-place { --i: 149; }
+.icon-upgrade-arrow { --i: 150; }
+.icon-harvest-ready { --i: 151; }
+.icon-sapling { --i: 152; }
+.icon-seed { --i: 153; }
+.icon-cilantro { --i: 154; }
+.icon-basil { --i: 155; }
+.icon-romaine-lettuce { --i: 156; }
+.icon-zucchini { --i: 157; }
+.icon-cherry-tomato { --i: 158; }
+.icon-blueberry { --i: 159; }
+.icon-pear { --i: 160; }
 
 
 /* ==========================================================================

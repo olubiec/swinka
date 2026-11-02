@@ -222,12 +222,13 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
     # whiskers (over the outline, like the 2D poses)
     if deg >= 40:
         for side in (-1, 1):
-            for k, (ox, oy) in enumerate(((0, 1), (1, 1), (2, 0), (0, 3), (1, 3), (2, 4))):
+            wl = [(0, 1), (1, 1), (2, 0), (0, 3), (1, 3), (2, 4)] + ([(3, 1), (3, 3)] if STYLE['named'] == 'james' else [])
+            for k, (ox, oy) in enumerate(wl):
                 xx, yy = nxp + (3 if side == 1 else -2) + side * ox, nyp + oy - 1
                 if 0 <= xx < S and 0 <= yy < S:
                     cv.over[yy, xx] = WHISK
     else:
-        for (ox, oy) in ((2, -1), (3, -1), (4, -2), (2, 1), (3, 1), (4, 2)):
+        for (ox, oy) in ((2, -1), (3, -1), (4, -2), (2, 1), (3, 1), (4, 2)) + (((5, -1), (5, 1)) if STYLE['named'] == 'james' else ()):
             xx, yy = nxp + ox, nyp + oy
             if 0 <= xx < S and 0 <= yy < S:
                 cv.over[yy, xx] = WHISK
