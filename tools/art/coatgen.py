@@ -89,7 +89,7 @@ RAMPS = {
              rp('98a2ba', '737c92', '4d5466', '2f3340')],   # 3 sheen highlight (rosette ridges read clearly on the black coat)
     'james': [rp('9aa0a8', '787e87', '5a5f68', '3f434b'),   # 0 grey base
               rp('b4bac2', '979da6', '7a808a', '5d626c'),   # 1 light ticks (one step lighter than the base)
-              rp('5c5f67', '444750', '2f3138', '1d1e23'),   # 2 dark muzzle / legs
+              rp('6a6e77', '545861', '3b3e46', '25272d'),   # 2 dark muzzle / legs
               rp('b4b9bf', '979ca4', '767b84', '585c65')],
     'racuch': [rp('f7ac52', 'e18c32', 'bf6b23', '8f4a17'),  # 0 ginger
                rp('544f5a', '39353f', '262329', '151418'),  # 1 black saddle
@@ -141,7 +141,10 @@ def body_slots(pid, u, v, w):
         _, ray, core = WH.field('glen', u, v, w)
         out = np.where((ray | core) & ~streak, 3, out)
     elif pid == 'james':
-        out = np.zeros(np.shape(s), int)       # James is one even grey: the coat texture comes from the fur strokes only
+        # rex: curly speckle of lighter and darker flecks (small tight curls), over the even grey base
+        cu = fbm(u * 11.0, v * 11.0, w * 11.0, 47, 2)
+        cd = fbm(u * 13.0 + 5, v * 13.0, w * 13.0 + 3, 83, 2)
+        out = np.where(cu > 0.22, 1, np.where(cd > 0.30, 2, 0))
     elif pid == 'racuch':
         edge = 1.95 + 0.14 * fbm(s * 3.0, 0.0, 2.0, 61) + 0.05 * np.sin(s * 7)           # wavy lower edge of the saddle
         fr, rr = 0.30 + 0.06 * (pw - 0.8), -0.38 - 0.06 * (pw - 0.8)                       # slightly slanted front/rear edges
