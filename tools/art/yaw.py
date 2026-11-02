@@ -162,7 +162,7 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
         ex = hxc - (4.6 - 0.6 * t) * kh
         ey = hyc - 5.9 * kh - ear
         ez = side * (7.0 + 2.6 * t) * kh
-        he = _hit(ex, ey, ez, 3.8 * kh, 2.7 * kh, 1.5 * kh, th, px)
+        he = _hit(ex, ey, ez, 3.8 * kh, 2.7 * kh, (1.5 + 2.3 * t * t) * kh, th, px)
         take_e = put('ear%d' % side, he, MAT['ZC'])
         # inner pink on the face turned towards the viewer / front
         nxs, nys, nds = he[3]

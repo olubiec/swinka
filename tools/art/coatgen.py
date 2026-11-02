@@ -147,7 +147,7 @@ def body_slots(pid, u, v, w):
         fr, rr = 0.30 + 0.06 * (pw - 0.8), -0.38 - 0.06 * (pw - 0.8)                       # slightly slanted front/rear edges
         saddle = sm(rr - 0.02, rr + 0.04, sw) * (1 - sm(fr - 0.04, fr + 0.02, sw)) * (1 - sm(edge - 0.1, edge + 0.1, pw))
         out = pick(saddle, s, phi, 1, 0)
-        tip = (sw < -0.80 + 0.06 * fbm(s * 5, phi * 4, 0.7, 8)) & (pw < 2.4)
+        tip = (sw < -0.76 + 0.07 * fbm(w * 4.0, v * 4.0, u * 2.0, 8)) & (v < 0.45)      # rump tip: no phi (it is undefined at the pole)
         out = np.where(tip, 2, out)
     return out
 
@@ -158,11 +158,11 @@ def head_slots(pid, xh, yh, zh):
     out = np.zeros(np.shape(xh), int)
     if pid == 'ned':
         # white: muzzle, cheeks in front of the eye, chin, narrow blaze widening towards the nose. Brown: crown, ears, eye ring, back of the head
-        blaze = (zh < 1.0 + 0.30 * (xh + 4) + 0.2 * n) & (yh < 1.5)
-        cheek = (xh + n > 3.4 - 0.20 * yh) & (yh > -3.2)
-        chin = (yh > 2.2) & (xh > -0.5 + n)
-        out = np.where(blaze | cheek | chin, 0, 1)
-        out = np.where((xh > 4.6) , 0, out)
+        # brown head (crown, ears, eye ring, cheeks); white only on a narrow blaze, the muzzle cone and the chin
+        blaze = (zh < 0.8 + 0.10 * np.maximum(xh, 0) + 0.3 * n) & (yh < 2.0) & (xh > 1.0)
+        muz = (xh + n > 7.0) & (zh < 4.4 - 0.15 * np.maximum(-yh, 0)) & (yh > -1.2)
+        chin = (yh > 2.4) & (xh + n > 4.6)
+        out = np.where(blaze | muz | chin, 0, 1)
     elif pid == 'kuki':
         blaze = (xh + n > 5.0 - 0.5 * yh) & (zh < 2.8) & (yh < 3.5)
         chin = (xh + n > 4.2) & (yh > 2.4)

@@ -42,3 +42,11 @@ Loader musi znać `assets/sprites/pigs/pigs.json` (arkusz per świnka, bez `pale
 - Kuki: usunięta złota plamka (złote promienie rozetki). Wir zostaje jako delikatny cień/światło.
 - Kontrola: przegląd wszystkich 60 animacji Kukiego i Neda (pierwsze klatki dorosłych): rozmieszczenie łat jest spójne.
 - `verify_palettes` po tej poprawce: TOTAL DIFFERENCES 0 (tylko kształt `smooth_normal`, jak wcześniej).
+
+## Poprawka kształtu i łat z przodu i z tyłu (2026-11-02)
+- Widok z przodu i z tyłu (`render_front`) ma teraz tę samą geometrię co `yaw.render_yaw(90)`: te same promienie tułowia i głowy, ten sam środek głowy, oczy i nos w tych samych punktach modelu. Wcześniej przód był o ok. 8% większy, a głowa 5 px wyżej niż w obrocie, stąd skok rozmiaru po obrocie.
+- Głowa z przodu bierze łaty z dokładnie tej powierzchni co obrót (elipsoida głowy i elipsoida pyska), a nie z rzutu płaskiego.
+- Wzór głowy Neda: brązowa głowa, uszy i obwódka oczu, biała tylko wąska łysina, pysk i broda. Wcześniej z przodu cała twarz była biała, a brąz został nad oczami.
+- Z tyłu głowa i korzenie uszu są zasłonięte przez tułów, więc widać zad z łatami. Biała końcówka zadu Racucha liczona bez kąta phi (nieokreślony na biegunie), stąd dwie białe kreski zamiast plamy.
+- Arkusze: wszystkie kształty i pięć świnek zregenerowane. `check_sprites`, `anim-test`, `palette-test`, `web-smoke` OK. Podgląd: `docs/album/views/`.
+- `verify_palettes`: TOTAL DIFFERENCES 0 (kształt `smooth_normal`).

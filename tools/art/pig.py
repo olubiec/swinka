@@ -624,12 +624,17 @@ def render_front(**kw):
         m = ((XX - cx) / (15 * kb * p['sx'])) ** 2 + ((YY - FLOOR - 0.5) / 1.6) ** 2 <= 1
         c.under[m] = SHADOW
 
-    hxc, hyc = cx + lkx * 0.7, (FLOOR - 1.5 - 11 * kb) - 7 * kb + lky * 0.5
+    # the same model as yaw.render_yaw(90): body radii, head centre and head radii
+    chub = STYLE['build'] == 'chubby'
+    bry = 10.5 * kb * (1.05 if chub else 1.0) + p['breathe']
+    brz = 13.5 * kb * (1.12 if chub else 0.9 if STYLE['build'] in ('lean', 'skinny') else 1.0)
+    brx = min(17.0 * kb, 20.5) if chub else 17.0 * kb
+    byc = FLOOR - 1.5 - bry
+    hxc, hyc = cx + lkx * 0.7, byc - 5.0 * kb + 2.5 + lky * 0.5
+    bodym = np.zeros((S, S), bool)
     # tułów
     if p['body']:
-        bry = 11 * kb + p['breathe']
-        byc = FLOOR - 1.5 - bry
-        u = (lx - cx) / (14.5 * kb)
+        u = (lx - cx) / brz
         v = (ly - byc) / bry
         body = u ** 2 + v ** 2 <= 1
         b = -(0.35 * u + 0.9 * v)
@@ -643,12 +648,13 @@ def render_front(**kw):
             um = np.sqrt(np.clip(1 - v * v - u * u, 0, 1)) * (-1.0 if p['back'] else 1.0)
             if STYLE['named']:
                 mat = named_body_mat(um, v, wm)
-            b = b + FUR.delta(um * 17 * kb, v * 10.5 * kb, wm * 13.5 * kb, STYLE['breed'], 3 if not STYLE['named'] else 3 + len(STYLE['named'])) * (1.0 - 0.5 * (v > 0.5))
+            b = b + FUR.delta(um * brx, v * bry, wm * brz, STYLE['breed'], 3 if not STYLE['named'] else 3 + len(STYLE['named'])) * (1.0 - 0.5 * (v > 0.5))
             wk_ = STYLE['named'] if STYLE['named'] in WH.WHORLS else ('rosette' if STYLE['breed'] == 'rosette' else None)
             if wk_:
                 b = b + 0.5 * WH.field(wk_, um, v, wm)[0]
         c.hash = (np.floor(lx).astype(int) * 7 + np.floor(ly).astype(int) * 13 + (np.floor(lx).astype(int) * np.floor(ly).astype(int)) % 5) % 11
         c.put_mat(body, mat, level(b))
+        bodym = body
         for fx0 in (cx - 7 * kb * p['sx'], cx + (4 * kb) * p['sx']):
             c.stamp(['PPP', 'PPP'], int(fx0), FLOOR - 2 + int(oy), {'P': FR(1)})
             c.put_px(int(fx0) + 1, FLOOR - 1 + int(oy), FR(2))
@@ -660,34 +666,40 @@ def render_front(**kw):
 
     # uszy (za głową)
     for side in (-1, 1):
-        ex, ey = hxc + side * 10.0 * kh, hyc - 6.5 * kh - p['ear'] * (1 if side == 1 else 0.5)
-        ear = ell(ex, ey, 3.8 * kh, 2.7 * kh, side * 28)
-        inner = ell(ex - side * 0.3, ey + 0.4, 2.1 * kh, 1.4 * kh, side * 28)
+        ex, ey = hxc + side * 9.6 * kh, hyc - 5.9 * kh - p['ear'] * (1 if side == 1 else 0.5)
+        ear = ell(ex, ey, 3.8 * kh, 2.7 * kh)
+        inner = ell(ex - side * 0.3, ey + 0.4, 2.1 * kh, 1.4 * kh)
+        if p['back']:
+            ear = ear & ~bodym      # seen from behind the body hides the head and the ears' roots
         c.put_mat(ear, MAT['ZC'], level(-(ly - ey) / 2.7))
         if not p['back']:
             c.put_mat(inner & ear, MAT['pink'], 2)
 
-    head = ell(hxc, hyc, 11.0 * kh, 9.3 * kh)
+    head = ell(hxc, hyc, 10.0 * kh, 8.5 * kh)
     if STYLE['breed'] == 'rosette':
-        head = head | ell(hxc + 0.5, hyc - 9.0 * kh, 3.8 * kh, 2.2 * kh)
-    hu = (lx - hxc) / (11 * kh)
-    hv = (ly - hyc) / (9.3 * kh)
+        head = head | ell(hxc + 0.5, hyc - 8.6 * kh, 4.0 * kh, 2.0 * kh)
+    hu = (lx - hxc) / (10 * kh)
+    hv = (ly - hyc) / (8.5 * kh)
     hb = -(0.35 * hu + 0.9 * hv) + 0.15
     blaze = np.abs(lx - hxc - lkx * 0.3) < (1.2 + np.maximum(ly - (hyc - 9 * kh), 0) * 0.28)
-    muzzle = ell(hxc + lkx * 0.4, hyc + 5.0 * kh, 5.6 * kh, 3.6 * kh)
+    muzzle = ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 5.2 * kh, 3.4 * kh)
     hmat = np.full((S, S), MAT['ZC'])
     hmat[ly < hyc - 4.6 * kh] = MAT['ZH']
     hmat[muzzle] = MAT['ZN2']
     hmat[blaze] = MAT['ZN1']
     if STYLE['named']:
         # head frame of the yaw renderer: xh = depth (the face points at the camera), yh down, zh lateral (+z = screen left from the front)
-        fhu = (lx - hxc) / (11 * kh)
-        fhv = (ly - hyc) / (9.3 * kh)
-        depth = np.sqrt(np.clip(1 - fhu ** 2 - fhv ** 2, 0, 1))
+        # the exact surface of yaw.render_yaw(90): head ellipsoid (9.5, 8.5, 10) and muzzle ellipsoid (5.2, 4.6, 5.2) at (5.5, 2.6, 0)
+        lat = (lx - hxc) / kh
+        yh = (ly - hyc) / kh
+        xh_h = 9.5 * np.sqrt(np.clip(1 - (lat / 10.0) ** 2 - (yh / 8.5) ** 2, 0, 1))
+        rm = 1 - (lat / 5.2) ** 2 - ((yh - 2.6) / 4.6) ** 2
+        xh_m = np.where(rm > 0, 5.5 + 5.2 * np.sqrt(np.clip(rm, 0, 1)), -1e9)
+        xh = np.maximum(xh_h, xh_m)
         if p['back']:
-            hmat = named_head_mat(-10.0 * depth, fhv * 8.5, fhu * 10.0)
+            hmat = named_head_mat(-xh_h, yh, lat)
         else:
-            hmat = named_head_mat(10.0 * depth, fhv * 8.5, -fhu * 10.0)
+            hmat = named_head_mat(xh, yh, -lat)
     if STYLE['senior'] and not p['back']:
         dith = ((XX.astype(int) + YY.astype(int)) % 2) == 0
         ring = ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 8.2 * kh, 5.6 * kh) & ~muzzle & ~blaze & (dith | ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 6.6 * kh, 4.4 * kh))
@@ -696,6 +708,8 @@ def render_front(**kw):
     if p['back']:
         hmat = np.full((S, S), MAT['ZH'])
     hl = level(hb)
+    if p['back']:
+        head = head & ~bodym
     c.put_mat(head, hmat, hl)
     if p['back']:
         for f in p['fx']:
@@ -712,8 +726,8 @@ def render_front(**kw):
     }
     pat, cm = eyes[p['eye']]
     for side in (-1, 1):
-        ex = int(round(hxc + side * 5.6 * kh - 2 + lkx * 0.6))
-        ey = int(round(hyc - 4 * kh + lky * 0.6))
+        ex = int(math.floor(hxc + side * 5.8 * kh + lkx * 0.6)) - 2
+        ey = int(math.floor(hyc - 1.6 * kh + lky * 0.6)) - 2
         if p['eye'] == 'wide':
             ey -= 1
         pp = pat if side == 1 else [r[::-1] for r in pat]
@@ -725,7 +739,7 @@ def render_front(**kw):
         if p['blush']:
             c.stamp(['BB'], int(round(hxc + side * 6.5 * kh - 1)), int(round(hyc + 2.5 * kh)), {'B': RAMP['pink'][1]})
     nx = int(round(hxc - 1 + lkx * 0.8))
-    ny = int(round(hyc + 2.5 * kh + lky * 0.6 - p['nose']))
+    ny = int(round(hyc + 1.2 * kh + lky * 0.6 - p['nose']))
     mouths = {
         'closed': ['.NN.', '..O.', '.O.O'],
         'chew':   ['.NN.', '.O..', 'O.O.'],
