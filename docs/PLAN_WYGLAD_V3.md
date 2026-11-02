@@ -114,3 +114,6 @@ A0 -> A1 -> (A2, A3 równolegle po A1) -> A4 -> A5 -> A6 -> A8; A7 po A5. Najpie
 - Gotowych świnek ani darmowych sprite'ów gryzoni nie ma (research §7), więc wzorcem są wyłącznie zdjęcia właściciela; zewnętrzne potoki 3D -> pixel art (Blender add-ony) odrzucone (research §6).
 - Środowisko ma tylko numpy i Pillow (brak scipy, skimage, opencv, sklearn): CIEDE2000, k-means i szum piszę sam w numpy; gotowe biblioteki służą za wzór formuł (research §0, §2).
 - Zdjęcia nie pokazują wszystkich widoków (np. brak tyłu Neda): nieznane części ustalam konwencją i oznaczam w `spec` jako "domysł".
+
+## Status wykonania (2026-11-02)
+A0, A1, A2, A3, A5, A6 i A8 wykonane (z ograniczeniami); A4 częściowo, A7 pominięta. Szczegóły i uczciwa ocena: `docs/AUDYT_WYGLAD_V3.md`.

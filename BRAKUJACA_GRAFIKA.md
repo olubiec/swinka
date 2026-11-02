@@ -48,3 +48,13 @@ The five borrowed item icons now have their own: `soft_pellets`, `warm_house_bed
 | Icons 107-119 (8 patterns, hide, fence, feeder, bedding, trait_skittish) | done | `icons_16.png`, `.icon-pattern-*` etc. |
 | Decor: 40 shop items in an atlas | done | `assets/decor/decor.png`, `decor.json`, proposed `decor_items.json` |
 | Code that uses all this (per-pig life, unlocks, rotation playback, decor drawing, new slots) | **not done**, contracts T1-T10 in `docs/PLAN_GRAFIK_V2.md` | - |
+
+## Appearance round 3 (A0-A8, `docs/PLAN_WYGLAD_V3.md`, audit `docs/AUDYT_WYGLAD_V3.md`)
+| Item | Status | Where |
+| --- | --- | --- |
+| Photo specs of the five pigs | done | `docs/reference/pigs/spec/` |
+| Model-space coat engine, fur, rosette whorls | done | `tools/art/coatgen.py`, `fur.py`, `whorls.py` |
+| Baked sheets of the five named pigs (5 stages) | done | `assets/sprites/pigs/<id>/<stage>/`, `pigs.json` |
+| Five new generic patterns | done | `palettes.json` ids `brindle.*`, `magpie.*`, `tortoiseshell.*`, `belt.*`, `blaze_only.*` |
+| Curly rex whiskers, per-breed heads, 128 px portraits, new pattern icons | not done | audit |
+| Code that loads `pigs.json` | **not done** (outside graphics) | - |

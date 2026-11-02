@@ -74,4 +74,6 @@ def field(key, u, v, w):
                 near = (di < cs[ci][2] * 1.5) & (dj < cs[cj][2] * 1.5)
                 dif = di - dj
                 d = np.where(near & (np.abs(dif) < 0.7) & ~core, -1.2, np.where(near & (dif > 0.7) & (dif < 1.7) & ~core, np.maximum(d, 0.6), d))
+    if key == 'rosette':
+        d = d * 1.7      # generic coats have no colour change in the whorls: the light has to carry them
     return d, ray, core

@@ -95,3 +95,6 @@ Owner: wygląd świnek słaby (łaty, układ kolorów, sierść, rozetki). Napis
 ## 2026-11-02 A1 silnik maści w przestrzeni modelu (done)
 `tools/art/coatgen.py`: szum 3D (numpy), warping, dither o progu stałym na powierzchni (bez migotania), sloty Q0-Q3 z własnymi rampami i wzory pięciu świnek liczone z punktu na powierzchni (ciało: u,phi; głowa: xh,yh,zh). Podpięte w `pig.py` (`set_style(named=...)`, strona boczna) i `yaw.py` (obrót). Strefy wzorów generycznych dostały organiczny warping (`body_zones`). Brak szwu, ten sam wzór w idle i turn. Dalsze dopracowanie wzorów w A5.
 Eksport arkuszy pięciu świnek i regeneracja arkuszy generycznych: A5/A6 (wymaga pełnego `verify_palettes`).
+
+## 2026-11-02 A2-A8 wygląd V3 (done z ograniczeniami)
+Sierść (`fur.py`), rozetki (`whorls.py`), obrys selektywny, arkusze pięciu świnek (`export_named.py`), pięć nowych wzorów generycznych, regeneracja wszystkich kształtów. Testy: verify_palettes 0 różnic, check_sprites, anim-test, palette-test, web-smoke OK. Ocena i braki: `docs/AUDYT_WYGLAD_V3.md`.
