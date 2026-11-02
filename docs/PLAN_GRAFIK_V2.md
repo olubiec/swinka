@@ -135,3 +135,6 @@ Szacunek: G0 0,5 d, G1 1,5 d, G2 1 d, G3 2 d, G4 0,5 d, G5 1 d, G6 0,5 d, G7 2 d
 5. Pięć świnek rozpoznawalnych ze zdjęć (arkusz porównawczy zatwierdzony wzrokiem).
 6. 40 przedmiotów dekoracji narysowane i widoczne w scenie 240x130 po przycięciu.
 7. `check_sprites.py` i test rozmiarów zielone; paczka grafik poniżej 25 MB przyrostu.
+
+## Status wykonania (2026-11-02)
+G0-G8 wykonane (poza kodem gry, który jest kontraktem). Wynik i dowody: `docs/AUDYT_GRAFIK_V2_FINAL.md`, dziennik: `docs/VISUAL_LOG.md`. Odstępstwa od planu: 8 kształtów zamiast 7 (dodano `smooth_lean` jako następcę starego id `skinny`), `rotation.json` zamiast pól `col` w `animations.json` (test `anim-test` wymaga dokładnie 60 wpisów), `palettes.json` zachowuje format v1 dla istniejących ładowarek (`v2` jako dodatek), `decor_items.json` jako propozycja zamiast zmiany `items_decor.json`.

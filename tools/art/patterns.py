@@ -58,7 +58,7 @@ def fade_ramp(r):
     return out
 
 
-# pattern: zone -> slot. 'tick': slot whose shades speckle the coat (roan). 'eye_pink': himalayan.
+# pattern: zone -> slot. 'tick': 'light' = lightened shades of the zone's own colour (roan). 'eye_pink': himalayan.
 def pat(**kw):
     d = dict(N1='W', N2='W', H='A', C='A', S='A', M='A', R='A', T='A', B='W', L='W')
     d.update({k: v for k, v in kw.items() if k in d})
@@ -74,7 +74,7 @@ PATTERNS = {
     'tricolor': pat(M='K'),
     'dutch': pat(S='W', T='W', B='W', L='W', R='A', M='A'),
     'himalayan': pat(N1='K', N2='K', H='W', C='W', S='W', M='W', R='W', T='W', L='K'),
-    'roan': pat(N1='A', N2='K', B='A', L='K', tick='W'),
+    'roan': pat(N1='A', N2='K', B='A', L='K', tick='light'),
     'bicolor_head': pat(H='B', C='B', S='W', M='W', R='W', T='W', L='W', X1='B'),
     'saddle': pat(H='K', S='A', M='K', R='A', T='W', B='A', L='A'),
     'two_tone': pat(M='B', R='B', T='B', B='B', L='A'),
@@ -97,10 +97,18 @@ def slot_ramp(palette, slot, senior=False):
     return fade_ramp(r) if senior else r
 
 
+def lighten(r, k=0.42):
+    return [[int(round(v + (255 - v) * k)) for v in c] for c in r]
+
+
 def zone_ramp(pattern, palette, zone, senior=False, tick=False):
     p = PATTERNS[pattern]
-    slot = p['tick'] if (tick and 'tick' in p) else p[zone]
-    return slot_ramp(palette, slot, senior)
+    r = slot_ramp(palette, p[zone], senior)
+    if tick and p.get('tick') == 'light':
+        return lighten(r)
+    if tick and 'tick' in p:
+        return slot_ramp(palette, p['tick'], senior)
+    return r
 
 
 RUST = ramp('dc7445', 'bb552e', '923c21', '6c2a17')

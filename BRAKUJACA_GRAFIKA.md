@@ -36,3 +36,15 @@ The five borrowed item icons now have their own: `soft_pellets`, `warm_house_bed
 | V6 screens and minigames review | done |
 | V7 animation closure (`docs/ANIMATIONS.md`) | done |
 | V8 final acceptance (`docs/AUDYT_WIZUALNY_FINAL.md`; Windows walk-through left to the human) | done except Windows |
+
+## Graphics round 2 (G0-G8, `docs/PLAN_GRAFIK_V2.md`, log in `docs/VISUAL_LOG.md`)
+| Item | Status | Where |
+| --- | --- | --- |
+| Coats: 13 zones, 8 patterns x 10 palettes, zone-coded master sheets | done | `tools/art/patterns.py`, `assets/sprites/palettes.json` (v1-compatible ids + `v2`) |
+| Rotation: `turn` 0/30/60/90 degrees, `turn_smooth` 8, `idle_34` 4 | done | `tools/art/yaw.py`, `rotation.json` per stage folder |
+| Breeds x builds: 8 shapes x 5 stages (hairless skinny dropped, reason in `docs/RASY.md`) | done | `assets/sprites/breeds/<shape>/`, `breeds.json` v2 |
+| Ageing: senior light fade + grey muzzle, legend peak look + gold outline + sparkles | done | sheets, `palettes.json` `@senior` |
+| Five named pigs (Ned, Kuki, Glen, James, Racuch) | done | `docs/reference/pigs/looks.json`, `docs/album/compare/` |
+| Icons 107-119 (8 patterns, hide, fence, feeder, bedding, trait_skittish) | done | `icons_16.png`, `.icon-pattern-*` etc. |
+| Decor: 40 shop items in an atlas | done | `assets/decor/decor.png`, `decor.json`, proposed `decor_items.json` |
+| Code that uses all this (per-pig life, unlocks, rotation playback, decor drawing, new slots) | **not done**, contracts T1-T10 in `docs/PLAN_GRAFIK_V2.md` | - |
