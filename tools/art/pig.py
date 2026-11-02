@@ -627,10 +627,10 @@ def render_front(**kw):
     # the same model as yaw.render_yaw(90): body radii, head centre and head radii
     chub = STYLE['build'] == 'chubby'
     bry = 10.5 * kb * (1.05 if chub else 1.0) + p['breathe']
-    brz = 13.5 * kb * (1.12 if chub else 0.9 if STYLE['build'] in ('lean', 'skinny') else 1.0)
+    brz = 12.6 * kb * (1.12 if chub else 0.9 if STYLE['build'] in ('lean', 'skinny') else 1.0)
     brx = min(17.0 * kb, 20.5) if chub else 17.0 * kb
     byc = FLOOR - 1.5 - bry
-    hxc, hyc = cx + lkx * 0.7, byc - 5.0 * kb + 2.5 + lky * 0.5
+    hxc, hyc = cx + lkx * 0.7, byc - 5.0 * kb + 1.2 + lky * 0.5
     bodym = np.zeros((S, S), bool)
     # tułów
     if p['body']:
@@ -666,7 +666,7 @@ def render_front(**kw):
 
     # uszy (za głową)
     for side in (-1, 1):
-        ex, ey = hxc + side * 9.6 * kh, hyc - 5.9 * kh - p['ear'] * (1 if side == 1 else 0.5)
+        ex, ey = hxc + side * 10.8 * kh, hyc - 5.9 * kh - p['ear'] * (1 if side == 1 else 0.5)
         ear = ell(ex, ey, 3.8 * kh, 2.7 * kh)
         inner = ell(ex - side * 0.3, ey + 0.4, 2.1 * kh, 1.4 * kh)
         if p['back']:
@@ -675,12 +675,12 @@ def render_front(**kw):
         if not p['back']:
             c.put_mat(inner & ear, MAT['pink'], 2)
 
-    head = ell(hxc, hyc, 10.0 * kh, 8.5 * kh)
+    head = ell(hxc, hyc, 11.6 * kh, 9.3 * kh)
     if STYLE['breed'] == 'rosette':
-        head = head | ell(hxc + 0.5, hyc - 8.6 * kh, 4.0 * kh, 2.0 * kh)
-    hu = (lx - hxc) / (10 * kh)
-    hv = (ly - hyc) / (8.5 * kh)
-    hb = -(0.35 * hu + 0.9 * hv) + 0.15
+        head = head | ell(hxc + 0.5, hyc - 9.4 * kh, 4.0 * kh, 2.0 * kh)
+    hu = (lx - hxc) / (11.6 * kh)
+    hv = (ly - hyc) / (9.3 * kh)
+    hb = np.maximum(-(0.35 * hu + 0.9 * hv) + 0.15, -0.2)      # no darkest rim under the chin (it read as a smile)
     blaze = np.abs(lx - hxc - lkx * 0.3) < (1.2 + np.maximum(ly - (hyc - 9 * kh), 0) * 0.28)
     muzzle = ell(hxc + lkx * 0.4, hyc + 4.6 * kh, 5.2 * kh, 3.4 * kh)
     hmat = np.full((S, S), MAT['ZC'])
@@ -689,10 +689,10 @@ def render_front(**kw):
     hmat[blaze] = MAT['ZN1']
     if STYLE['named']:
         # head frame of the yaw renderer: xh = depth (the face points at the camera), yh down, zh lateral (+z = screen left from the front)
-        # the exact surface of yaw.render_yaw(90): head ellipsoid (9.5, 8.5, 10) and muzzle ellipsoid (5.2, 4.6, 5.2) at (5.5, 2.6, 0)
+        # the exact surface of yaw.render_yaw(90): head ellipsoid (9.5, 9.3, 11.6) and muzzle ellipsoid (5.2, 4.6, 5.2) at (5.5, 2.6, 0)
         lat = (lx - hxc) / kh
         yh = (ly - hyc) / kh
-        xh_h = 9.5 * np.sqrt(np.clip(1 - (lat / 10.0) ** 2 - (yh / 8.5) ** 2, 0, 1))
+        xh_h = 9.5 * np.sqrt(np.clip(1 - (lat / 11.6) ** 2 - (yh / 9.3) ** 2, 0, 1))
         rm = 1 - (lat / 5.2) ** 2 - ((yh - 2.6) / 4.6) ** 2
         xh_m = np.where(rm > 0, 5.5 + 5.2 * np.sqrt(np.clip(rm, 0, 1)), -1e9)
         xh = np.maximum(xh_h, xh_m)
@@ -708,6 +708,9 @@ def render_front(**kw):
     if p['back']:
         hmat = np.full((S, S), MAT['ZH'])
     hl = level(hb)
+    if p['body'] and not p['back']:
+        occl = dil(dil(head)) & bodym & ~head          # the body in the shade right under the head, like the yaw renderer
+        c.lvl[occl] = np.maximum(c.lvl[occl], 1)
     if p['back']:
         head = head & ~bodym
     c.put_mat(head, hmat, hl)

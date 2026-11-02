@@ -161,7 +161,7 @@ def head_slots(pid, xh, yh, zh):
         # brown head (crown, ears, eye ring, cheeks); white only on a narrow blaze, the muzzle cone and the chin
         blaze = (zh < 0.8 + 0.10 * np.maximum(xh, 0) + 0.3 * n) & (yh < 2.0) & (xh > 1.0)
         muz = (xh + n > 7.0) & (zh < 4.4 - 0.15 * np.maximum(-yh, 0)) & (yh > -1.2)
-        chin = (yh > 2.4) & (xh + n > 4.6)
+        chin = ((yh > 2.4) & (xh + n > 4.6)) | (yh > 5.4 + n)      # the underside of the jaw is white too (no dark rim under the chin)
         out = np.where(blaze | muz | chin, 0, 1)
     elif pid == 'kuki':
         blaze = (xh + n > 5.0 - 0.5 * yh) & (zh < 2.8) & (yh < 3.5)

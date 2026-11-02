@@ -66,13 +66,13 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
     if build == 'chubby':
         brx = min(brx, 20.5)
         bry *= 1.05
-    brz = 13.5 * kb * (1.12 if build == 'chubby' else 0.9 if build in ('lean', 'skinny') else 1.0)
+    brz = 12.6 * kb * (1.12 if build == 'chubby' else 0.9 if build in ('lean', 'skinny') else 1.0)   # shoulders narrower than the head seen from the front
     bx = 29.0 - (1.0 if build == 'chubby' else 0.0)
     by = FLOOR - 1.5 - bry
     hdx = 13.5 * (1.0 if build == 'chubby' else kb)
     t = min(1.0, deg / 90.0)
-    hxc, hyc = bx + hdx, by - 5.0 * kb + 2.5 * t * t   # head hangs lower in front of the chest when facing us
-    hrx, hry, hrz = 9.5 * kh, 8.5 * kh, 10.0 * kh
+    hxc, hyc = bx + hdx, by - 5.0 * kb + 1.2 * t * t   # head hangs a little lower in front of the chest when facing us
+    hrx, hry, hrz = 9.5 * kh, (8.5 + 0.8 * t * t) * kh, (10.0 + 1.6 * t * t) * kh   # the face is broader and taller seen from the front
     px = bx + 4.0                                  # pivot: middle of the pig
     # the whole pig drifts so that it stays centred while the long axis turns towards the viewer
     cv = Canvas()
@@ -161,7 +161,7 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
     for side in (-1, 1):
         ex = hxc - (4.6 - 0.6 * t) * kh
         ey = hyc - 5.9 * kh - ear
-        ez = side * (7.0 + 2.6 * t) * kh
+        ez = side * (7.0 + 3.8 * t) * kh
         he = _hit(ex, ey, ez, 3.8 * kh, 2.7 * kh, (1.5 + 2.3 * t * t) * kh, th, px)
         take_e = put('ear%d' % side, he, MAT['ZC'])
         # inner pink on the face turned towards the viewer / front
@@ -183,7 +183,7 @@ def render_yaw(deg, breathe=0.0, eye='open', ear=0.0, nose=0, look=0.0, mouth='c
         headmask |= tk & (MATIDX >= 0) & (ZB >= -1e8)
     body_front = parts['body'][0] & ~headmask
     occl = dil(dil(headmask)) & body_front & ~headmask
-    LV = np.where(occl, np.maximum(LV, 2), LV)
+    LV = np.where(occl, np.maximum(LV, 1), LV)
     cv.put_mat(vis, np.where(vis, MATIDX, 0), LV)
     # shadow
     if shadow > 0.05:

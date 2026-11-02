@@ -50,3 +50,8 @@ Loader musi znać `assets/sprites/pigs/pigs.json` (arkusz per świnka, bez `pale
 - Z tyłu głowa i korzenie uszu są zasłonięte przez tułów, więc widać zad z łatami. Biała końcówka zadu Racucha liczona bez kąta phi (nieokreślony na biegunie), stąd dwie białe kreski zamiast plamy.
 - Arkusze: wszystkie kształty i pięć świnek zregenerowane. `check_sprites`, `anim-test`, `palette-test`, `web-smoke` OK. Podgląd: `docs/album/views/`.
 - `verify_palettes`: TOTAL DIFFERENCES 0 (kształt `smooth_normal`).
+
+## Korekta kształtu z przodu (2026-11-02)
+- Z przodu świnki były płaskie i szerokie, z małą głową zapadniętą w tułów. Teraz bryła jest gruszkowata: barki węższe (promień boczny 12,6 zamiast 13,5), głowa szersza i wyższa (11,6 x 9,3), wyżej osadzona, uszy dalej od siebie. Parametry boczne rosną z kątem obrotu w `yaw.py`, więc profil się nie zmienia, a obrót płynnie dochodzi do widoku z przodu.
+- Zniknął ciemny łuk pod brodą (efekt ciemnego dolnego brzegu głowy). U Neda spód szczęki jest biały.
+- Przegląd animacji: arkusze Neda, Racucha, Kukiego i Glena (60 animacji, klatka środkowa). Pozy z przodu, kapelusz, miska i tunel siedzą poprawnie. Testy: `check_sprites`, `anim-test`, `palette-test`, `web-smoke` OK.
