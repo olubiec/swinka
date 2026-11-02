@@ -446,6 +446,134 @@
     "temperature_min": 28
    },
    "cooldown_s": 600
+  },
+  {
+   "id": "following",
+   "animation": "follow",
+   "duration_s": 4,
+   "effects": {
+    "mood": 4
+   },
+   "conditions": {
+    "companion": true,
+    "energy_min": 30
+   },
+   "cooldown_s": 900,
+   "satisfies": [
+    "mood"
+   ],
+   "base_weight": 0.05,
+   "description": "Trotting after the companion"
+  },
+  {
+   "id": "sleeping_together",
+   "animation": "sleep_together",
+   "duration_s": [
+    20,
+    60
+   ],
+   "effects": {
+    "energy": 10,
+    "mood": 4
+   },
+   "conditions": {
+    "companion": true,
+    "energy_max": 45
+   },
+   "cooldown_s": 1800,
+   "satisfies": [
+    "energy"
+   ],
+   "base_weight": 0.1,
+   "description": "Napping next to the companion"
+  },
+  {
+   "id": "chirping",
+   "animation": "chirp",
+   "duration_s": 2,
+   "effects": {
+    "mood": 3
+   },
+   "conditions": {
+    "mood_min": 50
+   },
+   "cooldown_s": 600,
+   "daily_limit": {
+    "baby": 8,
+    "junior": 2,
+    "adult": 0,
+    "senior": 0,
+    "legend": 0
+   },
+   "satisfies": [
+    "mood"
+   ],
+   "base_weight": 0.05,
+   "description": "Quiet baby chirping"
+  },
+  {
+   "id": "dancing",
+   "animation": "dance",
+   "duration_s": 4,
+   "effects": {
+    "mood": 4,
+    "energy": -2
+   },
+   "conditions": {
+    "mood_min": 85,
+    "energy_min": 40
+   },
+   "cooldown_s": 3600,
+   "daily_limit": {
+    "baby": 1,
+    "junior": 3,
+    "adult": 2,
+    "senior": 0,
+    "legend": 1
+   },
+   "satisfies": [
+    "mood"
+   ],
+   "base_weight": 0.04,
+   "description": "A happy little dance when the mood is very high"
+  },
+  {
+   "id": "yawning",
+   "animation": "yawn",
+   "duration_s": 2,
+   "effects": {
+    "energy": 1
+   },
+   "conditions": {
+    "energy_max": 65
+   },
+   "cooldown_s": 1200,
+   "base_weight": 0.04,
+   "description": "A big yawn when tired"
+  },
+  {
+   "id": "beaming",
+   "animation": "front_happy",
+   "duration_s": 3,
+   "effects": {
+    "mood": 3
+   },
+   "conditions": {
+    "mood_min": 90
+   },
+   "cooldown_s": 7200,
+   "daily_limit": {
+    "baby": 2,
+    "junior": 2,
+    "adult": 2,
+    "senior": 2,
+    "legend": 2
+   },
+   "satisfies": [
+    "mood"
+   ],
+   "base_weight": 0.04,
+   "description": "Turns to face you with a happy smile"
   }
  ],
  "events": {

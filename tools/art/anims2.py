@@ -135,9 +135,9 @@ add('heat_flop', fr, 5, True, 'Upał: leży rozpłaszczona z tylnymi łapkami wy
 fr = []
 for i in range(8):
     zz = [fx(Z_SM, 52, 22 - (i % 4)), fx(Z_BIG, 57, 12 - (i % 4))] if i >= 2 else [fx(Z_SM, 52, 22)]
-    p = dict(LIE); p.update(bx=12 - (i % 4 == 1), eye='closed', whisk=0, shadow=0)
-    pigimg = hide_x(flip(R(**p)), x0=30)
-    fr.append(compose(pigimg, house(30, 32, 31), fxl(zz)))
+    p = dict(LIE); p.update(bx=7 - (i % 4 == 1), eye='closed', whisk=0, shadow=0)
+    pigimg = hide_x(flip(R(**p)), x0=36)
+    fr.append(compose(pigimg, house(36, 28, 30), fxl(zz)))
 add('sleep_house', fr, 4, True, 'Sen w domku: z wejścia wystaje tylko nosek')
 
 # ---------------------------------------------------------------- emocje
