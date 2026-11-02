@@ -20,3 +20,12 @@ Log of waves V0-V8 (`docs/VISUAL_WAVES.md`), newest at the bottom.
 - Metric (idle frame 0): adult vs senior differ in 39.7% of opaque pixels (target >= 4%); senior vs legend 12.7%. Reviewed contact sheets of idle, walk, popcorn, eat, sleep, sit, sleep_house at x3-x6.
 - New `tools/art/export_sprites.py` (writes sheet, x2, json; baby re-export is byte-identical to the committed files) and `tools/art/check_sprites.py` (sizes, x2 equality, tables, empty frames, border clipping; `tools/qa/sprite-check.js` from W9-09 is not merged yet). All 8 variants pass; only prop animations (ball_push, house_*, tunnel_*, peek, sleep_house) clip by design, same as before.
 - `verify_palettes.py` re-run on the new senior/legend: 0 differences.
+
+## V3 Breeds (2026-11-02)
+- `pig.py` STYLE has `breed`; `set_style(age, coat, breed)`. Breeds are body-level so all 60 animations follow:
+  - `chubby`: kb x1.07, kh x1.05, body height extra x1.05 (total about x1.12), rounder belly (superellipse power 2.3). Decision: width is scaled less than 1.12 and body is shifted 1 px left because x1.12 made `chew_stick` and `heat_flop` clip the 64 px frame; head offset is not scaled.
+  - `skinny`: kb x0.92, kh x0.96, thinner legs.
+  - `rosette`: three swirl tufts (dark ring with gap plus light centre) on back/shoulder in body-local coordinates, plus a small crest on the head (side and front views).
+  - `peruvian`: fringe strands over the eyes (side and front) and a hair skirt from the belly to 2 px above the floor line that hides most of the feet; the hem lifts where a foot is raised so walk, run and popcorn still read. Floor line stays at y=59.
+- `tools/art/export_breeds.py` generates 4 breeds x 5 stages (sheet, x2, json) into `assets/sprites/breeds/<breed>/<stage>/` and `assets/sprites/breeds.json` (smooth uses the root stage folders). 20 variants = 8.4 MB added (package budget 60 MB).
+- Checks: `check_sprites.py` passes on all 20 (1024x3840 / 2048x7680, 60 animations, 592 frames, tables equal across breeds, no clipping except the known prop animations). Reviewed contact sheets of all 60 animations (middle frame, x2) for peruvian, rosette, chubby and skinny at adult stage, plus front views; no open defect. `verify_palettes.py` extended: every breed at adult x every palette remaps pixel-exactly.

@@ -33,6 +33,13 @@ def main():
             diff = int((remap(ginger[st], data['palettes'][pid]) != ref).any(axis=2).sum())
             print(f'{st:7s} {pid:12s} differing pixels: {diff}')
             bad += diff
+    for br in ('chubby', 'skinny', 'rosette', 'peruvian'):   # breeds at adult stage
+        _, gb = sheets.render('adult', 'ruda', br)
+        for pid, coat in palettes.PALETTES.items():
+            _, ref = sheets.render('adult', coat, br)
+            diff = int((remap(gb, data['palettes'][pid]) != ref).any(axis=2).sum())
+            print(f'{br:8s} adult {pid:12s} differing pixels: {diff}')
+            bad += diff
     for pid, folder in (('agouti', 'companion_agouti'), ('black_white', 'companion_black_white'), ('cream', 'companion_cream')):
         comm = np.array(Image.open(os.path.join(ROOT, 'assets', 'sprites', folder, 'spritesheet.png')).convert('RGBA'))
         diff = int((remap(ginger['adult'], data['palettes'][pid]) != comm).any(axis=2).sum())

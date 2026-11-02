@@ -34,7 +34,7 @@ Przy ponownym generowaniu wariantu trzeba go podłożyć w katalogu eksportu.
 | V0 baseline | done |
 | V1 coats (palettes.json, JS/C# remap, verify_palettes) | done |
 | V2 senior/legend look old | done |
-| V3 breeds | open |
+| V3 breeds (chubby, skinny, rosette, peruvian x 5 stages, `assets/sprites/breeds/`, `breeds.json`) | done |
 | V4 wire breeds and palettes | open |
 | V5 own icons | open |
 | V6 screens and minigames review | open |

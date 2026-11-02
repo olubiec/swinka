@@ -1,0 +1,26 @@
+{
+ "default": "smooth",
+ "note": "breed -> folder holding <stage>/spritesheet.png etc. smooth uses the root stage folders",
+ "breeds": {
+  "smooth": {
+   "folder": "",
+   "description": "Smooth"
+  },
+  "chubby": {
+   "folder": "breeds/chubby",
+   "description": "Chubby"
+  },
+  "skinny": {
+   "folder": "breeds/skinny",
+   "description": "Skinny"
+  },
+  "rosette": {
+   "folder": "breeds/rosette",
+   "description": "Rosette"
+  },
+  "peruvian": {
+   "folder": "breeds/peruvian",
+   "description": "Peruvian"
+  }
+ }
+}

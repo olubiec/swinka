@@ -56,6 +56,10 @@ def set_style(age='adult', coat='ruda', breed='smooth'):
         STYLE.update(senior=True)
     elif age == 'legend':
         STYLE.update(senior=True, gold=True)
+    if breed == 'chubby':
+        STYLE.update(kb=STYLE['kb'] * 1.07, kh=STYLE['kh'] * 1.05)   # plus 5% extra body height in render_side
+    elif breed == 'skinny':
+        STYLE.update(kb=STYLE['kb'] * 0.92, kh=STYLE['kh'] * 0.96)
 
 def eyec():
     return COATS.get(STYLE['coat'], {}).get('eye', EYE)
@@ -63,6 +67,7 @@ def eyec():
 
 def ramp(name):
     return COATS.get(STYLE['coat'], {}).get(name, RAMP[name])
+coat_ramp = ramp   # alias: render_side has a local variable named ramp
 OUT = hx('3a1d17')
 EYE = hx('2b1712')
 HL = hx('ffffff')
@@ -181,10 +186,14 @@ def render_side(**kw):
     c = Canvas()
     kb, kh = STYLE['kb'], STYLE['kh']
     bx, brx, bry = p['bx'], p['brx'] * kb, p['bry'] * kb
+    if STYLE['breed'] == 'chubby':
+        brx = min(brx, 20.5)   # keep the widest poses (heat_flop) inside the 64 px frame
+        bx -= 0.0 if p['back_out'] else 1.0
+        bry *= 1.05            # rounder, taller belly (total body height x1.12 of the stage value)
     if STYLE['senior']:
         bry *= 0.93            # lower, sagging back line
     by = FLOOR - 1.5 - bry - p['lift']
-    hxc, hyc = bx + p['hdx'] * kb, by + p['hdy'] * kb + (1.0 * kb if STYLE['senior'] else 0.0)
+    hxc, hyc = bx + p['hdx'] * (1.0 if STYLE['breed'] == 'chubby' else kb), by + p['hdy'] * kb + (1.0 * kb if STYLE['senior'] else 0.0)
     hrx, hry = p['hrx'] * kh, p['hry'] * kh
     pivx, pivy = bx + p['piv'] * kb, FLOOR - 1.0 - p['lift']
     a = math.radians(p['rot'])
@@ -234,7 +243,7 @@ def render_side(**kw):
         fy0 = fbot - 1 + feet[i][1] - p['feet_hidden']
         if p['legs']:
             top = by + bry - 3
-            leg = capsule(fx0 + 1.0, top, fx0 + 1.2, fy0 + 0.5, 1.35)
+            leg = capsule(fx0 + 1.0, top, fx0 + 1.2, fy0 + 0.5, 1.05 if STYLE['breed'] == 'skinny' else 1.35)
             c.put_mat(leg, MAT['orange'], 2 if far else 1)
         X, Y = fwd(fx0 + 0.5, fy0 + 0.5)
         col = RAMP['pink'][2 if far else 1]
@@ -248,7 +257,7 @@ def render_side(**kw):
     # tułów
     u = (lx - bx) / brx
     v = (ly - by) / bry
-    pw = np.where(v > 0, 2.7, 2.0)
+    pw = np.where(v > 0, 2.3 if STYLE['breed'] == 'chubby' else 2.7, 2.0)
     body = (np.abs(u) ** pw + np.abs(v) ** pw) <= 1.0
     if p['fluff']:
         tuft = dil(body) & ~body & (v < 0.3) & (((XX + 2 * YY).astype(int) % 4) == 0)
@@ -271,6 +280,8 @@ def render_side(**kw):
 
     # głowa (czaszka + pyszczek)
     head = ell(hxc, hyc, hrx, hry) | ell(hxc + 5.5 * kh, hyc + 2.6 * kh, 5.0 * kh, 4.6 * kh)
+    if STYLE['breed'] == 'rosette':   # small crest on top of the head
+        head = head | ell(hxc + 1.5 * kh, hyc - hry - 0.1 * kh, 3.4 * kh, 2.0 * kh)
     hu = (lx - hxc) / hrx
     hv = (ly - hyc) / hry
     hb = -(0.42 * hu + 0.88 * hv) + 0.1
@@ -288,6 +299,18 @@ def render_side(**kw):
     occl = dil(dil(head)) & body & ~head
     lv = np.where(occl, np.maximum(lv, 2), lv)
     c.put_mat(body, mat, lv)
+    if STYLE['breed'] == 'rosette':
+        # swirl tufts: dark ring with a gap plus a light centre, fixed to the body (local coordinates)
+        for (su, sv, rr) in ((-0.32, -0.42, 3.0), (0.45, -0.48, 2.8), (-0.3, 0.1, 2.4)):
+            cxs, cys = bx + su * brx, by + sv * bry
+            dd = np.hypot(lx - cxs, ly - cys)
+            ang = np.arctan2(ly - cys, lx - cxs)
+            ring = (dd >= rr * 0.45) & (dd < rr) & (np.abs(((ang - dd * 0.9) + math.pi) % (2 * math.pi) - math.pi) > 0.7)
+            ctr = dd < rr * 0.45
+            ring &= body & ~head & (mat != MAT['white'])
+            ctr &= body & ~head & (mat != MAT['white'])
+            c.put_mat(ring, MAT['orange'], 3)
+            c.put_mat(ctr, MAT['orange'], 0)
 
     # dalekie ucho (za głową)
     ey = hyc - hry + 2.6 * kh - p['ear']
@@ -335,6 +358,10 @@ def render_side(**kw):
     if p['eye'] == 'wide':
         EY -= 1
     c.stamp(pat, EX, EY, cm)
+    if STYLE['breed'] == 'peruvian' and p['eye'] != 'none':   # fringe falling over the eyes
+        for k, (dxk, hk) in enumerate(((-1, 1), (0, 2), (1, 2), (2, 2), (3, 1), (4, 1))):
+            for hh in range(-1, hk):
+                c.put_px(EX + dxk, EY + hh - 1 + (1 if p['eye'] == 'wide' else 0), coat_ramp('orange')[3 if (k + hh) % 2 else 2])
 
     # nos i pyszczek
     NX, NY = fwd(hxc + 9.2 * kh, hyc + 0.6 * kh - p['nose'])
@@ -396,6 +423,17 @@ def render_side(**kw):
     if p['scratch'] is None:
         draw_foot(1, False)
     draw_foot(3, False)
+    if STYLE['breed'] == 'peruvian':
+        # long hair skirt: hangs from the belly down to just above the floor line (hides most of the feet)
+        ix = np.floor(lx).astype(int)
+        raise_ = np.zeros_like(lx)
+        for i in range(4):
+            fdx, fdy = feet[i]
+            raise_ += max(0.0, -fdy) * np.exp(-((lx - (bx + base[i][0] + fdx)) / 3.5) ** 2)
+        hem = FLOOR - 2.0 - p['lift'] - raise_ - ((ix % 3) == 0) * 0.9
+        skirt = (np.abs(u) < 0.93 - 0.06 * np.clip((ly - by) / bry - 1.0, 0, 2)) & (ly > by + bry * 0.55) & (ly <= hem)
+        sk_lv = np.where(ly > hem - 1.3, 3, np.where((ix % 2) == 0, 1, 2))
+        c.put_mat(skirt, MAT['orange'], sk_lv)
 
     # siano / jedzenie w pyszczku
     if p['hay']:
@@ -475,6 +513,11 @@ def render_front(**kw):
         for fx0 in (cx - 7 * kb * p['sx'], cx + (4 * kb) * p['sx']):
             c.stamp(['PPP', 'PPP'], int(fx0), FLOOR - 2 + int(oy), {'P': RAMP['pink'][1]})
             c.put_px(int(fx0) + 1, FLOOR - 1 + int(oy), RAMP['pink'][2])
+        if STYLE['breed'] == 'peruvian':   # hair skirt down to the floor, hides the feet
+            ixx = np.floor(lx).astype(int)
+            hem = FLOOR - 2.0 - ((ixx % 3) == 0) * 0.9
+            skirt = (np.abs(lx - cx) < 12.6 * kb) & (ly > byc + bry * 0.35) & (ly <= hem) & (u ** 2 + ((ly - byc) / bry - 0.4) ** 2 <= 1.6)
+            c.put_mat(skirt, MAT['orange'], np.where(ly > hem - 1.3, 3, np.where((ixx % 2) == 0, 1, 2)))
 
     # uszy (za głową)
     for side in (-1, 1):
@@ -486,6 +529,8 @@ def render_front(**kw):
             c.put_mat(inner & ear, MAT['pink'], 2)
 
     head = ell(hxc, hyc, 11.0 * kh, 9.3 * kh)
+    if STYLE['breed'] == 'rosette':
+        head = head | ell(hxc + 0.5, hyc - 9.0 * kh, 3.8 * kh, 2.2 * kh)
     hu = (lx - hxc) / (11 * kh)
     hv = (ly - hyc) / (9.3 * kh)
     hb = -(0.35 * hu + 0.9 * hv) + 0.15
@@ -522,6 +567,11 @@ def render_front(**kw):
             ey -= 1
         pp = pat if side == 1 else [r[::-1] for r in pat]
         c.stamp(pp, ex, ey, cm)
+        if STYLE['breed'] == 'peruvian':   # fringe over the eyes
+            for k in range(-1, 5):
+                for hh in range(-1, 1 + (k in (1, 2))):
+                    c.put_px(ex + (k if side == 1 else 3 - k), ey + hh - (1 if p['eye'] == 'wide' else 0),
+                             coat_ramp('orange')[3 if (k + hh) % 2 else 2])
         if p['blush']:
             c.stamp(['BB'], int(round(hxc + side * 6.5 * kh - 1)), int(round(hyc + 2.5 * kh)), {'B': RAMP['pink'][1]})
     nx = int(round(hxc - 1 + lkx * 0.8))
