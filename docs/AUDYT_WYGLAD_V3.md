@@ -55,3 +55,8 @@ Loader musi znać `assets/sprites/pigs/pigs.json` (arkusz per świnka, bez `pale
 - Z przodu świnki były płaskie i szerokie, z małą głową zapadniętą w tułów. Teraz bryła jest gruszkowata: barki węższe (promień boczny 12,6 zamiast 13,5), głowa szersza i wyższa (11,6 x 9,3), wyżej osadzona, uszy dalej od siebie. Parametry boczne rosną z kątem obrotu w `yaw.py`, więc profil się nie zmienia, a obrót płynnie dochodzi do widoku z przodu.
 - Zniknął ciemny łuk pod brodą (efekt ciemnego dolnego brzegu głowy). U Neda spód szczęki jest biały.
 - Przegląd animacji: arkusze Neda, Racucha, Kukiego i Glena (60 animacji, klatka środkowa). Pozy z przodu, kapelusz, miska i tunel siedzą poprawnie. Testy: `check_sprites`, `anim-test`, `palette-test`, `web-smoke` OK.
+
+## Serduszko Neda, Glen (2026-11-02)
+- Serduszko Neda przesunięte ku grzbietowi (u -0,48, phi 0,78) i powiększone (5,6), nadal po jednej stronie i na ukos 40°. Z profilu czyta się częściowo jako plama, z góry jako serce; widoku z góry w grze nie ma.
+- Glen: rdzawy pasek szerszy i zwężający się na końcach, jaśniejszy połysk grzbietów rozetek. Ucho bez rdzawej smugi.
+- Inwentarz: `docs/INWENTARZ_GRAFIKI.md`. Testy: `check_sprites`, `anim-test`, `palette-test`, `web-smoke` OK.

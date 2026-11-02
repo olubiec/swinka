@@ -86,7 +86,7 @@ RAMPS = {
     'glen': [rp('5a6070', '3b3e49', '25272f', '131419'),    # 0 black with blue-grey sheen
              rp('d08236', 'ae6024', '82431a', '5a2d11'),    # 1 ginger streak
              rp('9a9aa2', '7a7a83', '5c5c64', '404046'),    # 2 grey feet
-             rp('7a8296', '555b6b', '3b3e49', '25272f')],   # 3 sheen highlight
+             rp('98a2ba', '737c92', '4d5466', '2f3340')],   # 3 sheen highlight (rosette ridges read clearly on the black coat)
     'james': [rp('9aa0a8', '787e87', '5a5f68', '3f434b'),   # 0 grey base
               rp('b4bac2', '979da6', '7a808a', '5d626c'),   # 1 light ticks (one step lighter than the base)
               rp('5c5f67', '444750', '2f3138', '1d1e23'),   # 2 dark muzzle / legs
@@ -108,7 +108,7 @@ NZ = {
 }
 
 
-def heart_mask(u, v, w, centre=(-0.40, 0.85), size=5.4, angle=40.0):
+def heart_mask(u, v, w, centre=(-0.48, 0.78), size=5.6, angle=40.0):
     """Ned's heart: on ONE side of the back (the +w side = the side facing the camera in the side view), slanted by `angle` degrees.
     Drawn in the tangent plane of the surface at `centre` (u, phi); implicit heart curve (x^2+y^2-1)^3 - x^2 y^3 < 0."""
     u, v, w = np.asarray(u, float), np.asarray(v, float), np.asarray(w, float)
@@ -136,7 +136,7 @@ def body_slots(pid, u, v, w):
         patch = 1 - sm(0.85, 1.25, np.hypot((sw + 0.27) / 0.36, pw / 1.15))    # ginger hip patch on the back (rosettes sit here)
         out = pick(np.maximum(front, patch), s, phi, 0, 1)
     elif pid == 'glen':
-        streak = (pw > 0.95) & (pw < 1.55) & (np.abs(sw - 0.10 - 0.12 * (pw - 1.2)) < 0.030)
+        streak = (pw > 0.80) & (pw < 1.65) & (np.abs(sw - 0.10 - 0.12 * (pw - 1.2)) < 0.048 - 0.02 * np.abs(pw - 1.2))   # rust stripe on the side, tapering at both ends
         out = np.where(streak, 1, 0)
         _, ray, core = WH.field('glen', u, v, w)
         out = np.where((ray | core) & ~streak, 3, out)
