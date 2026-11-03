@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using Cuy.Core.Pigs;
 
 namespace Cuy.Core
 {
@@ -59,5 +60,27 @@ namespace Cuy.Core
 
         public int Clovers { get; }
         public int Streak { get; }
+    }
+
+    public sealed class OfferUnlockedEventArgs : EventArgs
+    {
+        public OfferUnlockedEventArgs(string pigId)
+        {
+            PigId = pigId;
+        }
+
+        public string PigId { get; }
+    }
+
+    public sealed class PigAdoptedEventArgs : EventArgs
+    {
+        public PigAdoptedEventArgs(PigProfile pig, bool memorial)
+        {
+            Pig = pig;
+            Memorial = memorial;
+        }
+
+        public PigProfile Pig { get; }
+        public bool Memorial { get; }
     }
 }
