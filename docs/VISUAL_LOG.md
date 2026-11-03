@@ -163,3 +163,6 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 ## B12 - świnki w świecie i rekwizyty pulpitu (3.11.2026)
 - `shadow_pig_baby/junior/adult` (fx), specyfikacja `docs/SWIATLO_SWINEK.md`; test 5x5x4 w `pig_shadow.py` (maści czytelne, bez poprawek świata).
 - `assets/props/` (`ball`, `tunnel`, `hay_ball`, `house` + `_x2` + `props.json`) dla okna Pulpit.
+
+## Polana farmy (3.11.2026)
+- `bg/farm.png`, `bg/orchard.png`, `bg/menu.png`: jedna zróżnicowana polana (plamy tonów trawy, kępy z długimi źdźbłami, pojedyncze kwiatki na łodygach, koniczyna, paprocie, kamyki). `plot_lawn` i `plot_orchard` przezroczyste, widać polanę pod działkami. Lint 0 (161 plików).

@@ -21,19 +21,19 @@ def _grass(im, r, tones):
 
 
 def plot_lawn():
-    """Puste pole z trawnikiem: jasniejsza kratka z naroznikami z siana (miejsce do przerobienia)."""
+    """Pusta dzialka trawnika: tylko znaczniki naroznikow z siana (L-ki), reszta przezroczysta, zeby widac bylo polane."""
     im = H.canvas(W, Ht)
-    _grass(im, random.Random(7), ("moss.2", "moss.1", "moss.3"))
-    for x, y in ((0, 0), (W - 1, 0), (0, Ht - 1), (W - 1, Ht - 1)): H.put(im, x, y, "hay.1")
+    for x, y, dx, dy in ((0, 0, 1, 1), (W - 1, 0, -1, 1), (0, Ht - 1, 1, -1), (W - 1, Ht - 1, -1, -1)):
+        H.put(im, x, y, "hay.0"); H.put(im, x + dx, y, "hay.0"); H.put(im, x, y + dy, "hay.0")
     return im
 
 
 def plot_orchard():
     """Miejsce na drzewko: trawa z kregiem sciolki; drzewko (16x32) stoi dolem na tej komorce, korona zajmuje komorke nad nia."""
     im = H.canvas(W, Ht)
-    _grass(im, random.Random(11), ("moss.2", "moss.1", "moss.3"))
     for dy, hw in ((-4, 4), (-3, 6), (-2, 7), (-1, 6), (0, 4)):
-        H.hline(im, 8 - hw, 7 + hw, 10 + dy + 2, "wood.1" if abs(dy) < 2 else "wood.0")
+        H.hline(im, 8 - hw, 7 + hw, 10 + dy + 2, "wood.0")
+        if -3 <= dy <= -1: H.hline(im, 10 - hw, 5 + hw, 10 + dy + 2, "wood.1")
     H.hline(im, 5, 10, 10, "wood.2")
     return im
 
