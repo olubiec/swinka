@@ -14,9 +14,17 @@ Get-CimInstance Win32_Process |
 Get-Process -Name agy -ErrorAction SilentlyContinue | Stop-Process -Force
 Start-Sleep -Seconds 3
 
-Write-Host "2/5 Cleaning the working tree (only generated files)..."
+Write-Host "2/5 Cleaning the working tree (generated files + local edits of the loop scripts)..."
 git checkout main
-git checkout -- README.md STAN_PROJEKTU.md TODO.md 2>$null
+# Local edits of loop_runner.py / battery_guard.py are replaced by the fixed versions from the
+# branch. They are saved to a patch on the Desktop first, nothing is lost.
+$localDiff = git diff -- tools/loop_runner.py tools/battery_guard.py
+if ($localDiff) {
+  $backup = Join-Path ([Environment]::GetFolderPath("Desktop")) ("swinka-local-backup-" + (Get-Date -Format "yyyyMMdd-HHmmss") + ".patch")
+  $localDiff | Out-File -FilePath $backup -Encoding utf8
+  Write-Host "  local edits saved to $backup"
+}
+git checkout -- tools/loop_runner.py tools/battery_guard.py README.md STAN_PROJEKTU.md TODO.md 2>$null
 $dirty = git status --porcelain
 if ($dirty) { Write-Host "STOP: uncommitted changes, fix them first:"; Write-Host $dirty; exit 1 }
 
