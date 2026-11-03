@@ -195,4 +195,5 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 
 | Fala | Stan |
 |---|---|
-| B0-B13 | nie rozpoczęte (czeka na „lecimy") |
+| B0-1 | zrobione (handart.py + test_handart.py) |
+| B0-2..B13 | nie rozpoczęte |
