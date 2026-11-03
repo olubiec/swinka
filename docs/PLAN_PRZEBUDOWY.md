@@ -241,4 +241,5 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B7-1..B7-6 | zrobione (farm_a.py, farm_bg.py: plansza farm.png w ramkach z farm.json, 11 upraw x4, 4 drzewka x3, grządki, woda, wielki zbiór; przedmioty farmy + nowa `barn_hay` 64x48; tło farmy; lint 0) |
 | B7 | **fala zamknięta** |
 | B8 | **fala zamknięta** |
-| B9..B13 | nie rozpoczęte |
+| B9 | **fala zamknięta** |
+| B10..B13 | nie rozpoczęte |

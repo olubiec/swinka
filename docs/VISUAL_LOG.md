@@ -133,3 +133,6 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 ## B8 targ (przebudowa)
 - `stall_big` (plandeka dusk z łatami, lampiony), `order_board`, `promo_1..3` przerysowane; nowe plakaty `poster_1..3` (16x32, wpisy w `tiles.json` -> market). Tło targu 256x144, wieczór ze sznurem lampek. Lint 0. Podgląd: docs/album/przebudowa/b8-1_*.png, b8-3_targ_wieczor.png.
 - Hand-off B13-5: nowe id `poster_1`, `poster_2`, `poster_3` (market, tiles.json).
+
+## B9 dekoracje sklepu (przebudowa)
+- decor.png przerysowany w całości (40 przedmiotów, 41 klatek) w tych samych ramkach co decor.json (kontrakt bez zmian): tapety, podłogi, posłania, kryjówki, płotki, karmniki, dywany, rośliny, lampki, obrazy. Generator: tools/art/world/decor_a.py (lint klatek 0, R5 jako `prop`, bo dekoracje nie leżą na siatce 16). Przegląd: docs/album/przebudowa/b9_dekoracje_sklepu.png.
