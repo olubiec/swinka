@@ -1,7 +1,30 @@
-﻿using System;
+using System;
+using Cuy.Core.Pigs;
 
 namespace Cuy.Core
 {
+    public sealed class OfferUnlockedEventArgs : EventArgs
+    {
+        public OfferUnlockedEventArgs(string pigId)
+        {
+            PigId = pigId;
+        }
+
+        public string PigId { get; }
+    }
+
+    public sealed class PigAdoptedEventArgs : EventArgs
+    {
+        public PigAdoptedEventArgs(PigProfile pig, bool memorial)
+        {
+            Pig = pig;
+            Memorial = memorial;
+        }
+
+        public PigProfile Pig { get; }
+        public bool Memorial { get; }
+    }
+
     public sealed class NeedEventArgs : EventArgs
     {
         public NeedEventArgs(Need need, double value)
