@@ -32,17 +32,37 @@ Ramy od najciemniejszego do najjasniejszego (pełne hexy w JSON):
 - Biel `#ffffff` i czerń `#000000` są zakazane. Najjaśniejszy = `linen[3]`, najciemniejszy = `plum[0]`.
 - Nasycenie: nic poza grupą flame nie przekracza nasycenia HSV 0.75 przy jasności > 0.55.
 
-## 3. Światło i płomienie
-- **Kierunek stały:** światło dzienne z lewej góry. Źródła w scenie (lampa, świeca) dają dodatkowe światło z własnej strony.
-- **Strefa blasku:** koło lub elipsa dithera 2x2 z kolorów `glow` (pomarańcz → żółć → jasna żółć) wokół źródła, maksymalnie 3 stopnie, bez gładkich gradientów.
-- **Cień kontaktowy:** każdy przedmiot na ziemi ma owalny cień `plum[1]` pod sobą (przy źródle światła cień wydłużony w przeciwną stronę).
-- **Płomień:** animacja 4 klatek, 3 kolory (flame[0] podstawa, flame[2] środek, flame[3] czubek), kształt łzy, lekkie kołysanie. Wyłącznie bezpieczne motywy dla zwierzaków: świeca w latarni, żarówka, kominek za kratą, piecyk za szybką. Brak otwartego ognia obok siana w żadnej scenie.
-- **Pory dnia = zmiana palety, nie nakładka koloru:**
-  - rano: różowo-miodowa mgła, długie cienie, blask lamp słaby;
-  - dzień: len i szałwia, najmniej blasku;
-  - wieczór: pomarańcz i cegła, ciepłe lampy włączone;
-  - noc: plum i dusk, lampy i świece jako jedyne plamy ciepłego światła, okna świecą.
-- **Ziarno lofi:** delikatny dither 2x2 na dużych powierzchniach (niebo, ściana), nigdy na konturach.
+## 3. Światło: pełna fizyka (włącz/wyłącz, pory dnia)
+Referencje (`docs/reference/world/`) pokazują, że klimat robi **kontrast: ciemne wnętrze i kałuże ciepłego światła**, a nie równo oświetlony pokój. Dlatego światło jest systemem w grze, nie tylko rysunkiem.
+
+**Model (kontrakt: `assets/data/lights.json`, prototyp: `tools/art/light_demo.py`, wynik: `docs/album/stylbook/swiatlo_demo.png`)**
+1. **Ambient pory dnia** (rano, dzień, wieczór, noc): kolor i poziom światła ogólnego, przez okno. Noc jest chłodna (dusk/plum), ale czytelna, nie czarna.
+2. **Źródła światła** (lampy, świece, kominek, pochodnie): każde ma kolor, promień, siłę, migotanie i stan **włączone/wyłączone**. Dokładają światło wokół siebie z kilkoma stopniami (5) i ditherem, bez gładkich gradientów.
+3. **Składanie:** kolor piksela x (ambient + suma źródeł), potem blask na jasnych miejscach, na końcu **kwantyzacja do palety stylu** z ditherem 4x4. Dzięki temu każda scena przy każdym oświetleniu zostaje w 42 kolorach i wygląda jak ta sama gra.
+4. **Wygląd źródła:** każde ma sprite „wyłączony" (ciemna żarówka/szkło) i „włączony" (jasna żarówka, plus animacja płomienia/lawy). Sam włącznik w grze przełącza stan i oświetlenie.
+
+**Rodzaje źródeł, każde daje inny nastrój**
+| Źródło | Nastrój | Szczegóły |
+| --- | --- | --- |
+| Lampa stojąca/stołowa, abażur | ciepło miodowe | stała, miękka |
+| Lampa-grzybek (pomarańcz) | retro, mocny pomarańcz | nasycona, mały promień |
+| Lampa łukowa | punkt nad sofą | duży promień, ostra krawędź snopa |
+| Papierowy lampion | miękka biel pod sufitem | rozlewa się równo |
+| Lampa solna | różowo-pomarańczowy półmrok | lekkie pulsowanie |
+| Lava lamp | kolor płynie jagoda ↔ pomarańcza | animowane bańki w sprite'cie |
+| Kominek/piecyk za kratką | najsilniejszy, czerwono-pomarańczowy | migotanie 8 Hz, ruchome refleksy na ścianie, lekko ogrzewa ambient |
+| Świeca w słoiku, latarnia | punktowe, ciepłe | migotanie ±10% |
+| Sznur lampek | wiele małych punktów | migotanie w fazach |
+| Okno | snop wg pory dnia | rano różowy, dzień neutralny, wieczór pomarańcz, noc księżyc (dusk[4]) |
+| Na zewnątrz: pochodnia, lampa naftowa, latarnia, lampa parkowa, kosz z żarem | zapalone/zgaszone, część włącza się o zmierzchu | pochodnie i żar tylko w bezpiecznych miejscach (nie obok siana) |
+
+**Zasady rysowania pod światło**
+- Przedmioty rysujemy w stanie „światło dzienne". Kod przyciemnia i barwi je. Dlatego **paleta musi mieć w każdej rampie sensowne ciemniejsze sąsiady**, a cienie przesuwają się w plum/dusk.
+- Elementy szklane, lampy i płomienie mają dodatkowy sprite „włączony" (nie da się go uzyskać mnożeniem).
+- Kierunek światła dziennego: lewa góra. Źródła w scenie rzucają cień przeciwny do siebie (cień kontaktowy owalny `plum[1]`, wydłużany przy lampie).
+- **Płomień:** 4 klatki, 3 kolory (flame[0] podstawa, flame[2] środek, flame[3] czubek), łza, kołysanie. **Bezpieczeństwo:** tylko za kratką, szybką, w słoiku lub latarni. Brak otwartego ognia obok siana.
+- **Ziarno lofi:** dither 4x4 na dużych powierzchniach i krawędziach blasku, nigdy na konturach.
+- **Co ustalić w P2:** siła blasku (prototyp przepala środek do bieli, trzeba ograniczyć do `flame[3]`), wygląd refleksów na ścianie kominka, czy lampa wieczorem włącza się sama (domyślnie tak, można wyłączyć), czy gracz włącza ręcznie w pokoju.
 
 ## 4. Kontur i kształt
 - **Pierwszy plan** (przedmioty gracza, meble, świnki): kontur `#3a1d17`, 1 px.
@@ -70,7 +90,7 @@ Ramy od najciemniejszego do najjasniejszego (pełne hexy w JSON):
 
 ## 6. Motywy własne i zakazy
 **Rodzina motywów (używać):** siano i wiązki siana, marchewka, pęk pietruszki, łapka, serduszko-nosek, okrągły łuk, bochenek, filcowa łatka, drewniana skrzynka, mała lampka, świeca w słoiku, kubek z parą, gramofon i kaseta (lofi), roślina doniczkowa, grzejnik z kratką, sznur lampek.
-**Zakazy (nie wolno się pojawić):** markiza w czerwono-białe pasy, obrus w czystą kratkę czerwono-białą, drzewo-lizak (okrągła korona o jednym kolorze), równy rząd tulipanów, klasyczna biała fontanna, czerwona stodoła jak z pocztówki, szara kostka brukowa, błękitne niebo bez gradientu paletowego, równy szum trawy, meble w skali człowieka.
+**Zakazy (nie wolno się pojawić):** markiza w czerwono-białe pasy, obrus w czystą kratkę czerwono-białą (kratka w ciepłym brązie i kremie, jako patchwork lub dywan z włóczki, jest dozwolona, patrz ref_05, ref_06), drzewo-lizak (okrągła korona o jednym kolorze), równy rząd tulipanów, klasyczna biała fontanna, czerwona stodoła jak z pocztówki, szara kostka brukowa, błękitne niebo bez gradientu paletowego, równy szum trawy, meble w skali człowieka.
 **Test sztampy:** jeśli element można zastąpić gotowym przedmiotem z dowolnej paczki „cozy pixel pack" bez zmiany wyglądu, jest za generyczny i do przeróbki.
 
 ## 7. Skala, ujęcie, siatka
