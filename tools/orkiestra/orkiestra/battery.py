@@ -82,3 +82,4 @@ def get_battery_status() -> BatteryStatus:
         except Exception:
             pass
     return BatteryStatus(ac_line_status=1, battery_flag=1, percent=100, lifetime_seconds=0)
+
