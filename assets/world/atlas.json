@@ -1435,6 +1435,22 @@
     "frames": 4,
     "fps": 8
    }
+  },
+  "gate_garden": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "garden/gate_garden.png",
+   "anchor": [
+    8,
+    16
+   ]
   }
  }
 }

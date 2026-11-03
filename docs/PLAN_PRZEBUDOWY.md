@@ -228,4 +228,6 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B4-8 | zrobione (prop_ball, prop_tunnel, prop_hay_ball, prop_house; home_d.py) |
 | B4-9 | zrobione (memory_frame ze świecą 4 klatki, dorm_nest 64x32, 5 scen pokoi + przegląd; room_scenes.py) |
 | B4 | **fala zamknięta** (nowe id bez wpisu w world_items: gramophone, mug_steam, rug_fringed, blanket_folded, mirror_wavy, frames_gallery, plant_pot, plant_shelf, plant_trailing, memory_frame, dorm_nest, lace_curtain, pouf_boucle → hand-off B13-5) |
-| B5..B13 | nie rozpoczęte |
+| B5-1 | zrobione (flowerbed_tulip/daisy, bush_berry, hedge; tree_small z B1; garden_a.py) |
+| B5-2 | zrobione (fence_wood, arch_rose, path_stone, bench_wood + nowa gate_garden 16x16) |
+| B5-3..B13 | nie rozpoczęte |
