@@ -148,10 +148,10 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 ### B11. Interfejs i aplikacja (4 zadania)
 | ID | Zadanie |
 |---|---|
-| B11-1 | [N] panele „papier + drewno" (ramki 9-slice), przyciski w 3 stanach, separatory |
-| B11-2 | [N] tło menu / ekranu startowego (ciepłe, ze światłem), nagłówki |
-| B11-3 | [R] ikona aplikacji i logo (`assets/app-icon/`), ramka paska „On your desktop" |
-| B11-4 | [N] rama planu domku `house_frame` (dach, komin, okna pokoi), panel sklepu domu |
+| B11-1 | (zrobione: panele, przyciski, separatory, naglowek: `ui_a.py`, `assets/ui/`) [N] panele „papier + drewno" (ramki 9-slice), przyciski w 3 stanach, separatory |
+| B11-2 | (zrobione: `bg:menu`, `menu_bg.py`) [N] tło menu / ekranu startowego (ciepłe, ze światłem), nagłówki |
+| B11-3 | (zrobione: ikona i logo w palecie, `app_icon.py`) [R] ikona aplikacji i logo (`assets/app-icon/`), ramka paska „On your desktop" |
+| B11-4 | (zrobione: `house_frame` 192x160, `shop_panel`) [N] rama planu domku `house_frame` (dach, komin, okna pokoi), panel sklepu domu |
 
 ### B12. Świnki w świecie i rekwizyty pulpitu (3 zadania)
 | ID | Zadanie |
@@ -254,5 +254,6 @@ Powód: po przeglądzie użytkownika (3.11.2026) w scenach nadal są przedmioty 
 | B8 | **fala zamknięta** |
 | B9 | **fala zamknięta** |
 | B10 | **fala zamknięta** |
+| B11 | **fala zamknięta** (nowe: assets/ui/*, bg:menu, house_frame → hand-off B13-5) |
 | B14 | **fala zamknięta** (nowe id: plot_lawn, plot_orchard, bg:orchard → hand-off B13-5; plot_field usunięty) |
-| B11, B12, B13 | nie rozpoczęte (kolejność: B11, B12, B13) |
+| B12, B13 | nie rozpoczęte (kolejność: B12, B13) |

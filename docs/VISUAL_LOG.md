@@ -154,3 +154,8 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 - Farma: tło `bg/farm.png` to pusty trawnik; działki to małe pola 16x16 tworzone osobno (`plot_lawn`, `plot_orchard`; grządki `bed_empty`, mokra `bed_wet` tylko po podlaniu). `bg:orchard` jako podgląd sadu. Albumy `b14-4_farma_etapy.png`, `b14-4_sad.png`.
 - B9: `fence_wire_black/white` rzadsze, `picture_pig_family` czytelny.
 - Hand-off dla kodu: sekcja "Pole i sad zależne od gracza" w `docs/PLAN.md`.
+
+## B11 - interfejs i aplikacja (3.11.2026)
+- `assets/ui/` + `ui.json`: panele papier/drewno 9-slice, przyciski w 3 stanach, separatory, nagłówek z szwem, panel sklepu z markizą. Lint 0 (R5 nie dotyczy: UI poza siatką 16).
+- `bg:menu` 256x144 (wieczór, lampy, stodoła); `house_frame` 192x160 z 5 otworami na pokoje; ikona i logo w palecie (`icon_16/32/256`, `.ico`).
+- Albumy: `b11-1_interfejs`, `b11-2_menu`, `b11-3_ikona`, `b11-4_dom_i_sklep`. Hand-off dla kodu: ścieżki w sekcji "Interfejs (B11)" w `docs/KONTRAKT_ASSETOW.md`.

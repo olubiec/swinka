@@ -1,0 +1,122 @@
+{
+ "note": "9-slice: slice=[lewy,gorny,prawy,dolny] nierozciagane brzegi; sep_*: rozciagac po dluzszej osi lub powtarzac",
+ "items": {
+  "panel_paper": {
+   "file": "ui/panel_paper.png",
+   "size": [
+    24,
+    24
+   ],
+   "slice": [
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "panel_wood": {
+   "file": "ui/panel_wood.png",
+   "size": [
+    24,
+    24
+   ],
+   "slice": [
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "btn_normal": {
+   "file": "ui/btn_normal.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "btn_hover": {
+   "file": "ui/btn_hover.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "btn_pressed": {
+   "file": "ui/btn_pressed.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "sep_h": {
+   "file": "ui/sep_h.png",
+   "size": [
+    32,
+    4
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "sep_v": {
+   "file": "ui/sep_v.png",
+   "size": [
+    4,
+    32
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "header_banner": {
+   "file": "ui/header_banner.png",
+   "size": [
+    96,
+    24
+   ],
+   "slice": [
+    12,
+    0,
+    12,
+    0
+   ]
+  },
+  "shop_panel": {
+   "file": "ui/shop_panel.png",
+   "size": [
+    96,
+    64
+   ],
+   "slice": [
+    8,
+    18,
+    8,
+    8
+   ]
+  }
+ }
+}

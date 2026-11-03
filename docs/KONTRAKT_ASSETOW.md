@@ -18,3 +18,9 @@ Format jest ostateczny. Kod tylko wczytuje i rysuje; jeśli pliku brak, rysuje g
 | Podgląd wszystkiego | `docs/album/podglad/*.png` | do oglądania, nie do gry |
 
 Generatory: `tools/art/*` (numpy + Pillow). Regeneracja: `python3 tools/art/export_all.py assets`, `export_named.py assets`, `icons_world.py assets`, `farm_art.py assets`, `items_art.py assets`, `tiles_art.py assets`, `portraits.py assets`.
+
+## Interfejs (B11)
+- `assets/ui/ui.json`: `items[id] = {file, size, slice:[lewy,gorny,prawy,dolny]}`; 9-slice: rogi i brzegi o grubosci `slice` nie sa rozciagane, srodek rozciagamy najblizszym sasiadem (bez wygladzania). Id: `panel_paper`, `panel_wood`, `btn_normal`, `btn_hover`, `btn_pressed`, `sep_h`, `sep_v` (powtarzac po dluzszej osi), `header_banner` (srodek powtarzac, nie rozciagac, szew z siana), `shop_panel` (markiza gora 18 px).
+- `bg:menu` (`tiles.json`, 256x144): cieply wieczor ze swiatlem, tlo menu i ekranu startowego; napisy i przyciski kod kladzie na nim.
+- `house_frame` (atlas, `place: house`, 192x160): rama planu domku; przezroczyste otwory 52x40 na miniatury pokoi: gora (10,46) (70,46) (130,46), dol (10,100) (70,100); drzwi sa czescia ramy.
+- Ikona aplikacji: `assets/app-icon/` (`cuy.ico` 16-256, `icon_16/32/256.png`, `logo_256.png`) w palecie domku z siana.

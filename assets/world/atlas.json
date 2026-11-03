@@ -1547,6 +1547,22 @@
     8,
     16
    ]
+  },
+  "house_frame": {
+   "place": "house",
+   "cells": [
+    12,
+    10
+   ],
+   "size": [
+    192,
+    160
+   ],
+   "file": "house/house_frame.png",
+   "anchor": [
+    96,
+    160
+   ]
   }
  }
 }
