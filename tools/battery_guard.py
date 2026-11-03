@@ -116,14 +116,21 @@ def get_battery_status() -> BatteryStatus:
 
 
 def run_git(args: list[str], cwd: Path = REPO_ROOT) -> subprocess.CompletedProcess:
-    return subprocess.run(
-        ["git", *args],
-        cwd=cwd,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-    )
+    """Run git; retry when another git process (orkiestra merge) holds index.lock."""
+    res = None
+    for _ in range(6):
+        res = subprocess.run(
+            ["git", *args],
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        if res.returncode == 0 or "index.lock" not in (res.stderr or ""):
+            break
+        time.sleep(3)
+    return res
 
 
 def read_orkiestra_summary() -> dict:
@@ -147,6 +154,38 @@ def read_orkiestra_summary() -> dict:
     except Exception as exc:
         logger.warning(f"Błąd odczytu {STATE_FILE}: {exc}")
         return {"current_wave": "błąd", "merged": [], "in_progress": [], "pending": [], "total": 162}
+
+
+LOOP_STATUS_FILE = REPO_ROOT / ".orkiestra" / "loop_status.json"
+
+
+def read_loop_status() -> dict:
+    """Status written by tools/loop_runner.py (empty if the loop is not running)."""
+    try:
+        return json.loads(LOOP_STATUS_FILE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def describe_loop(loop: dict) -> tuple[str, str, str]:
+    """Returns (system status text, emoji, tests text) from the real loop state."""
+    tests = loop.get("tests") or "brak danych"
+    if not loop:
+        return "❔ Brak statusu pętli (loop_runner nie działa?)", "🟠", tests
+    try:
+        updated = datetime.datetime.fromisoformat(loop["updated"])
+        age_min = int((datetime.datetime.now(datetime.timezone.utc) - updated).total_seconds() // 60)
+    except (KeyError, ValueError):
+        age_min = 9999
+    phase = loop.get("phase", "?")
+    msg = loop.get("message", "")
+    if phase in ("running", "quota", "starting", "idle") and age_min > 10:
+        return f"⚠️ Pętla milczy od {age_min} min (ostatnio: {msg})", "🟠", tests
+    icons = {"running": "⚙️", "quota": "⏳", "idle": "⚙️", "starting": "⚙️", "finished": "🏁",
+             "halted": "🛑", "battery": "🔋"}
+    emoji = {"running": "🟢", "quota": "🟡", "idle": "🟢", "starting": "🟢", "finished": "🟢",
+             "halted": "🔴", "battery": "🔴"}.get(phase, "🟠")
+    return f"{icons.get(phase, '❔')} {msg}", emoji, tests
 
 
 def generate_dashboard_markdown(battery: BatteryStatus, is_stopped: bool = False, reason: str = "") -> str:
@@ -174,6 +213,10 @@ def generate_dashboard_markdown(battery: BatteryStatus, is_stopped: bool = False
         sys_status = "⚡ Agenci pracują autonomicznie"
         sys_emoji = "🟡"
 
+    loop_text, loop_emoji, tests_text = describe_loop(read_loop_status())
+    if not is_stopped:
+        sys_status, sys_emoji = loop_text, loop_emoji
+
     wave_desc = f"**{current_wave}**"
     if summary["in_progress"]:
         wave_desc += f" (w toku: {', '.join(summary['in_progress'])})"
@@ -186,10 +229,10 @@ def generate_dashboard_markdown(battery: BatteryStatus, is_stopped: bool = False
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
 > | 🔋 **Zasilanie i Bateria** | **{battery.percent}%** ({'Zasilacz AC podłączony' if battery.is_plugged_in else 'Praca na baterii'}) | {bat_badge} |
-> | 🌊 **Aktualna Fala** | {wave_desc} | {sys_emoji} Aktywna |
+> | 🌊 **Aktualna Fala** | {wave_desc} | {sys_emoji} |
 > | 🏆 **Ukończone Zadania** | **{merged_count} / {total_count}** ({pct_progress}%) | 🟢 Postęp OK |
-> | 🧪 **Testy Jednostkowe** | **399 / 399** zaliczonych | ✅ Wszystkie przechodzą |
-> | 💻 **Stan Systemu** | {sys_status} | {sys_emoji} Aktywny |
+> | 🧪 **Testy Jednostkowe** | **{tests_text}** (ostatnia fala) | 🧪 |
+> | 💻 **Stan Systemu** | {sys_status} | {sys_emoji} |
 >
 > 📄 [Szczegółowy raport zadań](STAN_PROJEKTU.md) • 📋 [Lista kolejnych fal](TODO.md) • 🔄 Odśwież stronę w przeglądarce telefonu, aby zobaczyć aktualny czas
 {DASHBOARD_END}"""

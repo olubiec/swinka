@@ -36,3 +36,12 @@ Ostatnie zmiany porządkowe (3.11): usunięto z planu dwie fale już wykonane (`
 - **Model działek farmy „trawnik → grządka/drzewko"** z `docs/PLAN.md` (sekcja „Pole i sad zależne od gracza"): zmienia stan zapisu farmy i ceny przeróbki, więc wymaga Twojej decyzji (koszt przeróbki działki, limit działek). Dopiero potem warto dopisać fale po W22.
 - Z `tasks/BACKLOG.md` zostały pozycje niemożliwe do sprawdzenia lokalnie lub zbyt szerokie (cache CI, job `setup-sh`, przegląd martwego kodu i komentarzy TODO).
 - Klucz Jules API leży w instrukcjach projektu Claude: unieważnij go (Jules nie jest już używany).
+
+## Pętla z watchdogiem (od 3.11.2026 wieczorem)
+`python tools/loop_runner.py` (z katalogu repo, gałąź `main`, czyste drzewo) uruchamia fale po kolei i pilnuje ich:
+- brak zmian w `.orkiestra/state.json` przez 60 min (flaga `--stall-minutes`) = zawieszenie: ubija orkiestrę i `agy`, restartuje falę (max 3 razy); gotowe zadania zostają;
+- limit Antigravity: orkiestra działa z `--no-wait`, a pętla czeka sama (`--quota-wait`, domyślnie 30 min), co 30 s sprawdzając baterię;
+- zadania `needs_human` są wznawiane (max 2 razy na falę); jeśli dalej się nie udaje, pętla staje na tej fali (nie przeskakuje do następnej, bo fale zależą od siebie);
+- niska bateria także w trakcie fali: checkpoint, ubicie agentów, wyjście;
+- log na żywo: `tools/loop_runner.log`; status: `.orkiestra/loop_status.json`, widoczny w dashboardzie README (stan pętli, a nie tylko baterii).
+Obok nadal działa `python tools/battery_guard.py watch --threshold 20 --kill-agents` (heartbeat na GitHub).
