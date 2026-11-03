@@ -32,6 +32,9 @@ def sky():
     return im
 
 
+PLACED = []
+
+
 def world():
     r = random.Random(61)
     im = H.canvas(W, HT)
@@ -45,10 +48,13 @@ def world():
     for k, y in enumerate(range(HORIZON + 66, HT - 4, 13)):
         for x in range(-8 + (k % 2) * 8, W, 16): im.alpha_composite(pc, (x, y))
     H.break_checkers(im)
-    for name, x, y in STALLS: im.alpha_composite(_img(f"market/{name}.png"), (x, y))
-    im.alpha_composite(_img("market/order_board.png"), (64, HORIZON + 40))
-    for n, x in (("promo_1", 30), ("promo_2", 112), ("promo_3", 196)): im.alpha_composite(_img(f"market/{n}.png"), (x, HORIZON + 68))
-    for n, x in (("poster_2", 163), ("poster_3", 177), ("poster_1", 238)): im.alpha_composite(_img(f"market/{n}.png"), (x, HORIZON + 40))
+    PLACED.clear()
+    def put(n, x, y):
+        i = _img(f"market/{n}.png"); PLACED.append((n, x, y, i)); im.alpha_composite(i, (x, y))
+    for name, x, y in STALLS: put(name, x, y)
+    put("order_board", 64, HORIZON + 40)
+    for n, x in (("promo_1", 30), ("promo_2", 112), ("promo_3", 196)): put(n, x, HORIZON + 68)
+    for n, x in (("poster_2", 163), ("poster_3", 177), ("poster_1", 238)): put(n, x, HORIZON + 40)
     return im
 
 

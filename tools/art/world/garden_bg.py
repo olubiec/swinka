@@ -65,6 +65,9 @@ def sky(tod):
     return im
 
 
+PLACED = []
+
+
 def world(tod):
     r = random.Random(21)
     im = H.canvas(W, HT)
@@ -84,20 +87,23 @@ def world(tod):
         H.rrect(im, x + 1, HORIZON - 2, x + 4, HORIZON + 12, 1, ("wood.0", "wood.1", "wood.2", "wood.2"))
     H.hline(im, 0, W - 1, HORIZON + 3, "wood.2"); H.hline(im, 0, W - 1, HORIZON + 4, "wood.1")
     H.hline(im, 0, W - 1, HORIZON + 8, "wood.2"); H.hline(im, 0, W - 1, HORIZON + 9, "wood.1")
+    PLACED.clear()
+    def put(name, x, y, i):
+        PLACED.append((name, x, y, i)); im.alpha_composite(i, (x, y))
     ga = Image.open(H.WORLD_DIR / "garden/gate_garden.png").convert("RGBA")       # furtka na srodku plotu
-    for dx in (0, 16): im.alpha_composite(ga, (120 + dx - 8, HORIZON - 2))
+    for dx in (0, 16): put("gate_garden", 120 + dx - 8, HORIZON - 2, ga)
     # sciezka: kamienie coraz wieksze ku dolowi
     ps = Image.open(H.WORLD_DIR / "garden/path_stone.png").convert("RGBA")
     for row in range(6):
         im.alpha_composite(ps, (122 + (8 if row % 2 else -4) + row, HORIZON + 14 + row * 13))
     # tunel z wierzby, drzewa, krzewy
-    im.alpha_composite(home.willow_tunnel(), (24, HORIZON + 8))
+    put("willow_tunnel", 24, HORIZON + 8, home.willow_tunnel())
     t1, t2 = tree_small(), tree_small()
-    im.alpha_composite(t1, (196, HORIZON - 30)); im.alpha_composite(t2, (232, HORIZON - 26))
+    put("tree_small", 196, HORIZON - 30, t1); put("tree_small", 232, HORIZON - 26, t2)
     for name, x, y in (("bush_berry", 80, HORIZON + 14), ("hedge", 185, HORIZON + 14), ("hedge", 201, HORIZON + 14),
                        ("flowerbed_tulip", 8, HORIZON + 50), ("flowerbed_daisy", 200, HORIZON + 62),
                        ("bench_wood", 150, HORIZON + 40), ("bird_bath", 60, HORIZON + 58)):
-        im.alpha_composite(Image.open(H.WORLD_DIR / f"garden/{name}.png").convert("RGBA"), (x, y))
+        put(name, x, y, Image.open(H.WORLD_DIR / f"garden/{name}.png").convert("RGBA"))
     for _ in range(36):                                                           # drobne kwiaty
         x, y = r.randint(0, W - 1), r.randint(HORIZON + 24, HT - 3)
         if im.getpixel((x, y))[:3] in H.RAMPS["moss"] or True:

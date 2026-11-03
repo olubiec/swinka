@@ -1515,6 +1515,38 @@
     32,
     48
    ]
+  },
+  "plot_lawn": {
+   "place": "farm",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "farm/plot_lawn.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "plot_orchard": {
+   "place": "farm",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "farm/plot_orchard.png",
+   "anchor": [
+    8,
+    16
+   ]
   }
  }
 }

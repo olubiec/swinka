@@ -164,12 +164,12 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 Powód: po przeglądzie użytkownika (3.11.2026) w scenach nadal są przedmioty nachodzące na siebie lub rysowane w złej kolejności warstw (kto stoi niżej na ekranie, ten jest rysowany później), a sad powinien być osobną, przemyślaną sceną, nie rzędem drzewek przy polu.
 | ID | Zadanie |
 |---|---|
-| B14-1 | Zasady warstw w `docs/UKLAD_SCEN.md`: kolejność rysowania (niebo, dal, podłoże i płaskie, potem przedmioty rosnąco po dolnej krawędzi, światło, źródła światła), strefy (woda, brzeg, trawa, ścieżka), co wolno na co nachodzić (np. altana za mostem, świnka przed ławką). Rozszerzenie `layout_check.py` o kontrolę kolejności i o kotwice w złej strefie (np. w wodzie) |
-| B14-2 | Przegląd wszystkich scen (5 pokoi domku, ogród x4, park x4, farma, targ, albumy przeglądów) narzędziem z B14-1: raport nakładania i złej kolejności, lista poprawek |
-| B14-3 | [R] poprawki parku, ogrodu, targu i pokoi wg raportu (przesunięcia, kolejność rysowania, przycięcia), ponowny przegląd |
-| B14-4 | [N] sad jako osobna scena (`bg:orchard` 256x144 + przegląd): siatka drzew owocowych we wszystkich stadiach, kosze, drabina, ścieżka, brak nakładania; wpis w `tiles.json` (nowe id do hand-offu B13-5) |
-| B14-5 | [R] farma: samo pole z grządkami (sad przeniesiony do B14-4), zgodność układu grządek z kodem po potwierdzeniu w sekcji Przekazanie |
-| B14-6 | [R] zaległe poprawki: `fence_wire_black` (prawie pełna płyta) i `picture_pig_family` (nieczytelny) z B9; końcowy przegląd i commit |
+| B14-1 | (zrobione) Zasady warstw w `docs/UKLAD_SCEN.md`: kolejność rysowania (niebo, dal, podłoże i płaskie, potem przedmioty rosnąco po dolnej krawędzi, światło, źródła światła), strefy (woda, brzeg, trawa, ścieżka), co wolno na co nachodzić (np. altana za mostem, świnka przed ławką). Rozszerzenie `layout_check.py` o kontrolę kolejności i o kotwice w złej strefie (np. w wodzie) |
+| B14-2 | (zrobione: raport `layout_check` dla parku, ogrodu, targu, farmy, pokoi) Przegląd wszystkich scen (5 pokoi domku, ogród x4, park x4, farma, targ, albumy przeglądów) narzędziem z B14-1: raport nakładania i złej kolejności, lista poprawek |
+| B14-3 | (zrobione: drzewa parku nad wodą, pokoje Neda i Glena) [R] poprawki parku, ogrodu, targu i pokoi wg raportu (przesunięcia, kolejność rysowania, przycięcia), ponowny przegląd |
+| B14-4 | [N] sad jako osobna scena (zrobione: `bg:orchard`, `plot_lawn`, `plot_orchard` 16x16; działki pojedyncze, nie połacie) (`bg:orchard` 256x144 + przegląd): siatka drzew owocowych we wszystkich stadiach, kosze, drabina, ścieżka, brak nakładania; wpis w `tiles.json` (nowe id do hand-offu B13-5) |
+| B14-5 | (zrobione: pusty trawnik z siatką działek 16x16, grządki suche, mokra tylko po podlaniu) [R] farma: samo pole z grządkami (sad przeniesiony do B14-4), zgodność układu grządek z kodem po potwierdzeniu w sekcji Przekazanie |
+| B14-6 | (zrobione: płot rzadszy, obrazek ze świnkami czytelny) [R] zaległe poprawki: `fence_wire_black` (prawie pełna płyta) i `picture_pig_family` (nieczytelny) z B9; końcowy przegląd i commit |
 
 ### B13. Domknięcie (5 zadań)
 | ID | Zadanie |
@@ -254,4 +254,5 @@ Powód: po przeglądzie użytkownika (3.11.2026) w scenach nadal są przedmioty 
 | B8 | **fala zamknięta** |
 | B9 | **fala zamknięta** |
 | B10 | **fala zamknięta** |
-| B11, B12, B14, B13 | nie rozpoczęte (kolejność: B11, B12, B14, B13) |
+| B14 | **fala zamknięta** (nowe id: plot_lawn, plot_orchard, bg:orchard → hand-off B13-5; plot_field usunięty) |
+| B11, B12, B13 | nie rozpoczęte (kolejność: B11, B12, B13) |

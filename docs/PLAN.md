@@ -264,6 +264,15 @@ Grafika jest gotowa w `assets/` (kontrakt plików: `docs/KONTRAKT_ASSETOW.md`, s
 | G10 | Kontrola plików: skrypt `tools/qa/check-assets.js` (każdy id z `world_items.json`, `farm.json`, `pigs_named.json` ma plik; każda klasa `icon-*` ma wpis w `icons.json`) plus krok w `SelfTest` | `tools/qa/check-assets.js`, `SelfTest.cs` | W16 lub W22-05 | SMOKE + BUILD |
 Poza kodem: rysunek 3 starych animacji z `Resources/animations.xml` zostaje jak jest; po wdrożeniu G1-G8 człowiek ogląda wszystkie ekrany w grze, a Claude poprawia grafikę na podstawie zrzutów (nowa mała fala S6).
 
+### Pole i sad zależne od gracza (dla programisty; do G6 i W20-05 / W18)
+Gracz sam decyduje, ile ma pól uprawnych i ile drzewek w sadzie. Na początku dostaje **puste pole z trawnikiem** (`bg:farm`: trawa, płot i stodoła, bez grządek i drzew). Trawnik to siatka małych kwadratowych działek **16x16, każda przerabiana osobno** (żadnych dużych połaci):
+- działka `lawn` (`plot_lawn`, 16x16, jaśniejsza kratka z narożnikami z siana) → **grządka** (`bed_empty`, 16x16) albo **miejsce na drzewko** (`plot_orchard`, 16x16, krąg ściółki, na nim stoi drzewko 16x32; korona zajmuje komórkę nad nim, więc ta komórka jest zarezerwowana i nie przyjmie drugiego drzewka);
+- **grządka jest sucha** (`bed_empty`), mokra (`bed_wet`) tylko po podlaniu i znowu sucha po wyschnięciu (czas z `farm.json`); mokra grządka nie jest osobnym typem działki;
+- przeróbka kosztuje koniczynki, rozbiórka zwraca działkę do trawnika; liczba działek i podział pole/sad nie są zaszyte w układzie: stan zapisu trzyma listę działek `{col, row, kind: lawn|bed|tree, stage, wet}`, a `FarmExpansion` odblokowuje kolejne komórki siatki za koniczynki (strop w `farm.json`);
+- scena: tło, potem działki rzędami od góry (niższe rysowane później), potem światło; siatka 12x4 komórek na trawniku (`farm_bg.GX/GY/COLS/ROWS`), zasady warstw w `docs/UKLAD_SCEN.md`;
+- nowe id: `plot_lawn`, `plot_orchard` (atlas, `place: farm`), `bg:orchard` (podgląd sadu 256x144).
+Akceptacja: nowy zapis startuje z samymi działkami `lawn`; test w `FarmEngine`/`FarmExpansion`: przeróbka lawn→bed i lawn→tree, rozbiórka, limit działek, nawodnienie tylko grządek, zgodność zapisu.
+
 ## Mapa starych zadań
 F2-02→PR #32 (W1-01,W1-02,W2-01 stare) + W1-09,W1-10,W2-01 · F2-07→zrobione · F3-01→W1-03,W1-04,W2-02,W3-01,W7-06 · F3-03→W4-01..W4-04,W7-07,W7-08 · F4-01→W4-07,W5-01,W5-02 · F4-02→W4-06,W6-01,W6-02 ·
 F4-03→W1-05,W2-03,W3-03 · F4-04→W3-04,W3-05,W4-05 · F4-05→W1-06,W2-06,W2-08,W5-04 · F4-06→W1-07,W2-04,W5-03,W6-02,W6-03 · F4-07→W3-08,W4-08 · F4-08→W2-09,W3-07 ·

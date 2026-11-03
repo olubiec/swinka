@@ -147,3 +147,10 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 - Farma: sad (drzewka owocowe) po lewej na trawie, pole z rzędami grządek po prawej (zamiast jednego bloku ziemi).
 - Ogród: drzewa za płotem, nie w płocie. Targ: plakaty i tabliczki bez nakładania na stragany.
 - Nowe narzędzie: tools/art/world/layout_check.py (wykrywa nakładanie nieprzezroczystych pikseli przedmiotów). Stosować przy każdym tle/scenie w B11-B13.
+
+## B14 - sad i układ scen (3.11.2026)
+- `docs/UKLAD_SCEN.md`: kolejność warstw, strefy, dozwolone nakładanie; `layout_check.py` kontroluje nakładanie, kolejność i kotwice w wodzie; raporty w `park_bg`, `garden_bg`, `market_bg`, `farm_bg`.
+- Poprawki: drzewa parku wyżej nad wodą; pokoje Neda i Glena bez nachodzenia mebli.
+- Farma: tło `bg/farm.png` to pusty trawnik; działki to małe pola 16x16 tworzone osobno (`plot_lawn`, `plot_orchard`; grządki `bed_empty`, mokra `bed_wet` tylko po podlaniu). `bg:orchard` jako podgląd sadu. Albumy `b14-4_farma_etapy.png`, `b14-4_sad.png`.
+- B9: `fence_wire_black/white` rzadsze, `picture_pig_family` czytelny.
+- Hand-off dla kodu: sekcja "Pole i sad zależne od gracza" w `docs/PLAN.md`.

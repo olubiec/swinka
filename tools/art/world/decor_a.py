@@ -249,8 +249,8 @@ def h_house():
 def fence_wire(frame, bar, seed):
     im = H.canvas(24, 40)
     for x in (1, 22): H.vline(im, x, 0, 39, frame); H.vline(im, x + 1 if x == 1 else x - 1, 0, 39, bar)
-    for x in range(4, 22, 4): H.vline(im, x, 1, 38, bar)
-    for y in range(2, 39, 6): H.hline(im, 1, 22, y, frame)
+    for x in range(7, 22, 7): H.vline(im, x, 1, 38, bar)
+    for y in (3, 19, 35): H.hline(im, 1, 22, y, frame)
     return fin(im)
 
 
@@ -395,9 +395,12 @@ def pic_field():
 
 
 def pic_pigs():
-    im = H.canvas(22, 18); H.rect(im, 1, 1, 20, 16, "wood.2"); H.rect(im, 3, 3, 18, 14, "hay.0")
-    for x, w in ((5, 6), (12, 4)):
-        oval(im, x + w // 2, 10, w // 2 + 1, 2, "wood.1"); H.put(im, x + w, 9, "plum.2"); H.put(im, x + 1, 8, "wood.0")
+    im = H.canvas(22, 18); H.rect(im, 1, 1, 20, 16, "wood.2"); H.rect(im, 3, 3, 18, 14, "hay.1")
+    H.hline(im, 3, 18, 13, "moss.2"); H.hline(im, 3, 18, 14, "moss.1")
+    oval(im, 8, 10, 4, 3, "wood.1"); oval(im, 15, 11, 2, 2, "linen.2")             # duza i mala swinka
+    for x, y in ((5, 8), (13, 9)): H.put(im, x, y, "wood.0" if x < 10 else "linen.1")      # uszy
+    for x, y in ((5, 10), (13, 11)): H.put(im, x, y, "plum.0")                                # oczy
+    H.put(im, 4, 11, "rose.1"); H.put(im, 12, 12, "rose.1")                                 # noski
     return fin(im)
 
 

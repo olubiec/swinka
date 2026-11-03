@@ -13,9 +13,9 @@ TILES = json.loads(H.TILES_FILE.read_text(encoding="utf-8"))["tiles"]
 WALL_ROWS, W, Ht = 4, 10, 7
 LAYOUT = {   # id -> (x_lewy, y_gora | None = na podlodze)
     "kuki": [("window_sun", 8, 14), ("side_table", 52, None), ("cushion_big", 70, None), ("sig_kuki_blanket", 18, None)],
-    "ned": [("shelf_small", 14, 20), ("hay_bar_wood", 54, None), ("cushion_big", 100, None), ("sig_ned_snack_nook", 10, None)],
+    "ned": [("shelf_small", 14, 20), ("cushion_big", 44, None), ("hay_bar_wood", 62, None), ("sig_ned_snack_nook", 10, None)],
     "james": [("curtains_dots", 10, 16), ("fairy_lights", 50, 8), ("cosy_nook", 60, None), ("sig_james_hideout", 10, None)],
-    "glen": [("bookshelf", 10, None), ("armchair", 54, None), ("cushion_big", 100, None), ("sig_glen_knit_bed", 20, None)],
+    "glen": [("bookshelf", 4, None), ("sig_glen_knit_bed", 38, None), ("armchair", 74, None), ("cushion_big", 110, None)],
     "racuch": [("hanging_planter", 40, 12), ("fairy_lights", 4, 6), ("toy_basket", 60, None), ("sig_racuch_hop_pad", 6, None)],
 }
 

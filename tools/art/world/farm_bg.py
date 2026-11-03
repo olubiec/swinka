@@ -10,6 +10,7 @@ from PIL import Image
 from garden import blob
 from garden_bg import SKY, _break
 import farm_a
+import farm_b
 
 W, HT, HORIZON = 256, 144, 54
 
@@ -38,7 +39,15 @@ def sky():
     return im
 
 
-def world():
+PLACED = []
+GX, GY, COLS, ROWS = 32, HORIZON + 22, 12, 4      # siatka dzialek 16x16 na trawniku (kazda przerabiana osobno)
+START = [("lawn", c, r) for r in range(ROWS) for c in range(COLS)]
+MID = [("lawn", c, r) for r in range(ROWS) for c in range(COLS) if (c, r) not in {(1, 1), (2, 1), (3, 1), (1, 2), (3, 2), (6, 1), (8, 1), (10, 1), (6, 3), (8, 3), (10, 3), (5, 2)}] + \
+      [("bed", 1, 1), ("bed", 2, 1), ("bed", 3, 1), ("bed", 1, 2), ("bed_wet", 3, 2), ("bed", 5, 2),
+       ("tree", 6, 1), ("tree", 8, 1), ("tree", 10, 1), ("tree", 6, 3), ("tree", 8, 3), ("tree", 10, 3)]
+
+
+def world(plots=()):
     r = random.Random(51)
     im = H.canvas(W, HT)
     for x in range(W):
@@ -57,24 +66,49 @@ def world():
         x, y, w, h = meta[name][i]; return sheet.crop((x, y, x + w, y + h))
     fence = _img("farm/fence_farm.png")
     for x in range(0, W, 16): im.alpha_composite(fence, (x, HORIZON + 6))
-    im.alpha_composite(_img("farm/barn_hay.png"), (176, HORIZON - 34))
-    # sad: dwa rzedy drzewek owocowych na trawie (lewa czesc), z przerwa na sciezke
-    for row, y in enumerate((HORIZON + 22, HORIZON + 54)):
-        for k, name in enumerate(("tree_apple", "tree_strawberry", "tree_apple", "tree_strawberry") if row == 0 else ("tree_strawberry", "tree_apple", "tree_strawberry", "tree_apple")):
-            im.alpha_composite(fr(name, 2), (12 + k * 24, y))
-    # pole: rzedy grzadek z przerwami na trawe (prawa czesc)
-    for row, ty in enumerate((HORIZON + 24, HORIZON + 46, HORIZON + 68)):
-        for tx in range(124, 244, 16):
-            im.alpha_composite(fr("bed_wet" if (row + tx // 16) % 3 == 0 else "bed_empty", 0), (tx, ty))
+    PLACED.clear()
+    def put(n, x, y, i):
+        PLACED.append((n, x, y, i)); im.alpha_composite(i, (x, y))
+    put("barn_hay", 176, HORIZON - 34, _img("farm/barn_hay.png"))
+    kinds = {"lawn": ("plot_lawn", None), "bed": ("bed_empty", 0), "bed_wet": ("bed_wet", 0)}
+    for kind, c, rw in sorted(plots, key=lambda p: p[2]):                       # rzedami od gory: nizsze rysowane pozniej
+        x, y = GX + c * 16, GY + rw * 16
+        if kind == "lawn": put("plot_lawn", x, y, _img("farm/plot_lawn.png"))
+        elif kind in ("bed", "bed_wet"): put(kinds[kind][0], x, y, fr(kinds[kind][0], 0))
+        elif kind == "tree":
+            put("plot_orchard", x, y, _img("farm/plot_orchard.png"))
+            nm = "tree_apple" if (c + rw) % 2 == 0 else "tree_strawberry"
+            put(nm, x, y - 16, fr(nm, 2))
     for _ in range(30):
         x, y = r.randint(0, W - 1), r.randint(HORIZON + 24, HT - 3)
         if im.getpixel((x, y))[:3] in H.RAMPS["moss"]: H.put(im, x, y, r.choice(["hay.2", "linen.2"]))
     return im
 
 
-def build():
+def orchard_scene():
+    """bg:orchard - podglad sadu: trzy dzialki sadu z drzewkami w stadiach 0-2, kosz i drabina na trawie."""
     out = Image.new("RGBA", (W, HT))
-    out.alpha_composite(sky()); out.alpha_composite(world())
+    out.alpha_composite(sky()); base = world([])
+    PLACED.clear()
+    def put(n, x, y, i):
+        PLACED.append((n, x, y, i)); base.alpha_composite(i, (x, y))
+    meta = json.loads((H.WORLD_DIR / "farm/farm.json").read_text(encoding="utf-8"))["frames"]
+    sheet = _img("farm/farm.png")
+    for st in range(3):
+        for k in range(4):
+            c, r = 1 + st * 4 + (k % 2) * 2, 1 + (k // 2) * 2
+            x, y = GX - 16 + c * 16, GY + r * 16
+            put("plot_orchard", x, y, _img("farm/plot_orchard.png"))
+            name = ("tree_apple", "tree_strawberry", "tree_pear", "tree_blueberry")[k]
+            x0, y0, w, h = meta[name][st]
+            put(name, x, y + 16 - h, sheet.crop((x0, y0, x0 + w, y0 + h)))
+    out.alpha_composite(base)
+    return _break(out)
+
+
+def build(plots=()):
+    out = Image.new("RGBA", (W, HT))
+    out.alpha_composite(sky()); out.alpha_composite(world(plots))
     return _break(out)
 
 
@@ -109,5 +143,19 @@ def overview(path):
 if __name__ == "__main__":
     im = build()
     H.save_png(im, H.WORLD_DIR / "bg/farm.png")
+    oi = orchard_scene(); H.save_png(oi, H.WORLD_DIR / "bg/orchard.png")
+    import layout_check as _LC; _LC.report("sad", PLACED)
+    H._update_json(H.TILES_FILE, lambda d: d["bg"].__setitem__("orchard", {"file": "bg/orchard.png", "size": [W, HT]}))
+    oi.convert("RGB").resize((W * 3, HT * 3), Image.NEAREST).save(H.ROOT / "docs/album/przebudowa/b14-4_sad.png")
     H.save_png(im.resize((W * 2, HT * 2), Image.NEAREST), H.WORLD_DIR / "bg/farm_x2.png")
     overview(H.ROOT / "docs/album/przebudowa/b7-6_przeglad_farmy.png")
+    import layout_check as LC
+    S = Path("/tmp/claude-0/-home-user/06cc83a8-7800-529c-8cf3-9903bd86f472/scratchpad")
+    stages = [START, MID, [p for p in MID if p[0] != "lawn"]]
+    sh = Image.new("RGB", (W, HT * 3 + 8))
+    for i, st in enumerate(stages):
+        im2 = build(st); LC.report(f"farma etap {i}", PLACED); sh.paste(im2.convert("RGB"), (0, i * (HT + 4)))
+    sh = sh.resize((sh.width * 3, sh.height * 3), Image.NEAREST)
+    sh.save(S / "b14-farm.png")
+    Path(H.ROOT / "docs/album/przebudowa").mkdir(parents=True, exist_ok=True)
+    sh.save(H.ROOT / "docs/album/przebudowa/b14-4_farma_etapy.png")

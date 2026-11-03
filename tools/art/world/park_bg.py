@@ -84,7 +84,7 @@ def world(extra=()):
         i = _img(rel or f"park/{name}.png"); PLACED.append((name, x, y, i)); im.alpha_composite(i, (x, y))
     bank = STREAM[0] - 2                                                       # drzewa i altana stoja na dalekim brzegu
     put("gazebo", 70, bank - 48)
-    for x in (2, 212, 262, 316): put("tree_big", x, bank - 48 + (x % 5))
+    for x in (2, 212, 262, 316): put("tree_big", x, bank - 52 + (x % 3))
     put("bridge_wood", *BRIDGE)
     pc = _img("park/path_cobble.png")                                          # sciezka od mostu w dol
     for k, y in enumerate(range(STREAM[1] + 8, HT - 4, 13)):
