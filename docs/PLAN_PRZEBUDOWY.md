@@ -196,4 +196,5 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | Fala | Stan |
 |---|---|
 | B0-1 | zrobione (handart.py + test_handart.py) |
-| B0-2..B13 | nie rozpoczęte |
+| B0-2 | zrobione (style_check.py + lint_baseline.txt: 101 plików, wszystkie z odstępstwami, R1=547597 px) |
+| B0-3..B13 | nie rozpoczęte |
