@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
+using Cuy.Core.Pigs;
 using Cuy.Core.Time;
 
 namespace Cuy.Core.AI
@@ -72,6 +73,9 @@ namespace Cuy.Core.AI
         public string LastActionId => _lastActionId;
         public int ConsecutiveCount => _consecutiveCount;
         public double TotalSimulatedSeconds => _totalSimulatedSeconds;
+
+        /// <summary>Provider of active pig multipliers (null means neutral).</summary>
+        public Func<PigModifiers> ModifiersProvider { get; set; }
 
         /// <summary>Hay in the rack (0-100). Default 100.</summary>
         public double HayInRack { get; set; } = 100.0;
@@ -325,6 +329,7 @@ namespace Cuy.Core.AI
 
             int hour = CurrentHour;
             double totalTimeSoFar = Math.Max(1.0, GetTotalTimeAcrossGroups());
+            PigModifiers modifiers = ModifiersProvider != null ? ModifiersProvider() : PigModifiers.Neutral;
 
             ActionDefinition bestAction = null;
             double bestScore = double.NegativeInfinity;
@@ -334,7 +339,7 @@ namespace Cuy.Core.AI
                 if (!IsActionAvailable(action, day))
                     continue;
 
-                double score = CalculateScore(action, hour, totalTimeSoFar);
+                double score = CalculateScore(action, hour, totalTimeSoFar, modifiers);
                 if (score > bestScore)
                 {
                     bestScore = score;
@@ -454,12 +459,13 @@ namespace Cuy.Core.AI
             int day = CurrentDay;
             int hour = CurrentHour;
             double totalTimeSoFar = Math.Max(1.0, GetTotalTimeAcrossGroups());
+            PigModifiers modifiers = ModifiersProvider != null ? ModifiersProvider() : PigModifiers.Neutral;
 
             foreach (var action in _config.Actions)
             {
                 string reason;
                 bool available = CheckActionAvailability(action, day, out reason);
-                double score = CalculateScore(action, hour, totalTimeSoFar);
+                double score = CalculateScore(action, hour, totalTimeSoFar, modifiers);
                 bool isCurrent = _currentAction != null && _currentAction.ActionId == action.Id;
 
                 list.Add(new ActionScoreInfo
@@ -592,8 +598,9 @@ namespace Cuy.Core.AI
             return true;
         }
 
-        private double CalculateScore(ActionDefinition action, int hour, double totalTimeSoFar)
+        private double CalculateScore(ActionDefinition action, int hour, double totalTimeSoFar, PigModifiers? modifiers = null)
         {
+            var activeModifiers = modifiers ?? (ModifiersProvider != null ? ModifiersProvider() : PigModifiers.Neutral);
             var needs = CurrentNeeds;
 
             // Base formula: sum((1 - need/100)^2 * effect)
@@ -721,7 +728,49 @@ namespace Cuy.Core.AI
                 }
             }
 
+            baseZysk *= GetActionMultiplier(action, activeModifiers);
+
             return baseZysk;
+        }
+
+        private static double GetActionMultiplier(ActionDefinition action, PigModifiers modifiers)
+        {
+            if (action == null) return 1.0;
+
+            double multiplier = 1.0;
+            string id = action.Id ?? string.Empty;
+            string anim = action.Animation ?? string.Empty;
+
+            // Movement / exploring actions: moves flag, walking group or walk id
+            if (action.IsMovement ||
+                string.Equals(id, "walk", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(ActionDefinition.GetBudgetGroupEnglish(id), "walking", StringComparison.OrdinalIgnoreCase))
+            {
+                multiplier *= modifiers.Activity;
+            }
+
+            // Joyful actions: popcorn, dance, zoomies, front_happy
+            if (string.Equals(id, "popcorn", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(anim, "popcorn", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(id, "dancing", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(id, "dance", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(anim, "dance", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(id, "zoomies", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(id, "beaming", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(anim, "front_happy", StringComparison.OrdinalIgnoreCase))
+            {
+                multiplier *= modifiers.JoyWeight;
+            }
+
+            // Wheek action
+            if (string.Equals(id, "wheeking", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(id, "wheek", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(anim, "wheek", StringComparison.OrdinalIgnoreCase))
+            {
+                multiplier *= modifiers.WheekRate;
+            }
+
+            return multiplier;
         }
 
         private bool TryGetNeedValue(string needName, out double val)
