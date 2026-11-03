@@ -103,3 +103,6 @@ Sierść (`fur.py`), rozetki (`whorls.py`), obrys selektywny, arkusze pięciu ś
 Plan: `docs/PLAN_PACZKA_FINAL.md`. Zrobione F1 (portrety, James rex, bez R2/R5), F2 ikony 120-160, F3 farma, F4 45 przedmiotów, F5 tła i kafelki, F6 podgląd. Testy: check_sprites, anim-test, palette-test, web-smoke OK. assets/ 51 MB.
 Drugi przebieg: R2 profile głów wg rasy, R5 mocniejsze wiry, arkusze przeliczone, altana i uprawy poprawione. Testy OK.
 Przegląd końcowy: licznik ikon w style.css (161) i klasy .icon-* dla 120-160, James z zakręconymi wąsami, kontrola spójności world_items/farm/ikon z plikami.
+
+## 2026-11-03 B0 narzędzia przebudowy
+handart.py (piksele w palecie, kontur, cień, recolor, rejestr atlasu), style_check.py (R1-R7, baseline: 101 plików z odstępstwami, R1=547597 px), light.py (silnik światła bez wypalenia do bieli), scena.py (bramka: świnka + 3 oświetlenia + 4 warianty), world/registry.py (55 id, 10 bez plików). Plan: docs/PLAN_PRZEBUDOWY.md.

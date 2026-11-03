@@ -199,4 +199,6 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B0-2 | zrobione (style_check.py + lint_baseline.txt: 101 plików, wszystkie z odstępstwami, R1=547597 px) |
 | B0-4 | zrobione (light.py + test_light.py, blask przycięty, bez wypalenia do bieli; wykonane przed B0-3, bo scena z niego korzysta) |
 | B0-3 | zrobione (scena.py: bramka (c), 3 oświetlenia, 4 warianty, 1x/2x; warianty zadziałają od B1-1, stare pliki nie mają rampy brick) |
-| B0-5..B13 | nie rozpoczęte |
+| B0-5 | zrobione (registry.py: 55 id, brakuje wpisu i pliku dla 10 nowych; lamp_mushroom, fireplace, lamp_salt itd. nie ma w world_items.json, trafią do przekazania B13-5) |
+| B0 | **fala zamknięta** |
+| B1..B13 | nie rozpoczęte |
