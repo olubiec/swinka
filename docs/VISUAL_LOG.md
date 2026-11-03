@@ -118,3 +118,6 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 
 ## B4 – dom (przebudowa)
 - 13 przedmiotów (B4-1..3), 9 ciepłych dodatków, 5 rzeczy podpisowych 2x2 + 20 wariantów koloru, 4 rekwizyty, memory_frame, dorm_nest, 5 scen pokoi. Lint 0 (poza starym memory_corner – do B13). Gra nie uruchamiana (brak Windows).
+
+## B5 – ogród (przebudowa)
+- 17 przedmiotów ogrodu w stylu domku z siana (rośliny, konstrukcje, woda i zabawa, dodatki), nowa gate_garden, 4 tła 256x144 z tunelem z wierzby, furtką, ścieżką i oświetleniem. Lint 0 dla nowych. Nowe id: gate_garden, watering_can, hay_basket, stump_seat (hand-off B13-5).

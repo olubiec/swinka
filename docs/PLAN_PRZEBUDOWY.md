@@ -232,4 +232,8 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B5-2 | zrobione (fence_wood, arch_rose, path_stone, bench_wood + nowa gate_garden 16x16) |
 | B5-3 | zrobione (pond_small, bird_bath, sandbox_pig, pigloo_garden, memory_corner; lantern_garden z B3-4) |
 | B5-4 | zrobione (willow_tunnel z B1-3 + nowe watering_can, hay_basket, stump_seat → hand-off B13-5) |
-| B5-5..B13 | nie rozpoczęte |
+| B5-5 | zrobione (bg garden_morning, garden_day; garden_bg.py, 256x144, lint 0) |
+| B5-6 | zrobione (bg garden_evening, garden_night: pochodnie, latarnia, półksiężyc, gwiazdy) |
+| B5-7 | zrobione (przegląd: 3 świnki w ogrodzie, 4 pory dnia) |
+| B5 | **fala zamknięta** |
+| B6..B13 | nie rozpoczęte |
