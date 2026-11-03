@@ -3,13 +3,13 @@
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
 > ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** `2026-11-03 16:01:08`
+> **Ostatni heartbeat:** `2026-11-03 16:04:13`
 >
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
 > | 🔋 **Zasilanie i Bateria** | **97%** (Zasilacz AC podłączony) | 🟢 Zasilacz AC (Bezpieczny) |
-> | 🌊 **Aktualna Fala** | **W12** (w toku: W12-01, W12-02, W12-03, W12-04, W12-05) | 🟢 Aktywna |
-> | 🏆 **Ukończone Zadania** | **12 / 162** (7.4%) | 🟢 Postęp OK |
+> | 🌊 **Aktualna Fala** | **W12** | 🟢 Aktywna |
+> | 🏆 **Ukończone Zadania** | **17 / 162** (10.5%) | 🟢 Postęp OK |
 > | 🧪 **Testy Jednostkowe** | **399 / 399** zaliczonych | ✅ Wszystkie przechodzą |
 > | 💻 **Stan Systemu** | ⚡ Agenci pracują autonomicznie | 🟢 Aktywny |
 >
