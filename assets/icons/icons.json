@@ -126,7 +126,7 @@
   "pattern_tortoiseshell": 122,
   "pattern_belt": 123,
   "pattern_blaze_only": 124,
-  "candle": 125,
+  "candle": 161,
   "gift_offer": 126,
   "paw_walk": 127,
   "pair_pigs": 128,
@@ -161,6 +161,18 @@
   "zucchini": 157,
   "cherry_tomato": 158,
   "blueberry": 159,
-  "pear": 160
+  "pear": 160,
+  "bedroom": 162,
+  "run": 163,
+  "gate": 164,
+  "tray": 165,
+  "shop": 166,
+  "house_plan": 167,
+  "storage": 168,
+  "swatch": 169,
+  "wander": 170,
+  "bond": 171,
+  "rename": 172,
+  "color_lock": 173
  }
 }

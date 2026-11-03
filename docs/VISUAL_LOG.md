@@ -136,3 +136,8 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 
 ## B9 dekoracje sklepu (przebudowa)
 - decor.png przerysowany w całości (40 przedmiotów, 41 klatek) w tych samych ramkach co decor.json (kontrakt bez zmian): tapety, podłogi, posłania, kryjówki, płotki, karmniki, dywany, rośliny, lampki, obrazy. Generator: tools/art/world/decor_a.py (lint klatek 0, R5 jako `prop`, bo dekoracje nie leżą na siatce 16). Przegląd: docs/album/przebudowa/b9_dekoracje_sklepu.png.
+
+## B10 ikony (przebudowa)
+- Raport: 161 z 161 ikon miało piksele poza paletą (13301 px). Wszystkie 0-160 sprowadzone do palety legendy (najbliższy kolor, ciemne -> kontur #3a1d17), indeksy bez zmian. Nowe 161-173: candle, bedroom, run, gate, tray, shop, house_plan, storage, swatch, wander, bond, rename, color_lock (wpisy w icons.json). Poza paletą: 0. Generator: tools/art/world/icons_a.py. Przegląd: docs/album/przebudowa/b10_ikony.png.
+- Uwaga: przemalowanie 0-160 jest automatyczne (kwantyzacja), nie ręczne; ręczne dopracowanie pojedynczych ikon w B13 jeśli trzeba.
+- Hand-off B13-5: nowe ikony 161-173 (nazwy wyżej).

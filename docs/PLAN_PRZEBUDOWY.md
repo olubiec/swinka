@@ -242,4 +242,5 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B7 | **fala zamknięta** |
 | B8 | **fala zamknięta** |
 | B9 | **fala zamknięta** |
-| B10..B13 | nie rozpoczęte |
+| B10 | **fala zamknięta** |
+| B11..B13 | nie rozpoczęte |
