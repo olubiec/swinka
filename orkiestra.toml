@@ -17,7 +17,7 @@ use_pty = false
 extra_args = []
 
 [run]
-max_parallel = 6
+max_parallel = 4
 max_attempts = 2
 quota_wait_minutes = 30
 ci_timeout_minutes = 30
