@@ -1,6 +1,6 @@
 # Roadmap: what is left (2.11.2026)
 
-**20 Jules waves (W11-W30), 141 tasks**: W11-W15 named pigs (28), W16-W22 world (48), W23-W30 pig rooms, roaming, run, desktop props and the home store (65). Art: v1 of everything exists; open: style wave S (owner gate) and the new P0-P3 (33 required files, `docs/DESIGNER_BRIEF.md`). No loop is enabled; W11 waits in `tasks/`, W12-W30 are ready in `docs/prompts/` (136 files, loop format, validated: no `Zmieniaj` overlap in any wave).
+**20 Jules waves (W11-W30), 143 tasks** (W14-09 and W22-07 were added by the orchestrator session; `waves.yaml` now holds 45 waves/sub-waves and 154 tasks including QA and cleanup): W11-W15 named pigs (28), W16-W22 world (48), W23-W30 pig rooms, roaming, run, desktop props and the home store (65). Art: v1 of everything exists; open: style wave S (owner gate) and the new P0-P3 (33 required files, `docs/DESIGNER_BRIEF.md`). No loop is enabled; W11 waits in `tasks/`, W12-W30 are ready in `docs/prompts/` (136 files, loop format, validated: no `Zmieniaj` overlap in any wave).
 The loop adds its own test (`T<n>`) and integration (`I<n>`) tasks after each wave, so real sessions will be somewhat higher than 76.
 
 ## Part 1: Named pigs (28 tasks, 5 waves). Design: `docs/NAMED_PIGS.md`
@@ -38,6 +38,8 @@ Order is strict: W11 → W15 → W16 → W22 → W23 → W30 (the world uses off
 | W30 | 9 | one home store, purchase facade, store UI, full economy simulator, data checks, smoke and manual steps, flags on |
 
 3D / isometric view was dropped (3.11.2026); notes kept in `docs/PIG_ROOMS.md` section 11.
+
+W23-W30 are executed as 25 sub-waves (`W23a`...`W30c`, `docs/prompts/subwaves.json`, already in `waves.yaml`) because many tasks use code of a sibling task.
 
 ## Part 4: Graphics. Status and what is left: `docs/GRAFIKA_KOLEJKA.md`; designer brief: `docs/DESIGNER_BRIEF.md`
 v1 of all art exists. Open: style wave S (owner approval of 5 samples) and P0-P3 (13 icons, 5 signature items + 10 skin tiles, gate + 4 props, optional extras). No wave waits for art: the code draws fallback glyphs until files exist.

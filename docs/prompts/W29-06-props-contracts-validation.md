@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, web/*, AGENTS.md, tasks/*
 Goal: The `props` state and messages are documented and validated.
-Depends on: W29-05 merged (read it).
+Depends on: W29-05 merged (read it). Sub-wave W29e: start only after W29-05 is merged (this task uses their code).
 Facts: Add a `props` section to `docs/contracts.md`; validator entries for the four messages (ids <= 64, `x`/`y` numbers: fractions 0..1 for desktop messages, -1..200 for room messages). Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Write the doc and entries.

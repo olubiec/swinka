@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, web/*, AGENTS.md, docs/*, tasks/*
 Goal: The new messages are validated with tests.
-Depends on: W25-01 merged.
+Depends on: W25-01 merged. Sub-wave W25a: no dependency on other tasks of the wave.
 Facts: As W19-06 (find the real validator file with grep). Add `room_variant` (uid string <= 64, variant int 0-7), `room_variant_unlock` (itemId string <= 64, variant int 1-7), `room_rename` (place string, name string <= 24 after trim, no control characters), `room_transfer` (from, to, uid, x, y with the same coordinate limits as `room_move`). Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Add the entries.

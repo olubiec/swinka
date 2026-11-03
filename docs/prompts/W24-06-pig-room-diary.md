@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/*, AGENTS.md, docs/*, tasks/*
 Goal: The diary has at least 10 new lines about the pig's own room and the shared bedroom.
-Depends on: W23 merged.
+Depends on: W23 merged. Sub-wave W24a: no dependency on other tasks of the wave.
 Facts: Same rules as W18-06 (`docs/diary-grammar.md`, `DiaryTemplatesTests.cs`). Events: a new decoration in my room, I got my own room, a recoloured item, rename of the room, a cosy evening in my room, moved in with a friend (shared bedroom), napping next to a friend, a visit to my memory room (soft wording, no mention of death). English, the pig's voice, warm, no amounts. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Append at least 10 templates (and symbols) without changing existing ones.

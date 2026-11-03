@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
 Goal: Core loads the rules and prices of item colours, the run, desktop props and roaming.
-Depends on: W22 merged.
+Depends on: W22 merged. Sub-wave W23a: no dependency on other tasks of the wave.
 Facts: Pattern as W16-01. File `assets/data/home_economy.json` (design: docs/PIG_ROOMS.md sections 7-9): `variants{unlock_percent,min_price}`, `skins{pig_skin_price}`, `resale{allowed}`, `roam{slot_minutes,night_from_hour,night_to_hour,default_mode}`, `run{min_cells,cells_per_pig,gate_item,blockers[],max_hours_per_day,day_from_hour,day_to_hour,min_temp_c,max_temp_c,allowed_conditions[],mood_per_hour,mood_cap_per_day}`, `props{max_on_desktop}`. Decorations are never resold: `resale.allowed` must stay false and no code path in this wave sells placeables back. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. `HomeEconomyConfig` (sealed; `Current/Load/LoadDefault`; typed properties; `int VariantPrice(int itemPrice)` = 0 when the price is 0, otherwise `max(min_price, ceil(price * percent / 100.0))`; `bool ResaleAllowed`).

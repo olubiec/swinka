@@ -5,7 +5,7 @@ Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargetin
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/*, web/*, AGENTS.md, docs/*, tasks/*
 Goal: The Home page can read the home store and buy from it.
-Depends on: W29 merged.
+Depends on: W29 merged. Sub-wave W30b: start only after W30-01, W30-02 are merged (this task uses their code).
 Facts: State key `store`: `{ clovers, rows: [ { kind, id, name, category, place, price, owned, placed, locked, lockedReason, icon } ], categories: [ { id, name, count } ] }` from `HomeStore.Rows`. Message `store_buy { kind, id, count }` calls `Pet.Purchase`; toasts: 'Not enough clovers', 'Not available yet', 'Bought!'. Rows are large (about 150): publish them only when the page asked (`store_open {}` message sets a flag for 5 minutes) and on changes. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Implement with the planned names.

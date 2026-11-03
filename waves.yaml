@@ -740,3 +740,505 @@ waves:
     - tests/Cuy.Core.Tests/WorldAssetsTests.cs
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
       --filter WorldAssetsTests
+- id: W23a
+  tasks:
+  - id: W23-01
+    title: 'W23-01: PigRoomConfig (loader for pig_rooms.json)'
+    prompt_file: docs/prompts/W23-01-pig-room-config.md
+    files:
+    - src/Cuy.Core/World/PigRoomConfig.cs
+    - tests/Cuy.Core.Tests/PigRoomConfigTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W23-02
+    title: 'W23-02: WorldState fields for pig rooms and the shared bedroom'
+    prompt_file: docs/prompts/W23-02-world-state-pig-fields.md
+    files:
+    - src/Cuy.Core/World/WorldState.cs
+    - tests/Cuy.Core.Tests/WorldStatePigFieldsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W23-06
+    title: 'W23-06: Flags and achievements for pig rooms and the shared bedroom'
+    prompt_file: docs/prompts/W23-06-pig-room-flags-achievements.md
+    files:
+    - src/Cuy.Core/Balance.cs
+    - assets/data/achievements.json
+    - tests/Cuy.Core.Tests/PigRoomFlagsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W23-07
+    title: 'W23-07: HomeEconomyConfig (loader for home_economy.json)'
+    prompt_file: docs/prompts/W23-07-home-economy-config.md
+    files:
+    - src/Cuy.Core/World/HomeEconomyConfig.cs
+    - tests/Cuy.Core.Tests/HomeEconomyConfigTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W23-08
+    title: 'W23-08: Economy simulator: pig rooms variant and checks'
+    prompt_file: docs/prompts/W23-08-economy-sim-pigrooms.md
+    files:
+    - tools/qa/economy-sim.js
+    test_command: 'node tools/qa/economy-sim.js --runs 12 --variant baseline --check && node tools/qa/economy-sim.js --runs 12 --variant pigrooms --check'
+- id: W23b
+  tasks:
+  - id: W23-03
+    title: 'W23-03: PigComfort: personal comfort and mood factor per pig'
+    prompt_file: docs/prompts/W23-03-pig-comfort.md
+    files:
+    - src/Cuy.Core/World/PigComfort.cs
+    - tests/Cuy.Core.Tests/PigComfortTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W23-04
+    title: 'W23-04: PigRoomOps: create a pig''s room with its theme and starter set'
+    prompt_file: docs/prompts/W23-04-pig-room-ops.md
+    files:
+    - src/Cuy.Core/World/PigRoomOps.cs
+    - tests/Cuy.Core.Tests/PigRoomOpsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W23-05
+    title: 'W23-05: Rooms of pigs and the shared bedroom in PlaceCatalog and PlaceUnlock'
+    prompt_file: docs/prompts/W23-05-dynamic-room-levels.md
+    files:
+    - src/Cuy.Core/World/PlaceCatalog.cs
+    - src/Cuy.Core/World/PlaceUnlock.cs
+    - tests/Cuy.Core.Tests/PigRoomLevelsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W24a
+  tasks:
+  - id: W24-01
+    title: 'W24-01: Pet.PigRooms: a room for every adopted pig'
+    prompt_file: docs/prompts/W24-01-pet-pig-rooms.md
+    files:
+    - src/Cuy.Core/Pet.PigRooms.cs
+    - tests/Cuy.Core.Tests/PetPigRoomsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W24-02
+    title: 'W24-02: Per-pig comfort in mood decay'
+    prompt_file: docs/prompts/W24-02-pet-pig-comfort-decay.md
+    files:
+    - src/Cuy.Core/Pet.Rooms.cs
+    - tests/Cuy.Core.Tests/PetPigComfortTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W24-03
+    title: 'W24-03: Pet.PigRoomItems: variants, room names, storage and transfer'
+    prompt_file: docs/prompts/W24-03-pet-pig-room-items.md
+    files:
+    - src/Cuy.Core/Pet.PigRoomItems.cs
+    - tests/Cuy.Core.Tests/PetPigRoomItemsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W24-04
+    title: 'W24-04: Memorial pigs keep their room as a memory room'
+    prompt_file: docs/prompts/W24-04-memory-room.md
+    files:
+    - src/Cuy.Core/Pet.MemoryRoom.cs
+    - tests/Cuy.Core.Tests/PetMemoryRoomTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W24-05
+    title: 'W24-05: GameState.PigRooms: rooms for old saves'
+    prompt_file: docs/prompts/W24-05-game-state-pig-rooms.md
+    files:
+    - src/Cuy.Core/GameState.PigRooms.cs
+    - tests/Cuy.Core.Tests/PigRoomsMigrationTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W24-06
+    title: 'W24-06: Diary lines for pig rooms'
+    prompt_file: docs/prompts/W24-06-pig-room-diary.md
+    files:
+    - assets/data/diary.json
+    - tests/Cuy.Core.Tests/PigRoomDiaryTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W25a
+  tasks:
+  - id: W25-01
+    title: 'W25-01: RoomsFeature: pig rooms, storage, variants, names, transfer'
+    prompt_file: docs/prompts/W25-01-rooms-feature-pig-rooms.md
+    files:
+    - src/Cuy/dotNet/Features/RoomsFeature.cs
+    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
+  - id: W25-03
+    title: 'W25-03: Validation for the pig room messages'
+    prompt_file: docs/prompts/W25-03-pig-room-message-validation.md
+    files:
+    - src/Cuy.Core/Input/MessageValidator.cs
+    - tests/Cuy.Core.Tests/PigRoomMessageTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W25-04
+    title: 'W25-04: Rooms page: one tab per room with portraits and level-up'
+    prompt_file: docs/prompts/W25-04-room-picker-tabs.md
+    files:
+    - web/home/features/rooms/feature.js
+    - web/home/features/rooms/feature.css
+    test_command: 'node --check web/home/features/rooms/feature.js && node tools/qa/web-smoke.js'
+  - id: W25-05
+    title: 'W25-05: Customize panel: skins, item colours, name, storage and transfer'
+    prompt_file: docs/prompts/W25-05-room-customize-panel.md
+    files:
+    - web/home/features/rooms/customize.js
+    - web/home/features/rooms/customize.css
+    test_command: 'node --check web/home/features/rooms/customize.js && node tools/qa/web-smoke.js'
+  - id: W25-06
+    title: 'W25-06: My Pigs: ''Visit room'' link'
+    prompt_file: docs/prompts/W25-06-pigs-visit-room.md
+    files:
+    - web/home/features/pigs/feature.js
+    test_command: 'node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js'
+  - id: W25-07
+    title: 'W25-07: Mock bridge: pig rooms, variants, storage, transfer'
+    prompt_file: docs/prompts/W25-07-mock-pig-rooms.md
+    files:
+    - web/home/bridge.js
+    test_command: 'node --check web/home/bridge.js && node tools/qa/web-smoke.js'
+- id: W25b
+  tasks:
+  - id: W25-02
+    title: 'W25-02: docs/contracts.md: pig rooms'
+    prompt_file: docs/prompts/W25-02-pig-rooms-contracts.md
+    files:
+    - docs/contracts.md
+    test_command: git diff --stat
+- id: W26a
+  tasks:
+  - id: W26-01
+    title: 'W26-01: SharedRoomOps: move pigs into the shared bedroom and back'
+    prompt_file: docs/prompts/W26-01-shared-room-ops.md
+    files:
+    - src/Cuy.Core/World/SharedRoomOps.cs
+    - tests/Cuy.Core.Tests/SharedRoomOpsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W26-03
+    title: 'W26-03: PigComfort: roommates use the shared bedroom as their own room'
+    prompt_file: docs/prompts/W26-03-dorm-comfort.md
+    files:
+    - src/Cuy.Core/World/PigComfort.cs
+    - tests/Cuy.Core.Tests/PigComfortDormTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W26-06
+    title: 'W26-06: Shared bedroom page: unlock, residents and move in or out'
+    prompt_file: docs/prompts/W26-06-dorm-ui.md
+    files:
+    - web/home/features/rooms/dorm.js
+    - web/home/features/rooms/dorm.css
+    test_command: 'node --check web/home/features/rooms/dorm.js && node tools/qa/web-smoke.js'
+- id: W26b
+  tasks:
+  - id: W26-02
+    title: 'W26-02: Pet.Dorm: unlock, move in and out, levels'
+    prompt_file: docs/prompts/W26-02-pet-dorm.md
+    files:
+    - src/Cuy.Core/Pet.Dorm.cs
+    - tests/Cuy.Core.Tests/PetDormTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W26-07
+    title: 'W26-07: Wire the shared bedroom into the rooms page and the mock'
+    prompt_file: docs/prompts/W26-07-dorm-wiring-mock.md
+    files:
+    - web/home/features/rooms/feature.js
+    - web/home/bridge.js
+    test_command: 'node --check web/home/features/rooms/feature.js && node --check web/home/bridge.js && node tools/qa/web-smoke.js'
+- id: W26c
+  tasks:
+  - id: W26-04
+    title: 'W26-04: DormFeature: state and messages'
+    prompt_file: docs/prompts/W26-04-dorm-feature.md
+    files:
+    - src/Cuy/dotNet/Features/DormFeature.cs
+    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
+  - id: W26-08
+    title: 'W26-08: GameSession.Open switches pig rooms and the dorm on'
+    prompt_file: docs/prompts/W26-08-enable-pig-rooms.md
+    files:
+    - src/Cuy.Core/GameSession.cs
+    - tests/Cuy.Core.Tests/GameSessionPigRoomsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W26-09
+    title: 'W26-09: Smoke test and manual steps for pig rooms and the shared bedroom'
+    prompt_file: docs/prompts/W26-09-pig-rooms-smoke-manual.md
+    files:
+    - tools/qa/web-smoke.js
+    - TESTY_RECZNE.md
+    test_command: node tools/qa/web-smoke.js
+- id: W26d
+  tasks:
+  - id: W26-05
+    title: 'W26-05: Contracts and validation for the shared bedroom'
+    prompt_file: docs/prompts/W26-05-dorm-contracts-validation.md
+    files:
+    - docs/contracts.md
+    - src/Cuy.Core/Input/MessageValidator.cs
+    - tests/Cuy.Core.Tests/DormMessageTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W27a
+  tasks:
+  - id: W27-01
+    title: 'W27-01: WorldState.PigHomes: free roaming or tied to a room'
+    prompt_file: docs/prompts/W27-01-world-state-homes.md
+    files:
+    - src/Cuy.Core/World/WorldState.cs
+    - tests/Cuy.Core.Tests/WorldStateHomesTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W27-02
+    title: 'W27-02: PigWander: where a pig is and what it does, from the clock'
+    prompt_file: docs/prompts/W27-02-pig-wander.md
+    files:
+    - src/Cuy.Core/World/PigWander.cs
+    - tests/Cuy.Core.Tests/PigWanderTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W27-06
+    title: 'W27-06: House plan: a flat cutaway to switch rooms'
+    prompt_file: docs/prompts/W27-06-house-plan.md
+    files:
+    - web/home/features/rooms/plan.js
+    - web/home/features/rooms/plan.css
+    test_command: 'node --check web/home/features/rooms/plan.js && node tools/qa/web-smoke.js'
+  - id: W27-07
+    title: 'W27-07: Pigs walking inside the room editor'
+    prompt_file: docs/prompts/W27-07-room-residents.md
+    files:
+    - web/home/features/rooms/residents.js
+    test_command: 'node --check web/home/features/rooms/residents.js && node tools/qa/web-smoke.js'
+- id: W27b
+  tasks:
+  - id: W27-03
+    title: 'W27-03: Pet.Homes: choose roaming or a home room'
+    prompt_file: docs/prompts/W27-03-pet-homes.md
+    files:
+    - src/Cuy.Core/Pet.Homes.cs
+    - src/Cuy.Core/Balance.cs
+    - tests/Cuy.Core.Tests/PetHomesTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W27-08
+    title: 'W27-08: Wire the plan, residents and home chips into the rooms page and the mock'
+    prompt_file: docs/prompts/W27-08-homes-wiring-mock.md
+    files:
+    - web/home/features/rooms/feature.js
+    - web/home/bridge.js
+    test_command: 'node --check web/home/features/rooms/feature.js && node --check web/home/bridge.js && node tools/qa/web-smoke.js'
+- id: W27c
+  tasks:
+  - id: W27-04
+    title: 'W27-04: HomesFeature: where the pigs are'
+    prompt_file: docs/prompts/W27-04-homes-feature.md
+    files:
+    - src/Cuy/dotNet/Features/HomesFeature.cs
+    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
+- id: W27d
+  tasks:
+  - id: W27-05
+    title: 'W27-05: Contracts and validation for homes'
+    prompt_file: docs/prompts/W27-05-homes-contracts-validation.md
+    files:
+    - docs/contracts.md
+    - src/Cuy.Core/Input/MessageValidator.cs
+    - tests/Cuy.Core.Tests/HomesMessageTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W28a
+  tasks:
+  - id: W28-01
+    title: 'W28-01: RunCheck: is the run fenced and how many pigs fit'
+    prompt_file: docs/prompts/W28-01-run-check.md
+    files:
+    - src/Cuy.Core/World/RunCheck.cs
+    - tests/Cuy.Core.Tests/RunCheckTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W28-02
+    title: 'W28-02: WorldState.Run: who is out in the run'
+    prompt_file: docs/prompts/W28-02-world-state-run.md
+    files:
+    - src/Cuy.Core/World/WorldState.cs
+    - tests/Cuy.Core.Tests/WorldStateRunTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W28-03
+    title: 'W28-03: RunRules: when a pig may be outside and how much mood it earns'
+    prompt_file: docs/prompts/W28-03-run-rules.md
+    files:
+    - src/Cuy.Core/World/RunRules.cs
+    - tests/Cuy.Core.Tests/RunRulesTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W28-07
+    title: 'W28-07: Garden: show the run, let pigs out and bring them in'
+    prompt_file: docs/prompts/W28-07-garden-run-ui.md
+    files:
+    - web/home/features/garden/run.js
+    - web/home/features/garden/feature.js
+    test_command: 'node --check web/home/features/garden/run.js && node --check web/home/features/garden/feature.js && node tools/qa/web-smoke.js'
+  - id: W28-08
+    title: 'W28-08: Mock bridge: the garden run'
+    prompt_file: docs/prompts/W28-08-run-mock.md
+    files:
+    - web/home/bridge.js
+    test_command: 'node --check web/home/bridge.js && node tools/qa/web-smoke.js'
+  - id: W28-09
+    title: 'W28-09: Audit: what is shown on the desktop today and how toys are used'
+    prompt_file: docs/prompts/W28-09-desktop-props-audit.md
+    files:
+    - docs/DESKTOP_PROPS.md
+    test_command: git diff --stat
+- id: W28b
+  tasks:
+  - id: W28-04
+    title: 'W28-04: Pet.Run: let pigs out into the garden run and bring them in'
+    prompt_file: docs/prompts/W28-04-pet-run.md
+    files:
+    - src/Cuy.Core/Pet.Run.cs
+    - src/Cuy.Core/Balance.cs
+    - assets/data/achievements.json
+    - tests/Cuy.Core.Tests/PetRunTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W28c
+  tasks:
+  - id: W28-05
+    title: 'W28-05: RunFeature: state and messages for the garden run'
+    prompt_file: docs/prompts/W28-05-run-feature.md
+    files:
+    - src/Cuy/dotNet/Features/RunFeature.cs
+    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
+- id: W28d
+  tasks:
+  - id: W28-06
+    title: 'W28-06: Contracts and validation for the run'
+    prompt_file: docs/prompts/W28-06-run-contracts-validation.md
+    files:
+    - docs/contracts.md
+    - src/Cuy.Core/Input/MessageValidator.cs
+    - tests/Cuy.Core.Tests/RunMessageTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W29a
+  tasks:
+  - id: W29-01
+    title: 'W29-01: DesktopPropCatalog: which items can live on the desktop'
+    prompt_file: docs/prompts/W29-01-desktop-prop-catalog.md
+    files:
+    - src/Cuy.Core/World/DesktopPropCatalog.cs
+    - tests/Cuy.Core.Tests/DesktopPropCatalogTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W29-02
+    title: 'W29-02: WorldState.DesktopProps: props on the desktop'
+    prompt_file: docs/prompts/W29-02-world-state-props.md
+    files:
+    - src/Cuy.Core/World/WorldState.cs
+    - tests/Cuy.Core.Tests/WorldStatePropsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W29-08
+    title: 'W29-08: Home: the ''On your desktop'' tray and dropping props into rooms'
+    prompt_file: docs/prompts/W29-08-props-tray.md
+    files:
+    - web/home/features/rooms/tray.js
+    - web/home/features/rooms/tray.css
+    test_command: 'node --check web/home/features/rooms/tray.js && node tools/qa/web-smoke.js'
+- id: W29b
+  tasks:
+  - id: W29-03
+    title: 'W29-03: DesktopPropOps: desktop <-> room, one place at a time'
+    prompt_file: docs/prompts/W29-03-desktop-prop-ops.md
+    files:
+    - src/Cuy.Core/World/DesktopPropOps.cs
+    - tests/Cuy.Core.Tests/DesktopPropOpsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W29-09
+    title: 'W29-09: Wire the tray into the rooms page and the mock'
+    prompt_file: docs/prompts/W29-09-props-wiring-mock.md
+    files:
+    - web/home/features/rooms/feature.js
+    - web/home/bridge.js
+    test_command: 'node --check web/home/features/rooms/feature.js && node --check web/home/bridge.js && node tools/qa/web-smoke.js'
+- id: W29c
+  tasks:
+  - id: W29-04
+    title: 'W29-04: Pet.Props: move toys between the desktop and the house'
+    prompt_file: docs/prompts/W29-04-pet-props.md
+    files:
+    - src/Cuy.Core/Pet.Props.cs
+    - src/Cuy.Core/Balance.cs
+    - tests/Cuy.Core.Tests/PetPropsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W29d
+  tasks:
+  - id: W29-05
+    title: 'W29-05: PropsFeature: state and messages for desktop props'
+    prompt_file: docs/prompts/W29-05-props-feature.md
+    files:
+    - src/Cuy/dotNet/Features/PropsFeature.cs
+    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
+  - id: W29-07
+    title: 'W29-07: Desktop: draw the props from the saved state'
+    prompt_file: docs/prompts/W29-07-desktop-props-overlay.md
+    files:
+    - src/Cuy/dotNet/DesktopPropsOverlay.cs
+    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
+- id: W29e
+  tasks:
+  - id: W29-06
+    title: 'W29-06: Contracts and validation for props'
+    prompt_file: docs/prompts/W29-06-props-contracts-validation.md
+    files:
+    - docs/contracts.md
+    - src/Cuy.Core/Input/MessageValidator.cs
+    - tests/Cuy.Core.Tests/PropsMessageTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W30a
+  tasks:
+  - id: W30-01
+    title: 'W30-01: HomeStore: one catalogue of everything the player can buy'
+    prompt_file: docs/prompts/W30-01-home-store.md
+    files:
+    - src/Cuy.Core/World/HomeStore.cs
+    - tests/Cuy.Core.Tests/HomeStoreTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W30-02
+    title: 'W30-02: Pet.Store: one purchase entry for the home store'
+    prompt_file: docs/prompts/W30-02-pet-store.md
+    files:
+    - src/Cuy.Core/Pet.Store.cs
+    - tests/Cuy.Core.Tests/PetStoreTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W30-05
+    title: 'W30-05: Home store page'
+    prompt_file: docs/prompts/W30-05-store-ui.md
+    files:
+    - web/home/features/store/feature.js
+    - web/home/features/store/feature.css
+    - web/home/features/index.json
+    test_command: 'node --check web/home/features/store/feature.js && node tools/qa/web-smoke.js'
+  - id: W30-06
+    title: 'W30-06: Economy simulator: every home sink, with checks'
+    prompt_file: docs/prompts/W30-06-economy-sim-complete.md
+    files:
+    - tools/qa/economy-sim.js
+    test_command: 'node tools/qa/economy-sim.js --runs 12 --variant baseline --check && node tools/qa/economy-sim.js --runs 12 --variant pigrooms --check && node tools/qa/economy-sim.js --runs 12 --variant full --check'
+  - id: W30-07
+    title: 'W30-07: Data checks and SelfTest for the home extras'
+    prompt_file: docs/prompts/W30-07-data-checks-selftest.md
+    files:
+    - tools/qa/data-check.js
+    - src/Cuy/dotNet/SelfTest.cs
+    test_command: 'node tools/qa/data-check.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
+  - id: W30-09
+    title: 'W30-09: GameSession.Open switches roaming, run and props on'
+    prompt_file: docs/prompts/W30-09-enable-home-extras.md
+    files:
+    - src/Cuy.Core/GameSession.cs
+    - tests/Cuy.Core.Tests/GameSessionHomeExtrasTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W30b
+  tasks:
+  - id: W30-03
+    title: 'W30-03: StoreFeature: state and the purchase message'
+    prompt_file: docs/prompts/W30-03-store-feature.md
+    files:
+    - src/Cuy/dotNet/Features/StoreFeature.cs
+    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
+- id: W30c
+  tasks:
+  - id: W30-04
+    title: 'W30-04: Contracts and validation for the store'
+    prompt_file: docs/prompts/W30-04-store-contracts-validation.md
+    files:
+    - docs/contracts.md
+    - src/Cuy.Core/Input/MessageValidator.cs
+    - tests/Cuy.Core.Tests/StoreMessageTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W30-08
+    title: 'W30-08: Smoke test and manual steps for roaming, run, props and the store'
+    prompt_file: docs/prompts/W30-08-smoke-manual-home-extras.md
+    files:
+    - tools/qa/web-smoke.js
+    - TESTY_RECZNE.md
+    test_command: node tools/qa/web-smoke.js

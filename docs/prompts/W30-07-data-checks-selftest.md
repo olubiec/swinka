@@ -5,7 +5,7 @@ Weryfikacja: node tools/qa/data-check.js && dotnet build src/Cuy/Cuy.csproj -c R
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/*, web/*, AGENTS.md, docs/*, tasks/*
 Goal: The data check and the desktop self-test cover the new data files.
-Depends on: W29 merged.
+Depends on: W29 merged. Sub-wave W30a: no dependency on other tasks of the wave.
 Facts: `data-check.js` already checks `pig_rooms.json` and `home_economy.json` (read the sections). Add: every theme `wall_tile`/`floor_tile` that exists in `assets/world/tiles.json` has a file; every placeable with `prop_of` has an atlas entry or is listed in a `missing_art` array printed as a warning (not an error); the sum of all prices is printed. `SelfTest.cs`: add `Check` entries (W22-05 style) for `pig_rooms.json`, `home_economy.json` parse, every theme skin exists in `items_decor.json`, every theme starter/signature exists in `world_items.json`. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Implement both; keep the existing checks unchanged.

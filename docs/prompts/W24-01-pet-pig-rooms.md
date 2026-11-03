@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
 Goal: The pet creates the room of a pig when it is adopted and keeps rooms in sync with the roster.
-Depends on: W23 merged.
+Depends on: W23 merged. Sub-wave W24a: no dependency on other tasks of the wave.
 Facts: Behind `Balance.PigRoomsActive` (off: every method returns without doing anything). `Pet` is partial (pattern `Pet.Economy.cs`). The adoption code (W13-03, `Pet.Adoption.cs`) raises `PigAdopted` (planned event args with the pig id); subscribe in a method `AttachPigRooms()` that the session calls once (W24-05 tests it) instead of editing `Pet.Adoption.cs`. `EnsurePigRooms()` loops over the roster (`State.Pigs`), calls `PigRoomOps.EnsureRoom` with the pig's display name, `Memorial` flag and the position in the roster as `randomIndex`, adds the counter `pig_rooms_furnished` when a room reaches 6 placed items (check after each placement, hook documented for W24-03). Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Implement `AttachPigRooms`, `EnsurePigRooms`, `string RoomIdOf(string pigId)`.

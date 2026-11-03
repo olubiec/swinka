@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*
 Goal: Roaming, the run and desktop props become active in the real game.
-Depends on: W29 merged.
+Depends on: W29 merged. Sub-wave W30a: no dependency on other tasks of the wave.
 Facts: Add `HomesActive`, `RunActive`, `PropsActive` to the flags set in `GameSession.Open` (both branches) and call the migration of W29-04. Existing tests must keep passing; record any that break only because of the flags. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Implement.

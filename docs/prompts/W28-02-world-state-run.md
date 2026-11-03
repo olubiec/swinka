@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
 Goal: The saved world state remembers which pigs are out in the garden run and since when.
-Depends on: W27 merged.
+Depends on: W27 merged. Sub-wave W28a: no dependency on other tasks of the wave.
 Facts: Additive: `WorldState.Run` = `RunState { Dictionary<string,DateTime> Out (pig id -> UTC time it went out); string DayLocalDate; Dictionary<string,double> HoursToday (pig id -> hours credited today); }` lazy, non-null. Design: docs/PIG_ROOMS.md section 8. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Add the types.

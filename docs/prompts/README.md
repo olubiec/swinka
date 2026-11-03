@@ -12,3 +12,6 @@ Rules kept by every file: non-overlapping `Zmieniaj` inside a wave, `Wymagane` i
 
 Waves: W12-W15 named pigs, W16-W22 world, W23-W30 pig rooms, shared bedroom, roaming, garden run, desktop props, home store.
 Overview and counts: `docs/ROADMAP.md`. Design: `docs/NAMED_PIGS.md`, `docs/WORLD.md`, `docs/PIG_ROOMS.md`. Graphics: `docs/GRAFIKA_KOLEJKA.md`, `docs/DESIGNER_BRIEF.md`.
+
+## Sub-waves (W23-W30)
+Tasks of one wave run in parallel, so a task that uses code from a sibling cannot start before it. W23-W30 are therefore split into sub-waves (`W23a`, `W23b`, ...) listed in `subwaves.json`; each prompt names its sub-wave and the tasks it needs merged first. They are also added to `waves.yaml` (the orchestrator plan). `tools/release-wave.sh W26b` copies one sub-wave. W11-W22 follow the grouping of `waves.yaml`.

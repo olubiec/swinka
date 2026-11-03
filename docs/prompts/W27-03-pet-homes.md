@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
 Goal: A pet can set a pig's home mode and read where each pig is now.
-Depends on: W26 merged.
+Depends on: W26 merged. Sub-wave W27b: start only after W27-01, W27-02 are merged (this task uses their code).
 Facts: Add the flag `HomesActive` (bool, default false) to `Balance.cs`; it is switched on in W30-09, not here. Behind that flag. `SetHome(string pigId, string mode, string roomId)` validates: pig on the roster; mode `free` or `room`; for `room` the room is one the pig can use (its own room, a common room that is unlocked, or the dorm when it is a resident). `LocationOf(string pigId)` uses `PigWander.Where` with the pet's clock. `IReadOnlyList<(string pigId,string room,string activity)> Locations()` for the page. Memorial pigs are always shown in their memory room and never wander. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Implement the three methods and the flag.

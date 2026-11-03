@@ -245,7 +245,7 @@ Projekt: `docs/PIG_ROOMS.md` (własny pokój każdej świnki z innym wyglądem i
 | **W28** (9) | wybieg (sprawdzenie ogrodzenia, zasady, Pet, funkcja, UI, mock), audyt rekwizytów | wybieg | W27 |
 | **W29** (9) | rekwizyty z pulpitu zapisane i przyczepione, wrzucanie do pokoi, nakładka na pulpicie, pasek | rekwizyty | W28 |
 | **W30** (9) | sklep domu, fasada zakupów, UI sklepu, pełny symulator, kontrola danych, smoke, włączenie flag | domknięcie | W29 |
-Razem **141 zadań w 20 falach Julesa** (W11-W30), z czego W11 w `tasks/`, reszta w `docs/prompts/`.
+Razem **143 zadania w 20 falach Julesa** (W11-W30; W23-W30 wykonywane jako 25 pod-fal `W23a`...`W30c`, patrz `docs/prompts/subwaves.json` i `waves.yaml`), z czego W11 w `tasks/`, reszta w `docs/prompts/`.
 
 ## Podpięcie grafiki w grze (fala G, po W14 i W20)
 Grafika jest gotowa w `assets/` (kontrakt plików: `docs/KONTRAKT_ASSETOW.md`, spis: `docs/INWENTARZ_GRAFIKI.md`). Gra używa jej dopiero po tych zadaniach; do tego czasu rysuje glify zapasowe. Zadania wchodzą do istniejących fal (te same pliki `Zmieniaj`), osobnych plików w `tasks/` nie ma, bo pisze je człowiek lub Claude tuż przed startem fali (zasada z W16-W22).

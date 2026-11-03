@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, web/*, AGENTS.md, tasks/*
 Goal: The `dorm` state and messages are documented and validated.
-Depends on: W26-04 merged (read it).
+Depends on: W26-04 merged (read it). Sub-wave W26d: start only after W26-04 is merged (this task uses their code).
 Facts: Add a `dorm` section to `docs/contracts.md` in the existing format. Validator entries as W19-06: `dorm_unlock {}`, `dorm_upgrade {}`, `dorm_move_in { pigIds: string[] }` (1-6 ids, each <= 64 chars, no duplicates), `dorm_move_out { pigId }`. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Write the doc section and the validator entries.

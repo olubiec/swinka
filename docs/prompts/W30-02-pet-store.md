@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
 Goal: A pet routes every home purchase through one method that returns a clear result.
-Depends on: W29 merged.
+Depends on: W29 merged. Sub-wave W30a: no dependency on other tasks of the wave.
 Facts: A thin facade, no new rules: `StoreResult Purchase(string kind, string id, int count)` calls the existing methods: `BuyItem` (W18-02), `UnlockPlace`/`UnlockRoom`/`UpgradePlace` (W18-01), `UnlockDorm`/`UpgradeDorm` (W26-02), `UnlockVariant` (W24-03), farm upgrades (`BuyPlotPack`, `BuyOrchardSlot`, `BuyCan`, `BuySprinkler`, W18-03), `BuyBigStall` (W18-04), and the old decor purchase (`Buy` of `items_decor`). `StoreResult { Ok, NotEnoughClovers, Locked, MaxLevel, Unknown, Disabled }` with the clovers spent. A purchase that costs the player nothing else changes nothing else. No selling. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Implement and test one purchase of each kind.

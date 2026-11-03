@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
 Goal: A pure function finds the fenced area of the garden and tells how many pigs it holds.
-Depends on: W27 merged.
+Depends on: W27 merged. Sub-wave W28a: no dependency on other tasks of the wave.
 Facts: Design: docs/PIG_ROOMS.md section 8. Input: the garden `RoomLayout`, its grid size, the item catalog and `HomeEconomyConfig.Run` (`blockers`, `gate_item`, `min_cells`, `cells_per_pig`). A cell is blocked when a placed item whose id is in `blockers` covers it. Flood fill (4-neighbour) from every free cell; the outside is everything that touches the grid edge, so a region counts as fenced only when it never reaches the grid edge. The best region is the largest fenced region with at least `min_cells`; it must have a gate: at least one `gate_item` placed on its border (touching one of its cells by a side). Capacity = floor(cells / cells_per_pig), at least 1 when the region qualifies. Pure, no clock. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. `public static class RunCheck`: `RunInfo Analyze(RoomLayout garden, int cols, int rows, WorldItemCatalog items, HomeEconomyConfig cfg)` with `RunInfo { bool Valid; int Cells; int Capacity; bool HasGate; string Reason; IReadOnlyList<(int x,int y)> CellList }`, reasons: `ok`, `no_fence`, `too_small`, `no_gate`, `open_edge`.

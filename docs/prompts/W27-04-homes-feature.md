@@ -5,7 +5,7 @@ Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargetin
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/*, web/*, AGENTS.md, docs/*, tasks/*
 Goal: The Home page can read the pigs' locations and set their home mode.
-Depends on: W26 merged.
+Depends on: W26 merged. Sub-wave W27c: start only after W27-03 is merged (this task uses their code).
 Facts: Pattern as `PlacesFeature` (W19-01). State key `homes`: `{ pigs: [ { pigId, name, mode, room, location, activity, memorial, portrait } ], rooms: [ { id, name } ] }` where `rooms` lists the rooms a pig can be tied to. Tick: re-publish the state at most every 20 seconds while the Home page is open (the schedule changes by slot). Message `pig_home { pigId, mode, room }` calls `Pet.SetHome`; refusals become toasts ('That room is not available'). Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Implement with the planned `Pet.*` names; ignore unknown ids.

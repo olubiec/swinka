@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, web/*, AGENTS.md, tasks/*
 Goal: The `homes` state and `pig_home` message are documented and validated.
-Depends on: W27-04 merged (read it).
+Depends on: W27-04 merged (read it). Sub-wave W27d: start only after W27-04 is merged (this task uses their code).
 Facts: Add a `homes` section to `docs/contracts.md` (format of the others). Validator entry like W19-06: `pig_home { pigId <= 64, mode in free|room, room string <= 64 required when mode is room }`. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Write the section and the entry.

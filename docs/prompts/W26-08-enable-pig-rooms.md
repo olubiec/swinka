@@ -5,7 +5,7 @@ Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*
 Goal: Pig rooms and the shared bedroom become active in the real game.
-Depends on: W25 merged and W26-01..03 merged earlier in this wave are not required (the flags only switch on code that exists since W24).
+Depends on: W25 merged and W26-01..03 merged earlier in this wave are not required (the flags only switch on code that exists since W24). Sub-wave W26c: start only after W26-02 is merged (this task uses their code).
 Facts: Add `PigRoomsActive` and `DormActive` to the flags in `GameSession.Open` (both branches), call `AttachPigRooms()` and `State.EnsurePigRooms(...)` after `EnsureWorld`. Existing tests must keep passing; record any that break only because of the flags. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
 Steps:
 1. Implement.
