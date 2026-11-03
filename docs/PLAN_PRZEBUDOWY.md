@@ -160,6 +160,17 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B12-2 | Test czytelności: pięć świnek x 4 pory dnia x 5 pokoi, arkusz zbiorczy, poprawki kontrastu świata (nie świnek) |
 | B12-3 | [R] rekwizyty pulpitu w palecie świata (kula siana, piłka, tunel, domek) jako pliki dla okna Pulpit (bez światła świata) |
 
+### B14. Sad i układ scen (6 zadań; po B12, przed B13)
+Powód: po przeglądzie użytkownika (3.11.2026) w scenach nadal są przedmioty nachodzące na siebie lub rysowane w złej kolejności warstw (kto stoi niżej na ekranie, ten jest rysowany później), a sad powinien być osobną, przemyślaną sceną, nie rzędem drzewek przy polu.
+| ID | Zadanie |
+|---|---|
+| B14-1 | Zasady warstw w `docs/UKLAD_SCEN.md`: kolejność rysowania (niebo, dal, podłoże i płaskie, potem przedmioty rosnąco po dolnej krawędzi, światło, źródła światła), strefy (woda, brzeg, trawa, ścieżka), co wolno na co nachodzić (np. altana za mostem, świnka przed ławką). Rozszerzenie `layout_check.py` o kontrolę kolejności i o kotwice w złej strefie (np. w wodzie) |
+| B14-2 | Przegląd wszystkich scen (5 pokoi domku, ogród x4, park x4, farma, targ, albumy przeglądów) narzędziem z B14-1: raport nakładania i złej kolejności, lista poprawek |
+| B14-3 | [R] poprawki parku, ogrodu, targu i pokoi wg raportu (przesunięcia, kolejność rysowania, przycięcia), ponowny przegląd |
+| B14-4 | [N] sad jako osobna scena (`bg:orchard` 256x144 + przegląd): siatka drzew owocowych we wszystkich stadiach, kosze, drabina, ścieżka, brak nakładania; wpis w `tiles.json` (nowe id do hand-offu B13-5) |
+| B14-5 | [R] farma: samo pole z grządkami (sad przeniesiony do B14-4), zgodność układu grządek z kodem po potwierdzeniu w sekcji Przekazanie |
+| B14-6 | [R] zaległe poprawki: `fence_wire_black` (prawie pełna płyta) i `picture_pig_family` (nieczytelny) z B9; końcowy przegląd i commit |
+
 ### B13. Domknięcie (5 zadań)
 | ID | Zadanie |
 |---|---|
@@ -171,7 +182,7 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 
 ## 4. Liczby
 
-14 fal, **72 zadania**. Rzędy wielkości plików: dom ok. 40, ogród ok. 25, park ok. 15, farma ok. 80 klatek, targ ok. 10, dekoracje 40, kafle ok. 70, światło ok. 40 sprite'ów i klatek, ikony 173, interfejs ok. 20. Zadania są małe (jedno lub kilka powiązanych przedmiotów + podgląd), żeby każde mieściło się w jednej sesji i kończyło commitem.
+15 fal, **78 zadań**. Rzędy wielkości plików: dom ok. 40, ogród ok. 25, park ok. 15, farma ok. 80 klatek, targ ok. 10, dekoracje 40, kafle ok. 70, światło ok. 40 sprite'ów i klatek, ikony 173, interfejs ok. 20. Zadania są małe (jedno lub kilka powiązanych przedmiotów + podgląd), żeby każde mieściło się w jednej sesji i kończyło commitem.
 
 ## 5. Ryzyka
 
@@ -243,4 +254,4 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B8 | **fala zamknięta** |
 | B9 | **fala zamknięta** |
 | B10 | **fala zamknięta** |
-| B11..B13 | nie rozpoczęte |
+| B11, B12, B14, B13 | nie rozpoczęte (kolejność: B11, B12, B14, B13) |
