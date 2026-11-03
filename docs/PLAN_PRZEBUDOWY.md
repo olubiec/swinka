@@ -230,4 +230,6 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B4 | **fala zamknięta** (nowe id bez wpisu w world_items: gramophone, mug_steam, rug_fringed, blanket_folded, mirror_wavy, frames_gallery, plant_pot, plant_shelf, plant_trailing, memory_frame, dorm_nest, lace_curtain, pouf_boucle → hand-off B13-5) |
 | B5-1 | zrobione (flowerbed_tulip/daisy, bush_berry, hedge; tree_small z B1; garden_a.py) |
 | B5-2 | zrobione (fence_wood, arch_rose, path_stone, bench_wood + nowa gate_garden 16x16) |
-| B5-3..B13 | nie rozpoczęte |
+| B5-3 | zrobione (pond_small, bird_bath, sandbox_pig, pigloo_garden, memory_corner; lantern_garden z B3-4) |
+| B5-4 | zrobione (willow_tunnel z B1-3 + nowe watering_can, hay_basket, stump_seat → hand-off B13-5) |
+| B5-5..B13 | nie rozpoczęte |

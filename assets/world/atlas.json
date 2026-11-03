@@ -1451,6 +1451,54 @@
     8,
     16
    ]
+  },
+  "watering_can": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "garden/watering_can.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "hay_basket": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "garden/hay_basket.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "stump_seat": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "garden/stump_seat.png",
+   "anchor": [
+    8,
+    16
+   ]
   }
  }
 }
