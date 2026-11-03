@@ -3,7 +3,7 @@
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
 > ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** `2026-11-03 16:38:09`
+> **Ostatni heartbeat:** `2026-11-03 16:41:12`
 >
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
