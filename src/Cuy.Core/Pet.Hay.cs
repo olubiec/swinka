@@ -34,7 +34,7 @@ namespace Cuy.Core
             if (State.HayRack <= 0) return 0;
             if (Needs.Satiety >= 95.0) return 0;
 
-            double rate = offline ? HayTable.OfflineEatPerHour : HayTable.EatPerGameHour;
+            double rate = (offline ? HayTable.OfflineEatPerHour : HayTable.EatPerGameHour) * ActiveModifiers.Appetite;
             double amountByTime = gameHours * rate;
             double spaceLeft = 95.0 - Needs.Satiety;
             double amountBySpace = spaceLeft / HayTable.FullnessPerHayUnit;
