@@ -1,6 +1,6 @@
 # Plan przebudowy paczki grafiki wg legendy „domek z siana" (3.11.2026)
 
-Status: **PLAN, do wykonania falami B0-B13, jedno małe zadanie po drugim.** Nic z tego jeszcze nie zrobiono. Podstawa: `docs/STYL_SWIATA.md` (legenda, decyzje 1-7 przyjęte 3.11.2026), `assets/data/style_palette.json` (42 kolory), `assets/data/lights.json` (światło), `docs/DESIGNER_BRIEF.md` (nowe elementy z pokoi świnek W23-W30). Ten plan zastępuje fale S0-S8 z `docs/PLAN_STYLU_SWIATA.md` i łączy je z paczkami P0-P10 oraz briefem H0-H3.
+Status: **ZREALIZOWANY (B0-B14 gotowe 3.11.2026; zostaje wdrożenie w kodzie G11-G14 i usunięcie `_x2` po potwierdzeniu).** Podstawa: `docs/STYL_SWIATA.md` (legenda, decyzje 1-7 przyjęte 3.11.2026), `assets/data/style_palette.json` (42 kolory), `assets/data/lights.json` (światło), `docs/DESIGNER_BRIEF.md` (nowe elementy z pokoi świnek W23-W30). Ten plan zastępuje fale S0-S8 z `docs/PLAN_STYLU_SWIATA.md` i łączy je z paczkami P0-P10 oraz briefem H0-H3.
 
 ## 1. Zakres (sprawdzone na plikach 3.11.2026)
 
@@ -174,11 +174,11 @@ Powód: po przeglądzie użytkownika (3.11.2026) w scenach nadal są przedmioty 
 ### B13. Domknięcie (5 zadań)
 | ID | Zadanie |
 |---|---|
-| B13-1 | Lint całej paczki (0 naruszeń), kontrola zgodności z `world_items.json`, `farm.json`, `pigs_named.json`, `decor.json`, `icons.json` |
-| B13-2 | Budżet: usunięcie starych `_x2` świata i przeniesienie skalowania do adnotacji kontraktu (po potwierdzeniu w sekcji Przekazanie), `assets/` ≤ 60 MB, zgodność z `check_sprites.py` i `node tools/qa/{anim-test,palette-test,web-smoke}.js` |
-| B13-3 | Album końcowy: każde miejsce x 4 pory dnia x 3 oświetlenia (`docs/album/przebudowa/`) i porównanie przed/po |
-| B13-4 | Aktualizacja `docs/KONTRAKT_ASSETOW.md`, `docs/INWENTARZ_GRAFIKI.md`, `docs/VISUAL_LOG.md`, `docs/STYL_SWIATA.md` (status „zrealizowano", lista elementów) |
-| B13-5 | **Przekazanie dla kodu** (dopisane do `docs/PLAN.md` jako zadania G11-G14): renderer światła z `lights.json` (przełączniki, pory dnia, automatyczne zapalanie lamp), oświetlenie świnek, skalowanie x2 w grze, wczytanie nowych id; po wdrożeniu: P10 (przegląd w grze 1x/1.5x/2x) |
+| B13-1 | (zrobione: lint 161 plików 0; 55/55 id z `world_items.json` w atlasie + 32 nowe; ikony 173) Lint całej paczki (0 naruszeń), kontrola zgodności z `world_items.json`, `farm.json`, `pigs_named.json`, `decor.json`, `icons.json` |
+| B13-2 | (częściowo: `assets/` 52 MB < 60; `_x2` świata zostają do G14, bo kod może ich używać; `node tools/qa/*` nie uruchomione, brak przeglądarki Playwright w środowisku) Budżet: usunięcie starych `_x2` świata i przeniesienie skalowania do adnotacji kontraktu (po potwierdzeniu w sekcji Przekazanie), `assets/` ≤ 60 MB, zgodność z `check_sprites.py` i `node tools/qa/{anim-test,palette-test,web-smoke}.js` |
+| B13-3 | (zrobione: `b13-3_album_koncowy.png`) Album końcowy: każde miejsce x 4 pory dnia x 3 oświetlenia (`docs/album/przebudowa/`) i porównanie przed/po |
+| B13-4 | (zrobione) Aktualizacja `docs/KONTRAKT_ASSETOW.md`, `docs/INWENTARZ_GRAFIKI.md`, `docs/VISUAL_LOG.md`, `docs/STYL_SWIATA.md` (status „zrealizowano", lista elementów) |
+| B13-5 | (zrobione: sekcja w `docs/PLAN.md`) **Przekazanie dla kodu** (dopisane do `docs/PLAN.md` jako zadania G11-G14): renderer światła z `lights.json` (przełączniki, pory dnia, automatyczne zapalanie lamp), oświetlenie świnek, skalowanie x2 w grze, wczytanie nowych id; po wdrożeniu: P10 (przegląd w grze 1x/1.5x/2x) |
 
 ## 4. Liczby
 

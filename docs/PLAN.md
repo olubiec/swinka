@@ -273,6 +273,15 @@ Gracz sam decyduje, ile ma pól uprawnych i ile drzewek w sadzie. Na początku d
 - nowe id: `plot_lawn`, `plot_orchard` (atlas, `place: farm`), `bg:orchard` (podgląd sadu 256x144).
 Akceptacja: nowy zapis startuje z samymi działkami `lawn`; test w `FarmEngine`/`FarmExpansion`: przeróbka lawn→bed i lawn→tree, rozbiórka, limit działek, nawodnienie tylko grządek, zgodność zapisu.
 
+### Przekazanie z przebudowy grafiki (B13-5; zadania G11-G14 dla kodu)
+Grafika świata jest gotowa (legenda „domek z siana", lint 0 na 161 plikach). Kod musi jeszcze:
+| ID | Zadanie | Pliki | Akceptacja |
+|---|---|---|---|
+| G11 | Wczytanie nowych id: dom `gramophone, mug_steam, rug_fringed, blanket_folded, mirror_wavy, frames_gallery, plant_pot, plant_shelf, plant_trailing, memory_frame, dorm_nest, lace_curtain, pouf_boucle, house_frame`; ogród `gate_garden, watering_can, hay_basket, stump_seat`; farma `barn_hay, plot_lawn, plot_orchard`, `bg:orchard`; targ `poster_1..3`; ikony 161-173; `bg:menu`; `assets/ui/*` + `ui.json` (9-slice); `assets/props/*`; `assets/app-icon/*`. Usunięte: `plot_field`. Zmiana rozmiaru: `bridge_wood` 64x32 → 32x32 | `app.js`, `features/*`, `Graphics/*` | `check-assets.js` (G10) zielony |
+| G12 | Renderer światła z `assets/data/lights.json`: pory dnia (rano, dzień, wieczór, noc), przełączniki, automatyczne zapalanie lamp (`*_on`) wieczorem i nocą; ogień tylko w ogrodzie i parku | `web/*`, `Graphics/*` | zrzuty 4 pór zgodne z `docs/album/przebudowa/b13-3_album_koncowy.png` |
+| G13 | Oświetlenie świnek (`docs/SWIATLO_SWINEK.md`, bez kwantyzacji), cienie `fx/shadow_pig_{baby,junior,adult}` pod świnką | `web/*`, `Graphics/*` | świnka czytelna w każdej porze |
+| G14 | Skalowanie x2 w grze (nearest) zamiast plików `_x2` świata; po wdrożeniu **człowiek potwierdza usunięcie `assets/world/**/*_x2.png` (102 pliki)**, Claude je kasuje; potem P10 (przegląd w grze 1x/1.5x/2x) | `web/*`, `Graphics/*` | brak odwołań do `_x2` w kodzie |
+
 ## Mapa starych zadań
 F2-02→PR #32 (W1-01,W1-02,W2-01 stare) + W1-09,W1-10,W2-01 · F2-07→zrobione · F3-01→W1-03,W1-04,W2-02,W3-01,W7-06 · F3-03→W4-01..W4-04,W7-07,W7-08 · F4-01→W4-07,W5-01,W5-02 · F4-02→W4-06,W6-01,W6-02 ·
 F4-03→W1-05,W2-03,W3-03 · F4-04→W3-04,W3-05,W4-05 · F4-05→W1-06,W2-06,W2-08,W5-04 · F4-06→W1-07,W2-04,W5-03,W6-02,W6-03 · F4-07→W3-08,W4-08 · F4-08→W2-09,W3-07 ·

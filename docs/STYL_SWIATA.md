@@ -1,6 +1,6 @@
 # Legenda stylu Cuya: „domek z siana" (wersja robocza 1, do zatwierdzenia)
 
-Status: **PROJEKT (wersja 2, po referencjach i systemie światła), czeka na zatwierdzenie właściciela.** Po zatwierdzeniu legenda jest zamrożona: zmienia ją tylko właściciel, a każda paczka (pkt 11) jest z nią sprawdzana linterem i przeglądem. Paleta: `assets/data/style_palette.json`, podgląd: `docs/album/stylbook/paleta.png`.
+Status: **ZREALIZOWANO (3.11.2026): paczka świata przebudowana wg legendy, lint 0 na 161 plikach; wdrożenie w kodzie: G11-G14 w `docs/PLAN.md`.** Po zatwierdzeniu legenda jest zamrożona: zmienia ją tylko właściciel, a każda paczka (pkt 11) jest z nią sprawdzana linterem i przeglądem. Paleta: `assets/data/style_palette.json`, podgląd: `docs/album/stylbook/paleta.png`.
 
 ## 0. Jedno zdanie
 **Ciepły, trochę lofi, vintage'owy domek świnki: popołudniowe światło lampy i świecy na drewnie, sianie i dzianinie. Miękko, przytulnie, trochę wyblakłe jak stara pocztówka.** Nic nie krzyczy, nic nie jest czysto czerwone, niebieskie ani zielone.

@@ -166,3 +166,8 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 
 ## Polana farmy (3.11.2026)
 - `bg/farm.png`, `bg/orchard.png`, `bg/menu.png`: jedna zróżnicowana polana (plamy tonów trawy, kępy z długimi źdźbłami, pojedyncze kwiatki na łodygach, koniczyna, paprocie, kamyki). `plot_lawn` i `plot_orchard` przezroczyste, widać polanę pod działkami. Lint 0 (161 plików).
+
+## B13 Domknięcie i wspólna polana (3.11.2026)
+- `tools/art/world/meadow.py`: polana wspólna dla farmy, ogrodu i parku (gęstość proporcjonalna do powierzchni); `garden_bg.py` i `park_bg.py` używają jej zamiast gładkiej trawy.
+- Lint 161 plików: 0. Zgodność: 55/55 id `world_items.json` w atlasie (87 przedmiotów, 32 nowe), ikony 173, kafle 53, tła 12. `assets/` 52 MB (limit 60). `_x2` świata (102 pliki) zostają do G14. `node tools/qa/*` nie działa w środowisku (brak przeglądarki Playwright).
+- Album końcowy: `docs/album/przebudowa/b13-3_album_koncowy.png`. Przekazanie dla kodu: `docs/PLAN.md` (G11-G14).

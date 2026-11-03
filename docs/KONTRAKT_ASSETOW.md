@@ -19,6 +19,9 @@ Format jest ostateczny. Kod tylko wczytuje i rysuje; jeśli pliku brak, rysuje g
 
 Generatory: `tools/art/*` (numpy + Pillow). Regeneracja: `python3 tools/art/export_all.py assets`, `export_named.py assets`, `icons_world.py assets`, `farm_art.py assets`, `items_art.py assets`, `tiles_art.py assets`, `portraits.py assets`.
 
+## Skalowanie x2 (adnotacja B13-2)
+Nowe pliki świata i interfejsu są tylko w x1 (indeksowana paleta). Kod skaluje całkowicie (2x, nearest, `image-rendering: pixelated`). Stare pliki `*_x2.png` w `assets/world/` zostają do wdrożenia G14; wtedy człowiek potwierdza ich usunięcie, a pole `file_x2` w `atlas.json` przestaje obowiązywać.
+
 ## Interfejs (B11)
 - `assets/ui/ui.json`: `items[id] = {file, size, slice:[lewy,gorny,prawy,dolny]}`; 9-slice: rogi i brzegi o grubosci `slice` nie sa rozciagane, srodek rozciagamy najblizszym sasiadem (bez wygladzania). Id: `panel_paper`, `panel_wood`, `btn_normal`, `btn_hover`, `btn_pressed`, `sep_h`, `sep_v` (powtarzac po dluzszej osi), `header_banner` (srodek powtarzac, nie rozciagac, szew z siana), `shop_panel` (markiza gora 18 px).
 - `bg:menu` (`tiles.json`, 256x144): cieply wieczor ze swiatlem, tlo menu i ekranu startowego; napisy i przyciski kod kladzie na nim.

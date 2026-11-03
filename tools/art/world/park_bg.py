@@ -10,6 +10,7 @@ import light
 from PIL import Image
 from garden import blob, MOSS
 from garden_bg import SKY, _break
+from meadow import meadow
 
 W, HT, HORIZON = 384, 192, 70
 STREAM = (HORIZON + 16, HORIZON + 30)                                       # gorny i dolny brzeg wody
@@ -57,7 +58,7 @@ def sky(tod):
 
 
 def world(extra=()):
-    r = random.Random(41)
+    r = random.Random(43)
     im = H.canvas(W, HT)
     for x in range(W):                                                          # dalekie wzgorza
         top = int(HORIZON - 8 - 5 * math.sin(x / 27.0) - 2 * math.sin(x / 9.0 + 1))
@@ -67,11 +68,7 @@ def world(extra=()):
         H.vline(im, x, top, HORIZON + 2, "moss.0")
     for cx in range(6, W, 22):                                                  # linia drzew na horyzoncie
         blob(im, cx + r.randint(-3, 3), HORIZON - 3, 7 + r.randint(0, 2), ("moss.0", "moss.1", "moss.1", "moss.2"), r)
-    for y in range(HORIZON + 2, HT):
-        for x in range(W):
-            c = "moss.1" if y < HORIZON + 40 else "moss.2"
-            if r.random() < .09: c = "moss.2" if c == "moss.1" else "moss.3"
-            H.put(im, x, y, c)
+    meadow(im, r, W, HT, HORIZON)
     H.break_checkers(im)
     for y in range(STREAM[0], STREAM[1] + 1):                                  # strumien
         for x in range(W):
@@ -92,9 +89,6 @@ def world(extra=()):
         for dx in (-8, 8): im.alpha_composite(pc, (x + dx - 8 + (k % 2) * 4, y))
     put("flower_arch", 156, STREAM[1] + 16)
     put("bench_park", 112, HORIZON + 62); put("bench_park", 344, HORIZON + 78)
-    for _ in range(48):                                                         # drobne kwiaty
-        x, y = r.randint(0, W - 1), r.randint(STREAM[1] + 8, HT - 3)
-        H.put(im, x, y, r.choice(["rose.1", "hay.2", "linen.2"])); H.put(im, x, y + 1, "moss.3")
     for rel, x, y in extra:
         put(Path(rel).stem, x, y, rel)
     return im

@@ -10,6 +10,7 @@ import light
 from PIL import Image
 from garden import blob, MOSS, tree_small
 import home
+from meadow import meadow
 
 W, HT, HORIZON = 256, 144, 58
 SKY = {
@@ -77,11 +78,7 @@ def world(tod):
     for x in range(W):
         top = int(HORIZON - 1 - 2 * math.sin(x / 12.0 + 2))
         H.vline(im, x, top, HORIZON + 2, "moss.0")
-    for y in range(HORIZON + 2, HT):                                              # trawa
-        for x in range(W):
-            c = "moss.1" if y < HORIZON + 30 else "moss.2"
-            if r.random() < .09: c = "moss.2" if c == "moss.1" else "moss.3"
-            H.put(im, x, y, c)
+    meadow(im, r, W, HT, HORIZON)                                                 # trawa
     H.break_checkers(im)
     for x in range(0, W, 8):                                                      # plot
         H.rrect(im, x + 1, HORIZON - 2, x + 4, HORIZON + 12, 1, ("wood.0", "wood.1", "wood.2", "wood.2"))
@@ -104,10 +101,6 @@ def world(tod):
                        ("flowerbed_tulip", 8, HORIZON + 50), ("flowerbed_daisy", 200, HORIZON + 62),
                        ("bench_wood", 150, HORIZON + 40), ("bird_bath", 60, HORIZON + 58)):
         put(name, x, y, Image.open(H.WORLD_DIR / f"garden/{name}.png").convert("RGBA"))
-    for _ in range(36):                                                           # drobne kwiaty
-        x, y = r.randint(0, W - 1), r.randint(HORIZON + 24, HT - 3)
-        if im.getpixel((x, y))[:3] in H.RAMPS["moss"] or True:
-            H.put(im, x, y, r.choice(["rose.1", "hay.2", "linen.2"])); H.put(im, x, y + 1, "moss.3")
     return im
 
 
