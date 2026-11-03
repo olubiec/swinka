@@ -765,6 +765,66 @@
     8,
     16
    ]
+  },
+  "fireplace": {
+   "place": "house",
+   "cells": [
+    3,
+    3
+   ],
+   "size": [
+    48,
+    48
+   ],
+   "file": "house/fireplace.png",
+   "anchor": [
+    24,
+    48
+   ],
+   "light": {
+    "kind": "fireplace",
+    "on_file": "house/fireplace_on.png",
+    "frames": 4,
+    "fps": 8
+   }
+  },
+  "lamp_mushroom": {
+   "place": "house",
+   "cells": [
+    1,
+    2
+   ],
+   "size": [
+    16,
+    32
+   ],
+   "file": "house/lamp_mushroom.png",
+   "anchor": [
+    8,
+    32
+   ],
+   "light": {
+    "kind": "lamp_mushroom",
+    "on_file": "house/lamp_mushroom_on.png",
+    "frames": 1,
+    "fps": 1
+   }
+  },
+  "willow_tunnel": {
+   "place": "garden",
+   "cells": [
+    3,
+    2
+   ],
+   "size": [
+    48,
+    32
+   ],
+   "file": "garden/willow_tunnel.png",
+   "anchor": [
+    24,
+    32
+   ]
   }
  }
 }

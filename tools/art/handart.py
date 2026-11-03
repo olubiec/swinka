@@ -341,3 +341,40 @@ def rrect(im, x0, y0, x1, y1, r, tones):
                 c = sh
             put(im, x, y, c)
     return im
+
+
+def register_states(item_id, place, off, on_frames, light_kind, fps=8, atlas=ATLAS_FILE, world_dir=WORLD_DIR):
+    """Przedmiot-zrodlo swiatla: <id>.png = wylaczony, <id>_on.png = pasek klatek
+    wlaczonego (klatki obok siebie). Wpis: light {kind, on_file, frames, fps}."""
+    w, h = off.size
+    strip = canvas(w * len(on_frames), h)
+    for i, f in enumerate(on_frames):
+        strip.alpha_composite(f, (i * w, 0))
+    on_rel = f"{place}/{item_id}_on.png"
+    save_png(strip, Path(world_dir) / on_rel)
+    return register_item(item_id, place, off, atlas=atlas, world_dir=world_dir,
+                         light={"kind": light_kind, "on_file": on_rel, "frames": len(on_frames), "fps": fps})
+
+
+def break_checkers(im, limit=50):
+    """Usuwa szachownice 4x4 (regula R6): zmienia srodkowy piksel o ton w rampie."""
+    px = im.load()
+    for _ in range(limit):
+        hit = None
+        for y in range(im.height - 3):
+            for x in range(im.width - 3):
+                a, b = px[x, y], px[x + 1, y]
+                if a != b and a[3] and b[3] and all(
+                        px[x + i, y + j] == (a if (i + j) % 2 == 0 else b) for i in range(4) for j in range(4)):
+                    hit = (x + 1, y + 1, a)
+                    break
+            if hit:
+                break
+        if not hit:
+            return im
+        x, y, a = hit
+        r = ramp_of(px[x, y][:3])
+        if r:
+            n, i = r
+            px[x, y] = RAMPS[n][i + 1 if i + 1 < len(RAMPS[n]) else i - 1] + (255,)
+    return im

@@ -36,7 +36,7 @@ def pig(who="glen", stage="adult"):
     return sheet.crop((0, row * fh, fw, row * fh + fh))
 
 
-def _stage(item, pig_im, place, tod, light, gap=6):
+def _stage(item, pig_im, place, tod, light, gap=6, on_item=None):
     """Jedna scena: tlo podlogi, przedmiot, swinka obok, oswietlenie."""
     w = item.width + gap + pig_im.width + 24
     h = max(item.height, pig_im.height) + 28
@@ -44,6 +44,8 @@ def _stage(item, pig_im, place, tod, light, gap=6):
     bg = Image.new("RGBA", (w, h), H.color(FLOOR.get(place, "wood.3")) + (255,))
     wall = H.color("linen.1" if place in ("house", "market") else "dusk.3")
     bg.paste(Image.new("RGBA", (w, floor_y - 18), wall + (255,)), (0, 0))
+    if on_item is not None and tod != "day":
+        item = on_item
     ix, iy = 12, floor_y - item.height
     bg.alpha_composite(item, (ix, iy))
     px_, py_ = ix + item.width + gap, floor_y - pig_im.height
@@ -59,13 +61,13 @@ def _stage(item, pig_im, place, tod, light, gap=6):
     return scene_lit
 
 
-def gate(item_id, item, out, place="house", light=None, recolor=False, who="glen", scale=4):
+def gate(item_id, item, out, place="house", light=None, recolor=False, who="glen", scale=4, on_item=None):
     """Zapisuje arkusz bramki. light = (rodzaj_zrodla, dx, dy) wzgledem lewego-gornego rogu przedmiotu."""
     pg = pig(who)
     tods = [("dzien", "day"), ("wieczor", "evening"), ("noc", "night")]
-    row1 = [_stage(item, pg, place, t, light) for _, t in tods]
+    row1 = [_stage(item, pg, place, t, light, on_item=on_item) for _, t in tods]
     variants = [item] if not recolor else [H.recolor(item, a, b) if a != b else item for a, b in VARIANTS]
-    row2 = [_stage(v, pg, place, "evening", light) for v in variants]
+    row2 = [_stage(v, pg, place, "evening", light, on_item=on_item) for v in variants]
     small = [row1[0].copy() for _ in range(0)]
     cw, ch = row1[0].size
     cols = max(len(row1), len(row2))
