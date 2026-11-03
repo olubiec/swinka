@@ -45,3 +45,4 @@ Ostatnie zmiany porządkowe (3.11): usunięto z planu dwie fale już wykonane (`
 - niska bateria także w trakcie fali: checkpoint, ubicie agentów, wyjście;
 - log na żywo: `tools/loop_runner.log`; status: `.orkiestra/loop_status.json`, widoczny w dashboardzie README (stan pętli, a nie tylko baterii).
 Obok nadal działa `python tools/battery_guard.py watch --threshold 20 --kill-agents` (heartbeat na GitHub).
+Jedna komenda na restart wszystkiego (ubija stare procesy, wciąga poprawkę, startuje strażnika baterii i pętlę): `powershell -ExecutionPolicy Bypass -File tools\restart_loop.ps1`.
