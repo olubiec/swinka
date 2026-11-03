@@ -46,9 +46,9 @@ def world():
         for x in range(-8 + (k % 2) * 8, W, 16): im.alpha_composite(pc, (x, y))
     H.break_checkers(im)
     for name, x, y in STALLS: im.alpha_composite(_img(f"market/{name}.png"), (x, y))
-    im.alpha_composite(_img("market/order_board.png"), (62, HORIZON + 44))
-    for n, x in (("promo_1", 40), ("promo_2", 158), ("promo_3", 224)): im.alpha_composite(_img(f"market/{n}.png"), (x, HORIZON + 52 + (x % 3) * 6))
-    for n, x in (("poster_1", 4), ("poster_2", 134), ("poster_3", 118)): im.alpha_composite(_img(f"market/{n}.png"), (x, HORIZON + 60 + (x % 2) * 18))
+    im.alpha_composite(_img("market/order_board.png"), (64, HORIZON + 40))
+    for n, x in (("promo_1", 30), ("promo_2", 112), ("promo_3", 196)): im.alpha_composite(_img(f"market/{n}.png"), (x, HORIZON + 68))
+    for n, x in (("poster_2", 163), ("poster_3", 177), ("poster_1", 238)): im.alpha_composite(_img(f"market/{n}.png"), (x, HORIZON + 40))
     return im
 
 

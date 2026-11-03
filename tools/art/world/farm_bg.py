@@ -51,19 +51,21 @@ def world():
             if r.random() < .09: c = "moss.2" if c == "moss.1" else "moss.3"
             H.put(im, x, y, c)
     H.break_checkers(im)
-    for yy in range(HORIZON + 22, HT - 6, 1):                                     # pole: ziemia pod grzadki
-        pass
-    soil = _img("farm/farm.png").crop((160, 64, 176, 80))
-    for ty in range(HORIZON + 22, HT - 8, 16):
-        for tx in range(24, 232, 16):
-            im.alpha_composite(soil, (tx, ty))
+    meta = json.loads((H.WORLD_DIR / "farm/farm.json").read_text(encoding="utf-8"))["frames"]
+    sheet = _img("farm/farm.png")
+    def fr(name, i):
+        x, y, w, h = meta[name][i]; return sheet.crop((x, y, x + w, y + h))
     fence = _img("farm/fence_farm.png")
     for x in range(0, W, 16): im.alpha_composite(fence, (x, HORIZON + 6))
     im.alpha_composite(_img("farm/barn_hay.png"), (176, HORIZON - 34))
-    t = _img("garden/tree_small.png") if (H.WORLD_DIR / "garden/tree_small.png").exists() else None
-    from garden import tree_small
-    for x, y in ((6, HORIZON - 22), (36, HORIZON - 16), (140, HORIZON - 18)):
-        im.alpha_composite(tree_small(), (x, y))
+    # sad: dwa rzedy drzewek owocowych na trawie (lewa czesc), z przerwa na sciezke
+    for row, y in enumerate((HORIZON + 22, HORIZON + 54)):
+        for k, name in enumerate(("tree_apple", "tree_strawberry", "tree_apple", "tree_strawberry") if row == 0 else ("tree_strawberry", "tree_apple", "tree_strawberry", "tree_apple")):
+            im.alpha_composite(fr(name, 2), (12 + k * 24, y))
+    # pole: rzedy grzadek z przerwami na trawe (prawa czesc)
+    for row, ty in enumerate((HORIZON + 24, HORIZON + 46, HORIZON + 68)):
+        for tx in range(124, 244, 16):
+            im.alpha_composite(fr("bed_wet" if (row + tx // 16) % 3 == 0 else "bed_empty", 0), (tx, ty))
     for _ in range(30):
         x, y = r.randint(0, W - 1), r.randint(HORIZON + 24, HT - 3)
         if im.getpixel((x, y))[:3] in H.RAMPS["moss"]: H.put(im, x, y, r.choice(["hay.2", "linen.2"]))

@@ -12,8 +12,11 @@ from garden import blob, MOSS
 from garden_bg import SKY, _break
 
 W, HT, HORIZON = 384, 192, 70
-LAMPS = [(96, HORIZON + 40), (270, HORIZON + 40), (170, HORIZON + 86)]     # lewy-gorny rog lamp_post 16x16
-BRAZIERS = [(318, HORIZON + 62)]
+STREAM = (HORIZON + 16, HORIZON + 30)                                       # gorny i dolny brzeg wody
+LAMPS = [(24, HORIZON + 46), (280, HORIZON + 46), (344, HORIZON + 106)]     # lewy-gorny rog lamp_post 16x16
+BRAZIERS = [(352, HORIZON + 40)]
+BRIDGE = (168, STREAM[0] - 6)                                                 # poklad przecina strumien
+PLACED = []
 
 
 def _img(rel):
@@ -70,35 +73,36 @@ def world(extra=()):
             if r.random() < .09: c = "moss.2" if c == "moss.1" else "moss.3"
             H.put(im, x, y, c)
     H.break_checkers(im)
-    # strumien
-    for y in range(HORIZON + 10, HORIZON + 26):
+    for y in range(STREAM[0], STREAM[1] + 1):                                  # strumien
         for x in range(W):
             off = int(2 * math.sin(x / 15.0))
-            if HORIZON + 10 + off <= y <= HORIZON + 24 + off:
-                edge = y in (HORIZON + 10 + off, HORIZON + 24 + off)
+            if STREAM[0] + off <= y <= STREAM[1] + off:
+                edge = y in (STREAM[0] + off, STREAM[1] + off)
                 H.put(im, x, y, "dusk.1" if edge else ("dusk.3" if (x // 7 + y) % 5 else "dusk.4"))
-    # altana na dalekim brzegu, drzewa
-    im.alpha_composite(_img("park/gazebo.png"), (46, HORIZON - 34))
-    for x, y in ((6, HORIZON - 24), (346, HORIZON - 28), (300, HORIZON - 14), (140, HORIZON - 12)):
-        im.alpha_composite(_img("park/tree_big.png"), (x, y))
-    im.alpha_composite(_img("park/bridge_wood.png"), (160, HORIZON - 2))
-    # sciezka z kamieni od mostu w dol
-    pc = _img("park/path_cobble.png")
-    for k, y in enumerate(range(HORIZON + 30, HT - 4, 13)):
-        x = 186 + int(24 * math.sin(k / 2.1))
+    PLACED.clear()
+    def put(name, x, y, rel=None):
+        i = _img(rel or f"park/{name}.png"); PLACED.append((name, x, y, i)); im.alpha_composite(i, (x, y))
+    bank = STREAM[0] - 2                                                       # drzewa i altana stoja na dalekim brzegu
+    put("gazebo", 70, bank - 48)
+    for x in (2, 212, 262, 316): put("tree_big", x, bank - 48 + (x % 5))
+    put("bridge_wood", *BRIDGE)
+    pc = _img("park/path_cobble.png")                                          # sciezka od mostu w dol
+    for k, y in enumerate(range(STREAM[1] + 8, HT - 4, 13)):
+        x = 180 + int(22 * math.sin(k / 2.1))
         for dx in (-8, 8): im.alpha_composite(pc, (x + dx - 8 + (k % 2) * 4, y))
-    for name, x, y in (("flower_arch", 168, HORIZON + 34), ("bench_park", 150, HORIZON + 70), ("bench_park", 100, HORIZON + 96)):
-        im.alpha_composite(_img(f"park/{name}.png"), (x, y))
+    put("flower_arch", 156, STREAM[1] + 16)
+    put("bench_park", 112, HORIZON + 62); put("bench_park", 344, HORIZON + 78)
     for _ in range(48):                                                         # drobne kwiaty
-        x, y = r.randint(0, W - 1), r.randint(HORIZON + 40, HT - 3)
+        x, y = r.randint(0, W - 1), r.randint(STREAM[1] + 8, HT - 3)
         H.put(im, x, y, r.choice(["rose.1", "hay.2", "linen.2"])); H.put(im, x, y + 1, "moss.3")
     for rel, x, y in extra:
-        im.alpha_composite(_img(rel), (x, y))
+        put(Path(rel).stem, x, y, rel)
     return im
 
 
 def build(tod, extra=(), pigs=()):
     wim = world(extra)
+    for n, (x, y) in [("lamp_post", p) for p in LAMPS] + [("brazier", p) for p in BRAZIERS]: PLACED.append((n, x, y, _img("park/lamp_post.png")))
     lights = []
     if tod in ("evening", "night"):
         lights = [("lamp_street", x + 8, y + 5) for x, y in LAMPS] + [("brazier", x + 8, y + 4) for x, y in BRAZIERS]

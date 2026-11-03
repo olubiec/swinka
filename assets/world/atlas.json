@@ -566,17 +566,17 @@
   "bridge_wood": {
    "place": "park",
    "cells": [
-    4,
+    2,
     2
    ],
    "size": [
-    64,
+    32,
     32
    ],
    "file": "park/bridge_wood.png",
    "file_x2": "park/bridge_wood_x2.png",
    "anchor": [
-    32,
+    16,
     32
    ]
   },

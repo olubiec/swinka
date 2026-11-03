@@ -93,7 +93,7 @@ def world(tod):
     # tunel z wierzby, drzewa, krzewy
     im.alpha_composite(home.willow_tunnel(), (24, HORIZON + 8))
     t1, t2 = tree_small(), tree_small()
-    im.alpha_composite(t1, (200, HORIZON - 20)); im.alpha_composite(t2, (234, HORIZON - 14))
+    im.alpha_composite(t1, (196, HORIZON - 30)); im.alpha_composite(t2, (232, HORIZON - 26))
     for name, x, y in (("bush_berry", 80, HORIZON + 14), ("hedge", 185, HORIZON + 14), ("hedge", 201, HORIZON + 14),
                        ("flowerbed_tulip", 8, HORIZON + 50), ("flowerbed_daisy", 200, HORIZON + 62),
                        ("bench_wood", 150, HORIZON + 40), ("bird_bath", 60, HORIZON + 58)):

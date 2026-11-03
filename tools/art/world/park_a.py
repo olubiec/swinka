@@ -97,19 +97,17 @@ A1 = {"tree_big": tree_big, "gazebo": gazebo, "flower_arch": flower_arch, "pond_
 
 
 def bridge_wood():
-    im = H.canvas(64, 32)
-    for x in range(2, 62):
-        top = 14 - int(8 * (1 - ((x - 32) / 30.0) ** 2))
-        H.vline(im, x, top, top + 3, "wood.2" if x % 4 else "wood.1")
-        H.put(im, x, top, "wood.3"); H.put(im, x, top + 4, "wood.0")
-    for x in range(2, 62, 6):
-        top = 14 - int(8 * (1 - ((x - 32) / 30.0) ** 2))
-        H.vline(im, x, top - 7, top - 1, "wood.1"); H.put(im, x, top - 8, "wood.3")
-    for x in range(2, 62):
-        top = 14 - int(8 * (1 - ((x - 32) / 30.0) ** 2))
-        H.put(im, x, top - 7, "wood.2"); H.put(im, x, top - 6, "wood.1")
-    for x in (3, 58): H.rrect(im, x, 22, x + 2, 30, 1, WD)                            # podpory
-    H.rect(im, 0, 28, 5, 31, "wood.1"); H.rect(im, 58, 28, 63, 31, "wood.1")
+    """32x32: mostek przez strumien (poprzecznie): poklad z desek, po bokach porecze z slupkami, rozszerzone wejscia."""
+    im = H.canvas(32, 32)
+    H.rect(im, 4, 0, 27, 3, "wood.2"); H.rect(im, 4, 28, 27, 31, "wood.2")           # wejscia
+    for y in range(2, 30):
+        c = "wood.2" if (y // 3) % 2 else "wood.3"
+        H.hline(im, 6, 25, y, c)
+        if y % 3 == 2: H.hline(im, 6, 25, y, "wood.1")
+    for x in (3, 4, 27, 28):
+        H.vline(im, x, 2, 29, "wood.1" if x in (3, 28) else "wood.2")
+    for y in (2, 10, 18, 26):
+        for x in (2, 27): H.rrect(im, x, y, x + 2, y + 3, 1, WD)
     return H.ground(H.outline(im), spread=1)
 
 

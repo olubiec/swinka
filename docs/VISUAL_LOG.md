@@ -141,3 +141,9 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 - Raport: 161 z 161 ikon miało piksele poza paletą (13301 px). Wszystkie 0-160 sprowadzone do palety legendy (najbliższy kolor, ciemne -> kontur #3a1d17), indeksy bez zmian. Nowe 161-173: candle, bedroom, run, gate, tray, shop, house_plan, storage, swatch, wander, bond, rename, color_lock (wpisy w icons.json). Poza paletą: 0. Generator: tools/art/world/icons_a.py. Przegląd: docs/album/przebudowa/b10_ikony.png.
 - Uwaga: przemalowanie 0-160 jest automatyczne (kwantyzacja), nie ręczne; ręczne dopracowanie pojedynczych ikon w B13 jeśli trzeba.
 - Hand-off B13-5: nowe ikony 161-173 (nazwy wyżej).
+
+## Poprawki układu scen (po przeglądzie użytkownika)
+- Park: `bridge_wood` przerysowany jako most poprzeczny przez strumień (rozmiar 32x32, było 64x32 - hand-off B13-5: zmiana rozmiaru). Altana i drzewa stoją na dalekim brzegu, nie w wodzie; sciezka prowadzi od mostu; kosz z żarem odsunięty od fontanny i posągu; przegląd parku bez nakładania.
+- Farma: sad (drzewka owocowe) po lewej na trawie, pole z rzędami grządek po prawej (zamiast jednego bloku ziemi).
+- Ogród: drzewa za płotem, nie w płocie. Targ: plakaty i tabliczki bez nakładania na stragany.
+- Nowe narzędzie: tools/art/world/layout_check.py (wykrywa nakładanie nieprzezroczystych pikseli przedmiotów). Stosować przy każdym tle/scenie w B11-B13.

@@ -6,10 +6,9 @@ import handart as H
 import park_bg
 from PIL import Image
 
-EXTRA = [("park/fountain.png", 24, 116), ("park/statue_pig.png", 320, 92), ("park/pond_big.png", 226, 128),
-         ("park/picnic_blanket.png", 110, 120), ("park/tunnel_playground.png", 60, 90), ("park/bridge_wood.png", 0, 0)]
-EXTRA = EXTRA[:-1]
-PIGS = [("glen", 150, 124), ("kuki", 204, 134), ("racuch", 250, 126)]
+EXTRA = [("park/fountain.png", 30, 138), ("park/statue_pig.png", 300, 106), ("park/pond_big.png", 252, 146),
+         ("park/picnic_blanket.png", 96, 150), ("park/tunnel_playground.png", 60, 100)]
+PIGS = [("glen", 150, 130), ("kuki", 176, 140), ("racuch", 222, 96)]
 
 
 def build(out):
