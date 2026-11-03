@@ -1079,6 +1079,150 @@
     16,
     32
    ]
+  },
+  "gramophone": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/gramophone.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "mug_steam": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/mug_steam.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "rug_fringed": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/rug_fringed.png",
+   "anchor": [
+    16,
+    16
+   ]
+  },
+  "blanket_folded": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/blanket_folded.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "mirror_wavy": {
+   "place": "house",
+   "cells": [
+    1,
+    2
+   ],
+   "size": [
+    16,
+    32
+   ],
+   "file": "house/mirror_wavy.png",
+   "anchor": [
+    8,
+    32
+   ]
+  },
+  "frames_gallery": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/frames_gallery.png",
+   "anchor": [
+    16,
+    16
+   ]
+  },
+  "plant_pot": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/plant_pot.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "plant_shelf": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/plant_shelf.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "plant_trailing": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/plant_trailing.png",
+   "anchor": [
+    8,
+    16
+   ]
   }
  }
 }

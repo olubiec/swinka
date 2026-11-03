@@ -221,4 +221,6 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B3-6 | zrobione (lights.json v2 ze ścieżkami, glow, mask; atlas.light; demo b3-6_zrodla_swiatla.png; test palety OK) |
 | B3 | **fala zamknięta** |
 | B4-1..B4-3 | zrobione (13 przedmiotów: siedziska, meble, ściana i okna; lint 0; home_a.py; albumy b4-1, b4-3) |
-| B4-4..B13 | nie rozpoczęte |
+| B4-4 | zrobione (gramophone, mug_steam, rug_fringed, blanket_folded; home_b.py) |
+| B4-5 | zrobione (mirror_wavy, frames_gallery, plant_pot, plant_shelf, plant_trailing; nowe id → hand-off B13-5) |
+| B4-6..B13 | nie rozpoczęte |
