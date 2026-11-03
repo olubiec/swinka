@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
+using Cuy.Core.Pigs;
 using Cuy.Core.Time;
 
 namespace Cuy.Core.AI
@@ -87,6 +88,9 @@ namespace Cuy.Core.AI
 
         /// <summary>How long the user has been idle (e.g. from Win32 GetLastInputInfo).</summary>
         public TimeSpan UserIdleDuration { get; set; }
+
+        /// <summary>Provider for active pig modifiers (e.g. activity, joy_weight, wheek_rate). Null means neutral.</summary>
+        public Func<PigModifiers> ModifiersProvider { get; set; }
 
         public Needs CurrentNeeds => _pet != null ? _pet.Needs : _fallbackNeeds;
         public LifeStage CurrentStage => _pet != null ? _pet.Stage : _fallbackStage;
@@ -721,7 +725,83 @@ namespace Cuy.Core.AI
                 }
             }
 
+            var modifiers = ModifiersProvider != null ? ModifiersProvider() : PigModifiers.Neutral;
+            double mult = GetActionMultiplier(action, modifiers);
+            if (mult != 1.0)
+            {
+                baseZysk *= mult;
+            }
+
             return baseZysk;
+        }
+
+        private static readonly HashSet<string> JoyfulActionIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "popcorn",
+            "dance",
+            "dancing",
+            "zoomies",
+            "front_happy",
+            "beaming"
+        };
+
+        private static readonly HashSet<string> WheekActionIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "wheek",
+            "wheeking"
+        };
+
+        private static readonly HashSet<string> MovementActionIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "walk",
+            "walking"
+        };
+
+        private static bool IsJoyfulAction(ActionDefinition action)
+        {
+            if (action == null) return false;
+            return JoyfulActionIds.Contains(action.Id)
+                || (action.Animation != null && JoyfulActionIds.Contains(action.Animation));
+        }
+
+        private static bool IsWheekAction(ActionDefinition action)
+        {
+            if (action == null) return false;
+            return WheekActionIds.Contains(action.Id)
+                || (action.Animation != null && WheekActionIds.Contains(action.Animation));
+        }
+
+        private static bool IsMovementAction(ActionDefinition action)
+        {
+            if (action == null) return false;
+            return action.IsMovement
+                || MovementActionIds.Contains(action.Id)
+                || (action.Animation != null && MovementActionIds.Contains(action.Animation))
+                || string.Equals(ActionDefinition.GetBudgetGroup(action.Id), "walking", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private double GetActionMultiplier(ActionDefinition action, PigModifiers modifiers)
+        {
+            if (action == null) return 1.0;
+
+            double multiplier = 1.0;
+
+            if (IsMovementAction(action))
+            {
+                multiplier *= modifiers.Activity;
+            }
+
+            if (IsJoyfulAction(action))
+            {
+                multiplier *= modifiers.JoyWeight;
+            }
+
+            if (IsWheekAction(action))
+            {
+                multiplier *= modifiers.WheekRate;
+            }
+
+            return multiplier;
         }
 
         private bool TryGetNeedValue(string needName, out double val)
