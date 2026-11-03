@@ -83,6 +83,15 @@ namespace Cuy.Core
         public bool BirthdayRewardsActive { get; set; } = false;
         public int DiaryWriteHour { get; set; } = 20;
 
+        /// <summary>The active pig's own age and stage drive the game.</summary>
+        public bool PerPigAgeActive { get; set; } = false;
+
+        /// <summary>Named-pig multipliers apply.</summary>
+        public bool PigModifiersActive { get; set; } = false;
+
+        /// <summary>The arrival schedule runs.</summary>
+        public bool ArrivalsActive { get; set; } = false;
+
         public static Balance CreateDefault()
         {
             return new Balance();
