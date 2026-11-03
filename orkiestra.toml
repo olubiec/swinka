@@ -6,7 +6,7 @@ test_command = "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Releas
 merge_mode = "local"
 
 [agent]
-cmd = ["C:\\Users\\m.olubiec\\.gemini\\bin\\agy.exe"]
+cmd = ["C:\\Users\\48782\\.gemini\\bin\\agy.exe"]
 model = "gemini-3.8-flash-medium"
 models = ["gemini-3.8-flash-medium", "gemini-3.8-flash-high", "gemini-4-argon-low", "claude-sonnet-5-5-low"]
 timeout_minutes = 20
