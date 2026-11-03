@@ -1,0 +1,33 @@
+{
+  "name": "cuy-hay-house",
+  "version": 1,
+  "note": "Paleta glowna swiata Cuya. Zrodlo prawdy dla docs/STYL_SWIATA.md. Kazda rampa idzie od najciemniejszego do najjasniejszego. Nie dodawac kolorow poza ta lista bez zgody wlasciciela.",
+  "outline": {"fg": "#3a1d17", "deep": "#241824"},
+  "ramps": {
+    "wood":    ["#47281c", "#6f4328", "#9b6238", "#c58a52", "#e3b27a"],
+    "hay":     ["#a97a2f", "#d1a548", "#e9c871", "#f6e2a0"],
+    "linen":   ["#b79d78", "#d9c096", "#efdcb8", "#fbf0d9"],
+    "brick":   ["#5e2a2a", "#8c4237", "#b8604a", "#d9876b"],
+    "flame":   ["#e8622c", "#ff9f45", "#ffd166", "#fff3b0"],
+    "moss":    ["#2f4234", "#475f3f", "#6c8050", "#97a569", "#c3c98a"],
+    "dusk":    ["#2b3c4e", "#3f5a68", "#5f7f87", "#8da9a8", "#b9c9c4"],
+    "plum":    ["#241824", "#382538", "#54394f", "#7a5a6b"],
+    "rose":    ["#a65a68", "#d98a86", "#f2b5a0"],
+    "berry":   ["#5c2440", "#8e3b5a"]
+  },
+  "roles": {
+    "shadow_shift": "plum",
+    "light_shift": "flame",
+    "glow": ["#ff9f45", "#ffd166", "#fff3b0"],
+    "sky": {
+      "morning": ["#f2b5a0", "#f6e2a0", "#b9c9c4"],
+      "day":     ["#8da9a8", "#b9c9c4", "#efdcb8"],
+      "evening": ["#d9876b", "#ff9f45", "#7a5a6b"],
+      "night":   ["#241824", "#2b3c4e", "#54394f"]
+    }
+  },
+  "forbidden": {
+    "pure_hues": "Zadnych kolorow o nasyceniu HSV > 0.75 przy jasnosci > 0.55 poza grupa flame (tylko punktowo, plomien i zarowka).",
+    "colors": ["#ff0000", "#0000ff", "#00ff00", "#ffffff", "#000000"]
+  }
+}
