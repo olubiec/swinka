@@ -223,4 +223,6 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B4-1..B4-3 | zrobione (13 przedmiotów: siedziska, meble, ściana i okna; lint 0; home_a.py; albumy b4-1, b4-3) |
 | B4-4 | zrobione (gramophone, mug_steam, rug_fringed, blanket_folded; home_b.py) |
 | B4-5 | zrobione (mirror_wavy, frames_gallery, plant_pot, plant_shelf, plant_trailing; nowe id → hand-off B13-5) |
-| B4-6..B13 | nie rozpoczęte |
+| B4-6 | zrobione (3 rzeczy podpisowe 32x32; home_c.py) |
+| B4-7 | zrobione (2 kolejne + warianty dusk/moss/linen/plum w house/variants/, atlas.variants; lint 0) |
+| B4-8..B13 | nie rozpoczęte |

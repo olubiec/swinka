@@ -1223,6 +1223,116 @@
     8,
     16
    ]
+  },
+  "sig_kuki_blanket": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/sig_kuki_blanket.png",
+   "anchor": [
+    16,
+    32
+   ],
+   "variants": {
+    "dusk": "house/variants/sig_kuki_blanket__dusk.png",
+    "moss": "house/variants/sig_kuki_blanket__moss.png",
+    "linen": "house/variants/sig_kuki_blanket__linen.png",
+    "plum": "house/variants/sig_kuki_blanket__plum.png"
+   }
+  },
+  "sig_ned_snack_nook": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/sig_ned_snack_nook.png",
+   "anchor": [
+    16,
+    32
+   ],
+   "variants": {
+    "dusk": "house/variants/sig_ned_snack_nook__dusk.png",
+    "moss": "house/variants/sig_ned_snack_nook__moss.png",
+    "linen": "house/variants/sig_ned_snack_nook__linen.png",
+    "plum": "house/variants/sig_ned_snack_nook__plum.png"
+   }
+  },
+  "sig_james_hideout": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/sig_james_hideout.png",
+   "anchor": [
+    16,
+    32
+   ],
+   "variants": {
+    "dusk": "house/variants/sig_james_hideout__dusk.png",
+    "moss": "house/variants/sig_james_hideout__moss.png",
+    "linen": "house/variants/sig_james_hideout__linen.png",
+    "plum": "house/variants/sig_james_hideout__plum.png"
+   }
+  },
+  "sig_glen_knit_bed": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/sig_glen_knit_bed.png",
+   "anchor": [
+    16,
+    32
+   ],
+   "variants": {
+    "dusk": "house/variants/sig_glen_knit_bed__dusk.png",
+    "moss": "house/variants/sig_glen_knit_bed__moss.png",
+    "linen": "house/variants/sig_glen_knit_bed__linen.png",
+    "plum": "house/variants/sig_glen_knit_bed__plum.png"
+   }
+  },
+  "sig_racuch_hop_pad": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/sig_racuch_hop_pad.png",
+   "anchor": [
+    16,
+    32
+   ],
+   "variants": {
+    "dusk": "house/variants/sig_racuch_hop_pad__dusk.png",
+    "moss": "house/variants/sig_racuch_hop_pad__moss.png",
+    "linen": "house/variants/sig_racuch_hop_pad__linen.png",
+    "plum": "house/variants/sig_racuch_hop_pad__plum.png"
+   }
   }
  }
 }
