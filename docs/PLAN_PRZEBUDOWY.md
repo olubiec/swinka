@@ -213,4 +213,11 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B2-3 | zrobione (16 tapet i podłóg, 4 warianty; refleksy listwy załatwi silnik światła) |
 | B2-4 | zrobione (10 skórek pokoi świnek, run_floor, wall_memory, floor_memory; 53 kafle, lint 0) |
 | B2 | **fala zamknięta** |
-| B3..B13 | nie rozpoczęte |
+| B3-1 | zrobione (płomień 4 klatki w świecy, pochodni, koszu, lampie naftowej, latarni; pyłki fx/dust_motes.png) |
+| B3-2 | zrobione (lamp_floor, lamp_arc, lantern_paper wył/wł) |
+| B3-3 | zrobione (lamp_salt, lamp_lava, fairy_lights, candle) |
+| B3-4 | zrobione (torch, lamp_oil, lantern_garden, lamp_post, brazier) |
+| B3-5 | zrobione (4 maski w fx/, okno window_sun x 4 pory dnia) |
+| B3-6 | zrobione (lights.json v2 ze ścieżkami, glow, mask; atlas.light; demo b3-6_zrodla_swiatla.png; test palety OK) |
+| B3 | **fala zamknięta** |
+| B4..B13 | nie rozpoczęte |

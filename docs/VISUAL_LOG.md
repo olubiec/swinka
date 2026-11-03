@@ -112,3 +112,6 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 
 ## 2026-11-03 B2 materiały i kafle
 53 kafle świata od nowa (tools/art/world/tiles.py + build_tiles.py): deski, wiklina, dzianina, siano, tapety z motywami, trawa z kępami, woda 4 klatki, 16 płotów, kamień pamięci, 10 skórek pokoi świnek, run_floor, wall/floor_memory. Lint 0. Stare _x2 kafli odświeżone nearest do czasu B13. Arkusze: docs/album/przebudowa/b2-*.png.
+
+## 2026-11-03 B3 światło i płomienie
+14 źródeł światła (wył + pasek klatek wł, atlas.items[id].light), 4 maski snopów, okno x 4 pory dnia, pyłki w świetle, lights.json v2 (item/file/on_file/frames/fps/glow/mask/window_tods/dust). Nowe id poza world_items.json: fireplace, lamp_mushroom, lamp_floor, lamp_arc, lantern_paper, lamp_salt, lamp_lava, candle, torch, lamp_oil, brazier, willow_tunnel (do przekazania w B13-5). Lint 0.

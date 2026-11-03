@@ -25,6 +25,14 @@ LIGHT = {
 }
 
 
+# Nowe przedmioty-zrodla swiatla spoza world_items.json (kontrakt kodu): id -> (miejsce, komorki).
+# Wpis do danych sklepu i world_items.json zglaszam kodowi w przekazaniu (B13-5).
+NEW_NOT_IN_ITEMS = {"fireplace": ("house", [3, 3]), "lamp_mushroom": ("house", [1, 2]), "lamp_floor": ("house", [1, 2]),
+                    "lamp_arc": ("house", [2, 3]), "lantern_paper": ("house", [1, 1]), "lamp_salt": ("house", [1, 1]),
+                    "lamp_lava": ("house", [1, 2]), "candle": ("both", [1, 1]), "torch": ("garden", [1, 2]),
+                    "lamp_oil": ("garden", [1, 1]), "brazier": ("garden", [1, 1]), "willow_tunnel": ("garden", [3, 2])}
+
+
 def registry():
     d = json.loads(ITEMS_FILE.read_text(encoding="utf-8"))["items"]
     reg = {}
@@ -44,7 +52,8 @@ def report():
     bad_size = [k for k, e in atlas.items() if k in reg and e["cells"] != reg[k]["cells"]]
     extra = [k for k in atlas if k not in reg]
     lights = [k for k, v in reg.items() if v["light"]]
-    return {"ids": len(reg), "bez_wpisu_w_atlasie": missing_atlas, "bez_pliku": missing_file,
+    nowe_bez_pliku = [k for k, (pl, _) in NEW_NOT_IN_ITEMS.items() if k not in atlas]
+    return {"nowe_poza_world_items": sorted(NEW_NOT_IN_ITEMS), "nowe_bez_wpisu_w_atlasie": nowe_bez_pliku, "ids": len(reg), "bez_wpisu_w_atlasie": missing_atlas, "bez_pliku": missing_file,
             "rozmiar_niezgodny": bad_size, "nadmiarowe_w_atlasie": extra, "ze_swiatlem": lights}
 
 

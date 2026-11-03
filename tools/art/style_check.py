@@ -33,6 +33,7 @@ FORBIDDEN = {H._hex(c) for c in H._pal["forbidden"]["colors"]}
 FLAME = set(H.RAMPS["flame"])
 EDGE_OK = {H.OUTLINE_FG, H.OUTLINE_DEEP, H.RAMPS["plum"][0], H.RAMPS["plum"][1]} | {
     r[0] for r in H.RAMPS.values()}
+NO_OUTLINE = {"fairy_lights"}   # cienki sznur 1 px: kontur zepsulby sylwete
 BRICK = set(H.RAMPS["brick"])
 LINEN = set(H.RAMPS["linen"])
 
@@ -130,12 +131,12 @@ def r7_shadow(im):
     return False
 
 
-def check_image(path, kind="item", size=None, layer=None):
+def check_image(path, kind="item", size=None, layer=None, name=""):
     """kind: item | tile | bg. Zwraca dict regula -> liczba naruszen."""
     im = _load(path)
     res = r1_r2_r3(im)
     if kind in ("item", "prop"):
-        res["R4"] = r4_outline(im)
+        res["R4"] = r4_outline(im) if name not in NO_OUTLINE else 0
         if kind == "item" and (im.width % 16 or im.height % 16):
             res["R5"] = 1
     else:
@@ -173,7 +174,7 @@ def run(paths=None):
             if not Path(path).exists():
                 rows.append((name, {"R5": 1, "missing": 1}))
                 continue
-            rows.append((name, check_image(path, kind, size, layer)))
+            rows.append((name, check_image(path, kind, size, layer, name)))
     return rows
 
 

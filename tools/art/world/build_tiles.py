@@ -2,7 +2,7 @@
 Zapisuje assets/world/tiles/*.png (x1, indeksowane) + wpisy w tiles.json i arkusz w docs/album/przebudowa/."""
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent)); sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import tiles as T
 import handart as H
 from PIL import Image

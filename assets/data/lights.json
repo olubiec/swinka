@@ -1,5 +1,5 @@
 {
- "version": 1,
+ "version": 2,
  "note": "Kontrakt systemu swiatla (grafika dostarcza plik z tym opisem, kod go czyta). Kolory to wartosci mnoznika swiatla, wynik zawsze kwantyzowany do assets/data/style_palette.json. Prototyp: tools/art/light_demo.py.",
  "steps": 5,
  "dither": "bayer4",
@@ -49,7 +49,17 @@
    "strength": 1.0,
    "flicker": 0.0,
    "toggle": true,
-   "note": "lampa stojaca i stolowa, abazur"
+   "note": "lampa stojaca i stolowa, abazur",
+   "item": "lamp_floor",
+   "file": "house/lamp_floor.png",
+   "on_file": "house/lamp_floor_on.png",
+   "frames": 1,
+   "fps": 1,
+   "glow": [
+    8,
+    10
+   ],
+   "mask": "fx/cone_shade.png"
   },
   "lamp_mushroom": {
    "place": "indoor",
@@ -62,7 +72,16 @@
    "strength": 1.1,
    "flicker": 0.0,
    "toggle": true,
-   "note": "pomaranczowy grzybek, mocny, nasycony"
+   "note": "pomaranczowy grzybek, mocny, nasycony",
+   "item": "lamp_mushroom",
+   "file": "house/lamp_mushroom.png",
+   "on_file": "house/lamp_mushroom_on.png",
+   "frames": 1,
+   "fps": 1,
+   "glow": [
+    8,
+    16
+   ]
   },
   "lamp_arc": {
    "place": "indoor",
@@ -75,7 +94,17 @@
    "strength": 1.0,
    "flicker": 0.0,
    "toggle": true,
-   "note": "lampa lukowa nad sofa"
+   "note": "lampa lukowa nad sofa",
+   "item": "lamp_arc",
+   "file": "house/lamp_arc.png",
+   "on_file": "house/lamp_arc_on.png",
+   "frames": 1,
+   "fps": 1,
+   "glow": [
+    25,
+    14
+   ],
+   "mask": "fx/cone_shade.png"
   },
   "lantern_paper": {
    "place": "indoor",
@@ -88,7 +117,16 @@
    "strength": 0.8,
    "flicker": 0.0,
    "toggle": true,
-   "note": "papierowy lampion pod sufitem, miekki"
+   "note": "papierowy lampion pod sufitem, miekki",
+   "item": "lantern_paper",
+   "file": "house/lantern_paper.png",
+   "on_file": "house/lantern_paper_on.png",
+   "frames": 1,
+   "fps": 1,
+   "glow": [
+    8,
+    8
+   ]
   },
   "lamp_salt": {
    "place": "indoor",
@@ -101,7 +139,16 @@
    "strength": 0.8,
    "flicker": 0.03,
    "toggle": true,
-   "note": "lampa solna, rozowo-pomaranczowa, wolne pulsowanie"
+   "note": "lampa solna, rozowo-pomaranczowa, wolne pulsowanie",
+   "item": "lamp_salt",
+   "file": "house/lamp_salt.png",
+   "on_file": "house/lamp_salt_on.png",
+   "frames": 4,
+   "fps": 1,
+   "glow": [
+    8,
+    8
+   ]
   },
   "lamp_lava": {
    "place": "indoor",
@@ -118,7 +165,16 @@
     "#8e3b5a",
     "#e8622c"
    ],
-   "note": "lava lamp, kolor wolno plynie miedzy jagoda a pomarancza; sprite z animowanymi bablami"
+   "note": "lava lamp, kolor wolno plynie miedzy jagoda a pomarancza; sprite z animowanymi bablami",
+   "item": "lamp_lava",
+   "file": "house/lamp_lava.png",
+   "on_file": "house/lamp_lava_on.png",
+   "frames": 4,
+   "fps": 2,
+   "glow": [
+    8,
+    14
+   ]
   },
   "fireplace": {
    "place": "indoor",
@@ -132,7 +188,17 @@
    "flicker": 0.12,
    "toggle": true,
    "warms_ambient": true,
-   "note": "kominek/piecyk za kratka; plomien 4 klatki, na scianie ruchome refleksy"
+   "note": "kominek/piecyk za kratka; plomien 4 klatki, na scianie ruchome refleksy",
+   "item": "fireplace",
+   "file": "house/fireplace.png",
+   "on_file": "house/fireplace_on.png",
+   "frames": 4,
+   "fps": 8,
+   "glow": [
+    24,
+    34
+   ],
+   "mask": "fx/cone_fireplace.png"
   },
   "candle": {
    "place": "both",
@@ -145,7 +211,16 @@
    "strength": 0.9,
    "flicker": 0.1,
    "toggle": true,
-   "note": "swieca w sloiku lub latarni"
+   "note": "swieca w sloiku lub latarni",
+   "item": "candle",
+   "file": "house/candle.png",
+   "on_file": "house/candle_on.png",
+   "frames": 4,
+   "fps": 8,
+   "glow": [
+    8,
+    9
+   ]
   },
   "fairy_lights": {
    "place": "both",
@@ -158,7 +233,16 @@
    "strength": 0.6,
    "flicker": 0.15,
    "toggle": true,
-   "note": "sznur lampek, kazdy punkt osobno, migotanie w fazach"
+   "note": "sznur lampek, kazdy punkt osobno, migotanie w fazach",
+   "item": "fairy_lights",
+   "file": "house/fairy_lights.png",
+   "on_file": "house/fairy_lights_on.png",
+   "frames": 4,
+   "fps": 4,
+   "glow": [
+    24,
+    8
+   ]
   },
   "window": {
    "place": "indoor",
@@ -167,7 +251,16 @@
    "strength": 1.0,
    "flicker": 0.0,
    "toggle": false,
-   "note": "snop swiatla wg pory dnia, rano rozowy, dzien neutralny, wieczor pomaranczowy, noc ksiezyc dusk[4]"
+   "note": "snop swiatla wg pory dnia, rano rozowy, dzien neutralny, wieczor pomaranczowy, noc ksiezyc dusk[4]",
+   "item": "window_sun",
+   "file": "house/window_sun.png",
+   "window_tods": {
+    "morning": "house/window_sun_morning.png",
+    "day": "house/window_sun_day.png",
+    "evening": "house/window_sun_evening.png",
+    "night": "house/window_sun_night.png"
+   },
+   "mask": "fx/beam_window.png"
   },
   "torch": {
    "place": "outdoor",
@@ -180,7 +273,16 @@
    "strength": 1.1,
    "flicker": 0.14,
    "toggle": true,
-   "note": "pochodnia na slupie, w bezpiecznym miejscu (nie przy sianie)"
+   "note": "pochodnia na slupie, w bezpiecznym miejscu (nie przy sianie)",
+   "item": "torch",
+   "file": "garden/torch.png",
+   "on_file": "garden/torch_on.png",
+   "frames": 4,
+   "fps": 8,
+   "glow": [
+    8,
+    6
+   ]
   },
   "lamp_oil": {
    "place": "outdoor",
@@ -193,7 +295,16 @@
    "strength": 0.9,
    "flicker": 0.05,
    "toggle": true,
-   "note": "lampa naftowa"
+   "note": "lampa naftowa",
+   "item": "lamp_oil",
+   "file": "garden/lamp_oil.png",
+   "on_file": "garden/lamp_oil_on.png",
+   "frames": 4,
+   "fps": 6,
+   "glow": [
+    8,
+    8
+   ]
   },
   "lantern": {
    "place": "outdoor",
@@ -206,7 +317,17 @@
    "strength": 0.9,
    "flicker": 0.08,
    "toggle": true,
-   "note": "latarnia ze swieca, wiszaca"
+   "note": "latarnia ze swieca, wiszaca",
+   "item": "lantern_garden",
+   "file": "garden/lantern_garden.png",
+   "on_file": "garden/lantern_garden_on.png",
+   "frames": 4,
+   "fps": 6,
+   "glow": [
+    8,
+    8
+   ],
+   "mask": "fx/glow_round.png"
   },
   "lamp_street": {
    "place": "outdoor",
@@ -220,7 +341,17 @@
    "flicker": 0.0,
    "toggle": true,
    "auto_at": "evening",
-   "note": "lampa parkowa, wlacza sie sama o zmierzchu, mozna wylaczyc"
+   "note": "lampa parkowa, wlacza sie sama o zmierzchu, mozna wylaczyc",
+   "item": "lamp_post",
+   "file": "park/lamp_post.png",
+   "on_file": "park/lamp_post_on.png",
+   "frames": 1,
+   "fps": 1,
+   "glow": [
+    8,
+    5
+   ],
+   "mask": "fx/glow_round.png"
   },
   "brazier": {
    "place": "outdoor",
@@ -233,12 +364,28 @@
    "strength": 1.1,
    "flicker": 0.12,
    "toggle": true,
-   "note": "kosz z zarem za siatka, tylko w parku, daleko od siana"
+   "note": "kosz z zarem za siatka, tylko w parku, daleko od siana",
+   "item": "brazier",
+   "file": "garden/brazier.png",
+   "on_file": "garden/brazier_on.png",
+   "frames": 4,
+   "fps": 8,
+   "glow": [
+    8,
+    5
+   ]
   }
  },
  "asset_per_source": {
   "sprites": "<id>_off.png i <id>_on.png (lub <id>_on_0..3 przy animacji)",
   "mask": "opcjonalna <id>_mask.png (kszalt snopa: abazur, okno, kominek); bez maski kod uzywa kola elipsy 1:1.25",
   "cast": "elementy sceny moga miec wariant trafiony swiatlem: kod mnozy kolor, a wynik kwantyzuje do palety"
+ },
+ "files_note": "Pliki wzgledem assets/world/. item = id w atlas.json: <file> = zrodlo wylaczone, light.on_file = pasek klatek wlaczonego (klatki obok siebie, szerokosc = size[0]), light.fps. glow = punkt srodka blasku w px przedmiotu (lewy-gorny rog = 0,0). mask = maska natezenia (alfa, 5 stopni) skalowana nearest. Okno: window_tods[pora] = plik. dust = pasek 4 klatek 16x16 czasteczek kurzu w swietle.",
+ "dust": {
+  "file": "fx/dust_motes.png",
+  "frames": 4,
+  "cell": 16,
+  "fps": 4
  }
 }

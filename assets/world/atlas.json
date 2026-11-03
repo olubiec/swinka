@@ -135,7 +135,13 @@
    "anchor": [
     16,
     32
-   ]
+   ],
+   "window_tods": {
+    "morning": "house/window_sun_morning.png",
+    "day": "house/window_sun_day.png",
+    "evening": "house/window_sun_evening.png",
+    "night": "house/window_sun_night.png"
+   }
   },
   "curtains_dots": {
    "place": "house",
@@ -220,7 +226,13 @@
    "anchor": [
     24,
     16
-   ]
+   ],
+   "light": {
+    "kind": "fairy_lights",
+    "on_file": "house/fairy_lights_on.png",
+    "frames": 4,
+    "fps": 4
+   }
   },
   "cosy_nook": {
    "place": "house",
@@ -424,7 +436,13 @@
    "anchor": [
     8,
     16
-   ]
+   ],
+   "light": {
+    "kind": "lantern",
+    "on_file": "garden/lantern_garden_on.png",
+    "frames": 4,
+    "fps": 6
+   }
   },
   "arch_rose": {
    "place": "garden",
@@ -577,7 +595,13 @@
    "anchor": [
     8,
     16
-   ]
+   ],
+   "light": {
+    "kind": "lamp_street",
+    "on_file": "park/lamp_post_on.png",
+    "frames": 1,
+    "fps": 1
+   }
   },
   "picnic_blanket": {
    "place": "park",
@@ -825,6 +849,204 @@
     24,
     32
    ]
+  },
+  "candle": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/candle.png",
+   "anchor": [
+    8,
+    16
+   ],
+   "light": {
+    "kind": "candle",
+    "on_file": "house/candle_on.png",
+    "frames": 4,
+    "fps": 8
+   }
+  },
+  "lamp_floor": {
+   "place": "house",
+   "cells": [
+    1,
+    2
+   ],
+   "size": [
+    16,
+    32
+   ],
+   "file": "house/lamp_floor.png",
+   "anchor": [
+    8,
+    32
+   ],
+   "light": {
+    "kind": "lamp_floor",
+    "on_file": "house/lamp_floor_on.png",
+    "frames": 1,
+    "fps": 1
+   }
+  },
+  "lamp_arc": {
+   "place": "house",
+   "cells": [
+    2,
+    3
+   ],
+   "size": [
+    32,
+    48
+   ],
+   "file": "house/lamp_arc.png",
+   "anchor": [
+    16,
+    48
+   ],
+   "light": {
+    "kind": "lamp_arc",
+    "on_file": "house/lamp_arc_on.png",
+    "frames": 1,
+    "fps": 1
+   }
+  },
+  "lantern_paper": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/lantern_paper.png",
+   "anchor": [
+    8,
+    16
+   ],
+   "light": {
+    "kind": "lantern_paper",
+    "on_file": "house/lantern_paper_on.png",
+    "frames": 1,
+    "fps": 1
+   }
+  },
+  "lamp_salt": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/lamp_salt.png",
+   "anchor": [
+    8,
+    16
+   ],
+   "light": {
+    "kind": "lamp_salt",
+    "on_file": "house/lamp_salt_on.png",
+    "frames": 4,
+    "fps": 1
+   }
+  },
+  "lamp_lava": {
+   "place": "house",
+   "cells": [
+    1,
+    2
+   ],
+   "size": [
+    16,
+    32
+   ],
+   "file": "house/lamp_lava.png",
+   "anchor": [
+    8,
+    32
+   ],
+   "light": {
+    "kind": "lamp_lava",
+    "on_file": "house/lamp_lava_on.png",
+    "frames": 4,
+    "fps": 2
+   }
+  },
+  "torch": {
+   "place": "garden",
+   "cells": [
+    1,
+    2
+   ],
+   "size": [
+    16,
+    32
+   ],
+   "file": "garden/torch.png",
+   "anchor": [
+    8,
+    32
+   ],
+   "light": {
+    "kind": "torch",
+    "on_file": "garden/torch_on.png",
+    "frames": 4,
+    "fps": 8
+   }
+  },
+  "lamp_oil": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "garden/lamp_oil.png",
+   "anchor": [
+    8,
+    16
+   ],
+   "light": {
+    "kind": "lamp_oil",
+    "on_file": "garden/lamp_oil_on.png",
+    "frames": 4,
+    "fps": 6
+   }
+  },
+  "brazier": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "garden/brazier.png",
+   "anchor": [
+    8,
+    16
+   ],
+   "light": {
+    "kind": "brazier",
+    "on_file": "garden/brazier_on.png",
+    "frames": 4,
+    "fps": 8
+   }
   }
  }
 }
