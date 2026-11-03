@@ -159,3 +159,7 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 - `assets/ui/` + `ui.json`: panele papier/drewno 9-slice, przyciski w 3 stanach, separatory, nagłówek z szwem, panel sklepu z markizą. Lint 0 (R5 nie dotyczy: UI poza siatką 16).
 - `bg:menu` 256x144 (wieczór, lampy, stodoła); `house_frame` 192x160 z 5 otworami na pokoje; ikona i logo w palecie (`icon_16/32/256`, `.ico`).
 - Albumy: `b11-1_interfejs`, `b11-2_menu`, `b11-3_ikona`, `b11-4_dom_i_sklep`. Hand-off dla kodu: ścieżki w sekcji "Interfejs (B11)" w `docs/KONTRAKT_ASSETOW.md`.
+
+## B12 - świnki w świecie i rekwizyty pulpitu (3.11.2026)
+- `shadow_pig_baby/junior/adult` (fx), specyfikacja `docs/SWIATLO_SWINEK.md`; test 5x5x4 w `pig_shadow.py` (maści czytelne, bez poprawek świata).
+- `assets/props/` (`ball`, `tunnel`, `hay_ball`, `house` + `_x2` + `props.json`) dla okna Pulpit.

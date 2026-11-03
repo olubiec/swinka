@@ -156,9 +156,9 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 ### B12. Świnki w świecie i rekwizyty pulpitu (3 zadania)
 | ID | Zadanie |
 |---|---|
-| B12-1 | [N] cień kontaktowy pod świnką (`shadow_pig.png`, 3 rozmiary etapów) + specyfikacja oświetlenia świnek dla kodu (decyzja 3) i test, że maści pięciu świnek nie giną pod ambientem nocnym |
-| B12-2 | Test czytelności: pięć świnek x 4 pory dnia x 5 pokoi, arkusz zbiorczy, poprawki kontrastu świata (nie świnek) |
-| B12-3 | [R] rekwizyty pulpitu w palecie świata (kula siana, piłka, tunel, domek) jako pliki dla okna Pulpit (bez światła świata) |
+| B12-1 | (zrobione: `shadow_pig_*` w `assets/world/fx`, specyfikacja `docs/SWIATLO_SWINEK.md`) [N] cień kontaktowy pod świnką (`shadow_pig.png`, 3 rozmiary etapów) + specyfikacja oświetlenia świnek dla kodu (decyzja 3) i test, że maści pięciu świnek nie giną pod ambientem nocnym |
+| B12-2 | (zrobione: album `b12-2`, bez poprawek świata) Test czytelności: pięć świnek x 4 pory dnia x 5 pokoi, arkusz zbiorczy, poprawki kontrastu świata (nie świnek) |
+| B12-3 | (zrobione: `assets/props/` + `props.json`) [R] rekwizyty pulpitu w palecie świata (kula siana, piłka, tunel, domek) jako pliki dla okna Pulpit (bez światła świata) |
 
 ### B14. Sad i układ scen (6 zadań; po B12, przed B13)
 Powód: po przeglądzie użytkownika (3.11.2026) w scenach nadal są przedmioty nachodzące na siebie lub rysowane w złej kolejności warstw (kto stoi niżej na ekranie, ten jest rysowany później), a sad powinien być osobną, przemyślaną sceną, nie rzędem drzewek przy polu.
@@ -256,4 +256,5 @@ Powód: po przeglądzie użytkownika (3.11.2026) w scenach nadal są przedmioty 
 | B10 | **fala zamknięta** |
 | B11 | **fala zamknięta** (nowe: assets/ui/*, bg:menu, house_frame → hand-off B13-5) |
 | B14 | **fala zamknięta** (nowe id: plot_lawn, plot_orchard, bg:orchard → hand-off B13-5; plot_field usunięty) |
-| B12, B13 | nie rozpoczęte (kolejność: B12, B13) |
+| B12 | **fala zamknięta** (nowe: shadow_pig_*, assets/props/* → hand-off B13-5) |
+| B13 | nie rozpoczęte (jako ostatnia) |
