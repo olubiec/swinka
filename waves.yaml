@@ -1,80 +1,5 @@
 version: 1
 waves:
-- id: w-qa-tools
-  tasks:
-  - id: check-css-vars
-    title: Dodaj skrypt check-css-vars.js
-    files:
-    - tools/qa/check-css-vars.js
-    test_command: node tools/qa/check-css-vars.js
-    prompt: 'Create tools/qa/check-css-vars.js in pure Node.js using CommonJS require
-      (no external dependencies).
-
-      The script should:
-
-      1. Read web/home/style.css and find all defined CSS variable names (--something).
-
-      2. Scan all CSS and JS files under web/home/ (e.g. style.css, canvas-pig.js,
-      features/**/*.css, features/**/*.js).
-
-      3. Extract all usages of var(--variable-name).
-
-      4. Check if every used variable is defined in style.css or locally.
-
-      5. If valid, print ''CSS VARS OK'' and exit code 0. If unknown variables are
-      found, log them and exit code 1.
-
-      '
-  - id: check-icons
-    title: Dodaj skrypt check-icons.js
-    files:
-    - tools/qa/check-icons.js
-    test_command: node tools/qa/check-icons.js
-    prompt: 'Create tools/qa/check-icons.js in pure Node.js using CommonJS require
-      (no external dependencies).
-
-      The script should:
-
-      1. Read assets/icons/icons.json and get all icon names/keys.
-
-      2. Scan web/home/**/*.html, web/home/**/*.js, web/home/**/*.css for class icon-<id>.
-
-      3. Verify every icon-<id> exists in assets/icons/icons.json.
-
-      4. If all icons match, print ''ICONS OK'' and exit code 0. If missing, log them
-      and exit code 1.
-
-      '
-- id: w-compat-tests
-  tasks:
-  - id: save-compat
-    title: Dodaj testy zgodności zapisów SaveCompatTests
-    files:
-    - tests/Cuy.Core.Tests/SaveCompatTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-      --filter FullyQualifiedName~SaveCompatTests
-    prompt: 'Create tests/Cuy.Core.Tests/SaveCompatTests.cs.
-
-      In this file, test loading legacy save JSON states through SaveSystem.
-
-      Verify default values for newer fields introduced in recent waves.
-
-      Do NOT modify production code in src/Cuy.Core.
-
-      '
-  - id: a11y-check
-    title: Dodaj skrypt a11y-check.js
-    files:
-    - tools/qa/a11y-check.js
-    test_command: node tools/qa/a11y-check.js
-    prompt: 'Create tools/qa/a11y-check.js using Playwright (already in package.json/tools/qa).
-
-      In a 420x640 window, verify buttons and input controls have accessible names
-      (aria-label, title, or innerText).
-
-      Check tab order. Print ''A11Y OK'' and exit code 0 on success.
-
-      '
 - id: w-validation-tests
   tasks:
   - id: data-ranges
@@ -170,14 +95,14 @@ waves:
   tasks:
   - id: W11-01
     title: 'W11-01: Named pig catalog (loader for pigs_named.json)'
-    prompt_file: tasks/W11-01-named-pig-catalog.md
+    prompt_file: docs/prompts/W11-01-named-pig-catalog.md
     files:
     - src/Cuy.Core/Pigs/NamedPigCatalog.cs
     - tests/Cuy.Core.Tests/NamedPigCatalogTests.cs
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
   - id: W11-02
     title: 'W11-02: Life fields on PigProfile and per-pig age helper'
-    prompt_file: tasks/W11-02-pig-life-fields.md
+    prompt_file: docs/prompts/W11-02-pig-life-fields.md
     files:
     - src/Cuy.Core/Pigs/PigProfile.cs
     - src/Cuy.Core/Pigs/PigLife.cs
@@ -185,21 +110,21 @@ waves:
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
   - id: W11-03
     title: 'W11-03: PigModifiers value type (average and clamp)'
-    prompt_file: tasks/W11-03-pig-modifiers.md
+    prompt_file: docs/prompts/W11-03-pig-modifiers.md
     files:
     - src/Cuy.Core/Pigs/PigModifiers.cs
     - tests/Cuy.Core.Tests/PigModifiersTests.cs
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
   - id: W11-04
     title: 'W11-04: Balance flags for the named-pig features (all off)'
-    prompt_file: tasks/W11-04-balance-flags.md
+    prompt_file: docs/prompts/W11-04-balance-flags.md
     files:
     - src/Cuy.Core/Balance.cs
     - tests/Cuy.Core.Tests/BalanceFlagsTests.cs
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
   - id: W11-05
     title: 'W11-05: Achievements for adopting family members'
-    prompt_file: tasks/W11-05-arrival-achievements.md
+    prompt_file: docs/prompts/W11-05-arrival-achievements.md
     files:
     - assets/data/achievements.json
     - tests/Cuy.Core.Tests/NamedPigAchievementsTests.cs
@@ -498,7 +423,7 @@ waves:
     title: 'W17-08: LegacyDecorMigration: slot decorations become placed items'
     prompt_file: docs/prompts/W17-08-legacy-decor-migration.md
     files:
-    - src/Cuy.Core/World/WorldEngine.Decor.cs
+    - src/Cuy.Core/World/LegacyDecorMigration.cs
     - src/Cuy.Core/World/WorldState.cs
     - tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
@@ -1242,3 +1167,87 @@ waves:
     - tools/qa/web-smoke.js
     - TESTY_RECZNE.md
     test_command: node tools/qa/web-smoke.js
+- id: W31
+  tasks:
+  - id: W31-01
+    title: 'W31-01: G10: check-assets.js, every referenced asset exists'
+    prompt_file: docs/prompts/W31-01-g10-check-assets-js-every-referenced-ass.md
+    files:
+    - tools/qa/check-assets.js
+    test_command: node tools/qa/check-assets.js
+  - id: W31-02
+    title: 'W31-02: G15: new app icon and favicon'
+    prompt_file: docs/prompts/W31-02-g15-new-app-icon-and-favicon.md
+    files:
+    - src/Cuy/Cuy.csproj
+    - src/Cuy/cuy.ico
+    - src/Cuy/dotNet/ProcessIcon.cs
+    - web/home/index.html
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W31-03
+    title: 'W31-03: G11: 9-slice UI assets and the CSS classes that use them'
+    prompt_file: docs/prompts/W31-03-g11-9-slice-ui-assets-and-the-css-classe.md
+    files:
+    - web/home/lib/ui-assets.js
+    - web/home/style.css
+    test_command: node tools/qa/check-css-vars.js && node tools/qa/web-smoke.js
+  - id: W31-04
+    title: 'W31-04: G12a: pure light engine and its test'
+    prompt_file: docs/prompts/W31-04-g12a-pure-light-engine-and-its-test.md
+    files:
+    - web/home/lib/lights.js
+    - tools/qa/lights-test.js
+    test_command: node tools/qa/lights-test.js
+- id: W32
+  tasks:
+  - id: W32-01
+    title: 'W32-01: G12b: light and time of day in the rooms view'
+    prompt_file: docs/prompts/W32-01-g12b-light-and-time-of-day-in-the-rooms-.md
+    files:
+    - web/home/features/rooms/feature.js
+    test_command: node tools/qa/web-smoke.js
+  - id: W32-02
+    title: 'W32-02: G12b: light and time of day in the garden and park view'
+    prompt_file: docs/prompts/W32-02-g12b-light-and-time-of-day-in-the-garden.md
+    files:
+    - web/home/features/garden/feature.js
+    test_command: node tools/qa/web-smoke.js
+  - id: W32-03
+    title: 'W32-03: G12b: light and time of day in the farm view'
+    prompt_file: docs/prompts/W32-03-g12b-light-and-time-of-day-in-the-farm-v.md
+    files:
+    - web/home/features/farm/feature.js
+    test_command: node tools/qa/web-smoke.js
+  - id: W32-04
+    title: 'W32-04: G12b: light and time of day in the market view'
+    prompt_file: docs/prompts/W32-04-g12b-light-and-time-of-day-in-the-market.md
+    files:
+    - web/home/features/market/feature.js
+    test_command: node tools/qa/web-smoke.js
+  - id: W32-05
+    title: 'W32-05: G11: apply UI assets, main menu background, removed ids'
+    prompt_file: docs/prompts/W32-05-g11-apply-ui-assets-main-menu-background.md
+    files:
+    - web/home/app.js
+    test_command: node tools/qa/check-assets.js && node tools/qa/web-smoke.js
+  - id: W32-06
+    title: 'W32-06: G13: pig lighting and contact shadow in Home scenes'
+    prompt_file: docs/prompts/W32-06-g13-pig-lighting-and-contact-shadow-in-h.md
+    files:
+    - web/home/canvas-pig.js
+    test_command: node tools/qa/web-smoke.js
+- id: W33
+  tasks:
+  - id: W33-01
+    title: 'W33-01: G14: stop using _x2 files and list them for deletion'
+    prompt_file: docs/prompts/W33-01-g14-stop-using-x2-files-and-list-them-fo.md
+    files:
+    - docs/X2_DELETE_LIST.md
+    - tools/qa/check-assets.js
+    test_command: node tools/qa/check-assets.js --x2
+  - id: W33-02
+    title: 'W33-02: G16: final verification run recorded in the visual log'
+    prompt_file: docs/prompts/W33-02-g16-final-verification-run-recorded-in-t.md
+    files:
+    - docs/VISUAL_LOG.md
+    test_command: node tools/qa/check-assets.js

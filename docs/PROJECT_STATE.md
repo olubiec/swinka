@@ -5,8 +5,7 @@
 ## Status
 
 <!-- STATUS -->
-**Ukończone fale:** W1 (PR #3–#49), W2 bez W2-06 · **Faza pętli:** czeka na start W3 (9 zadań w `tasks/`) · **Aktualizacja:** 2026-10-28 UTC
-**Otwarte poza pętlą:** PR #61 (W2-06, Jules, sprzed pętli) – do decyzji człowieka. Fale W4–W8 rozpisane w `tasks/` (pętla uruchomi je po W3).
+**Stan z 3.11.2026:** fale uruchamia orkiestra w Antigravity z `waves.yaml` (46 fal, 162 zadania; `docs/START_ORKIESTRA.md`). Pętla Julesa wyłączona. Poniższy log dotyczy okresu pętli.
 <!-- /STATUS -->
 
 ## Log zmian (najnowsze u góry)

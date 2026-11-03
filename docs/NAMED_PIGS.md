@@ -122,7 +122,7 @@ Część świnek z kolekcji nie żyje naprawdę. Gra pozostaje zgodna z zasadą 
 | Pętla Julesa | workflow `jules-loop.yml` **wyłączony ręcznie**; start fali wymaga włączenia go w Actions (Enable workflow) |
 
 ### 6.2 Fale Julesa do zrobienia: 5 fal, 28 zadań
-Zasady fal bez zmian (1 zadanie = 1 zachowanie, 1-4 pliki, brak nakładania `Zmieniaj`, zależne zadania w następnej fali). Pliki fal W12-W15 piszę tuż przed ich startem (krok A2), po sprawdzeniu zgodności z kodem po poprzedniej fali; W11 jest gotowa w `tasks/`.
+Zasady fal bez zmian (1 zadanie = 1 zachowanie, 1-4 pliki, brak nakładania `Zmieniaj`, zależne zadania w następnej fali). Pliki fal W12-W15 piszę tuż przed ich startem (krok A2), po sprawdzeniu zgodności z kodem po poprzedniej fali; W11 leży w `docs/prompts/` jak pozostałe fale.
 
 | Fala | Zadania | Co wdraża | Wymaga |
 | --- | --- | --- | --- |

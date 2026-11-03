@@ -30,6 +30,30 @@ for (const r of refs) if (!fs.existsSync(path.join(root, r))) fail('waves.yaml m
 const inYaml = new Set(refs.map(r => path.basename(r)));
 for (const f of prompts) if (/^W(2[3-9]|30)-/.test(f) && !inYaml.has(f)) fail('prompt not in waves.yaml: ' + f);
 console.log(refs.length + ' waves.yaml prompt refs');
+// 2b. waves.yaml `files:` must equal the prompt's `Zmieniaj:` line (orkiestra rejects edits outside `files`)
+{
+  const lines = wy.split('\n');
+  let curFile = null, curFiles = null;
+  const check = () => {
+    if (!curFile || !curFiles) return;
+    const t = fs.existsSync(path.join(root, curFile)) ? rd(curFile) : '';
+    const z = (t.match(/^Zmieniaj:\s*(.*)$/m) || [])[1];
+    if (!z) return;
+    const a = new Set(z.split(/[\s,]+/).filter(Boolean)), b = new Set(curFiles);
+    for (const x of a) if (!b.has(x)) fail(curFile + ': Zmieniaj has ' + x + ' but waves.yaml files does not');
+    for (const x of b) if (!a.has(x)) fail(curFile + ': waves.yaml files has ' + x + ' but Zmieniaj does not');
+  };
+  let inFiles = false;
+  for (const l of lines) {
+    let m;
+    if ((m = l.match(/^\s+prompt_file:\s*(\S+)/))) { check(); curFile = m[1]; curFiles = null; inFiles = false; }
+    else if (/^\s+files:\s*$/.test(l)) { curFiles = []; inFiles = true; }
+    else if (inFiles && (m = l.match(/^\s+-\s+(\S+)\s*$/))) curFiles.push(m[1]);
+    else inFiles = false;
+  }
+  check();
+}
+
 
 // 3. sub-waves: every W23-W30 prompt belongs to exactly one sub-wave
 const sw = js('docs/prompts/subwaves.json');

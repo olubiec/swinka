@@ -1,17 +1,11 @@
-# Prompt library for future waves (W12-W30)
+# Prompty zadań (W11-W33)
 
-136 task files in the Jules Loop format (`docs/JULES_LOOP.md`), one per small task. They are kept here, **not** in `tasks/`, on purpose: the loop starts a wave when `tasks/W*.md` land on `main`, and no loop is enabled yet. W11 (5 tasks) is already in `tasks/`.
+Jeden plik na zadanie (format pętli: `docs/JULES_LOOP.md`), łącznie 155. Fale uruchamia **orkiestra w Antigravity** z `waves.yaml` (`prompt_file` wskazuje na te pliki), a nie kopiowanie do `tasks/`. Instrukcja startu: `docs/START_ORKIESTRA.md`.
 
-## How a wave is started
-1. Wave N-1 is merged and green. Re-read the next wave's files against the real code (names and signatures are "as planned"; every file tells the agent to use the real code and list differences in the PR).
-2. `bash tools/release-wave.sh W12` copies `docs/prompts/W12-*.md` to `tasks/`.
-3. Commit and push to `main`. The loop starts the wave.
-4. When all tasks of the wave are merged, repeat with the next wave.
+Zasady każdego pliku: `Zmieniaj` = dokładnie `files` z `waves.yaml` (pilnuje tego `node tools/qa/plan-audit.js`), `Wymagane` jest podzbiorem `Zmieniaj`, jest `Weryfikacja`, zadanie nie zadaje pytań, zależne zadania są w późniejszej fali, nazwy z wcześniejszych fal są „jak zaplanowano" i agent ma użyć prawdziwego kodu oraz wypisać różnice w PR.
 
-Rules kept by every file: non-overlapping `Zmieniaj` inside a wave, `Wymagane` is a subset of `Zmieniaj`, `Weryfikacja` present, no questions, dependent work only in a later wave.
+Fale: W11-W15 nazwane świnki, W16-W22 świat, W23-W30 pokoje świnek, sypialnia, wędrowanie, wybieg, rekwizyty, sklep, W31-W33 grafika w kodzie (G10-G16).
+Podział W23-W30 na pod-fale: `subwaves.json` (te same grupy są w `waves.yaml`).
+Przegląd i liczby: `docs/ROADMAP.md`. Projekty: `docs/NAMED_PIGS.md`, `docs/WORLD.md`, `docs/PIG_ROOMS.md`.
 
-Waves: W12-W15 named pigs, W16-W22 world, W23-W30 pig rooms, shared bedroom, roaming, garden run, desktop props, home store.
-Overview and counts: `docs/ROADMAP.md`. Design: `docs/NAMED_PIGS.md`, `docs/WORLD.md`, `docs/PIG_ROOMS.md`. Graphics: `docs/GRAFIKA_KOLEJKA.md`, `docs/DESIGNER_BRIEF.md`.
-
-## Sub-waves (W23-W30)
-Tasks of one wave run in parallel, so a task that uses code from a sibling cannot start before it. W23-W30 are therefore split into sub-waves (`W23a`, `W23b`, ...) listed in `subwaves.json`; each prompt names its sub-wave and the tasks it needs merged first. They are also added to `waves.yaml` (the orchestrator plan). `tools/release-wave.sh W26b` copies one sub-wave. W11-W22 follow the grouping of `waves.yaml`.
+Stary tryb (Jules Loop): `tools/release-wave.sh W12` kopiuje prompty do `tasks/` i wymaga włączonej pętli; nieużywany.
