@@ -17,7 +17,7 @@ MERGE_TRIES = 5
 def run_gh(args: list[str], cwd: Path, check: bool = True) -> subprocess.CompletedProcess[str]:
     try:
         result = subprocess.run(
-            ["gh", *args], cwd=cwd, capture_output=True, text=True, check=False
+            ["gh", *args], cwd=cwd, capture_output=True, encoding="utf-8", errors="replace", check=False
         )
     except FileNotFoundError as exc:
         raise GitHubError("Nie znaleziono gh – zainstaluj GitHub CLI") from exc

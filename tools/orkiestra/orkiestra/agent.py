@@ -220,7 +220,7 @@ def run_agent(
                     ["git", "rev-parse", "--git-common-dir"],
                     cwd=worktree,
                     capture_output=True,
-                    text=True,
+                    encoding="utf-8", errors="replace",
                     check=False,
                 )
                 if proc.returncode == 0 and proc.stdout.strip():
@@ -244,7 +244,7 @@ def run_agent(
                 args,
                 cwd=worktree,
                 capture_output=True,
-                text=True,
+                encoding="utf-8", errors="replace",
                 timeout=hard_timeout,
                 stdin=subprocess.DEVNULL,
                 check=False,
