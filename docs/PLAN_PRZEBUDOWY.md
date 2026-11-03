@@ -204,4 +204,5 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B1-1 | zrobione (sofa_cosy bochenek, 4 warianty, lint 0; arkusz docs/album/przebudowa/b1-1_sofa_cosy.png) |
 | B1-2 | zrobione (fireplace 48x48: wył + 4 klatki wł, pasek fireplace_on.png; maska snopa i refleksy w B3-5/B3-6) |
 | B1-3 | zrobione (lamp_mushroom wył/wł, willow_tunnel 48x32) |
-| B1-4..B13 | nie rozpoczęte |
+| B1-4 | zrobione (tree_small 32x32, stall_basic 48x40; lint 0; rekwizyty targu poza regułą 16 w lincie) |
+| B1-5..B13 | nie rozpoczęte |

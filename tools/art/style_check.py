@@ -134,9 +134,9 @@ def check_image(path, kind="item", size=None, layer=None):
     """kind: item | tile | bg. Zwraca dict regula -> liczba naruszen."""
     im = _load(path)
     res = r1_r2_r3(im)
-    if kind == "item":
+    if kind in ("item", "prop"):
         res["R4"] = r4_outline(im)
-        if im.width % 16 or im.height % 16:
+        if kind == "item" and (im.width % 16 or im.height % 16):
             res["R5"] = 1
     else:
         res["R4"] = 0
@@ -160,7 +160,7 @@ def world_files():
     for bid, e in t["bg"].items():
         yield "bg:" + bid, H.WORLD_DIR / e["file"], "bg", e["size"], None
     for mid, e in t["market"].items():
-        yield "market:" + mid, H.WORLD_DIR / e["file"], "item", e["size"], None
+        yield "market:" + mid, H.WORLD_DIR / e["file"], "prop", e["size"], None
 
 
 def run(paths=None):
