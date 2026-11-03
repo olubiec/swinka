@@ -8,7 +8,7 @@ using Cuy.Core.Time;
 namespace Cuy.Core.AI
 {
     /// <summary>
-    /// The pig's brain (Utility AI): picks the next action,
+    /// Represents the pig's brain (Utility AI): picks the next action,
     /// manages durations, cooldowns, daily limits and the time budget.
     /// .NET Standard 2.0 compatible (no WinForms/Win32 dependencies).
     /// </summary>
