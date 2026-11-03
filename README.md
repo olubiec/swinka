@@ -1,5 +1,21 @@
 # Cuy
 
+<!-- STATUS_DASHBOARD_START -->
+> [!NOTE]
+> ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
+> **Ostatni heartbeat:** `2026-11-03 15:48:06`
+>
+> | Wskaźnik | Wartość | Status |
+> | :--- | :--- | :---: |
+> | 🔋 **Zasilanie i Bateria** | **97%** (Zasilacz AC podłączony) | 🟢 Zasilacz AC (Bezpieczny) |
+> | 🌊 **Aktualna Fala** | **W11** | 🟢 Aktywna |
+> | 🏆 **Ukończone Zadania** | **12 / 162** (7.4%) | 🟢 Postęp OK |
+> | 🧪 **Testy Jednostkowe** | **399 / 399** zaliczonych | ✅ Wszystkie przechodzą |
+> | 💻 **Stan Systemu** | ⚡ Agenci pracują autonomicznie | 🟢 Aktywny |
+>
+> 📄 [Szczegółowy raport zadań](STAN_PROJEKTU.md) • 📋 [Lista kolejnych fal](TODO.md) • 🔄 Odśwież stronę w przeglądarce telefonu, aby zobaczyć aktualny czas
+<!-- STATUS_DASHBOARD_END -->
+
 A pixel art guinea pig for the Windows desktop. It walks on the taskbar and on windows, has needs like a Pou-style pet, and grows up at the pace of a real guinea pig. A gift project, built with AI agents.
 
 ---
