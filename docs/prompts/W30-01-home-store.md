@@ -1,0 +1,14 @@
+# W30-01: HomeStore: one catalogue of everything the player can buy
+Zmieniaj: src/Cuy.Core/World/HomeStore.cs, tests/Cuy.Core.Tests/HomeStoreTests.cs
+Wymagane: src/Cuy.Core/World/HomeStore.cs, tests/Cuy.Core.Tests/HomeStoreTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
+Goal: A pure helper lists every purchasable thing of the home with price, owned count and the reason it is locked.
+Depends on: W29 merged.
+Facts: Rows (all from existing data and rules, nothing new is invented): rooms and levels (`PlaceUnlock`: bedroom, playroom, each level of every room incl. pig rooms and the dorm), places and their levels (garden, farm, park), placeable items by place (`WorldItemCatalog`, price, `free`, `signature_of` excluded from sale), item colours (`HomeEconomyConfig.VariantPrice` for variants 1-3, only for items with `recolor: true`), old shop decor (`items_decor.json`: wallpapers, floors, rugs, plants, pictures, lamps), farm upgrades (`FarmExpansion`: plot packs, orchard slots, cans, sprinkler), the big market stall. Each row: `Kind`, `Id`, `Name`, `Category`, `Place`, `Price`, `Owned`, `Placed`, `Locked` (bool), `LockedReason` (`needs_place:garden`, `needs_pigs`, `needs_room_level`, `max_level`, ...). No decoration is ever sold back. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
+Steps:
+1. `static class HomeStore`: `IReadOnlyList<StoreRow> Rows(GameState, PlaceCatalog, WorldItemCatalog, FarmConfig, MarketConfig, PigRoomConfig, HomeEconomyConfig, ItemCatalog)` and `StoreRow Row(string kind, string id, ...)`.
+2. Tests: a fresh state lists the bedroom at 470, playroom at 660, garden at 400, pig room level 2 at 400 for an adopted pig, dorm at 1500 locked with `needs_pigs`; the farm is locked with `needs_place:garden`; owned and placed counts follow the state; a signature item is not a row; every row price equals the value in its data file; the total of all rows is within 5 percent of the sink table in `docs/WORLD.md` plus the new pig room sinks (print the total in the test name or message; assert it is above 35000).
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.

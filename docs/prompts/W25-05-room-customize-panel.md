@@ -1,0 +1,14 @@
+# W25-05: Customize panel: skins, item colours, name, storage and transfer
+Zmieniaj: web/home/features/rooms/customize.js, web/home/features/rooms/customize.css
+Wymagane: web/home/features/rooms/customize.js
+Weryfikacja: node --check web/home/features/rooms/customize.js && node tools/qa/web-smoke.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/*, AGENTS.md, docs/*, tasks/*, web/home/features/rooms/feature.js, web/home/app.js, web/home/bridge.js
+Goal: The player can recolour any placed item, change wallpaper and floor from owned skins, rename the room and move items between rooms.
+Depends on: W24 merged; mounted by W25-04 in the same wave through `window.RoomCustomize.mount(container, ctx)`.
+Facts: Export `window.RoomCustomize = { mount(container, ctx) }` (`ctx = { state, roomId, send }`, state is the `rooms` object). Panels: (1) Selected item: four colour swatches (`variantNames` from state; a locked variant shows a small padlock and its price `variantPrices[itemId][variant]` and the click sends `room_variant_unlock { itemId, variant }` after a confirm; the swatch shows the ramp colours from `lib/palette.js` if available, else plain squares) sending `room_variant { place, uid, variant }`, plus Flip/Remove. The selected uid is announced by the editor through a `CustomEvent('room-select', { detail: { uid } })` on `document` (feature.js dispatches it in W25-04; if no event arrives show 'Click an item to change it'). (2) Walls and floor: owned wallpapers/floors (from `rooms.skins`) as small swatches, send `room_skin { room, slot, itemId }`. (3) Name: text input (24 chars) sending `room_rename { place, name }`; reset button. (4) Storage: list of `storage` with counts and a 'Put in this room' button (sends `room_place` at the first free cell the C# side finds: send `x: -1, y: -1` meaning auto, document it in the PR) and a 'Move here from ...' select for placed items of other rooms (`room_transfer`). Text English, escape all text. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
+Steps:
+1. Implement the four panels and the styles (palette variables only).
+2. The module must be harmless when a message is rejected (the server toasts).
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.

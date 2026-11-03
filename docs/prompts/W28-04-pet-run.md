@@ -1,0 +1,14 @@
+# W28-04: Pet.Run: let pigs out into the garden run and bring them in
+Zmieniaj: src/Cuy.Core/Pet.Run.cs, src/Cuy.Core/Balance.cs, assets/data/achievements.json, tests/Cuy.Core.Tests/PetRunTests.cs
+Wymagane: src/Cuy.Core/Pet.Run.cs, tests/Cuy.Core.Tests/PetRunTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
+Goal: A pet can send pigs out to the run and bring them in; hours out turn into a little mood, even after the app was closed.
+Depends on: W27 merged.
+Facts: Add the flag `RunActive` (default false; switched on in W30-09). Behind `RunActive` and `PlacesActive`. `RunInfo Run()` calls `RunCheck.Analyze` on the garden layout. `RunResult LetOut(pigId)` requires: the garden unlocked, a valid run, a free capacity slot, the pig is not memorial and not already out, `RunRules.CanBeOut` Ok. `BringIn(pigId)` credits the hours since it went out with `RunRules.MoodFor` (adds mood through the existing need API) and removes it. `RunTick()` (called by the session tick and on open) brings pigs in when the verdict turns bad or the day ends and credits the allowed hours only (offline safe: compute from the clock, not from ticks). Counters: `run_hours` (integer hours), achievement `garden_run` ('Fenced in': a valid run exists, reward 40) in `achievements.json` (format of W16-08). A pig that is out is shown in the garden by the page and does not appear in its room (`LocationOf` returns the garden for it; W27-03 hook: add a `RunOut(pigId)` check there only if the method exists, otherwise list the call in the PR). Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
+Steps:
+1. Implement the methods, the flag and the achievement.
+2. Tests: no fence refuses with `no_fence`; valid run lets 2 pigs out and refuses the third with `Full`; bad weather refuses; 3 hours later bring in gives +3 mood; closing the app (no ticks) for 10 hours still credits at most 6; the run empties itself after 19:00; memorial pigs refused; the achievement pays once; flag off does nothing.
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.

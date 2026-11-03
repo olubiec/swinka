@@ -1,6 +1,6 @@
 # Roadmap: what is left (2.11.2026)
 
-**12 Jules waves (W11-W22), 76 tasks**, plus **7 art waves** (R, S0-S5) done by Claude Code. No loop is enabled; W11 waits in `tasks/`, W12-W22 are ready in `docs/prompts/` (71 files, loop format, validated: no `Zmieniaj` overlap in any wave).
+**20 Jules waves (W11-W30), 141 tasks**: W11-W15 named pigs (28), W16-W22 world (48), W23-W30 pig rooms, roaming, run, desktop props and the home store (65). Art: v1 of everything exists; open: style wave S (owner gate) and the new P0-P3 (33 required files, `docs/DESIGNER_BRIEF.md`). No loop is enabled; W11 waits in `tasks/`, W12-W30 are ready in `docs/prompts/` (136 files, loop format, validated: no `Zmieniaj` overlap in any wave).
 The loop adds its own test (`T<n>`) and integration (`I<n>`) tasks after each wave, so real sessions will be somewhat higher than 76.
 
 ## Part 1: Named pigs (28 tasks, 5 waves). Design: `docs/NAMED_PIGS.md`
@@ -23,15 +23,29 @@ The loop adds its own test (`T<n>`) and integration (`I<n>`) tasks after each wa
 | W21 | 5 | harvest notification, settings, sounds, My Pigs links, canvas limits |
 | W22 | 6 | flags on, economy sim in C# with invariants, smoke for world screens, manual tests, self-test, save size |
 
-Order is strict: W11 → W15 → W16 → W22 (the world uses offers, memorial pigs and the flags pattern). Inside a wave tasks are independent.
+Order is strict: W11 → W15 → W16 → W22 → W23 → W30 (the world uses offers, memorial pigs and the flags pattern; pig rooms use the world). Inside a wave tasks are independent.
 
-## Part 3: Graphics (7 art waves). List with sizes and counts: `docs/GRAFIKA_KOLEJKA.md`
-R (finish pig looks: rex whiskers, per-breed heads, 5 portraits, pattern icons, album, 4 icons) · S0 (24 UI icons) · S1 (farm: 56 plant frames + tools + 22 item icons) · S2 house (14 items + tiles) · S3 garden (15 + backgrounds) · S4 park (12 + backgrounds) · S5 farm and market (4 items + stalls). No wave waits for art: the code draws fallback glyphs until files exist.
+## Part 3: Pig rooms and the home (65 tasks, 8 waves). Design: `docs/PIG_ROOMS.md`
+| Wave | Tasks | What it delivers |
+|---|---|---|
+| W23 | 8 | Core foundations: `PigRoomConfig`, world-state fields, per-pig comfort, room creation with themes, dynamic room levels, flags and achievements, `HomeEconomyConfig`, simulator variant |
+| W24 | 6 | Pet integration: a room per adopted pig, per-pig comfort in mood decay, item colours (paid), room names, storage and transfer, memory room, save migration, diary |
+| W25 | 7 | `RoomsFeature` extension, contracts, validation, room tabs with portraits, customize panel, My Pigs link, mock |
+| W26 | 9 | shared bedroom (pure merge/split, Pet, comfort, feature, contracts, UI, mock), flags on, smoke and manual steps |
+| W27 | 8 | roaming or tied to a room, wander schedule, house plan (flat cutaway), pigs walking in rooms |
+| W28 | 9 | garden run (fence + gate check, rules, Pet, feature, UI, mock) and the desktop props audit |
+| W29 | 9 | desktop props saved and attached to the house, drop into rooms and back, desktop overlay, tray UI |
+| W30 | 9 | one home store, purchase facade, store UI, full economy simulator, data checks, smoke and manual steps, flags on |
+
+3D / isometric view was dropped (3.11.2026); notes kept in `docs/PIG_ROOMS.md` section 11.
+
+## Part 4: Graphics. Status and what is left: `docs/GRAFIKA_KOLEJKA.md`; designer brief: `docs/DESIGNER_BRIEF.md`
+v1 of all art exists. Open: style wave S (owner approval of 5 samples) and P0-P3 (13 icons, 5 signature items + 10 skin tiles, gate + 4 props, optional extras). No wave waits for art: the code draws fallback glyphs until files exist.
 
 ## Human steps
 1. Rotate the Jules API key (it sits in the Project instructions) and enable the new loop when ready; until then copy waves with `tools/release-wave.sh W<n>`.
-2. Windows test after W14 and W15 (two pigs of different ages, offer and adoption, memorial mode, poop rate, skittish James) and after W22 (`TESTY_RECZNE.md`, world section).
-3. Approve the look of the five pigs after wave R.
+2. Windows test after W14 and W15 (two pigs of different ages, offer and adoption, memorial mode, poop rate, skittish James), after W22 (world) and after W26 and W30 (`TESTY_RECZNE.md`: pig rooms, shared bedroom, roaming, run, desktop props, store).
+3. Approve the style samples (wave S gate) and the Kuki sample of P1; decide the open points in `docs/PIG_ROOMS.md` section 13.
 4. Tune numbers in `assets/data/*.json`; check with `node tools/qa/data-check.js` and `node tools/qa/economy-sim.js --runs 12 --variant baseline --sweep --check`.
 
 ## Known blockers

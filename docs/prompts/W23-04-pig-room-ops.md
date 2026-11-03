@@ -1,0 +1,14 @@
+# W23-04: PigRoomOps: create a pig's room with its theme and starter set
+Zmieniaj: src/Cuy.Core/World/PigRoomOps.cs, tests/Cuy.Core.Tests/PigRoomOpsTests.cs
+Wymagane: src/Cuy.Core/World/PigRoomOps.cs, tests/Cuy.Core.Tests/PigRoomOpsTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
+Goal: A pure helper creates a pig's room (skins, 3 starter items placed, signature item owned and placed) idempotently.
+Depends on: W22 merged. Uses W23-01 (`PigRoomConfig`) and W23-02 (fields) from this wave only through the interfaces below: build against the planned names and list differences.
+Facts: `WorldState.Rooms[roomId]` holds a `RoomLayout` (`Wallpaper`, `Floor`, `Items`); `RoomLayoutOps.Place` (W17-01) validates cells; level 1 grid is 10x6 with 2 wall rows. Starter items are free copies: add 1 to `OwnedItems` for each starter id and for the signature id, then place them with a deterministic first-fit scan (wall items on the wall rows from the left, floor items from the bottom-left, row by row; the signature item first, in the middle of the floor). Wallpaper and floor ids are also added to `OwnedItems` (free, once). `PigRoomsEnsured` makes the whole call idempotent (a second call changes nothing, even if the player removed the starter items). Design: docs/PIG_ROOMS.md section 3. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
+Steps:
+1. `static bool EnsureRoom(WorldState, string pigId, string pigName, bool memorial, int randomIndex, PigRoomConfig, WorldItemCatalog, Func<string> newUid)` returns true when it created the room; sets level 1 in `PlaceLevels[roomId]`, `Name` stays null.
+2. Tests: kuki's room has wallpaper `wallpaper_mint`, floor `floor_wood_light`, 3 starter items plus `sig_kuki_blanket` placed inside 10x6 without overlaps; items are in `OwnedItems`; the second call returns false and changes nothing; removing the starter and calling again does not bring it back; an unknown pig gets a default theme; two pigs get independent rooms; a memorial pig also gets a room.
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.

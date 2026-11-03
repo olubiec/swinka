@@ -1,0 +1,180 @@
+{
+ "note": "Personal room of every pig and the shared bedroom. Numbers tuned by the human; code only reads them. Design: docs/PIG_ROOMS.md. Room id of a pig is 'pig:<id>'. Skins are ids from items_decor.json. 'wall_tile' and 'floor_tile' are optional tile ids in assets/world/tiles.json; when the file is missing the decor skin is used.",
+ "version": 1,
+ "template": {
+  "id_prefix": "pig:",
+  "name": "{name}'s room",
+  "memorial_name": "{name}'s memory room",
+  "max_name_len": 24,
+  "levels": [
+   {
+    "cols": 10,
+    "rows": 6,
+    "cost": 0
+   },
+   {
+    "cols": 12,
+    "rows": 7,
+    "cost": 400
+   },
+   {
+    "cols": 14,
+    "rows": 8,
+    "cost": 900
+   }
+  ]
+ },
+ "comfort": {
+  "own": 1.0,
+  "common": 0.5,
+  "others": 0.0,
+  "common_places": [
+   "salon",
+   "bedroom",
+   "playroom",
+   "dorm",
+   "garden",
+   "park"
+  ]
+ },
+ "variants": {
+  "count": 4,
+  "names": [
+   "default",
+   "dusk",
+   "moss",
+   "linen"
+  ],
+  "ramp": {
+   "source": "brick",
+   "targets": [
+    null,
+    "dusk",
+    "moss",
+    "linen"
+   ]
+  },
+  "note": "PlacedItem.Variant 0..3. Art draws all fabric areas in the 'brick' ramp (4 shades); the page remaps it to the target ramp of the variant (first 4 shades). Wood and other materials never change."
+ },
+ "dorm": {
+  "id": "dorm",
+  "name": "Shared bedroom",
+  "unlock_cost": 1500,
+  "requires_pigs": 2,
+  "max_residents": 6,
+  "bond_gain_bonus": 0.05,
+  "levels": [
+   {
+    "cols": 16,
+    "rows": 8,
+    "cost": 0
+   },
+   {
+    "cols": 20,
+    "rows": 9,
+    "cost": 1100
+   },
+   {
+    "cols": 24,
+    "rows": 10,
+    "cost": 1800
+   }
+  ]
+ },
+ "default_themes": [
+  {
+   "wallpaper": "wallpaper_mint",
+   "floor": "floor_wood_light",
+   "starter": [
+    "cushion_big",
+    "window_sun",
+    "side_table"
+   ]
+  },
+  {
+   "wallpaper": "wallpaper_peach",
+   "floor": "floor_wood_light",
+   "starter": [
+    "cushion_big",
+    "wall_clock",
+    "toy_basket"
+   ]
+  },
+  {
+   "wallpaper": "wallpaper_sky",
+   "floor": "floor_wood_light",
+   "starter": [
+    "cushion_big",
+    "curtains_dots",
+    "side_table"
+   ]
+  }
+ ],
+ "themes": {
+  "kuki": {
+   "wallpaper": "wallpaper_mint",
+   "floor": "floor_wood_light",
+   "starter": [
+    "cushion_big",
+    "window_sun",
+    "side_table"
+   ],
+   "signature": "sig_kuki_blanket",
+   "mood": "calm meadow",
+   "wall_tile": "wall_pig_kuki",
+   "floor_tile": "floor_pig_kuki"
+  },
+  "ned": {
+   "wallpaper": "wallpaper_peach",
+   "floor": "floor_carpet_red",
+   "starter": [
+    "hay_bar_wood",
+    "cushion_big",
+    "shelf_small"
+   ],
+   "signature": "sig_ned_snack_nook",
+   "mood": "snack nook",
+   "wall_tile": "wall_pig_ned",
+   "floor_tile": "floor_pig_ned"
+  },
+  "james": {
+   "wallpaper": "wallpaper_night",
+   "floor": "floor_tiles_checker",
+   "starter": [
+    "cosy_nook",
+    "curtains_dots",
+    "fairy_lights"
+   ],
+   "signature": "sig_james_hideout",
+   "mood": "safe hideout",
+   "wall_tile": "wall_pig_james",
+   "floor_tile": "floor_pig_james"
+  },
+  "glen": {
+   "wallpaper": "wallpaper_lilac",
+   "floor": "floor_wood_light",
+   "starter": [
+    "armchair",
+    "bookshelf",
+    "cushion_big"
+   ],
+   "signature": "sig_glen_knit_bed",
+   "mood": "cosy reading corner",
+   "wall_tile": "wall_pig_glen",
+   "floor_tile": "floor_pig_glen"
+  },
+  "racuch": {
+   "wallpaper": "wallpaper_sky",
+   "floor": "floor_grass",
+   "starter": [
+    "toy_basket",
+    "fairy_lights",
+    "hanging_planter"
+   ],
+   "signature": "sig_racuch_hop_pad",
+   "mood": "play corner",
+   "wall_tile": "wall_pig_racuch",
+   "floor_tile": "floor_pig_racuch"
+  }
+ }
+}

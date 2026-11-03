@@ -60,7 +60,7 @@ następnej fali (szablon A2) albo gdy błąd jest w koncepcie lub planie.
 - **W9 (10 zadań) i W10-01: zastąpione.** Zrobiły to ręcznie fale wizualne V4-V6 (`docs/VISUAL_LOG.md`); pliki przeniesione do `tasks/done/`, żeby pętla ich nie powtórzyła.
 - **Grafika (Claude Code, poza Julesem):** V0-V8 i G0-G8 zrobione; wygląd V3 wg commitów: A0-A3 i A5/A6 wykonane (pięć świnek ma osobne arkusze w `assets/sprites/pigs/<id>/<etap>/`), zostają A4, A7 (opcja) i A8 (`docs/PLAN_WYGLAD_V3.md`).
 - **Nowe: stado z kolekcji (Ned, Kuki, Glen, James, Racuch)** w falach **W11-W15** (28 zadań), projekt i ekonomia: `docs/NAMED_PIGS.md`, dane: `assets/data/pigs_named.json`. Para Kuki + Ned do adopcji naraz po aktualizacji, James/Glen/Racuch jako oferty adopcji z czasem (90/105/130 dni, 100 koniczynek), losowy próg Legend dla każdej świnki, tryb pamięci dla wszystkich pięciu. W11 (5 zadań) leży w `tasks/` i czeka na start; W12-W15 rozpisuję przed ich startem.
-- **Nowe: świat (dom, ogród, park, farma, targ)** w falach **W16-W22** (48 zadań) i grafice S0-S5: projekt, ekonomia i niezmienniki w `docs/WORLD.md`, dane w `assets/data/{places,world_items,farm,market,items_farm}.json`, kontrola `node tools/qa/data-check.js`. Pliki zadań W16-W22 piszę tuż przed startem każdej fali (nie leżą w `tasks/`, żeby żadna pętla ich nie podjęła przedwcześnie).
+- **Nowe: świat (dom, ogród, park, farma, targ)** w falach **W16-W22** (48 zadań; rozszerzenie o pokoje świnek i dom: W23-W30, 65 zadań) i grafice S0-S5: projekt, ekonomia i niezmienniki w `docs/WORLD.md`, dane w `assets/data/{places,world_items,farm,market,items_farm}.json`, kontrola `node tools/qa/data-check.js`. Pliki zadań W16-W22 piszę tuż przed startem każdej fali (nie leżą w `tasks/`, żeby żadna pętla ich nie podjęła przedwcześnie).
 - **Pętla:** pętla Julesa jest wyłączona ręcznie (`jules-loop.yml` = disabled_manually): żadna fala nie ruszy, dopóki w Actions nie klikniesz "Enable workflow". Nowa pętla (Antigravity) jest wdrażana osobno; do jej uruchomienia niczego nie włączamy. Otwarty PR #75 (W3-04.1, diary) jest sprzed wyłączenia i czeka na decyzję.
 
 ## Status historyczny (27.10.2026, wieczór)
@@ -232,6 +232,20 @@ Pełny projekt (zasady, mapa miejsc, edytor siatki, komfort, farma i rośliny, t
 | **W21** Pulpit i dźwięk (5) | powiadomienie o zbiorach, ustawienia, dźwięki, My Pigs (kącik pamięci), limit wydajności | dopracowanie | W20 |
 | **W22** Domknięcie (6) | flagi włączone, symulacja 60 dni z niezmiennikami, smoke czterech ekranów, testy ręczne, `SelfTest`, rozmiar zapisu | funkcja włączona | W21 |
 Grafika (Claude Code, poza Julesem): S0 podłoże i tła, S1 rośliny, S2 meble domu, S3 ogród i farma, S4 park, S5 targ i audyt (`docs/WORLD.md` pkt 8). Zapasowe glify pozwalają fali W20 działać przed gotową grafiką. Człowiek: test na Windowsie po W20 i W22, decyzje z `docs/WORLD.md` pkt 10.
+
+## Pokoje świnek i dom (W23-W30)
+Projekt: `docs/PIG_ROOMS.md` (własny pokój każdej świnki z innym wyglądem i pełną customizacją, komfort per świnka, tryb pamięci, wspólna sypialnia, wędrowanie albo przywiązanie do pokoju z płaskim planem domku, wybieg w ogrodzie z furtką, rekwizyty z pulpitu przyczepione do domku, sklep ze wszystkim i ekonomia bez odsprzedaży). Dane: `assets/data/pig_rooms.json`, `home_economy.json`, `world_items.json` (55 przedmiotów); kontrola `node tools/qa/data-check.js`. Widok 3D odłożony. Brief dla designera: `docs/DESIGNER_BRIEF.md`.
+| Fala | Zadań | Co wdraża | Wymaga |
+| --- | --- | --- | --- |
+| **W23** (8) | `PigRoomConfig`, pola stanu, `PigComfort`, `PigRoomOps`, poziomy pokoi, flagi i osiągnięcia, `HomeEconomyConfig`, symulator | fundamenty Core | W22 |
+| **W24** (6) | pokój przy adopcji, komfort w spadku humoru, kolory (płatne), nazwy, magazyn i przenoszenie, pokój pamięci, migracja zapisów, pamiętnik | Pet | W23 |
+| **W25** (7) | `RoomsFeature`, kontrakty, walidacja, zakładki pokoi, panel dopasowania, link w Moje świnki, mock | most i Home | W24 |
+| **W26** (9) | wspólna sypialnia (Core, Pet, komfort, funkcja, UI, mock), włączenie flag, smoke i testy ręczne | sypialnia | W25 |
+| **W27** (8) | stan i harmonogram wędrowania, tryby, funkcja, plan domku, świnki w pokojach | wędrowanie | W26 |
+| **W28** (9) | wybieg (sprawdzenie ogrodzenia, zasady, Pet, funkcja, UI, mock), audyt rekwizytów | wybieg | W27 |
+| **W29** (9) | rekwizyty z pulpitu zapisane i przyczepione, wrzucanie do pokoi, nakładka na pulpicie, pasek | rekwizyty | W28 |
+| **W30** (9) | sklep domu, fasada zakupów, UI sklepu, pełny symulator, kontrola danych, smoke, włączenie flag | domknięcie | W29 |
+Razem **141 zadań w 20 falach Julesa** (W11-W30), z czego W11 w `tasks/`, reszta w `docs/prompts/`.
 
 ## Podpięcie grafiki w grze (fala G, po W14 i W20)
 Grafika jest gotowa w `assets/` (kontrakt plików: `docs/KONTRAKT_ASSETOW.md`, spis: `docs/INWENTARZ_GRAFIKI.md`). Gra używa jej dopiero po tych zadaniach; do tego czasu rysuje glify zapasowe. Zadania wchodzą do istniejących fal (te same pliki `Zmieniaj`), osobnych plików w `tasks/` nie ma, bo pisze je człowiek lub Claude tuż przed startem fali (zasada z W16-W22).

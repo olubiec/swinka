@@ -1,0 +1,46 @@
+{
+ "note": "Economy and rules of the home extras: item colours, run, desktop props, roaming. Tuned by the human. Design: docs/PIG_ROOMS.md sections 7-9. Decorations cannot be sold back (no resale), they go to storage.",
+ "version": 1,
+ "variants": {
+  "unlock_percent": 15,
+  "min_price": 5,
+  "note": "Variant 1-3 of one item id costs ceil(price*percent/100), min min_price, bought once, valid for every copy; variant 0 and free items cost nothing"
+ },
+ "skins": {
+  "pig_skin_price": 180,
+  "note": "price of the dedicated wall/floor tile set of a pig when the player wants it in another room"
+ },
+ "resale": {
+  "allowed": false
+ },
+ "roam": {
+  "slot_minutes": 20,
+  "night_from_hour": 22,
+  "night_to_hour": 7,
+  "default_mode": "free"
+ },
+ "run": {
+  "min_cells": 12,
+  "cells_per_pig": 6,
+  "gate_item": "gate_garden",
+  "blockers": [
+   "fence_wood",
+   "hedge",
+   "gate_garden"
+  ],
+  "max_hours_per_day": 6,
+  "day_from_hour": 8,
+  "day_to_hour": 19,
+  "min_temp_c": 10,
+  "max_temp_c": 28,
+  "allowed_conditions": [
+   "Clear",
+   "Cloudy"
+  ],
+  "mood_per_hour": 1.0,
+  "mood_cap_per_day": 6
+ },
+ "props": {
+  "max_on_desktop": 6
+ }
+}

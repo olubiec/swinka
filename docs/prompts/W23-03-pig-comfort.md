@@ -1,0 +1,14 @@
+# W23-03: PigComfort: personal comfort and mood factor per pig
+Zmieniaj: src/Cuy.Core/World/PigComfort.cs, tests/Cuy.Core.Tests/PigComfortTests.cs
+Wymagane: src/Cuy.Core/World/PigComfort.cs, tests/Cuy.Core.Tests/PigComfortTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
+Goal: A pure function computes the comfort of one pig from its own room, the common places and (for roommates) the shared bedroom.
+Depends on: W22 merged.
+Facts: Design: docs/PIG_ROOMS.md section 4. `Score(pig) = min(cap, own*Sum(own room) + common*Sum(common places) + others*Sum(other pigs' rooms))` with weights from `PigRoomConfig` and the cap from `PlaceCatalog.ComfortCap` (100). Sums use the same item comfort as `Comfort.Score` (W17-02; reuse its per-place sum, do not copy the arithmetic). A pig that lives in the shared bedroom (`RoomShare[pig]`) counts that room as its own room. Common places are the ids in `common_places` (rooms `salon`, `bedroom`, `playroom`, `dorm` and the outdoor places). The mood factor is `Comfort.MoodDecayFactor(score, places)` (so the maximum slow-down stays 15 percent and the economy sim thresholds do not move). A memorial pig has no needs: return factor 1.0 for it. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
+Steps:
+1. `public static class PigComfort`: `int Score(WorldState, WorldItemCatalog, PlaceCatalog, PigRoomConfig, string pigId)`, `double MoodFactor(...same..., bool memorial)`, `double AverageFactor(IEnumerable<(string pigId,bool memorial)> activePigs, ...)` (average of the factors of non-memorial pigs, 1.0 when there are none).
+2. Tests: empty world 0 and factor 1.0; own sofa (comfort 6) counts 6, the same sofa in the salon counts 3, in another pig's room 0; roommates both count the dorm as own; the score is capped at 100 and the factor is exactly 0.85 at the cap; a memorial pig gives factor 1.0; the average ignores memorial pigs; weights come from the config (build a config from JSON in the test).
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.

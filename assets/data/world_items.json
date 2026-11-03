@@ -18,7 +18,8 @@
    "price": 320,
    "comfort": 6,
    "layer": "floor",
-   "icon": "sofa_cosy"
+   "icon": "sofa_cosy",
+   "recolor": true
   },
   {
    "id": "armchair",
@@ -31,7 +32,8 @@
    "price": 200,
    "comfort": 4,
    "layer": "floor",
-   "icon": "armchair"
+   "icon": "armchair",
+   "recolor": true
   },
   {
    "id": "bookshelf",
@@ -70,7 +72,8 @@
    "price": 55,
    "comfort": 3,
    "layer": "floor",
-   "icon": "cushion_big"
+   "icon": "cushion_big",
+   "recolor": true
   },
   {
    "id": "toy_basket",
@@ -83,7 +86,8 @@
    "price": 90,
    "comfort": 2,
    "layer": "floor",
-   "icon": "toy_basket"
+   "icon": "toy_basket",
+   "recolor": true
   },
   {
    "id": "hay_bar_wood",
@@ -122,7 +126,8 @@
    "price": 110,
    "comfort": 2,
    "layer": "wall",
-   "icon": "curtains_dots"
+   "icon": "curtains_dots",
+   "recolor": true
   },
   {
    "id": "wall_clock",
@@ -187,7 +192,8 @@
    "price": 260,
    "comfort": 5,
    "layer": "floor",
-   "icon": "cosy_nook"
+   "icon": "cosy_nook",
+   "recolor": true
   },
   {
    "id": "fence_wood",
@@ -463,7 +469,8 @@
    "price": 160,
    "comfort": 5,
    "layer": "floor",
-   "icon": "picnic_blanket"
+   "icon": "picnic_blanket",
+   "recolor": true
   },
   {
    "id": "statue_pig",
@@ -594,6 +601,173 @@
    "comfort": 1,
    "layer": "floor",
    "icon": "signpost"
+  },
+  {
+   "id": "sig_kuki_blanket",
+   "name": "Kuki's meadow blanket",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 0,
+   "comfort": 4,
+   "layer": "floor",
+   "icon": "sig_kuki_blanket",
+   "free": true,
+   "signature_of": "kuki",
+   "note": "A soft patchwork blanket in meadow colours.",
+   "recolor": true
+  },
+  {
+   "id": "sig_ned_snack_nook",
+   "name": "Ned's snack nook",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 0,
+   "comfort": 4,
+   "layer": "floor",
+   "icon": "sig_ned_snack_nook",
+   "free": true,
+   "signature_of": "ned",
+   "note": "A hay-lined box with a small treat shelf.",
+   "recolor": true
+  },
+  {
+   "id": "sig_james_hideout",
+   "name": "James's hideout",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 0,
+   "comfort": 4,
+   "layer": "floor",
+   "icon": "sig_james_hideout",
+   "free": true,
+   "signature_of": "james",
+   "note": "An arched hideout with a curtain, safe for a jumpy pig.",
+   "recolor": true
+  },
+  {
+   "id": "sig_glen_knit_bed",
+   "name": "Glen's knitted bed",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 0,
+   "comfort": 4,
+   "layer": "floor",
+   "icon": "sig_glen_knit_bed",
+   "free": true,
+   "signature_of": "glen",
+   "note": "A deep knitted bed for cuddling.",
+   "recolor": true
+  },
+  {
+   "id": "sig_racuch_hop_pad",
+   "name": "Racuch's hop pad",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 0,
+   "comfort": 4,
+   "layer": "floor",
+   "icon": "sig_racuch_hop_pad",
+   "free": true,
+   "signature_of": "racuch",
+   "note": "A soft round pad for popcorning.",
+   "recolor": true
+  },
+  {
+   "id": "gate_garden",
+   "name": "Garden gate",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 40,
+   "comfort": 1,
+   "layer": "floor",
+   "icon": "gate_garden",
+   "note": "Closes a fence line. A run needs one gate."
+  },
+  {
+   "id": "prop_ball",
+   "name": "Ball (desk toy)",
+   "place": [
+    "house",
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 0,
+   "comfort": 1,
+   "layer": "floor",
+   "icon": "prop_ball",
+   "note": "The toy from your desktop, placed in a room.",
+   "prop_of": "ball",
+   "free": true
+  },
+  {
+   "id": "prop_tunnel",
+   "name": "Tunnel (desk toy)",
+   "place": [
+    "house",
+    "garden"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": 0,
+   "comfort": 1,
+   "layer": "floor",
+   "icon": "prop_tunnel",
+   "note": "The tunnel from your desktop, placed in a room.",
+   "prop_of": "tunnel",
+   "free": true
+  },
+  {
+   "id": "prop_hay_ball",
+   "name": "Hay ball (desk toy)",
+   "place": [
+    "house",
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": 0,
+   "comfort": 1,
+   "layer": "floor",
+   "icon": "prop_hay_ball",
+   "note": "The hay ball from your desktop, placed in a room.",
+   "prop_of": "hay_ball",
+   "free": true
+  },
+  {
+   "id": "prop_house",
+   "name": "Hideout (desk item)",
+   "place": [
+    "house",
+    "garden"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": 0,
+   "comfort": 2,
+   "layer": "floor",
+   "icon": "prop_house",
+   "note": "The little house from your desktop, placed in a room.",
+   "prop_of": "house",
+   "free": true
   }
  ]
 }

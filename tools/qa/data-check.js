@@ -100,5 +100,40 @@ let sink = 0;
 for (const w of world.items) sink += w.price;
 need(sink > 3000, 'placeable catalog too small to be a long-term sink');
 
+// ---- pig rooms ----
+const pigRooms = read('assets/data/pig_rooms.json');
+const decorIds = new Set(read('assets/data/items_decor.json').items.map(d => d.id));
+need(pigRooms.template.levels[0].cost === 0, 'pig room level 1 must be free');
+for (const lv of [pigRooms.template.levels, pigRooms.dorm.levels]) for (let i = 1; i < lv.length; i++) need(lv[i].cols >= lv[i - 1].cols && lv[i].rows >= lv[i - 1].rows && lv[i].cost > 0, 'room levels must grow');
+need(pigRooms.comfort.own >= pigRooms.comfort.common && pigRooms.comfort.common >= pigRooms.comfort.others && pigRooms.comfort.others >= 0 && pigRooms.comfort.own <= 1, 'comfort weights must be 1 >= own >= common >= others >= 0');
+for (const t of [...Object.values(pigRooms.themes), ...pigRooms.default_themes]) {
+  need(decorIds.has(t.wallpaper) && decorIds.has(t.floor), 'theme skin not in items_decor.json: ' + t.wallpaper + '/' + t.floor);
+  for (const s of t.starter) need(wids.has(s) && world.items.find(w => w.id === s).place.includes('house'), 'theme starter not a house item: ' + s);
+  need(t.starter.length === 3, 'a theme has 3 starter items');
+}
+for (const [pid, t] of Object.entries(pigRooms.themes)) {
+  need(np.pigs.some(p => p.id === pid), 'theme for unknown pig ' + pid);
+  const sg = world.items.find(w => w.id === t.signature);
+  need(sg && sg.free && sg.price === 0 && sg.signature_of === pid, pid + ': signature item must exist, be free and point back at the pig');
+}
+need(np.pigs.every(p => pigRooms.themes[p.id]), 'every named pig needs a theme');
+need(pigRooms.dorm.requires_pigs >= 2 && pigRooms.dorm.max_residents <= 6, 'dorm limits');
+
+// ---- home economy ----
+const he = read('assets/data/home_economy.json');
+need(he.resale.allowed === false, 'decorations must not be resellable');
+need(he.variants.unlock_percent > 0 && he.variants.unlock_percent <= 50, 'variant percent out of 1..50');
+for (const b of he.run.blockers) need(wids.has(b), 'run blocker is not a placeable: ' + b);
+need(wids.has(he.run.gate_item) && he.run.blockers.includes(he.run.gate_item), 'run gate must be a placeable and a blocker');
+need(he.run.min_cells >= he.run.cells_per_pig * 2, 'run must hold at least two pigs');
+need(he.run.mood_per_hour * he.run.max_hours_per_day >= he.run.mood_cap_per_day, 'run mood cap unreachable');
+need(he.run.mood_cap_per_day <= 10, 'run mood cap too generous');
+need(he.props.max_on_desktop >= 1 && he.props.max_on_desktop <= 12, 'desktop props limit');
+const invIds = new Set();
+for (const f of ['items.json', 'items_shop.json']) { const d = read('assets/data/' + f); for (const i of (d.items || d)) invIds.add(i.id); }
+for (const w of world.items) if (w.prop_of) need(invIds.has(w.prop_of) && w.price === 0 && w.free, w.id + ': prop_of must name an inventory item and be free');
+
+need(world.items.filter(w => w.recolor).length >= 8, 'at least 8 recolourable items');
+for (const w of world.items) if (w.recolor) need(w.price > 0 || w.free, w.id + ': recolour on an item with no price info');
 if (problems.length) { console.error(problems.filter(Boolean).join('\n')); console.error(problems.filter(Boolean).length + ' problems'); process.exit(1); }
-console.log('data-check: ok (' + np.pigs.length + ' pigs, ' + farm.crops.length + ' crops, ' + world.items.length + ' placeables)');
+console.log('data-check: ok (' + np.pigs.length + ' pigs, ' + farm.crops.length + ' crops, ' + world.items.length + ' placeables, ' + Object.keys(pigRooms.themes).length + ' pig room themes)');

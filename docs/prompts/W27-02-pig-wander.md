@@ -1,0 +1,14 @@
+# W27-02: PigWander: where a pig is and what it does, from the clock
+Zmieniaj: src/Cuy.Core/World/PigWander.cs, tests/Cuy.Core.Tests/PigWanderTests.cs
+Wymagane: src/Cuy.Core/World/PigWander.cs, tests/Cuy.Core.Tests/PigWanderTests.cs
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
+Nie ruszaj: src/Cuy/*, AGENTS.md, docs/*, tasks/*, assets/data/*
+Goal: A pure, deterministic schedule says which room a roaming pig is in and what it is doing.
+Depends on: W26 merged.
+Facts: Design: docs/PIG_ROOMS.md section 7. Nothing is saved: the result depends only on the pig id, the local time, the list of rooms the pig may visit and the settings `roam{slot_minutes (20), night_from_hour (22), night_to_hour (7)}` from `HomeEconomyConfig`. Slots of `slot_minutes`; per slot a hash of (pig id, date, slot index) picks the room and activity with these weights: at night (22-7) the pig sleeps in its own room (its shared bedroom if it is a resident); in the morning and evening it likes the living room (eating) and the playroom (play); at other times uniform over unlocked rooms; a pig tied to a room (`Mode == room`) always returns that room, with activities by time of day only. Activities: `sleep`, `eat`, `play`, `rest`, `explore`. Offline time needs no handling because the result is a pure function of the clock. Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
+Steps:
+1. `public static class PigWander`: `WanderResult Where(string pigId, PigHomeState home, string ownRoomId, IReadOnlyList<string> visitableRooms, DateTime localNow, HomeEconomyConfig cfg)` with `WanderResult { string RoomId; string Activity; int SlotIndex }`, and `bool IsNight(DateTime localNow, HomeEconomyConfig cfg)`.
+2. Tests: same inputs give the same result; a tied pig is always in its room; at 03:00 every roaming pig sleeps in its own room; over a simulated week a roaming pig visits every visitable room at least once and no room gets more than 60 percent of the slots; the activity at 23:00 is `sleep`; an empty visitable list returns the own room; two pigs do not share the same schedule (compare 20 slots).
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
+PR: what was done, decisions and why, how to check by hand.
