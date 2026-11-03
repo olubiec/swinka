@@ -349,8 +349,99 @@
   "memory_stone": {
    "file": "tiles/memory_stone.png",
    "size": [
-    32,
-    32
+    16,
+    16
+   ]
+  },
+  "wall_pig_kuki": {
+   "file": "tiles/wall_pig_kuki.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_pig_kuki": {
+   "file": "tiles/floor_pig_kuki.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wall_pig_ned": {
+   "file": "tiles/wall_pig_ned.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_pig_ned": {
+   "file": "tiles/floor_pig_ned.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wall_pig_james": {
+   "file": "tiles/wall_pig_james.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_pig_james": {
+   "file": "tiles/floor_pig_james.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wall_pig_glen": {
+   "file": "tiles/wall_pig_glen.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_pig_glen": {
+   "file": "tiles/floor_pig_glen.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wall_pig_racuch": {
+   "file": "tiles/wall_pig_racuch.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_pig_racuch": {
+   "file": "tiles/floor_pig_racuch.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "run_floor": {
+   "file": "tiles/run_floor.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wall_memory": {
+   "file": "tiles/wall_memory.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_memory": {
+   "file": "tiles/floor_memory.png",
+   "size": [
+    16,
+    16
    ]
   }
  },

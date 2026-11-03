@@ -109,3 +109,6 @@ handart.py (piksele w palecie, kontur, cień, recolor, rejestr atlasu), style_ch
 
 ## 2026-11-03 B1 próbki kierunku
 sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_mushroom (wył/wł), willow_tunnel, tree_small, stall_basic, wycinek tła ogrodu wieczorem. Lint 0 na nowych plikach. Zmiany silnika: kwantyzacja w YCbCr (zieleń nie brązowieje), ambient evening w lights.json [1,0.84,0.74] x 0.76. Arkusze: docs/album/przebudowa/b1-*.png.
+
+## 2026-11-03 B2 materiały i kafle
+53 kafle świata od nowa (tools/art/world/tiles.py + build_tiles.py): deski, wiklina, dzianina, siano, tapety z motywami, trawa z kępami, woda 4 klatki, 16 płotów, kamień pamięci, 10 skórek pokoi świnek, run_floor, wall/floor_memory. Lint 0. Stare _x2 kafli odświeżone nearest do czasu B13. Arkusze: docs/album/przebudowa/b2-*.png.

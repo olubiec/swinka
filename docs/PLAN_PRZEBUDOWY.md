@@ -208,4 +208,9 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B1-5 | zrobione (wycinek tła ogrodu wieczorem 240x96; zmiana: ambient evening łagodniejszy w lights.json, kwantyzacja w YCbCr trzyma zieleń) |
 | B1-6 | zrobione (arkusz zbiorczy docs/album/przebudowa/b1-6_probki_zbiorczo.png) |
 | B1 | **fala zamknięta; punkt kontrolny dla właściciela, lecę dalej** |
-| B2..B13 | nie rozpoczęte |
+| B2-1 | zrobione (9 materiałów, arkusz b2-1_materialy.png; tekstury zawinięte, więc bezszwowe) |
+| B2-2 | zrobione (trawa x3, woda x4, 16 płotów, kamień pamięci) |
+| B2-3 | zrobione (16 tapet i podłóg, 4 warianty; refleksy listwy załatwi silnik światła) |
+| B2-4 | zrobione (10 skórek pokoi świnek, run_floor, wall_memory, floor_memory; 53 kafle, lint 0) |
+| B2 | **fala zamknięta** |
+| B3..B13 | nie rozpoczęte |
