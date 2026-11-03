@@ -129,3 +129,7 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 ## B7 farma (przebudowa)
 - farm.png przerysowany w tych samych ramkach (kontrakt farm.json bez zmian): 11 upraw po 4 stadia, 4 drzewka po 3, grządki pusta/mokra/ziemia, podlewanie, wielki zbiór. scarecrow, fence_farm, wheelbarrow, signpost przerysowane; nowa `barn_hay` (stodoła ze słomą, bez źródeł ognia). Tło farmy 256x144. Lint 0 (farm.png: 181 px R4 to krawędzie kafli grządek, nie przedmiot).
 - Hand-off B13-5: nowe id `barn_hay` (place farm).
+
+## B8 targ (przebudowa)
+- `stall_big` (plandeka dusk z łatami, lampiony), `order_board`, `promo_1..3` przerysowane; nowe plakaty `poster_1..3` (16x32, wpisy w `tiles.json` -> market). Tło targu 256x144, wieczór ze sznurem lampek. Lint 0. Podgląd: docs/album/przebudowa/b8-1_*.png, b8-3_targ_wieczor.png.
+- Hand-off B13-5: nowe id `poster_1`, `poster_2`, `poster_3` (market, tiles.json).

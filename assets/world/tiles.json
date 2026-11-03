@@ -487,6 +487,27 @@
     32,
     16
    ]
+  },
+  "poster_1": {
+   "file": "market/poster_1.png",
+   "size": [
+    16,
+    32
+   ]
+  },
+  "poster_2": {
+   "file": "market/poster_2.png",
+   "size": [
+    16,
+    32
+   ]
+  },
+  "poster_3": {
+   "file": "market/poster_3.png",
+   "size": [
+    16,
+    32
+   ]
   }
  }
 }
