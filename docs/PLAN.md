@@ -281,6 +281,9 @@ Grafika świata jest gotowa (legenda „domek z siana", lint 0 na 161 plikach). 
 | G12 | Renderer światła z `assets/data/lights.json`: pory dnia (rano, dzień, wieczór, noc), przełączniki, automatyczne zapalanie lamp (`*_on`) wieczorem i nocą; ogień tylko w ogrodzie i parku | `web/*`, `Graphics/*` | zrzuty 4 pór zgodne z `docs/album/przebudowa/b13-3_album_koncowy.png` |
 | G13 | Oświetlenie świnek (`docs/SWIATLO_SWINEK.md`, bez kwantyzacji), cienie `fx/shadow_pig_{baby,junior,adult}` pod świnką | `web/*`, `Graphics/*` | świnka czytelna w każdej porze |
 | G14 | Skalowanie x2 w grze (nearest) zamiast plików `_x2` świata; po wdrożeniu **człowiek potwierdza usunięcie `assets/world/**/*_x2.png` (102 pliki)**, Claude je kasuje; potem P10 (przegląd w grze 1x/1.5x/2x) | `web/*`, `Graphics/*` | brak odwołań do `_x2` w kodzie |
+| G15 | Ikona i logo: użyć `assets/app-icon/{icon_16,icon_32,icon_256,cuy.ico,logo_256}.png` (nowa ikona: cała świnka w ramce); podmienić ikonę okna/exe/tray i `favicon` strony | `src/Cuy/*`, `web/*` | ikona widoczna w 16/32/256 px, bez ucięć |
+| G16 | Weryfikacja końcowa: doinstalować Playwright (`npx playwright install chromium`), uruchomić `node tools/qa/{anim-test,palette-test,web-smoke}.js`, `python3 tools/art/style_check.py` (0) i `node check-assets.js`; obejrzeć park (strumień w każdej porze), ogród (żywopłot `hedge` jako dwa segmenty, rzadsza polana), farmę i menu w grze | `tools/qa/*` | wszystkie testy zielone; zrzuty z gry dołączone do `docs/VISUAL_LOG.md` |
+Kolejność: G11 → G12 → G13 → G14 → G15 → G16. Po G14 człowiek zatwierdza usunięcie plików `_x2`. Zmiany grafiki po tym planie nie są planowane; poprawki wizualne zgłaszać do `docs/VISUAL_LOG.md`.
 
 ## Mapa starych zadań
 F2-02→PR #32 (W1-01,W1-02,W2-01 stare) + W1-09,W1-10,W2-01 · F2-07→zrobione · F3-01→W1-03,W1-04,W2-02,W3-01,W7-06 · F3-03→W4-01..W4-04,W7-07,W7-08 · F4-01→W4-07,W5-01,W5-02 · F4-02→W4-06,W6-01,W6-02 ·
