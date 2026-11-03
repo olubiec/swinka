@@ -106,3 +106,6 @@ Przegląd końcowy: licznik ikon w style.css (161) i klasy .icon-* dla 120-160, 
 
 ## 2026-11-03 B0 narzędzia przebudowy
 handart.py (piksele w palecie, kontur, cień, recolor, rejestr atlasu), style_check.py (R1-R7, baseline: 101 plików z odstępstwami, R1=547597 px), light.py (silnik światła bez wypalenia do bieli), scena.py (bramka: świnka + 3 oświetlenia + 4 warianty), world/registry.py (55 id, 10 bez plików). Plan: docs/PLAN_PRZEBUDOWY.md.
+
+## 2026-11-03 B1 próbki kierunku
+sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_mushroom (wył/wł), willow_tunnel, tree_small, stall_basic, wycinek tła ogrodu wieczorem. Lint 0 na nowych plikach. Zmiany silnika: kwantyzacja w YCbCr (zieleń nie brązowieje), ambient evening w lights.json [1,0.84,0.74] x 0.76. Arkusze: docs/album/przebudowa/b1-*.png.

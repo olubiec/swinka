@@ -81,10 +81,16 @@ def _cap(out):
     return out * sc[..., None]
 
 
+_YCC = np.array([[0.299, 0.587, 0.114], [-0.1687, -0.3313, 0.5], [0.5, -0.4187, -0.0813]])
+_PAL_YCC = PALETTE @ _YCC.T
+
+
 def quantize(out):
-    flat = out.reshape(-1, 3)
-    wgt = np.array([0.9, 1.0, 0.8])
-    d2 = (((flat[:, None, :] - PALETTE[None]) * wgt) ** 2).sum(-1)
+    """Najblizszy kolor palety w YCbCr: barwa (Cb, Cr) wazy wiecej niz jasnosc,
+    zeby zielen po ociepleniu nie zamieniala sie w brazowy."""
+    flat = out.reshape(-1, 3) @ _YCC.T
+    wgt = np.array([0.8, 1.8, 1.8])
+    d2 = (((flat[:, None, :] - _PAL_YCC[None]) * wgt) ** 2).sum(-1)
     return PALETTE[d2.argmin(1)].reshape(out.shape)
 
 
