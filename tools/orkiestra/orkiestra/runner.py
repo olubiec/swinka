@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import subprocess
 import threading
 import time
@@ -91,6 +92,8 @@ class WaveRunner:
         self._quota_reset: int | None = None
         self._lock = threading.Lock()
         self._git_lock = threading.Lock()
+        if not hasattr(self.state, "save"):
+            setattr(self.state, "save", lambda: self.store.save(self.state))
 
     # ----------------------------------------------------------------- helpers
     def _branch(self, wave: Wave, task: Task) -> str:
@@ -101,6 +104,9 @@ class WaveRunner:
 
     def _say(self, wave: Wave, task: Task, message: str) -> None:
         self.notify(f"[{wave.id}/{task.id}] {message}")
+
+    def _log(self, message: str) -> None:
+        self.notify(message)
 
     def _status(self, task: Task) -> TaskStatus:
         return self.state.tasks[task.id].status
@@ -242,6 +248,21 @@ class WaveRunner:
                 log_path=self.store.log_path(task.id, attempt),
             )
             if res.quota_exhausted:
+                if gitops.changed_files(path, self.base):
+                    problem, blocked, note = self._check(task, path, res, ignore_returncode=True)
+                    if problem is None and not blocked:
+                        msg = f"[{task.id}] {task.title}"
+                        with self._git_lock:
+                            gitops.stage_and_commit(path, msg, task.files)
+                        ts.commit_sha = gitops.head_sha(path)
+                        ts.status = TaskStatus.VERIFIED
+                        ts.last_error = None
+                        ts.error = None
+                        self.store.save(self.state)
+                        self._log(
+                            f"[{task.id}] Zweryfikowano pomimo limitu (kod był gotowy, commit {ts.commit_sha[:8]})"
+                        )
+                        return
                 self._signal_quota(res.quota_reset_seconds)
                 self.store.update(
                     self.state,
@@ -300,14 +321,18 @@ class WaveRunner:
         return status, note
 
     def _check(
-        self, task: Task, path: Path, res: AgentResult
+        self,
+        task: Task,
+        path: Path,
+        res: AgentResult,
+        ignore_returncode: bool = False,
     ) -> tuple[str | None, bool, str | None]:
         status, note = self._read_result(path)
         if status == "blocked":
             return None, True, note
         changed = gitops.changed_files(path, self.base)
         if not changed:
-            if not res.ok:
+            if not ignore_returncode and not res.ok:
                 detail = res.error or res.response[:300] or "brak odpowiedzi"
                 problem = f"Błąd agenta: {detail}"
                 if res.timed_out:
@@ -334,6 +359,10 @@ class WaveRunner:
         return None, False, note
 
     def _run_tests(self, cmd: str, path: Path) -> str | None:
+        env = os.environ.copy()
+        node_modules = (self.repo_root / "tools" / "qa" / "node_modules").resolve()
+        if node_modules.exists():
+            env["NODE_PATH"] = str(node_modules)
         try:
             proc = subprocess.run(
                 cmd,
@@ -342,6 +371,7 @@ class WaveRunner:
                 capture_output=True,
                 text=True,
                 timeout=TEST_TIMEOUT_SECONDS,
+                env=env,
             )
         except subprocess.TimeoutExpired as exc:
             return _as_text(exc.stdout) + _as_text(exc.stderr) + "\n[timeout]"

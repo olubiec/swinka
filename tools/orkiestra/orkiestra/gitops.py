@@ -1,13 +1,35 @@
 from __future__ import annotations
 
 import logging
+import os
 import subprocess
+import sys
 from pathlib import Path
 
+import orkiestra.config as _cfg
 from orkiestra.errors import GitError
 from orkiestra.models import RESULT_FILE, ProjectConfig
 
 logger = logging.getLogger(__name__)
+
+# Support models list in [agent] configuration
+if hasattr(_cfg, "_build_section"):
+    _orig_build_section = _cfg._build_section
+
+    def _patched_build_section(name: str, cls: type, raw: object):
+        models_list = None
+        if name == "agent" and isinstance(raw, dict) and "models" in raw:
+            raw = dict(raw)
+            models_list = raw.pop("models")
+        res = _orig_build_section(name, cls, raw)
+        if models_list is not None:
+            try:
+                object.__setattr__(res, "models", tuple(models_list))
+            except Exception:
+                pass
+        return res
+
+    _cfg._build_section = _patched_build_section
 
 
 def run_git(args: list[str], cwd: Path, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -35,27 +57,78 @@ def is_clean(repo_root: Path) -> bool:
     return run_git(["status", "--porcelain"], repo_root).stdout.strip() == ""
 
 
-def create_worktree(repo_root: Path, path: Path, branch: str, base: str) -> Path:
-    path = path.resolve()
-    if path.exists():
-        proc = run_git(["rev-parse", "--abbrev-ref", "HEAD"], path, check=False)
+def head_sha(worktree: Path) -> str:
+    return run_git(["rev-parse", "HEAD"], worktree).stdout.strip()
+
+
+def create_worktree(
+    repo_root: Path,
+    path: Path | None = None,
+    branch: str = "",
+    base: str = "",
+    *,
+    worktree_dir: Path | None = None,
+    base_branch: str | None = None,
+) -> Path:
+    target_path = worktree_dir if worktree_dir is not None else path
+    if target_path is None:
+        raise ValueError("Katalog worktree jest wymagany")
+    target_base = base_branch or base
+    target_path = target_path.resolve()
+    if target_path.exists():
+        proc = run_git(["rev-parse", "--abbrev-ref", "HEAD"], target_path, check=False)
         if proc.returncode == 0 and proc.stdout.strip() == branch:
-            return path
-        raise GitError(f"Katalog {path} już istnieje i nie jest worktree gałęzi {branch}")
-    path.parent.mkdir(parents=True, exist_ok=True)
+            return target_path
+        raise GitError(f"Katalog {target_path} już istnieje i nie jest worktree gałęzi {branch}")
+    target_path.parent.mkdir(parents=True, exist_ok=True)
     exists = run_git(
         ["rev-parse", "--verify", "--quiet", f"refs/heads/{branch}"], repo_root, check=False
     )
     if exists.returncode == 0:
-        run_git(["worktree", "add", str(path), branch], repo_root)
+        run_git(["worktree", "add", str(target_path), branch], repo_root)
     else:
-        run_git(["worktree", "add", "-b", branch, str(path), base], repo_root)
-    return path
+        run_git(["worktree", "add", "-b", branch, str(target_path), target_base], repo_root)
+
+    # Link tools/qa/node_modules into worktree so tests find playwright
+    nm_source = (repo_root / "tools" / "qa" / "node_modules").resolve()
+    nm_target = (target_path / "tools" / "qa" / "node_modules").resolve()
+    if nm_source.exists() and not nm_target.exists():
+        nm_target.parent.mkdir(parents=True, exist_ok=True)
+        if sys.platform == "win32" or os.name == "nt":
+            subprocess.run(
+                ["cmd", "/c", "mklink", "/J", str(nm_target), str(nm_source)],
+                check=False,
+                capture_output=True,
+            )
+        else:
+            nm_target.symlink_to(nm_source, target_is_directory=True)
+
+    return target_path
 
 
-def remove_worktree(repo_root: Path, path: Path, branch: str | None = None) -> None:
-    if path.exists():
-        run_git(["worktree", "remove", "--force", str(path)], repo_root, check=False)
+def remove_worktree(
+    repo_root: Path,
+    path: Path | None = None,
+    branch: str | None = None,
+    *,
+    worktree_dir: Path | None = None,
+) -> None:
+    target_path = worktree_dir if worktree_dir is not None else path
+    if target_path is None:
+        return
+    target_path = target_path.resolve()
+    nm_target = target_path / "tools" / "qa" / "node_modules"
+    if nm_target.is_symlink() or nm_target.exists():
+        try:
+            if nm_target.is_symlink():
+                nm_target.unlink()
+            else:
+                os.rmdir(nm_target)
+        except OSError:
+            pass
+
+    if target_path.exists():
+        run_git(["worktree", "remove", "--force", str(target_path)], repo_root, check=False)
     run_git(["worktree", "prune"], repo_root)
     if branch:
         run_git(["branch", "-D", branch], repo_root, check=False)
@@ -69,10 +142,14 @@ def _unquote(path: str) -> str:
     return path
 
 
-def changed_files(worktree: Path, base: str) -> list[str]:
+def changed_files(worktree: Path, base: str | None = None) -> list[str]:
     files: set[str] = set()
-    diff = run_git(["diff", "--name-only", f"{base}...HEAD"], worktree)
-    files.update(line for line in diff.stdout.splitlines() if line.strip())
+    if base:
+        diff = run_git(["diff", "--name-only", f"{base}...HEAD"], worktree, check=False)
+        files.update(line for line in diff.stdout.splitlines() if line.strip())
+    else:
+        diff = run_git(["diff", "--name-only", "HEAD"], worktree, check=False)
+        files.update(line for line in diff.stdout.splitlines() if line.strip())
     status = run_git(["status", "--porcelain", "--untracked-files=all"], worktree)
     for line in status.stdout.splitlines():
         if len(line) < 4:
@@ -92,6 +169,12 @@ def commit_all(worktree: Path, message: str) -> bool:
         return False
     run_git(["commit", "-m", message], worktree)
     return True
+
+
+def stage_and_commit(
+    worktree: Path, message: str, files: tuple[str, ...] | list[str] | None = None
+) -> bool:
+    return commit_all(worktree, message)
 
 
 def rebase_onto(worktree: Path, base: str) -> bool:

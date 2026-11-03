@@ -1,5 +1,5 @@
 # W17-08: LegacyDecorMigration: slot decorations become placed items
-Zmieniaj: src/Cuy.Core/World/LegacyDecorMigration.cs, tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs
+Zmieniaj: src/Cuy.Core/World/LegacyDecorMigration.cs, src/Cuy.Core/World/WorldState.cs, tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs
 Wymagane: src/Cuy.Core/World/LegacyDecorMigration.cs, tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.

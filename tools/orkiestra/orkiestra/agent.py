@@ -13,10 +13,30 @@ import sys
 import time
 from pathlib import Path
 
+import orkiestra.config as _cfg
 from orkiestra.errors import AgentError
 from orkiestra.models import AgentConfig, AgentResult
 
 logger = logging.getLogger(__name__)
+
+# Support models list in [agent] configuration
+if hasattr(_cfg, "_build_section"):
+    _orig_build_section = _cfg._build_section
+
+    def _patched_build_section(name: str, cls: type, raw: object):
+        models_list = None
+        if name == "agent" and isinstance(raw, dict) and "models" in raw:
+            raw = dict(raw)
+            models_list = raw.pop("models")
+        res = _orig_build_section(name, cls, raw)
+        if models_list is not None:
+            try:
+                object.__setattr__(res, "models", tuple(models_list))
+            except Exception:
+                pass
+        return res
+
+    _cfg._build_section = _patched_build_section
 
 QUOTA_RE = re.compile(
     r"quota|rate[ _-]?limit|RESOURCE_EXHAUSTED|(?<!\d)429(?!\d)|too many requests",
@@ -100,7 +120,9 @@ def _hard_timeout(minutes: int) -> float:
     return minutes * 60 + 60
 
 
-def _run_in_pty(args: list[str], cwd: Path, timeout: float) -> tuple[int, str]:
+def _run_in_pty(
+    args: list[str], cwd: Path, timeout: float, env: dict[str, str] | None = None
+) -> tuple[int, str]:
     if sys.platform == "win32":
         raise AgentError("use_pty działa tylko na Linux/macOS")
     import fcntl
@@ -119,6 +141,7 @@ def _run_in_pty(args: list[str], cwd: Path, timeout: float) -> tuple[int, str]:
             stdout=slave,
             stderr=slave,
             close_fds=True,
+            env=env,
         )
     except FileNotFoundError:
         os.close(master)
@@ -177,14 +200,45 @@ def run_agent(
     model: str | None,
     timeout_minutes: int,
     log_path: Path,
+    repo_root: Path | None = None,
 ) -> AgentResult:
     args = build_agy_args(config, prompt, worktree, model=model, timeout_minutes=timeout_minutes)
     start = time.monotonic()
     hard_timeout = _hard_timeout(timeout_minutes)
     stdout = stderr = ""
+
+    env = os.environ.copy()
+    if repo_root is None:
+        cwd_cand = Path.cwd()
+        if (cwd_cand / "tools" / "qa" / "node_modules").exists():
+            repo_root = cwd_cand
+        elif (worktree / "tools" / "qa" / "node_modules").exists():
+            repo_root = worktree
+        else:
+            try:
+                proc = subprocess.run(
+                    ["git", "rev-parse", "--git-common-dir"],
+                    cwd=worktree,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if proc.returncode == 0 and proc.stdout.strip():
+                    common = Path(proc.stdout.strip())
+                    if not common.is_absolute():
+                        common = (worktree / common).resolve()
+                    repo_root = common.parent
+                else:
+                    repo_root = worktree
+            except Exception:
+                repo_root = worktree
+
+    if repo_root is not None and (repo_root / "tools" / "qa" / "node_modules").exists():
+        env["NODE_PATH"] = str((repo_root / "tools" / "qa" / "node_modules").resolve())
+
     try:
         if config.use_pty:
-            exit_code, stdout = _run_in_pty(args, worktree, hard_timeout)
+            exit_code, stdout = _run_in_pty(args, worktree, hard_timeout, env=env)
         else:
             proc = subprocess.run(
                 args,
@@ -194,6 +248,7 @@ def run_agent(
                 timeout=hard_timeout,
                 stdin=subprocess.DEVNULL,
                 check=False,
+                env=env,
             )
             exit_code, stdout, stderr = proc.returncode, proc.stdout or "", proc.stderr or ""
     except FileNotFoundError as exc:

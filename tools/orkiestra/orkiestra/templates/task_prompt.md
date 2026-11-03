@@ -13,6 +13,10 @@ ${test_rule}
   If you cannot complete the task, write {"status": "blocked", "note": "<reason, max 30 words>"} and stop.
 - Your final reply must be ONE line, max 20 words. No summaries.
 
+Constraints:
+- When calling run_command, ALWAYS set WaitMsBeforeAsync to 10000 so builds and tests complete synchronously without background task polling.
+- Read only the files directly needed for this task; do not scan unrelated folders.
+
 ## Task
 ${prompt}
 ${feedback}

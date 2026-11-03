@@ -1,9 +1,7 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..', '..');
 const HOME_DIR = path.join(ROOT, 'web', 'home');
 const STYLE_CSS = path.join(HOME_DIR, 'style.css');

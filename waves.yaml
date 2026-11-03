@@ -1,91 +1,742 @@
 version: 1
 waves:
-  - id: w-qa-tools
-    tasks:
-      - id: check-css-vars
-        title: "Dodaj skrypt check-css-vars.js"
-        files: ["tools/qa/check-css-vars.js"]
-        test_command: "node tools/qa/check-css-vars.js"
-        prompt: |
-          Create tools/qa/check-css-vars.js in pure Node.js (ESM, no external dependencies).
-          The script should:
-          1. Read web/home/style.css and find all defined CSS variable names (--something).
-          2. Scan all CSS and JS files under web/home/ (e.g. style.css, canvas-pig.js, features/**/*.css, features/**/*.js).
-          3. Extract all usages of var(--variable-name).
-          4. Check if every used variable is defined in style.css or locally.
-          5. If valid, print 'CSS VARS OK' and exit code 0. If unknown variables are found, log them and exit code 1.
+- id: w-qa-tools
+  tasks:
+  - id: check-css-vars
+    title: Dodaj skrypt check-css-vars.js
+    files:
+    - tools/qa/check-css-vars.js
+    test_command: node tools/qa/check-css-vars.js
+    prompt: 'Create tools/qa/check-css-vars.js in pure Node.js using CommonJS require
+      (no external dependencies).
 
-      - id: check-icons
-        title: "Dodaj skrypt check-icons.js"
-        files: ["tools/qa/check-icons.js"]
-        test_command: "node tools/qa/check-icons.js"
-        prompt: |
-          Create tools/qa/check-icons.js in pure Node.js (ESM, no external dependencies).
-          The script should:
-          1. Read assets/icons/icons.json and get all icon names/keys.
-          2. Scan web/home/**/*.html, web/home/**/*.js, web/home/**/*.css for class icon-<id>.
-          3. Verify every icon-<id> exists in assets/icons/icons.json.
-          4. If all icons match, print 'ICONS OK' and exit code 0. If missing, log them and exit code 1.
+      The script should:
 
-  - id: w-compat-tests
-    tasks:
-      - id: save-compat
-        title: "Dodaj testy zgodności zapisów SaveCompatTests"
-        files: ["tests/Cuy.Core.Tests/SaveCompatTests.cs"]
-        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~SaveCompatTests"
-        prompt: |
-          Create tests/Cuy.Core.Tests/SaveCompatTests.cs.
-          In this file, test loading legacy save JSON states through SaveSystem.
-          Verify default values for newer fields introduced in recent waves.
-          Do NOT modify production code in src/Cuy.Core.
+      1. Read web/home/style.css and find all defined CSS variable names (--something).
 
-      - id: a11y-check
-        title: "Dodaj skrypt a11y-check.js"
-        files: ["tools/qa/a11y-check.js"]
-        test_command: "node tools/qa/a11y-check.js"
-        prompt: |
-          Create tools/qa/a11y-check.js using Playwright (already in package.json/tools/qa).
-          In a 420x640 window, verify buttons and input controls have accessible names (aria-label, title, or innerText).
-          Check tab order. Print 'A11Y OK' and exit code 0 on success.
+      2. Scan all CSS and JS files under web/home/ (e.g. style.css, canvas-pig.js,
+      features/**/*.css, features/**/*.js).
 
-  - id: w-validation-tests
-    tasks:
-      - id: data-validation
-        title: "Dodaj testy walidacji danych DataValidationTests"
-        files: ["tests/Cuy.Core.Tests/DataValidationTests.cs"]
-        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~DataValidationTests"
-        prompt: |
-          Create tests/Cuy.Core.Tests/DataValidationTests.cs.
-          Ensure that every JSON file in assets/data/*.json parses successfully,
-          item and need IDs conform to canonical IDs in AGENTS.md,
-          and every item has an icon in assets/icons/icons.json.
-          Do not modify data files.
+      3. Extract all usages of var(--variable-name).
 
-      - id: no-polish-ids
-        title: "Dodaj test NoPolishIdsTests"
-        files: ["tests/Cuy.Core.Tests/NoPolishIdsTests.cs"]
-        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~NoPolishIdsTests"
-        prompt: |
-          Create tests/Cuy.Core.Tests/NoPolishIdsTests.cs.
-          Verify that Polish identifiers (from docs/NAMES.md) appear only in Save/SaveSystem.cs
-          and nowhere else in src/Cuy.Core or src/Cuy.
+      4. Check if every used variable is defined in style.css or locally.
 
-  - id: w-perf-tests
-    tasks:
-      - id: brain-perf
-        title: "Dodaj test wydajności pętli decyzji BrainPerfTests"
-        files: ["tests/Cuy.Core.Tests/BrainPerfTests.cs"]
-        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~BrainPerfTests"
-        prompt: |
-          Create tests/Cuy.Core.Tests/BrainPerfTests.cs.
-          Execute 10,000 ticks of Brain with ManualClock and a fixed Random seed.
-          Assert execution time is under 2.0 seconds and no exceptions are thrown.
-          Do not modify production code.
+      5. If valid, print ''CSS VARS OK'' and exit code 0. If unknown variables are
+      found, log them and exit code 1.
 
-      - id: sim-determinism
-        title: "Dodaj test deterministyczności symulatora"
-        files: ["tests/Cuy.Core.Tests/SimulationDeterminismTests.cs"]
-        test_command: "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~SimulationDeterminismTests"
-        prompt: |
-          Create tests/Cuy.Core.Tests/SimulationDeterminismTests.cs.
-          Run a 30-day simulation twice using the same seed and assert identical outcomes.
+      '
+  - id: check-icons
+    title: Dodaj skrypt check-icons.js
+    files:
+    - tools/qa/check-icons.js
+    test_command: node tools/qa/check-icons.js
+    prompt: 'Create tools/qa/check-icons.js in pure Node.js using CommonJS require
+      (no external dependencies).
+
+      The script should:
+
+      1. Read assets/icons/icons.json and get all icon names/keys.
+
+      2. Scan web/home/**/*.html, web/home/**/*.js, web/home/**/*.css for class icon-<id>.
+
+      3. Verify every icon-<id> exists in assets/icons/icons.json.
+
+      4. If all icons match, print ''ICONS OK'' and exit code 0. If missing, log them
+      and exit code 1.
+
+      '
+- id: w-compat-tests
+  tasks:
+  - id: save-compat
+    title: Dodaj testy zgodności zapisów SaveCompatTests
+    files:
+    - tests/Cuy.Core.Tests/SaveCompatTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+      --filter FullyQualifiedName~SaveCompatTests
+    prompt: 'Create tests/Cuy.Core.Tests/SaveCompatTests.cs.
+
+      In this file, test loading legacy save JSON states through SaveSystem.
+
+      Verify default values for newer fields introduced in recent waves.
+
+      Do NOT modify production code in src/Cuy.Core.
+
+      '
+  - id: a11y-check
+    title: Dodaj skrypt a11y-check.js
+    files:
+    - tools/qa/a11y-check.js
+    test_command: node tools/qa/a11y-check.js
+    prompt: 'Create tools/qa/a11y-check.js using Playwright (already in package.json/tools/qa).
+
+      In a 420x640 window, verify buttons and input controls have accessible names
+      (aria-label, title, or innerText).
+
+      Check tab order. Print ''A11Y OK'' and exit code 0 on success.
+
+      '
+- id: w-validation-tests
+  tasks:
+  - id: data-ranges
+    title: Dodaj testy walidacji danych DataValidationTests
+    files:
+    - tests/Cuy.Core.Tests/DataValidationTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+      --filter FullyQualifiedName~DataValidationTests
+    prompt: 'Create tests/Cuy.Core.Tests/DataValidationTests.cs.
+
+      Ensure that every JSON file in assets/data/*.json parses successfully,
+
+      item and need IDs conform to canonical IDs in AGENTS.md,
+
+      and every item has an icon in assets/icons/icons.json.
+
+      Do not modify data files.
+
+      '
+  - id: sim-assertions
+    title: Dodaj test deterministyczności symulatora
+    files:
+    - tests/Cuy.Core.Tests/SimulationDeterminismTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+      --filter FullyQualifiedName~SimulationDeterminismTests
+    prompt: 'Create tests/Cuy.Core.Tests/SimulationDeterminismTests.cs.
+
+      Run a 30-day simulation twice using the same seed and assert identical outcomes.
+
+      '
+- id: w-perf-tests
+  tasks:
+  - id: perf-test
+    title: Dodaj test wydajności pętli decyzji BrainPerfTests
+    files:
+    - tests/Cuy.Core.Tests/BrainPerfTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+      --filter FullyQualifiedName~BrainPerfTests
+    prompt: 'Create tests/Cuy.Core.Tests/BrainPerfTests.cs.
+
+      Execute 10,000 ticks of Brain with ManualClock and a fixed Random seed.
+
+      Assert execution time is under 2.0 seconds and no exceptions are thrown.
+
+      Do not modify production code.
+
+      '
+  - id: fuzz-test
+    title: Dodaj test NoPolishIdsTests
+    files:
+    - tests/Cuy.Core.Tests/NoPolishIdsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+      --filter FullyQualifiedName~NoPolishIdsTests
+    prompt: 'Create tests/Cuy.Core.Tests/NoPolishIdsTests.cs.
+
+      Verify that Polish identifiers (from docs/NAMES.md) appear only in Save/SaveSystem.cs
+
+      and nowhere else in src/Cuy.Core or src/Cuy.
+
+      '
+- id: w-backlog-cleanup
+  tasks:
+  - id: xml-docs-ai
+    title: Dodaj komentarze XML do klas AI
+    files:
+    - src/Cuy.Core/AI/Brain.cs
+    - src/Cuy.Core/AI/IAction.cs
+    - src/Cuy.Core/AI/Actions/EatAction.cs
+    - src/Cuy.Core/AI/Actions/PlayAction.cs
+    - src/Cuy.Core/AI/Actions/RestAction.cs
+    - src/Cuy.Core/AI/Actions/WanderAction.cs
+    test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release
+    prompt: Add short English XML doc comments (/// <summary>) to public classes in
+      src/Cuy.Core/AI/ (Brain, IAction, EatAction, PlayAction, RestAction, WanderAction).
+      Do not modify logic.
+  - id: arch-doc-refresh
+    title: Odśwież ARCHITECTURE.md
+    files:
+    - ARCHITECTURE.md
+    test_command: git diff --stat
+    prompt: Refresh ARCHITECTURE.md with current modules and features based on current
+      code. Update documentation only.
+  - id: testing-docs-unify
+    title: Ujednolić dokumentację testów
+    files:
+    - docs/TESTY_RECZNE.md
+    - docs/TESTING.md
+    test_command: git diff --stat
+    prompt: Clarify roles of docs/TESTY_RECZNE.md (manual Windows checklist) and docs/TESTING.md
+      (automated tests) with cross-links. Remove duplicates and keep documentation
+      consistent.
+- id: W11
+  tasks:
+  - id: W11-01
+    title: 'W11-01: Named pig catalog (loader for pigs_named.json)'
+    prompt_file: tasks/W11-01-named-pig-catalog.md
+    files:
+    - src/Cuy.Core/Pigs/NamedPigCatalog.cs
+    - tests/Cuy.Core.Tests/NamedPigCatalogTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W11-02
+    title: 'W11-02: Life fields on PigProfile and per-pig age helper'
+    prompt_file: tasks/W11-02-pig-life-fields.md
+    files:
+    - src/Cuy.Core/Pigs/PigProfile.cs
+    - src/Cuy.Core/Pigs/PigLife.cs
+    - tests/Cuy.Core.Tests/PigLifeTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W11-03
+    title: 'W11-03: PigModifiers value type (average and clamp)'
+    prompt_file: tasks/W11-03-pig-modifiers.md
+    files:
+    - src/Cuy.Core/Pigs/PigModifiers.cs
+    - tests/Cuy.Core.Tests/PigModifiersTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W11-04
+    title: 'W11-04: Balance flags for the named-pig features (all off)'
+    prompt_file: tasks/W11-04-balance-flags.md
+    files:
+    - src/Cuy.Core/Balance.cs
+    - tests/Cuy.Core.Tests/BalanceFlagsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W11-05
+    title: 'W11-05: Achievements for adopting family members'
+    prompt_file: tasks/W11-05-arrival-achievements.md
+    files:
+    - assets/data/achievements.json
+    - tests/Cuy.Core.Tests/NamedPigAchievementsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W12
+  tasks:
+  - id: W12-01
+    title: 'W12-01: OfferChecker: which adoption offers are unlocked'
+    prompt_file: docs/prompts/W12-01-offer-checker.md
+    files:
+    - src/Cuy.Core/Pigs/OfferChecker.cs
+    - tests/Cuy.Core.Tests/OfferCheckerTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W12-02
+    title: 'W12-02: Pet.ActiveModifiers: averaged multipliers of the active pigs'
+    prompt_file: docs/prompts/W12-02-pet-active-modifiers.md
+    files:
+    - src/Cuy.Core/Pet.PigModifiers.cs
+    - tests/Cuy.Core.Tests/PetActiveModifiersTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W12-03
+    title: 'W12-03: Per-pig age and life stage in Pet (flag PerPigAgeActive)'
+    prompt_file: docs/prompts/W12-03-pet-per-pig-age.md
+    files:
+    - src/Cuy.Core/Pet.cs
+    - src/Cuy.Core/Pet.PigAge.cs
+    - tests/Cuy.Core.Tests/PetPerPigAgeTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W12-04
+    title: 'W12-04: LegendRoll: random legend threshold per pig'
+    prompt_file: docs/prompts/W12-04-legend-roll.md
+    files:
+    - src/Cuy.Core/Pigs/LegendRoll.cs
+    - tests/Cuy.Core.Tests/LegendRollTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W12-05
+    title: 'W12-05: Offer clock fields in GameState'
+    prompt_file: docs/prompts/W12-05-offer-state-fields.md
+    files:
+    - src/Cuy.Core/GameState.Pigs.cs
+    - tests/Cuy.Core.Tests/OfferStateTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W13
+  tasks:
+  - id: W13-01
+    title: 'W13-01: Brain: activity, joy and wheek multipliers'
+    prompt_file: docs/prompts/W13-01-brain-modifiers.md
+    files:
+    - src/Cuy.Core/AI/Brain.cs
+    - tests/Cuy.Core.Tests/BrainModifiersTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W13-02
+    title: 'W13-02: Appetite multiplier in hay consumption'
+    prompt_file: docs/prompts/W13-02-hay-appetite.md
+    files:
+    - src/Cuy.Core/Pet.Hay.cs
+    - tests/Cuy.Core.Tests/HayAppetiteTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W13-03
+    title: 'W13-03: Pet.Adoption: adopt from an offer, memorial mode, offer announcements'
+    prompt_file: docs/prompts/W13-03-pet-adoption.md
+    files:
+    - src/Cuy.Core/Pet.Adoption.cs
+    - src/Cuy.Core/Pet.cs
+    - src/Cuy.Core/Events.cs
+    - tests/Cuy.Core.Tests/PetAdoptionTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W13-04
+    title: 'W13-04: New game starts with Kuki and Ned; old saves get the pair offer'
+    prompt_file: docs/prompts/W13-04-new-game-and-migration.md
+    files:
+    - src/Cuy.Core/GameState.Pigs.cs
+    - tests/Cuy.Core.Tests/NewGameMigrationTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W14
+  tasks:
+  - id: W13-05
+    title: 'W13-05: PigsFeature: ages, offers, adoption and memorial messages'
+    prompt_file: docs/prompts/W13-05-pigs-feature-offers.md
+    files:
+    - src/Cuy/dotNet/Features/PigsFeature.cs
+    - assets/data/pigs.json
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+      && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W14-01
+    title: 'W14-01: bond_gain and minigame_score multipliers'
+    prompt_file: docs/prompts/W14-01-bond-and-minigame-modifiers.md
+    files:
+    - src/Cuy.Core/Pet.cs
+    - src/Cuy.Core/Pet.Bond.cs
+    - tests/Cuy.Core.Tests/PigModifiersEconomyTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W14-02
+    title: 'W14-02: PigLook and Xml: each pig''s own stage and baked sheets'
+    prompt_file: docs/prompts/W14-02-piglook-per-pig-stage.md
+    files:
+    - src/Cuy/dotNet/Graphics/PigLook.cs
+    - src/Cuy/dotNet/Xml.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W14-03
+    title: 'W14-03: Desktop: offer toast, adopted pig appears with a peek'
+    prompt_file: docs/prompts/W14-03-desktop-offer-and-adoption.md
+    files:
+    - src/Cuy/dotNet/BrainController.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W14-04
+    title: 'W14-04: PoopManager: droppings interval scaled by poop_rate'
+    prompt_file: docs/prompts/W14-04-poop-rate.md
+    files:
+    - src/Cuy/dotNet/PoopManager.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W14-05
+    title: 'W14-05: MouseFearBehavior: startle sensitivity'
+    prompt_file: docs/prompts/W14-05-startle-sensitivity.md
+    files:
+    - src/Cuy/dotNet/Behaviors/MouseFearBehavior.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W14-06
+    title: 'W14-06: My Pigs: age, stage, traits, adoption offers, memorial mode'
+    prompt_file: docs/prompts/W14-06-my-pigs-screen.md
+    files:
+    - web/home/features/pigs/feature.js
+    - web/home/features/pigs/feature.css
+    - web/home/features/pigs/style.css
+    test_command: node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js
+  - id: W14-07
+    title: 'W14-07: Mock state with five pigs and offers; welcome toast'
+    prompt_file: docs/prompts/W14-07-mock-state-offers.md
+    files:
+    - web/home/bridge.js
+    - web/home/app.js
+    test_command: node --check web/home/bridge.js && node --check web/home/app.js
+      && node tools/qa/web-smoke.js
+  - id: W14-08
+    title: 'W14-08: Home sprite resolver: baked sheets for named pigs'
+    prompt_file: docs/prompts/W14-08-sprite-resolver-named.md
+    files:
+    - web/home/lib/sprites.js
+    test_command: node --check web/home/lib/sprites.js && node tools/qa/web-smoke.js
+  - id: W14-09
+    title: 'W14-09: Patch2 color from NamedPigCatalog in PigPalette and PixelArtGenerator'
+    prompt_file: docs/prompts/W14-09-pig-patch-palette.md
+    files:
+    - src/Cuy/dotNet/Sprite/PigPalette.cs
+    - src/Cuy/dotNet/Sprite/PixelArtGenerator.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+- id: W15
+  tasks:
+  - id: W15-01
+    title: 'W15-01: GameSession.Open switches the named-pig flags on'
+    prompt_file: docs/prompts/W15-01-enable-pig-flags.md
+    files:
+    - src/Cuy.Core/GameSession.cs
+    - tests/Cuy.Core.Tests/GameSessionFlagsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W15-02
+    title: 'W15-02: Timeline and economy invariants for the collection'
+    prompt_file: docs/prompts/W15-02-collection-economy-sim.md
+    files:
+    - tools/Cuy.Simulator/Program.cs
+    - docs/economy-report.md
+    - tests/Cuy.Core.Tests/CollectionInvariantsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W15-03
+    title: 'W15-03: Web smoke: My Pigs with five pigs and offers'
+    prompt_file: docs/prompts/W15-03-smoke-my-pigs.md
+    files:
+    - tools/qa/web-smoke.js
+    test_command: node tools/qa/web-smoke.js
+  - id: W15-04
+    title: 'W15-04: Contracts and manual test steps for the collection'
+    prompt_file: docs/prompts/W15-04-contracts-and-manual-tests.md
+    files:
+    - docs/contracts.md
+    - TESTY_RECZNE.md
+    test_command: git diff --stat
+  - id: W15-05
+    title: 'W15-05: SelfTest: pigs_named.json and baked sheets'
+    prompt_file: docs/prompts/W15-05-selftest-named-pigs.md
+    files:
+    - src/Cuy/dotNet/SelfTest.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+- id: W16
+  tasks:
+  - id: W16-01
+    title: 'W16-01: FarmConfig and crop catalog (loader for farm.json)'
+    prompt_file: docs/prompts/W16-01-farm-config.md
+    files:
+    - src/Cuy.Core/World/FarmConfig.cs
+    - tests/Cuy.Core.Tests/FarmConfigTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W16-02
+    title: 'W16-02: MarketConfig (loader for market.json)'
+    prompt_file: docs/prompts/W16-02-market-config.md
+    files:
+    - src/Cuy.Core/World/MarketConfig.cs
+    - tests/Cuy.Core.Tests/MarketConfigTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W16-03
+    title: 'W16-03: PlaceCatalog (loader for places.json)'
+    prompt_file: docs/prompts/W16-03-place-catalog.md
+    files:
+    - src/Cuy.Core/World/PlaceCatalog.cs
+    - tests/Cuy.Core.Tests/PlaceCatalogTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W16-04
+    title: 'W16-04: WorldItemCatalog (loader for world_items.json)'
+    prompt_file: docs/prompts/W16-04-world-item-catalog.md
+    files:
+    - src/Cuy.Core/World/WorldItemCatalog.cs
+    - tests/Cuy.Core.Tests/WorldItemCatalogTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W16-05
+    title: 'W16-05: Load items_farm.json together with the other item files'
+    prompt_file: docs/prompts/W16-05-items-farm-in-catalog.md
+    files:
+    - src/Cuy.Core/ItemCatalog.cs
+    - src/Cuy/dotNet/ItemCatalogLoader.cs
+    - tests/Cuy.Core.Tests/ItemsFarmTests.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+      && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W16-06
+    title: 'W16-06: GameState.World: saved state of the world'
+    prompt_file: docs/prompts/W16-06-world-state.md
+    files:
+    - src/Cuy.Core/GameState.World.cs
+    - src/Cuy.Core/World/WorldState.cs
+    - tests/Cuy.Core.Tests/WorldStateTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W16-07
+    title: 'W16-07: Balance flags for the world (all off)'
+    prompt_file: docs/prompts/W16-07-world-balance-flags.md
+    files:
+    - src/Cuy.Core/Balance.cs
+    - tests/Cuy.Core.Tests/WorldFlagsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W16-08
+    title: 'W16-08: Achievements for the world (8) and their counters'
+    prompt_file: docs/prompts/W16-08-world-achievements.md
+    files:
+    - assets/data/achievements.json
+    - tests/Cuy.Core.Tests/WorldAchievementsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W17
+  tasks:
+  - id: W17-01
+    title: 'W17-01: RoomLayout operations: place, move, flip, remove'
+    prompt_file: docs/prompts/W17-01-room-layout.md
+    files:
+    - src/Cuy.Core/World/RoomLayoutOps.cs
+    - tests/Cuy.Core.Tests/RoomLayoutOpsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W17-02
+    title: 'W17-02: Comfort: capped sum and mood-decay factor'
+    prompt_file: docs/prompts/W17-02-comfort.md
+    files:
+    - src/Cuy.Core/World/Comfort.cs
+    - tests/Cuy.Core.Tests/ComfortTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W17-03
+    title: 'W17-03: FarmEngine: plant, water, grow, harvest (real time, offline)'
+    prompt_file: docs/prompts/W17-03-farm-engine.md
+    files:
+    - src/Cuy.Core/World/FarmEngine.cs
+    - tests/Cuy.Core.Tests/FarmEngineTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W17-04
+    title: 'W17-04: FarmExpansion: plot packs, orchard slots, cans, sprinkler'
+    prompt_file: docs/prompts/W17-04-farm-expansion.md
+    files:
+    - src/Cuy.Core/World/FarmExpansion.cs
+    - tests/Cuy.Core.Tests/FarmExpansionTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W17-05
+    title: 'W17-05: MarketPricing: demand meter, wiggle, cap, quotes'
+    prompt_file: docs/prompts/W17-05-market-pricing.md
+    files:
+    - src/Cuy.Core/World/MarketPricing.cs
+    - tests/Cuy.Core.Tests/MarketPricingTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W17-06
+    title: 'W17-06: MarketStock: daily specials and orders'
+    prompt_file: docs/prompts/W17-06-market-stock.md
+    files:
+    - src/Cuy.Core/World/MarketStock.cs
+    - tests/Cuy.Core.Tests/MarketStockTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W17-07
+    title: 'W17-07: PlaceUnlock: requirements, costs and levels'
+    prompt_file: docs/prompts/W17-07-place-unlock.md
+    files:
+    - src/Cuy.Core/World/PlaceUnlock.cs
+    - tests/Cuy.Core.Tests/PlaceUnlockTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W17-08
+    title: 'W17-08: LegacyDecorMigration: slot decorations become placed items'
+    prompt_file: docs/prompts/W17-08-legacy-decor-migration.md
+    files:
+    - src/Cuy.Core/World/WorldEngine.Decor.cs
+    - src/Cuy.Core/World/WorldState.cs
+    - tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W18a
+  tasks:
+  - id: W18-01
+    title: 'W18-01: Pet.World: unlock and upgrade places and rooms'
+    prompt_file: docs/prompts/W18-01-pet-world-places.md
+    files:
+    - src/Cuy.Core/Pet.World.cs
+    - src/Cuy.Core/Events.cs
+    - tests/Cuy.Core.Tests/PetWorldTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W18-06
+    title: 'W18-06: Diary templates for the farm, garden and market'
+    prompt_file: docs/prompts/W18-06-world-diary.md
+    files:
+    - assets/data/diary.json
+    - tests/Cuy.Core.Tests/WorldDiaryTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W18b
+  tasks:
+  - id: W18-02
+    title: 'W18-02: Pet.Rooms: buy, place, move and remove items; comfort in mood
+      decay'
+    prompt_file: docs/prompts/W18-02-pet-rooms.md
+    files:
+    - src/Cuy.Core/Pet.Rooms.cs
+    - src/Cuy.Core/Pet.cs
+    - tests/Cuy.Core.Tests/PetRoomsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W18-03
+    title: 'W18-03: Pet.Farm: plant, water, harvest into the inventory'
+    prompt_file: docs/prompts/W18-03-pet-farm.md
+    files:
+    - src/Cuy.Core/Pet.Farm.cs
+    - tests/Cuy.Core.Tests/PetFarmTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W18-04
+    title: 'W18-04: Pet.Market: buy, sell, orders, daily rollover'
+    prompt_file: docs/prompts/W18-04-pet-market.md
+    files:
+    - src/Cuy.Core/Pet.Market.cs
+    - src/Cuy.Core/Pet.Economy.cs
+    - tests/Cuy.Core.Tests/PetMarketTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W18-05
+    title: 'W18-05: Pet.Walk: garden/park walk and the varied-diet bonus'
+    prompt_file: docs/prompts/W18-05-pet-walk-variety.md
+    files:
+    - src/Cuy.Core/Pet.Walk.cs
+    - tests/Cuy.Core.Tests/PetWalkTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W18-07
+    title: 'W18-07: Save: world state version, memory corner unlock, migration on
+      open'
+    prompt_file: docs/prompts/W18-07-save-migration-world.md
+    files:
+    - src/Cuy.Core/GameState.World.cs
+    - tests/Cuy.Core.Tests/WorldMigrationTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W19a
+  tasks:
+  - id: W19-01
+    title: 'W19-01: PlacesFeature: places, rooms and unlocks'
+    prompt_file: docs/prompts/W19-01-places-feature.md
+    files:
+    - src/Cuy/dotNet/Features/PlacesFeature.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W19-02
+    title: 'W19-02: RoomsFeature: layouts, owned items and comfort'
+    prompt_file: docs/prompts/W19-02-rooms-feature.md
+    files:
+    - src/Cuy/dotNet/Features/RoomsFeature.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W19-03
+    title: 'W19-03: FarmFeature: plots, orchard, tools and harvest'
+    prompt_file: docs/prompts/W19-03-farm-feature.md
+    files:
+    - src/Cuy/dotNet/Features/FarmFeature.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W19-04
+    title: 'W19-04: MarketFeature: quotes, specials, orders and the daily cap'
+    prompt_file: docs/prompts/W19-04-market-feature.md
+    files:
+    - src/Cuy/dotNet/Features/MarketFeature.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+- id: W19b
+  tasks:
+  - id: W19-05
+    title: 'W19-05: docs/contracts.md: places, rooms, farm, market'
+    prompt_file: docs/prompts/W19-05-world-contracts.md
+    files:
+    - docs/contracts.md
+    test_command: git diff --stat
+  - id: W19-06
+    title: 'W19-06: Validation and name mapping for the new messages'
+    prompt_file: docs/prompts/W19-06-message-validation.md
+    files:
+    - src/Cuy.Core/Input/MessageValidator.cs
+    - tests/Cuy.Core.Tests/WorldMessageTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: W20a
+  tasks:
+  - id: W20-01
+    title: 'W20-01: Places bar: navigation between house, garden, farm, park and market'
+    prompt_file: docs/prompts/W20-01-places-nav.md
+    files:
+    - web/home/app.js
+    - web/home/style.css
+    test_command: node --check web/home/app.js && node tools/qa/web-smoke.js
+  - id: W20-02
+    title: 'W20-02: Room editor: place, move, flip and remove items on the grid'
+    prompt_file: docs/prompts/W20-02-rooms-editor.md
+    files:
+    - web/home/features/rooms/feature.js
+    - web/home/features/rooms/feature.css
+    test_command: node --check web/home/features/rooms/feature.js && node tools/qa/web-smoke.js
+- id: W20b
+  tasks:
+  - id: W20-03
+    title: 'W20-03: Room editor extras: undo/redo, snapping, comfort meter, buy drawer'
+    prompt_file: docs/prompts/W20-03-rooms-editor-extras.md
+    files:
+    - web/home/features/rooms/editor.js
+    test_command: node --check web/home/features/rooms/editor.js && node tools/qa/web-smoke.js
+  - id: W20-04
+    title: 'W20-04: Garden and park view with walks and the memory corner'
+    prompt_file: docs/prompts/W20-04-garden-park-view.md
+    files:
+    - web/home/features/garden/feature.js
+    - web/home/features/garden/feature.css
+    test_command: node --check web/home/features/garden/feature.js && node tools/qa/web-smoke.js
+  - id: W20-05
+    title: 'W20-05: Farm view: plots, planting menu, watering, harvest all'
+    prompt_file: docs/prompts/W20-05-farm-view.md
+    files:
+    - web/home/features/farm/feature.js
+    - web/home/features/farm/feature.css
+    test_command: node --check web/home/features/farm/feature.js && node tools/qa/web-smoke.js
+  - id: W20-06
+    title: 'W20-06: Market view: stalls, quotes and the daily cap bar'
+    prompt_file: docs/prompts/W20-06-market-view.md
+    files:
+    - web/home/features/market/feature.js
+    - web/home/features/market/feature.css
+    test_command: node --check web/home/features/market/feature.js && node tools/qa/web-smoke.js
+  - id: W20-07
+    title: 'W20-07: Market orders board and daily specials'
+    prompt_file: docs/prompts/W20-07-market-orders-specials.md
+    files:
+    - web/home/features/market/orders.js
+    test_command: node --check web/home/features/market/orders.js && node tools/qa/web-smoke.js
+  - id: W20-08
+    title: 'W20-08: Mock bridge: state and messages for places, rooms, farm, market'
+    prompt_file: docs/prompts/W20-08-mock-world-state.md
+    files:
+    - web/home/bridge.js
+    test_command: node --check web/home/bridge.js && node tools/qa/web-smoke.js
+- id: W21
+  tasks:
+  - id: W21-01
+    title: 'W21-01: Desktop: ''harvest ready'' notification once a day'
+    prompt_file: docs/prompts/W21-01-desktop-harvest-toast.md
+    files:
+    - src/Cuy/dotNet/BrainController.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W21-02
+    title: 'W21-02: Settings: farm notifications and shortcut'
+    prompt_file: docs/prompts/W21-02-settings-world.md
+    files:
+    - web/home/features/settings/feature.js
+    - web/home/features/index.json
+    test_command: node --check web/home/features/settings/feature.js && node tools/qa/web-smoke.js
+  - id: W21-03
+    title: 'W21-03: Sounds for planting, harvesting, coins and placing'
+    prompt_file: docs/prompts/W21-03-world-sounds.md
+    files:
+    - web/home/sound.js
+    test_command: node --check web/home/sound.js && node tools/qa/web-smoke.js
+  - id: W21-04
+    title: 'W21-04: My Pigs: memory corner link and walk button'
+    prompt_file: docs/prompts/W21-04-pigs-memory-and-walks.md
+    files:
+    - web/home/features/pigs/feature.js
+    test_command: node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js
+  - id: W21-05
+    title: 'W21-05: Canvas limits: cap drawn items and animation work'
+    prompt_file: docs/prompts/W21-05-draw-limits.md
+    files:
+    - web/home/canvas-pig.js
+    test_command: node --check web/home/canvas-pig.js && node tools/qa/web-smoke.js
+- id: W22
+  tasks:
+  - id: W22-01
+    title: 'W22-01: GameSession.Open switches the world flags on'
+    prompt_file: docs/prompts/W22-01-enable-world-flags.md
+    files:
+    - src/Cuy.Core/GameSession.cs
+    - tests/Cuy.Core.Tests/GameSessionWorldTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W22-02
+    title: 'W22-02: Port the economy simulator and enforce the world invariants'
+    prompt_file: docs/prompts/W22-02-world-economy-sim.md
+    files:
+    - tools/Cuy.Simulator/Program.cs
+    - docs/economy-report.md
+    - tests/Cuy.Core.Tests/WorldInvariantsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+      && node tools/qa/economy-sim.js --runs 12 --variant baseline --check
+  - id: W22-03
+    title: 'W22-03: Web smoke: places bar, rooms, garden, farm and market screens'
+    prompt_file: docs/prompts/W22-03-smoke-world-screens.md
+    files:
+    - tools/qa/web-smoke.js
+    test_command: node tools/qa/web-smoke.js
+  - id: W22-04
+    title: 'W22-04: Manual test steps for the world (TESTY_RECZNE.md)'
+    prompt_file: docs/prompts/W22-04-manual-tests-world.md
+    files:
+    - TESTY_RECZNE.md
+    test_command: git diff --stat
+  - id: W22-05
+    title: 'W22-05: SelfTest: world data files'
+    prompt_file: docs/prompts/W22-05-selftest-world-data.md
+    files:
+    - src/Cuy/dotNet/SelfTest.cs
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+  - id: W22-06
+    title: 'W22-06: Test: save size and load time with a full world'
+    prompt_file: docs/prompts/W22-06-save-size-and-perf.md
+    files:
+    - tests/Cuy.Core.Tests/WorldSaveSizeTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+  - id: W22-07
+    title: 'W22-07: World and portrait assets contract tests'
+    prompt_file: docs/prompts/W22-07-world-assets-tests.md
+    files:
+    - tests/Cuy.Core.Tests/WorldAssetsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+      --filter WorldAssetsTests
