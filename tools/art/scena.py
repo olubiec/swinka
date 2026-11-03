@@ -97,3 +97,35 @@ if __name__ == "__main__":
     it = Image.open(ROOT / "assets/world/house/sofa_cosy.png").convert("RGBA")
     print(gate("sofa_cosy_demo", it, sys.argv[1] if len(sys.argv) > 1 else "/tmp/scena_demo.png",
                light=("lamp_floor", 24, 8), recolor=True))
+
+
+def group(items, out, place="house", lights=(), who="glen", scale=3, on=None):
+    """Scena zbiorcza: przedmioty w rzedzie + swinka w skali, dzien / wieczor / noc.
+    items: lista obrazow (kotwica dol); lights: [(rodzaj, x, y)] we wspolrzednych sceny, na kazdej wysokosci;
+    on: {indeks_przedmiotu: obraz_wlaczony} podmieniany wieczorem i noca."""
+    from PIL import Image, ImageDraw
+    pg = pig(who)
+    gap = 6
+    W = sum(i.width for i in items) + gap * (len(items) + 1) + pg.width + 8
+    Hh = max(max(i.height for i in items), pg.height) + 30
+    floor_y = Hh - 12
+    panels = []
+    for tod in ("day", "evening", "night"):
+        bg = Image.new("RGBA", (W, Hh), H.color(FLOOR.get(place, "wood.3")) + (255,))
+        bg.paste(Image.new("RGBA", (W, floor_y - 20), H.color("linen.1" if place in ("house", "market") else "dusk.3") + (255,)), (0, 0))
+        x = gap
+        for k, it in enumerate(items):
+            im = on[k] if (on and k in on and tod != "day") else it
+            bg.alpha_composite(im, (x, floor_y - im.height))
+            x += im.width + gap
+        lit = L.render(bg, tod, list(lights) if tod != "day" else [])
+        px_, py_ = x, floor_y - pg.height
+        pl = L.render(pg, tod, [(k_, a - px_, b - py_, 0.5) for k_, a, b in (lights if tod != "day" else [])], quantized=False)
+        lit.alpha_composite(pl, (px_, py_))
+        panels.append(lit)
+    sheet = Image.new("RGB", (W * scale * 3 + 16, Hh * scale + 6), H.color("plum.0"))
+    for i, p in enumerate(panels):
+        sheet.paste(p.convert("RGB").resize((W * scale, Hh * scale), Image.NEAREST), (4 + i * (W * scale + 4), 3))
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    sheet.save(out)
+    return out

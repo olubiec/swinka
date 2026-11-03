@@ -304,6 +304,12 @@ def put(im, x, y, c):
         im.putpixel((x, y), color(c) + (255,))
 
 
+def put_in(im, x, y, c):
+    """Rysuje tylko na juz nieprzezroczystym pikselu (detal wewnatrz bryly, nic nie wystaje)."""
+    if 0 <= x < im.width and 0 <= y < im.height and im.getpixel((x, y))[3]:
+        im.putpixel((x, y), color(c) + (255,))
+
+
 def rect(im, x0, y0, x1, y1, c):
     for y in range(y0, y1 + 1):
         for x in range(x0, x1 + 1):
@@ -378,3 +384,17 @@ def break_checkers(im, limit=50):
             n, i = r
             px[x, y] = RAMPS[n][i + 1 if i + 1 < len(RAMPS[n]) else i - 1] + (255,)
     return im
+
+
+def ground(im, rows=1, spread=1):
+    """Kontur + cien kontaktowy. Gdy przedmiot siega dolu komorki (brak miejsca na cien),
+    dolny wiersz konturu zamienia sie w cien plum[1] (kontur selektywny)."""
+    im = outline(im)
+    px = im.load()
+    bottom = max((y for y in range(im.height) for x in range(im.width) if px[x, y][3]), default=-1)
+    if bottom >= im.height - 1:
+        for x in range(im.width):
+            if px[x, bottom][:3] == OUTLINE_FG and px[x, bottom][3]:
+                px[x, bottom] = SHADOW + (255,)
+        return im
+    return contact_shadow(im, rows=rows, spread=spread)

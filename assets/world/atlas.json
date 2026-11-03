@@ -1047,6 +1047,38 @@
     "frames": 4,
     "fps": 8
    }
+  },
+  "pouf_boucle": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/pouf_boucle.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "lace_curtain": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/lace_curtain.png",
+   "anchor": [
+    16,
+    32
+   ]
   }
  }
 }
