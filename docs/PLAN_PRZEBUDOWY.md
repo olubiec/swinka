@@ -201,4 +201,5 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B0-3 | zrobione (scena.py: bramka (c), 3 oświetlenia, 4 warianty, 1x/2x; warianty zadziałają od B1-1, stare pliki nie mają rampy brick) |
 | B0-5 | zrobione (registry.py: 55 id, brakuje wpisu i pliku dla 10 nowych; lamp_mushroom, fireplace, lamp_salt itd. nie ma w world_items.json, trafią do przekazania B13-5) |
 | B0 | **fala zamknięta** |
-| B1..B13 | nie rozpoczęte |
+| B1-1 | zrobione (sofa_cosy bochenek, 4 warianty, lint 0; arkusz docs/album/przebudowa/b1-1_sofa_cosy.png) |
+| B1-2..B13 | nie rozpoczęte |

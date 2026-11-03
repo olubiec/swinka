@@ -51,10 +51,10 @@ def _stage(item, pig_im, place, tod, light, gap=6):
     lights = []
     if light and tod != "day":
         kind, dx, dy = light
-        lights.append((kind, ix + dx, iy + dy))
+        lights.append((kind, ix + dx, iy + dy, 0.6))
     scene_lit = L.render(base, tod, lights)
     # swinka osobno, tint bez kwantyzacji
-    pl = L.render(pig_im, tod, [(k, x - px_, y - py_) for k, x, y in lights], quantized=False)
+    pl = L.render(pig_im, tod, [(k, x - px_, y - py_, sc) for k, x, y, sc in lights], quantized=False)
     scene_lit.alpha_composite(pl, (px_, py_))
     return scene_lit
 

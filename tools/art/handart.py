@@ -262,6 +262,9 @@ def register_item(item_id, place, im, rel_file=None, atlas=ATLAS_FILE, world_dir
         raise ValueError(f"{item_id}: rozmiar {w}x{h} nie jest wielokrotnoscia 16")
     rel = rel_file or f"{place}/{item_id}.png"
     save_png(im, Path(world_dir) / rel)
+    old = json.loads(Path(atlas).read_text(encoding="utf-8"))["items"].get(item_id, {})
+    if old.get("file_x2"):  # do B13 kod moze czytac _x2: trzymamy go zgodnym z nowym obrazem
+        save_png(im.resize((w * 2, h * 2), Image.NEAREST), Path(world_dir) / old["file_x2"])
 
     def upd(d):
         e = d["items"].setdefault(item_id, {})
@@ -293,3 +296,48 @@ def sheet(images, scale=4, pad=4, bg=(0x2b, 0x3c, 0x4e)):
         out.paste(i, (x, pad), i)
         x += i.width + pad
     return out
+
+
+# ---- prymitywy rysunkowe (bryly cieniowane recznie ustawianymi tonami) ----
+def put(im, x, y, c):
+    if 0 <= x < im.width and 0 <= y < im.height:
+        im.putpixel((x, y), color(c) + (255,))
+
+
+def rect(im, x0, y0, x1, y1, c):
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            put(im, x, y, c)
+
+
+def hline(im, x0, x1, y, c):
+    rect(im, x0, y, x1, y, c)
+
+
+def vline(im, x, y0, y1, c):
+    rect(im, x, y0, x, y1, c)
+
+
+def rrect(im, x0, y0, x1, y1, r, tones):
+    """Zaokraglony prostokat z cieniowaniem: tones = (cien, baza, swiatlo, blysk).
+    Gora: swiatlo (1 wiersz) + blysk na lewym-gornym naroznikach, dol i prawo: cien."""
+    sh, base, lt, hi = [color(t) for t in tones]
+    def inside(x, y):
+        if not (x0 <= x <= x1 and y0 <= y <= y1):
+            return False
+        dx = max(x0 + r - x, 0, x - (x1 - r))
+        dy = max(y0 + r - y, 0, y - (y1 - r))
+        return dx * dx + dy * dy <= r * r + r * 0.6
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            if not inside(x, y):
+                continue
+            c = base
+            if not inside(x, y - 1) or not inside(x - 1, y - 1) and y - y0 < 3:
+                c = lt
+            if (x - x0 < 2 and y - y0 < 4 + r) and not inside(x - 1, y):
+                c = lt
+            if not inside(x, y + 1) or (not inside(x + 1, y) and y - y0 > r):
+                c = sh
+            put(im, x, y, c)
+    return im
