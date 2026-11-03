@@ -60,10 +60,17 @@ namespace Cuy.Core
 
         public PigAge Age
         {
-            get { return PigAge.FromBirth(State.BirthDateUtc, Clock.UtcNow, Balance.PigDaysPerRealDay); }
+            get { return ComputeCurrentAge(); }
         }
 
-        public LifeStage Stage { get { return State.Stage; } }
+        public LifeStage Stage
+        {
+            get
+            {
+                CheckStage();
+                return State.Stage;
+            }
+        }
 
         // ---- Passage of time -------------------------------------------------
 
@@ -129,7 +136,7 @@ namespace Cuy.Core
 
         private void CheckStage()
         {
-            var newStage = Balance.GrowthActive ? Age.Stage : LifeStage.Baby;
+            var newStage = ComputeCurrentStage();
             if (newStage == State.Stage) return;
             var old = State.Stage;
             State.Stage = newStage;
