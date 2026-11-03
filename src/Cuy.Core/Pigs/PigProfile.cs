@@ -12,6 +12,12 @@ namespace Cuy.Core.Pigs
         public List<string> Traits { get; set; } = new List<string>();
         public HashSet<string> DiscoveredTraits { get; set; } = new HashSet<string>();
 
+        public string NamedId { get; set; }
+        public DateTime? BornAtUtc { get; set; }
+        public DateTime? ArrivedAtUtc { get; set; }
+        public double? LegendAtYears { get; set; }
+        public bool Memorial { get; set; }
+
         public PigProfile()
         {
         }
