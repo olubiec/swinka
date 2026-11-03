@@ -115,3 +115,6 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 
 ## 2026-11-03 B3 światło i płomienie
 14 źródeł światła (wył + pasek klatek wł, atlas.items[id].light), 4 maski snopów, okno x 4 pory dnia, pyłki w świetle, lights.json v2 (item/file/on_file/frames/fps/glow/mask/window_tods/dust). Nowe id poza world_items.json: fireplace, lamp_mushroom, lamp_floor, lamp_arc, lantern_paper, lamp_salt, lamp_lava, candle, torch, lamp_oil, brazier, willow_tunnel (do przekazania w B13-5). Lint 0.
+
+## B4 – dom (przebudowa)
+- 13 przedmiotów (B4-1..3), 9 ciepłych dodatków, 5 rzeczy podpisowych 2x2 + 20 wariantów koloru, 4 rekwizyty, memory_frame, dorm_nest, 5 scen pokoi. Lint 0 (poza starym memory_corner – do B13). Gra nie uruchamiana (brak Windows).

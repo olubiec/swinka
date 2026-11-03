@@ -1333,6 +1333,108 @@
     "linen": "house/variants/sig_racuch_hop_pad__linen.png",
     "plum": "house/variants/sig_racuch_hop_pad__plum.png"
    }
+  },
+  "prop_ball": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/prop_ball.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "prop_tunnel": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/prop_tunnel.png",
+   "anchor": [
+    16,
+    16
+   ]
+  },
+  "prop_hay_ball": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/prop_hay_ball.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "prop_house": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/prop_house.png",
+   "anchor": [
+    16,
+    32
+   ]
+  },
+  "dorm_nest": {
+   "place": "house",
+   "cells": [
+    4,
+    2
+   ],
+   "size": [
+    64,
+    32
+   ],
+   "file": "house/dorm_nest.png",
+   "anchor": [
+    32,
+    32
+   ]
+  },
+  "memory_frame": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/memory_frame.png",
+   "anchor": [
+    8,
+    16
+   ],
+   "light": {
+    "kind": "candle",
+    "on_file": "house/memory_frame_on.png",
+    "frames": 4,
+    "fps": 8
+   }
   }
  }
 }
