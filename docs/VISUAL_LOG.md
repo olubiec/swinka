@@ -125,3 +125,7 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 ## B6 park (przebudowa)
 - 11 przedmiotów (tree_big, gazebo ze słomianym dachem, flower_arch, pond_big, bridge_wood, fountain, statue_pig, path_cobble, bench_park, picnic_blanket, tunnel_playground) i 4 tła 384x192 (strumień z mostem, altana, lampy parkowe, kosz z żarem). Lint 0. Przegląd: docs/album/przebudowa/b6-6_przeglad_parku.png.
 - Gry nie uruchamiano; stare `_x2` odświeżone nearest.
+
+## B7 farma (przebudowa)
+- farm.png przerysowany w tych samych ramkach (kontrakt farm.json bez zmian): 11 upraw po 4 stadia, 4 drzewka po 3, grządki pusta/mokra/ziemia, podlewanie, wielki zbiór. scarecrow, fence_farm, wheelbarrow, signpost przerysowane; nowa `barn_hay` (stodoła ze słomą, bez źródeł ognia). Tło farmy 256x144. Lint 0 (farm.png: 181 px R4 to krawędzie kafli grządek, nie przedmiot).
+- Hand-off B13-5: nowe id `barn_hay` (place farm).

@@ -1499,6 +1499,22 @@
     8,
     16
    ]
+  },
+  "barn_hay": {
+   "place": "farm",
+   "cells": [
+    4,
+    3
+   ],
+   "size": [
+    64,
+    48
+   ],
+   "file": "farm/barn_hay.png",
+   "anchor": [
+    32,
+    48
+   ]
   }
  }
 }

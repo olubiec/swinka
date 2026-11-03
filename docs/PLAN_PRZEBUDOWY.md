@@ -238,4 +238,6 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B5 | **fala zamknięta** |
 | B6-1..B6-6 | zrobione (park_a.py, park_bg.py, park_scene.py; 11 przedmiotów + 4 tła parku, lint 0; lamp_post z B3) |
 | B6 | **fala zamknięta** |
-| B7..B13 | nie rozpoczęte |
+| B7-1..B7-6 | zrobione (farm_a.py, farm_bg.py: plansza farm.png w ramkach z farm.json, 11 upraw x4, 4 drzewka x3, grządki, woda, wielki zbiór; przedmioty farmy + nowa `barn_hay` 64x48; tło farmy; lint 0) |
+| B7 | **fala zamknięta** |
+| B8..B13 | nie rozpoczęte |
