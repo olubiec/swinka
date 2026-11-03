@@ -10,12 +10,12 @@ D = H.ROOT / "assets/app-icon"
 
 
 def pig32():
-    im = Image.open(D / "icon_256.png").convert("RGBA").resize((32, 32), Image.NEAREST)
+    """Cala swinka z logo (bez cienia) x2: miesci sie w ramce 30x30, nic nie jest ucinane."""
+    lg = Image.open(D / "logo_256.png").convert("RGBA").resize((32, 32), Image.NEAREST)
+    bb = lg.getbbox(); h = bb[3] - bb[1] - 2
+    crop = lg.crop((bb[0], bb[1], bb[2], bb[1] + h)).resize(((bb[2] - bb[0]) * 2, h * 2), Image.NEAREST)
     out = H.canvas(32, 32)
-    for y in range(32):
-        for x in range(32):
-            p = im.getpixel((x, y))
-            if p[3] > 0: out.putpixel((x, y), (*icons_a.snap(p), 255))
+    out.alpha_composite(crop, ((32 - crop.width) // 2, 31 - crop.height - 1))
     return out
 
 

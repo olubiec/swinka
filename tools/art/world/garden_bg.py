@@ -70,7 +70,7 @@ PLACED = []
 
 
 def world(tod):
-    r = random.Random(21)
+    r = random.Random(22)
     im = H.canvas(W, HT)
     for x in range(W):                                                            # dalekie wzgorza i krzewy
         top = int(HORIZON - 6 - 4 * math.sin(x / 21.0) - 2 * math.sin(x / 8.0 + 1))
@@ -78,7 +78,7 @@ def world(tod):
     for x in range(W):
         top = int(HORIZON - 1 - 2 * math.sin(x / 12.0 + 2))
         H.vline(im, x, top, HORIZON + 2, "moss.0")
-    meadow(im, r, W, HT, HORIZON)                                                 # trawa
+    meadow(im, r, W, HT, HORIZON, flowers=.5)                                             # trawa
     H.break_checkers(im)
     for x in range(0, W, 8):                                                      # plot
         H.rrect(im, x + 1, HORIZON - 2, x + 4, HORIZON + 12, 1, ("wood.0", "wood.1", "wood.2", "wood.2"))

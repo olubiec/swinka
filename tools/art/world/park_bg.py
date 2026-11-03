@@ -75,7 +75,7 @@ def world(extra=()):
             off = int(2 * math.sin(x / 15.0))
             if STREAM[0] + off <= y <= STREAM[1] + off:
                 edge = y in (STREAM[0] + off, STREAM[1] + off)
-                H.put(im, x, y, "dusk.1" if edge else ("dusk.3" if (x // 7 + y) % 5 else "dusk.4"))
+                H.put(im, x, y, "dusk.0" if edge else ("dusk.2" if (x // 7 + y) % 5 else "dusk.3"))
     PLACED.clear()
     def put(name, x, y, rel=None):
         i = _img(rel or f"park/{name}.png"); PLACED.append((name, x, y, i)); im.alpha_composite(i, (x, y))

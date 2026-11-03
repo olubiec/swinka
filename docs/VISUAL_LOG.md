@@ -171,3 +171,10 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 - `tools/art/world/meadow.py`: polana wspólna dla farmy, ogrodu i parku (gęstość proporcjonalna do powierzchni); `garden_bg.py` i `park_bg.py` używają jej zamiast gładkiej trawy.
 - Lint 161 plików: 0. Zgodność: 55/55 id `world_items.json` w atlasie (87 przedmiotów, 32 nowe), ikony 173, kafle 53, tła 12. `assets/` 52 MB (limit 60). `_x2` świata (102 pliki) zostają do G14. `node tools/qa/*` nie działa w środowisku (brak przeglądarki Playwright).
 - Album końcowy: `docs/album/przebudowa/b13-3_album_koncowy.png`. Przekazanie dla kodu: `docs/PLAN.md` (G11-G14).
+
+## B13 Szlify końcowe (ikona, żywopłot, ogród, strumień)
+- Ikona aplikacji: cała świnka z logo x2 w ramce 30x30, nic nie jest ucięte (`app_icon.py` czyta teraz `logo_256.png`, więc jest powtarzalny).
+- `garden:hedge`: prostokątna bryła z falistym wierzchem i konturem po bokach; dwa kafle obok siebie czytają się jako dwa segmenty.
+- Polana ogrodu: o połowę mniej kwiatów (`meadow(..., flowers=.5)`), seed ogrodu 22 (R6=0).
+- Strumień w parku: ciemniejsze tony wody (`dusk.0/2/3`), nie blednie wieczorem.
+- Lint: 0 naruszeń.

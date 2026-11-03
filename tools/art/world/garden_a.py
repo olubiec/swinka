@@ -52,11 +52,19 @@ def bush_berry():
 
 
 def hedge():
+    """Strzyzony zywoplot: prostokatna bryla z falistym wierzchem i jasnymi listkami; kontur zamyka boki,
+    wiec dwa kafle obok siebie czytaja sie jako dwa segmenty."""
     r = random.Random(4)
     im = H.canvas(16, 16)
-    for cx in (3, 8, 13): blob(im, cx, 9, 5, MOSS, r)
-    H.rect(im, 0, 10, 15, 13, "moss.1")
-    for x in range(0, 16, 3): H.put(im, x + r.randint(0, 1), 8 + r.randint(0, 2), "moss.3")
+    for x in range(1, 15):
+        top = 5 + (1 if (x // 3) % 2 else 0)
+        H.vline(im, x, top, 13, "moss.1")
+    for x in range(1, 15):
+        H.put(im, x, 5 + (1 if (x // 3) % 2 else 0), "moss.2")
+    for _ in range(14): H.put(im, r.randint(2, 13), r.randint(7, 11), "moss.2")
+    for _ in range(8): H.put(im, r.randint(2, 13), r.randint(8, 12), "moss.0")
+    for x, y in ((4, 7), (9, 8), (12, 6), (6, 10)): H.put(im, x, y, "moss.3")
+    H.hline(im, 1, 14, 13, "moss.0")
     H.break_checkers(im)
     return H.ground(H.outline(im))
 

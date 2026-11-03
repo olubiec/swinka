@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import handart as H
 
 
-def meadow(im, r, W, HT, HORIZON):
+def meadow(im, r, W, HT, HORIZON, flowers=1.0):
     """Polana: plamy tonow trawy (niska czestotliwosc), kepy z dlugimi zdzblami, kwiatki, koniczyna, paprocie i kamyki."""
     k = W * (HT - HORIZON) / (256 * 90.0)                            # gestosc roslin proporcjonalna do powierzchni
     for y in range(HORIZON + 2, HT):
@@ -29,7 +29,7 @@ def meadow(im, r, W, HT, HORIZON):
         for k, (dx, dy) in enumerate(((0, 0), (-3, 1), (3, 1), (-2, -2), (2, -2), (0, -3), (-4, 3), (4, 3))):
             H.put(im, x + dx, y + dy, "moss.0" if k < 1 else "moss.4"); H.put(im, x + dx // 2, y + dy // 2, "moss.3")
     pal = ("rose.1", "rose.2", "hay.3", "linen.3", "linen.2", "berry.0", "hay.2")
-    for _ in range(int(95 * k)):                                            # pojedyncze kwiatki na lodygach
+    for _ in range(int(95 * k * flowers)):                                            # pojedyncze kwiatki na lodygach
         x, y = r.randint(2, W - 3), r.randint(HORIZON + 8, HT - 4)
         c = r.choice(pal); big = r.random() < .3
         H.vline(im, x, y, y + 2, "moss.0")
