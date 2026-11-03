@@ -2,7 +2,7 @@
 
 Zmieniaj: tests/Cuy.Core.Tests/WorldAssetsTests.cs
 Nie ruszaj: src/**, assets/**, web/**, AGENTS.md, docs/*, tasks/*
-Wymagane: docs/KONTRAKT_ASSETOW.md, assets/data/named_pigs.json, assets/data/world_items.json, assets/data/farm.json, assets/data/places.json, assets/icons/icons.json, assets/world/atlas.json, assets/world/farm/farm.json, assets/world/tiles.json
+Wymagane: tests/Cuy.Core.Tests/WorldAssetsTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter WorldAssetsTests
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Goal: Automated contract tests in xUnit verify that all world art, tiles, crops, portraits, and icons referenced by game data exist on disk with correct dimensions.

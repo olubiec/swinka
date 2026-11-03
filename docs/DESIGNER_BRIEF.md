@@ -17,7 +17,7 @@ Dla kogo: osoba rysująca pixel art (lub Claude Code w roli grafika). Cel: dorys
 
 ## 2. Lista do narysowania
 
-### 2.1 Rzeczy podpisowe świnek (5; pierwszeństwo P1)
+### 2.1 Rzeczy podpisowe świnek (5; pierwszeństwo H1)
 Każda ma pasować do charakteru świnki i do jej motywu pokoju (`docs/PIG_ROOMS.md` pkt 2). Wszystkie 2x2 komórki. Tkanina w rampie brick.
 | id | komórki | piksele | x2 | plik |
 |---|---|---|---|---|
@@ -29,11 +29,11 @@ Każda ma pasować do charakteru świnki i do jej motywu pokoju (`docs/PIG_ROOMS
 
 Opisy: **sig_kuki_blanket**: patchworkowy kocyk w kolorach łąki (mech, len, róż uszu), ciepły, lekko pognieciony, bez wzorów w kratkę. **sig_ned_snack_nook**: wiklinowo-sianowy kosz z półką na przysmaki, z łukiem wejściowym, kilka źdźbeł siana na wierzchu. **sig_james_hideout**: kryjówka z łukowym wejściem i zasłonką (bezpieczna, ciemniejsza, dusk/plum), lekko przekrzywiona. **sig_glen_knit_bed**: głębokie dzianinowe legowisko z widocznym ściegiem „v", okrągłe, miękkie. **sig_racuch_hop_pad**: okrągła miękka podkładka do „popcornowania", jaskrawsza (tylko flame/hay, punktowo), kilka łatek.
 
-### 2.2 Kafle skórek pokoi świnek (10; P1)
+### 2.2 Kafle skórek pokoi świnek (10; H1)
 Dla każdej z pięciu świnek: `wall_pig_<id>` i `floor_pig_<id>`, **16x16**, powtarzalne (bezszwowe), plik `assets/world/tiles/<nazwa>.png` i wpis w `assets/world/tiles.json`. Nastrój i kolory: tabela w `docs/PIG_ROOMS.md` pkt 2 (kolumny tapeta/podłoga i „nastrój"); tapeta nie jest jaskrawa, podłoga czytelna pod meblami. Dedykowana tapeta może mieć dolną listwę 4 px.
 Nazwy: `wall_pig_kuki`, `floor_pig_kuki`, `wall_pig_ned`, `floor_pig_ned`, `wall_pig_james`, `floor_pig_james`, `wall_pig_glen`, `floor_pig_glen`, `wall_pig_racuch`, `floor_pig_racuch`.
 
-### 2.3 Nowe przedmioty do ustawiania (5; P2)
+### 2.3 Nowe przedmioty do ustawiania (5; H2)
 | id | komórki | piksele | x2 | plik |
 |---|---|---|---|---|
 | `prop_ball` | 1x1 | 16x16 | 32x32 | `assets/world/house/prop_ball.png` |
@@ -45,7 +45,7 @@ Nazwy: `wall_pig_kuki`, `floor_pig_kuki`, `wall_pig_ned`, `floor_pig_ned`, `wall
 - **gate_garden**: furtka wplatana w płotek. Ma wyglądać dobrze zarówno w linii poziomej, jak i pionowej (jeden sprite, gracz może go odbić), z okrągłym łukiem. Musi stykać się wizualnie z kafelkami płotu `fence_00..15`.
 - **prop_ball, prop_tunnel, prop_hay_ball, prop_house**: te same zabawki, które są na pulpicie (ball, tunnel, hay_ball, house), ale jako przedmioty do pokoju. Zachowaj wygląd zabawek z pulpitu (sprite'y w `assets/sprites/`/`Resources`), dopasowany do palety świata; tunel 2x1 z okrągłym wejściem, domek 2x2 jako „bochenek" z łukiem.
 
-### 2.4 Ikony 16x16 (13; P0, najpierw)
+### 2.4 Ikony 16x16 (13; H0, najpierw)
 Dopisz na końcu `assets/icons/icons_16.png` (obecnie 161 ikon, indeksy 0-160; nowe od 161), wpis w `assets/icons/icons.json` i klasa `.icon-*` w `web/home/style.css` (`--icon-count` rośnie; uruchom `node tools/qa/check-icons.js` i `check-css-vars.js`). Styl ikon 0-119 (kontur `#3a1d17`, 2-4 odcienie, przezroczyste tło).
 | # | nazwa | do czego |
 |---|---|---|
@@ -63,7 +63,7 @@ Dopisz na końcu `assets/icons/icons_16.png` (obecnie 161 ikon, indeksy 0-160; n
 | 172 | `rename_pen` | zmiana nazwy pokoju |
 | 173 | `variant_lock` | zablokowany kolor (kłódka z paletą) |
 
-### 2.5 Opcjonalne (P3, wymagają decyzji właściciela, nie ma ich w danych)
+### 2.5 Opcjonalne (H3, wymagają decyzji właściciela, nie ma ich w danych)
 - Rama domu do planu: `assets/world/house_frame.png` (256x160 i x2): dach, ściany, komin, 3x2 okna na pokoje i szerokie okno sypialni; kod rysuje prosty plan bez niej.
 - Zestaw pokoju pamięci: `wall_memory`, `floor_memory` (spokojny wieczorny ton), ramka na zdjęcie 1x1; wymaga dopisania do `world_items.json`.
 - Duże wspólne legowisko do sypialni 4x2 (`dorm_nest`); wymaga dopisania do `world_items.json`.
@@ -76,10 +76,10 @@ Przedmioty z `recolor: true` (`sofa_cosy`, `armchair`, `cushion_big`, `toy_baske
 Ok. 55 przedmiotów w `assets/world/` (v1, podlegają fali S), 161 ikon, 5 portretów (`assets/sprites/portraits/`), kafle `wall_/floor_<bedroom|playroom>_1..4`, tła miejsc, uprawy. Świnki w pokojach używają istniejących animacji (`walk`, `idle`, `sleep`, `eat`; brakująca animacja zastępowana jest `idle`), więc nie trzeba nowych klatek.
 
 ## 5. Kolejność i bramki
-1. **P0**: 13 ikon. Bramka: `check-icons.js` zielony.
-2. **P1**: 5 rzeczy podpisowych + 10 kafli, najpierw jedna świnka (Kuki) jako próbka. Bramka: właściciel ogląda próbkę obok świnki i pokoju (zrzut pokoju w skali 1x i 2x), dopiero potem reszta.
-3. **P2**: furtka i cztery rekwizyty.
-4. **P3**: opcjonalne, po decyzji.
+1. **H0**: 13 ikon. Bramka: `check-icons.js` zielony.
+2. **H1**: 5 rzeczy podpisowych + 10 kafli, najpierw jedna świnka (Kuki) jako próbka. Bramka: właściciel ogląda próbkę obok świnki i pokoju (zrzut pokoju w skali 1x i 2x), dopiero potem reszta.
+3. **H2**: furtka i cztery rekwizyty.
+4. **H3**: opcjonalne, po decyzji.
 Wszystko zapisuj w `docs/VISUAL_LOG.md` (co, ile, jak sprawdzone) i wygeneruj podgląd (`tools/art/podglad.py`).
 
 ## 6. Kryteria odbioru

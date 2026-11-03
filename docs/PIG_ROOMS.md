@@ -55,19 +55,29 @@ Wybieg to ogrodzony fragment ogrodu: zamknięty obwód z `fence_wood`/`hedge` i 
 Rekwizyty z pulpitu (na start: ball, tunnel, hay_ball, house) są zapisane: współrzędne jako ułamki obszaru roboczego, limit 6 na pulpicie. Gdy Home jest otwarty, rekwizyty widać jako kafelki „On your desktop" przyczepione do strony (nie znikają). Przeciągnięcie kafelka do pokoju wrzuca rzecz do domku (`prop_*`), a z pokoju można ją zabrać z powrotem. Rzecz jest zawsze w jednym miejscu (pulpit, pokój lub magazyn). Zadanie W28-09 najpierw opisuje, jak to działa dziś (audyt kodu), a W29 buduje na tym; tam, gdzie audyt się różni od założeń, zadania mają wpisać różnice do PR.
 
 ## 10. Ekonomia (kompletna)
-Źródła nowych wydatków (z danych):
-
+Nowe wydatki (zmierzone przez `node tools/qa/economy-sim.js --variant full`, ten sam wynik daje suma cen z plików danych):
 | Wydatek | Wyliczenie | Koniczynki |
 |---|---|---|
-| Poziomy pokoi świnek (2 i 3, każda z do 5 świnek) | 5 x (400 + 900) | 6 500 |
-| Umeblowanie pokoi (komfort ok. 60 na pokój, najtańsze rzeczy domu, ok. 2 000 na pokój) | 5 x 2 000 | 10 000 |
+| Poziomy pokoi 5 świnek (2 i 3) | 5 x (400 + 900) | 6 500 |
+| Umeblowanie pokoi: po jednym egzemplarzu każdej kupowanej rzeczy domu (14 rzeczy) na pokój | 5 x 1 980 | 9 900 |
 | Wspólna sypialnia: odblokowanie + 2 poziomy | 1500 + 1100 + 1800 | 4 400 |
-| Umeblowanie sypialni | ok. | 2 000 |
-| Kolory przedmiotów (ok. 25% przedmiotów z `recolor`, 15% ceny) | ok. | 1 000 |
-| Wybieg (furtka + ok. 20 elementów płotu) | ok. | 400 |
-| Razem nowe wydatki (szacunek) |  | **ok. 24 000** |
+| Umeblowanie sypialni | 1 980 | 1 980 |
+| Kolory 7 kupowanych przedmiotów z `recolor` (3 warianty po 15% ceny) | | 543 |
+| Wybieg: furtka + 16 elementów płotu | 40 + 16 x 15 | 280 |
+| **Razem nowe wydatki** | | **23 603** |
 
-Do tego dotychczasowe: świat ok. 25 850 (`docs/WORLD.md`), czyli razem **ok. 50 000 koniczynek** wydatków; przedmioty w `world_items.json` kosztują łącznie 8240, stare przedmioty sklepu 2 330. Szacunek jest wstępny: W23-08 rozszerza symulator (wariant `pigrooms`), a W30-06 dodaje wariant `full` z testami (nikt nie ma całości w rok; połowa treści: heavy po min. 150 dniach, regular po 220, casual po 300). Jeśli sprawdzenie nie przejdzie, poprawiamy liczby w JSON, nie kod.
+Razem z dotychczasową zawartością (ok. 25 000) sklep ma ok. **48 650 koniczynek** zawartości. Rzeczy darmowe (zestaw startowy, rzeczy podpisowe, rekwizyty) nic nie kosztują i nie liczą się.
+
+**Tempo (symulator, 5 profili, 365 dni; dwa modele gracza).** Model „stres" to dotychczasowy symulator (gracz sadzi bez umiaru i marnuje budżet na nasiona), model „rozsądny" (`sane`) sadzi tyle, ile potrzeba. Tempo oceniamy na modelu rozsądnym, a „czy nie utknął" na modelu stresowym.
+| Profil (model rozsądny) | Ogród | Farma | Park | 1. pokój świnki, poziom 2 | Sypialnia | połowa zawartości | wszystko |
+|---|---|---|---|---|---|---|---|
+| casual | dzień 15 | 43 | 176 | 94 | 144 | po roku | po roku |
+| regular | 8 | 22 | 72 | 51 | 111 | 242 | po roku (80% w dniu 365) |
+| heavy | 4 | 11 | 37 | 26 | 93 | 119 | 348 |
+Model stresowy: regular ma Ogród w dniu 8, Farmę 22, pierwszy poziom 2 pokoju w dniu 79; nikt nie kończy w rok. Świnki mają 21 dni świnki na dzień (legenda po ok. 4,5-9 miesiącach), więc zawartość na ponad rok wystarcza z zapasem.
+**Testy tempa:** `node tools/qa/economy-sim.js --runs 12 --variant full --check` (i `pigrooms`) sprawdza m.in.: casual i regular nie kupują całości w rok, heavy nie wcześniej niż w dniu 300, regular ma połowę zawartości między dniami 180 i 330, pierwszy poziom 2 pokoju nie później niż dzień 100, sypialnia nie później niż dzień 200, nowe wydatki 15 000-30 000. Test pada przy zawyżonych cenach (sprawdzone).
+**Założenia modelu:** pięć świnek pojawia się wg ofert (0, 0, 90, 105, 130 dni, po 100 koniczynek), utrzymanie 3 koniczynki dziennie za każdą świnkę ponad dwie, kupowanie pokoi i sypialni w ustalonej kolejności (pokoje poziom 2 po `pack2`, sypialnia po drugim pokoju, poziomy 3 po `park:L2`).
+
 Nowe źródła koniczynek: tylko cztery osiągnięcia (own_room 25, every_pig_home 100, shared_nest 75, garden_run 40 = 240). Brak odsprzedaży, brak koniczynek z komfortu, wybiegu i rekwizytów. Wszystko, co można kupić, jest w jednym **sklepie domu** (`HomeStore`, W30): pokoje i poziomy, miejsca, przedmioty wg miejsca, kolory, stare dekoracje, ulepszenia farmy, duży stragan, sypialnia; z filtrami, sortowaniem i powodem zablokowania.
 
 ## 11. Odłożone: widok izometryczny 3D
@@ -174,9 +184,11 @@ Rozważone i odłożone na prośbę właściciela (3.11.2026). Zostaje wiedza na
 
 Zależności: W23 wymaga W22 (świat działa); W24-W26 pokoje i sypialnia; W27-W29 niezależne od siebie funkcje (każda ma własne pliki), W30 domyka i włącza. W28-09 (audyt) musi się zakończyć przed W29.
 
-## 13. Decyzje do potwierdzenia
-1. Domyślny tryb świnek: swobodny (zmieniamy na przywiązany jednym wpisem w `home_economy.json`).
-2. Ceny: poziomy pokoi 400/900, sypialnia 1500/1100/1800, kolor 15 procent, furtka 40.
-3. Brak odsprzedaży (zalecane; bez tego trzeba osobno zbilansować koniczynki).
-4. Wybieg tylko w dzień i przy dobrej pogodzie; limit 6 godzin dziennie i +6 humoru dziennie.
-5. Czy rekwizyty z pulpitu (poza czterema zabawkami) też mają trafiać do domku: wynika z audytu W28-09.
+## 13. Decyzje podjęte (2026-11-03, właściciel zlecił decyzje Claude'owi; weto możliwe przy pierwszym teście na Windows)
+1. Domyślny tryb świnek: swobodny (`roam.default_mode: free`); przywiązanie do pokoju jednym przełącznikiem na świnkę.
+2. Ceny: poziomy pokoi 400/900, sypialnia 1500 (odblokowanie) + 1100/1800, kolor 15 procent (min 5), furtka 40, skórka 180.
+3. Brak odsprzedaży (`resale.allowed: false`); zamiast tego magazyn i przenoszenie.
+4. Wybieg: tylko w dzień (8-19), przy Clear/Cloudy, 10-28 stopni, limit 6 godzin dziennie i +6 humoru dziennie.
+5. Rekwizyty z pulpitu: cztery zabawki (piłka, tunel, siano, domek); reszta tylko jeśli audyt W28-09 ją znajdzie.
+6. Losowe adopcje: najwyżej 1, skład do 6 (spójne z sypialnią, 6 mieszkańców).
+7. Widok 3D/izometryczny: odrzucony; zostaje płaski plan domu.

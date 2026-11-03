@@ -10,7 +10,7 @@ const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i < 0 ? d : (args[i + 1] && !args[i + 1].startsWith('--') ? Number(args[i + 1]) : true); };
 const DAYS = opt('days', 365), RUNS = opt('runs', 20);
 
-const base = { farm: J('farm.json'), market: J('market.json'), places: J('places.json'), world: J('world_items.json') };
+const base = { farm: J('farm.json'), market: J('market.json'), places: J('places.json'), world: J('world_items.json'), pigRooms: J('pig_rooms.json'), homeEco: J('home_economy.json'), pigsNamed: J('pigs_named.json') };
 const items = {};
 for (const f of ['items.json', 'items_shop.json', 'items_farm.json']) for (const i of J(f).items) items[i.id] = i;
 const decorOld = J('items_decor.json').items;
@@ -49,6 +49,14 @@ const VARIANTS = {
   'no orders': (d) => { d.market.orders.per_day = 0; return d; },
   'orders 3 x1.5': (d) => { d.market.orders.per_day = 3; d.market.orders.reward_factor = 1.5; return d; },
   'no wiggle': (d) => { d.market.price_wiggle_percent = 0; return d; },
+  // pig rooms: every adopted pig has a room (levels 2 and 3, a furnished set of house items); pigs arrive on the offers timeline
+  'pigrooms': (d) => { d.pigrooms = true; return d; },
+  // the same rooms, with players who do not over-plant (optimistic income): the content must still last
+  'pigrooms sane': (d) => { d.pigrooms = true; d.sane = true; return d; },
+  'baseline sane': (d) => { d.sane = true; return d; },
+  // everything: pig rooms + shared bedroom (3+ pigs) + item colours + the garden run
+  'full': (d) => { d.pigrooms = true; d.dorm = true; d.colours = true; d.run = true; return d; },
+  'full sane': (d) => { d.pigrooms = true; d.dorm = true; d.colours = true; d.run = true; d.sane = true; return d; },
 };
 
 function buildShopList(d) {
@@ -79,8 +87,35 @@ function buildShopList(d) {
   push('park:L2', P('park').levels[1].cost, 'level');
   push('big_stall', d.market.stall_upgrades[0].cost, 'stall');
   for (const c of d.farm.crops.filter((c) => c.kind === 'perennial')) push('sapling_' + c.id, c.seed_price, 'sapling', { crop: c.id });
-  const rest = [...d.world.items.filter((i) => i.price > 0).map((i) => ({ k: i.id, cost: i.price, kind: 'item' })), ...decorOld.map((i) => ({ k: i.id, cost: i.price, kind: 'item' }))].sort((a, b) => a.cost - b.cost);
-  // interleave: items are bought as money allows, but the structural list keeps its order
+  if (d.pigrooms) {
+    const pr = d.pigRooms, lvls = pr.template.levels;
+    const pigs = d.pigsNamed.pigs.map((p) => p.id);
+    const at = (key, arr) => { const i = list.findIndex((x) => x.k === key); list.splice(i + 1, 0, ...arr); };
+    const L = (pig, n) => ({ k: 'pigroom:' + pig + ':L' + n, cost: lvls[n - 1].cost, kind: 'pigroom', pig });
+    at('pack2', pigs.slice(0, 2).map((p) => L(p, 2)));
+    at('playroom', pigs.slice(2).map((p) => L(p, 2)));
+    at('park:L2', pigs.map((p) => L(p, 3)));
+    if (d.dorm) {
+      const dl = pr.dorm.levels;
+      at('pigroom:ned:L2', [{ k: 'dorm', cost: pr.dorm.unlock_cost, kind: 'dorm', needPigs: 3 }]);
+      at('garden:L2', [{ k: 'dorm:L2', cost: dl[1].cost, kind: 'dorm', req: 'dorm' }]);
+      at('big_stall', [{ k: 'dorm:L3', cost: dl[2].cost, kind: 'dorm', req: 'dorm' }]);
+    }
+    if (d.run) at('garden', [{ k: 'run:gate', cost: d.world.items.find((i) => i.id === 'gate_garden').price, kind: 'run', req: 'garden' }, { k: 'run:fence', cost: 16 * d.world.items.find((i) => i.id === 'fence_wood').price, kind: 'run', req: 'garden' }]);
+  }
+  const rest0 = [...d.world.items.filter((i) => i.price > 0 && i.id !== 'gate_garden').map((i) => ({ k: i.id, cost: i.price, kind: 'item' })), ...decorOld.map((i) => ({ k: i.id, cost: i.price, kind: 'item' }))].sort((a, b) => a.cost - b.cost);
+  const rest = rest0;
+  if (d.pigrooms) {
+    // furnishing: one copy of every purchasable house item per pig room (a room holds at most one set of this size), bought when the pig exists
+    const furn = d.world.items.filter((i) => i.place.includes('house') && i.price > 0 && !i.signature_of && !i.prop_of);
+    for (const pig of d.pigsNamed.pigs.map((p) => p.id)) for (const i of furn) rest.push({ k: 'furn:' + pig + ':' + i.id, cost: i.price, kind: 'item', pig });
+    if (d.dorm) for (const i of furn) rest.push({ k: 'furn:dorm:' + i.id, cost: i.price, kind: 'item', req: 'dorm' });
+  }
+  if (d.colours) {
+    const pct = d.homeEco.variants.unlock_percent / 100, mn = d.homeEco.variants.min_price;
+    for (const i of d.world.items.filter((i) => i.recolor && i.price > 0)) rest.push({ k: 'colour:' + i.id, cost: 3 * Math.max(mn, Math.ceil(i.price * pct)), kind: 'item', colourOf: i.id });
+  }
+  rest.sort((a, b) => a.cost - b.cost);
   return { structural: list, items: rest };
 }
 
@@ -88,13 +123,17 @@ function simulate(d, prof, seed, o) {
   const R = rng(seed), M = d.market;
   const shop = buildShopList(d);
   const owned = new Set(), clovers = { v: 30 }; let decorWallet = 0;
+  // pigs: the two starters are free at day 0, the others are offers (days from pigs_named.json) that cost 100 clovers
+  const adopted = new Set(d.pigrooms ? d.pigsNamed.pigs.filter((p) => p.offer.cost === 0).map((p) => p.id) : []);
+  const offers = d.pigrooms ? d.pigsNamed.pigs.filter((p) => p.offer.cost > 0) : [];
+  const upkeep = o.pigUpkeep ?? 3; // clovers per day for each pig beyond the first two (food, hay, vet), assumption
   let plots = 0, orchardSlots = 0, hasFarm = false, stallBonus = 0;
   const plotState = []; // {crop, plantedAt, watered}
   const orchard = [];   // {crop, nextAt, stock}
   const inv = {};       // item -> count
   let harvests = 0, totalSpent = 0, totalContent = 0;
   const contentTotal = shop.structural.reduce((a, b) => a + b.cost, 0) + shop.items.reduce((a, b) => a + b.cost, 0);
-  const milestones = { 0.25: null, 0.5: null, 0.75: null, 1: null, garden: null, farm: null, park: null, allPlaces: null };
+  const milestones = { 0.25: null, 0.5: null, 0.75: null, 1: null, garden: null, farm: null, park: null, allPlaces: null, firstRoomL2: null, allRoomL3: null, dorm: null };
   const dem = {}; const stats = { farmSales: 0, orderSales: 0, capDays: 0, capHit: 0, foodSaved: 0, baseIncome: 0, seedCost: 0, capDaysArr: [], earnedByDay: [] };
   const crops = d.farm.crops;
   const cropBy = {}; crops.forEach((c) => (cropBy[c.id] = c));
@@ -112,6 +151,8 @@ function simulate(d, prof, seed, o) {
     clovers.v += gain; stats.baseIncome += gain;
     // existing shop habits: part of the income goes to things that exist today (toys, food, vet), not to the world content
     const otherSpend = play ? gain * (o.otherShare ?? 0.2) : 0; clovers.v -= otherSpend;
+    for (const of of offers) if (!adopted.has(of.id) && day >= of.offer.after_days && clovers.v >= of.offer.cost + 30) { clovers.v -= of.offer.cost; adopted.add(of.id); }
+    if (play && adopted.size > 2) clovers.v -= (adopted.size - 2) * upkeep;
     // orders for the day
     const orders = [];
     if (M.orders.per_day > 0 && harvests >= M.orders.unlock_harvests) {
@@ -155,6 +196,8 @@ function simulate(d, prof, seed, o) {
         const pc = plantable();
         for (let i = 0; i < plots; i++) {
           if (plotState[i]) continue; if (!pc.length) break;
+          // a sensible player does not keep planting when the barn is full (the market only buys ~30 clovers a day); the baseline keeps its published behaviour
+          if (d.sane && Object.keys(inv).reduce((a, id) => a + (cropBy[id] ? inv[id] : 0), 0) >= 14) break;
           let c;
           if (prof.smart) c = pc.slice().sort((a, b) => (b.yield * b.sell_price * (b.item in dem ? dem[b.item] : 1) - b.seed_price) / b.grow_minutes - (a.yield * a.sell_price * (a.item in dem ? dem[a.item] : 1) - a.seed_price) / a.grow_minutes)[0];
           else if (prof.optimizer) c = pc.slice().sort((a, b) => (b.yield * b.sell_price - b.seed_price) / b.grow_minutes - (a.yield * a.sell_price - a.seed_price) / a.grow_minutes)[0];
@@ -177,18 +220,23 @@ function simulate(d, prof, seed, o) {
       if (s.kind === 'orchard') orchardSlots++;
       if (s.kind === 'sapling') orchard.push({ crop: s.crop, nextAt: day * 1440 + prof.visits[0] + cropBy[s.crop].grow_minutes, stock: 0 });
       for (const m of ['garden', 'farm', 'park']) if (s.k === m && !milestones[m]) milestones[m] = day + 1;
+      if (s.kind === 'pigroom' && s.k.endsWith(':L2') && !milestones.firstRoomL2) milestones.firstRoomL2 = day + 1;
+      if (s.k === 'dorm' && !milestones.dorm) milestones.dorm = day + 1;
+      if (d.pigrooms && !milestones.allRoomL3 && d.pigsNamed.pigs.every((p) => owned.has('pigroom:' + p.id + ':L3'))) milestones.allRoomL3 = day + 1;
       const frac = totalSpent / contentTotal; for (const q of [0.25, 0.5, 0.75, 1]) if (!milestones[q] && frac >= q - 1e-9) milestones[q] = day + 1;
     };
     for (let guard = 0; guard < 8; guard++) {
-      const s = shop.structural.find((x) => !owned.has(x.k) && !((x.kind === 'pack' || x.kind === 'orchard') && !hasFarm) && !(x.kind === 'sapling' && orchardSlots <= orchard.length) && !((x.k === 'farm' || x.k === 'park') && !owned.has('garden')));
+      const s = shop.structural.find((x) => !owned.has(x.k) && !((x.kind === 'pack' || x.kind === 'orchard') && !hasFarm) && !(x.kind === 'sapling' && orchardSlots <= orchard.length) && !((x.k === 'farm' || x.k === 'park') && !owned.has('garden')) && !(x.pig && !adopted.has(x.pig)) && !(x.req && !owned.has(x.req)) && !(x.needPigs && adopted.size < x.needPigs));
       if (!s || clovers.v < s.cost + 30) break;
       clovers.v -= s.cost; buy(s);
     }
     for (let guard = 0; guard < 8; guard++) {
-      const s = shop.items.find((x) => !owned.has(x.k) && x.cost <= decorWallet);
+      const s = shop.items.find((x) => !owned.has(x.k) && x.cost <= decorWallet && !(x.pig && !adopted.has(x.pig)) && !(x.req && !owned.has(x.req)));
       if (!s) break;
       decorWallet -= s.cost; buy(s);
     }
+    // when nothing is left to buy with the decor wallet, the money goes back to the main purse (only in the pig room variants; the baseline keeps its published numbers)
+    if (d.pigrooms && decorWallet > 0 && !shop.items.some((x) => !owned.has(x.k) && !(x.pig && !adopted.has(x.pig)) && !(x.req && !owned.has(x.req)))) { clovers.v += decorWallet; decorWallet = 0; }
     if (!milestones.allPlaces && owned.has('garden') && owned.has('farm') && owned.has('park') && owned.has('bedroom') && owned.has('playroom')) milestones.allPlaces = day + 1;
     stats.earnedByDay.push(gain + dayFarm);
   }
@@ -200,14 +248,14 @@ function runVariant(name, other) {
   const d = VARIANTS[name](clone(base));
   const out = {};
   for (const [pn, prof] of Object.entries(PROFILES)) {
-    const agg = { m: { 0.25: [], 0.5: [], 1: [], garden: [], farm: [], park: [], allPlaces: [] }, farmSales: 0, farmShare: 0, capShare: 0, saved: 0, benefit: 0, spent: 0, sold: 0 };
+    const agg = { m: { 0.25: [], 0.5: [], 1: [], garden: [], farm: [], park: [], allPlaces: [], firstRoomL2: [], allRoomL3: [], dorm: [] }, farmSales: 0, farmShare: 0, capShare: 0, saved: 0, benefit: 0, spent: 0, sold: 0 };
     for (let r = 0; r < RUNS; r++) {
       const res = simulate(d, prof, 1000 + r * 7919 + pn.length, other || {});
       for (const k of Object.keys(agg.m)) agg.m[k].push(res.milestones[k] ?? Infinity);
-      agg.farmSales += res.stats.avgFarmSales; agg.farmShare += res.stats.farmShare; agg.capShare += res.stats.capShare; agg.saved += res.stats.foodSaved / DAYS; agg.benefit += (res.stats.farmSales + res.stats.foodSaved) / (res.stats.farmSales + res.stats.foodSaved + res.stats.baseIncome); agg.spent += res.spent / res.contentTotal;
+      agg.farmSales += res.stats.avgFarmSales; agg.farmShare += res.stats.farmShare; agg.capShare += res.stats.capShare; agg.saved += res.stats.foodSaved / DAYS; agg.benefit += (res.stats.farmSales + res.stats.foodSaved) / (res.stats.farmSales + res.stats.foodSaved + res.stats.baseIncome); agg.spent += res.spent / res.contentTotal; agg.total = res.contentTotal;
     }
     const med = (a) => { const s = a.slice().sort((x, y) => x - y); const v = s[Math.floor(s.length / 2)]; return v === Infinity ? '>' + DAYS : v; };
-    out[pn] = { garden: med(agg.m.garden), farm: med(agg.m.farm), park: med(agg.m.park), places: med(agg.m.allPlaces), c50: med(agg.m[0.5]), c100: med(agg.m[1]), farmSales: agg.farmSales / RUNS, farmShare: agg.farmShare / RUNS, capShare: agg.capShare / RUNS, saved: agg.saved / RUNS, benefit: agg.benefit / RUNS, done: agg.spent / RUNS };
+    out[pn] = { garden: med(agg.m.garden), farm: med(agg.m.farm), park: med(agg.m.park), places: med(agg.m.allPlaces), c50: med(agg.m[0.5]), c25: med(agg.m[0.25]), c100: med(agg.m[1]), firstRoomL2: med(agg.m.firstRoomL2), allRoomL3: med(agg.m.allRoomL3), dorm: med(agg.m.dorm), contentTotal: 0, farmSales: agg.farmSales / RUNS, farmShare: agg.farmShare / RUNS, capShare: agg.capShare / RUNS, saved: agg.saved / RUNS, benefit: agg.benefit / RUNS, done: agg.spent / RUNS, contentTotal: agg.total };
   }
   return out;
 }
@@ -219,8 +267,9 @@ if (require.main === module) {
   for (const n of names) {
     results[n] = runVariant(n);
     console.log('\n== ' + n + ' (' + RUNS + ' runs, ' + DAYS + ' days)');
+    const extra = /^(pigrooms|full)/.test(n);
     console.log('profile  garden farm park allPlaces 50%  100%   sales/day saved/day  benefit%   cap days  content bought');
-    for (const [pn, r] of Object.entries(results[n])) console.log(pn.padEnd(8), String(r.garden).padStart(6), String(r.farm).padStart(4), String(r.park).padStart(4), String(r.places).padStart(9), String(r.c50).padStart(4), String(r.c100).padStart(5), r.farmSales.toFixed(1).padStart(9), r.saved.toFixed(1).padStart(9), (r.benefit * 100).toFixed(0).padStart(8) + '%', (r.capShare * 100).toFixed(0).padStart(8) + '%', (r.done * 100).toFixed(0).padStart(12) + '%');
+    for (const [pn, r] of Object.entries(results[n])) console.log(pn.padEnd(8), String(r.garden).padStart(6), String(r.farm).padStart(4), String(r.park).padStart(4), String(r.places).padStart(9), String(r.c50).padStart(4), String(r.c100).padStart(5), r.farmSales.toFixed(1).padStart(9), r.saved.toFixed(1).padStart(9), (r.benefit * 100).toFixed(0).padStart(8) + '%', (r.capShare * 100).toFixed(0).padStart(8) + '%', (r.done * 100).toFixed(0).padStart(12) + '%' + (extra ? '   25%:' + r.c25 + ' firstRoomL2:' + r.firstRoomL2 + ' allRoomL3:' + r.allRoomL3 + ' dorm:' + r.dorm + ' total:' + r.contentTotal : ''));
   }
   if (args.includes('--sweep')) {
     console.log('\n== sweep: how much of the income goes to other shops (existing items) and how much to decor');
@@ -228,6 +277,34 @@ if (require.main === module) {
       const r = runVariant('baseline', other);
       console.log(label.padEnd(10), ['casual', 'regular', 'heavy'].map((p) => p + ': garden ' + r[p].garden + ', park ' + r[p].park + ', 50% ' + r[p].c50).join(' | '));
     }
+  }
+  if (args.includes('--check') && only && /^(pigrooms|full)/.test(only)) {
+    // Home extras (pig rooms, shared bedroom, colours, run). Two player models: the stress model (default planting, players over-plant and starve their budget)
+    // and the 'sane' model. Pacing is judged on 'sane', "not stuck" on the stress model. Numbers: docs/PIG_ROOMS.md section 10.
+    const kind = only.startsWith('full') ? 'full' : 'pigrooms';
+    const sane = runVariant(kind + ' sane'), stress = runVariant(kind), b0 = runVariant('baseline');
+    const probs = [], chk = (c, m) => { if (!c) probs.push(m); };
+    const num = (v) => (typeof v === 'number' ? v : Infinity);
+    for (const p of ['casual', 'regular']) chk(String(sane[p].c100).startsWith('>'), p + ': buys all content within a year (sane model)');
+    chk(num(sane.heavy.c100) >= 300, 'heavy buys all content before day 300 (sane model)');
+    chk(num(sane.regular.c50) >= 180 && num(sane.regular.c50) <= 330, 'regular reaches half of the content outside days 180-330 (sane): ' + sane.regular.c50);
+    chk(num(sane.casual.c50) >= 300, 'casual reaches half of the content before day 300 (sane)');
+    chk(num(sane.heavy.c50) >= 100, 'heavy reaches half of the content before day 100 (sane)');
+    chk(num(sane.regular.firstRoomL2) <= 100, 'regular buys the first pig room level 2 after day 100 (sane): ' + sane.regular.firstRoomL2);
+    chk(num(sane.regular.park) >= 40 && num(sane.regular.park) <= 130, 'regular buys the park outside days 40-130 (sane): ' + sane.regular.park);
+    if (kind === 'full') {
+      chk(num(sane.regular.dorm) <= 200 && num(sane.casual.dorm) <= 300, 'the shared bedroom comes too late (regular <= 200, casual <= 300, sane)');
+      chk(num(sane.regular.dorm) >= 105, 'the shared bedroom is bought before three pigs exist');
+    }
+    for (const p of ['casual', 'regular', 'heavy']) chk(String(stress[p].c100).startsWith('>'), p + ': buys all content within a year (stress model)');
+    chk(num(stress.regular.garden) >= 5 && num(stress.regular.garden) <= 12, 'regular garden outside days 5-12 (stress)');
+    chk(num(stress.regular.farm) >= 10 && num(stress.regular.farm) <= 30, 'regular farm outside days 10-30 (stress)');
+    chk(num(stress.regular.firstRoomL2) <= 120, 'regular first pig room level 2 after day 120 (stress): ' + stress.regular.firstRoomL2);
+    const extraSink = stress.regular.contentTotal - b0.regular.contentTotal;
+    chk(extraSink >= 15000 && extraSink <= 30000, 'new sinks ' + Math.round(extraSink) + ' outside 15000-30000');
+    console.log('new sinks vs baseline: ' + Math.round(extraSink) + ' clovers (total content ' + Math.round(stress.regular.contentTotal) + ')');
+    console.log(probs.length ? '\nCHECK FAILED:\n' + probs.join('\n') : '\nCHECK OK');
+    process.exit(probs.length ? 1 : 0);
   }
   if (args.includes('--check')) {
     const b = results.baseline || runVariant('baseline');

@@ -82,7 +82,7 @@ Wszystkie obecne źródła i limity z `assets/data/economy.json` zostają bez zm
 
 ### 4.3 Skład, adopcja, koszty
 - Para startowa: **0 koniczynek**. James, Glen, Racuch: **100 koniczynek** każda (`offer.cost`), czyli ok. 1-2 dni typowej gry; kupno jest zawsze dobrowolne.
-- Losowa adopcja zostaje (80 koniczynek, `adopt_cost`), najwyżej 2 losowo adoptowane (`max_adopted` w `pigs.json`). Skład: 5 z kolekcji + 2 losowe = 7; `max_roster` w `pigs.json` rośnie do 7.
+- Losowa adopcja zostaje (80 koniczynek, `adopt_cost`; **świnki w etapie Legenda i w trybie pamięci nie liczą się do limitu składu ani do `max_adopted`**, więc nic się nie blokuje, gdy starsze odchodzą na emeryturę), najwyżej 1 losowo adoptowana (`max_adopted` w `pigs.json`). Skład: 5 z kolekcji + 1 losowa = 6; `max_roster` w `pigs.json` zostaje 6 (limit mieszkańców sypialni też 6).
 - Świnki poza pulpitem nie kosztują nic: nie mają własnych potrzeb (wspólne potrzeby, pkt 1.2), ich wiek tylko płynie.
 - Przełączanie aktywnych świnek jest darmowe. Mnożniki liczą się od razu po zmianie.
 - Adopcja w trybie pamięci jest **zawsze darmowa i natychmiastowa** (pkt 5), także dla ofert, które jeszcze się nie odblokowały.
@@ -144,5 +144,5 @@ Do potwierdzenia (domyślne wartości są w `pigs_named.json`, strojone bez zmia
 1. Terminy ofert (90/105/130 dni) i cena 100 koniczynek.
 2. Zakresy Legend (Kuki 6,0-7,5, Ned 7,0-9,5, reszta 6,5-9,5 l.).
 3. Zapisy z dotychczasową świnką: zostaje jako adoptowana, para jest w ofercie od razu.
-4. Limit 2 losowo adoptowanych (skład do 7).
+4. Limit 1 losowo adoptowanej (skład do 6) - DECYZJA PODJĘTA.
 5. Włączenie pętli Julesa: **nie dotyczy tej sesji**; nowa pętla w Antigravity jest wdrażana osobno.

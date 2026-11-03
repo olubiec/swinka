@@ -180,4 +180,8 @@ Legenda i paleta są zamrożone po zatwierdzeniu. Zmiany tylko przez właścicie
 6. **Zewnętrzne ognie:** pochodnie, kosz z żarem i latarnie ze świecą tylko w ogrodzie/parku, nigdy przy słomie i sianie, zawsze za osłoną. Rekomendacja: tak.
 7. **Kolejność paczek** z pkt 11. Rekomendacja: P0, P1, P2 (światło przed meblami, bo wszystko od niego zależy), potem P3-P9.
 
+**Decyzja 2026-11-03: pkt 1-7 przyjęte zgodnie z rekomendacjami (właściciel zlecił decyzje Claude'owi; weto możliwe przy pierwszym teście na Windows).**
+
+**Mapowanie nowych elementów (pokoje świnek, sypialnia, wybieg, rekwizyty, sklep) do paczek:** brief `docs/DESIGNER_BRIEF.md` używa nazw H0-H3 (to nie są paczki P). H0 (13 ikon indeksy 161-173) → P8 Ikony; H1 (5 rzeczy podpisowych 2x2, 10 kafli skórek pokoi) → P3 Dom; H2 (furtka `gate_garden` → P4 Ogród, cztery rekwizyty `prop_*` → P3 Dom/P4 Ogród); H3 (opcjonalne: rama planu domu, zestaw pokoju pamięci, legowisko sypialni, kafel wybiegu) → P9 Interfejs / P3 Dom. Panele tacki, planu domu i sklepu → P9 Interfejs.
+
 **Po akceptacji pkt 1-7 nic więcej do ustalenia nie zostaje.** Zaczynam od P0 (próbki: sofa-bochenek, kominek włączony/wyłączony, lampa-grzybek, tunel z wierzby, stragan, tło ogrodu wieczorem; każda obok świnki i pod trzema oświetleniami).

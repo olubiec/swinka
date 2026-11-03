@@ -1,6 +1,6 @@
 # W14-09: Patch2 color from NamedPigCatalog in PigPalette and PixelArtGenerator
 Zmieniaj: src/Cuy/dotNet/Sprite/PigPalette.cs, src/Cuy/dotNet/Sprite/PixelArtGenerator.cs
-Wymagane: src/Cuy.Core/Pigs/NamedPigCatalog.cs, assets/data/named_pigs.json
+Wymagane: src/Cuy/dotNet/Sprite/PigPalette.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ zadanie do końca.
 Nie ruszaj: src/Cuy.Core/*, web/*, AGENTS.md, docs/*, tasks/*

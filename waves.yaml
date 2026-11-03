@@ -772,11 +772,11 @@ waves:
     - tests/Cuy.Core.Tests/HomeEconomyConfigTests.cs
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
   - id: W23-08
-    title: 'W23-08: Economy simulator: pig rooms variant and checks'
-    prompt_file: docs/prompts/W23-08-economy-sim-pigrooms.md
+    title: 'W23-08: Test: pig room data keeps the economy invariants'
+    prompt_file: docs/prompts/W23-08-pig-room-invariants.md
     files:
-    - tools/qa/economy-sim.js
-    test_command: 'node tools/qa/economy-sim.js --runs 12 --variant baseline --check && node tools/qa/economy-sim.js --runs 12 --variant pigrooms --check'
+    - tests/Cuy.Core.Tests/PigRoomInvariantsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 - id: W23b
   tasks:
   - id: W23-03
@@ -1197,12 +1197,6 @@ waves:
     - web/home/features/store/feature.css
     - web/home/features/index.json
     test_command: 'node --check web/home/features/store/feature.js && node tools/qa/web-smoke.js'
-  - id: W30-06
-    title: 'W30-06: Economy simulator: every home sink, with checks'
-    prompt_file: docs/prompts/W30-06-economy-sim-complete.md
-    files:
-    - tools/qa/economy-sim.js
-    test_command: 'node tools/qa/economy-sim.js --runs 12 --variant baseline --check && node tools/qa/economy-sim.js --runs 12 --variant pigrooms --check && node tools/qa/economy-sim.js --runs 12 --variant full --check'
   - id: W30-07
     title: 'W30-07: Data checks and SelfTest for the home extras'
     prompt_file: docs/prompts/W30-07-data-checks-selftest.md
@@ -1219,6 +1213,12 @@ waves:
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
 - id: W30b
   tasks:
+  - id: W30-06
+    title: 'W30-06: Test: the store total matches the simulator and nothing can be sold'
+    prompt_file: docs/prompts/W30-06-home-store-totals.md
+    files:
+    - tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
   - id: W30-03
     title: 'W30-03: StoreFeature: state and the purchase message'
     prompt_file: docs/prompts/W30-03-store-feature.md
