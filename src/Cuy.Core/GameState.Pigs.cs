@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cuy.Core.Pigs;
 
@@ -7,11 +8,14 @@ namespace Cuy.Core
     {
         public List<PigProfile> Roster { get; set; } = new List<PigProfile>();
         public List<string> ActivePigIds { get; set; } = new List<string>();
+        public DateTime? OffersStartUtc { get; set; }
+        public HashSet<string> OffersSeen { get; set; } = new HashSet<string>();
 
         public void EnsureRosterInitialized()
         {
             if (Roster == null) Roster = new List<PigProfile>();
             if (ActivePigIds == null) ActivePigIds = new List<string>();
+            if (OffersSeen == null) OffersSeen = new HashSet<string>();
 
             if (Roster.Count == 0)
             {
