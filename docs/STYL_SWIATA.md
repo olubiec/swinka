@@ -1,6 +1,6 @@
 # Legenda stylu Cuya: „domek z siana" (wersja robocza 1, do zatwierdzenia)
 
-Status: **PROJEKT, czeka na zatwierdzenie właściciela.** Po zatwierdzeniu legenda jest zamrożona: zmienia ją tylko właściciel, a każda paczka (pkt 11) jest z nią sprawdzana linterem i przeglądem. Paleta: `assets/data/style_palette.json`, podgląd: `docs/album/stylbook/paleta.png`.
+Status: **PROJEKT (wersja 2, po referencjach i systemie światła), czeka na zatwierdzenie właściciela.** Po zatwierdzeniu legenda jest zamrożona: zmienia ją tylko właściciel, a każda paczka (pkt 11) jest z nią sprawdzana linterem i przeglądem. Paleta: `assets/data/style_palette.json`, podgląd: `docs/album/stylbook/paleta.png`.
 
 ## 0. Jedno zdanie
 **Ciepły, trochę lofi, vintage'owy domek świnki: popołudniowe światło lampy i świecy na drewnie, sianie i dzianinie. Miękko, przytulnie, trochę wyblakłe jak stara pocztówka.** Nic nie krzyczy, nic nie jest czysto czerwone, niebieskie ani zielone.
@@ -89,6 +89,7 @@ Referencje (`docs/reference/world/`) pokazują, że klimat robi **kontrast: ciem
 | Kamień | linen[0-1] + plum[3] | nieregularne, mech w szczelinach |
 
 ## 6. Motywy własne i zakazy
+**Z referencji (dodane w wersji 2):** dywany z obwódką, frędzlami i wzorem (kilim, orientalny, włóczkowy rombowy), koc z frędzlami, pufa z baranka/boucle, faliste lustro, ramy z plakatami na ścianie (galeria: plakaty w stylu wycinanek z liśćmi, łapką, siankiem i napisem "better days are coming"), płyty winylowe, gramofon, pnącza (pothos, monstera) na półkach, koronkowa firanka z promieniem słońca, żaluzje z paskami światła na podłodze, lampa mosiężna z abażurem, bambusowa lampa podłogowa, półki z książkami, kaloryfer. Wszystko w skali świnki.
 **Rodzina motywów (używać):** siano i wiązki siana, marchewka, pęk pietruszki, łapka, serduszko-nosek, okrągły łuk, bochenek, filcowa łatka, drewniana skrzynka, mała lampka, świeca w słoiku, kubek z parą, gramofon i kaseta (lofi), roślina doniczkowa, grzejnik z kratką, sznur lampek.
 **Zakazy (nie wolno się pojawić):** markiza w czerwono-białe pasy, obrus w czystą kratkę czerwono-białą (kratka w ciepłym brązie i kremie, jako patchwork lub dywan z włóczki, jest dozwolona, patrz ref_05, ref_06), drzewo-lizak (okrągła korona o jednym kolorze), równy rząd tulipanów, klasyczna biała fontanna, czerwona stodoła jak z pocztówki, szara kostka brukowa, błękitne niebo bez gradientu paletowego, równy szum trawy, meble w skali człowieka.
 **Test sztampy:** jeśli element można zastąpić gotowym przedmiotem z dowolnej paczki „cozy pixel pack" bez zmiany wyglądu, jest za generyczny i do przeróbki.
@@ -139,10 +140,13 @@ Każde miejsce ma: dominującą rampę, jedno źródło światła, jeden „znak
 - Ikony 0-119 (starsze) są wzorcem; 120-160 mają być dopasowane do nich.
 - Interfejs web (CSS) należy do kodu: grafika dostarcza ramki, tło „papier + drewno" i ikony w tym stylu jako pliki, kod ich używa. Szczegóły w paczce P9.
 
-## 10. Materiały referencyjne
-- **Lista wzorców stylu do zatwierdzenia:** świnki Cuya (arkusze, portrety), ikony 0-119, paleta z pkt 2.
-- **Źródła inspiracji znalezione przez przegląd:** palety Lospec o ciepłym, lofi charakterze (#homeyhoney, #goldenflame, #miyazaki16, Warm32 od hyenabyte, Light Academia 8) jako kierunek nasycenia i kontrastu; paczki „Cozy Room" na itch.io (toffeecraft, paowieepixel) i OpenGameArt jako przykłady, **czego unikać** (generyczność) oraz jako punkt odniesienia dla skali 16x16.
-- **Zdjęcia prawdziwych świnek i klatek (wiklinowe tunele, domki z drewna, siano, dzianinowe legowiska):** wyszukiwanie dało tylko opisy tekstowe; pobieranie zdjęć jest zablokowane przez sieć sesji. Zdjęcia dostarcza właściciel (patrz pkt 13).
+## 10. Materiały referencyjne (`docs/reference/world/ref_01..09.jpg`, opis w README tamże)
+Dziewięć zrzutów od właściciela (moodboard). Co z nich bierzemy, a czego nie:
+- **Bierzemy:** (1) ciemne otoczenie i 1-3 kałuże ciepłego światła; (2) drewno wszędzie (podłogi, półki, listwy, ramy); (3) tekstylia z wzorem i frędzlami (dywany, koce, firanki); (4) rośliny zwisające i duże liście; (5) płyty, gramofon, galeria ramek; (6) szkło bursztynowe, mosiądz, abażury; (7) akcenty: rdza/terakota, oliwka/szałwia, bordo, krem; (8) zaokrąglone, organiczne kształty (pufa, grzybek, faliste lustro, kula-lampa).
+- **Nie bierzemy:** beton i industrial (ref_09 sufit), meble w skali człowieka (łóżka, biurka), ozdobne żyrandole i rzeźbione lustra jako pełna skala (tylko jako mały akcent), zbyt ciemny "dark academia" w pełnej wersji (ref_03, ref_08) jako ogólny poziom jasności.
+- **Czy paleta to pokrywa:** tak. Rdza = brick[2]/flame[0]; oliwka i szałwia = moss; bordo = brick[0]/berry; ciemna zieleń ścian = moss[0]/dusk[0]; bursztyn lamp = flame; krem = linen. Nie dodaję kolorów.
+- **Ograniczenie:** to inspiracja nastrojem, nie wzorzec do obrysowywania. Część zrzutów jest oznaczona jako zmodyfikowana przez AI; pliki są pomniejszone i służą wyłącznie do wewnętrznego moodboardu. Repozytorium powinno być prywatne.
+- **Dodatkowe źródła tekstowe:** palety Lospec #homeyhoney, #goldenflame, #miyazaki16, Warm32, Light Academia 8 (nie pobrane, sieć sesji je blokuje).
 
 ## 11. Paczki (kolejność, zawartość, kryteria)
 Zasada: **każda paczka przechodzi lint stylu, podgląd ze świnką w skali i przegląd właściciela przed następną.** Ścieżki plików i formaty bez zmian (`docs/KONTRAKT_ASSETOW.md`).
@@ -151,7 +155,7 @@ Zasada: **każda paczka przechodzi lint stylu, podgląd ze świnką w skali i pr
 | --- | --- | --- |
 | **P0 Legenda i próbki** | ta legenda, `style_palette.json`, 6 próbek ręcznych: sofa, kominek, tunel z wierzby, drzewo, stragan, kawałek tła ogrodu wieczorem; każda obok świnki | akceptacja właściciela |
 | **P1 Materiały i narzędzia** | `tools/art/handart.py` (mapy pikseli z indeksami palety), `style_check.py` (lint), tekstury kafelkowe: deski, siano, wiklina, dzianina, karton, ziemia, trawa, woda, kamień | lint 0 naruszeń, tekstury w podglądzie |
-| **P2 Światło i płomienie** | animacje płomienia (świeca, latarnia, kominek, żarówka), maski blasku, snopy światła z okna, cząsteczki kurzu; zestawy 4 pór dnia dla każdej sceny | płomień 4 klatki, blask 3 stopnie |
+| **P2 Światło i płomienie** | system z pkt 3: `lights.json`, sprite'y "wyłączony/włączony" dla wszystkich źródeł (lampy, grzybek, łukowa, lampion, solna, lava, kominek, świeca, sznur lampek, pochodnia, lampa naftowa, latarnia, lampa parkowa, kosz z żarem), animacje płomienia i lawy, maski snopów, cząsteczki kurzu w świetle, ambient 4 pór dnia; zrzuty demo każdej sceny przy każdym oświetleniu | każda scena po przetworzeniu światłem ma tylko kolory palety, płomień 4 klatki |
 | **P3 Dom** | 14+ przedmiotów, kominek, gramofon, kubek, tapety i podłogi 4 wariantów, tła 3 pokoi | lista z pkt 8 |
 | **P4 Ogród** | 14+ przedmiotów, 4 tła pór dnia, kafelki trawy, wody i płotka | lista z pkt 8 |
 | **P5 Park** | 12+ przedmiotów, 4 tła, kafelki | lista z pkt 8 |
@@ -164,7 +168,16 @@ Zasada: **każda paczka przechodzi lint stylu, podgląd ze świnką w skali i pr
 ## 12. Lint stylu (`tools/art/style_check.py`, P1)
 Sprawdza dla każdego pliku świata: (1) wszystkie kolory z `style_palette.json` (tolerancja 0, wyjątki: przezroczystość), (2) brak kolorów zakazanych, (3) limit nasycenia poza flame, (4) kontur `#3a1d17` na pikselach graniczących z przezroczystością dla pierwszego planu, (5) rozmiary i liczba klatek zgodne z kontraktem, (6) brak pasów czerwono-białych i kratki (wykrywanie wzorca na krótkim okresie), (7) cień kontaktowy dla przedmiotów warstwy `floor`/`ground`. Wynik w kontroli `tools/qa`.
 
-## 13. Proces zmian i czego potrzebuję od właściciela
-- Legenda i paleta są zamrożone po zatwierdzeniu. Zmiany tylko przez właściciela (wpis w tej sekcji z datą).
-- **Do zatwierdzenia:** (a) nazwa i nastrój, (b) paleta 42 kolorów, (c) lista zakazów, (d) lista „znaków rozpoznawczych" miejsc, (e) kolejność paczek.
-- **Pomoże:** 5-10 zdjęć lub zrzutów, które pasują do klimatu (prawdziwe domki, kominki, lampki, ulubione gry lofi), wrzucone do `docs/reference/world/`. Można też dopuścić w ustawieniach sieci sesji hosty ze zdjęciami (np. lospec.com, upload.wikimedia.org), wtedy pobiorę je sam.
+## 13. Proces zmian i otwarte decyzje
+Legenda i paleta są zamrożone po zatwierdzeniu. Zmiany tylko przez właściciela (wpis tu z datą).
+
+**Do zatwierdzenia (z moją rekomendacją):**
+1. Nastrój "domek z siana", paleta 42 kolorów, lista zakazów, znaki rozpoznawcze miejsc. **Rekomendacja: zatwierdzić.**
+2. **Lampy:** gracz włącza ręcznie, a domyślnie o zmierzchu zapalają się same (każdą można wyłączyć; wyłączona zostaje wyłączona). Rekomendacja: tak.
+3. **Światło na świnkach:** świnki są oświetlane tym samym ambientem i światłami (mnożenie i barwa), ale **bez kwantyzacji do palety świata** (mają własne maści); tylko dither. Okno Pulpit (świnka na pasku zadań) **bez** światła świata. Rekomendacja: tak.
+4. **Skala renderu:** światło liczone na rozdzielczości logicznej (1x), potem skalowanie najbliższym sąsiadem, dla stabilnego ditheru i szybkości. Rekomendacja: tak.
+5. **Budżet paczki:** wersje włączony/wyłączony, 4 pory dnia i maski zwiększą `assets/` (dziś 51 MB, limit 60 MB). Rekomendacja: usunąć pliki `_x2` świata i skalować w grze (nearest), co zwalnia ok. połowę rozmiaru świata.
+6. **Zewnętrzne ognie:** pochodnie, kosz z żarem i latarnie ze świecą tylko w ogrodzie/parku, nigdy przy słomie i sianie, zawsze za osłoną. Rekomendacja: tak.
+7. **Kolejność paczek** z pkt 11. Rekomendacja: P0, P1, P2 (światło przed meblami, bo wszystko od niego zależy), potem P3-P9.
+
+**Po akceptacji pkt 1-7 nic więcej do ustalenia nie zostaje.** Zaczynam od P0 (próbki: sofa-bochenek, kominek włączony/wyłączony, lampa-grzybek, tunel z wierzby, stragan, tło ogrodu wieczorem; każda obok świnki i pod trzema oświetleniami).
