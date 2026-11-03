@@ -121,3 +121,7 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 
 ## B5 – ogród (przebudowa)
 - 17 przedmiotów ogrodu w stylu domku z siana (rośliny, konstrukcje, woda i zabawa, dodatki), nowa gate_garden, 4 tła 256x144 z tunelem z wierzby, furtką, ścieżką i oświetleniem. Lint 0 dla nowych. Nowe id: gate_garden, watering_can, hay_basket, stump_seat (hand-off B13-5).
+
+## B6 park (przebudowa)
+- 11 przedmiotów (tree_big, gazebo ze słomianym dachem, flower_arch, pond_big, bridge_wood, fountain, statue_pig, path_cobble, bench_park, picnic_blanket, tunnel_playground) i 4 tła 384x192 (strumień z mostem, altana, lampy parkowe, kosz z żarem). Lint 0. Przegląd: docs/album/przebudowa/b6-6_przeglad_parku.png.
+- Gry nie uruchamiano; stare `_x2` odświeżone nearest.

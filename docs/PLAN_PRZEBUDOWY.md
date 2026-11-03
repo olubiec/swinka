@@ -236,4 +236,6 @@ Oznaczenia: **[N]** = element nowy, **[R]** = przebudowa istniejącego. Kolejno�
 | B5-6 | zrobione (bg garden_evening, garden_night: pochodnie, latarnia, półksiężyc, gwiazdy) |
 | B5-7 | zrobione (przegląd: 3 świnki w ogrodzie, 4 pory dnia) |
 | B5 | **fala zamknięta** |
-| B6..B13 | nie rozpoczęte |
+| B6-1..B6-6 | zrobione (park_a.py, park_bg.py, park_scene.py; 11 przedmiotów + 4 tła parku, lint 0; lamp_post z B3) |
+| B6 | **fala zamknięta** |
+| B7..B13 | nie rozpoczęte |
