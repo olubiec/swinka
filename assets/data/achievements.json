@@ -19,6 +19,9 @@
     { "id": "bond_friend", "title": "True Friends", "text": "Reach bond level 5.", "category": "social", "hidden": false, "rule": { "kind": "bond_level", "name": "bond", "atLeast": 5 }, "reward": 100 },
     { "id": "bond_family", "title": "Soul Mates", "text": "Reach bond level 10.", "category": "social", "hidden": false, "rule": { "kind": "bond_level", "name": "bond", "atLeast": 10 }, "reward": 200 },
     { "id": "first_trick", "title": "Clever Cuy", "text": "Perform your first learned trick.", "category": "play", "hidden": false, "rule": { "kind": "counter", "name": "tricks_performed", "atLeast": 1 }, "reward": 60 },
-    { "id": "daily_trio", "title": "Active Day", "text": "Play 3 minigames in a single day.", "category": "play", "hidden": false, "rule": { "kind": "minigames_today", "name": "daily_minigames", "atLeast": 3 }, "reward": 100 }
+    { "id": "daily_trio", "title": "Active Day", "text": "Play 3 minigames in a single day.", "category": "play", "hidden": false, "rule": { "kind": "minigames_today", "name": "daily_minigames", "atLeast": 3 }, "reward": 100 },
+    { "id": "new_friend", "title": "New Friend", "text": "A new guinea pig joins the family.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "pigs_arrived", "atLeast": 1 }, "reward": 50 },
+    { "id": "full_house", "title": "Full House", "text": "The whole family has arrived.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "pigs_arrived", "atLeast": 3 }, "reward": 150 },
+    { "id": "forever_family", "title": "Forever in the Family", "text": "A special friend stays close, always.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "memorial_pigs", "atLeast": 1 }, "reward": 50 }
   ]
 }
