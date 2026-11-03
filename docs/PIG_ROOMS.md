@@ -95,7 +95,7 @@ Rozważone i odłożone na prośbę właściciela (3.11.2026). Zostaje wiedza na
 | W23-05 | Rooms of pigs and the shared bedroom in PlaceCatalog and PlaceUnlock | `GridSize`, `NextLevelCost`, `Upgrade` and room lookup work for `pig:<id>` rooms and for `dorm`. |
 | W23-06 | Flags and achievements for pig rooms and the shared bedroom | Two flags (off) and three achievements exist. |
 | W23-07 | HomeEconomyConfig (loader for home_economy.json) | Core loads the rules and prices of item colours, the run, desktop props and roaming. |
-| W23-08 | Economy simulator: pig rooms variant and checks | `economy-sim.js` models the pig rooms and the shared bedroom and enforces the invariants. |
+| W23-08 | Test: pig room data keeps the economy invariants | A C# test reads the real data and enforces the same sink totals and price relations as the simulator (the simulator itself is done and checked in CI by `--check`). |
 
 ### W24 Integracja w Pet (6)
 | ID | Zadanie | Cel |
@@ -177,7 +177,7 @@ Rozważone i odłożone na prośbę właściciela (3.11.2026). Zostaje wiedza na
 | W30-03 | StoreFeature: state and the purchase message | The Home page can read the home store and buy from it. |
 | W30-04 | Contracts and validation for the store | The `store` state and messages are documented and validated. |
 | W30-05 | Home store page | One page lists everything the player can buy for the home, with filters, locked reasons and prices. |
-| W30-06 | Economy simulator: every home sink, with checks | The simulator includes the pig rooms, shared bedroom, item colours and run items and enforces the global invariants. |
+| W30-06 | Test: home store totals | A C# test checks the whole home store catalogue against the simulator totals. |
 | W30-07 | Data checks and SelfTest for the home extras | The data check and the desktop self-test cover the new data files. |
 | W30-08 | Smoke test and manual steps for roaming, run, props and the store | The smoke test covers the new screens and the human has a checklist. |
 | W30-09 | GameSession.Open switches roaming, run and props on | Roaming, the run and desktop props become active in the real game. |
