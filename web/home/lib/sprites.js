@@ -5,6 +5,8 @@
   var BREEDS = ['smooth', 'chubby', 'skinny', 'rosette', 'peruvian'];
   var STAGES = ['baby', 'junior', 'adult', 'senior', 'legend'];
   var images = {};
+  var namedImages = {};
+  var namedPigsCache = null;
 
   function assetsBase() {
     var wv = root.chrome && root.chrome.webview;
@@ -17,6 +19,31 @@
     breed = normBreed(breed); stage = normStage(stage);
     var b = base || assetsBase();
     return b + 'sprites/' + (breed === 'smooth' ? '' : 'breeds/' + breed + '/') + stage + '/spritesheet.png';
+  }
+
+  function namedPath(pigId, stage, base) {
+    stage = normStage(stage);
+    var b = base || assetsBase();
+    return b + 'sprites/pigs/' + pigId + '/' + stage + '/spritesheet.png';
+  }
+
+  function loadNamedPigs() {
+    if (namedPigsCache) return Promise.resolve(namedPigsCache);
+    if (typeof fetch === 'undefined') {
+      namedPigsCache = { kuki: true, ned: true, glen: true, james: true, racuch: true };
+      return Promise.resolve(namedPigsCache);
+    }
+    var url = assetsBase() + 'sprites/pigs/pigs.json';
+    return fetch(url)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        namedPigsCache = (data && data.pigs) || { kuki: true, ned: true, glen: true, james: true, racuch: true };
+        return namedPigsCache;
+      })
+      .catch(function () {
+        namedPigsCache = { kuki: true, ned: true, glen: true, james: true, racuch: true };
+        return namedPigsCache;
+      });
   }
 
   // Image for (breed, stage); starts loading on first use. Falls back to the smooth sheet if the breed sheet fails.
@@ -34,10 +61,36 @@
     return img;
   }
 
-  function loaded(img) { return img && img.complete && img.naturalWidth > 0; }
+  function namedImage(pigId, stage) {
+    stage = normStage(stage);
+    var key = pigId + '/' + stage;
+    if (namedImages[key]) return namedImages[key];
+    var img = new Image();
+    img.onerror = function () {
+      img._failed = true;
+    };
+    img.src = namedPath(pigId, stage);
+    namedImages[key] = img;
+    return img;
+  }
+
+  function loaded(img) { return img && img.complete && img.naturalWidth > 0 && !img._failed; }
+
+  function namedSheet(pigId, stage) {
+    if (!pigId) return null;
+    stage = normStage(stage);
+    var img = namedImage(pigId, stage);
+    if (!loaded(img)) return null;
+    return img;
+  }
 
   // Palette-remapped canvas for the pig's look, or null while the sheet is still loading.
-  function sheet(breed, stage, paletteId) {
+  // Optional fourth argument namedId: if provided and baked sheet is available, returns baked sheet directly.
+  function sheet(breed, stage, paletteId, namedId) {
+    if (namedId) {
+      var baked = namedSheet(namedId, stage);
+      if (baked) return baked;
+    }
     var img = image(breed, stage);
     if (!loaded(img)) return null;
     return root.CuyPalette ? root.CuyPalette.apply(img, paletteId) : img;
@@ -71,9 +124,26 @@
 
   // Loads the palette table once; resolves even when it fails (the default look is then the ginger sheet).
   function init() {
+    loadNamedPigs();
     if (!root.CuyPalette) return Promise.resolve();
     return root.CuyPalette.load(assetsBase() + 'sprites/palettes.json').catch(function (e) { console.error('[sprites] palettes.json: ' + e); });
   }
 
-  root.CuySprites = { BREEDS: BREEDS, STAGES: STAGES, path: path, image: image, sheet: sheet, loaded: loaded, activePig: activePig, drawPortrait: drawPortrait, init: init, normStage: normStage, normBreed: normBreed };
+  root.CuySprites = {
+    BREEDS: BREEDS,
+    STAGES: STAGES,
+    path: path,
+    namedPath: namedPath,
+    image: image,
+    namedImage: namedImage,
+    sheet: sheet,
+    namedSheet: namedSheet,
+    loadNamedPigs: loadNamedPigs,
+    loaded: loaded,
+    activePig: activePig,
+    drawPortrait: drawPortrait,
+    init: init,
+    normStage: normStage,
+    normBreed: normBreed
+  };
 })(window);
