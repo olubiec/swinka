@@ -149,3 +149,25 @@ Przed testem: `tools/build.ps1`, potem `src/Cuy/bin/Debug/Cuy.exe`. Save: `%AppD
 16. Zapisz świnkę w trybie pamięci (My Pigs, krok z sekcji 8) i otwórz Ogród. Oczekiwane: w kąciku pamięci pojawia się świnka pamiątkowa z tabliczką.
 17. Zminimalizuj Cuy, przyspiesz czas na farmie (krok 9) tak, by plon dojrzał, i poczekaj. Oczekiwane: pojawia się powiadomienie systemowe „Something is ready on the farm!”.
 18. Zapisz wyniki w kolumnie „Wpisz wynik” (data, wersja Windows, dokładne teksty komunikatów, nazwy pól czasu z save.json, ewentualne linie `[World]` z logu).
+
+## 10. Pokoje świnek i wspólna sypialnia
+
+Przed testem: `tools/build.ps1`, potem `src/Cuy/bin/Debug/Cuy.exe`. Save: `%AppData%\Cuy\save.json`, log: `%LocalAppData%\Cuy\logs\cuy.log`. Teksty interfejsu są po angielsku, opisy kroków po polsku. Wyniki wpisuj w kolumnie „Wpisz wynik”.
+
+1. Uruchom Cuy na nowym zapisie. Oczekiwane: w Domku, w pokojach, każda adoptowana świnka (Kuki i Ned) ma własną zakładkę z imieniem, a na końcu paska jest zakładka „Shared bedroom” z ceną.
+2. Otwórz pokój każdej świnki. Oczekiwane: każdy pokój ma własny motyw (tapeta i podłoga są różne) i własne meble z początku gry.
+3. Przełączaj zakładki świnek. Oczekiwane: nazwa pokoju w nagłówku zmienia się na imię świnki („Kuki”, „Ned”), a po powrocie do salonu na „Living room”.
+4. W salonie wybierz kanapę i kliknij próbkę innego koloru w panelu pod siatką. Oczekiwane: kanapa zmienia kolor; po odświeżeniu widoku kolor zostaje. Zapisz nazwy kolorów, które są dostępne od razu, i te, które trzeba kupić.
+5. Zmień nazwę pokoju: kliknij nazwę w nagłówku (albo pole nazwy w panelu), wpisz nowe imię i zatwierdź. Oczekiwane: nagłówek pokazuje nową nazwę; pusta nazwa przywraca domyślną.
+6. Przenieś przedmiot z jednego pokoju do drugiego. Oczekiwane: przedmiot znika z pokoju źródłowego i pojawia się w docelowym; liczba „N placed” w obu pokojach się zgadza.
+7. Porównaj pasek komfortu w pokojach Kuki, Neda i salonu. Oczekiwane: wartości komfortu różnią się między pokojami, zgodnie z ustawionymi meblami.
+8. Sprawdź kartę wspólnej sypialni przed odblokowaniem. Oczekiwane: karta „Shared bedroom - 1500 clovers - needs two pigs”; przycisk odblokowania jest nieaktywny z podanym powodem, dopóki nie masz dwóch świnek i 1500 koniczyn.
+9. Odblokuj wspólną sypialnię (1500 koniczyn). Oczekiwane: koniczyny zmniejszają się o 1500, a pod kartą pojawia się siatka pokoju.
+10. Zaznacz Kuki i Neda, potem kliknij „Move in together”. Oczekiwane: obie świnki mają odznakę „moved in” przy zakładce; ich przedmioty są w sypialni obok siebie; jeśli coś nie weszło, pojawia się komunikat o schowku (zapisz tekst). Przed i po ruchu suma przedmiotów w pokojach i w schowku jest taka sama.
+11. Kliknij zakładkę Kuki albo Neda. Oczekiwane: otwiera się wspólna sypialnia, a nie osobny pokój.
+12. Wyprowadź Kuki przyciskiem „Move out”. Oczekiwane: jej przedmioty wracają do jej pokoju (albo do schowku, gdy pokój jest pełny); Ned zostaje w sypialni. Wyprowadź Neda. Oczekiwane: sypialnia jest pusta, a suma przedmiotów nie zmieniła się (nic nie zginęło).
+13. Zaznacz dwie świnki i sprawdź, czy przy dwóch mieszkańcach pojawia się spokojna linia „Friends who sleep together get along a little better”, a przy jednym już nie. Zapisz dokładny tekst.
+14. Sprawdź wspomnienie: włącz tryb pamięci dla świnki (My Pigs, sekcja 8), otwórz jej pokój. Oczekiwane: przy zakładce jest świeczka, a opis pokoju jest po angielsku i zgodny z tekstem ekranu; zapisz tekst.
+15. Kup poziom wspólnej sypialni (1100 koniczyn, potem 1800). Oczekiwane: siatka rośnie, koszt zmniejsza koniczyny, a przycisk znika po ostatnim poziomie.
+16. Zamknij i ponownie uruchom Cuy. Oczekiwane: pokoje, nazwy, meble, odblokowana wspólna sypialnia, jej mieszkańcy i poziom są takie same jak przed zamknięciem.
+17. Zapisz wyniki w kolumnie „Wpisz wynik” (data, wersja Windows, dokładne teksty komunikatów i opisów, ewentualne linie `[Rooms]` z logu).

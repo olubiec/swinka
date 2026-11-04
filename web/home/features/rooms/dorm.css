@@ -1,0 +1,106 @@
+/* Shared bedroom panel (W26-06). Styles only; markup comes from dorm.js. */
+.dorm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  margin: 0 0 8px;
+  border: 2px solid #c98d50;
+  border-radius: 10px;
+  background: #fffdf8;
+  color: #3a1d17;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+.dorm-title {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.dorm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dorm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 10px 4px 4px;
+  border: 2px solid #c98d50;
+  border-radius: 16px;
+  background: #fff;
+  color: #3a1d17;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dorm-chip.is-on {
+  background: #eedb7c;
+  border-color: #4f8f35;
+}
+
+.dorm-chip:focus-visible,
+.dorm .game-btn:focus-visible {
+  outline: 2px solid #4f8f35;
+  outline-offset: 2px;
+}
+
+.dorm-portrait {
+  width: 24px;
+  height: 24px;
+  image-rendering: pixelated;
+}
+
+.dorm-residents {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dorm-resident {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.dorm-resident-name {
+  flex: 1 1 80px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.dorm-level {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.dorm-reason,
+.dorm-bond,
+.dorm-notice {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.dorm-notice {
+  color: #7a3b1e;
+  font-weight: bold;
+}
+
+.dorm button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

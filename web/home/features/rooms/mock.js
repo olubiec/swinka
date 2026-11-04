@@ -3,6 +3,7 @@
 // Numbers are hard-coded here; the real ones come from assets/data/places.json and the C# catalog.
 // W25-07 adds pig rooms (rooms.pigRooms, layouts keyed 'pig:<pigId>'), colour variants, room names,
 // storage, transfers and ?memorial=1 (Ned gets a memorial room).
+// W26-07 adds the shared bedroom: state dorm, layout 'dorm', messages dorm_unlock, dorm_move_in, dorm_move_out, dorm_upgrade.
 (function () {
   'use strict';
   const bridge = window.bridge;
@@ -68,6 +69,15 @@
   const VARIANT_PRICES = { cocoa: 30, mint: 45, lilac: 45 };
   const NAME_MAX = 24;
 
+  // Shared bedroom (W26-07). Level 1 is the start size; DORM_LEVELS[n].cost is the price of reaching level n + 1.
+  const DORM_ID = 'dorm';
+  const DORM_UNLOCK_COST = 1500;
+  const DORM_LEVELS = [
+    { cols: 16, rows: 8, wallRows: 2, cost: 0 },
+    { cols: 18, rows: 9, wallRows: 2, cost: 1100 },
+    { cols: 20, rows: 10, wallRows: 2, cost: 1800 }
+  ];
+
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
 
   function defaultLayouts() {
@@ -107,8 +117,41 @@
       st.clovers = Math.max(st.clovers, 5000);
       st.places.places.forEach((p) => { p.unlocked = true; });
     }
+    ensureDorm(st);
     rebuildCatalog(st);
     return st;
+  }
+
+  // Shared bedroom state. Keeps unlocked, residents and origin; the rest is recomputed from the pig rooms.
+  function ensureDorm(st) {
+    if (!st.dorm) {
+      st.dorm = { unlocked: false, unlockCost: DORM_UNLOCK_COST, level: 1, residents: [], origin: {}, storedNotice: '' };
+    }
+    const d = st.dorm;
+    d.candidates = (st.rooms.pigRooms || []).filter((r) => r.adopted !== false)
+      .map((r) => ({ pigId: r.pigId, name: r.displayName, portrait: r.portrait, memorial: !!r.memorial }));
+    if (!Array.isArray(d.residents)) d.residents = [];
+    d.residents = d.residents.filter((id) => d.candidates.some((c) => c.pigId === id));
+    if (!d.origin) d.origin = {};
+    d.maxLevel = DORM_LEVELS.length;
+    d.nextLevelCost = d.level < DORM_LEVELS.length ? DORM_LEVELS[d.level].cost : null;
+    d.bondBonus = d.residents.length >= 2 ? 1 : 0;
+    if (d.unlocked) {
+      const lvl = DORM_LEVELS[d.level - 1];
+      if (!st.rooms.layouts[DORM_ID]) {
+        st.rooms.layouts[DORM_ID] = { cols: lvl.cols, rows: lvl.rows, wallRows: lvl.wallRows, wallpaper: 'wallpaper_cream', floor: 'floor_wood', items: [] };
+      } else {
+        const layout = st.rooms.layouts[DORM_ID];
+        layout.cols = lvl.cols; layout.rows = lvl.rows; layout.wallRows = lvl.wallRows;
+      }
+    }
+  }
+
+  // Spare item into storage (one more of that item).
+  function addStorage(st, itemId) {
+    const list = st.rooms.storage || (st.rooms.storage = []);
+    const row = list.find((s) => s.itemId === itemId);
+    if (row) row.count += 1; else list.push({ itemId: itemId, count: 1 });
   }
 
   function seedPigRooms(st) {
@@ -170,7 +213,7 @@
   function findPlace(st, id) { return (st.places.places || []).find((p) => p.id === id) || null; }
   function isPigRoomId(id) { return typeof id === 'string' && id.indexOf(PIG_ROOM_PREFIX) === 0; }
   // Pig rooms sell the living room catalogue.
-  function saleKeyOf(place) { return isPigRoomId(place) ? 'salon' : place; }
+  function saleKeyOf(place) { return isPigRoomId(place) || place === DORM_ID ? 'salon' : place; }
   function pigRoomOf(st, id) { return (st.rooms.pigRooms || []).find((r) => r.roomId === id) || null; }
   function variantUnlocked(st, itemId, variant) {
     if (variant === st.rooms.variantNames[0]) return true;
@@ -365,6 +408,99 @@
     this.dispatchMessage({ type: 'toast', text: 'No more rooms in the mock yet' });
   });
 
+  bridge.registerMockHandler('dorm_unlock', function (st) {
+    ensureRooms(st);
+    const d = st.dorm;
+    if (d.unlocked) return;
+    if (d.candidates.length < 2) { this.dispatchMessage({ type: 'toast', text: 'You need two pigs first' }); return; }
+    if (st.clovers < d.unlockCost && !WORLD) { this.dispatchMessage({ type: 'toast', text: 'Not enough clovers' }); return; }
+    st.clovers -= d.unlockCost;
+    d.unlocked = true;
+    ensureDorm(st);
+    rebuildCatalog(st);
+    this.dispatchMessage({ type: 'toast', text: 'The shared bedroom is open' });
+  });
+
+  // Residents' items go side by side into the shared room (in the order of the pig rooms); what does not fit goes to storage.
+  bridge.registerMockHandler('dorm_move_in', function (st, action) {
+    ensureRooms(st);
+    const d = st.dorm;
+    if (!d.unlocked) return;
+    const ids = (Array.isArray(action.pigIds) ? action.pigIds : [])
+      .filter((id) => d.candidates.some((c) => c.pigId === id) && d.residents.indexOf(id) < 0);
+    if (!ids.length) return;
+    const shared = st.rooms.layouts[DORM_ID];
+    let stored = 0;
+    d.storedNotice = '';
+    ids.forEach((id) => {
+      const room = st.rooms.layouts[PIG_ROOM_PREFIX + id];
+      const items = room ? room.items.slice() : [];
+      d.origin[id] = [];
+      items.forEach((it) => {
+        const def = findDef(it.itemId);
+        const cell = def ? findFreeCell(st, shared, def) : null;
+        if (cell) {
+          shared.items.push({ uid: it.uid, itemId: it.itemId, x: cell.x, y: cell.y, flip: it.flip, variant: it.variant });
+          d.origin[id].push(it.uid);
+        } else {
+          addStorage(st, it.itemId);
+          stored++;
+        }
+      });
+      if (room) room.items = [];
+      d.residents.push(id);
+    });
+    if (stored) {
+      d.storedNotice = stored + (stored === 1 ? ' item' : ' items') + ' went to storage: the shared bedroom is full';
+      this.dispatchMessage({ type: 'toast', text: d.storedNotice });
+    } else {
+      this.dispatchMessage({ type: 'toast', text: 'Moved in together' });
+    }
+    ensureDorm(st);
+    rebuildCatalog(st);
+  });
+
+  // Items that came from the pig's own room go back (or to storage when that room is full).
+  bridge.registerMockHandler('dorm_move_out', function (st, action) {
+    ensureRooms(st);
+    const d = st.dorm;
+    const id = action.pigId;
+    if (!d.unlocked || d.residents.indexOf(id) < 0) return;
+    const shared = st.rooms.layouts[DORM_ID];
+    const room = st.rooms.layouts[PIG_ROOM_PREFIX + id];
+    let stored = 0;
+    d.storedNotice = '';
+    (d.origin[id] || []).forEach((uid) => {
+      const it = shared.items.find((i) => i.uid === uid);
+      if (!it) return; // the player took it out of the shared room already
+      shared.items = shared.items.filter((i) => i !== it);
+      const def = findDef(it.itemId);
+      const cell = room && def ? findFreeCell(st, room, def) : null;
+      if (cell) room.items.push({ uid: it.uid, itemId: it.itemId, x: cell.x, y: cell.y, flip: it.flip, variant: it.variant });
+      else { addStorage(st, it.itemId); stored++; }
+    });
+    delete d.origin[id];
+    d.residents = d.residents.filter((r) => r !== id);
+    if (stored) {
+      d.storedNotice = stored + (stored === 1 ? ' item' : ' items') + ' went to storage: its room is full';
+      this.dispatchMessage({ type: 'toast', text: d.storedNotice });
+    }
+    ensureDorm(st);
+    rebuildCatalog(st);
+  });
+
+  bridge.registerMockHandler('dorm_upgrade', function (st) {
+    ensureRooms(st);
+    const d = st.dorm;
+    if (!d.unlocked || d.level >= DORM_LEVELS.length) return;
+    const next = DORM_LEVELS[d.level];
+    if (st.clovers < next.cost) { this.dispatchMessage({ type: 'toast', text: 'Not enough clovers' }); return; }
+    st.clovers -= next.cost;
+    d.level += 1;
+    ensureDorm(st);
+    this.dispatchMessage({ type: 'toast', text: 'The shared bedroom grew' });
+  });
+
   // Exposed for the feature and for tests; reads only.
-  window.CuyRoomsMock = { CATALOG: CATALOG, PLACE_DEFS: PLACE_DEFS, WORLD: WORLD, PIG_LEVELS: PIG_LEVELS, VARIANT_NAMES: VARIANT_NAMES };
+  window.CuyRoomsMock = { CATALOG: CATALOG, PLACE_DEFS: PLACE_DEFS, WORLD: WORLD, PIG_LEVELS: PIG_LEVELS, DORM_LEVELS: DORM_LEVELS, VARIANT_NAMES: VARIANT_NAMES };
 })();

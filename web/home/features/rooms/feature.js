@@ -3,12 +3,15 @@
 // Room ids: 'salon', 'garden', 'park' (shared) and 'pig:<pigId>' (one per pig, from rooms.pigRooms).
 // The server decides every placement; the ghost colour uses a local copy of the rules only as a hint.
 // Dispatches document 'room-select' (detail: { uid }) when the picked item changes; customize.js listens to it.
+// W26-07: shared bedroom tab (room id 'dorm', layout 'dorm'), panel from dorm.js (window.DormPanel), loaded on demand.
 (function () {
   'use strict';
 
   const CELL = 16;
-  const PLACE_LABELS = { salon: 'Living room', garden: 'Garden', park: 'Park' };
+  const DORM_ID = 'dorm';
+  const PLACE_LABELS = { salon: 'Living room', garden: 'Garden', park: 'Park', dorm: 'Shared bedroom' };
   const PIG_PREFIX = 'pig:';
+  let dormRequested = false;
   const FLOOR_COLORS = {
     floor_wood: '#e6b073', floor_straw: '#eedb7c', floor_fleece: '#f8eddd',
     floor_grass: '#7fbf4a', floor_soil: '#9c6636', floor_stone: '#b8b0a3'
@@ -76,9 +79,25 @@
     return typeof id === 'string' && id.indexOf(PIG_PREFIX) === 0;
   }
 
-  // Pig rooms sell the living room catalogue.
+  // Pig rooms sell the living room catalogue; so does the shared bedroom.
   function saleKeyOf(place) {
-    return isPigRoom(place) ? 'salon' : place;
+    return isPigRoom(place) || place === DORM_ID ? 'salon' : place;
+  }
+
+  function dormOf(st) { return (st && st.dorm) || {}; }
+
+  function residentsOf(st) {
+    const r = dormOf(st).residents;
+    return Array.isArray(r) ? r : [];
+  }
+
+  // A pig who lives in the shared bedroom has no room of its own on the page: its tab opens the dorm.
+  function residentRoom(st, id) {
+    return isPigRoom(id) && residentsOf(st).indexOf(id.slice(PIG_PREFIX.length)) >= 0;
+  }
+
+  function dormReady(st) {
+    return !!dormOf(st).unlocked && residentsOf(st).length > 0 && !!(st.rooms && st.rooms.layouts && st.rooms.layouts[DORM_ID]);
   }
 
   function pigRoomOf(st, id) {
@@ -93,11 +112,11 @@
 
   function resolvePlace(st, want) {
     if (PLACE_LABELS[want]) return want;
-    if (isPigRoom(want) && st && st.rooms && st.rooms.layouts && st.rooms.layouts[want]) return want;
+    if (isPigRoom(want) && st && st.rooms && st.rooms.layouts && st.rooms.layouts[want]) return residentRoom(st, want) ? DORM_ID : want;
     return 'salon';
   }
 
-  // Tabs: shared rooms first (garden and park once unlocked), then one tab per pig room.
+  // Tabs: shared rooms first (garden and park once unlocked), then one tab per pig room, then the shared bedroom.
   function tabsOf(st) {
     const tabs = [{ id: 'salon', label: PLACE_LABELS.salon, portrait: null, memorial: false }];
     const places = (st.places && st.places.places) || [];
@@ -107,9 +126,63 @@
     });
     ((st.rooms && st.rooms.pigRooms) || []).forEach((r) => {
       if (!r || r.adopted === false) return;
-      tabs.push({ id: r.roomId, label: r.displayName || r.roomId, portrait: r.portrait || null, memorial: !!r.memorial });
+      tabs.push({ id: r.roomId, label: r.displayName || r.roomId, portrait: r.portrait || null, memorial: !!r.memorial,
+        badge: residentRoom(st, r.roomId) ? 'moved in' : '' });
     });
+    const dorm = dormOf(st);
+    const locked = !dorm.unlocked;
+    tabs.push({ id: DORM_ID, label: PLACE_LABELS[DORM_ID], portrait: null, memorial: false,
+      price: locked && dorm.unlockCost != null ? dorm.unlockCost : null });
     return tabs;
+  }
+
+  function tabsHtmlOf(tabs) {
+    return tabs.map((t) => {
+      const sel = t.id === S.place;
+      const portrait = t.portrait
+        ? `<img class="room-tab-portrait" src="../../assets/sprites/portraits/${esc(t.portrait)}.png" width="24" height="24" alt="" onerror="this.style.visibility='hidden'">`
+        : '';
+      const candle = t.memorial ? '<span class="pixel-icon icon-candle" aria-hidden="true"></span>' : '';
+      const badge = t.badge ? `<span class="room-tab-badge">${esc(t.badge)}</span>` : '';
+      const price = t.price != null ? `<span class="room-tab-price">${esc(t.price)} clovers</span>` : '';
+      return `<button type="button" role="tab" class="room-tab${sel ? ' is-selected' : ''}${t.memorial ? ' is-memorial' : ''}" data-room="${esc(t.id)}" aria-selected="${sel}" tabindex="${sel ? '0' : '-1'}">` +
+        `${portrait}${candle}<span class="room-tab-label">${esc(t.label)}</span>${badge}${price}</button>`;
+    }).join('');
+  }
+
+  // The DormPanel script is loaded once, on demand; the page is drawn again when it arrives.
+  function loadDormPanel() {
+    if (dormRequested || window.DormPanel) return;
+    dormRequested = true;
+    const s = document.createElement('script');
+    s.src = 'features/rooms/dorm.js';
+    s.onload = () => { if (S.container && S.container.isConnected) render(); };
+    document.head.appendChild(s);
+  }
+
+  // Shows the panel in the slot above the canvas (dorm only).
+  function mountDorm(container, st) {
+    const slot = container.querySelector('.room-dorm');
+    if (!slot) return;
+    if (window.DormPanel && typeof window.DormPanel.mount === 'function') {
+      window.DormPanel.mount(slot, { state: st, send: send });
+    } else {
+      loadDormPanel();
+    }
+  }
+
+  // Locked or empty shared bedroom: the panel and the tabs, no canvas.
+  function renderDormWithoutRoom(container, st, tabs) {
+    S.canvas = null;
+    container.innerHTML = `
+      <div class="room-panel">
+        <div class="room-tabs" role="tablist" aria-label="Rooms">${tabsHtmlOf(tabs)}</div>
+        <div class="room-dorm"></div>
+        <p class="room-hint">${dormOf(st).unlocked ? 'Move a pig in above to use the shared bedroom.' : ''}</p>
+        <p class="room-status" aria-live="polite"></p>
+      </div>`;
+    bindTabs(container, tabs);
+    mountDorm(container, st);
   }
 
   function setSelectedUid(uid) {
@@ -395,7 +468,9 @@
 
   // Changes the room shown. Picks and drags are dropped, the customize panel is told that no item is picked.
   function switchRoom(id, focusTab) {
-    if (!id || id === S.place) return;
+    if (!id) return;
+    if (S.api && residentRoom(S.api.getState(), id)) id = DORM_ID;
+    if (id === S.place) return;
     S.place = id;
     S.selectedItem = null;
     S.drag = null;
@@ -438,8 +513,13 @@
     }
     S.catalogById = {};
     (st.rooms.catalog || []).forEach(c => { S.catalogById[c.id] = c; });
-    S.layout = st.rooms.layouts[S.place] || null;
+    const dormMode = S.place === DORM_ID;
+    S.layout = (dormMode && !dormReady(st)) ? null : (st.rooms.layouts[S.place] || null);
     S.pigs = (st.rooms && Array.isArray(st.rooms.pigs)) ? st.rooms.pigs.filter(p => p.place === S.place || !p.place) : [];
+    if (!S.layout && dormMode) {
+      renderDormWithoutRoom(container, st, tabsOf(st));
+      return;
+    }
     if (!S.layout) {
       container.innerHTML = '<p class="room-empty">This room is not built yet.</p>';
       S.canvas = null;
@@ -464,15 +544,7 @@
     }).join('') || '<p class="room-empty">Nothing owned for this room yet. Buy items in the Market.</p>';
 
     const tabs = tabsOf(st);
-    const tabsHtml = tabs.map((t) => {
-      const sel = t.id === S.place;
-      const portrait = t.portrait
-        ? `<img class="room-tab-portrait" src="../../assets/sprites/portraits/${esc(t.portrait)}.png" width="24" height="24" alt="" onerror="this.style.visibility='hidden'">`
-        : '';
-      const candle = t.memorial ? '<span class="pixel-icon icon-candle" aria-hidden="true"></span>' : '';
-      return `<button type="button" role="tab" class="room-tab${sel ? ' is-selected' : ''}${t.memorial ? ' is-memorial' : ''}" data-room="${esc(t.id)}" aria-selected="${sel}" tabindex="${sel ? '0' : '-1'}">` +
-        `${portrait}${candle}<span class="room-tab-label">${esc(t.label)}</span></button>`;
-    }).join('');
+    const tabsHtml = tabsHtmlOf(tabs);
 
     // Bigger room for pig rooms (the house upgrade is not offered here yet)
     const pr = pigRoomOf(st, S.place);
@@ -489,6 +561,7 @@
     container.innerHTML = `
       <div class="room-panel">
         <div class="room-tabs" role="tablist" aria-label="Rooms">${tabsHtml}</div>
+        ${dormMode ? '<div class="room-dorm"></div>' : ''}
         <div class="room-head">
           <button type="button" class="room-title room-name-btn" aria-label="Rename this room">${esc(layout.name || labelOf(st, S.place))}</button>
           <span class="room-count">${placedTotal} placed</span>
@@ -507,6 +580,7 @@
     if (hadFocus) S.canvas.focus({ preventScroll: true });
     bindCanvas(S.canvas);
     bindTabs(container, tabs);
+    if (dormMode) mountDorm(container, st);
     container.querySelectorAll('.room-item').forEach(btn => {
       btn.addEventListener('click', () => {
         S.selectedItem = S.selectedItem === btn.dataset.item ? null : btn.dataset.item;

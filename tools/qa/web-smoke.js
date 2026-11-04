@@ -144,6 +144,153 @@ async function worldSmoke(browser, base, errors) {
   }
 }
 
+// W26-09: rooms page with the pig rooms and the shared bedroom (W25-07, W26-06, W26-07), in the mock with ?world=1.
+// Each check also runs the layout check; console and page errors are collected like in worldSmoke.
+// Only the runner's size: at 360 px the Home page scrolls sideways (existing layout, see worldSmoke).
+const DORM_SIZES = [{ width: 420, height: 640 }];
+
+async function roomsDormSmoke(browser, base, errors) {
+  for (const viewport of DORM_SIZES) {
+    const label = `dorm ${viewport.width}x${viewport.height}`;
+    const page = await browser.newPage({ viewport });
+    const fail = (msg) => errors.push(`${label}: ${msg}`);
+    page.on('pageerror', (e) => fail('pageerror: ' + e.message));
+    page.on('requestfailed', (req) => {
+      if (req.failure() && req.failure().errorText === 'net::ERR_ABORTED' && /\.(ogg|mp3|wav)$/.test(req.url())) return;
+      if (ALLOWED_MISSING.some(allowed => req.url().includes(allowed))) return;
+      fail('requestfailed: ' + req.url());
+    });
+    page.on('console', (m) => {
+      if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) fail('console: ' + m.text());
+    });
+    page.on('response', (r) => {
+      if (r.status() >= 400 && !ALLOWED_MISSING.some(allowed => r.url().includes(allowed))) fail('404 or error response: ' + r.status() + ' ' + r.url());
+    });
+
+    await page.goto(base + '/web/home/index.html?world=1');
+    await page.evaluate(() => document.body.classList.add('webview-mode'));
+    await page.waitForTimeout(1000);
+    if (await page.isVisible('#modalBackdrop.active')) {
+      await page.click('#modalCloseBtn');
+      await page.waitForTimeout(200);
+    }
+
+    const check = async (name, fn) => {
+      try {
+        await fn();
+        await assertLayout(page, name + ' ' + label);
+        console.log('PASS ' + name + ' ' + label);
+      } catch (e) {
+        fail(name + ': ' + e.message);
+        console.log('FAIL ' + name + ' ' + label + ': ' + e.message);
+      }
+    };
+    // Items on the grids plus spare items in storage: must not change when residents move.
+    const total = () => page.evaluate(() => {
+      const rooms = window.bridge.getState().rooms;
+      const placed = Object.keys(rooms.layouts).reduce((n, p) => n + rooms.layouts[p].items.length, 0);
+      return placed + (rooms.storage || []).reduce((n, s) => n + s.count, 0);
+    });
+    const headerText = () => page.$eval('.room-name-btn', e => e.textContent.trim());
+
+    await check('dorm_rooms_tabs', async () => {
+      await page.evaluate(() => window.CuyHome.openFeature('rooms'));
+      await page.waitForSelector('.room-canvas', { timeout: 3000 });
+      const adopted = await page.evaluate(() => window.bridge.getState().rooms.pigRooms.filter(r => r.adopted !== false).map(r => r.roomId));
+      const tabs = await page.$$eval('.room-tab', b => b.map(x => x.dataset.room));
+      const missing = adopted.filter(id => !tabs.includes(id));
+      if (missing.length) throw new Error('no tab for ' + missing.join(', '));
+      if (!tabs.includes('dorm')) throw new Error('no shared bedroom tab');
+    });
+
+    await check('dorm_pig_tab_switch', async () => {
+      if ((await headerText()) !== 'Living room') throw new Error(`header shows "${await headerText()}", expected "Living room"`);
+      await page.click('.room-tab[data-room="pig:kuki"]');
+      await page.waitForTimeout(200);
+      if ((await headerText()) !== 'Kuki') throw new Error(`header shows "${await headerText()}" after the Kuki tab, expected "Kuki"`);
+      await page.click('.room-tab[data-room="salon"]');
+      await page.waitForTimeout(200);
+      if ((await headerText()) !== 'Living room') throw new Error(`header shows "${await headerText()}" after going back, expected "Living room"`);
+    });
+
+    const customizeLoaded = await page.evaluate(() => !!window.RoomCustomize);
+    if (!customizeLoaded) console.log(`SKIP dorm_customize_variant ${label}: RoomCustomize is not loaded`);
+    if (customizeLoaded) await check('dorm_customize_variant', async () => {
+      await page.click('.room-tab[data-room="pig:kuki"]');
+      await page.waitForTimeout(200);
+      const box = await page.locator('.room-canvas').boundingBox();
+      const cols = await page.evaluate(() => window.bridge.getState().rooms.layouts['pig:kuki'].cols);
+      const rows = await page.evaluate(() => window.bridge.getState().rooms.layouts['pig:kuki'].rows);
+      // Kuki's plant pot sits at cell (1, 2): picking it opens the customize panel
+      await page.mouse.click(box.x + (1.5 * box.width) / cols, box.y + (2.5 * box.height) / rows);
+      await page.waitForTimeout(300);
+      if (!(await page.$('.room-customize > *'))) throw new Error('customize panel is empty after picking an item');
+      await page.click('.room-customize [data-variant="natural"]');
+      await page.waitForTimeout(300);
+      const variant = await page.evaluate(() => (window.bridge.getState().rooms.layouts['pig:kuki'].items.find(i => i.uid === 'pkuki1') || {}).variant);
+      if (variant !== 'natural') throw new Error(`plant pot variant is "${variant}", expected "natural"`);
+    });
+
+    await check('dorm_rename_header', async () => {
+      await page.click('.room-tab[data-room="pig:kuki"]');
+      await page.waitForTimeout(200);
+      await page.evaluate(() => window.bridge.send({ type: 'room_rename', place: 'pig:kuki', name: 'Kuki corner' }));
+      await page.waitForTimeout(300);
+      if ((await headerText()) !== 'Kuki corner') throw new Error(`header shows "${await headerText()}", expected "Kuki corner"`);
+    });
+
+    await check('dorm_storage_state', async () => {
+      // The rooms page does not draw a storage list yet (storage is only checked in the state).
+      const storage = await page.evaluate(() => window.bridge.getState().rooms.storage || []);
+      if (!storage.length) throw new Error('the mock state has no spare items in storage');
+      console.log(`SKIP dorm_storage_list DOM ${label}: the rooms page draws no storage list yet`);
+    });
+
+    await check('dorm_locked_card', async () => {
+      await page.click('.room-tab[data-room="dorm"]');
+      await page.waitForSelector('.dorm-locked', { timeout: 3000 });
+      const title = await page.$eval('.dorm-title', e => e.textContent.trim());
+      if (!/needs two pigs/.test(title)) throw new Error(`locked card reads "${title}"`);
+      if (await page.$('.room-canvas')) throw new Error('the locked shared bedroom shows a canvas');
+    });
+
+    await check('dorm_residents_move_in_out', async () => {
+      const before = await total();
+      await page.evaluate(() => window.bridge.send({ type: 'dorm_unlock' }));
+      await page.waitForSelector('.dorm-chip[data-pig="kuki"]', { timeout: 3000 });
+      const pressedOf = (id) => page.getAttribute(`.dorm-chip[data-pig="${id}"]`, 'aria-pressed');
+      if ((await pressedOf('kuki')) !== 'false') throw new Error('Kuki is pressed although nobody lives here');
+      await page.click('.dorm-chip[data-pig="kuki"]');
+      await page.waitForTimeout(150);
+      if ((await pressedOf('kuki')) !== 'true') throw new Error('Kuki chip did not turn on');
+      await page.click('.dorm-chip[data-pig="kuki"]');
+      await page.waitForTimeout(150);
+      if ((await pressedOf('kuki')) !== 'false') throw new Error('Kuki chip did not turn off');
+      await page.click('.dorm-chip[data-pig="kuki"]');
+      await page.click('.dorm-chip[data-pig="ned"]');
+      await page.waitForTimeout(150);
+      await page.click('.dorm-move-in');
+      await page.waitForTimeout(300);
+      const residents = await page.evaluate(() => window.bridge.getState().dorm.residents.slice().sort());
+      if (residents.join(',') !== 'kuki,ned') throw new Error(`residents are "${residents.join(',')}", expected "kuki,ned"`);
+      if (await total() !== before) throw new Error(`items changed on move in: ${before} -> ${await total()}`);
+      await page.waitForSelector('.room-tab[data-room="pig:kuki"] .room-tab-badge', { timeout: 3000 });
+      await page.click('.room-tab[data-room="pig:kuki"]');
+      await page.waitForTimeout(200);
+      if ((await headerText()) !== 'Shared bedroom') throw new Error(`a resident's tab shows "${await headerText()}", expected the shared bedroom`);
+      await page.click('.dorm-move-out[data-pig="kuki"]');
+      await page.waitForTimeout(300);
+      await page.click('.dorm-move-out[data-pig="ned"]');
+      await page.waitForTimeout(300);
+      const left = await page.evaluate(() => window.bridge.getState().dorm.residents);
+      if (left.length) throw new Error(`residents left after move out: ${left.join(',')}`);
+      if (await total() !== before) throw new Error(`items changed on move out: ${before} -> ${await total()}`);
+    });
+
+    await page.close();
+  }
+}
+
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const featuresDir = path.join(ROOT, 'web', 'home', 'features');
@@ -566,6 +713,7 @@ async function worldSmoke(browser, base, errors) {
   });
 
   await worldSmoke(browser, base, errors);
+  await roomsDormSmoke(browser, base, errors);
 
   await browser.close();
   server.close();
