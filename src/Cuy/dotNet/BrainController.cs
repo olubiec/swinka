@@ -30,6 +30,15 @@ namespace Cuy
         private DateTime _lastOfferCheckTime = DateTime.UtcNow;
         private bool _isClosed;
 
+        // Harvest notification (at most once per local day)
+        private DateTime _lastHarvestNoticeDay = DateTime.MinValue;
+
+        /// <summary>Home setting "notifyHarvest" (default on).</summary>
+        public bool NotifyHarvest { get; set; } = true;
+
+        /// <summary>True when a plot is ripe or orchard stock is above zero. Null until the farm state is wired in.</summary>
+        public Func<bool> HarvestReadyCheck { get; set; }
+
         // Walk state (the pig walks the distance and stops)
         private int _targetWalkDistancePx;
         private int _traversedWalkDistancePx;
@@ -211,6 +220,37 @@ namespace Cuy
                     _lastOfferToastTime = now;
                     PostToast(toast);
                 }
+            }
+        }
+
+        private void CheckHarvestNotice()
+        {
+            try
+            {
+                if (!NotifyHarvest || HarvestReadyCheck == null) return;
+
+                DateTime today = DateTime.Now.Date;
+                if (_lastHarvestNoticeDay == today) return;
+
+                int dayKey = today.Year * 10000 + today.Month * 100 + today.Day;
+                var counters = Pet?.State?.Stats?.Counters;
+                if (counters != null && counters.TryGetValue("harvest_notice_day", out int storedDay) && storedDay == dayKey)
+                {
+                    _lastHarvestNoticeDay = today;
+                    return;
+                }
+
+                if (SoundManager.Instance != null && SoundManager.Instance.IsFullScreenOrBusy()) return;
+                if (!HarvestReadyCheck()) return;
+
+                _lastHarvestNoticeDay = today;
+                if (counters != null) counters["harvest_notice_day"] = dayKey;
+                Log("[Harvest] Notified: something is ready on the farm.");
+                PostToast("Something is ready on the farm!");
+            }
+            catch (Exception ex)
+            {
+                Log("[WARN] BrainController.CheckHarvestNotice: " + ex.Message);
             }
         }
 
@@ -492,6 +532,7 @@ namespace Cuy
                 {
                     Log("[WARN] BrainController slow tick CheckOffers: " + ex.Message);
                 }
+                CheckHarvestNotice();
             }
 
             DeliverOfferToastIfDue();

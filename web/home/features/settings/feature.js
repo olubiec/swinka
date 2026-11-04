@@ -28,6 +28,11 @@
             <label for="settingsMuteFullscreen">Mute when fullscreen app runs</label>
             <input type="checkbox" id="settingsMuteFullscreen" class="retro-toggle">
           </div>
+
+          <div class="settings-row">
+            <label for="settingsNotifyHarvest">Tell me the farm is ready</label>
+            <input type="checkbox" id="settingsNotifyHarvest" class="retro-toggle">
+          </div>
         </div>
 
         <div class="settings-group">
@@ -81,6 +86,7 @@
     const elQuietHoursFrom = document.getElementById('settingsQuietHoursFrom');
     const elQuietHoursTo = document.getElementById('settingsQuietHoursTo');
     const elMuteFullscreen = document.getElementById('settingsMuteFullscreen');
+    const elNotifyHarvest = document.getElementById('settingsNotifyHarvest');
     const elAutostart = document.getElementById('settingsAutostart');
     const radioSize = document.querySelectorAll('input[name="petSize"]');
     const elBtnCheckUpdate = document.getElementById('btnCheckUpdate');
@@ -129,6 +135,11 @@
           window.bridge.send({ type: 'settings_pet_size', size: e.target.value });
         }
       });
+    });
+
+    elNotifyHarvest.addEventListener('change', (e) => {
+      if (root.Sound) root.Sound.click();
+      sendMsg({ type: 'settings_notify_harvest', on: e.target.checked });
     });
 
     elAutostart.addEventListener('change', (e) => {
@@ -231,6 +242,11 @@
     const elMuteFullscreen = document.getElementById('settingsMuteFullscreen');
     if (elMuteFullscreen) {
       elMuteFullscreen.checked = typeof s.muteFullscreen === 'boolean' ? s.muteFullscreen : true;
+    }
+
+    const elNotifyHarvest = document.getElementById('settingsNotifyHarvest');
+    if (elNotifyHarvest) {
+      elNotifyHarvest.checked = typeof s.notifyHarvest === 'boolean' ? s.notifyHarvest : true;
     }
 
     const elAutostart = document.getElementById('settingsAutostart');

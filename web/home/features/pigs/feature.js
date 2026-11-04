@@ -78,8 +78,15 @@
     ];
   }
 
+  function isGardenUnlocked(state) {
+    const places = (state && state.places && state.places.places) || [];
+    const garden = places.find(p => p && p.id === 'garden');
+    return !!(garden && garden.unlocked);
+  }
+
   function render(container, api, state) {
     const clovers = (state && state.clovers) || 0;
+    const gardenUnlocked = isGardenUnlocked(state);
     const defaultRoster = [
       {
         id: 'pig_default',
@@ -151,6 +158,7 @@
           <button type="button" class="game-btn btn-memorial-toggle" data-pig-id="${pig.id}" data-action="off" aria-label="Toggle memorial for ${pig.name}">
             Return from Memorial
           </button>
+          ${gardenUnlocked ? `<button type="button" class="game-btn btn-memory-corner" aria-label="Visit the memory corner for ${pig.name}">Visit the memory corner</button>` : ''}
         `;
       } else {
         memorialSectionHtml = `
@@ -187,6 +195,7 @@
             <button type="button" class="game-btn btn-toggle-active" data-toggle-id="${pig.id}" aria-label="${isActive ? 'Rest ' + pig.name + ' in cage' : 'Bring ' + pig.name + ' to desk'}">
               ${isActive ? 'Rest in Cage' : 'Bring to Desk'}
             </button>
+            ${(!isMemorial && gardenUnlocked) ? `<button type="button" class="game-btn btn-walk-garden" data-pig-id="${pig.id}" aria-label="Take ${pig.name} for a walk in the garden">Go for a walk</button>` : ''}
             ${memorialSectionHtml}
           </div>
         </div>
@@ -513,6 +522,24 @@
               window.bridge.dispatchMessage({ type: 'toast', text: 'Forever in the family' });
             }
           }
+        }
+      });
+    });
+
+    // Handle Walk in the garden
+    container.querySelectorAll('.btn-walk-garden').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (root.Sound) root.Sound.click();
+        api.send({ type: 'walk', place: 'garden' });
+      });
+    });
+
+    // Handle memory corner link (opens the garden feature)
+    container.querySelectorAll('.btn-memory-corner').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (root.Sound) root.Sound.click();
+        if (window.CuyHome && typeof window.CuyHome.openFeature === 'function') {
+          window.CuyHome.openFeature('garden');
         }
       });
     });
