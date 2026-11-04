@@ -78,6 +78,17 @@
     ];
   }
 
+  // The pig's own room (W25-06): joined by pigId. Null when rooms.pigRooms is missing.
+  function roomForPig(state, pig) {
+    const rooms = state && state.rooms;
+    if (!rooms || !Array.isArray(rooms.pigRooms) || !pig || !pig.namedId) return null;
+    return rooms.pigRooms.find(r => r && r.pigId === pig.namedId) || null;
+  }
+
+  function escAttr(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
   function isGardenUnlocked(state) {
     const places = (state && state.places && state.places.places) || [];
     const garden = places.find(p => p && p.id === 'garden');
@@ -177,6 +188,11 @@
         `;
       }
 
+      const room = roomForPig(state, pig);
+      const roomLinkHtml = room
+        ? `<button type="button" class="game-btn btn-visit-room" data-room-id="${escAttr(room.roomId)}" aria-label="${isMemorial || room.memorial ? 'Visit the memory room of ' : 'Visit the room of '}${escAttr(pig.name)}">${isMemorial || room.memorial ? 'Visit the memory room' : 'Visit my room'}</button>`
+        : '';
+
       html += `
         <div class="pig-card ${isActive ? 'pig-active' : ''} ${isMemorial ? 'pig-memorial' : ''}" data-pig-id="${pig.id}">
           <div class="pig-card-header">
@@ -195,6 +211,7 @@
             <button type="button" class="game-btn btn-toggle-active" data-toggle-id="${pig.id}" aria-label="${isActive ? 'Rest ' + pig.name + ' in cage' : 'Bring ' + pig.name + ' to desk'}">
               ${isActive ? 'Rest in Cage' : 'Bring to Desk'}
             </button>
+            ${roomLinkHtml}
             ${(!isMemorial && gardenUnlocked) ? `<button type="button" class="game-btn btn-walk-garden" data-pig-id="${pig.id}" aria-label="Take ${pig.name} for a walk in the garden">Go for a walk</button>` : ''}
             ${memorialSectionHtml}
           </div>
@@ -531,6 +548,16 @@
       btn.addEventListener('click', () => {
         if (root.Sound) root.Sound.click();
         api.send({ type: 'walk', place: 'garden' });
+      });
+    });
+
+    // Handle Visit my room (opens the rooms feature on that pig's tab)
+    container.querySelectorAll('.btn-visit-room').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (root.Sound) root.Sound.click();
+        if (root.CuyHome && typeof root.CuyHome.openFeature === 'function') {
+          root.CuyHome.openFeature('rooms', { room: btn.dataset.roomId });
+        }
       });
     });
 

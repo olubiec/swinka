@@ -54,8 +54,20 @@ namespace Cuy.Features
             }
             placeOrRoomIds.Add("salon");
 
+            // Pig rooms exist only while Balance.PigRoomsActive is on; their ids come from the roster.
+            bool pigRoomsOn = pet.Balance.PigRoomsActive && pet.PigRooms != null && pet.State.Roster != null;
+            if (pigRoomsOn)
+            {
+                foreach (var pig in pet.State.Roster)
+                {
+                    if (pig == null) continue;
+                    placeOrRoomIds.Add(pet.RoomIdOf(pig.Id));
+                }
+            }
+
             int wallRows = placeCatalog != null ? placeCatalog.WallRows : 2;
             var layoutsDict = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            var gridSizes = new Dictionary<string, (int cols, int rows)>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var id in placeOrRoomIds)
             {
@@ -82,6 +94,7 @@ namespace Cuy.Features
                 }
                 if (cols <= 0) cols = 12;
                 if (rows <= 0) rows = 7;
+                gridSizes[id] = (cols, rows);
 
                 var itemsList = new List<object>();
                 if (roomLayout?.Items != null)
@@ -95,13 +108,15 @@ namespace Cuy.Features
                             itemId = it.ItemId,
                             x = it.X,
                             y = it.Y,
-                            flip = it.Flip
+                            flip = it.Flip,
+                            variant = it.Variant
                         });
                     }
                 }
 
                 layoutsDict[id] = new
                 {
+                    name = roomLayout?.Name ?? string.Empty,
                     cols = cols,
                     rows = rows,
                     wallRows = wallRows,
@@ -169,7 +184,75 @@ namespace Cuy.Features
                 moodFactor = Math.Round(moodFactor, 4)
             };
 
-            // 4. Skins
+            // 4. Pig rooms, comfort per pig, storage and colour variants
+            var pigRooms = new List<object>();
+            var comfortByPig = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            var storageList = new List<object>();
+            var variantPrices = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            int variantCount = pet.PigRooms != null ? pet.PigRooms.VariantCount : 4;
+            var variantNames = new List<string>();
+            for (int v = 0; v < variantCount; v++)
+            {
+                variantNames.Add(v == 0 ? "Original" : "Colour " + v);
+            }
+
+            if (pigRoomsOn)
+            {
+                foreach (var pig in pet.State.Roster)
+                {
+                    if (pig == null) continue;
+                    string roomId = pet.RoomIdOf(pig.Id);
+                    int roomLevel = PlaceUnlock.GetLevel(world, placeCatalog, roomId);
+                    var (pigCols, pigRows) = gridSizes.TryGetValue(roomId, out var grid) ? grid : (12, 7);
+
+                    pigRooms.Add(new
+                    {
+                        pigId = pig.Id,
+                        name = pig.Name,
+                        roomId = roomId,
+                        displayName = pet.RoomDisplayName(pig.Id),
+                        level = roomLevel,
+                        maxLevel = pet.PigRooms.Levels != null ? pet.PigRooms.Levels.Count : 0,
+                        nextLevelCost = PlaceUnlock.NextLevelCost(world, placeCatalog, roomId),
+                        cols = pigCols,
+                        rows = pigRows,
+                        memorial = pig.Memorial,
+                        portrait = string.IsNullOrEmpty(pig.NamedId) ? null : "sprites/portraits/" + pig.NamedId + ".png"
+                    });
+
+                    int pigScore = pet.ComfortScore(roomId);
+                    int pigCapped = Comfort.Capped(pigScore, placeCatalog);
+                    comfortByPig[pig.Id] = new
+                    {
+                        score = pigScore,
+                        cap = cap,
+                        moodFactor = Math.Round(Comfort.MoodDecayFactor(pigCapped, placeCatalog), 4)
+                    };
+                }
+
+                foreach (var s in pet.StorageList())
+                {
+                    storageList.Add(new { itemId = s.itemId, free = s.free });
+                }
+
+                if (itemCatalog?.All != null)
+                {
+                    foreach (var def in itemCatalog.All)
+                    {
+                        if (def == null || string.IsNullOrEmpty(def.Id) || !def.Recolor) continue;
+
+                        // Index 0 is the original colour (free); each other variant costs the same VariantPrice.
+                        var prices = new List<int>();
+                        for (int v = 0; v < variantCount; v++)
+                        {
+                            prices.Add(v == 0 ? 0 : pet.VariantPrice(def.Id));
+                        }
+                        variantPrices[def.Id] = prices;
+                    }
+                }
+            }
+
+            // 5. Skins
             var wallpapers = new List<object>();
             var floors = new List<object>();
 
@@ -215,14 +298,22 @@ namespace Cuy.Features
                 layouts = layoutsDict,
                 catalog = catalogList,
                 comfort = comfortObj,
-                skins = skinsObj
+                skins = skinsObj,
+                pigRooms = pigRooms,
+                storage = storageList,
+                variantNames = variantNames,
+                variantPrices = variantPrices,
+                variantsUnlocked = world.UnlockedVariants.ToList(),
+                comfortByPig = comfortByPig
             };
         }
 
         public override bool HandleMessage(string type, JObject message, BrainController brain)
         {
             if (type != "room_buy" && type != "room_place" && type != "room_move" &&
-                type != "room_flip" && type != "room_remove" && type != "room_skin")
+                type != "room_flip" && type != "room_remove" && type != "room_skin" &&
+                type != "room_variant" && type != "room_variant_unlock" &&
+                type != "room_rename" && type != "room_transfer")
             {
                 return false;
             }
@@ -378,6 +469,81 @@ namespace Cuy.Features
                     {
                         HomeWindow.PostToPage(new { type = "toast", text = "Not ready yet" });
                     }
+                }
+            }
+            else if (type == "room_variant")
+            {
+                string place = message?.Value<string>("place");
+                string uid = message?.Value<string>("uid");
+                int? variant = message?.Value<int?>("variant");
+                if (string.IsNullOrEmpty(place) || string.IsNullOrEmpty(uid) || !variant.HasValue) return true;
+
+                if (pet.SetVariant(place, uid, variant.Value))
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Colour changed!" });
+                }
+            }
+            else if (type == "room_variant_unlock")
+            {
+                string itemId = message?.Value<string>("itemId");
+                int? variant = message?.Value<int?>("variant");
+                if (string.IsNullOrEmpty(itemId) || !variant.HasValue) return true;
+
+                var res = pet.UnlockVariant(itemId, variant.Value);
+                if (res == WorldResult.Ok)
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Colour unlocked!" });
+                }
+                else if (res == WorldResult.NotEnoughClovers)
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Not enough clovers" });
+                }
+                else if (res == WorldResult.Unknown)
+                {
+                    return true;
+                }
+            }
+            else if (type == "room_rename")
+            {
+                string place = message?.Value<string>("place");
+                string name = message?.Value<string>("name") ?? string.Empty;
+                if (string.IsNullOrEmpty(place)) return true;
+
+                if (pet.RenameRoom(place, name))
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Room renamed!" });
+                }
+            }
+            else if (type == "room_transfer")
+            {
+                string from = message?.Value<string>("from");
+                string to = message?.Value<string>("to");
+                string uid = message?.Value<string>("uid");
+                int x = message?.Value<int?>("x") ?? 0;
+                int y = message?.Value<int?>("y") ?? 0;
+
+                if (string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to) || string.IsNullOrEmpty(uid)) return true;
+
+                var res = pet.TransferItem(from, uid, to, x, y);
+                if (res == PlaceResult.UnknownItem)
+                {
+                    return true;
+                }
+                else if (res == PlaceResult.Ok)
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Moved to another room!" });
+                }
+                else if (res == PlaceResult.Overlap)
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Something is in the way" });
+                }
+                else if (res == PlaceResult.OutOfBounds || res == PlaceResult.WrongLayerArea)
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Too close to the wall" });
+                }
+                else if (res == PlaceResult.NotAllowedHere)
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Not ready yet" });
                 }
             }
 

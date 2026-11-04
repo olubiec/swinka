@@ -1,11 +1,14 @@
-// Room editor (W20-02): place, move, flip and remove items on a grid.
-// State: rooms.layouts[place], rooms.catalog[]. Messages: room_place, room_move, room_flip, room_remove.
+// Room editor (W20-02, tabs and level-up W25-04): place, move, flip and remove items on a grid.
+// State: rooms.layouts[roomId], rooms.catalog[], rooms.pigRooms[]. Messages: room_place, room_move, room_flip, room_remove, place_upgrade.
+// Room ids: 'salon', 'garden', 'park' (shared) and 'pig:<pigId>' (one per pig, from rooms.pigRooms).
 // The server decides every placement; the ghost colour uses a local copy of the rules only as a hint.
+// Dispatches document 'room-select' (detail: { uid }) when the picked item changes; customize.js listens to it.
 (function () {
   'use strict';
 
   const CELL = 16;
   const PLACE_LABELS = { salon: 'Living room', garden: 'Garden', park: 'Park' };
+  const PIG_PREFIX = 'pig:';
   const FLOOR_COLORS = {
     floor_wood: '#e6b073', floor_straw: '#eedb7c', floor_fleece: '#f8eddd',
     floor_grass: '#7fbf4a', floor_soil: '#9c6636', floor_stone: '#b8b0a3'
@@ -67,6 +70,51 @@
 
   function findDef(st, id) {
     return ((st.rooms && st.rooms.catalog) || []).find(c => c.id === id) || null;
+  }
+
+  function isPigRoom(id) {
+    return typeof id === 'string' && id.indexOf(PIG_PREFIX) === 0;
+  }
+
+  // Pig rooms sell the living room catalogue.
+  function saleKeyOf(place) {
+    return isPigRoom(place) ? 'salon' : place;
+  }
+
+  function pigRoomOf(st, id) {
+    return ((st && st.rooms && st.rooms.pigRooms) || []).find(r => r && r.roomId === id) || null;
+  }
+
+  function labelOf(st, id) {
+    if (PLACE_LABELS[id]) return PLACE_LABELS[id];
+    const pr = pigRoomOf(st, id);
+    return pr && pr.displayName ? pr.displayName : String(id);
+  }
+
+  function resolvePlace(st, want) {
+    if (PLACE_LABELS[want]) return want;
+    if (isPigRoom(want) && st && st.rooms && st.rooms.layouts && st.rooms.layouts[want]) return want;
+    return 'salon';
+  }
+
+  // Tabs: shared rooms first (garden and park once unlocked), then one tab per pig room.
+  function tabsOf(st) {
+    const tabs = [{ id: 'salon', label: PLACE_LABELS.salon, portrait: null, memorial: false }];
+    const places = (st.places && st.places.places) || [];
+    ['garden', 'park'].forEach((id) => {
+      const p = places.find(x => x && x.id === id);
+      if (p && p.unlocked) tabs.push({ id: id, label: PLACE_LABELS[id], portrait: null, memorial: false });
+    });
+    ((st.rooms && st.rooms.pigRooms) || []).forEach((r) => {
+      if (!r || r.adopted === false) return;
+      tabs.push({ id: r.roomId, label: r.displayName || r.roomId, portrait: r.portrait || null, memorial: !!r.memorial });
+    });
+    return tabs;
+  }
+
+  function setSelectedUid(uid) {
+    S.selectedUid = uid;
+    document.dispatchEvent(new CustomEvent('room-select', { detail: { uid: uid } }));
   }
 
   // Local copy of the placement rules (hint only).
@@ -263,14 +311,14 @@
       S.cursor = c;
       const hit = itemAt(layout, c.x, c.y);
       if (hit) {
-        S.selectedUid = hit.uid;
         S.selectedItem = null;
+        setSelectedUid(hit.uid);
         S.drag = { uid: hit.uid, itemId: hit.itemId, offX: c.x - hit.x, offY: c.y - hit.y, moved: false, x: hit.x, y: hit.y, start: { x: hit.x, y: hit.y } };
         canvas.setPointerCapture(e.pointerId);
       } else {
         S.drag = null;
         if (S.selectedItem) placeAt(c.x, c.y);
-        else S.selectedUid = null;
+        else setSelectedUid(null);
       }
       redraw();
     });
@@ -329,7 +377,7 @@
           placeAt(S.cursor.x, S.cursor.y);
         } else {
           const hit = itemAt(layout, S.cursor.x, S.cursor.y);
-          S.selectedUid = hit ? hit.uid : null;
+          setSelectedUid(hit ? hit.uid : null);
           redraw();
         }
       } else if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -338,9 +386,43 @@
       } else if (e.key === 'f' || e.key === 'F') {
         if (S.selectedUid) send({ type: 'room_flip', place: S.place, uid: S.selectedUid });
       } else if (e.key === 'Escape') {
-        S.selectedItem = null; S.selectedUid = null; S.hover = null;
+        S.selectedItem = null; S.hover = null;
+        setSelectedUid(null);
         render();
       }
+    });
+  }
+
+  // Changes the room shown. Picks and drags are dropped, the customize panel is told that no item is picked.
+  function switchRoom(id, focusTab) {
+    if (!id || id === S.place) return;
+    S.place = id;
+    S.selectedItem = null;
+    S.drag = null;
+    S.hover = null;
+    setSelectedUid(null);
+    render();
+    if (focusTab && S.container) {
+      const tab = S.container.querySelector('.room-tab[data-room="' + id + '"]');
+      if (tab) tab.focus();
+    }
+  }
+
+  function bindTabs(container, tabs) {
+    const list = container.querySelector('.room-tabs');
+    container.querySelectorAll('.room-tab').forEach((btn) => {
+      btn.addEventListener('click', () => switchRoom(btn.dataset.room, false));
+    });
+    list.addEventListener('keydown', (e) => {
+      const ids = tabs.map(t => t.id);
+      let i = ids.indexOf(S.place);
+      if (e.key === 'ArrowRight') i = (i + 1) % ids.length;
+      else if (e.key === 'ArrowLeft') i = (i - 1 + ids.length) % ids.length;
+      else if (e.key === 'Home') i = 0;
+      else if (e.key === 'End') i = ids.length - 1;
+      else return;
+      e.preventDefault();
+      switchRoom(ids[i], true);
     });
   }
 
@@ -369,7 +451,9 @@
     const w = layout.cols * CELL * S.scale;
     const h = layout.rows * CELL * S.scale;
     const placedTotal = layout.items.length;
-    const drawer = (st.rooms.catalog || []).filter(c => c.owned && (c.places || []).indexOf(S.place) >= 0);
+    const sale = saleKeyOf(S.place);
+    const drawer = (st.rooms.catalog || []).filter(c => c.owned && (c.places || []).indexOf(sale) >= 0);
+    const clovers = typeof st.clovers === 'number' ? st.clovers : 0;
 
     const items = drawer.map(c => {
       const free = c.repeatable || c.placed === 0;
@@ -379,16 +463,42 @@
         `<span class="room-item-meta">${c.w}×${c.h} · ${c.placed} placed</span></button>`;
     }).join('') || '<p class="room-empty">Nothing owned for this room yet. Buy items in the Market.</p>';
 
+    const tabs = tabsOf(st);
+    const tabsHtml = tabs.map((t) => {
+      const sel = t.id === S.place;
+      const portrait = t.portrait
+        ? `<img class="room-tab-portrait" src="../../assets/sprites/portraits/${esc(t.portrait)}.png" width="24" height="24" alt="" onerror="this.style.visibility='hidden'">`
+        : '';
+      const candle = t.memorial ? '<span class="pixel-icon icon-candle" aria-hidden="true"></span>' : '';
+      return `<button type="button" role="tab" class="room-tab${sel ? ' is-selected' : ''}${t.memorial ? ' is-memorial' : ''}" data-room="${esc(t.id)}" aria-selected="${sel}" tabindex="${sel ? '0' : '-1'}">` +
+        `${portrait}${candle}<span class="room-tab-label">${esc(t.label)}</span></button>`;
+    }).join('');
+
+    // Bigger room for pig rooms (the house upgrade is not offered here yet)
+    const pr = pigRoomOf(st, S.place);
+    let levelHtml = '';
+    if (pr && pr.nextLevelCost != null) {
+      const cost = pr.nextLevelCost;
+      const missing = Math.max(0, cost - clovers);
+      levelHtml = `<div class="room-level">
+          <button type="button" class="game-btn room-level-btn" id="roomLevelBtn" ${missing > 0 ? 'disabled' : ''} aria-label="Bigger room for ${cost} clovers">Bigger room - ${cost} clovers</button>
+          ${missing > 0 ? `<span class="room-level-missing">${missing} more clovers needed</span>` : ''}
+        </div>`;
+    }
+
     container.innerHTML = `
       <div class="room-panel">
+        <div class="room-tabs" role="tablist" aria-label="Rooms">${tabsHtml}</div>
         <div class="room-head">
-          <span class="room-title">${esc(PLACE_LABELS[S.place] || S.place)}</span>
+          <button type="button" class="room-title room-name-btn" aria-label="Rename this room">${esc(layout.name || labelOf(st, S.place))}</button>
           <span class="room-count">${placedTotal} placed</span>
         </div>
+        ${levelHtml}
         <canvas class="room-canvas" width="${w}" height="${h}" style="width:${w}px;height:${h}px" tabindex="0"
           aria-label="Room grid. Arrow keys move the cursor. Enter places the picked item or picks up one. F flips, Delete removes."></canvas>
         <p class="room-hint">${S.selectedItem ? 'Click a cell to place the item. Esc cancels.' : 'Pick an item below, or drag an item to move it. Right-click or Delete removes. F flips.'}</p>
         <div class="room-drawer" role="group" aria-label="Owned items">${items}</div>
+        <div class="room-customize"></div>
         <p class="room-status" aria-live="polite"></p>
       </div>`;
 
@@ -396,13 +506,30 @@
     S.hasFocus = hadFocus;
     if (hadFocus) S.canvas.focus({ preventScroll: true });
     bindCanvas(S.canvas);
+    bindTabs(container, tabs);
     container.querySelectorAll('.room-item').forEach(btn => {
       btn.addEventListener('click', () => {
         S.selectedItem = S.selectedItem === btn.dataset.item ? null : btn.dataset.item;
-        S.selectedUid = null;
+        setSelectedUid(null);
         render();
       });
     });
+    // The name opens the rename field in the customize panel
+    const nameBtn = container.querySelector('.room-name-btn');
+    if (nameBtn) {
+      nameBtn.addEventListener('click', () => {
+        const input = S.container.querySelector('.rc-input[data-field="name"]');
+        if (input) { input.focus(); input.select(); }
+      });
+    }
+    const levelBtn = container.querySelector('#roomLevelBtn');
+    if (levelBtn) levelBtn.addEventListener('click', () => send({ type: 'place_upgrade', id: S.place }));
+
+    // Customize panel (W25-05); nothing breaks when it is not loaded
+    const customize = container.querySelector('.room-customize');
+    if (window.RoomCustomize && typeof window.RoomCustomize.mount === 'function') {
+      window.RoomCustomize.mount(customize, { state: st, roomId: S.place, send: send });
+    }
     loadAtlas();
     drawGrid(S.canvas, layout, S.pigs);
   }
@@ -415,9 +542,11 @@
     open(container, api, arg) {
       S.container = container;
       S.api = api;
-      S.place = PLACE_LABELS[arg] ? arg : 'salon';
+      // arg is a room id, or { room: roomId } from the My Pigs page
+      const want = arg && typeof arg === 'object' ? arg.room : arg;
+      S.place = resolvePlace(api.getState(), want);
       S.selectedItem = null;
-      S.selectedUid = null;
+      setSelectedUid(null);
       S.drag = null;
       S.hover = null;
       render();
