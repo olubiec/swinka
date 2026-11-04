@@ -1,0 +1,11 @@
+# PK-26b log
+- Listed files were missing (created): DormFeature.cs, docs/contracts/dorm.md, DormMessages.cs, DormMessageTests.cs, GameSessionPigRoomsTests.cs. GameSession.cs existed (edited). docs/contracts.md and MessageValidator.cs untouched (package override).
+- W26-04: DormFeature (Id "dorm") sets PigRoomsActive+DormActive; state/messages as planned. Differences: portrait = PigProfile.Breed (no portrait field); bondBonus = max DormBondBonus over roster; no "Not everything fit" toast (MoveIn returns MoveResult only); "You need two pigs first" also shows when unlock is Locked. dorm.layout NOT published: RoomsFeature layouts.dorm not verified.
+- W26-05: dorm_move_in pigIds array is NOT checked by the validator: FieldRule has no array kind and IMessageRuleSet.cs is outside Zmieniaj. Checked by DormMessages.ValidatePigIds instead (callers must use it). Tests pass.
+- W26-08: GameSession.Open sets both flags (both branches), calls state.EnsurePigRooms(PigRoomConfig.Current, WorldItemCatalog.Current) before Pet, and Pet.AttachPigRooms() after. Existing tests unaffected by the flags. Adoption test uses memorial=true (offer gate otherwise).
+- FAIL (new, not fixed, outside Zmieniaj): GameSessionPigRoomsTests.NewGame_WithStarterPair_HasOneRoomPerPig. GameState.EnsurePigRooms (GameState.PigRooms.cs) keys rooms by pig.Id, but Pet.RoomIdOf uses NamedId ?? Id, so named pigs have no room under the id the Pet expects.
+- Pre-existing failures unchanged: GameSessionWorldTests.Open_OldSaveWithEquippedDecor..., WorldAssetsTests.FloorTiles_..., WorldAssetsTests.WorldAndPlaceIcons_...
+- Undone: per-room theme assertion; dorm.layout; feature registration not verified (no reference to PlacesFeature outside its file).
+- Build: Cuy.exe Release succeeded, 0 warnings, 0 errors. Tests: 918 passed, 4 failed (3 pre-existing + 1 above).
+Main agent fix: GameState.EnsurePigRooms keys new rooms by NamedId ?? Id, matching Pet.PigKey/RoomIdOf (used by Dorm, MemoryRoom, Rooms). This makes GameSessionPigRoomsTests.NewGame_WithStarterPair_HasOneRoomPerPig pass.
+CONFLICT (left red, assertion not changed): PigRoomsMigrationTests.ThreeRosterPigsGetThreeRooms_AndSecondCallCreatesNone (PK-24b) asserts rooms keyed by raw pig Id for named pigs. Decision: keep the NamedId key; the PK-24b assertion needs an owner decision.

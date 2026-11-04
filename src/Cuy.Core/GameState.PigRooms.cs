@@ -24,7 +24,7 @@ namespace Cuy.Core
             {
                 if (pig == null || string.IsNullOrEmpty(pig.Id)) continue;
 
-                string roomId = config.RoomId(pig.Id);
+                string roomId = config.RoomId(string.IsNullOrEmpty(pig.NamedId) ? pig.Id : pig.NamedId);
                 if (world.PigRoomsEnsured.Contains(pig.Id)) continue;
                 if (world.Rooms.TryGetValue(roomId, out var existing) && existing != null)
                 {
