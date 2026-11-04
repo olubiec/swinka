@@ -47,6 +47,7 @@ namespace Cuy.Core
             var load = saveSystem.Load();
             var isNewGame = load.State == null;
             var state = load.State ?? GameState.CreateNew(newPetName, clock.UtcNow);
+            state.EnsureRosterInitialized(Cuy.Core.Pigs.NamedPigCatalog.Current, nowUtc: clock.UtcNow);
             var session = new GameSession(new Pet(state, clock, balance), saveSystem, load);
             if (isNewGame) session.Pet.ApplyNewGameEconomy();
             session.Pet.CheckOffers();
