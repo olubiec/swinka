@@ -1,0 +1,8 @@
+PK-26a log: items W26-01, W26-02, W26-03 done in order. Targeted filter: 20 of 20 tests passed (Release). The 7 target files did not exist, so all were created (no PigComfort or PigRooms dorm code was in the repo; Comfort.cs is per-room only).
+- Move-out restores the parked snapshot into the pig room and removes from the dorm only the uids of that snapshot; items bought while sharing stay. Dorm items keep their uid (new uid only on a clash). Placement uses place id 'bedroom' so item Place rules apply. Dorm level = world.PlaceLevels['dorm']. Unlock needs 2 non-memorial pigs; cost and upgrade costs come from PigRoomConfig.Dorm.
+- Dorm is not in PlaceCatalog, so PlaceUnlock.CanUnlockRoom/Upgrade are not used; UnlockDorm/UpgradeDorm are implemented directly. Diary lines are plain AddDiaryEntry (W24-06 templates not found).
+- Differences: MoveIn returns MoveInResult{Status, ItemsStored} (enum MoveInStatus). MoveIn has no PlaceCatalog (unused). MoveOut(world, pigId, config) only: nothing is placed, and config gives the room id.
+- Pet keys pigs by PigKey (NamedId or Id), as Pet.EnsureRoom does. GameState.EnsurePigRooms uses pig.Id, so named pigs may mismatch; not changed (outside Zmieniaj).
+- PigComfort (new file) is PigComfort.Score(world, items, config, pigId), capped 0..100: resident's own and parked rooms weigh 0, dorm weighs own for residents and common for others, other pigs' rooms weigh others.
+- Not done: Pet.cs bond gain must add Pet.DormBondBonus(pigId) (missing call, listed for PR). Pet.ComfortScore(null) still sums hidden pig rooms of residents while shared (outside Zmieniaj).
+- Warnings: xUnit analyzer style notes in PetDormTests.cs remain (not fixed). No git, no dependencies, no existing assertions changed.
