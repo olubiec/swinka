@@ -2,34 +2,33 @@
 
 <!-- HANDOFF_BANNER_START -->
 > [!IMPORTANT]
-> ### 🔄 Status sesji i gotowość do przełączenia (Handoff)
-> **Ostatni heartbeat sesji:** `2026-11-04 07:27:00` (czas lokalny)
+> ### 🔄 Status sesji i gotowość do przełączenia (Handoff dla nowego urządzenia)
+> **Zaktualizowano przed przerwą:** 2026-11-04 07:52:00 (czas lokalny)
 > 
-> - **Wykonano w tej sesji na tej maszynie:**
->   - **Fala W13:** ✅ Ukończona w 100% (W13-01 do W13-04 zmergowane).
->   - **Fala W14:** oczekuje na rozpoczęcie/dokończenie.
->   - **Łącznie zmergowanych zadań:** **4** w całym projekcie.
->   - **Testy regresyjne Cuy.Core:** **Wszystkie testy przechodzą (0 błędów)**.
+> - **Wykonano w całości w tej sesji (100% zmergowane do main i wypchnięte na GitHub):**
+>   - **Fala W13 (100%):** Wszystkie 4 zadania (W13-01, W13-02, W13-03, W13-04).
+>   - **Fala W14 (100%):** Wszystkie 10 zadań (W13-05, W14-01, W14-02, W14-03, W14-04, W14-05, W14-06, W14-07, W14-08, W14-09).
+>   - **Stan testów:** Wszystkie **470 / 470 testów Cuy.Core** przechodzą (dotnet test, 0 błędów), smoke testy webowe zielone (WEB SMOKE OK), kompilacja desktopowa Cuy.exe bez błędów.
 > - **Gdzie kontynuować na kolejnym urządzeniu:**
->   - **Następna fala do zrobienia/dokończenia:** **W14** (i kolejne wg `waves.yaml`).
->   - **Instrukcja przełączenia na drugie urządzenie:**
->     1. Pobierz najnowsze zmiany: `git pull origin main`
->     2. Uruchom pętlę orkiestratora: `python tools/loop_runner.py` (lub bezpośrednio `python -m orkiestra -v run --wave W14`)
->     3. Wszystkie commity są zsynchronizowane na GitHubie, a gałąź `main` jest gotowa i stabilna.
+>   - **Następna fala do wykonania:** **W15** (wg waves.yaml).
+>   - **Kroki wznowienia na nowym urządzeniu:**
+>     1. git pull origin main
+>     2. Uruchom zadania fali W15 bezpośrednio lub przez subagentów / skrypt.
+>     3. Wszystkie commity są zsynchronizowane na GitHubie, a repozytorium jest gotowe i stabilne.
 <!-- HANDOFF_BANNER_END -->
 
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
 > ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** `2026-11-04 07:27:00`
+> **Ostatni heartbeat:** 2026-11-04 07:52:00
 >
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
-> | 🔋 **Zasilanie i Bateria** | **88%** (Praca na baterii) | 🟡 Praca na baterii |
-> | 🌊 **Aktualna Fala** | **W14** | 🟡 Aktywna |
-> | 🏆 **Ukończone Zadania** | **4 / 162** (2.5%) | 🟢 Postęp OK |
-> | 🧪 **Testy Jednostkowe** | **399 / 399** zaliczonych | ✅ Wszystkie przechodzą |
-> | 💻 **Stan Systemu** | ⚡ Agenci pracują autonomicznie | 🟡 Aktywny |
+> | 🔋 **Zasilanie i Bateria** | **88%** (Praca na baterii) | 🟢 Bezpieczny |
+> | 🌊 **Zakończone Fale** | **W13 (4/4)** oraz **W14 (10/10)** | ✅ Ukończone 100% |
+> | 🌊 **Następna Fala** | **W15** | 🟢 Gotowa do startu |
+> | 🧪 **Testy Jednostkowe** | **470 / 470** zaliczonych | ✅ Wszystkie przechodzą (0 błędów) |
+> | 💻 **Stan Systemu** | 🏁 Sesja zakończona sukcesem, gotowa do przełączenia | 🟢 Czyste repozytorium |
 >
 > 📄 [Szczegółowy raport zadań](STAN_PROJEKTU.md) • 📋 [Lista kolejnych fal](TODO.md) • 🔄 Odśwież stronę w przeglądarce telefonu, aby zobaczyć aktualny czas
 <!-- STATUS_DASHBOARD_END -->
