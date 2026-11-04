@@ -1,4 +1,5 @@
 ﻿using System;
+using Cuy.Core.Pigs;
 using Cuy.Core.Save;
 using Cuy.Core.Time;
 
@@ -38,17 +39,24 @@ namespace Cuy.Core
         /// <param name="saveDirectory">Save folder; defaults to %AppData%/Cuy.</param>
         /// <param name="balance">Balance; defaults from PLAN.md.</param>
         /// <param name="newPetName">Name for a newly created pig.</param>
+        /// <param name="namedPigs">Named pig catalog; defaults to NamedPigCatalog.Current.</param>
+        /// <param name="rng">Random number generator for initial legend roll.</param>
         public static GameSession Open(IClock clock, string saveDirectory = null, Balance balance = null,
-            string newPetName = "Cuy")
+            string newPetName = "Cuy", NamedPigCatalog namedPigs = null, Random rng = null)
         {
             if (clock == null) throw new ArgumentNullException(nameof(clock));
-            if (balance == null) balance = new Balance { HayRackActive = true, DiaryActive = true, BirthdayRewardsActive = true }; else { balance.HayRackActive = true; balance.DiaryActive = true; balance.BirthdayRewardsActive = true; }
+            if (balance == null) balance = new Balance { HayRackActive = true, DiaryActive = true, BirthdayRewardsActive = true, PerPigAgeActive = true, PigModifiersActive = true, ArrivalsActive = true }; else { balance.HayRackActive = true; balance.DiaryActive = true; balance.BirthdayRewardsActive = true; balance.PerPigAgeActive = true; balance.PigModifiersActive = true; balance.ArrivalsActive = true; }
             var saveSystem = new SaveSystem(saveDirectory);
             var load = saveSystem.Load();
             var isNewGame = load.State == null;
             var state = load.State ?? GameState.CreateNew(newPetName, clock.UtcNow);
-            var session = new GameSession(new Pet(state, clock, balance), saveSystem, load);
+            var catalog = namedPigs ?? NamedPigCatalog.Current;
+            state.EnsureRosterInitialized(catalog, rng, clock.UtcNow);
+            var pet = new Pet(state, clock, balance);
+            if (namedPigs != null) pet.NamedPigs = namedPigs;
+            var session = new GameSession(pet, saveSystem, load);
             if (isNewGame) session.Pet.ApplyNewGameEconomy();
+            session.Pet.CheckOffers(clock.UtcNow);
             return session;
         }
 
