@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Cuy.Core;
 using Cuy.Core.AI;
@@ -13,7 +14,7 @@ namespace Cuy
     /// manages the game session (GameSession), the clock (ScaledClock), the AI brain (Brain),
     /// physics priority and the pig's walking distance.
     /// </summary>
-    public sealed class BrainController
+    public sealed class BrainController : IDisposable
     {
         private static BrainController _instance;
         public static BrainController Instance => _instance;
@@ -21,6 +22,13 @@ namespace Cuy
         private readonly ScaledClock _clock;
         private readonly GameSession _session;
         private readonly Brain _brain;
+
+        // Offer toasts & adoption
+        private readonly Queue<string> _pendingOfferToasts = new Queue<string>();
+        private DateTime _lastOfferToastTime = DateTime.MinValue;
+        private readonly object _offerToastLock = new object();
+        private DateTime _lastOfferCheckTime = DateTime.UtcNow;
+        private bool _isClosed;
 
         // Walk state (the pig walks the distance and stops)
         private int _targetWalkDistancePx;
@@ -66,7 +74,22 @@ namespace Cuy
             }
             _session.Start();
             _session.Pet.StageChanged += OnPetStageChanged;
+            if (_session.Pet.Balance != null)
+            {
+                _session.Pet.Balance.ArrivalsActive = true;
+            }
             _session.Pet.Birthday += OnPetBirthday;
+            _session.Pet.OfferUnlocked += OnOfferUnlocked;
+            _session.Pet.PigAdopted += OnPigAdopted;
+
+            try
+            {
+                _session.Pet.CheckOffers(DateTime.UtcNow);
+            }
+            catch (Exception ex)
+            {
+                Log("[WARN] BrainController initial CheckOffers: " + ex.Message);
+            }
 
             _brain = Brain.CreateDefault(_session.Pet);
 
@@ -151,6 +174,174 @@ namespace Cuy
             catch (Exception ex)
             {
                 Log("[WARN] BrainController.OnPetStageChanged: " + ex.Message);
+            }
+        }
+
+        private void OnOfferUnlocked(object sender, OfferUnlockedEventArgs e)
+        {
+            try
+            {
+                if (e == null || string.IsNullOrEmpty(e.PigId)) return;
+                var catalog = _session?.Pet?.NamedPigs ?? Cuy.Core.Pigs.NamedPigCatalog.Current;
+                var def = catalog?.Find(e.PigId);
+                string name = def != null && !string.IsNullOrEmpty(def.Name) ? def.Name : e.PigId;
+                string message = $"A new friend is waiting for adoption: {name}";
+                lock (_offerToastLock)
+                {
+                    _pendingOfferToasts.Enqueue(message);
+                }
+                DeliverOfferToastIfDue();
+            }
+            catch (Exception ex)
+            {
+                Log("[WARN] BrainController.OnOfferUnlocked: " + ex.Message);
+            }
+        }
+
+        private void DeliverOfferToastIfDue()
+        {
+            lock (_offerToastLock)
+            {
+                if (_pendingOfferToasts.Count == 0) return;
+
+                DateTime now = DateTime.UtcNow;
+                if ((now - _lastOfferToastTime).TotalSeconds >= 60.0)
+                {
+                    string toast = _pendingOfferToasts.Dequeue();
+                    _lastOfferToastTime = now;
+                    PostToast(toast);
+                }
+            }
+        }
+
+        private void PostToast(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+            try
+            {
+                HomeWindow.PostToPage(new { type = "toast", text = text });
+            }
+            catch (Exception ex)
+            {
+                Log("[WARN] HomeWindow.PostToPage: " + ex.Message);
+            }
+
+            try
+            {
+                var petForm = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                petForm?.ShowStatusMessage(text);
+            }
+            catch (Exception ex)
+            {
+                Log("[WARN] FormPet.ShowStatusMessage: " + ex.Message);
+            }
+        }
+
+        private void OnPigAdopted(object sender, PigAdoptedEventArgs e)
+        {
+            try
+            {
+                if (e?.Pig == null) return;
+
+                string toast = e.Memorial ? "Forever in the family" : $"Welcome, {e.Pig.Name}!";
+                PostToast(toast);
+
+                if (e.Memorial) return;
+
+                var state = _session?.Pet?.State;
+                if (state != null)
+                {
+                    if (state.ActivePigIds == null)
+                    {
+                        state.ActivePigIds = new List<string>();
+                    }
+                    if (state.ActivePigIds.Count < 2 && !state.ActivePigIds.Contains(e.Pig.Id))
+                    {
+                        state.ActivePigIds.Add(e.Pig.Id);
+                    }
+                }
+
+                bool isActive = state != null && state.ActivePigIds != null && state.ActivePigIds.Take(2).Contains(e.Pig.Id);
+                if (isActive)
+                {
+                    CreatePetWindowAndPeek(e.Pig);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("[ERROR] BrainController.OnPigAdopted: " + ex.Message);
+            }
+        }
+
+        private void CreatePetWindowAndPeek(Cuy.Core.Pigs.PigProfile pig)
+        {
+            if (pig == null) return;
+
+            try
+            {
+                var existing = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                if (existing == null)
+                {
+                    Log("[WARN] CreatePetWindowAndPeek: No existing FormPet available.");
+                    return;
+                }
+
+                if (existing.InvokeRequired)
+                {
+                    existing.BeginInvoke(new Action(() => CreatePetWindowAndPeek(pig)));
+                    return;
+                }
+
+                if (FormPet.AllPets.Count >= 2)
+                {
+                    Log("[Desktop] Already at max active desktop pets (2).");
+                    return;
+                }
+
+                foreach (var p in FormPet.AllPets)
+                {
+                    if (p != null && !p.IsDisposed && p.Profile?.Id == pig.Id)
+                    {
+                        return;
+                    }
+                }
+
+                var xml = existing.Xml;
+                var animField = typeof(FormPet).GetField("Animations", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var animations = animField?.GetValue(existing) as Animations;
+                if (animations == null && xml != null)
+                {
+                    animations = new Animations(xml);
+                    xml.LoadAnimations(animations);
+                }
+
+                if (xml == null || animations == null)
+                {
+                    Log("[WARN] Cannot create pet window: Xml or Animations missing.");
+                    return;
+                }
+
+                var newPet = new FormPet(animations, xml);
+                foreach (var sprite in xml.sprites)
+                {
+                    newPet.AddImage(sprite);
+                }
+                newPet.Profile = pig;
+                PigLook.Apply(newPet, xml, PigLook.CurrentStageKey());
+                newPet.Show(xml.spriteWidth, xml.spriteHeight);
+                newPet.Play(true);
+
+                Log($"[Desktop] Created pet window for adopted pig: {pig.Name} ({pig.Id})");
+
+                var scene = new EdgePeekScene(EdgeSide.Left, () =>
+                {
+                    Log($"[Peek] Adopted pig peek for {pig.Name} completed.");
+                }, firstRun: false);
+                scene.Start();
+            }
+            catch (Exception ex)
+            {
+                Log("[ERROR] CreatePetWindowAndPeek: " + ex);
             }
         }
 
@@ -288,6 +479,22 @@ namespace Cuy
 
             // Update Pet and AutoSaver
             _session.Tick();
+
+            // Periodic slow tick for offers (~1 minute)
+            if ((nowReal - _lastOfferCheckTime).TotalSeconds >= 60.0)
+            {
+                _lastOfferCheckTime = nowReal;
+                try
+                {
+                    _session?.Pet?.CheckOffers(nowReal);
+                }
+                catch (Exception ex)
+                {
+                    Log("[WARN] BrainController slow tick CheckOffers: " + ex.Message);
+                }
+            }
+
+            DeliverOfferToastIfDue();
 
             // Update poops (count down game time, update positions on windows)
             PoopManager.Instance?.Update(gameElapsed);
@@ -765,8 +972,30 @@ namespace Cuy
             return true;
         }
 
+        public void Dispose()
+        {
+            Close();
+        }
+
         public void Close()
         {
+            if (_isClosed) return;
+            _isClosed = true;
+
+            try
+            {
+                if (_session?.Pet != null)
+                {
+                    _session.Pet.OfferUnlocked -= OnOfferUnlocked;
+                    _session.Pet.PigAdopted -= OnPigAdopted;
+                    _session.Pet.StageChanged -= OnPetStageChanged;
+                    _session.Pet.Birthday -= OnPetBirthday;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("[WARN] Unsubscribe on close: " + ex.Message);
+            }
             try
             {
                 try { _behaviorHost?.Stop(); } catch { }
