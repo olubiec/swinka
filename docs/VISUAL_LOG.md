@@ -178,3 +178,28 @@ sofa_cosy (bochenek, brick, 4 warianty), fireplace (wył + 4 klatki wł), lamp_m
 - Polana ogrodu: o połowę mniej kwiatów (`meadow(..., flowers=.5)`), seed ogrodu 22 (R6=0).
 - Strumień w parku: ciemniejsze tony wody (`dusk.0/2/3`), nie blednie wieczorem.
 - Lint: 0 naruszeń.
+
+## Weryfikacja końcowa grafiki (2026-11-04)
+Uruchomione z korzenia repozytorium (PK-33, W33-02). Przeglądarka: `CHROMIUM_PATH=/usr/bin/google-chrome`. Playwright nie był instalowany (przeglądarka działała bez tego). Nie naprawiano błędów; wszystkie wyniki poniżej są z jednego przebiegu.
+
+| Sprawdzenie | Wynik | Ostatnia linia wyjścia |
+| --- | --- | --- |
+| `node tools/qa/anim-test.js` | PASS | `ANIM TEST OK (60 animations x 5 stages)` |
+| `node tools/qa/palette-test.js` | PASS | `PALETTE TEST OK` |
+| `node tools/qa/web-smoke.js` | FAIL (znane, PK-32a) | `roaming 420x640: 404 ... /assets/house/lamp_floor.png`; wcześniej 404 `dust_motes.png`, `cone_shade.png`; `mock.js` 404 to dozwolone brakujące pliki (`ALLOWED_MISSING`) |
+| `node tools/qa/check-assets.js` | FAIL (znane) | `ERROR web/home/style.css: no CSS rule for .icon-pig (used in web/home/features/pigs/feature.css)` |
+| `node tools/qa/check-assets.js --x2` | PASS | `X2 OK` |
+| `node tools/qa/lights-test.js` | PASS | `LIGHTS OK` |
+| `node tools/qa/check-icons.js` | FAIL (znane) | `  - icon-pig (found in: web/home/features/pigs/feature.css, web/home/features/pigs/feature.js)` |
+| `node tools/qa/check-css-vars.js` | FAIL (nowe, nienaprawiane) | `web/home/features/store/feature.css: --focus` (9 nieznanych zmiennych: `--text`, `--line`, `--panel`, `--accent`, `--muted`, `--focus`) |
+| `python3 tools/art/style_check.py` | PASS | `Suma: R1=0, R2=0, R3=0, R4=0, R5=0, R6=0, R7=0` (0 naruszeń) |
+
+Znane otwarte problemy (sprzed tego pakietu): `icon-pig` (check-assets, check-icons) i trzy brakujące pliki w web-smoke (`assets/fx/dust_motes.png`, `assets/fx/cone_shade.png`, `assets/house/lamp_floor.png`).
+
+Ręczna weryfikacja (człowiek, na Windows; pola do zaznaczenia):
+- [ ] Park: strumień i most rano, w dzień, wieczorem i w nocy
+- [ ] Ogród: żywopłot (`garden:hedge`) i polana, wszystkie pory dnia
+- [ ] Farma: grządki, uprawy w czterech stadiach, stodoła `barn_hay`
+- [ ] Targ: stragany, plakaty `poster_1..3`, tabliczki
+- [ ] Menu: tło `bg/menu.png`, panele i przyciski UI, ikona aplikacji
+- [ ] Dom: oświetlenie lamp i kominka w każdej porze dnia (`lights.json`)

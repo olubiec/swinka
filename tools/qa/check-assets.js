@@ -205,6 +205,43 @@ function checkIconClasses(icons) {
   }
 }
 
+// --x2 mode: the game must not read _x2 world files. Code (not data) is scanned for `file_x2`
+// and `_x2.png`; data files (atlas.json, props.json) may keep their file_x2 keys.
+const X2_SCAN_DIRS = ['web', 'src'];
+const X2_CODE_EXT = /\.(js|cs|html|css)$/;
+const X2_PATTERN = /file_x2|_x2\.png/;
+
+function scanX2Files(dir, out) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'bin' || entry.name === 'obj') continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) scanX2Files(full, out);
+    else if (X2_CODE_EXT.test(entry.name)) out.push(full);
+  }
+  return out;
+}
+
+function runX2() {
+  const hits = [];
+  for (const dir of X2_SCAN_DIRS) {
+    const base = path.join(ROOT, dir);
+    if (!fs.existsSync(base)) continue;
+    for (const file of scanX2Files(base, [])) {
+      const lines = fs.readFileSync(file, 'utf8').split(/\r?\n/);
+      lines.forEach((text, i) => {
+        if (X2_PATTERN.test(text)) hits.push(`${rel(file)}:${i + 1}: ${text.trim()}`);
+      });
+    }
+  }
+  for (const line of hits) console.log(`X2 ${line}`);
+  if (hits.length > 0) {
+    console.log(`X2 FAIL: ${hits.length} code reference(s) to _x2 files`);
+    process.exit(1);
+  }
+  console.log('X2 OK');
+  process.exit(0);
+}
+
 function main() {
   const iconsJson = readJson(path.join(ASSETS, 'icons', 'icons.json'));
   const icons = new Set(Object.keys(iconsJson.icons || {}));
@@ -230,4 +267,5 @@ function main() {
   process.exit(0);
 }
 
-main();
+if (process.argv.includes('--x2')) runX2();
+else main();
