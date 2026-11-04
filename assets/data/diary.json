@@ -955,6 +955,222 @@
         "weather": "any"
       },
       "text": "Resting quietly in the shaded grass after a pleasant stroll. Listening to birds chirp makes for a cozy nap."
+    },
+    {
+      "id": "t_room_decor_new",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Something new stands in my own room today, and it is #room_cosy_thing#. I keep sniffing it. Mine, all mine."
+    },
+    {
+      "id": "t_room_own_room",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Now I have a room of my own! It smells of fresh hay and #room_cosy_thing#. I ran three happy laps before I sat down."
+    },
+    {
+      "id": "t_room_decor_second",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "A new thing for my room! I pushed it with my nose until it sat just right. #room_cosy_thing.capitalize# feels like home."
+    },
+    {
+      "id": "t_room_recolor",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "My favourite thing in my room has a new colour. I wheeked at it for a long time. Fresh and bright, just like me."
+    },
+    {
+      "id": "t_room_renamed",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "My room has a new name on the door now. I think it sounds grand. I read it twice, then took a nap under it."
+    },
+    {
+      "id": "t_room_cosy_evening",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Quiet evening in my own room. #room_cosy_thing.capitalize# and a little hay were all I needed. Cosy toes, soft purrs."
+    },
+    {
+      "id": "t_room_evening_glow",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "The light in my room went all golden tonight. I curled up next to #room_cosy_thing# and listened to the house getting sleepy."
+    },
+    {
+      "id": "t_room_dorm_moved",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I moved into the shared bedroom with #room_friend_word#. So many soft noises at night. I do not feel alone at all."
+    },
+    {
+      "id": "t_room_dorm_nap",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Napped in the shared bedroom beside #room_friend_word#. We shared the warm spot and the hay. Best nap in a long while."
+    },
+    {
+      "id": "t_room_dorm_chat",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Whispered wheeks in the shared bedroom tonight. #room_friend_word.capitalize# wheeked back every time. We fell asleep nose to nose."
+    },
+    {
+      "id": "t_room_memory_visit",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "I visited the memory room today. It is quiet and gentle there, full of kind thoughts. I sat a while and felt warm inside."
+    },
+    {
+      "id": "t_room_memory_candle",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "The memory room glowed softly this evening. I sat close to it and remembered happy hay days. A good, calm feeling."
     }
   ],
   "generic_feelings": [
@@ -1110,5 +1326,19 @@
     "clover patch",
     "shady orchard",
     "green trail"
+  ],
+  "room_cosy_thing": [
+    "a plump cushion",
+    "a soft blanket",
+    "a sunny window spot",
+    "a little hay bar",
+    "a woolly rug",
+    "a tiny lamp"
+  ],
+  "room_friend_word": [
+    "my best friend",
+    "a good friend",
+    "my cuddly roommate",
+    "a fluffy friend"
   ]
 }

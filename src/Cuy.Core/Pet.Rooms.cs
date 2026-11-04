@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Cuy.Core.Pigs;
 using Cuy.Core.World;
 
 namespace Cuy.Core
@@ -175,6 +176,36 @@ namespace Cuy.Core
             if (!world.Rooms.TryGetValue(place, out var room) || room == null) return false;
 
             return RoomLayoutOps.Remove(room, uid);
+        }
+
+        /// <summary>
+        /// Factor for mood decay from comfort. World-wide while only WorldDecorActive is on; with PigRoomsActive
+        /// it is the average over the active (non-memorial) pigs, each judged by its own room.
+        /// Falls back to the world-wide factor when no active pig can be found.
+        /// </summary>
+        public double MoodDecayComfortFactor()
+        {
+            if (!Balance.WorldDecorActive) return 1.0;
+
+            if (Balance.PigRoomsActive && State.ActivePigIds != null && State.Roster != null)
+            {
+                var world = EnsureWorld();
+                double sum = 0;
+                int count = 0;
+                var seen = new System.Collections.Generic.HashSet<PigProfile>();
+                int max = Math.Min(State.ActivePigIds.Count, 2);
+                for (int i = 0; i < max; i++)
+                {
+                    var pig = FindRosterPig(State.ActivePigIds[i]);
+                    if (pig == null || pig.Memorial || !seen.Add(pig)) continue;
+                    int score = Comfort.Score(world, WorldItemCatalog, PigRooms.RoomId(PigKey(pig)));
+                    sum += Comfort.MoodDecayFactor(Comfort.Capped(score, PlaceCatalog), PlaceCatalog);
+                    count++;
+                }
+                if (count > 0) return sum / count;
+            }
+
+            return Comfort.MoodDecayFactor(Comfort.Capped(ComfortScore(), PlaceCatalog), PlaceCatalog);
         }
 
         public int ComfortScore(string placeId = null)
