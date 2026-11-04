@@ -58,6 +58,88 @@
   }
 
   // Default starting state in mock mode
+  // Named pig definitions and offer groups matching assets/data/pigs_named.json
+  const NAMED_PIGS = {
+    kuki: {
+      id: 'kuki',
+      name: 'Kuki',
+      breed: 'rosette_normal',
+      paletteId: 'two_tone.ginger',
+      pattern: 'two_tone',
+      palette: 'ginger',
+      startAgeYears: 0.1,
+      offerGroup: 'starter',
+      offerAfterDays: 0,
+      offerCost: 0,
+      traits: [],
+      blurb: 'Friendly and calm. Gets along with everybody.',
+      modifiers: { appetite: 1.0, poop_rate: 1.0, activity: 1.0, bond_gain: 1.0, minigame_score: 1.0, wheek_rate: 1.0, startle: 1.0, joy_weight: 1.0 }
+    },
+    ned: {
+      id: 'ned',
+      name: 'Ned',
+      breed: 'teddy_chubby',
+      paletteId: 'bicolor_head.chocolate',
+      pattern: 'bicolor_head',
+      palette: 'chocolate',
+      startAgeYears: 0.0,
+      offerGroup: 'starter',
+      offerAfterDays: 0,
+      offerCost: 0,
+      traits: ['sleepyhead', 'glutton', 'explorer'],
+      blurb: 'Lazy, curious and always hungry.',
+      modifiers: { appetite: 1.3, poop_rate: 1.5, activity: 0.85, bond_gain: 1.0, minigame_score: 1.0, wheek_rate: 1.0, startle: 1.0, joy_weight: 1.0 }
+    },
+    james: {
+      id: 'james',
+      name: 'James',
+      breed: 'teddy_normal',
+      paletteId: 'roan.slate',
+      pattern: 'roan',
+      palette: 'slate',
+      startAgeYears: 0.0,
+      offerGroup: null,
+      offerAfterDays: 90,
+      offerCost: 100,
+      traits: ['vocal', 'skittish'],
+      blurb: 'Loud and jumpy, but strong.',
+      modifiers: { appetite: 1.0, poop_rate: 1.0, activity: 1.0, bond_gain: 0.7, minigame_score: 1.2, wheek_rate: 1.5, startle: 1.5, joy_weight: 1.0 }
+    },
+    glen: {
+      id: 'glen',
+      name: 'Glen',
+      breed: 'rosette_lean',
+      paletteId: 'self.black',
+      pattern: 'self',
+      palette: 'black',
+      startAgeYears: 1.2,
+      offerGroup: null,
+      offerAfterDays: 105,
+      offerCost: 100,
+      traits: ['cuddly'],
+      blurb: 'Quiet and cuddly. Eats little and rarely rushes.',
+      modifiers: { appetite: 0.7, poop_rate: 0.8, activity: 0.6, bond_gain: 1.25, minigame_score: 1.0, wheek_rate: 1.0, startle: 1.0, joy_weight: 1.0 }
+    },
+    racuch: {
+      id: 'racuch',
+      name: 'Racuch',
+      breed: 'smooth_chubby',
+      paletteId: 'saddle.ginger',
+      pattern: 'saddle',
+      palette: 'ginger',
+      startAgeYears: 0.0,
+      offerGroup: null,
+      offerAfterDays: 130,
+      offerCost: 100,
+      traits: ['popcorning', 'glutton'],
+      blurb: 'Round, cheerful and always on the move.',
+      modifiers: { appetite: 1.2, poop_rate: 1.2, activity: 1.3, bond_gain: 1.0, minigame_score: 1.0, wheek_rate: 1.0, startle: 1.0, joy_weight: 1.5 }
+    }
+  };
+
+  const OFFER_GROUPS = {
+    starter: { id: 'starter', label: 'Adopt both', pigs: ['kuki', 'ned'] }
+  };
   const STORAGE_KEY = 'cuy_mock_state_v1';
   const defaultMockState = {
     type: 'state',
@@ -91,6 +173,132 @@
       pellets: 5
     },
     poops: 2,             // Poops in the run
+    roster: [
+      {
+        id: 'kuki',
+        name: 'Kuki',
+        breed: 'rosette_normal',
+        paletteId: 'two_tone.ginger',
+        traits: [],
+        discoveredTraits: [],
+        namedId: 'kuki',
+        ageYears: 1.5,
+        stage: 'adult',
+        memorial: false,
+        blurb: 'Friendly and calm. Gets along with everybody.',
+        modifiers: {
+          appetite: 1.0,
+          poop_rate: 1.0,
+          activity: 1.0,
+          bond_gain: 1.0,
+          minigame_score: 1.0,
+          wheek_rate: 1.0,
+          startle: 1.0,
+          joy_weight: 1.0
+        }
+      },
+      {
+        id: 'ned',
+        name: 'Ned',
+        breed: 'teddy_chubby',
+        paletteId: 'bicolor_head.chocolate',
+        traits: ['sleepyhead', 'glutton', 'explorer'],
+        discoveredTraits: [],
+        namedId: 'ned',
+        ageYears: 0.3,
+        stage: 'junior',
+        memorial: false,
+        blurb: 'Lazy, curious and always hungry.',
+        modifiers: {
+          appetite: 1.3,
+          poop_rate: 1.5,
+          activity: 0.85,
+          bond_gain: 1.0,
+          minigame_score: 1.0,
+          wheek_rate: 1.0,
+          startle: 1.0,
+          joy_weight: 1.0
+        }
+      }
+    ],
+    activePigIds: ['kuki', 'ned'],
+    offers: [
+      {
+        id: 'kuki',
+        name: 'Kuki',
+        unlocked: true,
+        daysLeft: 0,
+        cost: 0,
+        group: 'starter',
+        adopted: true,
+        look: {
+          breed: 'rosette_normal',
+          paletteId: 'two_tone.ginger'
+        },
+        blurb: 'Friendly and calm. Gets along with everybody.',
+        traits: []
+      },
+      {
+        id: 'ned',
+        name: 'Ned',
+        unlocked: true,
+        daysLeft: 0,
+        cost: 0,
+        group: 'starter',
+        adopted: true,
+        look: {
+          breed: 'teddy_chubby',
+          paletteId: 'bicolor_head.chocolate'
+        },
+        blurb: 'Lazy, curious and always hungry.',
+        traits: ['sleepyhead', 'glutton', 'explorer']
+      },
+      {
+        id: 'james',
+        name: 'James',
+        unlocked: false,
+        daysLeft: 12,
+        cost: 100,
+        group: null,
+        adopted: false,
+        look: {
+          breed: 'teddy_normal',
+          paletteId: 'roan.slate'
+        },
+        blurb: 'Loud and jumpy, but strong.',
+        traits: ['vocal', 'skittish']
+      },
+      {
+        id: 'glen',
+        name: 'Glen',
+        unlocked: false,
+        daysLeft: 27,
+        cost: 100,
+        group: null,
+        adopted: false,
+        look: {
+          breed: 'rosette_lean',
+          paletteId: 'self.black'
+        },
+        blurb: 'Quiet and cuddly. Eats little and rarely rushes.',
+        traits: ['cuddly']
+      },
+      {
+        id: 'racuch',
+        name: 'Racuch',
+        unlocked: false,
+        daysLeft: 52,
+        cost: 100,
+        group: null,
+        adopted: false,
+        look: {
+          breed: 'smooth_chubby',
+          paletteId: 'saddle.ginger'
+        },
+        blurb: 'Round, cheerful and always on the move.',
+        traits: ['popcorning', 'glutton']
+      }
+    ],
     // Minigames contract: { records: object, dailyRewardedCount: number, dailyMax: number, plays: object, lastResult: object|null }
     minigames: {
       records: {
@@ -339,6 +547,66 @@
       if (!state.bond) state.bond = { level: 4, points: 46, pointsToday: 6, maxPointsToday: 15 };
       if (state.bondNext === undefined) state.bondNext = { level: 5, id: 'trick_spin', title: 'Learns to spin', pointsToNext: 14 };
 
+      if (!state.roster || !Array.isArray(state.roster) || state.roster.length === 0) {
+        state.roster = JSON.parse(JSON.stringify(defaultMockState.roster));
+      }
+      if (!state.activePigIds || !Array.isArray(state.activePigIds)) {
+        state.activePigIds = state.roster.slice(0, 2).map(p => p.id);
+      }
+      if (!state.offers || !Array.isArray(state.offers) || state.offers.length === 0) {
+        state.offers = JSON.parse(JSON.stringify(defaultMockState.offers));
+      }
+
+      state.roster.forEach(pig => {
+        if (!pig) return;
+        const def = (pig.namedId && NAMED_PIGS[pig.namedId]) || (pig.id && NAMED_PIGS[pig.id]) || null;
+        if (def && !pig.namedId) pig.namedId = def.id;
+        if (pig.ageYears === undefined || pig.ageYears === null || typeof pig.ageYears !== 'number') {
+          if (pig.stage === 'adult') pig.ageYears = 1.5;
+          else if (pig.stage === 'junior') pig.ageYears = 0.3;
+          else if (pig.stage === 'senior') pig.ageYears = 5.0;
+          else if (pig.stage === 'legend') pig.ageYears = 8.0;
+          else if (def && typeof def.startAgeYears === 'number') pig.ageYears = def.startAgeYears;
+          else pig.ageYears = 0.0;
+        }
+        pig.ageYears = Math.round(pig.ageYears * 10) / 10;
+        if (pig.memorial) {
+          pig.stage = 'legend';
+        } else if (!pig.stage) {
+          if (pig.ageYears >= 8.0) pig.stage = 'legend';
+          else if (pig.ageYears >= 4.0) pig.stage = 'senior';
+          else if (pig.ageYears >= 0.5) pig.stage = 'adult';
+          else if (pig.ageYears >= 21 / 365.25) pig.stage = 'junior';
+          else pig.stage = 'baby';
+        }
+        if (def && def.modifiers && !pig.modifiers) {
+          pig.modifiers = { ...def.modifiers };
+        }
+        if (def && !pig.blurb && def.blurb) {
+          pig.blurb = def.blurb;
+        }
+        if (pig.memorial === undefined) {
+          pig.memorial = false;
+        }
+        if (!Array.isArray(pig.traits)) {
+          pig.traits = def ? [...def.traits] : [];
+        }
+        if (!Array.isArray(pig.discoveredTraits)) {
+          pig.discoveredTraits = [];
+        }
+      });
+
+      if (Array.isArray(state.offers) && Array.isArray(state.roster)) {
+        const adoptedIds = new Set();
+        state.roster.forEach(p => {
+          if (p && p.namedId) adoptedIds.add(p.namedId);
+          if (p && p.id) adoptedIds.add(p.id);
+        });
+        state.offers.forEach(o => {
+          if (o && adoptedIds.has(o.id)) o.adopted = true;
+        });
+      }
+
       // Health as in Cuy.Core.Needs.Health: 0.5 * avg + 0.5 * min
       const vals = [
         state.needs.fullness,
@@ -390,6 +658,7 @@
 
     broadcastState() {
       if (!this.currentState) return;
+      this.normalizeState(this.currentState);
       const copy = JSON.parse(JSON.stringify(this.currentState));
       this.listeners.forEach((fn) => {
         try { fn(copy); } catch (e) { console.error('Error in a bridge listener:', e); }
@@ -453,7 +722,9 @@
      * Returns the current state
      */
     getState() {
-      return this.currentState ? JSON.parse(JSON.stringify(this.currentState)) : null;
+      if (!this.currentState) return null;
+      this.normalizeState(this.currentState);
+      return JSON.parse(JSON.stringify(this.currentState));
     }
 
     /**
@@ -725,6 +996,160 @@
               }
             }
           }, 50);
+          break;
+        }
+
+        case 'adopt_named': {
+          const id = action.id || action.pigId;
+          const memorial = Boolean(action.memorial);
+          if (!id) break;
+
+          const def = NAMED_PIGS[id];
+          if (!def) break;
+
+          if (!s.roster) s.roster = [];
+          const alreadyAdopted = s.roster.some(p => p.id === id || p.namedId === id);
+          if (alreadyAdopted) break;
+
+          if (!s.offers) s.offers = JSON.parse(JSON.stringify(defaultMockState.offers));
+          const offer = s.offers.find(o => o.id === id);
+
+          if (!memorial) {
+            const unlocked = offer ? (offer.unlocked && offer.daysLeft <= 0) : (def.offerAfterDays === 0);
+            if (!unlocked) {
+              this.dispatchMessage({ type: 'toast', text: 'Not ready yet' });
+              break;
+            }
+
+            const cost = offer ? offer.cost : def.offerCost;
+            if (cost > 0 && (s.clovers || 0) < cost) {
+              this.dispatchMessage({ type: 'toast', text: 'Not enough clovers' });
+              break;
+            }
+
+            const livingCount = s.roster.filter(p => !p.memorial && p.stage !== 'legend').length;
+            if (livingCount >= 6) {
+              this.dispatchMessage({ type: 'toast', text: 'The family is full' });
+              break;
+            }
+
+            if (cost > 0) {
+              s.clovers -= cost;
+            }
+
+            if (def.offerGroup !== 'starter') {
+              if (!s.inventory) s.inventory = {};
+              s.inventory.bell_pepper = (s.inventory.bell_pepper || 0) + 2;
+              s.inventory.parsley = (s.inventory.parsley || 0) + 2;
+            }
+          }
+
+          const stage = memorial ? 'legend' : (def.startAgeYears >= 0.5 ? 'adult' : (def.startAgeYears >= 21 / 365.25 ? 'junior' : 'baby'));
+          const newPig = {
+            id: def.id,
+            name: def.name,
+            breed: def.breed,
+            paletteId: def.paletteId,
+            traits: [...(def.traits || [])],
+            discoveredTraits: [],
+            namedId: def.id,
+            ageYears: def.startAgeYears,
+            stage: stage,
+            memorial: memorial,
+            blurb: def.blurb || '',
+            modifiers: def.modifiers ? { ...def.modifiers } : undefined
+          };
+
+          s.roster.push(newPig);
+          if (offer) {
+            offer.adopted = true;
+          }
+
+          if (memorial) {
+            this.dispatchMessage({ type: 'toast', text: 'Forever in the family' });
+          } else {
+            this.dispatchMessage({ type: 'toast', text: `Welcome ${def.name} to the family!` });
+          }
+          s.currentAction = 'popcorn';
+          break;
+        }
+
+        case 'adopt_group': {
+          const groupId = action.id || action.groupId;
+          if (!groupId) break;
+
+          const group = OFFER_GROUPS[groupId];
+          if (!group || !Array.isArray(group.pigs)) break;
+
+          if (!s.roster) s.roster = [];
+          if (!s.offers) s.offers = JSON.parse(JSON.stringify(defaultMockState.offers));
+
+          const toAdopt = [];
+          for (const pid of group.pigs) {
+            const def = NAMED_PIGS[pid];
+            if (!def) continue;
+            const already = s.roster.some(p => p.id === def.id || p.namedId === def.id);
+            if (!already) {
+              toAdopt.push(def);
+            }
+          }
+
+          const livingCount = s.roster.filter(p => !p.memorial && p.stage !== 'legend').length;
+          if (livingCount + toAdopt.length > 6) {
+            this.dispatchMessage({ type: 'toast', text: 'The family is full' });
+            break;
+          }
+
+          for (const def of toAdopt) {
+            const stage = def.startAgeYears >= 0.5 ? 'adult' : (def.startAgeYears >= 21 / 365.25 ? 'junior' : 'baby');
+            const newPig = {
+              id: def.id,
+              name: def.name,
+              breed: def.breed,
+              paletteId: def.paletteId,
+              traits: [...(def.traits || [])],
+              discoveredTraits: [],
+              namedId: def.id,
+              ageYears: def.startAgeYears,
+              stage: stage,
+              memorial: false,
+              blurb: def.blurb || '',
+              modifiers: def.modifiers ? { ...def.modifiers } : undefined
+            };
+            s.roster.push(newPig);
+            const offer = s.offers.find(o => o.id === def.id);
+            if (offer) offer.adopted = true;
+          }
+
+          const groupPigs = group.pigs.map(pid => NAMED_PIGS[pid]).filter(Boolean);
+          const namesStr = groupPigs.map(p => p.name).join(' and ');
+          this.dispatchMessage({ type: 'toast', text: `Welcome ${namesStr} to the family!` });
+          s.currentAction = 'popcorn';
+          break;
+        }
+
+        case 'set_memorial': {
+          const pigId = action.pigId || action.id;
+          const on = action.on !== undefined ? Boolean(action.on) : true;
+          if (!pigId || !s.roster) break;
+
+          const pig = s.roster.find(p => p.id === pigId || p.namedId === pigId);
+          if (!pig) break;
+
+          if (pig.memorial === on) break;
+          pig.memorial = on;
+          if (on) {
+            pig.stage = 'legend';
+            this.dispatchMessage({ type: 'toast', text: 'Forever in the family' });
+          } else {
+            const def = (pig.namedId && NAMED_PIGS[pig.namedId]) || (pig.id && NAMED_PIGS[pig.id]) || null;
+            const age = typeof pig.ageYears === 'number' ? pig.ageYears : (def ? def.startAgeYears : 0.0);
+            if (age >= 8.0) pig.stage = 'legend';
+            else if (age >= 4.0) pig.stage = 'senior';
+            else if (age >= 0.5) pig.stage = 'adult';
+            else if (age >= 21 / 365.25) pig.stage = 'junior';
+            else pig.stage = 'baby';
+          }
           break;
         }
 
