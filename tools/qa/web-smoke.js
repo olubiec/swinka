@@ -337,6 +337,34 @@ function serve() {
     await page.waitForTimeout(200);
   });
 
+  await step('26_my_pigs', async () => {
+    const errorsBefore = errors.length;
+    await page.evaluate(() => window.CuyHome.openFeature('pigs'));
+    await page.waitForSelector('.pigs-grid .pig-card', { timeout: 5000 });
+    await page.waitForTimeout(300);
+
+    const roster = await page.$$eval('.pigs-grid .pig-card', cards => cards.map(c => c.querySelector('.pig-card-name').textContent.trim()));
+    if (!roster.includes('Kuki') || !roster.includes('Ned')) throw new Error('My Pigs roster lacks Kuki or Ned, got: ' + roster.join(', '));
+
+    const lockedWithPadlock = await page.$$eval('.pig-offer-card.offer-locked', cards => cards.filter(c => c.querySelector('.pixel-icon.icon-padlock')).length);
+    const lockedCards = await page.$$eval('.pig-offer-card.offer-locked', cards => cards.length);
+    if (lockedCards !== 3 || lockedWithPadlock !== 3) throw new Error(`Expected 3 locked offer cards with padlock, got ${lockedCards} cards, ${lockedWithPadlock} with padlock`);
+
+    const adoptBothShown = await page.$$eval('button', bs => bs.some(b => /adopt both/i.test(b.textContent)));
+    if (adoptBothShown) throw new Error('"Adopt both" button is shown although both pigs are adopted');
+
+    // Memorial toggle on Kuki: confirmation row must appear, then cancel it again
+    await page.click('.pigs-grid .pig-card[data-pig-id="kuki"] .btn-memorial-toggle');
+    await page.waitForTimeout(200);
+    if (!(await page.isVisible('#memorialConfirm_kuki'))) throw new Error('Memorial confirmation did not appear for Kuki');
+    await page.click('#memorialConfirm_kuki .btn-confirm-no');
+    await page.waitForTimeout(200);
+
+    if (errors.length > errorsBefore) throw new Error('console or page errors during My Pigs: ' + errors.slice(errorsBefore).join(' | '));
+    await page.evaluate(() => window.CuyHome.closeFeature && window.CuyHome.closeFeature());
+    await page.waitForTimeout(200);
+  });
+
   await step('30_firststart', async () => {
     const newPage = await browser.newPage({ viewport: { width: 420, height: 640 } });
     await newPage.addInitScript(() => {
