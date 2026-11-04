@@ -199,13 +199,46 @@ Message `settings_city { city }` (empty = off).
 Page message `{ type: 'toast', text }` → the page shows a small pixel toast for 2.5 s (implemented in `app.js`).
 
 ## pigs (My Pigs, breed and coat) – Core: `GameState.Pigs.cs`, `PigProfile`, `Palettes`; C#: `PigsFeature.cs`, `PigLook.cs`
-State keys `roster` and `activePigIds` (published by `PigsFeature`):
+State keys `roster`, `activePigIds` and `offers` (published by `PigsFeature`):
 ```json
 { "roster": [ { "id": "ab12", "name": "Piko", "breed": "smooth|chubby|skinny|rosette|peruvian",
-                "paletteId": "tricolor|dutch|agouti|albino|cinnamon", "traits": ["cuddly"], "discoveredTraits": ["cuddly"] } ],
-  "activePigIds": ["ab12"] }
+                "paletteId": "tricolor|dutch|agouti|albino|cinnamon", "traits": ["cuddly"], "discoveredTraits": ["cuddly"],
+                "namedId": null, "ageYears": 0.4, "stage": "baby|junior|adult|senior|legend", "memorial": false,
+                "blurb": "", "modifiers": { "poop_rate": 1.3 } } ],
+  "activePigIds": ["ab12"],
+  "offers": [ { "id": "james", "name": "James", "unlocked": true, "daysLeft": 0, "cost": 120, "group": null,
+                "adopted": false, "look": { "breed": "rosette", "paletteId": "dutch" },
+                "blurb": "...", "traits": ["startles"] } ] }
 ```
-Messages: `adopt_pig` (C# takes the price from `assets/data/pigs.json`, never from JS), `toggle_pig_active { pigId }` (max 2 active, at least 1).
+Roster fields:
+- `namedId`: id of the named pig definition (`null` or empty for randomly adopted pigs).
+- `ageYears`: age in pig years, rounded to 0.1. `stage`: life stage data key (`baby`, `junior`, `adult`, `senior`, `legend`).
+- `memorial`: `true` for a pig in memorial mode (not counted in the family limit).
+- `blurb`: text from the named pig definition, or `""` for random pigs.
+- `modifiers`: present ONLY for named pigs whose definition has modifiers. Keys come from the definition; values are
+  rounded to 2 decimals. Missing key = no modifier.
+
+`offers[]` (named pigs that can be adopted; status from `OfferChecker`, time from `OffersStartUtc`):
+`id`, `name`, `unlocked` (bool, false = not ready yet), `daysLeft` (days left as computed by `OfferChecker`), `cost` (clovers),
+`group` (offer group id or `null`; pigs in one group are adopted together), `adopted` (bool), `look { breed, paletteId }`,
+`blurb`, `traits`.
+
+Messages:
+- `adopt_pig` (C# takes the price from `assets/data/pigs.json`, never from JS). Random pig; one friend at a time, roster limit.
+- `toggle_pig_active { pigId }` (max 2 active, at least 1).
+- `adopt_named { id, memorial? }` (`pigId` is accepted as an alternative key; `memorial` defaults to `false`). Price and
+  unlock come from the named pig definition in C#. `memorial: true` adopts the pig straight into memorial mode.
+- `adopt_group { id }` (`groupId` accepted as an alternative key). Adopts the pigs of the offer group together; success
+  toast names all of them. Price and checks are done in Core (`AdoptGroup`).
+- `set_memorial { pigId, on }` (`id` accepted as an alternative key; `on` defaults to `true`). Switches a pig in or out of
+  memorial mode; the pig stays in the roster.
+
+Toasts posted by `PigsFeature` (page message `{ type: 'toast', text }`):
+- `adopt_pig`: "You already adopted a friend", "The family is full", "Not enough clovers", "Welcome <name> to the family!".
+- `adopt_named` / `adopt_group`: "Not enough clovers", "The family is full", "Not ready yet"; success "Welcome <name> to the
+  family!" (group: names joined with " and "); memorial adoption "Forever in the family".
+- `set_memorial` (switched on): "Forever in the family".
+- Unknown ids, a pig that is already in the requested state, or an unknown group are ignored silently (no toast).
 Sheets: `(breed, stage) -> assets/sprites/<stage>/spritesheet.png` for `smooth`, `assets/sprites/breeds/<breed>/<stage>/spritesheet.png` otherwise (`assets/sprites/breeds.json`).
 The sheets are drawn in ginger; the coat is a runtime exact-colour remap from `assets/sprites/palettes.json` (`web/home/lib/palette.js`, `PaletteRemap.cs`).
 Unknown breed -> `smooth`, unknown palette -> `tricolor`. Web: `CuySprites.sheet(breed, stage, paletteId)`, `CuySprites.activePig(state)`. Desktop: `PigLook.Apply(pet, xml, stageKey)` gives each `FormPet` the look of its own `PigProfile`.

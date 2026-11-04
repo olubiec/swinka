@@ -112,3 +112,17 @@ Na czystej VM (Windows 10 lub 11, migawka przed testem).
 | VIS-07 | Pulpit: tunel (tunnel_in -> tunnel_out), upadek (fall -> land), lie_down -> sleep | Bez skoków i błysków; tunnel_wiggle nie jest używany | |
 | VIS-08 | Pulpit: kursor blisko świnki 1-3 s (front_look 5 klatek), sztuczki: spin, stand up, popcorn, hurdle | Oczy śledzą kursor, sztuczki grają raz i wracają do idle | |
 | VIS-09 | Pulpit z towarzyszem: poczekaj na following / sleeping_together / nose_touch / grooming_other | Animacje pojawiają się rzadko (cooldowny w `assets/data/actions.json`) | |
+
+## 8. Kolekcja świnek (My Pigs: wiek, oferty, pamięć, cechy nazwanych świnek)
+
+Przed testem: `tools/build.ps1`, potem `src/Cuy/bin/Debug/Cuy.exe`. Save: `%AppData%\Cuy\save.json`, log: `%LocalAppData%\Cuy\logs\cuy.log`. Zamknij Cuy przed każdą edycją save.json.
+
+1. Zacznij nową grę (usuń `save.json` albo użyj nowego profilu). Oczekiwane: w Domku w „My Pigs” są Kuki i Ned, obie z portretem, wiekiem i etapem życia.
+2. Adoptuj jedną świnkę losową (80 koniczyn). Oczekiwane: w karcie Kuki/Neda i nowej świnki widać różne wieki (`ageYears`) i etapy; nowa świnka ma etap baby/junior.
+3. Przesuń czas do przodu, by pojawiła się oferta: zamknij Cuy, otwórz `%AppData%\Cuy\save.json` w Notatniku, znajdź pole daty początku ofert (`OffersStartUtc`; jeśli nazwa w pliku jest inna, zapisz ją w wyniku) i cofnij wartość o 60 dni w tym samym formacie (żeby oferta była już odblokowana, cofnij datę początku ofert, nie przesuwaj zegara systemowego). Zapisz plik, uruchom Cuy. Oczekiwane: po chwili (ok. 5 s) pojawia się toast o ofercie świnki i w „My Pigs” jest karta oferty z ceną (`cost`) i liczbą dni (`daysLeft`).
+4. Adoptuj Jamesa z sekcji ofert. Oczekiwane: toast „Welcome James to the family!” (przy adopcji grupowej: imiona wszystkich świnek z grupy, połączone „and”), James jest w rodzinie, a jego oferta pokazuje status „adopted”. Zapisz, co dostałaś/dostałeś jako paczkę powitalną (nagrody i zmiana koniczyn w nagłówku) oraz dokładny tekst toastu.
+5. Włącz Jamesowi tryb pamięci (przycisk pamięci na karcie). Oczekiwane: toast „Forever in the family”, karta pokazuje tryb pamięci, James nie liczy się do limitu rodziny. Wyłącz tryb pamięci tym samym przyciskiem. Oczekiwane: James wraca do zwykłej rodziny, bez nowego toastu.
+6. Obserwuj Neda na pulpicie przez ok. 15 min z włączonym zwierzęciem (lub przyspiesz zegar w save, jak w kroku 3). Oczekiwane: Ned robi kupki wyraźnie częściej niż inne świnki (modyfikator z definicji).
+7. Obserwuj Jamesa na pulpicie (na pulpicie, nie w Domku) przy dźwiękach i ruchu myszy. Oczekiwane: James płoszy się wcześniej (przy większym dystansie kursora) niż Kuki.
+8. Odpal Racucha (adopcja z ofert, jeśli dostępny) i sprawdź sztuczkę popcorn w Domku i na pulpicie. Oczekiwane: Racuch wykonuje popcorn częściej niż inne świnki.
+9. Zapisz wyniki w kolumnie „Wpisz wynik” (data, wersja Windows, co zobaczyłaś/zobaczyłeś, ewentualne linie `[Pigs]` z logu).

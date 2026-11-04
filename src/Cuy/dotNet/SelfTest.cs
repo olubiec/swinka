@@ -58,6 +58,9 @@ namespace Cuy
             Check("data json", CheckDataJson);
             Check("item ids", CheckItemIds);
             Check("core data tables", CheckCoreDataTables);
+            Check("named pigs data", CheckNamedPigsData);
+            Check("named pig sheets", CheckNamedPigSheets);
+            Check("pigs.json", CheckPigsJson);
             Check("music", CheckMusic);
             Check("coloring", CheckColoring);
             Check("features", CheckFeatures);
@@ -329,6 +332,46 @@ namespace Cuy
             if (Cuy.Core.TricksConfig.LoadDefault() == null) throw new Exception("tricks config failed to load");
             if (Cuy.Core.Achievements.AchievementCatalog.LoadDefault() == null) throw new Exception("achievements catalog failed to load");
             if (Cuy.Core.Diary.DiaryWriter.LoadDefault() == null) throw new Exception("diary writer failed to load");
+        }
+
+        private static JArray LoadNamedPigs()
+        {
+            JObject root = ParseData("pigs_named.json");
+            var pigs = root["pigs"] as JArray;
+            if (pigs == null) throw new Exception("no \"pigs\" array");
+            return pigs;
+        }
+
+        private static void CheckNamedPigsData()
+        {
+            var pigs = LoadNamedPigs();
+            foreach (JToken pig in pigs)
+            {
+                if (string.IsNullOrEmpty((string)pig["id"])) throw new Exception("pig without id");
+            }
+        }
+
+        private static void CheckNamedPigSheets()
+        {
+            string[] stages = { "baby", "junior", "adult", "senior", "legend" };
+            var missing = new List<string>();
+            foreach (JToken pig in LoadNamedPigs())
+            {
+                string id = (string)pig["id"];
+                foreach (var stage in stages)
+                {
+                    string path = Path.Combine(_assets, "sprites", "pigs", id, stage, "spritesheet.png");
+                    if (!File.Exists(path)) missing.Add(id + "/" + stage);
+                }
+            }
+            if (missing.Count > 0) throw new Exception("missing sheets: " + string.Join(", ", missing));
+        }
+
+        private static void CheckPigsJson()
+        {
+            string path = Path.Combine(_assets, "sprites", "pigs", "pigs.json");
+            if (!File.Exists(path)) throw new Exception("sprites/pigs/pigs.json missing");
+            JToken.Parse(File.ReadAllText(path));
         }
 
         private static void CheckMusic()
