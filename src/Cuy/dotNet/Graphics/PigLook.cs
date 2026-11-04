@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Cuy.Core;
 using Cuy.Core.Pigs;
+using Newtonsoft.Json.Linq;
 
 namespace Cuy
 {
@@ -34,24 +36,151 @@ namespace Cuy
 
         public static string CurrentStageKey()
         {
+            return CurrentStageKey(null);
+        }
+
+        public static string CurrentStageKey(PigProfile profile)
+        {
             var pet = BrainController.Instance?.Pet;
+            if (pet != null && pet.Balance != null && pet.Balance.PerPigAgeActive && profile != null)
+            {
+                if (profile.Memorial) return LifeStages.DataKey(LifeStage.Legend);
+                if (!pet.Balance.GrowthActive) return LifeStages.DataKey(LifeStage.Baby);
+                var nowUtc = pet.Clock != null ? pet.Clock.UtcNow : DateTime.UtcNow;
+                var fallbackBirth = pet.State != null ? pet.State.BirthDateUtc : nowUtc;
+                var stage = PigLife.StageOf(profile, nowUtc, pet.Balance.PigDaysPerRealDay, fallbackBirth);
+                return LifeStages.DataKey(stage);
+            }
             return LifeStages.DataKey(pet != null ? pet.Stage : LifeStage.Baby);
         }
 
+        private static readonly object _pigsJsonLock = new object();
+        private static bool _pigsJsonLoaded = false;
+        private static Dictionary<string, HashSet<string>> _pigsJsonMetadata;
+        private static bool _pigsJsonExists = false;
+
+        private static void EnsurePigsJsonLoaded()
+        {
+            if (_pigsJsonLoaded) return;
+            lock (_pigsJsonLock)
+            {
+                if (_pigsJsonLoaded) return;
+                _pigsJsonLoaded = true;
+                _pigsJsonMetadata = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
+
+                try
+                {
+                    string spritesDir = Xml.ResolveAssetsSpritesDir();
+                    string jsonPath = Path.Combine(spritesDir, "pigs", "pigs.json");
+                    if (File.Exists(jsonPath))
+                    {
+                        _pigsJsonExists = true;
+                        string content = File.ReadAllText(jsonPath);
+                        var obj = JObject.Parse(content);
+                        var pigs = obj["pigs"] as JObject;
+                        if (pigs != null)
+                        {
+                            foreach (var prop in pigs.Properties())
+                            {
+                                var stages = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                                var stagesArr = prop.Value?["stages"] as JArray;
+                                if (stagesArr != null)
+                                {
+                                    foreach (var s in stagesArr)
+                                    {
+                                        string val = s?.ToString();
+                                        if (!string.IsNullOrEmpty(val)) stages.Add(val);
+                                    }
+                                }
+                                _pigsJsonMetadata[prop.Name] = stages;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    BrainController.Log("[WARN] PigLook: failed reading pigs.json: " + ex.Message);
+                }
+            }
+        }
+
+        public static bool IsNamedPigAvailable(string pigId, string stageKey)
+        {
+            if (string.IsNullOrEmpty(pigId) || string.IsNullOrEmpty(stageKey)) return false;
+            EnsurePigsJsonLoaded();
+
+            if (_pigsJsonExists && _pigsJsonMetadata != null)
+            {
+                if (!_pigsJsonMetadata.TryGetValue(pigId, out var stages))
+                {
+                    return false;
+                }
+                if (stages != null && stages.Count > 0 && !stages.Contains(stageKey))
+                {
+                    return false;
+                }
+            }
+
+            try
+            {
+                string spritesDir = Xml.ResolveAssetsSpritesDir();
+                string folder = Path.Combine(spritesDir, "pigs", pigId.ToLowerInvariant(), stageKey.ToLowerInvariant());
+                if (!Directory.Exists(folder)) return false;
+                string sheet = Path.Combine(folder, "spritesheet.png");
+                return File.Exists(sheet);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         /// <summary>Replaces the pet's sprites with the look of its own profile (smooth + default palette when it has none).</summary>
-        public static void Apply(FormPet pet, Xml xml, string stageKey)
+        public static void Apply(FormPet pet, Xml xml, string stageKey = null)
         {
             if (pet == null || xml == null) return;
             try
             {
-                string breed = pet.Profile != null ? pet.Profile.Breed : "smooth";
-                string palette = pet.Profile != null ? pet.Profile.PaletteId : null;
+                string effectiveStageKey = stageKey;
+                var corePet = BrainController.Instance?.Pet;
+                if (corePet != null && corePet.Balance != null && corePet.Balance.PerPigAgeActive && pet.Profile != null)
+                {
+                    effectiveStageKey = CurrentStageKey(pet.Profile);
+                }
+                if (string.IsNullOrEmpty(effectiveStageKey))
+                {
+                    effectiveStageKey = CurrentStageKey();
+                }
+
+                var profile = pet.Profile;
+                string namedId = profile?.NamedId;
+                if (!string.IsNullOrWhiteSpace(namedId) && IsNamedPigAvailable(namedId, effectiveStageKey))
+                {
+                    try
+                    {
+                        var namedSprites = xml.BuildNamedPigSprites(namedId, effectiveStageKey);
+                        if (namedSprites != null)
+                        {
+                            pet.ReplaceSprites(namedSprites);
+                            BrainController.Log("[Look] " + (profile != null ? profile.Name : "pet") + ": " + namedId + "/" + effectiveStageKey);
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log("[WARN] PigLook.Apply (named): " + ex.Message);
+                    }
+                }
+
+                // Fall back to shape + palette path
+                string breed = profile != null ? profile.Breed : "smooth";
+                string palette = profile != null ? profile.PaletteId : null;
                 if (palette == null) palette = PaletteRemap.Table.Default;
-                var sprites = xml.BuildStageSprites(stageKey, breed, palette);
+                var sprites = xml.BuildStageSprites(effectiveStageKey, breed, palette);
                 if (sprites != null)
                 {
                     pet.ReplaceSprites(sprites);
-                    BrainController.Log("[Look] " + (pet.Profile != null ? pet.Profile.Name : "pet") + ": " + breed + "/" + stageKey + "/" + palette);
+                    BrainController.Log("[Look] " + (profile != null ? profile.Name : "pet") + ": " + breed + "/" + effectiveStageKey + "/" + palette);
                 }
             }
             catch (Exception ex)
@@ -65,12 +194,11 @@ namespace Cuy
         {
             try
             {
-                string stageKey = CurrentStageKey();
                 var pets = FormPet.AllPets.ToArray();
                 for (int i = 0; i < pets.Length; i++)
                 {
                     pets[i].Profile = ProfileForSlot(i);
-                    Apply(pets[i], pets[i].Xml, stageKey);
+                    Apply(pets[i], pets[i].Xml, CurrentStageKey(pets[i].Profile));
                 }
             }
             catch (Exception ex)
