@@ -116,6 +116,7 @@
     bindButtons();
     bindOnboarding();
     updateSoundButtonUI();
+    buildPlacesBar();
   }
 
   // ---- First run: welcome -> intro -> gift letter ----
@@ -258,6 +259,7 @@
   function updateStateUI(state) {
     if (!state) return;
     loadFeatures(state);
+    renderPlacesBar(state);
 
     // Broadcast state to all registered features
     window.CuyHome.listFeatures().forEach(feat => {
@@ -574,6 +576,95 @@
   }
 
 
+  // --- PLACES BAR (W20-01): House, Garden, Farm, Park, Market under the pig ---
+  const PLACE_BAR = [
+    { id: 'house',  label: 'House',  icon: 'icon-house',  open: { feature: 'rooms', arg: 'salon' } },
+    { id: 'garden', label: 'Garden', icon: 'icon-clover', open: { feature: 'garden', arg: 'garden' } },
+    { id: 'farm',   label: 'Farm',   icon: 'icon-hay',    open: { feature: 'farm' } },
+    { id: 'park',   label: 'Park',   icon: 'icon-star',   open: { feature: 'garden', arg: 'park' } },
+    { id: 'market', label: 'Market', icon: 'icon-carrot', open: { feature: 'market' } }
+  ];
+  let placePending = null; // id of a locked place waiting for a second tap
+
+  function buildPlacesBar() {
+    if (document.getElementById('placesBar')) return;
+    // Overlay on the top of the pig stage: the Home page has no spare height for a row.
+    const stage = document.querySelector('.stage-viewport');
+    if (!stage) return;
+    const bar = document.createElement('div');
+    bar.id = 'placesBar';
+    bar.className = 'places-bar';
+    bar.setAttribute('role', 'toolbar');
+    bar.setAttribute('aria-label', 'Places');
+    bar.addEventListener('keydown', onPlacesKeydown);
+    stage.appendChild(bar);
+  }
+
+  function renderPlacesBar(state) {
+    const bar = document.getElementById('placesBar');
+    if (!bar || !state) return;
+    const list = (state.places && state.places.places) || [];
+    const byId = {};
+    list.forEach(p => { byId[p.id] = p; });
+    const focusedId = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.place : null;
+
+    bar.innerHTML = PLACE_BAR.map((def, i) => {
+      const p = byId[def.id] || { unlocked: true, unlockCost: 0, level: 1 };
+      const locked = !p.unlocked;
+      const pending = locked && placePending === def.id;
+      const sub = locked
+        ? (pending ? 'Confirm?' : '<span class="pixel-icon icon-padlock" aria-hidden="true"></span>' + p.unlockCost)
+        : (p.level > 1 ? 'Lv. ' + p.level : def.label);
+      const aria = locked
+        ? def.label + ', locked, costs ' + p.unlockCost + ' clovers' + (pending ? ', tap again to unlock' : '')
+        : def.label + (p.level > 1 ? ', level ' + p.level : '');
+      return `<button type="button" class="place-btn${locked ? ' is-locked' : ''}${pending ? ' is-pending' : ''}" data-place="${def.id}" tabindex="${i === 0 ? '0' : '-1'}" aria-label="${aria}">` +
+        `<span class="pixel-icon ${def.icon}" aria-hidden="true"></span>` +
+        `<span class="place-sub">${sub}</span></button>`;
+    }).join('');
+
+    bar.querySelectorAll('.place-btn').forEach(btn => {
+      btn.addEventListener('click', () => onPlaceClick(btn.dataset.place, byId));
+    });
+    if (focusedId) {
+      const again = bar.querySelector(`[data-place="${focusedId}"]`);
+      if (again) again.focus({ preventScroll: true });
+    }
+  }
+
+  function onPlaceClick(id, byId) {
+    const def = PLACE_BAR.find(d => d.id === id);
+    const p = byId[id] || { unlocked: true, unlockCost: 0 };
+    if (!def) return;
+    if (!p.unlocked) {
+      if (placePending !== id) {
+        placePending = id;
+        if (window.bridge) renderPlacesBar(window.bridge.getState());
+        return;
+      }
+      placePending = null;
+      if (window.bridge) window.bridge.send({ type: 'place_unlock', id: id });
+      return;
+    }
+    placePending = null;
+    window.CuyHome.openFeature(def.open.feature, def.open.arg);
+  }
+
+  function onPlacesKeydown(e) {
+    const btns = Array.from(e.currentTarget.querySelectorAll('.place-btn'));
+    const idx = btns.indexOf(document.activeElement);
+    if (idx < 0) return;
+    let next = -1;
+    if (e.key === 'ArrowRight') next = (idx + 1) % btns.length;
+    else if (e.key === 'ArrowLeft') next = (idx - 1 + btns.length) % btns.length;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = btns.length - 1;
+    if (next < 0) return;
+    e.preventDefault();
+    btns.forEach((b, i) => { b.tabIndex = i === next ? 0 : -1; });
+    btns[next].focus();
+  }
+
   // --- FEATURES MODULE SYSTEM ---
   window.CuyHome = {
     features: [],
@@ -584,14 +675,14 @@
     listFeatures() {
       return this.features;
     },
-    openFeature(id) {
+    openFeature(id, arg) {
       const feat = this.features.find(f => f.id === id);
       if (!feat) return;
       openModal(feat.title, '');
       if (elements.modalBody) {
         elements.modalBody.className = 'modal-body feature-' + id;
         try {
-          feat.open(elements.modalBody, this.api);
+          feat.open(elements.modalBody, this.api, arg);
         } catch (err) {
           console.error('[feature ' + id + ']', err);
         }

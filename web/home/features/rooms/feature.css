@@ -1,0 +1,90 @@
+/* Room editor (W20-02). Every selector is prefixed with .feature-rooms. */
+.feature-rooms .room-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 2px 8px;
+}
+.feature-rooms .room-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.feature-rooms .room-title {
+  font-weight: 700;
+  color: var(--c-wood-deep);
+}
+.feature-rooms .room-count,
+.feature-rooms .room-hint,
+.feature-rooms .room-status {
+  font-size: 12px;
+  color: var(--c-wood-dark);
+  margin: 0;
+}
+.feature-rooms .room-canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  image-rendering: pixelated;
+  border: 3px solid var(--c-wood-dark);
+  border-radius: 6px;
+  background: var(--c-cream);
+  cursor: pointer;
+  touch-action: none;
+}
+.feature-rooms .room-canvas:focus-visible {
+  outline: 3px solid var(--c-leaf-dark);
+  outline-offset: 2px;
+}
+.feature-rooms .room-drawer {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.feature-rooms .room-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 2px solid var(--c-wood-dark);
+  border-radius: 6px;
+  background: var(--c-white);
+  color: var(--c-wood-deep);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.feature-rooms .room-item:focus-visible {
+  outline: 3px solid var(--c-leaf-dark);
+  outline-offset: 2px;
+}
+.feature-rooms .room-item.is-picked {
+  background: var(--c-hay);
+  border-color: var(--c-hay-shadow);
+}
+.feature-rooms .room-item:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.feature-rooms .room-item-name {
+  font-weight: 700;
+  font-size: 13px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.feature-rooms .room-item-meta {
+  font-size: 11px;
+  color: var(--c-wood-dark);
+}
+.feature-rooms .room-empty {
+  font-size: 13px;
+  color: var(--c-wood-dark);
+  text-align: center;
+  margin: 12px 0;
+}
