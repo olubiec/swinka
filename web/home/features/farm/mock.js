@@ -128,7 +128,7 @@
   bridge.registerMockState('farm', function (st) { ensureFarm(st); });
 
   bridge.registerMockHandler('farm_plant', function (st, action) {
-    const m = ensureFarm(st).farmMock;
+    const m = ensureFarm(st);
     const def = cropDef(action.cropId);
     const p = m.plots[action.plot];
     if (!def || !p || p.cropId) return;
@@ -142,7 +142,7 @@
   });
 
   bridge.registerMockHandler('farm_water', function (st, action) {
-    const m = ensureFarm(st).farmMock;
+    const m = ensureFarm(st);
     const p = m.plots[action.plot];
     const def = p && cropDef(p.cropId);
     if (!def || p.watered || Date.now() >= p.readyAt) return;
@@ -158,7 +158,7 @@
   });
 
   bridge.registerMockHandler('farm_harvest_all', function (st) {
-    const m = ensureFarm(st).farmMock;
+    const m = ensureFarm(st);
     let n = 0;
     m.plots.forEach((_, i) => { if (harvestPlot(st, i)) n++; });
     if (n === 0) this.dispatchMessage({ type: 'toast', text: 'Nothing is ripe yet' });
@@ -166,7 +166,7 @@
   });
 
   bridge.registerMockHandler('farm_buy', function (st, action) {
-    const m = ensureFarm(st).farmMock;
+    const m = ensureFarm(st);
     const what = action.what || action.id;
     if (what === 'pack') {
       if (m.plotsOwned >= MAX_PLOTS) return;
@@ -190,7 +190,7 @@
   });
 
   bridge.registerMockHandler('orchard_plant', function (st, action) {
-    const m = ensureFarm(st).farmMock;
+    const m = ensureFarm(st);
     const o = m.orchard[action.slot];
     if (!o || o.cropId) return;
     if (!st.inventory.sapling_apple) { this.dispatchMessage({ type: 'toast', text: 'You have no apple saplings' }); return; }
@@ -200,7 +200,7 @@
   });
 
   bridge.registerMockHandler('orchard_harvest', function (st, action) {
-    const m = ensureFarm(st).farmMock;
+    const m = ensureFarm(st);
     const o = m.orchard[action.slot];
     if (!o || !o.cropId || o.stock <= 0) return;
     st.inventory[ORCHARD_CROP.id] = (st.inventory[ORCHARD_CROP.id] || 0) + o.stock;
