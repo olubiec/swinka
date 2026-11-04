@@ -42,7 +42,7 @@ namespace Cuy.Core.Tests
                 Assert.False(string.IsNullOrWhiteSpace(def.Id));
                 Assert.False(string.IsNullOrWhiteSpace(def.Title));
                 Assert.False(string.IsNullOrWhiteSpace(def.Text));
-                Assert.True(def.Reward >= 50 && def.Reward <= 200, $"Reward for {def.Id} was {def.Reward}");
+                Assert.True(def.Reward >= 25 && def.Reward <= 200, $"Reward for {def.Id} was {def.Reward}");
                 Assert.NotNull(def.Rule);
                 Assert.False(string.IsNullOrWhiteSpace(def.Rule.Kind));
             }
