@@ -1,6 +1,6 @@
 # Contracts per feature
 
-Each feature documents its Home state and messages in `docs/contracts/<feature>.md` (old features stay in `docs/contracts.md`). One file per feature means two packages never edit the same contract file.
+Each feature documents its Home state and messages in `docs/contracts/<feature>.md` (old features stay in `docs/contracts.md`, which is frozen; the directory is the index). One file per feature means two packages never edit the same contract file.
 
 ## Message validation (Core)
 `src/Cuy.Core/Input/MessageValidator.cs` validates the messages JS sends. It never changes per feature. A feature adds one class `src/Cuy.Core/Input/Validation/<Feature>Messages.cs` implementing `IMessageRuleSet`; the validator finds all rule sets by reflection. Rules cover required fields, types, ranges and the snake_case type name. Prices and rewards are never read from JS.

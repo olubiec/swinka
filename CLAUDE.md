@@ -12,9 +12,12 @@ Read AGENTS.md once per session (single source of rules for Claude and Jules). P
 - App output: `src/Cuy/bin/Debug/Cuy.exe` (Release: `src/Cuy/bin/Release/Cuy.exe`)
 - Log: `%LocalAppData%\Cuy\logs\cuy.log`; save: `%AppData%\Cuy\save.json`
 
-## Working with Jules
-(Since 3.11.2026 waves are run by the orkiestra in Antigravity from `waves.yaml`; see `docs/START_ORKIESTRA.md`. The Jules loop below is off; the task-file format still applies.)
-All Jules work goes through the Jules Loop (`docs/JULES_LOOP.md`). Claude writes the plan and the wave files `tasks/W<n>-<nn>-*.md` in the loop format (`Zmieniaj:` line required), and pushes them to `main`: the loop starts the wave on push. Do not start Jules sessions by hand and do not use `tools/jules-wave.sh`, `tools/jules-backlog.sh` or `jules/queue/`. Read `docs/PROJECT_STATE.md` (state) and `docs/GOALS.md` (product goals; the loop plans new waves from it once `tasks/` is empty) at session start.
+## Working with waves (orkiestra, packages)
+Waves are run by the orkiestra in Antigravity from `waves.yaml` (`docs/START_ORKIESTRA.md`). Since 4.11.2026 work from W17 on is grouped into **packages** (`PK-*`, one agent session each): the plan, the generator and the reasons are in `docs/opt/README.md`. Rules for the chat that plans or fixes waves:
+- Never write package prompts or `waves.yaml` by hand. Edit `docs/opt/packages.spec.json` (or an item prompt in `docs/prompts/items/`), run `python3 tools/opt/gen_packages.py` and `node tools/qa/plan-audit.js`.
+- Keep packages small (1-6 items), files disjoint inside one wave, shared files edited by one package at a time. New contracts, validation rules and browser mocks go to per-feature files (AGENTS.md "Per-feature files").
+- Spend limits on agents, not on reading: do not read whole design documents (`docs/WORLD.md`, `docs/PIG_ROOMS.md`, `docs/NAMED_PIGS.md`); the item text already holds the facts. Run `tools/verify.ps1` or the package's `Weryfikacja` line, the full suite only at a stage gate.
+- Jules is not used any more (`docs/JULES_LOOP.md` is history). State of the run: `.orkiestra/state.json`, checkpoints in `STAN_PROJEKTU.md`.
 
 ## Visual work
 Sprites, breeds, coats, icons, animations and screen graphics are done by Claude Code in waves V0-V8 (`docs/VISUAL_WAVES.md`, log in `docs/VISUAL_LOG.md`). Those files are in `docs/`, not `tasks/`, so the Jules Loop does not start them. For this work the "do not read assets binaries" rule is lifted: render contact sheets into a scratch folder and look at them.

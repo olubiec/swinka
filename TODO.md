@@ -1,7 +1,7 @@
 # Status planu fal (3.11.2026)
 
-Plan: `waves.yaml`, **46 fal, 162 zadania**; prompty: `docs/prompts/` (155 plików); start: `docs/START_ORKIESTRA.md`.
-Kontrola: `python -m orkiestra validate` -> `OK: 46 fal, 162 zadań`; `node tools/qa/plan-audit.js` -> `PLAN AUDIT OK`.
+Plan: `waves.yaml` (od W17 paczki PK-*, `docs/opt/README.md`); prompty: `docs/prompts/`; start: `docs/START_ORKIESTRA.md`.
+Kontrola: `python -m orkiestra validate` -> `OK: 33 fal, 78 zadań`; `node tools/qa/plan-audit.js` -> `PLAN AUDIT OK`.
 Testy: `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --nologo` -> **399/399 passed**.
 
 ## Stan wykonania (12/162 zadań zmergowanych do `main`)

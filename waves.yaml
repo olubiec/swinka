@@ -368,886 +368,477 @@ waves:
     - assets/data/achievements.json
     - tests/Cuy.Core.Tests/WorldAchievementsTests.cs
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+- id: PK-00
+  tasks:
+  - id: PK-00
+    title: 'PK-00: Per-feature files for validation, mock and contracts'
+    prompt_file: docs/prompts/PK-00-per-feature-files.md
+    files:
+    - src/Cuy.Core/Input/MessageValidator.cs
+    - src/Cuy.Core/Input/IMessageRuleSet.cs
+    - tests/Cuy.Core.Tests/MessageValidatorTests.cs
+    - web/home/bridge.js
+    - web/home/app.js
+    - web/home/features/README.md
+    - tools/qa/web-smoke.js
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MessageValidatorTests && node --check web/home/bridge.js && node --check web/home/app.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
 - id: W17
   tasks:
-  - id: W17-01
-    title: 'W17-01: RoomLayout operations: place, move, flip, remove'
-    prompt_file: docs/prompts/W17-01-room-layout.md
+  - id: PK-17a
+    title: 'PK-17a: Room layout, comfort, place unlock, legacy decor migration'
+    prompt_file: docs/prompts/PK-17a-room-layout-comfort-place-unlock-legacy-deco.md
     files:
     - src/Cuy.Core/World/RoomLayoutOps.cs
     - tests/Cuy.Core.Tests/RoomLayoutOpsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W17-02
-    title: 'W17-02: Comfort: capped sum and mood-decay factor'
-    prompt_file: docs/prompts/W17-02-comfort.md
-    files:
     - src/Cuy.Core/World/Comfort.cs
     - tests/Cuy.Core.Tests/ComfortTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W17-03
-    title: 'W17-03: FarmEngine: plant, water, grow, harvest (real time, offline)'
-    prompt_file: docs/prompts/W17-03-farm-engine.md
-    files:
-    - src/Cuy.Core/World/FarmEngine.cs
-    - tests/Cuy.Core.Tests/FarmEngineTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W17-04
-    title: 'W17-04: FarmExpansion: plot packs, orchard slots, cans, sprinkler'
-    prompt_file: docs/prompts/W17-04-farm-expansion.md
-    files:
-    - src/Cuy.Core/World/FarmExpansion.cs
-    - tests/Cuy.Core.Tests/FarmExpansionTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W17-05
-    title: 'W17-05: MarketPricing: demand meter, wiggle, cap, quotes'
-    prompt_file: docs/prompts/W17-05-market-pricing.md
-    files:
-    - src/Cuy.Core/World/MarketPricing.cs
-    - tests/Cuy.Core.Tests/MarketPricingTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W17-06
-    title: 'W17-06: MarketStock: daily specials and orders'
-    prompt_file: docs/prompts/W17-06-market-stock.md
-    files:
-    - src/Cuy.Core/World/MarketStock.cs
-    - tests/Cuy.Core.Tests/MarketStockTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W17-07
-    title: 'W17-07: PlaceUnlock: requirements, costs and levels'
-    prompt_file: docs/prompts/W17-07-place-unlock.md
-    files:
     - src/Cuy.Core/World/PlaceUnlock.cs
     - tests/Cuy.Core.Tests/PlaceUnlockTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W17-08
-    title: 'W17-08: LegacyDecorMigration: slot decorations become placed items'
-    prompt_file: docs/prompts/W17-08-legacy-decor-migration.md
-    files:
     - src/Cuy.Core/World/LegacyDecorMigration.cs
     - src/Cuy.Core/World/WorldState.cs
     - tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~RoomLayoutOpsTests|FullyQualifiedName~ComfortTests|FullyQualifiedName~PlaceUnlockTests|FullyQualifiedName~LegacyDecorMigrationTests"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-17b
+    title: 'PK-17b: Farm engine and farm expansion'
+    prompt_file: docs/prompts/PK-17b-farm-engine-and-farm-expansion.md
+    files:
+    - src/Cuy.Core/World/FarmEngine.cs
+    - tests/Cuy.Core.Tests/FarmEngineTests.cs
+    - src/Cuy.Core/World/FarmExpansion.cs
+    - tests/Cuy.Core.Tests/FarmExpansionTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~FarmEngineTests|FullyQualifiedName~FarmExpansionTests"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 36
+  - id: PK-17c
+    title: 'PK-17c: Market pricing and market stock'
+    prompt_file: docs/prompts/PK-17c-market-pricing-and-market-stock.md
+    files:
+    - src/Cuy.Core/World/MarketPricing.cs
+    - tests/Cuy.Core.Tests/MarketPricingTests.cs
+    - src/Cuy.Core/World/MarketStock.cs
+    - tests/Cuy.Core.Tests/MarketStockTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 36
 - id: W18a
   tasks:
-  - id: W18-01
-    title: 'W18-01: Pet.World: unlock and upgrade places and rooms'
-    prompt_file: docs/prompts/W18-01-pet-world-places.md
+  - id: PK-18a
+    title: 'PK-18a: Pet.World, Pet.Rooms and diary lines for the world'
+    prompt_file: docs/prompts/PK-18a-pet-world-pet-rooms-and-diary-lines-for-the.md
     files:
     - src/Cuy.Core/Pet.World.cs
     - src/Cuy.Core/Events.cs
     - tests/Cuy.Core.Tests/PetWorldTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W18-06
-    title: 'W18-06: Diary templates for the farm, garden and market'
-    prompt_file: docs/prompts/W18-06-world-diary.md
-    files:
     - assets/data/diary.json
     - tests/Cuy.Core.Tests/WorldDiaryTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-- id: W18b
-  tasks:
-  - id: W18-02
-    title: 'W18-02: Pet.Rooms: buy, place, move and remove items; comfort in mood
-      decay'
-    prompt_file: docs/prompts/W18-02-pet-rooms.md
-    files:
     - src/Cuy.Core/Pet.Rooms.cs
     - src/Cuy.Core/Pet.cs
     - tests/Cuy.Core.Tests/PetRoomsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W18-03
-    title: 'W18-03: Pet.Farm: plant, water, harvest into the inventory'
-    prompt_file: docs/prompts/W18-03-pet-farm.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PetWorldTests|FullyQualifiedName~WorldDiaryTests|FullyQualifiedName~PetRoomsTests"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W18b
+  tasks:
+  - id: PK-18b
+    title: 'PK-18b: Pet.Farm, Pet.Walk and world save migration'
+    prompt_file: docs/prompts/PK-18b-pet-farm-pet-walk-and-world-save-migration.md
     files:
     - src/Cuy.Core/Pet.Farm.cs
     - tests/Cuy.Core.Tests/PetFarmTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W18-04
-    title: 'W18-04: Pet.Market: buy, sell, orders, daily rollover'
-    prompt_file: docs/prompts/W18-04-pet-market.md
+    - src/Cuy.Core/Pet.Walk.cs
+    - tests/Cuy.Core.Tests/PetWalkTests.cs
+    - src/Cuy.Core/GameState.World.cs
+    - tests/Cuy.Core.Tests/WorldMigrationTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PetFarmTests|FullyQualifiedName~PetWalkTests|FullyQualifiedName~WorldMigrationTests"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-18c
+    title: 'PK-18c: Pet.Market'
+    prompt_file: docs/prompts/PK-18c-pet-market.md
     files:
     - src/Cuy.Core/Pet.Market.cs
     - src/Cuy.Core/Pet.Economy.cs
     - tests/Cuy.Core.Tests/PetMarketTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W18-05
-    title: 'W18-05: Pet.Walk: garden/park walk and the varied-diet bonus'
-    prompt_file: docs/prompts/W18-05-pet-walk-variety.md
-    files:
-    - src/Cuy.Core/Pet.Walk.cs
-    - tests/Cuy.Core.Tests/PetWalkTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W18-07
-    title: 'W18-07: Save: world state version, memory corner unlock, migration on
-      open'
-    prompt_file: docs/prompts/W18-07-save-migration-world.md
-    files:
-    - src/Cuy.Core/GameState.World.cs
-    - tests/Cuy.Core.Tests/WorldMigrationTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-- id: W19a
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 28
+- id: W19
   tasks:
-  - id: W19-01
-    title: 'W19-01: PlacesFeature: places, rooms and unlocks'
-    prompt_file: docs/prompts/W19-01-places-feature.md
+  - id: PK-19
+    title: 'PK-19: C# features for places, rooms, farm, market with contracts and validation'
+    prompt_file: docs/prompts/PK-19-c-features-for-places-rooms-farm-market-with.md
     files:
     - src/Cuy/dotNet/Features/PlacesFeature.cs
-    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
-  - id: W19-02
-    title: 'W19-02: RoomsFeature: layouts, owned items and comfort'
-    prompt_file: docs/prompts/W19-02-rooms-feature.md
-    files:
     - src/Cuy/dotNet/Features/RoomsFeature.cs
-    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
-  - id: W19-03
-    title: 'W19-03: FarmFeature: plots, orchard, tools and harvest'
-    prompt_file: docs/prompts/W19-03-farm-feature.md
-    files:
     - src/Cuy/dotNet/Features/FarmFeature.cs
-    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
-  - id: W19-04
-    title: 'W19-04: MarketFeature: quotes, specials, orders and the daily cap'
-    prompt_file: docs/prompts/W19-04-market-feature.md
-    files:
     - src/Cuy/dotNet/Features/MarketFeature.cs
-    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
-- id: W19b
-  tasks:
-  - id: W19-05
-    title: 'W19-05: docs/contracts.md: places, rooms, farm, market'
-    prompt_file: docs/prompts/W19-05-world-contracts.md
-    files:
-    - docs/contracts.md
-    test_command: git diff --stat
-  - id: W19-06
-    title: 'W19-06: Validation and name mapping for the new messages'
-    prompt_file: docs/prompts/W19-06-message-validation.md
-    files:
-    - src/Cuy.Core/Input/MessageValidator.cs
+    - docs/contracts/places.md
+    - docs/contracts/rooms.md
+    - docs/contracts/farm.md
+    - docs/contracts/market.md
+    - src/Cuy.Core/Input/Validation/PlacesMessages.cs
+    - src/Cuy.Core/Input/Validation/RoomsMessages.cs
+    - src/Cuy.Core/Input/Validation/FarmMessages.cs
+    - src/Cuy.Core/Input/Validation/MarketMessages.cs
     - tests/Cuy.Core.Tests/WorldMessageTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 60
 - id: W20a
   tasks:
-  - id: W20-01
-    title: 'W20-01: Places bar: navigation between house, garden, farm, park and market'
-    prompt_file: docs/prompts/W20-01-places-nav.md
+  - id: PK-20a
+    title: 'PK-20a: Browser mocks for the world, places bar and room editor'
+    prompt_file: docs/prompts/PK-20a-browser-mocks-for-the-world-places-bar-and-r.md
     files:
+    - web/home/features/rooms/mock.js
+    - web/home/features/farm/mock.js
+    - web/home/features/market/mock.js
     - web/home/app.js
     - web/home/style.css
-    test_command: node --check web/home/app.js && node tools/qa/web-smoke.js
-  - id: W20-02
-    title: 'W20-02: Room editor: place, move, flip and remove items on the grid'
-    prompt_file: docs/prompts/W20-02-rooms-editor.md
-    files:
     - web/home/features/rooms/feature.js
     - web/home/features/rooms/feature.css
-    test_command: node --check web/home/features/rooms/feature.js && node tools/qa/web-smoke.js
+    test_command: node --check web/home/features/rooms/mock.js && node --check web/home/features/farm/mock.js && node --check web/home/features/market/mock.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
 - id: W20b
   tasks:
-  - id: W20-03
-    title: 'W20-03: Room editor extras: undo/redo, snapping, comfort meter, buy drawer'
-    prompt_file: docs/prompts/W20-03-rooms-editor-extras.md
-    files:
-    - web/home/features/rooms/editor.js
-    test_command: node --check web/home/features/rooms/editor.js && node tools/qa/web-smoke.js
-  - id: W20-04
-    title: 'W20-04: Garden and park view with walks and the memory corner'
-    prompt_file: docs/prompts/W20-04-garden-park-view.md
+  - id: PK-20b
+    title: 'PK-20b: Garden and park view, farm view'
+    prompt_file: docs/prompts/PK-20b-garden-and-park-view-farm-view.md
     files:
     - web/home/features/garden/feature.js
     - web/home/features/garden/feature.css
-    test_command: node --check web/home/features/garden/feature.js && node tools/qa/web-smoke.js
-  - id: W20-05
-    title: 'W20-05: Farm view: plots, planting menu, watering, harvest all'
-    prompt_file: docs/prompts/W20-05-farm-view.md
-    files:
     - web/home/features/farm/feature.js
     - web/home/features/farm/feature.css
-    test_command: node --check web/home/features/farm/feature.js && node tools/qa/web-smoke.js
-  - id: W20-06
-    title: 'W20-06: Market view: stalls, quotes and the daily cap bar'
-    prompt_file: docs/prompts/W20-06-market-view.md
+    test_command: node --check web/home/features/garden/feature.js && node --check web/home/features/farm/feature.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 36
+  - id: PK-20c
+    title: 'PK-20c: Market view, orders board and daily specials'
+    prompt_file: docs/prompts/PK-20c-market-view-orders-board-and-daily-specials.md
     files:
     - web/home/features/market/feature.js
     - web/home/features/market/feature.css
-    test_command: node --check web/home/features/market/feature.js && node tools/qa/web-smoke.js
-  - id: W20-07
-    title: 'W20-07: Market orders board and daily specials'
-    prompt_file: docs/prompts/W20-07-market-orders-specials.md
-    files:
     - web/home/features/market/orders.js
-    test_command: node --check web/home/features/market/orders.js && node tools/qa/web-smoke.js
-  - id: W20-08
-    title: 'W20-08: Mock bridge: state and messages for places, rooms, farm, market'
-    prompt_file: docs/prompts/W20-08-mock-world-state.md
-    files:
-    - web/home/bridge.js
-    test_command: node --check web/home/bridge.js && node tools/qa/web-smoke.js
+    test_command: node --check web/home/features/market/feature.js && node --check web/home/features/market/orders.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 36
 - id: W21
   tasks:
-  - id: W21-01
-    title: 'W21-01: Desktop: ''harvest ready'' notification once a day'
-    prompt_file: docs/prompts/W21-01-desktop-harvest-toast.md
+  - id: PK-21
+    title: 'PK-21: Harvest notification, world settings, My Pigs links'
+    prompt_file: docs/prompts/PK-21-harvest-notification-world-settings-my-pigs.md
     files:
     - src/Cuy/dotNet/BrainController.cs
-    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
-  - id: W21-02
-    title: 'W21-02: Settings: farm notifications and shortcut'
-    prompt_file: docs/prompts/W21-02-settings-world.md
-    files:
     - web/home/features/settings/feature.js
     - web/home/features/index.json
-    test_command: node --check web/home/features/settings/feature.js && node tools/qa/web-smoke.js
-  - id: W21-03
-    title: 'W21-03: Sounds for planting, harvesting, coins and placing'
-    prompt_file: docs/prompts/W21-03-world-sounds.md
-    files:
-    - web/home/sound.js
-    test_command: node --check web/home/sound.js && node tools/qa/web-smoke.js
-  - id: W21-04
-    title: 'W21-04: My Pigs: memory corner link and walk button'
-    prompt_file: docs/prompts/W21-04-pigs-memory-and-walks.md
-    files:
     - web/home/features/pigs/feature.js
-    test_command: node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js
-  - id: W21-05
-    title: 'W21-05: Canvas limits: cap drawn items and animation work'
-    prompt_file: docs/prompts/W21-05-draw-limits.md
-    files:
-    - web/home/canvas-pig.js
-    test_command: node --check web/home/canvas-pig.js && node tools/qa/web-smoke.js
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check web/home/features/settings/feature.js && node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
 - id: W22
   tasks:
-  - id: W22-01
-    title: 'W22-01: GameSession.Open switches the world flags on'
-    prompt_file: docs/prompts/W22-01-enable-world-flags.md
+  - id: PK-22a
+    title: 'PK-22a: Switch world flags on, SelfTest, save size, asset contract tests'
+    prompt_file: docs/prompts/PK-22a-switch-world-flags-on-selftest-save-size-ass.md
     files:
     - src/Cuy.Core/GameSession.cs
     - tests/Cuy.Core.Tests/GameSessionWorldTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W22-02
-    title: 'W22-02: Port the economy simulator and enforce the world invariants'
-    prompt_file: docs/prompts/W22-02-world-economy-sim.md
+    - src/Cuy/dotNet/SelfTest.cs
+    - tests/Cuy.Core.Tests/WorldSaveSizeTests.cs
+    - tests/Cuy.Core.Tests/WorldAssetsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~GameSessionWorldTests|FullyQualifiedName~WorldSaveSizeTests|FullyQualifiedName~WorldAssetsTests" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-22b
+    title: 'PK-22b: World economy invariants test (data level, no simulator port)'
+    prompt_file: docs/prompts/PK-22b-world-economy-invariants-test-data-level-no.md
     files:
-    - tools/Cuy.Simulator/Program.cs
-    - docs/economy-report.md
     - tests/Cuy.Core.Tests/WorldInvariantsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-      && node tools/qa/economy-sim.js --runs 12 --variant baseline --check
-  - id: W22-03
-    title: 'W22-03: Web smoke: places bar, rooms, garden, farm and market screens'
-    prompt_file: docs/prompts/W22-03-smoke-world-screens.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/economy-sim.js --runs 12 --variant baseline --sweep --check
+    model: gemini-3.8-flash-high
+    timeout_minutes: 28
+  - id: PK-22c
+    title: 'PK-22c: Web smoke for world screens and manual test steps'
+    prompt_file: docs/prompts/PK-22c-web-smoke-for-world-screens-and-manual-test.md
     files:
     - tools/qa/web-smoke.js
-    test_command: node tools/qa/web-smoke.js
-  - id: W22-04
-    title: 'W22-04: Manual test steps for the world (TESTY_RECZNE.md)'
-    prompt_file: docs/prompts/W22-04-manual-tests-world.md
-    files:
     - TESTY_RECZNE.md
-    test_command: git diff --stat
-  - id: W22-05
-    title: 'W22-05: SelfTest: world data files'
-    prompt_file: docs/prompts/W22-05-selftest-world-data.md
-    files:
-    - src/Cuy/dotNet/SelfTest.cs
-    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
-  - id: W22-06
-    title: 'W22-06: Test: save size and load time with a full world'
-    prompt_file: docs/prompts/W22-06-save-size-and-perf.md
-    files:
-    - tests/Cuy.Core.Tests/WorldSaveSizeTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W22-07
-    title: 'W22-07: World and portrait assets contract tests'
-    prompt_file: docs/prompts/W22-07-world-assets-tests.md
-    files:
-    - tests/Cuy.Core.Tests/WorldAssetsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-      --filter WorldAssetsTests
+    test_command: node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 36
 - id: W23a
   tasks:
-  - id: W23-01
-    title: 'W23-01: PigRoomConfig (loader for pig_rooms.json)'
-    prompt_file: docs/prompts/W23-01-pig-room-config.md
+  - id: PK-23a
+    title: 'PK-23a: Pig room config, world-state fields, flags, home economy config, invariants test'
+    prompt_file: docs/prompts/PK-23a-pig-room-config-world-state-fields-flags-hom.md
     files:
     - src/Cuy.Core/World/PigRoomConfig.cs
     - tests/Cuy.Core.Tests/PigRoomConfigTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W23-02
-    title: 'W23-02: WorldState fields for pig rooms and the shared bedroom'
-    prompt_file: docs/prompts/W23-02-world-state-pig-fields.md
-    files:
     - src/Cuy.Core/World/WorldState.cs
     - tests/Cuy.Core.Tests/WorldStatePigFieldsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W23-06
-    title: 'W23-06: Flags and achievements for pig rooms and the shared bedroom'
-    prompt_file: docs/prompts/W23-06-pig-room-flags-achievements.md
-    files:
     - src/Cuy.Core/Balance.cs
     - assets/data/achievements.json
     - tests/Cuy.Core.Tests/PigRoomFlagsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W23-07
-    title: 'W23-07: HomeEconomyConfig (loader for home_economy.json)'
-    prompt_file: docs/prompts/W23-07-home-economy-config.md
-    files:
     - src/Cuy.Core/World/HomeEconomyConfig.cs
     - tests/Cuy.Core.Tests/HomeEconomyConfigTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W23-08
-    title: 'W23-08: Test: pig room data keeps the economy invariants'
-    prompt_file: docs/prompts/W23-08-pig-room-invariants.md
-    files:
     - tests/Cuy.Core.Tests/PigRoomInvariantsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigRoomConfigTests|FullyQualifiedName~WorldStatePigFieldsTests|FullyQualifiedName~PigRoomFlagsTests|FullyQualifiedName~HomeEconomyConfigTests|FullyQualifiedName~PigRoomInvariantsTests"
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 60
 - id: W23b
   tasks:
-  - id: W23-03
-    title: 'W23-03: PigComfort: personal comfort and mood factor per pig'
-    prompt_file: docs/prompts/W23-03-pig-comfort.md
+  - id: PK-23b
+    title: 'PK-23b: PigComfort, PigRoomOps and pig-room levels in the catalog'
+    prompt_file: docs/prompts/PK-23b-pigcomfort-pigroomops-and-pig-room-levels-in.md
     files:
     - src/Cuy.Core/World/PigComfort.cs
     - tests/Cuy.Core.Tests/PigComfortTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W23-04
-    title: 'W23-04: PigRoomOps: create a pig''s room with its theme and starter set'
-    prompt_file: docs/prompts/W23-04-pig-room-ops.md
-    files:
     - src/Cuy.Core/World/PigRoomOps.cs
     - tests/Cuy.Core.Tests/PigRoomOpsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W23-05
-    title: 'W23-05: Rooms of pigs and the shared bedroom in PlaceCatalog and PlaceUnlock'
-    prompt_file: docs/prompts/W23-05-dynamic-room-levels.md
-    files:
     - src/Cuy.Core/World/PlaceCatalog.cs
     - src/Cuy.Core/World/PlaceUnlock.cs
     - tests/Cuy.Core.Tests/PigRoomLevelsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-- id: W24a
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W24
   tasks:
-  - id: W24-01
-    title: 'W24-01: Pet.PigRooms: a room for every adopted pig'
-    prompt_file: docs/prompts/W24-01-pet-pig-rooms.md
+  - id: PK-24a
+    title: 'PK-24a: Pet integration of pig rooms: rooms, comfort, items, memory room'
+    prompt_file: docs/prompts/PK-24a-pet-integration-of-pig-rooms-rooms-comfort-i.md
     files:
     - src/Cuy.Core/Pet.PigRooms.cs
     - tests/Cuy.Core.Tests/PetPigRoomsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W24-02
-    title: 'W24-02: Per-pig comfort in mood decay'
-    prompt_file: docs/prompts/W24-02-pet-pig-comfort-decay.md
-    files:
     - src/Cuy.Core/Pet.Rooms.cs
     - tests/Cuy.Core.Tests/PetPigComfortTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W24-03
-    title: 'W24-03: Pet.PigRoomItems: variants, room names, storage and transfer'
-    prompt_file: docs/prompts/W24-03-pet-pig-room-items.md
-    files:
     - src/Cuy.Core/Pet.PigRoomItems.cs
     - tests/Cuy.Core.Tests/PetPigRoomItemsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W24-04
-    title: 'W24-04: Memorial pigs keep their room as a memory room'
-    prompt_file: docs/prompts/W24-04-memory-room.md
-    files:
     - src/Cuy.Core/Pet.MemoryRoom.cs
     - tests/Cuy.Core.Tests/PetMemoryRoomTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W24-05
-    title: 'W24-05: GameState.PigRooms: rooms for old saves'
-    prompt_file: docs/prompts/W24-05-game-state-pig-rooms.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PetPigRoomsTests|FullyQualifiedName~PetPigComfortTests|FullyQualifiedName~PetPigRoomItemsTests|FullyQualifiedName~PetMemoryRoomTests"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-24b
+    title: 'PK-24b: Pig rooms for old saves and diary lines'
+    prompt_file: docs/prompts/PK-24b-pig-rooms-for-old-saves-and-diary-lines.md
     files:
     - src/Cuy.Core/GameState.PigRooms.cs
     - tests/Cuy.Core.Tests/PigRoomsMigrationTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W24-06
-    title: 'W24-06: Diary lines for pig rooms'
-    prompt_file: docs/prompts/W24-06-pig-room-diary.md
-    files:
     - assets/data/diary.json
     - tests/Cuy.Core.Tests/PigRoomDiaryTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-- id: W25a
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 36
+- id: W25
   tasks:
-  - id: W25-01
-    title: 'W25-01: RoomsFeature: pig rooms, storage, variants, names, transfer'
-    prompt_file: docs/prompts/W25-01-rooms-feature-pig-rooms.md
+  - id: PK-25a
+    title: 'PK-25a: RoomsFeature for pig rooms with contract and validation'
+    prompt_file: docs/prompts/PK-25a-roomsfeature-for-pig-rooms-with-contract-and.md
     files:
     - src/Cuy/dotNet/Features/RoomsFeature.cs
-    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
-  - id: W25-03
-    title: 'W25-03: Validation for the pig room messages'
-    prompt_file: docs/prompts/W25-03-pig-room-message-validation.md
-    files:
-    - src/Cuy.Core/Input/MessageValidator.cs
+    - src/Cuy.Core/Input/Validation/PigRoomsMessages.cs
     - tests/Cuy.Core.Tests/PigRoomMessageTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W25-04
-    title: 'W25-04: Rooms page: one tab per room with portraits and level-up'
-    prompt_file: docs/prompts/W25-04-room-picker-tabs.md
+    - docs/contracts/pigrooms.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-25b
+    title: 'PK-25b: Pig room tabs, customize panel, My Pigs link, mock'
+    prompt_file: docs/prompts/PK-25b-pig-room-tabs-customize-panel-my-pigs-link-m.md
     files:
+    - web/home/features/rooms/mock.js
     - web/home/features/rooms/feature.js
     - web/home/features/rooms/feature.css
-    test_command: 'node --check web/home/features/rooms/feature.js && node tools/qa/web-smoke.js'
-  - id: W25-05
-    title: 'W25-05: Customize panel: skins, item colours, name, storage and transfer'
-    prompt_file: docs/prompts/W25-05-room-customize-panel.md
-    files:
     - web/home/features/rooms/customize.js
     - web/home/features/rooms/customize.css
-    test_command: 'node --check web/home/features/rooms/customize.js && node tools/qa/web-smoke.js'
-  - id: W25-06
-    title: 'W25-06: My Pigs: ''Visit room'' link'
-    prompt_file: docs/prompts/W25-06-pigs-visit-room.md
-    files:
     - web/home/features/pigs/feature.js
-    test_command: 'node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js'
-  - id: W25-07
-    title: 'W25-07: Mock bridge: pig rooms, variants, storage, transfer'
-    prompt_file: docs/prompts/W25-07-mock-pig-rooms.md
-    files:
-    - web/home/bridge.js
-    test_command: 'node --check web/home/bridge.js && node tools/qa/web-smoke.js'
-- id: W25b
-  tasks:
-  - id: W25-02
-    title: 'W25-02: docs/contracts.md: pig rooms'
-    prompt_file: docs/prompts/W25-02-pig-rooms-contracts.md
-    files:
-    - docs/contracts.md
-    test_command: git diff --stat
+    test_command: node --check web/home/features/rooms/mock.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/customize.js && node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
 - id: W26a
   tasks:
-  - id: W26-01
-    title: 'W26-01: SharedRoomOps: move pigs into the shared bedroom and back'
-    prompt_file: docs/prompts/W26-01-shared-room-ops.md
+  - id: PK-26a
+    title: 'PK-26a: Shared bedroom: SharedRoomOps, Pet.Dorm and roommate comfort'
+    prompt_file: docs/prompts/PK-26a-shared-bedroom-sharedroomops-pet-dorm-and-ro.md
     files:
     - src/Cuy.Core/World/SharedRoomOps.cs
     - tests/Cuy.Core.Tests/SharedRoomOpsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W26-03
-    title: 'W26-03: PigComfort: roommates use the shared bedroom as their own room'
-    prompt_file: docs/prompts/W26-03-dorm-comfort.md
-    files:
+    - src/Cuy.Core/Pet.Dorm.cs
+    - tests/Cuy.Core.Tests/PetDormTests.cs
     - src/Cuy.Core/World/PigComfort.cs
     - tests/Cuy.Core.Tests/PigComfortDormTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W26-06
-    title: 'W26-06: Shared bedroom page: unlock, residents and move in or out'
-    prompt_file: docs/prompts/W26-06-dorm-ui.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~SharedRoomOpsTests|FullyQualifiedName~PetDormTests|FullyQualifiedName~PigComfortDormTests"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W26b
+  tasks:
+  - id: PK-26b
+    title: 'PK-26b: DormFeature, contract and validation, flags on for pig rooms and the dorm'
+    prompt_file: docs/prompts/PK-26b-dormfeature-contract-and-validation-flags-on.md
+    files:
+    - src/Cuy/dotNet/Features/DormFeature.cs
+    - docs/contracts/dorm.md
+    - src/Cuy.Core/Input/Validation/DormMessages.cs
+    - tests/Cuy.Core.Tests/DormMessageTests.cs
+    - src/Cuy.Core/GameSession.cs
+    - tests/Cuy.Core.Tests/GameSessionPigRoomsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W26c
+  tasks:
+  - id: PK-26c
+    title: 'PK-26c: Shared bedroom page, wiring and smoke test'
+    prompt_file: docs/prompts/PK-26c-shared-bedroom-page-wiring-and-smoke-test.md
     files:
     - web/home/features/rooms/dorm.js
     - web/home/features/rooms/dorm.css
-    test_command: 'node --check web/home/features/rooms/dorm.js && node tools/qa/web-smoke.js'
-- id: W26b
-  tasks:
-  - id: W26-02
-    title: 'W26-02: Pet.Dorm: unlock, move in and out, levels'
-    prompt_file: docs/prompts/W26-02-pet-dorm.md
-    files:
-    - src/Cuy.Core/Pet.Dorm.cs
-    - tests/Cuy.Core.Tests/PetDormTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W26-07
-    title: 'W26-07: Wire the shared bedroom into the rooms page and the mock'
-    prompt_file: docs/prompts/W26-07-dorm-wiring-mock.md
-    files:
     - web/home/features/rooms/feature.js
-    - web/home/bridge.js
-    test_command: 'node --check web/home/features/rooms/feature.js && node --check web/home/bridge.js && node tools/qa/web-smoke.js'
-- id: W26c
-  tasks:
-  - id: W26-04
-    title: 'W26-04: DormFeature: state and messages'
-    prompt_file: docs/prompts/W26-04-dorm-feature.md
-    files:
-    - src/Cuy/dotNet/Features/DormFeature.cs
-    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
-  - id: W26-08
-    title: 'W26-08: GameSession.Open switches pig rooms and the dorm on'
-    prompt_file: docs/prompts/W26-08-enable-pig-rooms.md
-    files:
-    - src/Cuy.Core/GameSession.cs
-    - tests/Cuy.Core.Tests/GameSessionPigRoomsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W26-09
-    title: 'W26-09: Smoke test and manual steps for pig rooms and the shared bedroom'
-    prompt_file: docs/prompts/W26-09-pig-rooms-smoke-manual.md
-    files:
+    - web/home/features/rooms/mock.js
     - tools/qa/web-smoke.js
     - TESTY_RECZNE.md
-    test_command: node tools/qa/web-smoke.js
-- id: W26d
-  tasks:
-  - id: W26-05
-    title: 'W26-05: Contracts and validation for the shared bedroom'
-    prompt_file: docs/prompts/W26-05-dorm-contracts-validation.md
-    files:
-    - docs/contracts.md
-    - src/Cuy.Core/Input/MessageValidator.cs
-    - tests/Cuy.Core.Tests/DormMessageTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    test_command: node --check web/home/features/rooms/dorm.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
 - id: W27a
   tasks:
-  - id: W27-01
-    title: 'W27-01: WorldState.PigHomes: free roaming or tied to a room'
-    prompt_file: docs/prompts/W27-01-world-state-homes.md
+  - id: PK-27a
+    title: 'PK-27a: Roaming and home mode: state, PigWander, Pet.Homes, HomesFeature, contract, validation'
+    prompt_file: docs/prompts/PK-27a-roaming-and-home-mode-state-pigwander-pet-ho.md
     files:
     - src/Cuy.Core/World/WorldState.cs
     - tests/Cuy.Core.Tests/WorldStateHomesTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W27-02
-    title: 'W27-02: PigWander: where a pig is and what it does, from the clock'
-    prompt_file: docs/prompts/W27-02-pig-wander.md
-    files:
     - src/Cuy.Core/World/PigWander.cs
     - tests/Cuy.Core.Tests/PigWanderTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W27-06
-    title: 'W27-06: House plan: a flat cutaway to switch rooms'
-    prompt_file: docs/prompts/W27-06-house-plan.md
-    files:
-    - web/home/features/rooms/plan.js
-    - web/home/features/rooms/plan.css
-    test_command: 'node --check web/home/features/rooms/plan.js && node tools/qa/web-smoke.js'
-  - id: W27-07
-    title: 'W27-07: Pigs walking inside the room editor'
-    prompt_file: docs/prompts/W27-07-room-residents.md
-    files:
-    - web/home/features/rooms/residents.js
-    test_command: 'node --check web/home/features/rooms/residents.js && node tools/qa/web-smoke.js'
-- id: W27b
-  tasks:
-  - id: W27-03
-    title: 'W27-03: Pet.Homes: choose roaming or a home room'
-    prompt_file: docs/prompts/W27-03-pet-homes.md
-    files:
     - src/Cuy.Core/Pet.Homes.cs
     - src/Cuy.Core/Balance.cs
     - tests/Cuy.Core.Tests/PetHomesTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W27-08
-    title: 'W27-08: Wire the plan, residents and home chips into the rooms page and the mock'
-    prompt_file: docs/prompts/W27-08-homes-wiring-mock.md
-    files:
-    - web/home/features/rooms/feature.js
-    - web/home/bridge.js
-    test_command: 'node --check web/home/features/rooms/feature.js && node --check web/home/bridge.js && node tools/qa/web-smoke.js'
-- id: W27c
-  tasks:
-  - id: W27-04
-    title: 'W27-04: HomesFeature: where the pigs are'
-    prompt_file: docs/prompts/W27-04-homes-feature.md
-    files:
     - src/Cuy/dotNet/Features/HomesFeature.cs
-    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
-- id: W27d
-  tasks:
-  - id: W27-05
-    title: 'W27-05: Contracts and validation for homes'
-    prompt_file: docs/prompts/W27-05-homes-contracts-validation.md
-    files:
-    - docs/contracts.md
-    - src/Cuy.Core/Input/MessageValidator.cs
+    - docs/contracts/homes.md
+    - src/Cuy.Core/Input/Validation/HomesMessages.cs
     - tests/Cuy.Core.Tests/HomesMessageTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-- id: W28a
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 60
+- id: W27b
   tasks:
-  - id: W28-01
-    title: 'W28-01: RunCheck: is the run fenced and how many pigs fit'
-    prompt_file: docs/prompts/W28-01-run-check.md
+  - id: PK-27b
+    title: 'PK-27b: House plan and wiring of plan and home chips'
+    prompt_file: docs/prompts/PK-27b-house-plan-and-wiring-of-plan-and-home-chips.md
     files:
-    - src/Cuy.Core/World/RunCheck.cs
-    - tests/Cuy.Core.Tests/RunCheckTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W28-02
-    title: 'W28-02: WorldState.Run: who is out in the run'
-    prompt_file: docs/prompts/W28-02-world-state-run.md
-    files:
-    - src/Cuy.Core/World/WorldState.cs
-    - tests/Cuy.Core.Tests/WorldStateRunTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W28-03
-    title: 'W28-03: RunRules: when a pig may be outside and how much mood it earns'
-    prompt_file: docs/prompts/W28-03-run-rules.md
-    files:
-    - src/Cuy.Core/World/RunRules.cs
-    - tests/Cuy.Core.Tests/RunRulesTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W28-07
-    title: 'W28-07: Garden: show the run, let pigs out and bring them in'
-    prompt_file: docs/prompts/W28-07-garden-run-ui.md
-    files:
-    - web/home/features/garden/run.js
-    - web/home/features/garden/feature.js
-    test_command: 'node --check web/home/features/garden/run.js && node --check web/home/features/garden/feature.js && node tools/qa/web-smoke.js'
-  - id: W28-08
-    title: 'W28-08: Mock bridge: the garden run'
-    prompt_file: docs/prompts/W28-08-run-mock.md
-    files:
-    - web/home/bridge.js
-    test_command: 'node --check web/home/bridge.js && node tools/qa/web-smoke.js'
-  - id: W28-09
-    title: 'W28-09: Audit: what is shown on the desktop today and how toys are used'
-    prompt_file: docs/prompts/W28-09-desktop-props-audit.md
-    files:
-    - docs/DESKTOP_PROPS.md
-    test_command: git diff --stat
-- id: W28b
-  tasks:
-  - id: W28-04
-    title: 'W28-04: Pet.Run: let pigs out into the garden run and bring them in'
-    prompt_file: docs/prompts/W28-04-pet-run.md
-    files:
-    - src/Cuy.Core/Pet.Run.cs
-    - src/Cuy.Core/Balance.cs
-    - assets/data/achievements.json
-    - tests/Cuy.Core.Tests/PetRunTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-- id: W28c
-  tasks:
-  - id: W28-05
-    title: 'W28-05: RunFeature: state and messages for the garden run'
-    prompt_file: docs/prompts/W28-05-run-feature.md
-    files:
-    - src/Cuy/dotNet/Features/RunFeature.cs
-    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
-- id: W28d
-  tasks:
-  - id: W28-06
-    title: 'W28-06: Contracts and validation for the run'
-    prompt_file: docs/prompts/W28-06-run-contracts-validation.md
-    files:
-    - docs/contracts.md
-    - src/Cuy.Core/Input/MessageValidator.cs
-    - tests/Cuy.Core.Tests/RunMessageTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-- id: W29a
-  tasks:
-  - id: W29-01
-    title: 'W29-01: DesktopPropCatalog: which items can live on the desktop'
-    prompt_file: docs/prompts/W29-01-desktop-prop-catalog.md
-    files:
-    - src/Cuy.Core/World/DesktopPropCatalog.cs
-    - tests/Cuy.Core.Tests/DesktopPropCatalogTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W29-02
-    title: 'W29-02: WorldState.DesktopProps: props on the desktop'
-    prompt_file: docs/prompts/W29-02-world-state-props.md
-    files:
-    - src/Cuy.Core/World/WorldState.cs
-    - tests/Cuy.Core.Tests/WorldStatePropsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W29-08
-    title: 'W29-08: Home: the ''On your desktop'' tray and dropping props into rooms'
-    prompt_file: docs/prompts/W29-08-props-tray.md
-    files:
-    - web/home/features/rooms/tray.js
-    - web/home/features/rooms/tray.css
-    test_command: 'node --check web/home/features/rooms/tray.js && node tools/qa/web-smoke.js'
-- id: W29b
-  tasks:
-  - id: W29-03
-    title: 'W29-03: DesktopPropOps: desktop <-> room, one place at a time'
-    prompt_file: docs/prompts/W29-03-desktop-prop-ops.md
-    files:
-    - src/Cuy.Core/World/DesktopPropOps.cs
-    - tests/Cuy.Core.Tests/DesktopPropOpsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W29-09
-    title: 'W29-09: Wire the tray into the rooms page and the mock'
-    prompt_file: docs/prompts/W29-09-props-wiring-mock.md
-    files:
+    - web/home/features/rooms/plan.js
+    - web/home/features/rooms/plan.css
     - web/home/features/rooms/feature.js
-    - web/home/bridge.js
-    test_command: 'node --check web/home/features/rooms/feature.js && node --check web/home/bridge.js && node tools/qa/web-smoke.js'
-- id: W29c
-  tasks:
-  - id: W29-04
-    title: 'W29-04: Pet.Props: move toys between the desktop and the house'
-    prompt_file: docs/prompts/W29-04-pet-props.md
-    files:
-    - src/Cuy.Core/Pet.Props.cs
-    - src/Cuy.Core/Balance.cs
-    - tests/Cuy.Core.Tests/PetPropsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-- id: W29d
-  tasks:
-  - id: W29-05
-    title: 'W29-05: PropsFeature: state and messages for desktop props'
-    prompt_file: docs/prompts/W29-05-props-feature.md
-    files:
-    - src/Cuy/dotNet/Features/PropsFeature.cs
-    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
-  - id: W29-07
-    title: 'W29-07: Desktop: draw the props from the saved state'
-    prompt_file: docs/prompts/W29-07-desktop-props-overlay.md
-    files:
-    - src/Cuy/dotNet/DesktopPropsOverlay.cs
-    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
-- id: W29e
-  tasks:
-  - id: W29-06
-    title: 'W29-06: Contracts and validation for props'
-    prompt_file: docs/prompts/W29-06-props-contracts-validation.md
-    files:
-    - docs/contracts.md
-    - src/Cuy.Core/Input/MessageValidator.cs
-    - tests/Cuy.Core.Tests/PropsMessageTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    - web/home/features/rooms/mock.js
+    test_command: node --check web/home/features/rooms/plan.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 36
 - id: W30a
   tasks:
-  - id: W30-01
-    title: 'W30-01: HomeStore: one catalogue of everything the player can buy'
-    prompt_file: docs/prompts/W30-01-home-store.md
+  - id: PK-30a
+    title: 'PK-30a: HomeStore catalogue, Pet.Store and store totals test'
+    prompt_file: docs/prompts/PK-30a-homestore-catalogue-pet-store-and-store-tota.md
     files:
     - src/Cuy.Core/World/HomeStore.cs
     - tests/Cuy.Core.Tests/HomeStoreTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W30-02
-    title: 'W30-02: Pet.Store: one purchase entry for the home store'
-    prompt_file: docs/prompts/W30-02-pet-store.md
-    files:
     - src/Cuy.Core/Pet.Store.cs
     - tests/Cuy.Core.Tests/PetStoreTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W30-05
-    title: 'W30-05: Home store page'
-    prompt_file: docs/prompts/W30-05-store-ui.md
+    - tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~HomeStoreTests|FullyQualifiedName~PetStoreTests|FullyQualifiedName~HomeStoreTotalsTests"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W30b
+  tasks:
+  - id: PK-30b
+    title: 'PK-30b: StoreFeature with contract and validation, store page'
+    prompt_file: docs/prompts/PK-30b-storefeature-with-contract-and-validation-st.md
     files:
+    - src/Cuy/dotNet/Features/StoreFeature.cs
+    - docs/contracts/store.md
+    - src/Cuy.Core/Input/Validation/StoreMessages.cs
+    - tests/Cuy.Core.Tests/StoreMessageTests.cs
     - web/home/features/store/feature.js
     - web/home/features/store/feature.css
     - web/home/features/index.json
-    test_command: 'node --check web/home/features/store/feature.js && node tools/qa/web-smoke.js'
-  - id: W30-07
-    title: 'W30-07: Data checks and SelfTest for the home extras'
-    prompt_file: docs/prompts/W30-07-data-checks-selftest.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~StoreMessageTests" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check web/home/features/store/feature.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W30c
+  tasks:
+  - id: PK-30c
+    title: 'PK-30c: Data checks, smoke test and manual steps, flags on for roaming'
+    prompt_file: docs/prompts/PK-30c-data-checks-smoke-test-and-manual-steps-flag.md
     files:
     - tools/qa/data-check.js
     - src/Cuy/dotNet/SelfTest.cs
-    test_command: 'node tools/qa/data-check.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
-  - id: W30-09
-    title: 'W30-09: GameSession.Open switches roaming, run and props on'
-    prompt_file: docs/prompts/W30-09-enable-home-extras.md
-    files:
     - src/Cuy.Core/GameSession.cs
     - tests/Cuy.Core.Tests/GameSessionHomeExtrasTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-- id: W30b
-  tasks:
-  - id: W30-06
-    title: 'W30-06: Test: the store total matches the simulator and nothing can be sold'
-    prompt_file: docs/prompts/W30-06-home-store-totals.md
-    files:
-    - tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W30-03
-    title: 'W30-03: StoreFeature: state and the purchase message'
-    prompt_file: docs/prompts/W30-03-store-feature.md
-    files:
-    - src/Cuy/dotNet/Features/StoreFeature.cs
-    test_command: 'dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true'
-- id: W30c
-  tasks:
-  - id: W30-04
-    title: 'W30-04: Contracts and validation for the store'
-    prompt_file: docs/prompts/W30-04-store-contracts-validation.md
-    files:
-    - docs/contracts.md
-    - src/Cuy.Core/Input/MessageValidator.cs
-    - tests/Cuy.Core.Tests/StoreMessageTests.cs
-    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
-  - id: W30-08
-    title: 'W30-08: Smoke test and manual steps for roaming, run, props and the store'
-    prompt_file: docs/prompts/W30-08-smoke-manual-home-extras.md
-    files:
     - tools/qa/web-smoke.js
     - TESTY_RECZNE.md
-    test_command: node tools/qa/web-smoke.js
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check tools/qa/data-check.js && node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js && node tools/qa/data-check.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
 - id: W31
   tasks:
-  - id: W31-01
-    title: 'W31-01: G10: check-assets.js, every referenced asset exists'
-    prompt_file: docs/prompts/W31-01-g10-check-assets-js-every-referenced-ass.md
+  - id: PK-31a
+    title: 'PK-31a: Asset checker, light engine and 9-slice UI assets'
+    prompt_file: docs/prompts/PK-31a-asset-checker-light-engine-and-9-slice-ui-as.md
     files:
     - tools/qa/check-assets.js
-    test_command: node tools/qa/check-assets.js
-  - id: W31-02
-    title: 'W31-02: G15: new app icon and favicon'
-    prompt_file: docs/prompts/W31-02-g15-new-app-icon-and-favicon.md
+    - web/home/lib/lights.js
+    - tools/qa/lights-test.js
+    - web/home/lib/ui-assets.js
+    - web/home/style.css
+    test_command: node --check tools/qa/check-assets.js && node --check web/home/lib/lights.js && node --check tools/qa/lights-test.js && node --check web/home/lib/ui-assets.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/lights-test.js && node tools/qa/check-css-vars.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+  - id: PK-31b
+    title: 'PK-31b: New app icon and favicon'
+    prompt_file: docs/prompts/PK-31b-new-app-icon-and-favicon.md
     files:
     - src/Cuy/Cuy.csproj
     - src/Cuy/cuy.ico
     - src/Cuy/dotNet/ProcessIcon.cs
     - web/home/index.html
     test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
-  - id: W31-03
-    title: 'W31-03: G11: 9-slice UI assets and the CSS classes that use them'
-    prompt_file: docs/prompts/W31-03-g11-9-slice-ui-assets-and-the-css-classe.md
-    files:
-    - web/home/lib/ui-assets.js
-    - web/home/style.css
-    test_command: node tools/qa/check-css-vars.js && node tools/qa/web-smoke.js
-  - id: W31-04
-    title: 'W31-04: G12a: pure light engine and its test'
-    prompt_file: docs/prompts/W31-04-g12a-pure-light-engine-and-its-test.md
-    files:
-    - web/home/lib/lights.js
-    - tools/qa/lights-test.js
-    test_command: node tools/qa/lights-test.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 28
 - id: W32
   tasks:
-  - id: W32-01
-    title: 'W32-01: G12b: light and time of day in the rooms view'
-    prompt_file: docs/prompts/W32-01-g12b-light-and-time-of-day-in-the-rooms-.md
+  - id: PK-32a
+    title: 'PK-32a: Light and time of day in rooms, garden, farm and market views'
+    prompt_file: docs/prompts/PK-32a-light-and-time-of-day-in-rooms-garden-farm-a.md
     files:
     - web/home/features/rooms/feature.js
-    test_command: node tools/qa/web-smoke.js
-  - id: W32-02
-    title: 'W32-02: G12b: light and time of day in the garden and park view'
-    prompt_file: docs/prompts/W32-02-g12b-light-and-time-of-day-in-the-garden.md
-    files:
     - web/home/features/garden/feature.js
-    test_command: node tools/qa/web-smoke.js
-  - id: W32-03
-    title: 'W32-03: G12b: light and time of day in the farm view'
-    prompt_file: docs/prompts/W32-03-g12b-light-and-time-of-day-in-the-farm-v.md
-    files:
     - web/home/features/farm/feature.js
-    test_command: node tools/qa/web-smoke.js
-  - id: W32-04
-    title: 'W32-04: G12b: light and time of day in the market view'
-    prompt_file: docs/prompts/W32-04-g12b-light-and-time-of-day-in-the-market.md
-    files:
     - web/home/features/market/feature.js
-    test_command: node tools/qa/web-smoke.js
-  - id: W32-05
-    title: 'W32-05: G11: apply UI assets, main menu background, removed ids'
-    prompt_file: docs/prompts/W32-05-g11-apply-ui-assets-main-menu-background.md
+    test_command: node --check web/home/features/rooms/feature.js && node --check web/home/features/garden/feature.js && node --check web/home/features/farm/feature.js && node --check web/home/features/market/feature.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-32b
+    title: 'PK-32b: Apply UI assets in the main menu, pig lighting and contact shadow'
+    prompt_file: docs/prompts/PK-32b-apply-ui-assets-in-the-main-menu-pig-lightin.md
     files:
     - web/home/app.js
-    test_command: node tools/qa/check-assets.js && node tools/qa/web-smoke.js
-  - id: W32-06
-    title: 'W32-06: G13: pig lighting and contact shadow in Home scenes'
-    prompt_file: docs/prompts/W32-06-g13-pig-lighting-and-contact-shadow-in-h.md
-    files:
     - web/home/canvas-pig.js
-    test_command: node tools/qa/web-smoke.js
+    test_command: node --check web/home/app.js && node --check web/home/canvas-pig.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 36
 - id: W33
   tasks:
-  - id: W33-01
-    title: 'W33-01: G14: stop using _x2 files and list them for deletion'
-    prompt_file: docs/prompts/W33-01-g14-stop-using-x2-files-and-list-them-fo.md
+  - id: PK-33
+    title: 'PK-33: Stop using _x2 files and final verification record'
+    prompt_file: docs/prompts/PK-33-stop-using-x2-files-and-final-verification-r.md
     files:
     - docs/X2_DELETE_LIST.md
     - tools/qa/check-assets.js
-    test_command: node tools/qa/check-assets.js --x2
-  - id: W33-02
-    title: 'W33-02: G16: final verification run recorded in the visual log'
-    prompt_file: docs/prompts/W33-02-g16-final-verification-run-recorded-in-t.md
-    files:
     - docs/VISUAL_LOG.md
-    test_command: node tools/qa/check-assets.js
+    test_command: node --check tools/qa/check-assets.js && node tools/qa/check-assets.js --x2 && node tools/qa/check-assets.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 36

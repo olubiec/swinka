@@ -52,10 +52,9 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 - Logic apart from rendering: games and screens keep logic in pure functions that tests can call.
 
 ## Per-feature files (so parallel work never collides)
-- Contracts: `docs/contracts/<feature>.md` (one file per feature); `docs/contracts.md` only gets an index line.
+- Contracts: `docs/contracts/<feature>.md` (one file per feature); `docs/contracts.md` is frozen for new features.
 - Message validation (Core): one `IMessageRuleSet` class per feature in `src/Cuy.Core/Input/Validation/<Feature>Messages.cs`, found by reflection (see `docs/contracts/README.md`). Do not edit `MessageValidator.cs` for a new feature.
 - Browser mock: `web/home/features/<id>/mock.js` calls `bridge.registerMockHandler(type, fn)` / `bridge.registerMockState(id, fn)`. Do not add cases to the `switch` in `bridge.js`.
-- New saved fields of a shared class go to a partial file of their own (`WorldState.<Topic>.cs`), not into the main file.
 
 ## Canonical ids
 - items: hay pellets bell_pepper parsley kale cucumber carrot chew_stick ball tunnel house water_bottle cake (+ ids added in `assets/data/items_*.json`)

@@ -1,12 +1,14 @@
 # Start wszystkich fal w Antigravity (orkiestra)
 
+> **Od 4.11.2026 fale W17 i dalej to paczki (PK-*)**: 34 paczki w 24 falach, prompty `docs/prompts/PK-*.md`, plan i powody w `docs/opt/README.md`. Pierwsza po W16 jest `PK-00` (wzorzec plików per funkcja). Liczby w tym pliku poniżej (46 fal, 162 zadania) dotyczą stanu sprzed zmiany; aktualne wypisze `orkiestra validate`. Wybieg (W28) i rekwizyty z pulpitu (W29) są odłożone. Punkty bramek ręcznych (Windows) bez zmian: po W22, W26 i W30 (W28/W29 pominięte).
+
 Stan na 3.11.2026. Plan: `waves.yaml` (**46 fal, 162 zadania**), prompty: `docs/prompts/` (jeden plik na zadanie, wszystkie ścieżki `prompt_file` istnieją). Narzędzie: `tools/orkiestra`, konfiguracja: `orkiestra.toml` (agent `agy`, model `gemini-3-flash`, 2 zadania równolegle, 2 próby, `stop_on_failure = true`).
 Pętla Julesa (`.github/workflows/jules-loop.yml`) jest wyłączona; nic w `tasks/` jej nie uruchomi (tam zostały tylko `BACKLOG.md` i `done/`).
 
 ## Przed pierwszym startem (raz)
 1. `pip install -e tools/orkiestra` (Python 3.11+), `gh auth login`, sprawdź `agy models` i `agy -p "Reply with exactly: OK" --output-format json`.
 2. Wejdź na gałąź `main`, zrób `git pull`, upewnij się, że drzewo robocze jest czyste.
-3. `orkiestra validate` (oczekiwane: `OK: 46 fal, 162 zadań`) oraz `node tools/qa/plan-audit.js` (oczekiwane: `PLAN AUDIT OK`).
+3. `orkiestra validate` (oczekiwane: `OK: 33 fal, 78 zadań`) oraz `node tools/qa/plan-audit.js` (oczekiwane: `PLAN AUDIT OK`).
 4. `orkiestra run --dry-run` pokazuje kolejność i polecenia bez uruchamiania agenta.
 
 ## Start
