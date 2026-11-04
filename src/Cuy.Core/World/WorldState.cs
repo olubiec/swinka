@@ -81,6 +81,40 @@ namespace Cuy.Core.World
             get => _unlockedVariants ?? (_unlockedVariants = new HashSet<string>());
             set => _unlockedVariants = value ?? new HashSet<string>();
         }
+
+        /// <summary>Pig id -> home mode. Absent entry = HomeEconomyConfig.RoamDefaultMode (see <see cref="HomeOf"/>).</summary>
+        private Dictionary<string, PigHomeState> _pigHomes;
+        public Dictionary<string, PigHomeState> PigHomes
+        {
+            get => _pigHomes ?? (_pigHomes = new Dictionary<string, PigHomeState>());
+            set => _pigHomes = value ?? new Dictionary<string, PigHomeState>();
+        }
+
+        /// <summary>The pig's home mode; an absent entry reads as <paramref name="defaultMode"/>. The result is normalized.</summary>
+        public PigHomeState HomeOf(string pigId, string defaultMode)
+        {
+            if (pigId != null && PigHomes.TryGetValue(pigId, out var home) && home != null) return home.Normalize();
+            return new PigHomeState { Mode = defaultMode }.Normalize();
+        }
+    }
+
+    /// <summary>Whether a pig roams the house (<see cref="ModeFree"/>) or stays in one room (<see cref="ModeRoom"/>).</summary>
+    public class PigHomeState
+    {
+        public const string ModeFree = "free";
+        public const string ModeRoom = "room";
+
+        public string Mode { get; set; } = ModeFree;
+
+        /// <summary>Room id when Mode is room, otherwise null.</summary>
+        public string Room { get; set; }
+
+        /// <summary>Returns a copy with an unknown mode read as free (and no room). The stored object is not changed.</summary>
+        public PigHomeState Normalize()
+        {
+            if (Mode == ModeRoom) return new PigHomeState { Mode = ModeRoom, Room = Room };
+            return new PigHomeState { Mode = ModeFree, Room = null };
+        }
     }
 
     public class RoomLayout

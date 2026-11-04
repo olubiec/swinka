@@ -1,0 +1,9 @@
+# PK-27a log (W27-01 to W27-05 done in order; core tests 954 pass, 4 known failures; app Release build OK)
+- Listed files were missing (except WorldState.cs, Balance.cs): created them; the names of earlier waves were checked by grep (HomeEconomyConfig.RoamDefaultMode, PigRoomConfig.CommonPlaces, SharedRoomOps.DormId "dorm", Pet.RoomIdOf, FindRosterPig, IMessageRuleSet reflection discovery).
+- Names differ from plan: no "living" room id exists, so the living room is "salon" (PigWander.LivingRoomId) and the playroom is "playroom"; common rooms come from PigRoomConfig.CommonPlaces; the dorm room id is "dorm" (SharedRoomOps.DormId).
+- Added WorldState.HomeOf(pigId, defaultMode) (absent entry = default, normalized) and PigHomeState.Normalize() returns a copy: invalid mode becomes free with null room.
+- PigWander: morning = 4 h after the night ends, evening = 4 h before it starts; weights salon 3, playroom 3, others 1; hash = FNV-1a (stable across runs). A tied pig's activity depends on time only (sleep, eat, play). A tie with an empty room falls back to roaming.
+- Pet.Homes: SetHome returns bool and refuses everything while Balance.HomesActive is off (default false). LocationOf returns null for an unknown pig; memorial pigs and flag-off pigs use an empty visitable list, so they stay in their own or memory room. A tie that is no longer usable falls back to roaming.
+- Validation: MessageValidator only checks the field rules, so mode and the conditional room rule live in HomesMessages.ValidatePigHome (HomesFeature calls it too). Contract written to docs/contracts/homes.md; docs/contracts.md and MessageValidator.cs untouched (package override).
+- HomesFeature has no Initialize (the flag stays off until W30-09); portrait follows RoomsFeature (sprites/portraits/<namedId>.png); no test file for the feature is in Zmieniaj.
+- Undone: nothing in the five items. Warnings only (xUnit null InlineData in WorldStateHomesTests).

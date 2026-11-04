@@ -107,6 +107,9 @@ namespace Cuy.Core
         /// <summary>Each pig has its own room (assets/data/pig_rooms.json). Switched on by the app later, not in GameSession.Open.</summary>
         public bool PigRoomsActive { get; set; } = false;
 
+        /// <summary>Pigs can roam the house or stay in one room (Pet.Homes). Switched on in W30-09, not here.</summary>
+        public bool HomesActive { get; set; } = false;
+
         /// <summary>The shared bedroom (dorm) for pigs is active.</summary>
         public bool DormActive { get; set; } = false;
 
