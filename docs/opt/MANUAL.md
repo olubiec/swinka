@@ -24,7 +24,8 @@ Wykonanie:
 
 Na koniec (agent główny):
 - Sprawdź, że zmienione pliki mieszczą się w FILES pakietów. Napraw tylko to, co padło.
-- git commit "$FALA: <ID pakietów>" (jeden commit, tylko agent główny).
+- git commit "$FALA: <ID pakietów>" (jeden commit, tylko agent główny) i od razu git push origin HEAD.
+  Jeśli push się nie uda, zgłoś to w raporcie (nie kończ fali bez wypchnięcia).
 - Raport do 10 linii: ID pakietów, ok/fail, co padło i dlaczego, przeniesienia zadań nie ma.
   Dla W22, W26 i W30 (ostatnia podfala) dopisz: "Wymagany test ręczny na Windowsie (TESTY_RECZNE.md)".
 ```
