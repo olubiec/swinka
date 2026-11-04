@@ -72,3 +72,7 @@ Razem 96 punktów w 33 paczkach plus PK-00 (z 118 punktów od W17; 22 odłożone
 - `orkiestra.toml` ma `max_parallel = 4`, a `START_ORKIESTRA.md` mówił o 2; największa fala ma 3 paczki. Każde zadanie buduje się od zera w świeżym worktree (brak `obj/`), więc więcej równoległych zadań to więcej kompilacji i szybciej zużyty limit.
 - Lokalny tryb orkiestry wymaga czystego `main`: zmerguj gałąź `claude/opt-packages` przed startem.
 - Punkty z odłożonych fal nie są usunięte: leżą w `docs/prompts/items/` i można z nich złożyć paczki później (dopisać do specyfikacji).
+
+## Odzyskanie 4.11.2026: W15/W16 nie ma w repo
+W15 i W16 wykonano na innym urządzeniu i nie wypchnięto. Pierwsze podejście do W17 (`ffcd213`) powstało bez typów z W16 i agent zdefiniował własne zamienniki (`FarmConfig`, `MarketConfig`, `PlaceCatalog`, `WorldItemCatalog`), co zderzyłoby się z prawdziwym W16. Kod W17 z tego podejścia zdjęto z `main` (kopia: gałąź `w17-wip-backup`). Kolejność: **W15 → W16 → PK-17a/b/c (cała W17 od nowa) → W18a ...**. PK-00 jest zrobione. Stan W17 w `.orkiestra/state.json` trzeba wyczyścić (zadania PK-17a/b/c mają być PENDING).
+Gdy tamto urządzenie wróci: nie wypychać jego `main`; wypchnąć osobną gałąź i porównać z nowym W15/W16 przed scaleniem.
