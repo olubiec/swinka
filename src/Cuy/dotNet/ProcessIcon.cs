@@ -8,7 +8,7 @@ namespace Cuy
 {
     /// <summary>
     /// Icon in the system tray (next to the Windows clock).
-    /// Shows the guinea pig head from assets/icons/icons_16.png,
+    /// Shows the app icon (the same icon as the exe, src/Cuy/cuy.ico),
     /// a tooltip with the pig's name,
     /// opens Home on double-click, and the context menu.
     /// </summary>
@@ -26,10 +26,10 @@ namespace Cuy
             ni.MouseClick += new MouseEventHandler(Ni_MouseClick);
             ni.MouseDoubleClick += new MouseEventHandler(Ni_MouseDoubleClick);
 
-            // Set the pig head icon from assets/icons/icons_16.png
+            // Set the tray icon from the app icon embedded in the exe
             try
             {
-                ni.Icon = PetIcons.GetTrayIcon();
+                ni.Icon = LoadAppIcon();
             }
             catch
             {
@@ -60,8 +60,8 @@ namespace Cuy
         {
             try
             {
-                // Make sure the tray icon is the pig head
-                ni.Icon = PetIcons.GetTrayIcon();
+                // Make sure the tray icon is the app icon
+                ni.Icon = LoadAppIcon();
                 UpdateTooltip();
                 ContextMenus.UpdateIcon(ni.Icon, petName, aboutAuthor, aboutTitle, aboutVersion, aboutInfo);
             }
@@ -89,6 +89,16 @@ namespace Cuy
                 ni.Dispose();
                 ni = null;
             }
+        }
+
+        /// <summary>
+        /// Loads the app icon embedded in the exe (ApplicationIcon = cuy.ico in Cuy.csproj).
+        /// Falls back to the pig head when the exe has no icon.
+        /// </summary>
+        private static Icon LoadAppIcon()
+        {
+            Icon icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+            return icon ?? PetIcons.GetTrayIcon();
         }
 
         void Ni_MouseClick(object sender, MouseEventArgs e)

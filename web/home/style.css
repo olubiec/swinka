@@ -729,6 +729,7 @@ body.webview-mode .game-device {
 .icon-water-bottle { --i: 9; }
 .icon-poop { --i: 10; }
 .icon-cake { --i: 11; }
+.icon-shop { --i: 166; }
 .icon-hay { --i: 12; }
 .icon-clover { --i: 13; }
 .icon-kale { --i: 14; }
@@ -1244,4 +1245,82 @@ body.webview-mode .game-device {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   9-SLICE UI (assets/ui, --ui-* set by lib/ui-assets.js). `initial` means no image:
+   each rule keeps its flat background/border, so the look survives a missing variable.
+   ========================================================================== */
+
+:root {
+  --ui-panel_paper: initial;
+  --ui-panel_wood: initial;
+  --ui-btn_normal: initial;
+  --ui-btn_hover: initial;
+  --ui-btn_pressed: initial;
+  --ui-sep_h: initial;
+  --ui-sep_v: initial;
+  --ui-header_banner: initial;
+  --ui-shop_panel: initial;
+}
+
+.ui-panel-paper {
+  background: var(--c-cream);
+  border: 4px solid var(--c-contour-dark);
+  border-image: var(--ui-panel_paper) 8 fill / 8px;
+  image-rendering: pixelated;
+}
+
+.ui-panel-wood {
+  background: var(--c-wood);
+  border: 4px solid var(--c-wood-deep);
+  border-image: var(--ui-panel_wood) 8 fill / 8px;
+  image-rendering: pixelated;
+}
+
+.ui-btn {
+  background: var(--c-wood-light);
+  border: 3px solid var(--c-contour-dark);
+  border-image: var(--ui-btn_normal) 6 fill / 6px;
+  color: var(--c-contour-dark);
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+
+.ui-btn:hover {
+  background: var(--c-orange-light);
+  border-image: var(--ui-btn_hover) 6 fill / 6px;
+}
+
+.ui-btn:active {
+  border-image: var(--ui-btn_pressed) 6 fill / 6px;
+}
+
+/* Separators are tiled, not 9-sliced (slice 0), so they use background-image. */
+.ui-sep-h {
+  height: 4px;
+  background-color: var(--c-wood-dark);
+  background-image: var(--ui-sep_h);
+  background-repeat: repeat-x;
+  background-size: 32px 4px;
+  image-rendering: pixelated;
+}
+
+.ui-sep-v {
+  width: 4px;
+  background-color: var(--c-wood-dark);
+  background-image: var(--ui-sep_v);
+  background-repeat: repeat-y;
+  background-size: 4px 32px;
+  image-rendering: pixelated;
+}
+
+.ui-banner {
+  background: var(--c-wood-dark);
+  color: var(--c-white);
+  border: 3px solid var(--c-contour-dark);
+  border-image: var(--ui-header_banner) 0 12 0 12 fill / 0 12px 0 12px;
+  image-rendering: pixelated;
 }
