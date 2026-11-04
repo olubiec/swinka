@@ -108,3 +108,23 @@ A dedicated stress test was executed in `tools/Cuy.Simulator` running 500 rapid-
 
 **Result:** `>> NO-EXPLOIT AUDIT RESULT: ALL DAILY CAPS STRICTLY ENFORCED [PASS]`.
 No loop or spamming script can exploit the game loop to exceed designed daily economy boundaries.
+
+
+---
+
+## 7. Collection Pairs Balance (60 Days, `PigModifiersActive = true`)
+All ten active pairs from `assets/data/pigs_named.json` (starting with `Kuki + Ned` and every other pair in the collection) were simulated over 60 days across all three player profiles with `Balance.PigModifiersActive = true` and `Balance.PerPigAgeActive = true`, compared against the single-pig baseline (tolerance: $\pm 10\%$).
+
+| Active Pair | Modifiers (`minigame` / `poop` / `bond` / `appetite`) | Casual Clovers ($\Delta\%$) | Regular Clovers ($\Delta\%$) | Heavy Clovers ($\Delta\%$) | Regular Final Balance ($\Delta\%$) | Status |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Single-Pig Baseline** | `1.00 / 1.00 / 1.00 / 1.00` | 5,670 🍀 (+0.0%) | 8,620 🍀 (+0.0%) | 15,470 🍀 (+0.0%) | 8,400 🍀 (+0.0%) | **BASELINE** |
+| **Kuki + Ned** | `1.00 / 1.25 / 1.00 / 1.15` | 5,620 🍀 (-0.9%) | 8,680 🍀 (+0.7%) | 15,530 🍀 (+0.4%) | 8,460 🍀 (+0.7%) | **PASS** |
+| **Kuki + James** | `1.10 / 1.00 / 0.85 / 1.00` | 5,740 🍀 (+1.2%) | 8,860 🍀 (+2.8%) | 15,470 🍀 (+0.0%) | 8,640 🍀 (+2.9%) | **PASS** |
+| **Kuki + Glen** | `1.00 / 0.90 / 1.13 / 0.85` | 5,620 🍀 (-0.9%) | 8,620 🍀 (+0.0%) | 15,470 🍀 (+0.0%) | 8,400 🍀 (+0.0%) | **PASS** |
+| **Kuki + Racuch** | `1.00 / 1.10 / 1.00 / 1.10` | 5,620 🍀 (-0.9%) | 8,620 🍀 (+0.0%) | 15,470 🍀 (+0.0%) | 8,400 🍀 (+0.0%) | **PASS** |
+| **Ned + James** | `1.10 / 1.25 / 0.85 / 1.15` | 5,790 🍀 (+2.1%) | 8,920 🍀 (+3.5%) | 15,530 🍀 (+0.4%) | 8,700 🍀 (+3.6%) | **PASS** |
+| **Ned + Glen** | `1.00 / 1.15 / 1.13 / 1.00` | 5,670 🍀 (+0.0%) | 8,620 🍀 (+0.0%) | 15,530 🍀 (+0.4%) | 8,400 🍀 (+0.0%) | **PASS** |
+| **Ned + Racuch** | `1.00 / 1.35 / 1.00 / 1.25` | 5,670 🍀 (+0.0%) | 8,680 🍀 (+0.7%) | 15,530 🍀 (+0.4%) | 8,460 🍀 (+0.7%) | **PASS** |
+| **James + Glen** | `1.10 / 0.90 / 0.98 / 0.85` | 5,790 🍀 (+2.1%) | 8,860 🍀 (+2.8%) | 15,470 🍀 (+0.0%) | 8,640 🍀 (+2.9%) | **PASS** |
+| **James + Racuch** | `1.10 / 1.10 / 0.85 / 1.10` | 5,790 🍀 (+2.1%) | 8,860 🍀 (+2.8%) | 15,470 🍀 (+0.0%) | 8,640 🍀 (+2.9%) | **PASS** |
+| **Glen + Racuch** | `1.00 / 1.00 / 1.13 / 0.95` | 5,920 🍀 (+4.4%) | 8,870 🍀 (+2.9%) | 15,770 🍀 (+1.9%) | 8,700 🍀 (+3.6%) | **PASS** |
