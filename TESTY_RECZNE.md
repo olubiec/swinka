@@ -171,3 +171,20 @@ Przed testem: `tools/build.ps1`, potem `src/Cuy/bin/Debug/Cuy.exe`. Save: `%AppD
 15. Kup poziom wspólnej sypialni (1100 koniczyn, potem 1800). Oczekiwane: siatka rośnie, koszt zmniejsza koniczyny, a przycisk znika po ostatnim poziomie.
 16. Zamknij i ponownie uruchom Cuy. Oczekiwane: pokoje, nazwy, meble, odblokowana wspólna sypialnia, jej mieszkańcy i poziom są takie same jak przed zamknięciem.
 17. Zapisz wyniki w kolumnie „Wpisz wynik” (data, wersja Windows, dokładne teksty komunikatów i opisów, ewentualne linie `[Rooms]` z logu).
+
+## 11. Dom: wędrowanie i sklep
+
+Przed testem: `tools/build.ps1`, potem `src/Cuy/bin/Debug/Cuy.exe`. Save: `%AppData%\Cuy\save.json`, log: `%LocalAppData%\Cuy\logs\cuy.log`. Wybieg w ogrodzie i rzeczy z pulpitu są odłożone na później, więc ich tu nie ma. Teksty interfejsu są po angielsku. Wyniki wpisuj w kolumnie „Wpisz wynik”.
+
+1. Uruchom Cuy na nowym zapisie i otwórz plan domu przyciskiem „House plan” w Pokojach. Oczekiwane: na planie jest jedno okno na każdy pokój; zablokowane pokoje mają kłódkę.
+2. Kliknij odblokowane okno na planie. Oczekiwane: plan się zamyka, a zakładka tego pokoju jest zaznaczona.
+3. Otwórz plan i kliknij Kuki. Oczekiwane: karta Kuki pokazuje aktywność i tryb (wolna albo przypisana do pokoju) oraz przycisk „Stay in …” (albo „Roam the house”, gdy jest już przypisana).
+4. Na karcie Kuki kliknij „Stay in …”, zamknij plan i otwórz go ponownie. Oczekiwane: Kuki jest w wybranym pokoju za każdym razem, a jej tryb to przypisana. Zrób to samo dla Neda, potem kliknij „Roam the house” przy Kuki. Oczekiwane: Kuki wraca do wędrówki po domu.
+5. Obserwuj plan przez ok. 5 min, z wolnymi świnkami. Oczekiwane: wolne świnki zmieniają pokoje co kilkadziesiąt sekund, a przypisane stoją w swoim pokoju bez zmian.
+6. Przyspiesz czas w save: cofnij znaczniki czasu tak, by była noc (nazwy pól sprawdź w `save.json` i zapisz je w wyniku), uruchom Cuy. Oczekiwane: wolna świnka śpi we własnym pokoju; w planie jej aktywność to sen.
+7. Otwórz sklep z menu Więcej. Oczekiwane: lista kategorii (przycisk „All” i kolejne) oraz lista przedmiotów z ceną w koniczynach i licznikami „Owned” i „placed”.
+8. W polu „Search the store” wpisz „sofa”. Oczekiwane: lista zawęża się do pasujących przedmiotów; po wyczyszczeniu pola wraca cała lista.
+9. Kup przedmiot za więcej niż 0 koniczyn (przycisk „Buy”). Oczekiwane: liczba koniczyn w sklepie maleje o cenę przedmiotu; „Owned” tego przedmiotu rośnie o 1.
+10. Sprawdź, czy w sklepie i przy przedmiotach nie ma żadnego sposobu sprzedaży. Oczekiwane: brak przycisku „Sell” lub podobnego; przedmioty da się tylko kupić.
+11. Zamknij i ponownie uruchom Cuy. Oczekiwane: przypisania świnek do pokojów, ich tryby, zakupy i liczba koniczyn są takie same jak przed zamknięciem.
+12. Zapisz wyniki w kolumnie „Wpisz wynik” (data, wersja Windows, dokładne teksty komunikatów, nazwy pól czasu z save.json, ewentualne linie `[Homes]` z logu).

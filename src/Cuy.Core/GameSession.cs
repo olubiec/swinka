@@ -42,7 +42,7 @@ namespace Cuy.Core
             string newPetName = "Cuy")
         {
             if (clock == null) throw new ArgumentNullException(nameof(clock));
-            if (balance == null) balance = new Balance { HayRackActive = true, DiaryActive = true, BirthdayRewardsActive = true, PerPigAgeActive = true, PigModifiersActive = true, ArrivalsActive = true, PlacesActive = true, FarmActive = true, MarketActive = true, WorldDecorActive = true, PigRoomsActive = true, DormActive = true }; else { balance.HayRackActive = true; balance.DiaryActive = true; balance.BirthdayRewardsActive = true; balance.PerPigAgeActive = true; balance.PigModifiersActive = true; balance.ArrivalsActive = true; balance.PlacesActive = true; balance.FarmActive = true; balance.MarketActive = true; balance.WorldDecorActive = true; balance.PigRoomsActive = true; balance.DormActive = true; }
+            if (balance == null) balance = new Balance { HayRackActive = true, DiaryActive = true, BirthdayRewardsActive = true, PerPigAgeActive = true, PigModifiersActive = true, ArrivalsActive = true, PlacesActive = true, FarmActive = true, MarketActive = true, WorldDecorActive = true, PigRoomsActive = true, DormActive = true, HomesActive = true }; else { balance.HayRackActive = true; balance.DiaryActive = true; balance.BirthdayRewardsActive = true; balance.PerPigAgeActive = true; balance.PigModifiersActive = true; balance.ArrivalsActive = true; balance.PlacesActive = true; balance.FarmActive = true; balance.MarketActive = true; balance.WorldDecorActive = true; balance.PigRoomsActive = true; balance.DormActive = true; balance.HomesActive = true; }
             var saveSystem = new SaveSystem(saveDirectory);
             var load = saveSystem.Load();
             var isNewGame = load.State == null;

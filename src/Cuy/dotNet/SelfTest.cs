@@ -47,7 +47,11 @@ namespace Cuy
             Check("places.json", () => ParseData("places.json"));
             Check("world_items.json", () => ParseData("world_items.json"));
             Check("items_farm.json", () => ParseData("items_farm.json"));
+            Check("pig_rooms.json", () => ParseData("pig_rooms.json"));
+            Check("home_economy.json", () => ParseData("home_economy.json"));
             Check("farm crop items", CheckFarmCropItems);
+            Check("pig room skins", CheckPigRoomSkins);
+            Check("pig room placeables", CheckPigRoomPlaceables);
             Check("world item icons", CheckWorldItemIcons);
             Check("actions animations", CheckActionAnimations);
             Check("sprite sheets", CheckSpriteSheets);
@@ -364,6 +368,51 @@ namespace Cuy
                 if (string.IsNullOrWhiteSpace((string)it["icon"]))
                     throw new Exception("placeable " + (string)it["id"] + " has no icon");
             }
+        }
+
+        private static List<JToken> PigRoomThemes()
+        {
+            JObject root = ParseData("pig_rooms.json");
+            var themes = root["themes"] as JObject;
+            var defaults = root["default_themes"] as JArray;
+            if (themes == null || defaults == null) throw new Exception("pig_rooms.json needs \"themes\" and \"default_themes\"");
+            var list = new List<JToken>();
+            foreach (var p in themes.Properties()) list.Add(p.Value);
+            list.AddRange(defaults);
+            return list;
+        }
+
+        private static void CheckPigRoomSkins()
+        {
+            var skins = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (JToken item in (JArray)ParseData("items_decor.json")["items"]) skins.Add((string)item["id"]);
+            var missing = new List<string>();
+            foreach (JToken theme in PigRoomThemes())
+            {
+                foreach (string key in new[] { "wallpaper", "floor" })
+                {
+                    string id = (string)theme[key];
+                    if (!skins.Contains(id)) missing.Add(id);
+                }
+            }
+            if (missing.Count > 0) throw new Exception("theme skin not in items_decor.json: " + string.Join(", ", missing.Distinct()));
+        }
+
+        private static void CheckPigRoomPlaceables()
+        {
+            var placeables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (JToken item in (JArray)ParseData("world_items.json")["items"]) placeables.Add((string)item["id"]);
+            var refs = new List<string>();
+            foreach (JToken theme in PigRoomThemes())
+            {
+                if (theme["starter"] is JArray starter)
+                {
+                    foreach (JToken id in starter) refs.Add((string)id);
+                }
+                if (theme["signature"] != null) refs.Add((string)theme["signature"]);
+            }
+            var missing = refs.Where(id => !placeables.Contains(id)).Distinct().ToList();
+            if (missing.Count > 0) throw new Exception("theme starter or signature not in world_items.json: " + string.Join(", ", missing));
         }
 
         private static void CheckCoreDataTables()

@@ -291,6 +291,180 @@ async function roomsDormSmoke(browser, base, errors) {
   }
 }
 
+// PK-30c / W30-08: roaming (house plan windows, window -> tab, home switch), a pig drawn in a room, and the store, in the mock with ?world=1.
+// The garden run and the desktop props are deferred (package override), so they have no scenarios here.
+// Each check also runs the layout check; console and page errors are collected like in worldSmoke.
+const ROAMING_SIZES = [{ width: 420, height: 640 }];
+
+async function roamingStoreSmoke(browser, base, errors) {
+  for (const viewport of ROAMING_SIZES) {
+    const label = `roaming ${viewport.width}x${viewport.height}`;
+    const page = await browser.newPage({ viewport });
+    const fail = (msg) => errors.push(`${label}: ${msg}`);
+    page.on('pageerror', (e) => fail('pageerror: ' + e.message));
+    page.on('requestfailed', (req) => {
+      if (req.failure() && req.failure().errorText === 'net::ERR_ABORTED' && /\.(ogg|mp3|wav)$/.test(req.url())) return;
+      if (ALLOWED_MISSING.some(allowed => req.url().includes(allowed))) return;
+      fail('requestfailed: ' + req.url());
+    });
+    page.on('console', (m) => {
+      if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) fail('console: ' + m.text());
+    });
+    page.on('response', (r) => {
+      if (r.status() >= 400 && !ALLOWED_MISSING.some(allowed => r.url().includes(allowed))) fail('404 or error response: ' + r.status() + ' ' + r.url());
+    });
+
+    await page.goto(base + '/web/home/index.html?world=1');
+    await page.evaluate(() => document.body.classList.add('webview-mode'));
+    await page.waitForTimeout(1000);
+    if (await page.isVisible('#modalBackdrop.active')) {
+      await page.click('#modalCloseBtn');
+      await page.waitForTimeout(200);
+    }
+
+    const closePlan = async () => {
+      if (await page.$('.house-plan-close')) await page.click('.house-plan-close');
+      await page.waitForTimeout(200);
+    };
+    const openRooms = async () => {
+      await page.evaluate(() => window.CuyHome.openFeature('rooms'));
+      await page.waitForSelector('.room-canvas', { timeout: 3000 });
+    };
+    const modes = () => page.evaluate(() => Object.fromEntries(window.bridge.getState().homes.pigs.map(p => [p.pigId, p.mode])));
+
+    const check = async (name, fn) => {
+      try {
+        await fn();
+        await assertLayout(page, name + ' ' + label);
+        console.log('PASS ' + name + ' ' + label);
+      } catch (e) {
+        fail(name + ': ' + e.message);
+        console.log('FAIL ' + name + ' ' + label + ': ' + e.message);
+      } finally {
+        await closePlan();
+        await page.evaluate(() => window.CuyHome.closeFeature && window.CuyHome.closeFeature()).catch(() => {});
+        await page.waitForTimeout(200);
+      }
+    };
+
+    await check('roaming_house_plan_windows', async () => {
+      await openRooms();
+      await page.click('#roomPlanBtn');
+      await page.waitForSelector('.house-plan-room', { timeout: 3000 });
+      // Shared rooms (living room, garden, park, dorm) always get a window, then one per adopted pig room.
+      const expected = await page.evaluate(() => ['salon', 'garden', 'park', 'dorm']
+        .concat(window.bridge.getState().rooms.pigRooms.filter(r => r.adopted !== false).map(r => r.roomId)).sort());
+      const ids = (await page.$$eval('.house-plan-room', b => b.map(x => x.dataset.room))).sort();
+      if (JSON.stringify(ids) !== JSON.stringify(expected)) throw new Error(`house plan windows are [${ids}], expected one per room [${expected}]`);
+      if (new Set(ids).size !== ids.length) throw new Error('two windows share a room id');
+    });
+
+    await check('roaming_window_switches_tab', async () => {
+      await openRooms();
+      await page.click('#roomPlanBtn');
+      await page.waitForSelector('.house-plan-room:not(.is-locked)', { timeout: 3000 });
+      const id = await page.$eval('.house-plan-room:not(.is-locked)', b => b.dataset.room);
+      await page.click(`.house-plan-room[data-room="${id}"]`);
+      await page.waitForTimeout(300);
+      const selected = await page.$eval('.room-tab.is-selected', t => t.dataset.room);
+      if (selected !== id) throw new Error(`picking window "${id}" selected tab "${selected}"`);
+      if (await page.isVisible('.house-plan-overlay')) throw new Error('house plan is still open after picking a window');
+    });
+
+    await check('roaming_pigs_drawn_in_room', async () => {
+      await openRooms();
+      await page.click('.room-tab[data-room="salon"]');
+      await page.waitForTimeout(200);
+      const painted = await page.$eval('.room-canvas', c => {
+        const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+        let n = 0;
+        for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+        return n;
+      });
+      if (!painted) throw new Error('room canvas is empty');
+    });
+
+    await check('roaming_home_switch', async () => {
+      await openRooms();
+      await page.click('#roomPlanBtn');
+      await page.waitForSelector('.house-plan-pig[data-pig="kuki"]', { timeout: 3000 });
+      await page.click('.house-plan-pig[data-pig="kuki"]');
+      await page.waitForSelector('.house-plan-card:not([hidden]) .house-plan-switch', { timeout: 3000 });
+      const before = (await modes()).kuki;
+      await page.click('.house-plan-card .house-plan-switch');
+      await page.waitForTimeout(300);
+      const after = (await modes()).kuki;
+      if (before === after) throw new Error(`home switch left Kuki in mode "${after}"`);
+    });
+
+    // There is no store mock module in web/home/features/store, so the smoke page supplies the store state and the buy handler itself.
+    const mockStore = () => page.evaluate(() => {
+      // Initializers run on every state update, so this one only fills the store once.
+      window.bridge.registerMockState('store', function (st) {
+        if (st.store) return;
+        st.store = {
+          categories: [{ id: 'furniture', name: 'Furniture', count: 2 }, { id: 'plants', name: 'Plants', count: 1 }],
+          rows: [
+            { id: 'sofa_cosy', kind: 'item', name: 'Cosy sofa', category: 'furniture', place: 'house', price: 40, owned: 0, placed: 0, locked: false },
+            { id: 'plant_pot', kind: 'item', name: 'Plant pot', category: 'plants', place: 'house', price: 15, owned: 0, placed: 0, locked: false },
+            { id: 'bookshelf', kind: 'item', name: 'Bookshelf', category: 'furniture', place: 'house', price: 60, owned: 0, placed: 0, locked: true, lockedReason: 'Needs the living room upgrade' }
+          ]
+        };
+      });
+      window.bridge.registerMockHandler('store_buy', function (st, action) {
+        const row = ((st.store && st.store.rows) || []).find(r => r.id === action.id && r.kind === action.kind);
+        const count = action.count || 1;
+        if (!row || row.locked || st.clovers < row.price * count) return;
+        st.clovers -= row.price * count;
+        row.owned += count;
+      });
+      // The world mocks (rooms, farm, market) keep clovers at 5000 or more on every update, so start above that floor for the buy to show.
+      window.bridge.currentState.clovers = Math.max(window.bridge.currentState.clovers, 6000);
+    });
+
+    await check('store_categories_and_search', async () => {
+      await mockStore();
+      await page.evaluate(() => window.CuyHome.openFeature('store'));
+      await page.waitForSelector('.store-card', { timeout: 3000 });
+      const categories = await page.$$eval('[data-category]', b => b.length);
+      if (categories < 2) throw new Error(`store lists ${categories} category buttons, expected at least 2`);
+      const shown = await page.$$eval('.store-card', b => b.length);
+      await page.fill('[data-filter="query"]', 'zzz-no-such-item');
+      await page.waitForTimeout(200);
+      const none = await page.$$eval('.store-card', b => b.length);
+      if (none !== 0) throw new Error(`search for a non-existent name still shows ${none} of ${shown} items`);
+      await page.fill('[data-filter="query"]', '');
+      await page.waitForTimeout(200);
+      const back = await page.$$eval('.store-card', b => b.length);
+      if (back !== shown) throw new Error(`clearing the search shows ${back} items, expected ${shown}`);
+    });
+
+    await check('store_buy_lowers_clovers', async () => {
+      await mockStore();
+      await page.evaluate(() => window.CuyHome.openFeature('store'));
+      await page.waitForSelector('.store-card', { timeout: 3000 });
+      const id = await page.evaluate(() => {
+        const clovers = window.bridge.getState().clovers;
+        const card = Array.from(document.querySelectorAll('.store-card:not(.is-locked)')).find(c => {
+          const price = parseInt(c.querySelector('.store-card-price').textContent, 10);
+          return price > 0 && price <= clovers && !c.querySelector('.store-buy').disabled;
+        });
+        return card ? card.dataset.id : null;
+      });
+      if (!id) throw new Error('no unlocked store item costs more than 0 and at most the clovers owned');
+      const before = await page.evaluate(() => window.bridge.getState().clovers);
+      await page.click(`.store-card[data-id="${id}"] .store-buy`);
+      await page.waitForTimeout(300);
+      const after = await page.evaluate(() => window.bridge.getState().clovers);
+      if (!(after < before)) throw new Error(`buying ${id} did not lower clovers: ${before} -> ${after}`);
+      const shown = await page.$eval('[data-role="clovers"]', e => e.textContent.trim());
+      if (shown !== String(after)) throw new Error(`store shows ${shown} clovers, expected ${after}`);
+    });
+
+    await page.close();
+  }
+}
+
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const featuresDir = path.join(ROOT, 'web', 'home', 'features');
@@ -714,6 +888,7 @@ async function roomsDormSmoke(browser, base, errors) {
 
   await worldSmoke(browser, base, errors);
   await roomsDormSmoke(browser, base, errors);
+  await roamingStoreSmoke(browser, base, errors);
 
   await browser.close();
   server.close();

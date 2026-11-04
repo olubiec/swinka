@@ -135,5 +135,20 @@ for (const w of world.items) if (w.prop_of) need(invIds.has(w.prop_of) && w.pric
 
 need(world.items.filter(w => w.recolor).length >= 8, 'at least 8 recolourable items');
 for (const w of world.items) if (w.recolor) need(w.price > 0 || w.free, w.id + ': recolour on an item with no price info');
+
+// ---- theme tiles and prop art (tiles.json keeps tiles under "tiles") ----
+const tiles = read('assets/world/tiles.json');
+for (const t of [...Object.values(pigRooms.themes), ...pigRooms.default_themes]) {
+  for (const key of ['wall_tile', 'floor_tile']) {
+    const tile = t[key] && tiles.tiles[t[key]];
+    if (tile) need(fs.existsSync(path.join(root, 'assets/world', tile.file)), 'theme tile has no file: ' + t[key] + ' (' + tile.file + ')');
+  }
+}
+// Props without an atlas entry are a warning (art still to come), not an error.
+const atlas = read('assets/world/atlas.json');
+const missingArt = world.items.filter(w => w.prop_of && !(atlas.items && atlas.items[w.id])).map(w => w.id);
+if (missingArt.length) console.warn('warning missing_art (prop_of without atlas entry): ' + JSON.stringify(missingArt));
+console.log('placeable price sum: ' + sink);
+
 if (problems.length) { console.error(problems.filter(Boolean).join('\n')); console.error(problems.filter(Boolean).length + ' problems'); process.exit(1); }
 console.log('data-check: ok (' + np.pigs.length + ' pigs, ' + farm.crops.length + ' crops, ' + world.items.length + ' placeables, ' + Object.keys(pigRooms.themes).length + ' pig room themes)');
