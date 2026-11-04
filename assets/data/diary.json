@@ -1,4 +1,4 @@
-{
+﻿{
   "templates": [
     {
       "id": "t_1",
@@ -703,6 +703,258 @@
         "weather": "any"
       },
       "text": "Found #clovers# today! I'm so lucky. #greeting# to everyone."
+    },
+    {
+      "id": "t_world_harvest_first",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Woke up early and gathered our first fresh harvest of the morning. The dew was still glistening on the leaves."
+    },
+    {
+      "id": "t_world_harvest_great",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Gathered a #world_harvest_vibes# harvest from the soil today. Every bite will be so juicy and sweet."
+    },
+    {
+      "id": "t_world_harvest_celebrate",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Celebrated a wonderful harvest with tiny celebratory hops. The plots are full of healthy growing greens."
+    },
+    {
+      "id": "t_world_market_sale",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Visitors stopped by our cozy market stall today. It felt lovely sharing our fresh garden harvest."
+    },
+    {
+      "id": "t_world_market_order",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Finished packing a full order at the market. Seeing the bundles ready made me wheek with pride."
+    },
+    {
+      "id": "t_world_market_welcome",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Welcomed kind customers to our busy market counter. Everyone admired the bright colors of the fresh vegetables."
+    },
+    {
+      "id": "t_world_walk_garden",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Strolled along the garden path this afternoon. Sniffing fresh clover blossoms and moss made my whiskers twitch."
+    },
+    {
+      "id": "t_world_walk_breeze",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Wandered along the #world_walk_spots# this sunny afternoon. My whiskers danced with excitement at every new scent."
+    },
+    {
+      "id": "t_world_decor_placed",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Put up a delightful new decoration today. Our little corner feels warmer and more inviting than ever."
+    },
+    {
+      "id": "t_world_decor_cozy",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Arranged our favorite resting nook with care. Now it is the most comfortable spot in the whole home."
+    },
+    {
+      "id": "t_world_place_unlocked",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Explored an exciting new place today! There are so many fresh trails to investigate and corners to sniff."
+    },
+    {
+      "id": "t_world_place_explore",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Discovered an unfamiliar path and unlocked a brand new area! Adventure always makes my heart thump happily."
+    },
+    {
+      "id": "t_world_rare_veg_eaten",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Nibbled a rare vegetable fresh from the morning harvest. The sweetest flavor imaginable filled my mouth."
+    },
+    {
+      "id": "t_world_garden_rest",
+      "stages": [
+        "baby",
+        "junior",
+        "adult",
+        "senior",
+        "legend"
+      ],
+      "when": {
+        "minFed": 0,
+        "sick": false,
+        "mood": "any",
+        "birthday": false,
+        "weather": "any"
+      },
+      "text": "Resting quietly in the shaded grass after a pleasant stroll. Listening to birds chirp makes for a cozy nap."
     }
   ],
   "generic_feelings": [
@@ -846,5 +1098,17 @@
     "Hello!",
     "Hi there!",
     "Wheek!"
+  ],
+  "world_harvest_vibes": [
+    "bountiful",
+    "fresh",
+    "crisp",
+    "golden"
+  ],
+  "world_walk_spots": [
+    "garden path",
+    "clover patch",
+    "shady orchard",
+    "green trail"
   ]
 }

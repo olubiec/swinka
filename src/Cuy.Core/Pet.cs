@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Cuy.Core.Time;
@@ -122,7 +122,27 @@ namespace Cuy.Core
         {
             if (Balance.HayRackActive) ConsumeHay(span.TotalHours, offline);
 
-            State.Needs.ApplyTime(span, offline || IsAway, IsSleeping, Balance);
+            double originalMoodDecay = Balance.GetDecay(Need.Mood);
+            bool decorActive = Balance.WorldDecorActive;
+            if (decorActive)
+            {
+                int score = ComfortScore();
+                int capped = World.Comfort.Capped(score, PlaceCatalog);
+                double factor = World.Comfort.MoodDecayFactor(capped, PlaceCatalog);
+                Balance.DecayPerHour[Need.Mood] = originalMoodDecay * factor;
+            }
+
+            try
+            {
+                State.Needs.ApplyTime(span, offline || IsAway, IsSleeping, Balance);
+            }
+            finally
+            {
+                if (decorActive)
+                {
+                    Balance.DecayPerHour[Need.Mood] = originalMoodDecay;
+                }
+            }
             if (offline) State.Stats.OfflineHours += span.TotalHours;
             else State.Stats.OnlineHours += span.TotalHours;
         }
@@ -196,6 +216,8 @@ namespace Cuy.Core
             CheckNeedThresholds();
         }
 
+
+        public int Clovers => State.Clovers;
 
         public void AddClovers(int amount)
         {

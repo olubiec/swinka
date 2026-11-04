@@ -83,4 +83,26 @@ namespace Cuy.Core
         public PigProfile Pig { get; }
         public bool Memorial { get; }
     }
+
+    public sealed class PlaceUnlockedEventArgs : EventArgs
+    {
+        public PlaceUnlockedEventArgs(string id)
+        {
+            Id = id;
+        }
+
+        public string Id { get; }
+    }
+
+    public sealed class PlaceUpgradedEventArgs : EventArgs
+    {
+        public PlaceUpgradedEventArgs(string id, int level)
+        {
+            Id = id;
+            Level = level;
+        }
+
+        public string Id { get; }
+        public int Level { get; }
+    }
 }

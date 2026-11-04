@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Cuy.Core.Economy;
 using Cuy.Core.Time;
+using Cuy.Core.World;
 
 namespace Cuy.Core
 {
@@ -25,6 +26,7 @@ namespace Cuy.Core
                 State.Economy.MinigameCloversToday = 0;
                 State.Economy.ColoringRewardedToday = 0;
                 State.Economy.CareCloversToday = 0;
+                MarketPricing.NewDay(State.World.Market, today, MarketConfig);
             }
         }
 
