@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Cuy.Core.Time;
 
 namespace Cuy.Core
 {
@@ -44,6 +45,40 @@ namespace Cuy.Core
                     AddDiaryEntry("Level 20! My human gave me a golden bowl.");
                 }
             }
+        }
+        /// <summary>
+        /// Adds bond points within the daily limit. Returns how many were actually added.
+        /// Scaled by ActiveModifiers.BondGain before applying the daily limit.
+        /// </summary>
+        public int AddBondPoints(int points)
+        {
+            if (points <= 0) return 0;
+            int scaled = (int)Math.Round(points * ActiveModifiers.BondGain, MidpointRounding.AwayFromZero);
+            if (scaled <= 0) return 0;
+
+            var bond = State.Bond;
+            string today = Clock.LocalNow().ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            if (bond.PointsTodayDate != today)
+            {
+                bond.PointsTodayDate = today;
+                bond.PointsToday = 0;
+            }
+
+            int allowed = Math.Max(0, Math.Min(scaled, Balance.BondDailyLimit - bond.PointsToday));
+            if (allowed == 0) return 0;
+
+            bond.PointsToday += allowed;
+            bond.Points += allowed;
+
+            int newLevel = Balance.BondLevelForPoints(bond.Points);
+            while (bond.Level < newLevel)
+            {
+                int old = bond.Level;
+                bond.Level++;
+                Raise(LevelUp, new LevelUpEventArgs(old, bond.Level));
+                OnBondLevelUp(bond.Level);
+            }
+            return allowed;
         }
     }
 }
