@@ -16,8 +16,16 @@
     unlockPending: false,  // first tap on the locked farm button
     clock: [],             // [{ at, left, total }] local countdown per plot index
     timer: null,
-    lastState: null
+    lastState: null,
+    period: null,          // time of day of the last render
+    periodAt: 0            // when the period was last checked (once a minute)
   };
+
+  // Light and time of day (W32-03): ambient tint on the plots and crops.
+  // Engine: lib/lights.js (window.Lights); data: assets/data/lights.json. A missing lib or file means no tint, no error.
+  const LIGHT_PERIOD_MS = 60000;
+  let lightsData = null;
+  let lightsRequested = false;
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -95,6 +103,10 @@
   // Local countdown: updates text and bars between state pushes. It never sends a message.
   function tick() {
     if (!S.container || !S.container.isConnected) return;
+    if (Date.now() - S.periodAt >= LIGHT_PERIOD_MS) {
+      S.periodAt = Date.now();
+      if (lightPeriod() !== S.period) { render(); return; }
+    }
     S.clock.forEach((c, i) => {
       if (!c) return;
       const left = Math.max(0, c.left - (Date.now() - c.at) / 1000);
@@ -211,7 +223,10 @@
     container.querySelectorAll('[data-plot-canvas]').forEach(cv => {
       const i = Number(cv.dataset.plotCanvas);
       drawPlot(cv, plots[i], cropOf(st, plots[i].cropId));
+      applyAmbient(cv.getContext('2d'), 32, 32);
     });
+    S.period = lightPeriod();
+    ensureLights();
 
     container.querySelectorAll('.farm-plot').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -265,6 +280,43 @@
     if (S.container && S.container.isConnected) render();
   }
 
+  function rgbCss(rgb, alpha) {
+    return 'rgba(' + Math.round(rgb[0]) + ', ' + Math.round(rgb[1]) + ', ' + Math.round(rgb[2]) + ', ' + (alpha == null ? 1 : alpha) + ')';
+  }
+
+  function lightPeriod() {
+    return window.Lights ? window.Lights.periodOf(new Date()) : null;
+  }
+
+  // Loads lib/lights.js once (dynamic script, the page does not list it) and the light data once.
+  function ensureLights() {
+    if (!window.Lights && !document.querySelector('script[data-cuy-lights]')) {
+      const s = document.createElement('script');
+      s.src = 'lib/lights.js';
+      s.dataset.cuyLights = '1';
+      s.onload = () => refreshPlots();
+      document.head.appendChild(s);
+    }
+    if (lightsRequested) return;
+    lightsRequested = true;
+    fetch(url('data/lights.json'))
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { lightsData = j; refreshPlots(); })
+      .catch(() => { lightsData = null; });
+  }
+
+  // Ambient tint (multiply) over one plot canvas, crop included. No tint without the light data.
+  function applyAmbient(ctx, w, h) {
+    if (!window.Lights || !lightsData) return;
+    const L = window.Lights;
+    const amb = L.ambientFor(lightsData, lightPeriod());
+    ctx.save();
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.fillStyle = rgbCss(L.tint([255, 255, 255], amb));
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+  }
+
   window.CuyHome.registerFeature({
     id: 'farm',
     title: 'Farm',
@@ -274,6 +326,7 @@
       S.container = container;
       S.api = api;
       S.menuPlot = null;
+      S.periodAt = Date.now();
       render();
       if (S.timer) clearInterval(S.timer);
       S.timer = setInterval(tick, 1000);

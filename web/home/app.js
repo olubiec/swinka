@@ -89,8 +89,28 @@
     }, 2500);
   }
 
+  // UI assets (9-slice frames and --ui-* variables) from lib/ui-assets.js.
+  // The script is inserted here when index.html does not list it.
+  function applyUiAssets() {
+    const apply = () => {
+      try {
+        window.UiAssets.apply(document.documentElement);
+      } catch (err) {
+        console.error('[app] UI assets not applied', err);
+      }
+    };
+    if (window.UiAssets) { apply(); return; }
+    const script = document.createElement('script');
+    script.src = 'lib/ui-assets.js';
+    script.onload = apply;
+    script.onerror = () => console.error('[app] Failed to load lib/ui-assets.js');
+    document.head.appendChild(script);
+  }
+
   // App initialisation
   function init() {
+    applyUiAssets();
+
     // Set the icon sheet from assets depending on WebView2 / a normal browser
     const isWebView = !!(window.chrome && window.chrome.webview);
     const iconsUrl = isWebView ? 'https://cuy.assets/icons/icons_16.png' : '../../assets/icons/icons_16.png';

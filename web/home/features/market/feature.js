@@ -22,8 +22,75 @@
     quoteTimers: {},
     unsubQuote: null,
     extrasReady: false,
-    extrasRequested: false
+    extrasRequested: false,
+    period: null,    // time of day of the last render
+    lightTimer: null
   };
+
+  // Light and time of day (W32-04): ambient tint on the market panel and the posters from the atlas.
+  // Engine: lib/lights.js (window.Lights); data: assets/data/lights.json. A missing lib, file or image means no tint, no error.
+  const LIGHT_PERIOD_MS = 60000;
+  const POSTERS = ['poster_1', 'poster_2', 'poster_3'];
+  let lightsData = null;
+  let lightsRequested = false;
+  let atlas = null;
+  let atlasRequested = false;
+
+  function rgbCss(rgb, alpha) {
+    return 'rgba(' + Math.round(rgb[0]) + ', ' + Math.round(rgb[1]) + ', ' + Math.round(rgb[2]) + ', ' + (alpha == null ? 1 : alpha) + ')';
+  }
+
+  function lightPeriod() {
+    return window.Lights ? window.Lights.periodOf(new Date()) : null;
+  }
+
+  // Loads lib/lights.js once (dynamic script, the page does not list it) and the light data once.
+  function ensureLights() {
+    if (!window.Lights && !document.querySelector('script[data-cuy-lights]')) {
+      const s = document.createElement('script');
+      s.src = 'lib/lights.js';
+      s.dataset.cuyLights = '1';
+      s.onload = () => render();
+      document.head.appendChild(s);
+    }
+    if (lightsRequested) return;
+    lightsRequested = true;
+    fetch(S.api.assetUrl('data/lights.json'))
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { lightsData = j; render(); })
+      .catch(() => { lightsData = null; });
+  }
+
+  function loadAtlas() {
+    if (atlasRequested) return;
+    atlasRequested = true;
+    fetch(S.api.assetUrl('world/atlas.json'))
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { atlas = j && j.items ? j : null; render(); })
+      .catch(() => { atlas = null; });
+  }
+
+  // Ambient tint over the whole panel (multiply, no pointer events). Empty when the light data is missing.
+  function tintHtml() {
+    if (!window.Lights || !lightsData) return '';
+    const L = window.Lights;
+    const amb = L.ambientFor(lightsData, lightPeriod());
+    return `<div class="market-tint" aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;background:${rgbCss(L.tint([255, 255, 255], amb))}"></div>`;
+  }
+
+  // Posters poster_1..3 from the atlas, only the ones the atlas has.
+  function postersHtml() {
+    if (!atlas || !atlas.items) return '';
+    const imgs = POSTERS.map(id => atlas.items[id]).filter(e => e && e.file && e.size)
+      .map(e => `<img class="market-poster" src="${esc(S.api.assetUrl('world/' + e.file))}" width="${e.size[0] * 2}" height="${e.size[1] * 2}" alt="" style="image-rendering:pixelated" onerror="this.style.display='none'">`);
+    return imgs.length ? `<div class="market-posters" style="display:flex;gap:8px;justify-content:center">${imgs.join('')}</div>` : '';
+  }
+
+  // Once a minute the period is checked and the market is rendered again when it changed.
+  function lightTick() {
+    if (!S.container || !S.container.isConnected) return;
+    if (lightPeriod() !== S.period) render();
+  }
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -122,9 +189,15 @@
     const tabs = TABS.map(t => `<button type="button" role="tab" class="market-tab${t.id === S.tab ? ' is-current' : ''}" aria-selected="${t.id === S.tab}" data-tab="${t.id}">${esc(t.label)}</button>`).join('');
     const body = S.tab === 'sell' ? sellRows(st) : buyRows(st, TABS.find(t => t.id === S.tab).category);
 
+    S.period = lightPeriod();
+    ensureLights();
+    loadAtlas();
+
     container.innerHTML = `
-      <div class="market-panel">
+      <div class="market-panel" style="position:relative">
+        ${tintHtml()}
         <img class="market-stall-banner" src="${esc(S.api.assetUrl('world/market/stall_basic.png'))}" alt="" />
+        ${postersHtml()}
         <div class="market-top">
           <span class="market-clovers"><span class="pixel-icon icon-clover" aria-hidden="true"></span> ${st.clovers || 0}</span>
           <span class="market-stall">Stall level ${stall.level}
@@ -194,6 +267,8 @@
       S.api = api;
       S.tab = 'seeds';
       S.quotes = {};
+      if (S.lightTimer) clearInterval(S.lightTimer);
+      S.lightTimer = setInterval(lightTick, LIGHT_PERIOD_MS);
       if (S.unsubQuote) S.unsubQuote();
       S.unsubQuote = api.onMessage('market_quote_result', (msg) => {
         S.quotes[msg.itemId] = { count: msg.count, total: msg.total, unitPrice: msg.unitPrice };
@@ -204,6 +279,7 @@
     },
     close() {
       S.container = null;
+      if (S.lightTimer) { clearInterval(S.lightTimer); S.lightTimer = null; }
       if (S.unsubQuote) { S.unsubQuote(); S.unsubQuote = null; }
       Object.keys(S.quoteTimers).forEach(k => clearTimeout(S.quoteTimers[k]));
     },

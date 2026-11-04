@@ -80,6 +80,22 @@
 
   const FRAME_SIZE = 64;
 
+  // Home scene light for pigs (rules in docs/SWIATLO_SWINEK.md): the pig's own light strength,
+  // the soft knee above which the coat is compressed, and the cap on the light multiplier.
+  const PIG_LIGHT_STRENGTH = 0.5;
+  const PIG_LIGHT_MAX = 1.15;
+  const PIG_KNEE = 200;
+  // Contact shadow sprite per life stage (senior and legend use the adult shadow) and its width.
+  const PIG_SHADOW_BY_STAGE = { baby: 'baby', junior: 'junior', adult: 'adult', senior: 'adult', legend: 'adult' };
+  const PIG_SHADOW_WIDTH = { baby: 30, junior: 38, adult: 46 };
+  // Ambient level per scene period (scene.level, when given, overrides it).
+  const AMBIENT_BY_PERIOD = { day: 1, dusk: 0.8, night: 0.6 };
+
+  function sceneAmbient(scene) {
+    if (typeof scene.level === 'number') return scene.level;
+    return AMBIENT_BY_PERIOD[scene.period] ?? 1;
+  }
+
   class PigCanvas {
     constructor(canvasElement) {
       this.canvas = canvasElement;
@@ -114,6 +130,10 @@
 
       // Sprite sheets for the variants
       this.sheets = {};
+      this.pigShadows = {};
+      this.litCanvas = null;
+      this.litCtx = null;
+      this.lightScene = null;
       this.iconsImg = null;
       this.isLoaded = false;
 
@@ -151,6 +171,7 @@
     initAssets() {
       const isWebView = window.chrome && window.chrome.webview;
       const assetsBase = isWebView ? 'https://cuy.assets/' : '../../assets/';
+      this.assetsBase = assetsBase;
 
       // Sheets come from CuySprites (breed + stage, palette remap). Start with the current look and baby as fallback.
       this.breed = 'smooth';
@@ -562,7 +583,7 @@
       this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
 
       // --- 4. THE GUINEA PIG (from the sprite sheet) ---
-      this.drawPig(ctx);
+      this.drawPig(ctx, this.lightScene);
 
       // Draw Z >= 10 layers
       this.layers.filter(l => l.z >= 10).forEach(l => l.drawFn(ctx, scene));
@@ -747,7 +768,13 @@
       }
     }
 
-    drawPig(ctx) {
+    // Home scenes pass a light scene {period, sources, origin} to set the pig's lighting; null = desktop look.
+    setLightScene(scene) {
+      this.lightScene = scene || null;
+    }
+
+    // lightScene is optional: without it the frame and the desktop shadow ellipse are drawn exactly as before.
+    drawPig(ctx, lightScene) {
       if (this.pigY < -100) return; // Hidden
 
       const sheet = this.usableSheet();
@@ -764,26 +791,118 @@
 
       ctx.save();
 
-      // Shadow under the pig
-      const h = Math.max(0, 60 - this.pigY);
-      const factor = Math.max(0.4, Math.min(1, 1 - h / 80));
-      const shadowAlpha = 0.45 * Math.max(0.2, Math.min(1, 1 - h / 80));
+      let frame = sheet;
+      let fx = sx;
+      let fy = sy;
+      if (lightScene) {
+        // Scene pigs: contact shadow first, then the pig lit by the scene.
+        this.drawContactShadow(ctx);
+        const lit = this.litFrame(sheet, sx, sy, lightScene);
+        if (lit) {
+          frame = lit;
+          fx = 0;
+          fy = 0;
+        }
+      } else {
+        // Shadow under the pig
+        const h = Math.max(0, 60 - this.pigY);
+        const factor = Math.max(0.4, Math.min(1, 1 - h / 80));
+        const shadowAlpha = 0.45 * Math.max(0.2, Math.min(1, 1 - h / 80));
 
-      ctx.fillStyle = `rgba(70, 45, 30, ${shadowAlpha})`;
-      ctx.beginPath();
-      ctx.ellipse(this.pigX + 32, 119, 22 * factor, 6 * factor, 0, 0, Math.PI * 2);
-      ctx.fill();
+        ctx.fillStyle = `rgba(70, 45, 30, ${shadowAlpha})`;
+        ctx.beginPath();
+        ctx.ellipse(this.pigX + 32, 119, 22 * factor, 6 * factor, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Draw the pig frame, mirrored if needed
       if (this.facing < 0) {
         ctx.translate(this.pigX + FRAME_SIZE, this.pigY);
         ctx.scale(-1, 1);
-        ctx.drawImage(sheet, sx, sy, FRAME_SIZE, FRAME_SIZE, 0, 0, FRAME_SIZE, FRAME_SIZE);
+        ctx.drawImage(frame, fx, fy, FRAME_SIZE, FRAME_SIZE, 0, 0, FRAME_SIZE, FRAME_SIZE);
       } else {
-        ctx.drawImage(sheet, sx, sy, FRAME_SIZE, FRAME_SIZE, this.pigX, this.pigY, FRAME_SIZE, FRAME_SIZE);
+        ctx.drawImage(frame, fx, fy, FRAME_SIZE, FRAME_SIZE, this.pigX, this.pigY, FRAME_SIZE, FRAME_SIZE);
       }
 
       ctx.restore();
+    }
+
+    // Contact shadow sprite at (32 - width/2, 57) inside the pig frame.
+    drawContactShadow(ctx) {
+      const key = PIG_SHADOW_BY_STAGE[this.stageKey] || 'adult';
+      const img = this.pigShadowImage(key);
+      if (!img.complete || !img.naturalWidth) return; // not loaded yet
+      ctx.drawImage(img, this.pigX + 32 - PIG_SHADOW_WIDTH[key] / 2, this.pigY + 57);
+    }
+
+    pigShadowImage(key) {
+      if (!this.pigShadows[key]) {
+        const img = new Image();
+        img.onerror = () => { console.error('[canvas-pig] Failed to load image: ' + img.src); };
+        img.src = this.assetsBase + 'world/fx/shadow_pig_' + key + '.png';
+        this.pigShadows[key] = img;
+      }
+      return this.pigShadows[key];
+    }
+
+    // Copy of one sprite frame lit by the scene: ambient plus the two nearest sources, multiplied in
+    // at PIG_LIGHT_STRENGTH without dither. Returns null when the pixels cannot be read (tainted canvas).
+    litFrame(sheet, sx, sy, scene) {
+      if (!this.litCanvas) {
+        this.litCanvas = document.createElement('canvas');
+        this.litCanvas.width = FRAME_SIZE;
+        this.litCanvas.height = FRAME_SIZE;
+        this.litCtx = this.litCanvas.getContext('2d', { willReadFrequently: true });
+      }
+      const c = this.litCtx;
+      c.clearRect(0, 0, FRAME_SIZE, FRAME_SIZE);
+      c.drawImage(sheet, sx, sy, FRAME_SIZE, FRAME_SIZE, 0, 0, FRAME_SIZE, FRAME_SIZE);
+
+      let img;
+      try {
+        img = c.getImageData(0, 0, FRAME_SIZE, FRAME_SIZE);
+      } catch (err) {
+        return null;
+      }
+      const data = img.data;
+      const ambient = sceneAmbient(scene);
+      const origin = scene.origin || { x: this.pigX, y: this.pigY };
+      const cx = origin.x + FRAME_SIZE / 2;
+      const cy = origin.y + FRAME_SIZE / 2;
+      const sources = (scene.sources || [])
+        .map((s) => ({ s, d: Math.hypot(s.x - cx, s.y - cy) }))
+        .sort((a, b) => a.d - b.d)
+        .slice(0, 2)
+        .map((e) => e.s);
+
+      const light = [0, 0, 0];
+      for (let py = 0; py < FRAME_SIZE; py++) {
+        for (let px = 0; px < FRAME_SIZE; px++) {
+          const i = (py * FRAME_SIZE + px) * 4;
+          if (data[i + 3] === 0) continue;
+          const wx = origin.x + px;
+          const wy = origin.y + py;
+          light[0] = ambient;
+          light[1] = ambient;
+          light[2] = ambient;
+          sources.forEach((src) => {
+            const r = src.radius || 40;
+            const dist = Math.hypot(src.x - wx, src.y - wy);
+            if (dist >= r) return;
+            const k = (src.intensity ?? 1) * (1 - dist / r);
+            const col = src.color || [1, 1, 1];
+            for (let ch = 0; ch < 3; ch++) light[ch] += k * col[ch];
+          });
+          // Multiply only, with a cap and a soft knee: the coat darkens or tints but never burns out to white.
+          for (let ch = 0; ch < 3; ch++) {
+            const l = Math.min(PIG_LIGHT_MAX, light[ch]);
+            const v = data[i + ch] * (1 - PIG_LIGHT_STRENGTH + PIG_LIGHT_STRENGTH * l);
+            data[i + ch] = v <= PIG_KNEE ? v : PIG_KNEE + (v - PIG_KNEE) * 0.5;
+          }
+        }
+      }
+      c.putImageData(img, 0, 0);
+      return this.litCanvas;
     }
 
     drawParticles(ctx) {

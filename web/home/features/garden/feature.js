@@ -36,8 +36,21 @@
     layout: null,
     catalogById: {},
     pigs: [],
-    memorial: []
+    memorial: [],
+    period: null,         // time of day of the last render
+    periodAt: 0,          // when the period was last checked (once a minute)
+    animating: false,     // a lamp strip, flicker or dust runs: redraw on every frame tick
+    lampToggles: {},      // placed item uid -> lamp on/off picked by the player (module memory only, no save)
+    lightTimer: null
   };
+
+  // Light and time of day (W32-02): time-of-day backgrounds, ambient tint, lamp glow, lamp strips and dust motes.
+  // Engine: lib/lights.js (window.Lights); data: assets/data/lights.json. A missing lib, file or image means no light, no error.
+  const LIGHT_PERIOD_MS = 60000;
+  const LIGHT_FRAME_MS = 250;
+  const DUST_ALPHA = 0.3;
+  let lightsData = null;
+  let lightsRequested = false;
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -65,6 +78,153 @@
       .then(r => (r.ok ? r.json() : null))
       .then(j => { atlas = j && j.items ? j : null; redraw(); })
       .catch(() => { atlas = null; });
+  }
+
+  // The 1x file is always drawn (never the _x2 file), scaled by an integer factor.
+  function oneX(rel) { return String(rel).replace(/_x2(\.[a-z0-9]+)$/i, '$1'); }
+
+  function rgbCss(rgb, alpha) {
+    return 'rgba(' + Math.round(rgb[0]) + ', ' + Math.round(rgb[1]) + ', ' + Math.round(rgb[2]) + ', ' + (alpha == null ? 1 : alpha) + ')';
+  }
+
+  function colourOf(c) {
+    if (Array.isArray(c)) return [c[0], c[1], c[2]];
+    const hex = String(c || '#ffffff').replace('#', '');
+    return [parseInt(hex.slice(0, 2), 16) || 0, parseInt(hex.slice(2, 4), 16) || 0, parseInt(hex.slice(4, 6), 16) || 0];
+  }
+
+  function lightPeriod() {
+    return window.Lights ? window.Lights.periodOf(new Date()) : null;
+  }
+
+  // Loads lib/lights.js once (dynamic script, the page does not list it) and the light data once.
+  function ensureLights() {
+    if (!window.Lights && !document.querySelector('script[data-cuy-lights]')) {
+      const s = document.createElement('script');
+      s.src = 'lib/lights.js';
+      s.dataset.cuyLights = '1';
+      s.onload = () => redraw();
+      document.head.appendChild(s);
+    }
+    if (lightsRequested) return;
+    lightsRequested = true;
+    fetch(url('data/lights.json'))
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { lightsData = j; redraw(); })
+      .catch(() => { lightsData = null; });
+  }
+
+  // Edit mode (an item picked from the drawer, or an item being moved): no tint and no light.
+  function isEditing() {
+    return !!S.selectedItem || !!(S.drag && S.drag.moved);
+  }
+
+  // Lamps from lib/lights.js. Each placed item gets its own key (its uid), so every lamp keeps its own toggle.
+  function activeLamps(layout) {
+    const sources = lightsData.sources || {};
+    const keyed = {};
+    const placed = [];
+    layout.items.forEach((it) => {
+      const key = Object.keys(sources).find(id => id === it.itemId || sources[id].item === it.itemId);
+      if (!key) return;
+      keyed[it.uid] = sources[key];
+      placed.push({ id: it.uid, x: it.x, y: it.y });
+    });
+    return window.Lights.activeSources(Object.assign({}, lightsData, { sources: keyed }), 'outdoor', placed, lightPeriod(), S.lampToggles);
+  }
+
+  // Light pass after the scene and before the UI overlays. Fire and lamp sources are outdoor sources.
+  function drawLight(ctx, canvas, layout, cell, k) {
+    S.animating = false;
+    if (!window.Lights || !lightsData || isEditing()) return;
+    const L = window.Lights;
+    const amb = L.ambientFor(lightsData, lightPeriod());
+    ctx.save();
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.fillStyle = rgbCss(L.tint([255, 255, 255], amb));
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    const now = Date.now();
+    const lit = [];
+    activeLamps(layout).forEach((a, i) => {
+      if (!a.on) return;
+      const it = layout.items.find(x => x.uid === a.id);
+      const def = it && S.catalogById[it.itemId];
+      if (!def) return;
+      const w = def.w * cell;
+      const h = def.h * cell;
+      const cx = a.x * cell + w / 2;
+      const cy = a.y * cell + h / 2;
+      const r = Math.max(1, (a.radiusCells || 2) * CELL * k);
+      lit.push({ cx: cx, cy: cy });
+      let alpha = a.strength == null ? 0.6 : a.strength;
+      if (a.flicker) { alpha *= 0.85 + 0.15 * Math.sin(now / 160 + i); S.animating = true; }
+      const mask = typeof a.mask === 'string' ? loadImage(oneX(a.mask)) : null;
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      if (mask && mask.ok) {
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(mask.img, cx - r, cy - r, 2 * r, 2 * r);
+      } else {
+        const c = colourOf(a.color);
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        g.addColorStop(0, rgbCss(c, alpha));
+        g.addColorStop(1, rgbCss(c, 0));
+        ctx.fillStyle = g;
+        ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+      }
+      ctx.restore();
+      // Sprite strip: frames side by side, frame width = the item's atlas width, anchored like the item
+      const sheet = typeof a.file === 'string' ? loadImage(oneX(a.file)) : null;
+      const entry = atlas && atlas.items ? atlas.items[it.itemId] : null;
+      const sw = entry && entry.size ? entry.size[0] : (sheet && sheet.ok ? sheet.img.naturalWidth : 0);
+      if (sheet && sheet.ok && sw > 0) {
+        const sh = sheet.img.naturalHeight;
+        const frames = a.frames || Math.max(1, Math.floor(sheet.img.naturalWidth / sw));
+        const idx = Math.floor((now / 1000) * (a.fps || 1)) % frames;
+        const dw = sw * k;
+        const dh = sh * k;
+        ctx.drawImage(sheet.img, idx * sw, 0, sw, sh, a.x * cell + (w - dw) / 2, a.y * cell + h - dh, dw, dh);
+        if (frames > 1) S.animating = true;
+      }
+    });
+
+    // Dust motes: the lights.dust strip around each lit lamp, at low opacity
+    const dust = lightsData.dust && typeof lightsData.dust.file === 'string' ? lightsData.dust : null;
+    const dustSheet = dust ? loadImage(oneX(dust.file)) : null;
+    if (dustSheet && dustSheet.ok && lit.length) {
+      const frames = dust.frames || 1;
+      const fw = Math.floor(dustSheet.img.naturalWidth / frames);
+      const fh = dustSheet.img.naturalHeight;
+      if (fw > 0) {
+        const idx = Math.floor((now / 1000) * (dust.fps || 1)) % frames;
+        ctx.save();
+        ctx.globalAlpha = DUST_ALPHA;
+        lit.forEach(p => ctx.drawImage(dustSheet.img, idx * fw, 0, fw, fh, p.cx - fw * k / 2, p.cy - fh * k / 2, fw * k, fh * k));
+        ctx.restore();
+        if (frames > 1) S.animating = true;
+      }
+    }
+  }
+
+  // Play mode: a click on a lamp toggles it. The choice stays in S.lampToggles (module memory, no save).
+  function toggleLamp(uid) {
+    if (!window.Lights || !lightsData || !S.layout) return;
+    const lamp = activeLamps(S.layout).find(a => a.id === uid);
+    if (!lamp) return;
+    S.lampToggles[uid] = !lamp.on;
+    redraw();
+  }
+
+  // Once a minute the period is checked and the view is rendered again when it changed; animated lamps redraw each tick.
+  function lightTick() {
+    if (!S.container || !S.container.isConnected) return;
+    if (Date.now() - S.periodAt >= LIGHT_PERIOD_MS) {
+      S.periodAt = Date.now();
+      if (lightPeriod() !== S.period) { render(); return; }
+    }
+    if (S.animating) redraw();
   }
 
   function redraw() {
@@ -125,10 +285,14 @@
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Time-of-day background (garden_<period>.png or park_<period>.png); with it the floor tiles are see-through
+    const bg = loadImage('world/bg/' + (S.place === 'park' ? 'park' : 'garden') + '_' + (lightPeriod() || 'day') + '.png');
+    if (bg.ok) ctx.drawImage(bg.img, 0, 0, canvas.width, canvas.height);
+
     const base = FLOOR_COLORS[layout.floor] || FLOOR_COLORS.floor_grass;
     for (let y = 0; y < layout.rows; y++) {
       for (let x = 0; x < layout.cols; x++) {
-        ctx.globalAlpha = 0.9;
+        ctx.globalAlpha = bg.ok ? 0.35 : 0.9;
         ctx.fillStyle = base;
         ctx.fillRect(x * cell, y * cell, cell, cell);
         if ((x + y) % 2 === 0) {
@@ -154,6 +318,9 @@
       ctx.textBaseline = 'top';
       ctx.fillText(p.name || '', cx, cy + cell / 2);
     });
+
+    // Light pass (not in edit mode)
+    drawLight(ctx, canvas, layout, cell, k);
 
     const sel = S.selectedUid && layout.items.find(i => i.uid === S.selectedUid);
     if (sel) {
@@ -275,6 +442,7 @@
     canvas.addEventListener('pointerup', () => {
       const drag = S.drag;
       S.drag = null;
+      if (drag && !drag.moved && !S.selectedItem) { toggleLamp(drag.uid); return; }
       if (drag && drag.moved) {
         const def = S.catalogById[drag.itemId];
         if (def && !spotProblem(S.layout, def, drag.x, drag.y, drag.uid)) {
@@ -419,6 +587,8 @@
     if (S.canvas) {
       if (hadFocus) S.canvas.focus({ preventScroll: true });
       bindCanvas(S.canvas);
+      S.period = lightPeriod();
+      ensureLights();
       loadAtlas();
       drawGrid(S.canvas, S.layout);
     }
@@ -473,6 +643,9 @@
       S.hover = null;
       S.walkPending = false;
       S.walkResult = null;
+      S.periodAt = Date.now();
+      if (S.lightTimer) clearInterval(S.lightTimer);
+      S.lightTimer = setInterval(lightTick, LIGHT_FRAME_MS);
       if (S.unsubWalk) S.unsubWalk();
       S.unsubWalk = api.onMessage('walk_result', (m) => {
         S.walkPending = false;
@@ -486,6 +659,7 @@
       S.canvas = null;
       S.drag = null;
       if (S.unsubWalk) { S.unsubWalk(); S.unsubWalk = null; }
+      if (S.lightTimer) { clearInterval(S.lightTimer); S.lightTimer = null; }
     },
     onState() {
       if (S.container && S.container.isConnected) render();

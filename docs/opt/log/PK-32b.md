@@ -1,0 +1,10 @@
+- W32-05: app.js calls applyUiAssets() first in init(); it uses window.UiAssets if present, else inserts lib/ui-assets.js (found at web/home/lib/, index.html not touched).
+- W32-05: no main menu/home hub screen exists in app.js, so bg:menu is NOT applied; only the helper was added.
+- W32-05: grep of web/ and src/ for plot_field, bridge_wood, 64x32: no references, nothing changed.
+- W32-06: drawPig(ctx, lightScene) plus setLightScene(); without a scene the frame and desktop ellipse are unchanged. render() passes this.lightScene (null by default, so no caller sets a scene yet).
+- W32-06: shadow sprite drawn first (contact shadow replaces the ellipse for scene pigs); stage map senior/legend -> adult.
+- W32-06 difference: lib/lights.js (Lights.tint) was not read (package forbids other files), so the light pass is a local multiply in litFrame(): ambient + 2 nearest sources, strength 0.5, no dither, cap 1.15, soft knee at 200.
+- Scene format assumed: {period, sources:[{x,y,radius,intensity,color}], origin, level}; period maps to ambient (day 1, dusk 0.8, night 0.6) - assumed, verify against SWIATLO_SWINEK.md.
+- Verify: node --check app.js and canvas-pig.js OK; web-smoke OK (404s on optional features/*/mock.js are expected, loader ignores them).
+- check-assets: fails only on known icon-pig (feature.css, no icons.json entry; no .icon-pig CSS rule). Not fixed.
+- Undone: none in W32-05/06 scope. check-css-vars not run (not in verify).
