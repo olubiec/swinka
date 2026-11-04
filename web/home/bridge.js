@@ -380,6 +380,8 @@
       this.listeners = new Set();
       this.actionListeners = new Set();
       this.messageListeners = new Map();
+      this.mockHandlers = new Map();
+      this.mockStates = new Map();
       this.currentState = null;
 
       if (this.isWebView2) {
@@ -620,6 +622,12 @@
       const min = Math.min(...vals);
       const avg = sum / vals.length;
       state.needs.health = Math.round((0.5 * avg + 0.5 * min) * 10) / 10;
+
+      if (this.mockStates) {
+        this.mockStates.forEach((fn, id) => {
+          try { fn(state); } catch (e) { console.error(`[CuyBridge] Error in mockState initializer "${id}":`, e); }
+        });
+      }
     }
 
     mockTick() {
@@ -679,6 +687,37 @@
     }
 
     // --- Public API ---
+
+    /**
+     * Registers a browser-mock action handler for a message type
+     * @param {String} type
+     * @param {Function} fn
+     */
+    registerMockHandler(type, fn) {
+      if (!type || typeof fn !== 'function') return;
+      if (this.mockHandlers.has(type)) {
+        console.warn(`[CuyBridge] Mock handler for type "${type}" is already registered; keeping the first.`);
+        return;
+      }
+      this.mockHandlers.set(type, fn);
+    }
+
+    /**
+     * Registers a browser-mock state initializer for a feature
+     * @param {String} id
+     * @param {Function} fn
+     */
+    registerMockState(id, fn) {
+      if (!id || typeof fn !== 'function') return;
+      if (this.mockStates.has(id)) {
+        console.warn(`[CuyBridge] Mock state initializer for "${id}" is already registered; keeping the first.`);
+        return;
+      }
+      this.mockStates.set(id, fn);
+      if (this.currentState) {
+        try { fn(this.currentState); } catch (e) { console.error(`[CuyBridge] Error in mockState initializer "${id}":`, e); }
+      }
+    }
 
     /**
      * Registers a callback for state changes
@@ -1154,7 +1193,12 @@
         }
 
         default:
-          console.info(`[mock] Unknown action type "${action.type}":`, action);
+          const handler = this.mockHandlers && this.mockHandlers.get(action.type);
+          if (handler) {
+            handler.call(this, s, action);
+          } else {
+            console.info(`[mock] Unknown action type "${action.type}":`, action);
+          }
           break;
       }
 

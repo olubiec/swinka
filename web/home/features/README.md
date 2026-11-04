@@ -44,3 +44,9 @@ Feature CSS must prefix every selector with `.feature-<id>`. The loader automati
 ## Enabling a feature
 In C# (WebView2), the state includes a `features` array.
 In mock mode (or fallback), the loader reads `features/index.json`. Add your feature ID there.
+
+## Browser mock (`mock.js`)
+In browser mock mode (`window.bridge.isMock`), the loader appends `features/<id>/mock.js` after `feature.js` (missing files are ignored).
+Use `window.bridge.registerMockState('<id>', state => { ... })` to fill missing default fields on `state` without overwriting existing ones.
+Use `window.bridge.registerMockHandler('<type>', function (state, action) { ... })` to handle feature actions in mock mode (may mutate `state` and call `this.dispatchMessage(...)`).
+Never add new feature cases directly to the `switch` in `bridge.js`.

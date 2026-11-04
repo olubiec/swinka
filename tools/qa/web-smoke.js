@@ -10,7 +10,7 @@ const { assertLayout } = require('./lib/layout.js');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const OUT = path.join(__dirname, 'out');
-const ALLOWED_MISSING = [];
+const ALLOWED_MISSING = ['/mock.js'];
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
   '.png': 'image/png', '.wav': 'audio/wav', '.ogg': 'audio/ogg', '.mp3': 'audio/mpeg', '.ico': 'image/x-icon', '.svg': 'image/svg+xml' };
 
@@ -55,6 +55,9 @@ function serve() {
   page.on('pageerror', (e) => { errors.push('pageerror: ' + e.message); });
   page.on('requestfailed', (req) => {
     if (req.failure() && req.failure().errorText === 'net::ERR_ABORTED' && /\.(ogg|mp3|wav)$/.test(req.url())) {
+      return;
+    }
+    if (ALLOWED_MISSING.some(allowed => req.url().includes(allowed))) {
       return;
     }
     errors.push('requestfailed: ' + req.url());
@@ -317,6 +320,18 @@ function serve() {
     await page.waitForTimeout(200);
     const sent = await page.evaluate(() => window._sentTrick);
     if (!sent || sent.id !== 'spin') throw new Error('Expected trick message for spin, got: ' + JSON.stringify(sent));
+
+    const mockHookOk = await page.evaluate(() => {
+      window.bridge.registerMockState('smoke_mock_test', (st) => {
+        if (st.smokeCounter === undefined) st.smokeCounter = 10;
+      });
+      window.bridge.registerMockHandler('smoke_mock_inc', function (st, action) {
+        st.smokeCounter = (st.smokeCounter || 0) + (action.delta || 1);
+      });
+      window.bridge.send({ type: 'smoke_mock_inc', delta: 5 });
+      return window.bridge.getState().smokeCounter === 15;
+    });
+    if (!mockHookOk) throw new Error('registerMockHandler / registerMockState assertion failed');
 
     await page.evaluate(() => window.CuyHome.closeFeature && window.CuyHome.closeFeature());
     await page.waitForTimeout(200);

@@ -691,6 +691,12 @@
         const script = document.createElement('script');
         script.src = 'features/' + id + '/feature.js';
         document.body.appendChild(script);
+        if (window.bridge && window.bridge.isMock) {
+          const mockScript = document.createElement('script');
+          mockScript.src = 'features/' + id + '/mock.js';
+          mockScript.onerror = () => {};
+          document.body.appendChild(mockScript);
+        }
       });
     };
 
