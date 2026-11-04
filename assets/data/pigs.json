@@ -1,5 +1,6 @@
 {
  "adopt_cost": 80,
  "max_roster": 6,
+ "max_adopted": 1,
  "names": ["Piko", "Milo", "Luna", "Koko", "Buba", "Zuzu", "Nala", "Oreo", "Pumpkin", "Mochi"]
 }
