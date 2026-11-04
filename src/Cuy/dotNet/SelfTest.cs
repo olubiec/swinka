@@ -42,6 +42,9 @@ namespace Cuy
             });
             Check("actions.json", () => ParseData("actions.json"));
             Check("items.json", () => ParseData("items.json"));
+            Check("pigs_named.json", () => ParseData("pigs_named.json"));
+            Check("pigs.json", CheckPigsJson);
+            Check("named pig sheets", CheckNamedPigSheets);
             Check("actions animations", CheckActionAnimations);
             Check("sprite sheets", CheckSpriteSheets);
             Check("spritesheet", CheckSpriteSheetLoader);
@@ -456,6 +459,32 @@ namespace Cuy
             if (!File.Exists(readme)) Warn("runtime files", "README.txt missing next to exe");
             if (!File.Exists(notices)) Warn("runtime files", "THIRD_PARTY_NOTICES.md missing next to exe");
             if (!Directory.Exists(licenses)) Warn("runtime files", "assets\\LICENSES folder missing next to exe");
+        }
+
+        private static void CheckPigsJson()
+        {
+            string path = Path.Combine(_assets, "sprites", "pigs", "pigs.json");
+            if (!File.Exists(path)) throw new Exception("pigs.json missing");
+            var root = JObject.Parse(File.ReadAllText(path));
+            if (root["pigs"] == null) throw new Exception("no \"pigs\" key");
+        }
+
+        private static void CheckNamedPigSheets()
+        {
+            JObject data = ParseData("pigs_named.json");
+            var pigs = data["pigs"] as JArray;
+            if (pigs == null || pigs.Count == 0) throw new Exception("no pigs array in pigs_named.json");
+            string[] stages = { "baby", "junior", "adult", "senior", "legend" };
+            foreach (var p in pigs)
+            {
+                string id = (string)p["id"];
+                if (string.IsNullOrEmpty(id)) throw new Exception("pig missing id");
+                foreach (var stage in stages)
+                {
+                    string path = Path.Combine(_assets, "sprites", "pigs", id, stage, "spritesheet.png");
+                    if (!File.Exists(path)) throw new Exception("missing pigs/" + id + "/" + stage + "/spritesheet.png");
+                }
+            }
         }
 
         private static void CheckBreedSheets()
