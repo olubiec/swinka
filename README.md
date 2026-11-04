@@ -20,15 +20,15 @@
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
 > ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** 2026-11-04 07:52:00
+> **Ostatni heartbeat:** `2026-11-04 15:51:10`
 >
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
-> | 🔋 **Zasilanie i Bateria** | **88%** (Praca na baterii) | 🟢 Bezpieczny |
-> | 🌊 **Zakończone Fale** | **W13 (4/4)** oraz **W14 (10/10)** | ✅ Ukończone 100% |
-> | 🌊 **Następna Fala** | **W15** | 🟢 Gotowa do startu |
-> | 🧪 **Testy Jednostkowe** | **470 / 470** zaliczonych | ✅ Wszystkie przechodzą (0 błędów) |
-> | 💻 **Stan Systemu** | 🏁 Sesja zakończona sukcesem, gotowa do przełączenia | 🟢 Czyste repozytorium |
+> | 🔋 **Zasilanie i Bateria** | **97%** (Zasilacz AC podłączony) | 🟢 Zasilacz AC (Bezpieczny) |
+> | 🌊 **Aktualna Fala** | **W13** | 🟢 Aktywna |
+> | 🏆 **Ukończone Zadania** | **17 / 162** (10.5%) | 🟢 Postęp OK |
+> | 🧪 **Testy Jednostkowe** | **399 / 399** zaliczonych | ✅ Wszystkie przechodzą |
+> | 💻 **Stan Systemu** | ⚡ Agenci pracują autonomicznie | 🟢 Aktywny |
 >
 > 📄 [Szczegółowy raport zadań](STAN_PROJEKTU.md) • 📋 [Lista kolejnych fal](TODO.md) • 🔄 Odśwież stronę w przeglądarce telefonu, aby zobaczyć aktualny czas
 <!-- STATUS_DASHBOARD_END -->
