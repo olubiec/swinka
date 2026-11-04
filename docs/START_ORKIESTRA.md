@@ -1,5 +1,7 @@
 # Start wszystkich fal w Antigravity (orkiestra)
 
+> **Opcjonalne.** Orkiestra startuje tylko na wyraźną prośbę użytkownika; agenci nie uruchamiają jej sami (`CLAUDE.md`, `AGENTS.md`).
+
 Stan na 3.11.2026. Plan: `waves.yaml` (**46 fal, 162 zadania**), prompty: `docs/prompts/` (jeden plik na zadanie, wszystkie ścieżki `prompt_file` istnieją). Narzędzie: `tools/orkiestra`, konfiguracja: `orkiestra.toml` (agent `agy`, model `gemini-3-flash`, 2 zadania równolegle, 2 próby, `stop_on_failure = true`).
 Pętla Julesa (`.github/workflows/jules-loop.yml`) jest wyłączona; nic w `tasks/` jej nie uruchomi (tam zostały tylko `BACKLOG.md` i `done/`).
 

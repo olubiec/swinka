@@ -23,6 +23,7 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 | `tasks/` | One file = one Jules task (`W<wave>-<nn>-name.md`) and `BACKLOG.md` (one line = one task). Do not edit unless your task says so |
 
 ## Rules
+- Do not start the orkiestra (`orkiestra run`, `tools/loop_runner.py`, `tools/battery_guard.py watch`) unless the user explicitly asks for it. Work in the current session by default.
 - Run tests and build before finishing; open the PR only when the task's verification command passes. If you cannot verify it, do not open the PR: say what blocks you.
 - One task = one branch = one pull request; PR title = `[<task id>] <task title>` (e.g. `[W2-03] Diary writer`).
 - Change only the files listed in the task's `Zmieniaj:` line (plus `Wymagane:`). The Jules Loop plan guard reverts any other file. If the task is missing a file you need, finish the rest and record the gap in the PR; do not touch the file.
