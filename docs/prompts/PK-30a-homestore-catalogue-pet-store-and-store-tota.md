@@ -1,15 +1,15 @@
 # PK-30a: HomeStore catalogue, Pet.Store and store totals test
-Zmieniaj: src/Cuy.Core/World/HomeStore.cs, tests/Cuy.Core.Tests/HomeStoreTests.cs, src/Cuy.Core/Pet.Store.cs, tests/Cuy.Core.Tests/PetStoreTests.cs, tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs
+Zmieniaj: src/Cuy.Core/World/HomeStore.cs, tests/Cuy.Core.Tests/HomeStoreTests.cs, src/Cuy.Core/Pet.Store.cs, tests/Cuy.Core.Tests/PetStoreTests.cs, tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs, docs/opt/log/PK-30a.md
 Wymagane: src/Cuy.Core/World/HomeStore.cs, tests/Cuy.Core.Tests/HomeStoreTests.cs, src/Cuy.Core/Pet.Store.cs, tests/Cuy.Core.Tests/PetStoreTests.cs, tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~HomeStoreTests|FullyQualifiedName~PetStoreTests|FullyQualifiedName~HomeStoreTotalsTests"
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ do końca.
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Items (in this order): W30-01, W30-02, W30-06
 Goal: HomeStore catalogue, Pet.Store and store totals test.
-Steps: work the items below in order; after each item run the quick check (the Weryfikacja line, or only the part that concerns the item), fix, then make one commit "[<item id>] <item title>". If time runs out, finish and commit the current item and list the unfinished items in the PR. Earlier stages are "merged" = present in the repo now. Where an item has a "Package override", it wins over any conflicting file or step in the item text; the `Zmieniaj` line of this package is authoritative.
+Steps: work the items below in order and keep the files of finished items in place. Do not run git (no commit, branch, PR): the orkiestra commits and merges after the Weryfikacja line passes. After each item run the part of the Weryfikacja line that concerns it and fix failures; if time runs out, finish the current item and say in the log which items are undone. Earlier stages are "merged" = present in the repo now. Where an item has a "Package override", it wins over any conflicting file or step in the item text; the `Zmieniaj` line of this package is authoritative. Docs are named by section: read only that section (grep its heading), never a whole design document or docs/PLAN.md.
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
 Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
-PR: one pull request for the package; for each item what was done, decisions and why, how to check by hand; a screenshot for visual changes; anything left undone.
+Log: write `docs/opt/log/PK-30a.md` (max 10 lines: decisions and why, differences from the planned names and signatures, anything left undone). No pull request text.
 
 ## Item W30-01: HomeStore: one catalogue of everything the player can buy
 Files of this item: src/Cuy.Core/World/HomeStore.cs, tests/Cuy.Core.Tests/HomeStoreTests.cs

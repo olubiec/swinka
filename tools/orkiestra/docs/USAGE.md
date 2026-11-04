@@ -24,6 +24,7 @@ Plik `orkiestra.toml` (tworzony przez `orkiestra init`).
 | `[project] merge_mode` | `github` (PR + CI + merge) lub `local` |
 | `[agent] cmd` | komenda agenta (`agy`) |
 | `[agent] model` | model z `agy models` |
+| `[agent] models` | lista modeli zapasowych (kolejność = priorytet); przy limicie modelu zadanie przechodzi na kolejny z listy zamiast czekać |
 | `[agent] timeout_minutes` | limit czasu jednego uruchomienia agenta |
 | `[agent] skip_permissions` | `true` dodaje `--dangerously-skip-permissions` |
 | `[agent] add_dir` | `false`, jeśli `agy --help` nie ma `--add-dir` |
@@ -84,6 +85,7 @@ Kody wyjścia `run`: 0 wszystko scalone; 1 zadanie wymaga człowieka; 75 zatrzym
 ## Limit Antigravity
 Orkiestra wykrywa limit po błędach agenta (RESOURCE_EXHAUSTED, 429, quota). Przestaje startować nowe zadania,
 czeka do czasu resetu z komunikatu (lub `quota_wait_minutes`) i kontynuuje. Trafienie w limit nie liczy się jako próba.
+Jeśli w `[agent] models` jest więcej niż jeden model, zadanie z wyczerpanym modelem (`model` zadania albo `[agent] model`) jest od razu ponawiane na pierwszym modelu z listy, który ma jeszcze limit; wyczerpany model jest pomijany do czasu resetu. Czeka dopiero wtedy, gdy wyczerpane są wszystkie modele z listy (po przerwie lista jest czyszczona).
 - `--no-wait` kończy przebieg kodem 75 zamiast czekać.
 - Stan limitu sprawdzisz w `agy` poleceniem `/usage`.
 - Uruchamiaj fale na początku świeżego 5-godzinnego okna.

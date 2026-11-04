@@ -92,10 +92,33 @@ class WaveRunner:
         self._quota_reset: int | None = None
         self._lock = threading.Lock()
         self._git_lock = threading.Lock()
+        self._exhausted: dict[str, float] = {}  # model -> epoch seconds when its quota should be back
         if not hasattr(self.state, "save"):
             setattr(self.state, "save", lambda: self.store.save(self.state))
 
     # ----------------------------------------------------------------- helpers
+    def _pick_model(self, task: Task) -> tuple[bool, str | None]:
+        """(available, model): the task's model, or the first model of [agent].models whose quota is back.
+
+        `available` is False only when every candidate is exhausted. With no `models` list this is
+        just `task.model or agent.model` (the previous behaviour; the model may be None).
+        """
+        first = task.model or self.config.agent.model
+        extra = [m for m in (getattr(self.config.agent, "models", ()) or ()) if m != first]
+        now = time.time()
+        with self._lock:
+            for m in [first] + extra:
+                if m is None or self._exhausted.get(m, 0.0) <= now:
+                    return True, m
+        return False, None
+
+    def _mark_exhausted(self, model: str | None, reset_seconds: int | None) -> None:
+        if model is None:
+            return
+        wait = reset_seconds if reset_seconds is not None else self.config.run.quota_wait_minutes * 60
+        with self._lock:
+            self._exhausted[model] = time.time() + wait + 60
+
     def _branch(self, wave: Wave, task: Task) -> str:
         return f"orkiestra/{wave.id}/{task.id}"
 
@@ -216,6 +239,8 @@ class WaveRunner:
         self.store.save(self.state)
         self.notify(f"Limit Antigravity wyczerpany – czekam {seconds // 60} min")
         self.sleep(seconds)
+        with self._lock:
+            self._exhausted.clear()
         self.state.quota_paused_until = None
         self.store.save(self.state)
 
@@ -252,11 +277,19 @@ class WaveRunner:
             self.store.update(self.state, task.id, attempts=attempt)
             self._say(wave, task, f"próba {attempt}")
             prompt = prompts.build_prompt(task, wave, cfg, feedback)
+            available, model = self._pick_model(task)
+            if not available:
+                self._signal_quota(None)
+                self.store.update(
+                    self.state, task.id, status=TaskStatus.PENDING, attempts=attempt - 1
+                )
+                self._say(wave, task, "limit wszystkich modeli wyczerpany")
+                return
             res = agent_fn(
                 prompt,
                 path,
                 cfg.agent,
-                model=task.model or cfg.agent.model,
+                model=model,
                 timeout_minutes=task.timeout_minutes or cfg.agent.timeout_minutes,
                 log_path=self.store.log_path(task.id, attempt),
             )
@@ -276,6 +309,13 @@ class WaveRunner:
                             f"[{task.id}] Zweryfikowano pomimo limitu (kod był gotowy, commit {ts.commit_sha[:8]})"
                         )
                         return
+                self._mark_exhausted(model, res.quota_reset_seconds)
+                has_fallback, fallback = self._pick_model(task)
+                if has_fallback and fallback != model:
+                    self.store.update(self.state, task.id, attempts=attempt - 1)
+                    ts.attempts = attempt - 1
+                    self._say(wave, task, f"limit modelu {model}: przełączam na {fallback}")
+                    continue
                 self._signal_quota(res.quota_reset_seconds)
                 self.store.update(
                     self.state,

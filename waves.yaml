@@ -381,6 +381,7 @@ waves:
     - web/home/app.js
     - web/home/features/README.md
     - tools/qa/web-smoke.js
+    - docs/opt/log/PK-00.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MessageValidatorTests && node --check web/home/bridge.js && node --check web/home/app.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -399,6 +400,7 @@ waves:
     - src/Cuy.Core/World/LegacyDecorMigration.cs
     - src/Cuy.Core/World/WorldState.cs
     - tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs
+    - docs/opt/log/PK-17a.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~RoomLayoutOpsTests|FullyQualifiedName~ComfortTests|FullyQualifiedName~PlaceUnlockTests|FullyQualifiedName~LegacyDecorMigrationTests"
     model: gemini-3.8-flash-high
     timeout_minutes: 52
@@ -410,6 +412,7 @@ waves:
     - tests/Cuy.Core.Tests/FarmEngineTests.cs
     - src/Cuy.Core/World/FarmExpansion.cs
     - tests/Cuy.Core.Tests/FarmExpansionTests.cs
+    - docs/opt/log/PK-17b.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~FarmEngineTests|FullyQualifiedName~FarmExpansionTests"
     model: gemini-3.8-flash-high
     timeout_minutes: 36
@@ -421,6 +424,7 @@ waves:
     - tests/Cuy.Core.Tests/MarketPricingTests.cs
     - src/Cuy.Core/World/MarketStock.cs
     - tests/Cuy.Core.Tests/MarketStockTests.cs
+    - docs/opt/log/PK-17c.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-high
     timeout_minutes: 36
@@ -438,6 +442,7 @@ waves:
     - src/Cuy.Core/Pet.Rooms.cs
     - src/Cuy.Core/Pet.cs
     - tests/Cuy.Core.Tests/PetRoomsTests.cs
+    - docs/opt/log/PK-18a.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PetWorldTests|FullyQualifiedName~WorldDiaryTests|FullyQualifiedName~PetRoomsTests"
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -453,6 +458,7 @@ waves:
     - tests/Cuy.Core.Tests/PetWalkTests.cs
     - src/Cuy.Core/GameState.World.cs
     - tests/Cuy.Core.Tests/WorldMigrationTests.cs
+    - docs/opt/log/PK-18b.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PetFarmTests|FullyQualifiedName~PetWalkTests|FullyQualifiedName~WorldMigrationTests"
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -463,6 +469,7 @@ waves:
     - src/Cuy.Core/Pet.Market.cs
     - src/Cuy.Core/Pet.Economy.cs
     - tests/Cuy.Core.Tests/PetMarketTests.cs
+    - docs/opt/log/PK-18c.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-high
     timeout_minutes: 28
@@ -485,6 +492,7 @@ waves:
     - src/Cuy.Core/Input/Validation/FarmMessages.cs
     - src/Cuy.Core/Input/Validation/MarketMessages.cs
     - tests/Cuy.Core.Tests/WorldMessageTests.cs
+    - docs/opt/log/PK-19.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-high
     timeout_minutes: 60
@@ -501,6 +509,7 @@ waves:
     - web/home/style.css
     - web/home/features/rooms/feature.js
     - web/home/features/rooms/feature.css
+    - docs/opt/log/PK-20a.md
     test_command: node --check web/home/features/rooms/mock.js && node --check web/home/features/farm/mock.js && node --check web/home/features/market/mock.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -514,6 +523,7 @@ waves:
     - web/home/features/garden/feature.css
     - web/home/features/farm/feature.js
     - web/home/features/farm/feature.css
+    - docs/opt/log/PK-20b.md
     test_command: node --check web/home/features/garden/feature.js && node --check web/home/features/farm/feature.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-high
     timeout_minutes: 36
@@ -524,6 +534,7 @@ waves:
     - web/home/features/market/feature.js
     - web/home/features/market/feature.css
     - web/home/features/market/orders.js
+    - docs/opt/log/PK-20c.md
     test_command: node --check web/home/features/market/feature.js && node --check web/home/features/market/orders.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-high
     timeout_minutes: 36
@@ -537,6 +548,7 @@ waves:
     - web/home/features/settings/feature.js
     - web/home/features/index.json
     - web/home/features/pigs/feature.js
+    - docs/opt/log/PK-21.md
     test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check web/home/features/settings/feature.js && node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
@@ -551,6 +563,7 @@ waves:
     - src/Cuy/dotNet/SelfTest.cs
     - tests/Cuy.Core.Tests/WorldSaveSizeTests.cs
     - tests/Cuy.Core.Tests/WorldAssetsTests.cs
+    - docs/opt/log/PK-22a.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~GameSessionWorldTests|FullyQualifiedName~WorldSaveSizeTests|FullyQualifiedName~WorldAssetsTests" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-high
     timeout_minutes: 52
@@ -559,6 +572,7 @@ waves:
     prompt_file: docs/prompts/PK-22b-world-economy-invariants-test-data-level-no.md
     files:
     - tests/Cuy.Core.Tests/WorldInvariantsTests.cs
+    - docs/opt/log/PK-22b.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/economy-sim.js --runs 12 --variant baseline --sweep --check
     model: gemini-3.8-flash-high
     timeout_minutes: 28
@@ -568,6 +582,7 @@ waves:
     files:
     - tools/qa/web-smoke.js
     - TESTY_RECZNE.md
+    - docs/opt/log/PK-22c.md
     test_command: node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-medium
     timeout_minutes: 36
@@ -587,6 +602,7 @@ waves:
     - src/Cuy.Core/World/HomeEconomyConfig.cs
     - tests/Cuy.Core.Tests/HomeEconomyConfigTests.cs
     - tests/Cuy.Core.Tests/PigRoomInvariantsTests.cs
+    - docs/opt/log/PK-23a.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigRoomConfigTests|FullyQualifiedName~WorldStatePigFieldsTests|FullyQualifiedName~PigRoomFlagsTests|FullyQualifiedName~HomeEconomyConfigTests|FullyQualifiedName~PigRoomInvariantsTests"
     model: gemini-3.8-flash-medium
     timeout_minutes: 60
@@ -603,6 +619,7 @@ waves:
     - src/Cuy.Core/World/PlaceCatalog.cs
     - src/Cuy.Core/World/PlaceUnlock.cs
     - tests/Cuy.Core.Tests/PigRoomLevelsTests.cs
+    - docs/opt/log/PK-23b.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -620,6 +637,7 @@ waves:
     - tests/Cuy.Core.Tests/PetPigRoomItemsTests.cs
     - src/Cuy.Core/Pet.MemoryRoom.cs
     - tests/Cuy.Core.Tests/PetMemoryRoomTests.cs
+    - docs/opt/log/PK-24a.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PetPigRoomsTests|FullyQualifiedName~PetPigComfortTests|FullyQualifiedName~PetPigRoomItemsTests|FullyQualifiedName~PetMemoryRoomTests"
     model: gemini-3.8-flash-high
     timeout_minutes: 52
@@ -631,6 +649,7 @@ waves:
     - tests/Cuy.Core.Tests/PigRoomsMigrationTests.cs
     - assets/data/diary.json
     - tests/Cuy.Core.Tests/PigRoomDiaryTests.cs
+    - docs/opt/log/PK-24b.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-medium
     timeout_minutes: 36
@@ -644,6 +663,7 @@ waves:
     - src/Cuy.Core/Input/Validation/PigRoomsMessages.cs
     - tests/Cuy.Core.Tests/PigRoomMessageTests.cs
     - docs/contracts/pigrooms.md
+    - docs/opt/log/PK-25a.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -657,6 +677,7 @@ waves:
     - web/home/features/rooms/customize.js
     - web/home/features/rooms/customize.css
     - web/home/features/pigs/feature.js
+    - docs/opt/log/PK-25b.md
     test_command: node --check web/home/features/rooms/mock.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/customize.js && node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-high
     timeout_minutes: 52
@@ -672,6 +693,7 @@ waves:
     - tests/Cuy.Core.Tests/PetDormTests.cs
     - src/Cuy.Core/World/PigComfort.cs
     - tests/Cuy.Core.Tests/PigComfortDormTests.cs
+    - docs/opt/log/PK-26a.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~SharedRoomOpsTests|FullyQualifiedName~PetDormTests|FullyQualifiedName~PigComfortDormTests"
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -687,6 +709,7 @@ waves:
     - tests/Cuy.Core.Tests/DormMessageTests.cs
     - src/Cuy.Core/GameSession.cs
     - tests/Cuy.Core.Tests/GameSessionPigRoomsTests.cs
+    - docs/opt/log/PK-26b.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -702,6 +725,7 @@ waves:
     - web/home/features/rooms/mock.js
     - tools/qa/web-smoke.js
     - TESTY_RECZNE.md
+    - docs/opt/log/PK-26c.md
     test_command: node --check web/home/features/rooms/dorm.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -722,6 +746,7 @@ waves:
     - docs/contracts/homes.md
     - src/Cuy.Core/Input/Validation/HomesMessages.cs
     - tests/Cuy.Core.Tests/HomesMessageTests.cs
+    - docs/opt/log/PK-27a.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-high
     timeout_minutes: 60
@@ -735,6 +760,7 @@ waves:
     - web/home/features/rooms/plan.css
     - web/home/features/rooms/feature.js
     - web/home/features/rooms/mock.js
+    - docs/opt/log/PK-27b.md
     test_command: node --check web/home/features/rooms/plan.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-high
     timeout_minutes: 36
@@ -749,6 +775,7 @@ waves:
     - src/Cuy.Core/Pet.Store.cs
     - tests/Cuy.Core.Tests/PetStoreTests.cs
     - tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs
+    - docs/opt/log/PK-30a.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~HomeStoreTests|FullyQualifiedName~PetStoreTests|FullyQualifiedName~HomeStoreTotalsTests"
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -765,6 +792,7 @@ waves:
     - web/home/features/store/feature.js
     - web/home/features/store/feature.css
     - web/home/features/index.json
+    - docs/opt/log/PK-30b.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~StoreMessageTests" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check web/home/features/store/feature.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -780,6 +808,7 @@ waves:
     - tests/Cuy.Core.Tests/GameSessionHomeExtrasTests.cs
     - tools/qa/web-smoke.js
     - TESTY_RECZNE.md
+    - docs/opt/log/PK-30c.md
     test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check tools/qa/data-check.js && node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js && node tools/qa/data-check.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
@@ -794,6 +823,7 @@ waves:
     - tools/qa/lights-test.js
     - web/home/lib/ui-assets.js
     - web/home/style.css
+    - docs/opt/log/PK-31a.md
     test_command: node --check tools/qa/check-assets.js && node --check web/home/lib/lights.js && node --check tools/qa/lights-test.js && node --check web/home/lib/ui-assets.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/lights-test.js && node tools/qa/check-css-vars.js
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
@@ -805,6 +835,7 @@ waves:
     - src/Cuy/cuy.ico
     - src/Cuy/dotNet/ProcessIcon.cs
     - web/home/index.html
+    - docs/opt/log/PK-31b.md
     test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-medium
     timeout_minutes: 28
@@ -818,6 +849,7 @@ waves:
     - web/home/features/garden/feature.js
     - web/home/features/farm/feature.js
     - web/home/features/market/feature.js
+    - docs/opt/log/PK-32a.md
     test_command: node --check web/home/features/rooms/feature.js && node --check web/home/features/garden/feature.js && node --check web/home/features/farm/feature.js && node --check web/home/features/market/feature.js && node tools/qa/web-smoke.js
     model: gemini-3.8-flash-high
     timeout_minutes: 52
@@ -827,6 +859,7 @@ waves:
     files:
     - web/home/app.js
     - web/home/canvas-pig.js
+    - docs/opt/log/PK-32b.md
     test_command: node --check web/home/app.js && node --check web/home/canvas-pig.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js
     model: gemini-3.8-flash-high
     timeout_minutes: 36
@@ -839,6 +872,7 @@ waves:
     - docs/X2_DELETE_LIST.md
     - tools/qa/check-assets.js
     - docs/VISUAL_LOG.md
+    - docs/opt/log/PK-33.md
     test_command: node --check tools/qa/check-assets.js && node tools/qa/check-assets.js --x2 && node tools/qa/check-assets.js
     model: gemini-3.8-flash-medium
     timeout_minutes: 36

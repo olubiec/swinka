@@ -6,6 +6,8 @@ Od W17 zadania są łączone w **paczki**: jedna paczka = jedna sesja agenta (je
 - Źródło prawdy: `docs/opt/packages.spec.json` (ręczny podział, pomijane zadania, nadpisania celów plików) + stare prompty zadań w `docs/prompts/items/`.
 - Generator: `python3 tools/opt/gen_packages.py` tworzy `docs/prompts/PK-*.md`, zamienia część `waves.yaml` od PK-00 w dół i zapisuje `docs/opt/packages.json`. Sprawdza, że każdy punkt jest w dokładnie jednej paczce albo odłożony i że paczki w jednej fali nie dzielą plików. Po każdej zmianie specyfikacji uruchom generator i `node tools/qa/plan-audit.js`.
 - Polecenie weryfikacji paczki: testy tylko klas z paczki (`--filter`), a **pełny test i build tylko w paczce zamykającej etap** (kolumna „pełny test"). `tools/verify.ps1` robi to samo ręcznie i drukuje tylko błędy.
+- Agent **nie commituje** (orkiestra zabrania `git`, commit i merge robi sama po przejściu `Weryfikacja`); zamiast opisu PR pisze `docs/opt/log/<paczka>.md` (max 10 linii: decyzje, różnice względem planu). Te logi czyta później czat programujący.
+- Przy wyczerpanym limicie modelu orkiestra przechodzi na kolejny model z `[agent] models` (`orkiestra.toml`) zamiast czekać; czeka dopiero, gdy wyczerpane są wszystkie. Kolejność listy = priorytet zapasu (testy: `tools/orkiestra/tests/test_runner.py`).
 - Model i limit czasu są per paczka (`model`, `timeout_minutes` = 20 + 8 min na punkt, max 60). Przy dwóch porażkach UI-paczki warto przełączyć `model` na `claude-sonnet-5-5-low` z `orkiestra.toml`.
 - Wzorzec **PK-00** (najpierw): reguły walidacji (`IMessageRuleSet`), mock przeglądarki (`features/<id>/mock.js`) i kontrakty (`docs/contracts/<feature>.md`) są per funkcja, więc nie ma już osobnych zadań „kontrakt / walidacja / mock" ani edycji tych samych plików przez różne paczki.
 
@@ -67,5 +69,6 @@ Razem 96 punktów w 33 paczkach plus PK-00 (z 118 punktów od W17; 22 odłożone
 ## Ryzyka i uwagi
 - Porażka kosztuje całą paczkę (`max_attempts = 2`); paczki mają 1-6 punktów i commit po każdym punkcie, a prompt każe dokończyć bieżący punkt i wypisać resztę w PR.
 - Filtr `--filter FullyQualifiedName~<Plik>` zakłada, że klasa testowa nazywa się jak plik. Jeśli nie, filtr nic nie znajdzie, a pełny test na końcu etapu to wyłapie.
-- `orkiestra.toml` ma `max_parallel = 4`, a `START_ORKIESTRA.md` mówił o 2. Przy limicie Antigravity 2 jest bezpieczniejsze.
+- `orkiestra.toml` ma `max_parallel = 4`, a `START_ORKIESTRA.md` mówił o 2; największa fala ma 3 paczki. Każde zadanie buduje się od zera w świeżym worktree (brak `obj/`), więc więcej równoległych zadań to więcej kompilacji i szybciej zużyty limit.
+- Lokalny tryb orkiestry wymaga czystego `main`: zmerguj gałąź `claude/opt-packages` przed startem.
 - Punkty z odłożonych fal nie są usunięte: leżą w `docs/prompts/items/` i można z nich złożyć paczki później (dopisać do specyfikacji).

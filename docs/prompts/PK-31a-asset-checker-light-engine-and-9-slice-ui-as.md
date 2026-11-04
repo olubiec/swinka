@@ -1,15 +1,15 @@
 # PK-31a: Asset checker, light engine and 9-slice UI assets
-Zmieniaj: tools/qa/check-assets.js, web/home/lib/lights.js, tools/qa/lights-test.js, web/home/lib/ui-assets.js, web/home/style.css
+Zmieniaj: tools/qa/check-assets.js, web/home/lib/lights.js, tools/qa/lights-test.js, web/home/lib/ui-assets.js, web/home/style.css, docs/opt/log/PK-31a.md
 Wymagane: tools/qa/check-assets.js, web/home/lib/lights.js, tools/qa/lights-test.js, web/home/lib/ui-assets.js
 Weryfikacja: node --check tools/qa/check-assets.js && node --check web/home/lib/lights.js && node --check tools/qa/lights-test.js && node --check web/home/lib/ui-assets.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/lights-test.js && node tools/qa/check-css-vars.js
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ do końca.
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Items (in this order): W31-01, W31-04, W31-03
 Goal: Asset checker, light engine and 9-slice UI assets.
-Steps: work the items below in order; after each item run the quick check (the Weryfikacja line, or only the part that concerns the item), fix, then make one commit "[<item id>] <item title>". If time runs out, finish and commit the current item and list the unfinished items in the PR. Earlier stages are "merged" = present in the repo now. Where an item has a "Package override", it wins over any conflicting file or step in the item text; the `Zmieniaj` line of this package is authoritative.
+Steps: work the items below in order and keep the files of finished items in place. Do not run git (no commit, branch, PR): the orkiestra commits and merges after the Weryfikacja line passes. After each item run the part of the Weryfikacja line that concerns it and fix failures; if time runs out, finish the current item and say in the log which items are undone. Earlier stages are "merged" = present in the repo now. Where an item has a "Package override", it wins over any conflicting file or step in the item text; the `Zmieniaj` line of this package is authoritative. Docs are named by section: read only that section (grep its heading), never a whole design document or docs/PLAN.md.
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
 Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
-PR: one pull request for the package; for each item what was done, decisions and why, how to check by hand; a screenshot for visual changes; anything left undone.
+Log: write `docs/opt/log/PK-31a.md` (max 10 lines: decisions and why, differences from the planned names and signatures, anything left undone). No pull request text.
 
 ## Item W31-01: G10: check-assets.js, every referenced asset exists
 Files of this item: tools/qa/check-assets.js

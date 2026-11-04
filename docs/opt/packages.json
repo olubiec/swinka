@@ -35,7 +35,8 @@
     "web/home/bridge.js",
     "web/home/app.js",
     "web/home/features/README.md",
-    "tools/qa/web-smoke.js"
+    "tools/qa/web-smoke.js",
+    "docs/opt/log/PK-00.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MessageValidatorTests && node --check web/home/bridge.js && node --check web/home/app.js && node tools/qa/web-smoke.js",
    "gate": false,
@@ -61,7 +62,8 @@
     "tests/Cuy.Core.Tests/PlaceUnlockTests.cs",
     "src/Cuy.Core/World/LegacyDecorMigration.cs",
     "src/Cuy.Core/World/WorldState.cs",
-    "tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs"
+    "tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs",
+    "docs/opt/log/PK-17a.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~RoomLayoutOpsTests|FullyQualifiedName~ComfortTests|FullyQualifiedName~PlaceUnlockTests|FullyQualifiedName~LegacyDecorMigrationTests\"",
    "gate": false,
@@ -80,7 +82,8 @@
     "src/Cuy.Core/World/FarmEngine.cs",
     "tests/Cuy.Core.Tests/FarmEngineTests.cs",
     "src/Cuy.Core/World/FarmExpansion.cs",
-    "tests/Cuy.Core.Tests/FarmExpansionTests.cs"
+    "tests/Cuy.Core.Tests/FarmExpansionTests.cs",
+    "docs/opt/log/PK-17b.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~FarmEngineTests|FullyQualifiedName~FarmExpansionTests\"",
    "gate": false,
@@ -99,7 +102,8 @@
     "src/Cuy.Core/World/MarketPricing.cs",
     "tests/Cuy.Core.Tests/MarketPricingTests.cs",
     "src/Cuy.Core/World/MarketStock.cs",
-    "tests/Cuy.Core.Tests/MarketStockTests.cs"
+    "tests/Cuy.Core.Tests/MarketStockTests.cs",
+    "docs/opt/log/PK-17c.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": true,
@@ -123,7 +127,8 @@
     "tests/Cuy.Core.Tests/WorldDiaryTests.cs",
     "src/Cuy.Core/Pet.Rooms.cs",
     "src/Cuy.Core/Pet.cs",
-    "tests/Cuy.Core.Tests/PetRoomsTests.cs"
+    "tests/Cuy.Core.Tests/PetRoomsTests.cs",
+    "docs/opt/log/PK-18a.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PetWorldTests|FullyQualifiedName~WorldDiaryTests|FullyQualifiedName~PetRoomsTests\"",
    "gate": false,
@@ -145,7 +150,8 @@
     "src/Cuy.Core/Pet.Walk.cs",
     "tests/Cuy.Core.Tests/PetWalkTests.cs",
     "src/Cuy.Core/GameState.World.cs",
-    "tests/Cuy.Core.Tests/WorldMigrationTests.cs"
+    "tests/Cuy.Core.Tests/WorldMigrationTests.cs",
+    "docs/opt/log/PK-18b.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PetFarmTests|FullyQualifiedName~PetWalkTests|FullyQualifiedName~WorldMigrationTests\"",
    "gate": false,
@@ -162,7 +168,8 @@
    "files": [
     "src/Cuy.Core/Pet.Market.cs",
     "src/Cuy.Core/Pet.Economy.cs",
-    "tests/Cuy.Core.Tests/PetMarketTests.cs"
+    "tests/Cuy.Core.Tests/PetMarketTests.cs",
+    "docs/opt/log/PK-18c.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": true,
@@ -194,7 +201,8 @@
     "src/Cuy.Core/Input/Validation/RoomsMessages.cs",
     "src/Cuy.Core/Input/Validation/FarmMessages.cs",
     "src/Cuy.Core/Input/Validation/MarketMessages.cs",
-    "tests/Cuy.Core.Tests/WorldMessageTests.cs"
+    "tests/Cuy.Core.Tests/WorldMessageTests.cs",
+    "docs/opt/log/PK-19.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": true,
@@ -217,7 +225,8 @@
     "web/home/app.js",
     "web/home/style.css",
     "web/home/features/rooms/feature.js",
-    "web/home/features/rooms/feature.css"
+    "web/home/features/rooms/feature.css",
+    "docs/opt/log/PK-20a.md"
    ],
    "verify": "node --check web/home/features/rooms/mock.js && node --check web/home/features/farm/mock.js && node --check web/home/features/market/mock.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node tools/qa/web-smoke.js",
    "gate": false,
@@ -236,7 +245,8 @@
     "web/home/features/garden/feature.js",
     "web/home/features/garden/feature.css",
     "web/home/features/farm/feature.js",
-    "web/home/features/farm/feature.css"
+    "web/home/features/farm/feature.css",
+    "docs/opt/log/PK-20b.md"
    ],
    "verify": "node --check web/home/features/garden/feature.js && node --check web/home/features/farm/feature.js && node tools/qa/web-smoke.js",
    "gate": false,
@@ -254,7 +264,8 @@
    "files": [
     "web/home/features/market/feature.js",
     "web/home/features/market/feature.css",
-    "web/home/features/market/orders.js"
+    "web/home/features/market/orders.js",
+    "docs/opt/log/PK-20c.md"
    ],
    "verify": "node --check web/home/features/market/feature.js && node --check web/home/features/market/orders.js && node tools/qa/web-smoke.js",
    "gate": true,
@@ -274,7 +285,8 @@
     "src/Cuy/dotNet/BrainController.cs",
     "web/home/features/settings/feature.js",
     "web/home/features/index.json",
-    "web/home/features/pigs/feature.js"
+    "web/home/features/pigs/feature.js",
+    "docs/opt/log/PK-21.md"
    ],
    "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check web/home/features/settings/feature.js && node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js",
    "gate": true,
@@ -296,7 +308,8 @@
     "tests/Cuy.Core.Tests/GameSessionWorldTests.cs",
     "src/Cuy/dotNet/SelfTest.cs",
     "tests/Cuy.Core.Tests/WorldSaveSizeTests.cs",
-    "tests/Cuy.Core.Tests/WorldAssetsTests.cs"
+    "tests/Cuy.Core.Tests/WorldAssetsTests.cs",
+    "docs/opt/log/PK-22a.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~GameSessionWorldTests|FullyQualifiedName~WorldSaveSizeTests|FullyQualifiedName~WorldAssetsTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": false,
@@ -311,7 +324,8 @@
     "W22-02"
    ],
    "files": [
-    "tests/Cuy.Core.Tests/WorldInvariantsTests.cs"
+    "tests/Cuy.Core.Tests/WorldInvariantsTests.cs",
+    "docs/opt/log/PK-22b.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/economy-sim.js --runs 12 --variant baseline --sweep --check",
    "gate": true,
@@ -328,7 +342,8 @@
    ],
    "files": [
     "tools/qa/web-smoke.js",
-    "TESTY_RECZNE.md"
+    "TESTY_RECZNE.md",
+    "docs/opt/log/PK-22c.md"
    ],
    "verify": "node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js",
    "gate": false,
@@ -356,7 +371,8 @@
     "tests/Cuy.Core.Tests/PigRoomFlagsTests.cs",
     "src/Cuy.Core/World/HomeEconomyConfig.cs",
     "tests/Cuy.Core.Tests/HomeEconomyConfigTests.cs",
-    "tests/Cuy.Core.Tests/PigRoomInvariantsTests.cs"
+    "tests/Cuy.Core.Tests/PigRoomInvariantsTests.cs",
+    "docs/opt/log/PK-23a.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigRoomConfigTests|FullyQualifiedName~WorldStatePigFieldsTests|FullyQualifiedName~PigRoomFlagsTests|FullyQualifiedName~HomeEconomyConfigTests|FullyQualifiedName~PigRoomInvariantsTests\"",
    "gate": false,
@@ -379,7 +395,8 @@
     "tests/Cuy.Core.Tests/PigRoomOpsTests.cs",
     "src/Cuy.Core/World/PlaceCatalog.cs",
     "src/Cuy.Core/World/PlaceUnlock.cs",
-    "tests/Cuy.Core.Tests/PigRoomLevelsTests.cs"
+    "tests/Cuy.Core.Tests/PigRoomLevelsTests.cs",
+    "docs/opt/log/PK-23b.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": true,
@@ -404,7 +421,8 @@
     "src/Cuy.Core/Pet.PigRoomItems.cs",
     "tests/Cuy.Core.Tests/PetPigRoomItemsTests.cs",
     "src/Cuy.Core/Pet.MemoryRoom.cs",
-    "tests/Cuy.Core.Tests/PetMemoryRoomTests.cs"
+    "tests/Cuy.Core.Tests/PetMemoryRoomTests.cs",
+    "docs/opt/log/PK-24a.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PetPigRoomsTests|FullyQualifiedName~PetPigComfortTests|FullyQualifiedName~PetPigRoomItemsTests|FullyQualifiedName~PetMemoryRoomTests\"",
    "gate": false,
@@ -423,7 +441,8 @@
     "src/Cuy.Core/GameState.PigRooms.cs",
     "tests/Cuy.Core.Tests/PigRoomsMigrationTests.cs",
     "assets/data/diary.json",
-    "tests/Cuy.Core.Tests/PigRoomDiaryTests.cs"
+    "tests/Cuy.Core.Tests/PigRoomDiaryTests.cs",
+    "docs/opt/log/PK-24b.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": true,
@@ -443,7 +462,8 @@
     "src/Cuy/dotNet/Features/RoomsFeature.cs",
     "src/Cuy.Core/Input/Validation/PigRoomsMessages.cs",
     "tests/Cuy.Core.Tests/PigRoomMessageTests.cs",
-    "docs/contracts/pigrooms.md"
+    "docs/contracts/pigrooms.md",
+    "docs/opt/log/PK-25a.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": true,
@@ -466,7 +486,8 @@
     "web/home/features/rooms/feature.css",
     "web/home/features/rooms/customize.js",
     "web/home/features/rooms/customize.css",
-    "web/home/features/pigs/feature.js"
+    "web/home/features/pigs/feature.js",
+    "docs/opt/log/PK-25b.md"
    ],
    "verify": "node --check web/home/features/rooms/mock.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/customize.js && node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js",
    "gate": false,
@@ -488,7 +509,8 @@
     "src/Cuy.Core/Pet.Dorm.cs",
     "tests/Cuy.Core.Tests/PetDormTests.cs",
     "src/Cuy.Core/World/PigComfort.cs",
-    "tests/Cuy.Core.Tests/PigComfortDormTests.cs"
+    "tests/Cuy.Core.Tests/PigComfortDormTests.cs",
+    "docs/opt/log/PK-26a.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~SharedRoomOpsTests|FullyQualifiedName~PetDormTests|FullyQualifiedName~PigComfortDormTests\"",
    "gate": false,
@@ -510,7 +532,8 @@
     "src/Cuy.Core/Input/Validation/DormMessages.cs",
     "tests/Cuy.Core.Tests/DormMessageTests.cs",
     "src/Cuy.Core/GameSession.cs",
-    "tests/Cuy.Core.Tests/GameSessionPigRoomsTests.cs"
+    "tests/Cuy.Core.Tests/GameSessionPigRoomsTests.cs",
+    "docs/opt/log/PK-26b.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": true,
@@ -532,7 +555,8 @@
     "web/home/features/rooms/feature.js",
     "web/home/features/rooms/mock.js",
     "tools/qa/web-smoke.js",
-    "TESTY_RECZNE.md"
+    "TESTY_RECZNE.md",
+    "docs/opt/log/PK-26c.md"
    ],
    "verify": "node --check web/home/features/rooms/dorm.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js",
    "gate": false,
@@ -561,7 +585,8 @@
     "src/Cuy/dotNet/Features/HomesFeature.cs",
     "docs/contracts/homes.md",
     "src/Cuy.Core/Input/Validation/HomesMessages.cs",
-    "tests/Cuy.Core.Tests/HomesMessageTests.cs"
+    "tests/Cuy.Core.Tests/HomesMessageTests.cs",
+    "docs/opt/log/PK-27a.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": true,
@@ -580,7 +605,8 @@
     "web/home/features/rooms/plan.js",
     "web/home/features/rooms/plan.css",
     "web/home/features/rooms/feature.js",
-    "web/home/features/rooms/mock.js"
+    "web/home/features/rooms/mock.js",
+    "docs/opt/log/PK-27b.md"
    ],
    "verify": "node --check web/home/features/rooms/plan.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node tools/qa/web-smoke.js",
    "gate": false,
@@ -601,7 +627,8 @@
     "tests/Cuy.Core.Tests/HomeStoreTests.cs",
     "src/Cuy.Core/Pet.Store.cs",
     "tests/Cuy.Core.Tests/PetStoreTests.cs",
-    "tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs"
+    "tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs",
+    "docs/opt/log/PK-30a.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~HomeStoreTests|FullyQualifiedName~PetStoreTests|FullyQualifiedName~HomeStoreTotalsTests\"",
    "gate": false,
@@ -624,7 +651,8 @@
     "tests/Cuy.Core.Tests/StoreMessageTests.cs",
     "web/home/features/store/feature.js",
     "web/home/features/store/feature.css",
-    "web/home/features/index.json"
+    "web/home/features/index.json",
+    "docs/opt/log/PK-30b.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~StoreMessageTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check web/home/features/store/feature.js && node tools/qa/web-smoke.js",
    "gate": false,
@@ -646,7 +674,8 @@
     "src/Cuy.Core/GameSession.cs",
     "tests/Cuy.Core.Tests/GameSessionHomeExtrasTests.cs",
     "tools/qa/web-smoke.js",
-    "TESTY_RECZNE.md"
+    "TESTY_RECZNE.md",
+    "docs/opt/log/PK-30c.md"
    ],
    "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check tools/qa/data-check.js && node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js && node tools/qa/data-check.js",
    "gate": true,
@@ -667,7 +696,8 @@
     "web/home/lib/lights.js",
     "tools/qa/lights-test.js",
     "web/home/lib/ui-assets.js",
-    "web/home/style.css"
+    "web/home/style.css",
+    "docs/opt/log/PK-31a.md"
    ],
    "verify": "node --check tools/qa/check-assets.js && node --check web/home/lib/lights.js && node --check tools/qa/lights-test.js && node --check web/home/lib/ui-assets.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/lights-test.js && node tools/qa/check-css-vars.js",
    "gate": false,
@@ -685,7 +715,8 @@
     "src/Cuy/Cuy.csproj",
     "src/Cuy/cuy.ico",
     "src/Cuy/dotNet/ProcessIcon.cs",
-    "web/home/index.html"
+    "web/home/index.html",
+    "docs/opt/log/PK-31b.md"
    ],
    "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": true,
@@ -706,7 +737,8 @@
     "web/home/features/rooms/feature.js",
     "web/home/features/garden/feature.js",
     "web/home/features/farm/feature.js",
-    "web/home/features/market/feature.js"
+    "web/home/features/market/feature.js",
+    "docs/opt/log/PK-32a.md"
    ],
    "verify": "node --check web/home/features/rooms/feature.js && node --check web/home/features/garden/feature.js && node --check web/home/features/farm/feature.js && node --check web/home/features/market/feature.js && node tools/qa/web-smoke.js",
    "gate": false,
@@ -723,7 +755,8 @@
    ],
    "files": [
     "web/home/app.js",
-    "web/home/canvas-pig.js"
+    "web/home/canvas-pig.js",
+    "docs/opt/log/PK-32b.md"
    ],
    "verify": "node --check web/home/app.js && node --check web/home/canvas-pig.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js",
    "gate": true,
@@ -741,7 +774,8 @@
    "files": [
     "docs/X2_DELETE_LIST.md",
     "tools/qa/check-assets.js",
-    "docs/VISUAL_LOG.md"
+    "docs/VISUAL_LOG.md",
+    "docs/opt/log/PK-33.md"
    ],
    "verify": "node --check tools/qa/check-assets.js && node tools/qa/check-assets.js --x2 && node tools/qa/check-assets.js",
    "gate": true,

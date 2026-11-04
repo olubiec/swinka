@@ -1,12 +1,12 @@
 # PK-00: Per-feature files for validation, mock and contracts (package, 3 items)
-Zmieniaj: src/Cuy.Core/Input/MessageValidator.cs, src/Cuy.Core/Input/IMessageRuleSet.cs, tests/Cuy.Core.Tests/MessageValidatorTests.cs, web/home/bridge.js, web/home/app.js, web/home/features/README.md, tools/qa/web-smoke.js
+Zmieniaj: src/Cuy.Core/Input/MessageValidator.cs, src/Cuy.Core/Input/IMessageRuleSet.cs, tests/Cuy.Core.Tests/MessageValidatorTests.cs, web/home/bridge.js, web/home/app.js, web/home/features/README.md, tools/qa/web-smoke.js, docs/opt/log/PK-00.md
 Wymagane: src/Cuy.Core/Input/MessageValidator.cs, src/Cuy.Core/Input/IMessageRuleSet.cs, tests/Cuy.Core.Tests/MessageValidatorTests.cs, web/home/bridge.js, web/home/app.js
 Weryfikacja: powershell -File tools/verify.ps1 -Tests MessageValidatorTests -Js web/home/bridge.js,web/home/app.js -Smoke   (or on Linux: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MessageValidatorTests && node --check web/home/bridge.js && node --check web/home/app.js && node tools/qa/web-smoke.js)
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ do końca.
 Nie ruszaj: src/Cuy/*, docs/*, tasks/*, waves.yaml, AGENTS.md, existing feature folders
 Goal: Later packages add validation rules, browser-mock behavior and contracts in files of their own, so no two packages edit `MessageValidator.cs`, the `switch` in `bridge.js` or `docs/contracts.md`.
 Depends on: nothing. Docs `docs/contracts/README.md` and the `AGENTS.md` section "Per-feature files" already describe the target design; follow them.
-Steps: work the items below in order, one commit per item.
+Steps: work the items below in order. Do not run git (no commit, branch, PR): the orkiestra commits and merges after the Weryfikacja line passes.
 ### Item 1: Core message validation.
 - `IMessageRuleSet { IEnumerable<MessageRule> Rules { get; } }`; `MessageRule(string type, params FieldRule[] fields)`; `FieldRule` helpers: `Str(name, maxLen, required=true)`, `Int(name, min, max, required=true)`, `Bool(name, required=true)`, `Id(name)` (non-empty, snake_case or `a-z0-9_:`).
 - `MessageValidator`: static, discovers every public non-abstract `IMessageRuleSet` with a parameterless constructor in the Core assembly by reflection (cached, thread-safe). `ValidationResult Validate(string type, Newtonsoft.Json.Linq.JObject message)` returns `Ok`, `Invalid(error)` or `Unknown` (no rule for this type; callers keep their own checks, existing features are not changed). A type registered twice by different rule sets is a loud error at discovery (exception with both class names).
@@ -16,4 +16,4 @@ Steps: work the items below in order, one commit per item.
 ### Item 3: Load `features/<id>/mock.js`.
 - In `loadFeatures` (`web/home/app.js`), in mock mode only (`window.bridge && window.bridge.isMock`), append `features/<id>/mock.js` after `feature.js`; a missing file must be silent (no console error that fails the smoke test: `onerror` no-op). Add one smoke assertion in `tools/qa/web-smoke.js` using a temporary in-page `registerMockHandler` call. Document the `mock.js` convention in `web/home/features/README.md` (5 lines).
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue.
-PR: what was done, decisions and why, how to check by hand.
+Log: write `docs/opt/log/PK-00.md` (max 10 lines: decisions and why, differences from the plan, anything left undone). No pull request text.

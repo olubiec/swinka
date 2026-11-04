@@ -137,6 +137,7 @@ def main():
                 verify = build_verify(files, cmds, extra, pid in gates)
                 title = p['title']
                 n = len(its)
+                files.append('docs/opt/log/%s.md' % pid)
                 req = [x for x in req if x in files]
                 slg = '%s-%s' % (pid, slug(title))
                 prompt_file = 'docs/prompts/%s.md' % slg
@@ -148,12 +149,13 @@ def main():
                         'Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj',
                         'Items (in this order): ' + ', '.join(i['id'] for i in its),
                         'Goal: ' + title + '.',
-                        'Steps: work the items below in order; after each item run the quick check (the Weryfikacja line, or only the part that concerns the item), fix, then make one commit "[<item id>] <item title>". '
-                        'If time runs out, finish and commit the current item and list the unfinished items in the PR. '
-                        'Earlier stages are "merged" = present in the repo now. Where an item has a "Package override", it wins over any conflicting file or step in the item text; the `Zmieniaj` line of this package is authoritative.',
+                        'Steps: work the items below in order and keep the files of finished items in place. Do not run git (no commit, branch, PR): the orkiestra commits and merges after the Weryfikacja line passes. '
+                        'After each item run the part of the Weryfikacja line that concerns it and fix failures; if time runs out, finish the current item and say in the log which items are undone. '
+                        'Earlier stages are "merged" = present in the repo now. Where an item has a "Package override", it wins over any conflicting file or step in the item text; the `Zmieniaj` line of this package is authoritative. '
+                        'Docs are named by section: read only that section (grep its heading), never a whole design document or docs/PLAN.md.',
                         'Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).',
                         'Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.',
-                        'PR: one pull request for the package; for each item what was done, decisions and why, how to check by hand; a screenshot for visual changes; anything left undone.',
+                        'Log: write `docs/opt/log/%s.md` (max 10 lines: decisions and why, differences from the planned names and signatures, anything left undone). No pull request text.' % pid,
                         '']
                 text = '\n'.join(h for h in head if h is not None) + '\n' + '\n'.join(body)
                 open(prompt_file, 'w', encoding='utf-8').write(text)

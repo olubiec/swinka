@@ -1,15 +1,15 @@
 # PK-32a: Light and time of day in rooms, garden, farm and market views
-Zmieniaj: web/home/features/rooms/feature.js, web/home/features/garden/feature.js, web/home/features/farm/feature.js, web/home/features/market/feature.js
+Zmieniaj: web/home/features/rooms/feature.js, web/home/features/garden/feature.js, web/home/features/farm/feature.js, web/home/features/market/feature.js, docs/opt/log/PK-32a.md
 Wymagane: web/home/features/rooms/feature.js, web/home/features/garden/feature.js, web/home/features/farm/feature.js, web/home/features/market/feature.js
 Weryfikacja: node --check web/home/features/rooms/feature.js && node --check web/home/features/garden/feature.js && node --check web/home/features/farm/feature.js && node --check web/home/features/market/feature.js && node tools/qa/web-smoke.js
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w opisie PR i dokończ do końca.
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Items (in this order): W32-01, W32-02, W32-03, W32-04
 Goal: Light and time of day in rooms, garden, farm and market views.
-Steps: work the items below in order; after each item run the quick check (the Weryfikacja line, or only the part that concerns the item), fix, then make one commit "[<item id>] <item title>". If time runs out, finish and commit the current item and list the unfinished items in the PR. Earlier stages are "merged" = present in the repo now. Where an item has a "Package override", it wins over any conflicting file or step in the item text; the `Zmieniaj` line of this package is authoritative.
+Steps: work the items below in order and keep the files of finished items in place. Do not run git (no commit, branch, PR): the orkiestra commits and merges after the Weryfikacja line passes. After each item run the part of the Weryfikacja line that concerns it and fix failures; if time runs out, finish the current item and say in the log which items are undone. Earlier stages are "merged" = present in the repo now. Where an item has a "Package override", it wins over any conflicting file or step in the item text; the `Zmieniaj` line of this package is authoritative. Docs are named by section: read only that section (grep its heading), never a whole design document or docs/PLAN.md.
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj". Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR, and continue (do not stop, nobody will answer).
 Test rules: use `RepoFile(...)` for repo files, inject tables and `Random`/clock instead of assigning statics (`Current`), keep tests deterministic.
-PR: one pull request for the package; for each item what was done, decisions and why, how to check by hand; a screenshot for visual changes; anything left undone.
+Log: write `docs/opt/log/PK-32a.md` (max 10 lines: decisions and why, differences from the planned names and signatures, anything left undone). No pull request text.
 
 ## Item W32-01: G12b: light and time of day in the rooms view
 Files of this item: web/home/features/rooms/feature.js
