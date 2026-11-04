@@ -3,7 +3,7 @@
 <!-- HANDOFF_BANNER_START -->
 > [!IMPORTANT]
 > ### 🔄 Status sesji i gotowość do przełączenia (Handoff)
-> **Ostatni heartbeat sesji:** `2026-11-04 06:30:11` (czas lokalny)
+> **Ostatni heartbeat sesji:** `2026-11-04 06:30:52` (czas lokalny)
 > 
 > - **Wykonano w tej sesji na tej maszynie:**
 >   - **Fala W13:** ✅ Ukończona w 100% (W13-01 do W13-04 zmergowane).
@@ -21,7 +21,7 @@
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
 > ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** `2026-11-04 06:30:11`
+> **Ostatni heartbeat:** `2026-11-04 06:30:52`
 >
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
