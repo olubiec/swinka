@@ -10,6 +10,8 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Drawing.Imaging;
 
 namespace Cuy
 {
@@ -634,6 +636,124 @@ namespace Cuy
             catch (Exception ex)
             {
                 BrainController.Log("[WARN] Xml.BuildStageSprites: " + ex.Message);
+                return null;
+            }
+        }
+
+        private static readonly ConcurrentDictionary<string, Bitmap[]> _namedFramesCache =
+            new ConcurrentDictionary<string, Bitmap[]>(StringComparer.OrdinalIgnoreCase);
+        private static readonly object _namedFramesLock = new object();
+
+        internal static string ResolveAssetsSpritesDir()
+        {
+            foreach (var dir in new[] { AppDomain.CurrentDomain.BaseDirectory, Directory.GetCurrentDirectory() })
+            {
+                if (string.IsNullOrEmpty(dir)) continue;
+                var d = dir;
+                for (int i = 0; i < 6 && d != null; i++)
+                {
+                    var p = Path.Combine(d, "assets", "sprites");
+                    if (Directory.Exists(p)) return p;
+                    d = Directory.GetParent(d)?.FullName;
+                }
+            }
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "sprites");
+        }
+
+        public static Bitmap[] LoadNamedPigFrames(string pigId, string stageKey)
+        {
+            if (string.IsNullOrEmpty(pigId) || string.IsNullOrEmpty(stageKey)) return null;
+
+            string key = pigId.ToLowerInvariant() + "/" + stageKey.ToLowerInvariant();
+            if (_namedFramesCache.TryGetValue(key, out var cached))
+            {
+                return cached;
+            }
+
+            lock (_namedFramesLock)
+            {
+                if (_namedFramesCache.TryGetValue(key, out cached)) return cached;
+
+                string spritesDir = ResolveAssetsSpritesDir();
+                string sheetPath = Path.Combine(spritesDir, "pigs", pigId.ToLowerInvariant(), stageKey.ToLowerInvariant(), "spritesheet.png");
+                if (!File.Exists(sheetPath))
+                {
+                    BrainController.Log($"[Stage] named sheet missing: {pigId}/{stageKey}");
+                    return null;
+                }
+
+                try
+                {
+                    byte[] bytes = File.ReadAllBytes(sheetPath);
+                    using (var ms = new MemoryStream(bytes))
+                    using (var master = new Bitmap(ms))
+                    {
+                        int frameW = 64;
+                        int frameH = 64;
+                        int cols = 16;
+                        int rows = master.Height / frameH;
+                        int totalFrames = cols * rows;
+
+                        var frames = new Bitmap[totalFrames];
+                        for (int r = 0; r < rows; r++)
+                        {
+                            for (int c = 0; c < cols; c++)
+                            {
+                                int idx = r * cols + c;
+                                var rect = new Rectangle(c * frameW, r * frameH, frameW, frameH);
+                                var frame = new Bitmap(frameW, frameH, PixelFormat.Format32bppArgb);
+                                using (var g = Graphics.FromImage(frame))
+                                {
+                                    g.DrawImage(master, new Rectangle(0, 0, frameW, frameH), rect, GraphicsUnit.Pixel);
+                                }
+                                frames[idx] = frame;
+                            }
+                        }
+
+                        _namedFramesCache[key] = frames;
+                        return frames;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    BrainController.Log($"[Stage] named sheet missing: {pigId}/{stageKey} ({ex.Message})");
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Scaled sprite list for a named pig + stage (from assets/sprites/pigs/{pigId}/{stageKey}/spritesheet.png).
+        /// Returns null and logs on failure. Does not touch this.sprites: each pet applies its own list with FormPet.ReplaceSprites.
+        /// </summary>
+        public IList<Bitmap> BuildNamedPigSprites(string pigId, string stageKey)
+        {
+            try
+            {
+                var frames = LoadNamedPigFrames(pigId, stageKey);
+                if (frames == null || frames.Length == 0) return null;
+                if (frames[0].Width != 64 || frames[0].Height != 64) return null;
+
+                int targetW = spriteWidth > 0 ? spriteWidth : (64 * (iScale > 0 ? iScale : 1));
+                int targetH = spriteHeight > 0 ? spriteHeight : (64 * (iScale > 0 ? iScale : 1));
+
+                var list = new List<Bitmap>(frames.Length);
+                foreach (var src in frames)
+                {
+                    var bmp = new Bitmap(targetW, targetH, src.PixelFormat);
+                    using (var g = Graphics.FromImage(bmp))
+                    {
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                        g.DrawImage(src, new Rectangle(0, 0, targetW, targetH), new Rectangle(0, 0, src.Width, src.Height), GraphicsUnit.Pixel);
+                    }
+                    list.Add(bmp);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] Xml.BuildNamedPigSprites: " + ex.Message);
                 return null;
             }
         }
