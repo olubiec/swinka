@@ -3,7 +3,7 @@
 <!-- HANDOFF_BANNER_START -->
 > [!IMPORTANT]
 > ### 🔄 Status sesji i gotowość do przełączenia (Handoff)
-> **Ostatni heartbeat sesji:** `2026-11-04 06:30:52` (czas lokalny)
+> **Ostatni heartbeat sesji:** `2026-11-04 07:27:00` (czas lokalny)
 > 
 > - **Wykonano w tej sesji na tej maszynie:**
 >   - **Fala W13:** ✅ Ukończona w 100% (W13-01 do W13-04 zmergowane).
@@ -21,15 +21,15 @@
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
 > ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** `2026-11-04 06:30:52`
+> **Ostatni heartbeat:** `2026-11-04 07:27:00`
 >
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
-> | 🔋 **Zasilanie i Bateria** | **100%** (Zasilacz AC podłączony) | 🟢 Zasilacz AC (Bezpieczny) |
-> | 🌊 **Aktualna Fala** | **W13** | 🟢 Aktywna |
+> | 🔋 **Zasilanie i Bateria** | **88%** (Praca na baterii) | 🟡 Praca na baterii |
+> | 🌊 **Aktualna Fala** | **W14** | 🟡 Aktywna |
 > | 🏆 **Ukończone Zadania** | **4 / 162** (2.5%) | 🟢 Postęp OK |
 > | 🧪 **Testy Jednostkowe** | **399 / 399** zaliczonych | ✅ Wszystkie przechodzą |
-> | 💻 **Stan Systemu** | ⚡ Agenci pracują autonomicznie | 🟢 Aktywny |
+> | 💻 **Stan Systemu** | ⚡ Agenci pracują autonomicznie | 🟡 Aktywny |
 >
 > 📄 [Szczegółowy raport zadań](STAN_PROJEKTU.md) • 📋 [Lista kolejnych fal](TODO.md) • 🔄 Odśwież stronę w przeglądarce telefonu, aby zobaczyć aktualny czas
 <!-- STATUS_DASHBOARD_END -->
