@@ -29,7 +29,7 @@ Testy: `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --nolo
   ```
 - Uruchomienie ciągłego monitora w tle:
   ```powershell
-  python tools/battery_guard.py watch --threshold 20 --interval 30 --kill-agents
+  python tools/battery_guard.py watch --threshold 20 --kill-agents   # raport co 30 min + alerty na gałąź orkiestra-status
   ```
 
 ## Kolejność dalszych fal w `waves.yaml`:

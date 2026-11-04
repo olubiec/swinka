@@ -20,18 +20,7 @@
 
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
-> ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** `2026-11-04 06:30:52`
->
-> | Wskaźnik | Wartość | Status |
-> | :--- | :--- | :---: |
-> | 🔋 **Zasilanie i Bateria** | **100%** (Zasilacz AC podłączony) | 🟢 Zasilacz AC (Bezpieczny) |
-> | 🌊 **Aktualna Fala** | **W13** | 🟢 Aktywna |
-> | 🏆 **Ukończone Zadania** | **4 / 162** (2.5%) | 🟢 Postęp OK |
-> | 🧪 **Testy Jednostkowe** | **399 / 399** zaliczonych | ✅ Wszystkie przechodzą |
-> | 💻 **Stan Systemu** | ⚡ Agenci pracują autonomicznie | 🟢 Aktywny |
->
-> 📄 [Szczegółowy raport zadań](STAN_PROJEKTU.md) • 📋 [Lista kolejnych fal](TODO.md) • 🔄 Odśwież stronę w przeglądarce telefonu, aby zobaczyć aktualny czas
+> 📱 **Status orkiestry na żywo:** [STATUS.md na gałęzi `orkiestra-status`](https://github.com/olubiec/swinka/blob/orkiestra-status/STATUS.md). Odświeża się co ~30 min i od razu przy alercie; `python tools/battery_guard.py watch`.
 <!-- STATUS_DASHBOARD_END -->
 
 A pixel art guinea pig for the Windows desktop. It walks on the taskbar and on windows, has needs like a Pou-style pet, and grows up at the pace of a real guinea pig. A gift project, built with AI agents.

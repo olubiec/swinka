@@ -168,10 +168,9 @@ def push_to_remote() -> bool:
 
 def update_dashboard():
     try:
-        from battery_guard import get_battery_status, update_readme_dashboard
+        from battery_guard import Opts, get_battery_status, heartbeat_once
 
-        bat = get_battery_status()
-        update_readme_dashboard(bat)
+        heartbeat_once(get_battery_status(), Opts(), report=True)
     except Exception as exc:
         logger.warning(f"Could not update dashboard: {exc}")
 
