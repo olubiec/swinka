@@ -30,4 +30,4 @@ Na koniec (agent główny):
 ```
 
 Przed pierwszą falą scal gałąź `claude/opt-packages` do `main` i uruchom PK-00.
-W14/W15/W16 (stare zadania, `docs/prompts/items/` nie dotyczy) idą po staremu.
+W11-W16 to stare zadania (nie pakiety): skrypt wypisuje je tak samo, jeden subagent na zadanie, wszystkie naraz; pełny test + build na końcu fali.
