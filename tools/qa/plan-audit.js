@@ -1,4 +1,4 @@
-// Plan audit: prompt format, waves.yaml references, sub-wave order, art coverage vs designer brief.
+// Plan audit: prompt format, waves.yaml references, package coverage, art coverage vs designer brief.
 const fs = require('fs'), path = require('path');
 const root = path.join(__dirname, '..', '..');
 let bad = 0;
@@ -8,11 +8,11 @@ const js = p => JSON.parse(rd(p));
 
 // 1. prompt format
 const pdir = path.join(root, 'docs/prompts');
-const prompts = fs.readdirSync(pdir).filter(f => /^W\d+-\d+-.*\.md$/.test(f));
+const prompts = fs.readdirSync(pdir).filter(f => /^(W\d+-\d+|PK-\d+[a-z]?)-.*\.md$/.test(f));
 for (const f of prompts) {
   const t = fs.readFileSync(path.join(pdir, f), 'utf8');
   const g = k => (t.match(new RegExp('^' + k + ':\\s*(.*)$', 'm')) || [])[1];
-  if (!/^# W\d+-\d+: /.test(t)) fail(f + ' title');
+  if (!/^# (W\d+-\d+|PK-\d+[a-z]?): /.test(t)) fail(f + ' title');
   const z = g('Zmieniaj'), w = g('Wymagane');
   if (!z) { fail(f + ' Zmieniaj'); continue; }
   if (!g('Weryfikacja')) fail(f + ' Weryfikacja');
@@ -28,7 +28,7 @@ const wy = rd('waves.yaml');
 const refs = [...wy.matchAll(/prompt_file:\s*(\S+)/g)].map(m => m[1]);
 for (const r of refs) if (!fs.existsSync(path.join(root, r))) fail('waves.yaml missing ' + r);
 const inYaml = new Set(refs.map(r => path.basename(r)));
-for (const f of prompts) if (/^W(2[3-9]|30)-/.test(f) && !inYaml.has(f)) fail('prompt not in waves.yaml: ' + f);
+for (const f of prompts) if (!inYaml.has(f)) fail('prompt not in waves.yaml: ' + f);
 console.log(refs.length + ' waves.yaml prompt refs');
 // 2b. waves.yaml `files:` must equal the prompt's `Zmieniaj:` line (orkiestra rejects edits outside `files`)
 {
@@ -55,14 +55,19 @@ console.log(refs.length + ' waves.yaml prompt refs');
 }
 
 
-// 3. sub-waves: every W23-W30 prompt belongs to exactly one sub-wave
-const sw = js('docs/prompts/subwaves.json');
-const seen = {};
-const walk = o => { if (Array.isArray(o)) o.forEach(x => typeof x === 'string' ? (seen[x] = (seen[x] || 0) + 1) : walk(x)); else if (o && typeof o === 'object') Object.values(o).forEach(walk); };
-walk(sw);
-for (const f of prompts) {
-  const id = f.match(/^(W\d+-\d+)/)[1];
-  if (/^W(2[3-9]|30)-/.test(f) && seen[id] !== 1) fail('sub-wave membership ' + id + ' x' + (seen[id] || 0));
+// 3. packages: every item prompt (docs/prompts/items) is in exactly one package or listed as deferred (docs/opt/packages.json)
+{
+  const pk = js('docs/opt/packages.json');
+  const assigned = {};
+  for (const p of Object.values(pk.packages)) for (const i of p.items) assigned[i] = (assigned[i] || 0) + 1;
+  const idir = path.join(pdir, 'items');
+  for (const f of fs.readdirSync(idir)) {
+    const m = f.match(/^(W\d+-\d+)-.*\.md$/); if (!m) continue;
+    const id = m[1], n = assigned[id] || 0, def = Object.prototype.hasOwnProperty.call(pk.deferred, id);
+    if (def && n) fail('item ' + id + ' is deferred and assigned');
+    else if (!def && n !== 1) fail('item ' + id + ' assigned ' + n + ' times');
+  }
+  console.log(Object.keys(pk.packages).length + ' packages, ' + Object.keys(pk.deferred).length + ' deferred items');
 }
 
 // 4. art coverage: every placeable/skin/icon must have art or be named in the designer brief

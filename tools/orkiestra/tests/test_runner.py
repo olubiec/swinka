@@ -11,6 +11,7 @@ import pytest
 from orkiestra import runner
 from orkiestra.models import (
     RESULT_FILE,
+    AgentConfig,
     AgentResult,
     Config,
     Plan,
@@ -309,3 +310,81 @@ def test_agent_exception_isolated(git_repo: Path, tmp_path: Path) -> None:
     assert "RuntimeError: kaboom" in (state.tasks["a"].last_error or "")
     assert state.tasks["b"].status == TaskStatus.MERGED
     assert "src/b.py" in _main_files(git_repo)
+
+
+def _models_config(repo: Path, tmp_path: Path, models: tuple[str, ...]) -> Config:
+    cfg = _config(repo, tmp_path)
+    agent_cfg = AgentConfig(model=models[0])
+    object.__setattr__(agent_cfg, "models", models)
+    return Config(repo_root=cfg.repo_root, project=cfg.project, agent=agent_cfg, run=cfg.run)
+
+
+class ModelAgent:
+    """Quota for the models in `exhausted` (until `recover_after` calls), otherwise writes the file."""
+
+    def __init__(self, exhausted: set[str], recover_after: int | None = None):
+        self.exhausted = set(exhausted)
+        self.recover_after = recover_after
+        self.models: list[str | None] = []
+
+    def __call__(self, prompt: str, path: Path, agent_cfg: object, *, model: str | None,
+                 timeout_minutes: int, log_path: Path) -> AgentResult:
+        self.models.append(model)
+        if self.recover_after is not None and len(self.models) > self.recover_after:
+            self.exhausted.clear()
+        if model in self.exhausted:
+            return AgentResult(ok=False, exit_code=1, quota_exhausted=True, quota_reset_seconds=30)
+        task_id = log_path.stem.rsplit("-a", 1)[0]
+        return write_ok(path, f"src/{task_id}.py")
+
+
+def test_quota_falls_back_to_next_model(git_repo: Path, tmp_path: Path) -> None:
+    plan = Plan(version=1, waves=(Wave("w1", (_task("a"),)),))
+    config = _models_config(git_repo, tmp_path, ("m1", "m2", "m3"))
+    store = StateStore(tmp_path / "state")
+    state = store.init_or_merge(plan, "h")
+    agent_fn = ModelAgent({"m1"})
+    wr, sleeps, notes = _make(plan, config, store, state, agent_fn)
+    assert wr.run().ok
+    assert agent_fn.models == ["m1", "m2"]
+    assert sleeps == []  # no waiting: another model had quota
+    assert state.tasks["a"].status == TaskStatus.MERGED
+    assert state.tasks["a"].attempts == 1  # the quota hit did not use up an attempt
+    assert any("przełączam na m2" in n for n in notes)
+
+
+def test_exhausted_model_is_not_retried_by_next_task(git_repo: Path, tmp_path: Path) -> None:
+    plan = Plan(version=1, waves=(Wave("w1", (_task("a"),)), Wave("w2", (_task("b"),))))
+    config = _models_config(git_repo, tmp_path, ("m1", "m2"))
+    store = StateStore(tmp_path / "state")
+    state = store.init_or_merge(plan, "h")
+    agent_fn = ModelAgent({"m1"})
+    wr, sleeps, _ = _make(plan, config, store, state, agent_fn)
+    assert wr.run().ok
+    assert agent_fn.models == ["m1", "m2", "m2"]  # b goes straight to m2
+    assert sleeps == []
+
+
+def test_all_models_exhausted_waits_then_recovers(git_repo: Path, tmp_path: Path) -> None:
+    plan = Plan(version=1, waves=(Wave("w1", (_task("a"),)),))
+    config = _models_config(git_repo, tmp_path, ("m1", "m2"))
+    store = StateStore(tmp_path / "state")
+    state = store.init_or_merge(plan, "h")
+    agent_fn = ModelAgent({"m1", "m2"}, recover_after=2)
+    wr, sleeps, notes = _make(plan, config, store, state, agent_fn)
+    assert wr.run().ok
+    assert len(sleeps) == 1  # one pause, then the quotas are considered back
+    assert agent_fn.models[:2] == ["m1", "m2"]
+    assert state.tasks["a"].status == TaskStatus.MERGED
+    assert any("Limit Antigravity" in n for n in notes)
+
+
+def test_task_model_goes_first(git_repo: Path, tmp_path: Path) -> None:
+    plan = Plan(version=1, waves=(Wave("w1", (_task("a", model="m2"),)),))
+    config = _models_config(git_repo, tmp_path, ("m1", "m2"))
+    store = StateStore(tmp_path / "state")
+    state = store.init_or_merge(plan, "h")
+    agent_fn = ModelAgent(set())
+    wr, _, _ = _make(plan, config, store, state, agent_fn)
+    assert wr.run().ok
+    assert agent_fn.models == ["m2"]

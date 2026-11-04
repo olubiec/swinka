@@ -60,3 +60,6 @@ Not in any wave (needs a decision): the farm plot model "lawn -> bed/tree" (`doc
 
 ## Known blockers
 Jules loop disabled on purpose (waves run in Antigravity); .NET cannot be installed here, so C# builds and tests run only in the loop or on Windows.
+
+
+> **Aktualizacja 4.11.2026:** od W17 zadania są łączone w paczki, W28 i W29 odłożone: aktualny plan w `docs/opt/README.md`.

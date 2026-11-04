@@ -1,0 +1,787 @@
+{
+ "deferred": {
+  "W20-03": "undo/redo and snapping in the room editor",
+  "W21-03": "sounds for the world",
+  "W21-05": "canvas draw limits",
+  "W27-07": "pigs walking inside the room editor",
+  "W28-01": "garden run",
+  "W28-02": "garden run",
+  "W28-03": "garden run",
+  "W28-04": "garden run",
+  "W28-05": "garden run",
+  "W28-06": "garden run",
+  "W28-07": "garden run",
+  "W28-08": "garden run",
+  "W28-09": "desktop props audit",
+  "W29-01": "desktop props",
+  "W29-02": "desktop props",
+  "W29-03": "desktop props",
+  "W29-04": "desktop props",
+  "W29-05": "desktop props",
+  "W29-06": "desktop props",
+  "W29-07": "desktop props",
+  "W29-08": "desktop props",
+  "W29-09": "desktop props"
+ },
+ "packages": {
+  "PK-00": {
+   "wave": "PK-00",
+   "title": "Per-feature files for validation, mock and contracts",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Input/MessageValidator.cs",
+    "src/Cuy.Core/Input/IMessageRuleSet.cs",
+    "tests/Cuy.Core.Tests/MessageValidatorTests.cs",
+    "web/home/bridge.js",
+    "web/home/app.js",
+    "web/home/features/README.md",
+    "tools/qa/web-smoke.js",
+    "docs/opt/log/PK-00.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MessageValidatorTests && node --check web/home/bridge.js && node --check web/home/app.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-00-per-feature-files.md"
+  },
+  "PK-17a": {
+   "wave": "W17",
+   "title": "Room layout, comfort, place unlock, legacy decor migration",
+   "items": [
+    "W17-01",
+    "W17-02",
+    "W17-07",
+    "W17-08"
+   ],
+   "files": [
+    "src/Cuy.Core/World/RoomLayoutOps.cs",
+    "tests/Cuy.Core.Tests/RoomLayoutOpsTests.cs",
+    "src/Cuy.Core/World/Comfort.cs",
+    "tests/Cuy.Core.Tests/ComfortTests.cs",
+    "src/Cuy.Core/World/PlaceUnlock.cs",
+    "tests/Cuy.Core.Tests/PlaceUnlockTests.cs",
+    "src/Cuy.Core/World/LegacyDecorMigration.cs",
+    "src/Cuy.Core/World/WorldState.cs",
+    "tests/Cuy.Core.Tests/LegacyDecorMigrationTests.cs",
+    "docs/opt/log/PK-17a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~RoomLayoutOpsTests|FullyQualifiedName~ComfortTests|FullyQualifiedName~PlaceUnlockTests|FullyQualifiedName~LegacyDecorMigrationTests\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-17a-room-layout-comfort-place-unlock-legacy-deco.md"
+  },
+  "PK-17b": {
+   "wave": "W17",
+   "title": "Farm engine and farm expansion",
+   "items": [
+    "W17-03",
+    "W17-04"
+   ],
+   "files": [
+    "src/Cuy.Core/World/FarmEngine.cs",
+    "tests/Cuy.Core.Tests/FarmEngineTests.cs",
+    "src/Cuy.Core/World/FarmExpansion.cs",
+    "tests/Cuy.Core.Tests/FarmExpansionTests.cs",
+    "docs/opt/log/PK-17b.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~FarmEngineTests|FullyQualifiedName~FarmExpansionTests\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-17b-farm-engine-and-farm-expansion.md"
+  },
+  "PK-17c": {
+   "wave": "W17",
+   "title": "Market pricing and market stock",
+   "items": [
+    "W17-05",
+    "W17-06"
+   ],
+   "files": [
+    "src/Cuy.Core/World/MarketPricing.cs",
+    "tests/Cuy.Core.Tests/MarketPricingTests.cs",
+    "src/Cuy.Core/World/MarketStock.cs",
+    "tests/Cuy.Core.Tests/MarketStockTests.cs",
+    "docs/opt/log/PK-17c.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-17c-market-pricing-and-market-stock.md"
+  },
+  "PK-18a": {
+   "wave": "W18a",
+   "title": "Pet.World, Pet.Rooms and diary lines for the world",
+   "items": [
+    "W18-01",
+    "W18-06",
+    "W18-02"
+   ],
+   "files": [
+    "src/Cuy.Core/Pet.World.cs",
+    "src/Cuy.Core/Events.cs",
+    "tests/Cuy.Core.Tests/PetWorldTests.cs",
+    "assets/data/diary.json",
+    "tests/Cuy.Core.Tests/WorldDiaryTests.cs",
+    "src/Cuy.Core/Pet.Rooms.cs",
+    "src/Cuy.Core/Pet.cs",
+    "tests/Cuy.Core.Tests/PetRoomsTests.cs",
+    "docs/opt/log/PK-18a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PetWorldTests|FullyQualifiedName~WorldDiaryTests|FullyQualifiedName~PetRoomsTests\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-18a-pet-world-pet-rooms-and-diary-lines-for-the.md"
+  },
+  "PK-18b": {
+   "wave": "W18b",
+   "title": "Pet.Farm, Pet.Walk and world save migration",
+   "items": [
+    "W18-03",
+    "W18-05",
+    "W18-07"
+   ],
+   "files": [
+    "src/Cuy.Core/Pet.Farm.cs",
+    "tests/Cuy.Core.Tests/PetFarmTests.cs",
+    "src/Cuy.Core/Pet.Walk.cs",
+    "tests/Cuy.Core.Tests/PetWalkTests.cs",
+    "src/Cuy.Core/GameState.World.cs",
+    "tests/Cuy.Core.Tests/WorldMigrationTests.cs",
+    "docs/opt/log/PK-18b.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PetFarmTests|FullyQualifiedName~PetWalkTests|FullyQualifiedName~WorldMigrationTests\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-18b-pet-farm-pet-walk-and-world-save-migration.md"
+  },
+  "PK-18c": {
+   "wave": "W18b",
+   "title": "Pet.Market",
+   "items": [
+    "W18-04"
+   ],
+   "files": [
+    "src/Cuy.Core/Pet.Market.cs",
+    "src/Cuy.Core/Pet.Economy.cs",
+    "tests/Cuy.Core.Tests/PetMarketTests.cs",
+    "docs/opt/log/PK-18c.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 28,
+   "prompt_file": "docs/prompts/PK-18c-pet-market.md"
+  },
+  "PK-19": {
+   "wave": "W19",
+   "title": "C# features for places, rooms, farm, market with contracts and validation",
+   "items": [
+    "W19-01",
+    "W19-02",
+    "W19-03",
+    "W19-04",
+    "W19-05",
+    "W19-06"
+   ],
+   "files": [
+    "src/Cuy/dotNet/Features/PlacesFeature.cs",
+    "src/Cuy/dotNet/Features/RoomsFeature.cs",
+    "src/Cuy/dotNet/Features/FarmFeature.cs",
+    "src/Cuy/dotNet/Features/MarketFeature.cs",
+    "docs/contracts/places.md",
+    "docs/contracts/rooms.md",
+    "docs/contracts/farm.md",
+    "docs/contracts/market.md",
+    "src/Cuy.Core/Input/Validation/PlacesMessages.cs",
+    "src/Cuy.Core/Input/Validation/RoomsMessages.cs",
+    "src/Cuy.Core/Input/Validation/FarmMessages.cs",
+    "src/Cuy.Core/Input/Validation/MarketMessages.cs",
+    "tests/Cuy.Core.Tests/WorldMessageTests.cs",
+    "docs/opt/log/PK-19.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 60,
+   "prompt_file": "docs/prompts/PK-19-c-features-for-places-rooms-farm-market-with.md"
+  },
+  "PK-20a": {
+   "wave": "W20a",
+   "title": "Browser mocks for the world, places bar and room editor",
+   "items": [
+    "W20-08",
+    "W20-01",
+    "W20-02"
+   ],
+   "files": [
+    "web/home/features/rooms/mock.js",
+    "web/home/features/farm/mock.js",
+    "web/home/features/market/mock.js",
+    "web/home/app.js",
+    "web/home/style.css",
+    "web/home/features/rooms/feature.js",
+    "web/home/features/rooms/feature.css",
+    "docs/opt/log/PK-20a.md"
+   ],
+   "verify": "node --check web/home/features/rooms/mock.js && node --check web/home/features/farm/mock.js && node --check web/home/features/market/mock.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-20a-browser-mocks-for-the-world-places-bar-and-r.md"
+  },
+  "PK-20b": {
+   "wave": "W20b",
+   "title": "Garden and park view, farm view",
+   "items": [
+    "W20-04",
+    "W20-05"
+   ],
+   "files": [
+    "web/home/features/garden/feature.js",
+    "web/home/features/garden/feature.css",
+    "web/home/features/farm/feature.js",
+    "web/home/features/farm/feature.css",
+    "docs/opt/log/PK-20b.md"
+   ],
+   "verify": "node --check web/home/features/garden/feature.js && node --check web/home/features/farm/feature.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-20b-garden-and-park-view-farm-view.md"
+  },
+  "PK-20c": {
+   "wave": "W20b",
+   "title": "Market view, orders board and daily specials",
+   "items": [
+    "W20-06",
+    "W20-07"
+   ],
+   "files": [
+    "web/home/features/market/feature.js",
+    "web/home/features/market/feature.css",
+    "web/home/features/market/orders.js",
+    "docs/opt/log/PK-20c.md"
+   ],
+   "verify": "node --check web/home/features/market/feature.js && node --check web/home/features/market/orders.js && node tools/qa/web-smoke.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-20c-market-view-orders-board-and-daily-specials.md"
+  },
+  "PK-21": {
+   "wave": "W21",
+   "title": "Harvest notification, world settings, My Pigs links",
+   "items": [
+    "W21-01",
+    "W21-02",
+    "W21-04"
+   ],
+   "files": [
+    "src/Cuy/dotNet/BrainController.cs",
+    "web/home/features/settings/feature.js",
+    "web/home/features/index.json",
+    "web/home/features/pigs/feature.js",
+    "docs/opt/log/PK-21.md"
+   ],
+   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check web/home/features/settings/feature.js && node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-21-harvest-notification-world-settings-my-pigs.md"
+  },
+  "PK-22a": {
+   "wave": "W22",
+   "title": "Switch world flags on, SelfTest, save size, asset contract tests",
+   "items": [
+    "W22-01",
+    "W22-05",
+    "W22-06",
+    "W22-07"
+   ],
+   "files": [
+    "src/Cuy.Core/GameSession.cs",
+    "tests/Cuy.Core.Tests/GameSessionWorldTests.cs",
+    "src/Cuy/dotNet/SelfTest.cs",
+    "tests/Cuy.Core.Tests/WorldSaveSizeTests.cs",
+    "tests/Cuy.Core.Tests/WorldAssetsTests.cs",
+    "docs/opt/log/PK-22a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~GameSessionWorldTests|FullyQualifiedName~WorldSaveSizeTests|FullyQualifiedName~WorldAssetsTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-22a-switch-world-flags-on-selftest-save-size-ass.md"
+  },
+  "PK-22b": {
+   "wave": "W22",
+   "title": "World economy invariants test (data level, no simulator port)",
+   "items": [
+    "W22-02"
+   ],
+   "files": [
+    "tests/Cuy.Core.Tests/WorldInvariantsTests.cs",
+    "docs/opt/log/PK-22b.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/economy-sim.js --runs 12 --variant baseline --sweep --check",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 28,
+   "prompt_file": "docs/prompts/PK-22b-world-economy-invariants-test-data-level-no.md"
+  },
+  "PK-22c": {
+   "wave": "W22",
+   "title": "Web smoke for world screens and manual test steps",
+   "items": [
+    "W22-03",
+    "W22-04"
+   ],
+   "files": [
+    "tools/qa/web-smoke.js",
+    "TESTY_RECZNE.md",
+    "docs/opt/log/PK-22c.md"
+   ],
+   "verify": "node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-22c-web-smoke-for-world-screens-and-manual-test.md"
+  },
+  "PK-23a": {
+   "wave": "W23a",
+   "title": "Pig room config, world-state fields, flags, home economy config, invariants test",
+   "items": [
+    "W23-01",
+    "W23-02",
+    "W23-06",
+    "W23-07",
+    "W23-08"
+   ],
+   "files": [
+    "src/Cuy.Core/World/PigRoomConfig.cs",
+    "tests/Cuy.Core.Tests/PigRoomConfigTests.cs",
+    "src/Cuy.Core/World/WorldState.cs",
+    "tests/Cuy.Core.Tests/WorldStatePigFieldsTests.cs",
+    "src/Cuy.Core/Balance.cs",
+    "assets/data/achievements.json",
+    "tests/Cuy.Core.Tests/PigRoomFlagsTests.cs",
+    "src/Cuy.Core/World/HomeEconomyConfig.cs",
+    "tests/Cuy.Core.Tests/HomeEconomyConfigTests.cs",
+    "tests/Cuy.Core.Tests/PigRoomInvariantsTests.cs",
+    "docs/opt/log/PK-23a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigRoomConfigTests|FullyQualifiedName~WorldStatePigFieldsTests|FullyQualifiedName~PigRoomFlagsTests|FullyQualifiedName~HomeEconomyConfigTests|FullyQualifiedName~PigRoomInvariantsTests\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 60,
+   "prompt_file": "docs/prompts/PK-23a-pig-room-config-world-state-fields-flags-hom.md"
+  },
+  "PK-23b": {
+   "wave": "W23b",
+   "title": "PigComfort, PigRoomOps and pig-room levels in the catalog",
+   "items": [
+    "W23-03",
+    "W23-04",
+    "W23-05"
+   ],
+   "files": [
+    "src/Cuy.Core/World/PigComfort.cs",
+    "tests/Cuy.Core.Tests/PigComfortTests.cs",
+    "src/Cuy.Core/World/PigRoomOps.cs",
+    "tests/Cuy.Core.Tests/PigRoomOpsTests.cs",
+    "src/Cuy.Core/World/PlaceCatalog.cs",
+    "src/Cuy.Core/World/PlaceUnlock.cs",
+    "tests/Cuy.Core.Tests/PigRoomLevelsTests.cs",
+    "docs/opt/log/PK-23b.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-23b-pigcomfort-pigroomops-and-pig-room-levels-in.md"
+  },
+  "PK-24a": {
+   "wave": "W24",
+   "title": "Pet integration of pig rooms: rooms, comfort, items, memory room",
+   "items": [
+    "W24-01",
+    "W24-02",
+    "W24-03",
+    "W24-04"
+   ],
+   "files": [
+    "src/Cuy.Core/Pet.PigRooms.cs",
+    "tests/Cuy.Core.Tests/PetPigRoomsTests.cs",
+    "src/Cuy.Core/Pet.Rooms.cs",
+    "tests/Cuy.Core.Tests/PetPigComfortTests.cs",
+    "src/Cuy.Core/Pet.PigRoomItems.cs",
+    "tests/Cuy.Core.Tests/PetPigRoomItemsTests.cs",
+    "src/Cuy.Core/Pet.MemoryRoom.cs",
+    "tests/Cuy.Core.Tests/PetMemoryRoomTests.cs",
+    "docs/opt/log/PK-24a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PetPigRoomsTests|FullyQualifiedName~PetPigComfortTests|FullyQualifiedName~PetPigRoomItemsTests|FullyQualifiedName~PetMemoryRoomTests\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-24a-pet-integration-of-pig-rooms-rooms-comfort-i.md"
+  },
+  "PK-24b": {
+   "wave": "W24",
+   "title": "Pig rooms for old saves and diary lines",
+   "items": [
+    "W24-05",
+    "W24-06"
+   ],
+   "files": [
+    "src/Cuy.Core/GameState.PigRooms.cs",
+    "tests/Cuy.Core.Tests/PigRoomsMigrationTests.cs",
+    "assets/data/diary.json",
+    "tests/Cuy.Core.Tests/PigRoomDiaryTests.cs",
+    "docs/opt/log/PK-24b.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-24b-pig-rooms-for-old-saves-and-diary-lines.md"
+  },
+  "PK-25a": {
+   "wave": "W25",
+   "title": "RoomsFeature for pig rooms with contract and validation",
+   "items": [
+    "W25-01",
+    "W25-03",
+    "W25-02"
+   ],
+   "files": [
+    "src/Cuy/dotNet/Features/RoomsFeature.cs",
+    "src/Cuy.Core/Input/Validation/PigRoomsMessages.cs",
+    "tests/Cuy.Core.Tests/PigRoomMessageTests.cs",
+    "docs/contracts/pigrooms.md",
+    "docs/opt/log/PK-25a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-25a-roomsfeature-for-pig-rooms-with-contract-and.md"
+  },
+  "PK-25b": {
+   "wave": "W25",
+   "title": "Pig room tabs, customize panel, My Pigs link, mock",
+   "items": [
+    "W25-07",
+    "W25-04",
+    "W25-05",
+    "W25-06"
+   ],
+   "files": [
+    "web/home/features/rooms/mock.js",
+    "web/home/features/rooms/feature.js",
+    "web/home/features/rooms/feature.css",
+    "web/home/features/rooms/customize.js",
+    "web/home/features/rooms/customize.css",
+    "web/home/features/pigs/feature.js",
+    "docs/opt/log/PK-25b.md"
+   ],
+   "verify": "node --check web/home/features/rooms/mock.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/customize.js && node --check web/home/features/pigs/feature.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-25b-pig-room-tabs-customize-panel-my-pigs-link-m.md"
+  },
+  "PK-26a": {
+   "wave": "W26a",
+   "title": "Shared bedroom: SharedRoomOps, Pet.Dorm and roommate comfort",
+   "items": [
+    "W26-01",
+    "W26-02",
+    "W26-03"
+   ],
+   "files": [
+    "src/Cuy.Core/World/SharedRoomOps.cs",
+    "tests/Cuy.Core.Tests/SharedRoomOpsTests.cs",
+    "src/Cuy.Core/Pet.Dorm.cs",
+    "tests/Cuy.Core.Tests/PetDormTests.cs",
+    "src/Cuy.Core/World/PigComfort.cs",
+    "tests/Cuy.Core.Tests/PigComfortDormTests.cs",
+    "docs/opt/log/PK-26a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~SharedRoomOpsTests|FullyQualifiedName~PetDormTests|FullyQualifiedName~PigComfortDormTests\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-26a-shared-bedroom-sharedroomops-pet-dorm-and-ro.md"
+  },
+  "PK-26b": {
+   "wave": "W26b",
+   "title": "DormFeature, contract and validation, flags on for pig rooms and the dorm",
+   "items": [
+    "W26-04",
+    "W26-05",
+    "W26-08"
+   ],
+   "files": [
+    "src/Cuy/dotNet/Features/DormFeature.cs",
+    "docs/contracts/dorm.md",
+    "src/Cuy.Core/Input/Validation/DormMessages.cs",
+    "tests/Cuy.Core.Tests/DormMessageTests.cs",
+    "src/Cuy.Core/GameSession.cs",
+    "tests/Cuy.Core.Tests/GameSessionPigRoomsTests.cs",
+    "docs/opt/log/PK-26b.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-26b-dormfeature-contract-and-validation-flags-on.md"
+  },
+  "PK-26c": {
+   "wave": "W26c",
+   "title": "Shared bedroom page, wiring and smoke test",
+   "items": [
+    "W26-06",
+    "W26-07",
+    "W26-09"
+   ],
+   "files": [
+    "web/home/features/rooms/dorm.js",
+    "web/home/features/rooms/dorm.css",
+    "web/home/features/rooms/feature.js",
+    "web/home/features/rooms/mock.js",
+    "tools/qa/web-smoke.js",
+    "TESTY_RECZNE.md",
+    "docs/opt/log/PK-26c.md"
+   ],
+   "verify": "node --check web/home/features/rooms/dorm.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-26c-shared-bedroom-page-wiring-and-smoke-test.md"
+  },
+  "PK-27a": {
+   "wave": "W27a",
+   "title": "Roaming and home mode: state, PigWander, Pet.Homes, HomesFeature, contract, validation",
+   "items": [
+    "W27-01",
+    "W27-02",
+    "W27-03",
+    "W27-04",
+    "W27-05"
+   ],
+   "files": [
+    "src/Cuy.Core/World/WorldState.cs",
+    "tests/Cuy.Core.Tests/WorldStateHomesTests.cs",
+    "src/Cuy.Core/World/PigWander.cs",
+    "tests/Cuy.Core.Tests/PigWanderTests.cs",
+    "src/Cuy.Core/Pet.Homes.cs",
+    "src/Cuy.Core/Balance.cs",
+    "tests/Cuy.Core.Tests/PetHomesTests.cs",
+    "src/Cuy/dotNet/Features/HomesFeature.cs",
+    "docs/contracts/homes.md",
+    "src/Cuy.Core/Input/Validation/HomesMessages.cs",
+    "tests/Cuy.Core.Tests/HomesMessageTests.cs",
+    "docs/opt/log/PK-27a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 60,
+   "prompt_file": "docs/prompts/PK-27a-roaming-and-home-mode-state-pigwander-pet-ho.md"
+  },
+  "PK-27b": {
+   "wave": "W27b",
+   "title": "House plan and wiring of plan and home chips",
+   "items": [
+    "W27-06",
+    "W27-08"
+   ],
+   "files": [
+    "web/home/features/rooms/plan.js",
+    "web/home/features/rooms/plan.css",
+    "web/home/features/rooms/feature.js",
+    "web/home/features/rooms/mock.js",
+    "docs/opt/log/PK-27b.md"
+   ],
+   "verify": "node --check web/home/features/rooms/plan.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-27b-house-plan-and-wiring-of-plan-and-home-chips.md"
+  },
+  "PK-30a": {
+   "wave": "W30a",
+   "title": "HomeStore catalogue, Pet.Store and store totals test",
+   "items": [
+    "W30-01",
+    "W30-02",
+    "W30-06"
+   ],
+   "files": [
+    "src/Cuy.Core/World/HomeStore.cs",
+    "tests/Cuy.Core.Tests/HomeStoreTests.cs",
+    "src/Cuy.Core/Pet.Store.cs",
+    "tests/Cuy.Core.Tests/PetStoreTests.cs",
+    "tests/Cuy.Core.Tests/HomeStoreTotalsTests.cs",
+    "docs/opt/log/PK-30a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~HomeStoreTests|FullyQualifiedName~PetStoreTests|FullyQualifiedName~HomeStoreTotalsTests\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-30a-homestore-catalogue-pet-store-and-store-tota.md"
+  },
+  "PK-30b": {
+   "wave": "W30b",
+   "title": "StoreFeature with contract and validation, store page",
+   "items": [
+    "W30-03",
+    "W30-04",
+    "W30-05"
+   ],
+   "files": [
+    "src/Cuy/dotNet/Features/StoreFeature.cs",
+    "docs/contracts/store.md",
+    "src/Cuy.Core/Input/Validation/StoreMessages.cs",
+    "tests/Cuy.Core.Tests/StoreMessageTests.cs",
+    "web/home/features/store/feature.js",
+    "web/home/features/store/feature.css",
+    "web/home/features/index.json",
+    "docs/opt/log/PK-30b.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~StoreMessageTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check web/home/features/store/feature.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-30b-storefeature-with-contract-and-validation-st.md"
+  },
+  "PK-30c": {
+   "wave": "W30c",
+   "title": "Data checks, smoke test and manual steps, flags on for roaming",
+   "items": [
+    "W30-07",
+    "W30-09",
+    "W30-08"
+   ],
+   "files": [
+    "tools/qa/data-check.js",
+    "src/Cuy/dotNet/SelfTest.cs",
+    "src/Cuy.Core/GameSession.cs",
+    "tests/Cuy.Core.Tests/GameSessionHomeExtrasTests.cs",
+    "tools/qa/web-smoke.js",
+    "TESTY_RECZNE.md",
+    "docs/opt/log/PK-30c.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node --check tools/qa/data-check.js && node --check tools/qa/web-smoke.js && node tools/qa/web-smoke.js && node tools/qa/data-check.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-30c-data-checks-smoke-test-and-manual-steps-flag.md"
+  },
+  "PK-31a": {
+   "wave": "W31",
+   "title": "Asset checker, light engine and 9-slice UI assets",
+   "items": [
+    "W31-01",
+    "W31-04",
+    "W31-03"
+   ],
+   "files": [
+    "tools/qa/check-assets.js",
+    "web/home/lib/lights.js",
+    "tools/qa/lights-test.js",
+    "web/home/lib/ui-assets.js",
+    "web/home/style.css",
+    "docs/opt/log/PK-31a.md"
+   ],
+   "verify": "node --check tools/qa/check-assets.js && node --check web/home/lib/lights.js && node --check tools/qa/lights-test.js && node --check web/home/lib/ui-assets.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/lights-test.js && node tools/qa/check-css-vars.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-31a-asset-checker-light-engine-and-9-slice-ui-as.md"
+  },
+  "PK-31b": {
+   "wave": "W31",
+   "title": "New app icon and favicon",
+   "items": [
+    "W31-02"
+   ],
+   "files": [
+    "src/Cuy/Cuy.csproj",
+    "src/Cuy/cuy.ico",
+    "src/Cuy/dotNet/ProcessIcon.cs",
+    "web/home/index.html",
+    "docs/opt/log/PK-31b.md"
+   ],
+   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 28,
+   "prompt_file": "docs/prompts/PK-31b-new-app-icon-and-favicon.md"
+  },
+  "PK-32a": {
+   "wave": "W32",
+   "title": "Light and time of day in rooms, garden, farm and market views",
+   "items": [
+    "W32-01",
+    "W32-02",
+    "W32-03",
+    "W32-04"
+   ],
+   "files": [
+    "web/home/features/rooms/feature.js",
+    "web/home/features/garden/feature.js",
+    "web/home/features/farm/feature.js",
+    "web/home/features/market/feature.js",
+    "docs/opt/log/PK-32a.md"
+   ],
+   "verify": "node --check web/home/features/rooms/feature.js && node --check web/home/features/garden/feature.js && node --check web/home/features/farm/feature.js && node --check web/home/features/market/feature.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-32a-light-and-time-of-day-in-rooms-garden-farm-a.md"
+  },
+  "PK-32b": {
+   "wave": "W32",
+   "title": "Apply UI assets in the main menu, pig lighting and contact shadow",
+   "items": [
+    "W32-05",
+    "W32-06"
+   ],
+   "files": [
+    "web/home/app.js",
+    "web/home/canvas-pig.js",
+    "docs/opt/log/PK-32b.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check web/home/canvas-pig.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-32b-apply-ui-assets-in-the-main-menu-pig-lightin.md"
+  },
+  "PK-33": {
+   "wave": "W33",
+   "title": "Stop using _x2 files and final verification record",
+   "items": [
+    "W33-01",
+    "W33-02"
+   ],
+   "files": [
+    "docs/X2_DELETE_LIST.md",
+    "tools/qa/check-assets.js",
+    "docs/VISUAL_LOG.md",
+    "docs/opt/log/PK-33.md"
+   ],
+   "verify": "node --check tools/qa/check-assets.js && node tools/qa/check-assets.js --x2 && node tools/qa/check-assets.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-33-stop-using-x2-files-and-final-verification-r.md"
+  }
+ }
+}

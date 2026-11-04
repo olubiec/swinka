@@ -18,14 +18,14 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 | `src/Cuy/` | WinForms desktop app, .NET Framework 4.8, namespace `Cuy`. Main classes in `src/Cuy/dotNet/` |
 | `web/home/` | Home page: `index.html`, `app.js`, `bridge.js` (C# <-> JS + mock mode), `canvas-pig.js`, `style.css`; `minigames/` (Phaser 3), `features/<id>/` (feature modules) |
 | `assets/` | `sprites/<stage>/`, `icons/` (`icons_16.png` + `icons.json`), `sounds/`, `music/`, `data/*.json` (all tunable numbers), `coloring/` |
-| `tools/` | `build.ps1`, `package.ps1`, `qa/` (headless web checks), `art/` (Python generators), `Cuy.Simulator/`, `jules-wave.sh`, `jules-backlog.sh` |
+| `tools/` | `build.ps1`, `package.ps1`, `qa/` (headless web checks), `art/` (Python generators), `Cuy.Simulator/`, `orkiestra/`, `verify.ps1` |
 | `docs/` | `CONCEPT.md`, `PLAN.md` (waves, status), `contracts.md` (Home message/state shapes), `NAMES.md` (old Polish names), `archive/` |
-| `tasks/` | One file = one Jules task (`W<wave>-<nn>-name.md`) and `BACKLOG.md` (one line = one task). Do not edit unless your task says so |
+| `tasks/` | `BACKLOG.md` and `done/` only; wave prompts live in `docs/prompts/` (referenced by `waves.yaml`) |
 
 ## Rules
 - Run tests and build before finishing; open the PR only when the task's verification command passes. If you cannot verify it, do not open the PR: say what blocks you.
-- One task = one branch = one pull request; PR title = `[<task id>] <task title>` (e.g. `[W2-03] Diary writer`).
-- Change only the files listed in the task's `Zmieniaj:` line (plus `Wymagane:`). The Jules Loop plan guard reverts any other file. If the task is missing a file you need, finish the rest and record the gap in the PR; do not touch the file.
+- One task or package = one branch = one pull request; PR title = `[<task or package id>] <title>` (e.g. `[W2-03] Diary writer`, `[PK-17a] Room layout, comfort, unlock`).
+- Change only the files listed in the task's `Zmieniaj:` line (plus `Wymagane:`); other files are reverted. If the task is missing a file you need, finish the rest and record the gap in the PR; do not touch the file.
 - Never change or delete an existing test assertion to make a check pass. If an old assertion is wrong, do not change it: record the conflict and the decision in the PR and finish the task.
 - Libraries only from `docs/PLAN.md`. No new NuGet/npm dependencies. No network calls at runtime in the app (assets are local).
 - Game numbers (prices, rewards, chances, durations, speeds, timings) live in `assets/data/*.json` or `Balance`, not in code. The human tunes them.
@@ -37,11 +37,7 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 
 - Data tables (JSON in `assets/data/`) follow the `EconomyConfig` pattern: static `Current` (lazy `LoadDefault()`), `Load(string)`, `LoadDefault()` (file candidates, then code defaults, errors logged through `ItemCatalog.ErrorLogger`). A table is useless until something calls its loader: the task must name where. Tests inject tables into `Pet` (e.g. `BondTable`, `HayTable`) and never change statics. Tests find repo files by walking up from `AppContext.BaseDirectory` to the folder with `Cuy.sln` (`RepoFile` helper).
 - New Core behavior that changes numbers is behind a `Balance` flag (default off, switched on in `GameSession.Open`) so existing tests keep their numbers.
-- Never ask questions and never wait for an answer: nobody replies. For any unclear point, choose the most reasonable option yourself, record the decision and its reason in the PR, and finish the whole task. Do not leave a session waiting for input.
 - Names and signatures from earlier waves are given as planned. If the real code differs, use the real code, list each difference in the PR and continue (nobody answers questions). Do not invent aliases for old names.
-
-## Jules Loop
-Tasks arrive through the loop (`docs/JULES_LOOP.md`). Its plan guard asks you to revert files outside `Zmieniaj:`/`Wymagane:`, to restore removed assertions, and refuses PRs that touch `.github/workflows/jules-loop.yml` or `scripts/jules-loop/`. Keep the PR title format above; the loop uses it.
 
 ## Prohibited
 - Do not commit secrets or `.env`. Do not run processes that never end (dev server, the game loop) without a timeout.
@@ -55,6 +51,11 @@ Tasks arrive through the loop (`docs/JULES_LOOP.md`). Its plan guard asks you to
 - Feature modules: `web/home/features/<id>/feature.js` calls `CuyHome.registerFeature({ id, title, icon, order, open(container, api), onState(state) })`; the C# side implements `Cuy.Features.IHomeFeature` in `src/Cuy/dotNet/Features/<Name>Feature.cs` (found by reflection).
 - Logic apart from rendering: games and screens keep logic in pure functions that tests can call.
 
+## Per-feature files (so parallel work never collides)
+- Contracts: `docs/contracts/<feature>.md` (one file per feature); `docs/contracts.md` is frozen for new features.
+- Message validation (Core): one `IMessageRuleSet` class per feature in `src/Cuy.Core/Input/Validation/<Feature>Messages.cs`, found by reflection (see `docs/contracts/README.md`). Do not edit `MessageValidator.cs` for a new feature.
+- Browser mock: `web/home/features/<id>/mock.js` calls `bridge.registerMockHandler(type, fn)` / `bridge.registerMockState(id, fn)`. Do not add cases to the `switch` in `bridge.js`.
+
 ## Canonical ids
 - items: hay pellets bell_pepper parsley kale cucumber carrot chew_stick ball tunnel house water_bottle cake (+ ids added in `assets/data/items_*.json`)
 - icons: keys of `assets/icons/icons.json`
@@ -62,11 +63,10 @@ Tasks arrive through the loop (`docs/JULES_LOOP.md`). Its plan guard asks you to
 - stages: baby junior adult senior legend; currency: clovers (icon `clover`)
 
 ## Lessons from mistakes (add one line per repeated mistake)
-- (empty: the human adds a line when Jules makes the same mistake twice)
+- (empty: the human adds a line when an agent makes the same mistake twice)
 
-<!-- jules-loop:autonomy -->
-## Tryb autonomiczny (Jules Loop)
-- Nikt nie odpowiada na pytania ani nie zatwierdza planów. Nie zadawaj pytań; decyzje podejmuj sam i opisuj je w PR (sekcja "Decyzje").
-- Zadanie ma zająć najwyżej ok. 60 minut. Jeśli będzie dłuższe, zrób największą działającą część i opisz resztę w PR.
-- Zmieniaj tylko pliki z listy "Zmieniaj" z opisu zadania. Nie ruszaj .github/workflows/, scripts/jules-loop/ ani pliku stanu projektu.
-- Nie usuwaj i nie osłabiaj asercji istniejących testów. Uruchom testy i build przed otwarciem PR.
+## Packages and autonomy
+- Nobody answers questions or approves plans: decide, record the decision in the PR ("Decyzje"), finish.
+- A package (several `W<n>-<nn>` items in one prompt) is worked in the listed order. Under the orkiestra you never run git (no commit, branch, PR): it commits and merges once the `Weryfikacja` line passes. Instead of a PR description write `docs/opt/log/<package id>.md` (max 10 lines: decisions, differences from the planned names, anything left undone).
+- Do not edit `.github/workflows/` or `tools/orkiestra/`. Do not weaken or remove existing test assertions.
+- Verify with `tools/verify.ps1` (prints only failures) or the command named in the prompt; run the full test suite only when the prompt says so.
