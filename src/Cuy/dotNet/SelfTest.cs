@@ -42,6 +42,13 @@ namespace Cuy
             });
             Check("actions.json", () => ParseData("actions.json"));
             Check("items.json", () => ParseData("items.json"));
+            Check("farm.json", () => ParseData("farm.json"));
+            Check("market.json", () => ParseData("market.json"));
+            Check("places.json", () => ParseData("places.json"));
+            Check("world_items.json", () => ParseData("world_items.json"));
+            Check("items_farm.json", () => ParseData("items_farm.json"));
+            Check("farm crop items", CheckFarmCropItems);
+            Check("world item icons", CheckWorldItemIcons);
             Check("actions animations", CheckActionAnimations);
             Check("sprite sheets", CheckSpriteSheets);
             Check("spritesheet", CheckSpriteSheetLoader);
@@ -304,7 +311,7 @@ namespace Cuy
         private static void CheckItemIds()
         {
             var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            string[] files = { "items.json", "items_shop.json", "items_decor.json" };
+            string[] files = { "items.json", "items_shop.json", "items_decor.json", "items_farm.json" };
             foreach (var file in files)
             {
                 string path = Path.Combine(_assets, "data", file);
@@ -319,6 +326,43 @@ namespace Cuy
                     if (!seen.Add(id))
                         throw new Exception("duplicate item id: " + id + " in " + file);
                 }
+            }
+        }
+
+        private static void CheckFarmCropItems()
+        {
+            var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var file in new[] { "items.json", "items_shop.json", "items_decor.json", "items_farm.json" })
+            {
+                string path = Path.Combine(_assets, "data", file);
+                if (!File.Exists(path)) continue;
+                var items = JObject.Parse(File.ReadAllText(path))["items"] as JArray;
+                if (items == null) continue;
+                foreach (var it in items)
+                {
+                    string id = (string)it["id"];
+                    if (!string.IsNullOrEmpty(id)) ids.Add(id);
+                }
+            }
+            var crops = (JArray)ParseData("farm.json")["crops"];
+            foreach (var crop in crops)
+            {
+                foreach (string key in new[] { "item", "seed_item" })
+                {
+                    string item = (string)crop[key];
+                    if (!ids.Contains(item))
+                        throw new Exception("crop " + (string)crop["id"] + " " + key + " not in item catalog: " + item);
+                }
+            }
+        }
+
+        private static void CheckWorldItemIcons()
+        {
+            var items = (JArray)ParseData("world_items.json")["items"];
+            foreach (var it in items)
+            {
+                if (string.IsNullOrWhiteSpace((string)it["icon"]))
+                    throw new Exception("placeable " + (string)it["id"] + " has no icon");
             }
         }
 

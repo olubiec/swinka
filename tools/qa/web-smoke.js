@@ -29,6 +29,121 @@ function serve() {
   });
 }
 
+// W22-03 / G10: world screens (places bar, rooms, garden, farm, market, pigs) in the mock with ?world=1.
+// Checks layout, console and page errors, 404 responses and that every <img> in those views has loaded.
+// The runner's configured size. At 400x620 the Home page itself scrolls sideways (existing layout, not world code), so it is not used here.
+const WORLD_SIZES = [{ width: 420, height: 640 }];
+
+async function worldSmoke(browser, base, errors) {
+  for (const viewport of WORLD_SIZES) {
+    const label = `world ${viewport.width}x${viewport.height}`;
+    const page = await browser.newPage({ viewport });
+    const fail = (msg) => errors.push(`${label}: ${msg}`);
+    page.on('pageerror', (e) => fail('pageerror: ' + e.message));
+    page.on('requestfailed', (req) => {
+      if (req.failure() && req.failure().errorText === 'net::ERR_ABORTED' && /\.(ogg|mp3|wav)$/.test(req.url())) return;
+      if (ALLOWED_MISSING.some(allowed => req.url().includes(allowed))) return;
+      fail('requestfailed: ' + req.url());
+    });
+    page.on('console', (m) => {
+      if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) fail('console: ' + m.text());
+    });
+    page.on('response', (r) => {
+      if (r.status() >= 400 && !ALLOWED_MISSING.some(allowed => r.url().includes(allowed))) fail('404 or error response: ' + r.status() + ' ' + r.url());
+    });
+
+    await page.goto(base + '/web/home/index.html?world=1');
+    await page.evaluate(() => document.body.classList.add('webview-mode'));
+    await page.waitForTimeout(1000);
+    if (await page.isVisible('#modalBackdrop.active')) {
+      await page.click('#modalCloseBtn');
+      await page.waitForTimeout(200);
+    }
+
+    const screen = async (name, feature, fn, layout = true) => {
+      try {
+        if (feature) {
+          await page.evaluate((fid) => window.CuyHome.openFeature(fid), feature);
+          await page.waitForTimeout(400);
+        }
+        await fn();
+        // The Home page behind the places bar has known layout issues (see the skip list in step()), so the bar is checked by its own box.
+        if (layout) await assertLayout(page, name + ' ' + label);
+        const badImages = await page.evaluate(() => Array.from(document.querySelectorAll('#placesBar img, #modalBody img'))
+          .filter(i => i.getAttribute('src') && !(i.complete && i.naturalWidth > 0)).map(i => i.getAttribute('src')));
+        if (badImages.length) throw new Error('images not loaded: ' + badImages.join(', '));
+        console.log('PASS ' + name + ' ' + label);
+      } catch (e) {
+        fail(name + ': ' + e.message);
+        console.log('FAIL ' + name + ' ' + label + ': ' + e.message);
+      } finally {
+        if (feature) {
+          await page.evaluate(() => window.CuyHome.closeFeature && window.CuyHome.closeFeature()).catch(() => {});
+          await page.waitForTimeout(200);
+        }
+      }
+    };
+
+    await screen('world_places_bar', null, async () => {
+      await page.waitForSelector('#placesBar .place-btn', { timeout: 3000 });
+      const count = await page.$$eval('#placesBar .place-btn', b => b.length);
+      if (count !== 5) throw new Error(`places bar shows ${count} places, expected 5`);
+      const inside = await page.$eval('#placesBar', b => { const r = b.getBoundingClientRect(); return r.left >= -1 && r.right <= window.innerWidth + 1 && r.bottom <= window.innerHeight + 1; });
+      if (!inside) throw new Error('places bar is outside the window');
+    }, false);
+
+    await screen('world_rooms', 'rooms', async () => {
+      await page.waitForSelector('.room-canvas', { timeout: 3000 });
+      if (!(await page.$('.room-drawer .room-item'))) throw new Error('drawer lists no owned items');
+      const before = await page.evaluate(() => window.bridge.getState().rooms.layouts.salon.items.length);
+      const grid = await page.evaluate(() => ({ cols: window.bridge.getState().rooms.layouts.salon.cols, rows: window.bridge.getState().rooms.layouts.salon.rows }));
+      await page.click('.room-drawer .room-item:not([disabled])');
+      const box = await page.locator('.room-canvas').boundingBox();
+      // Cell (5, 3) is floor and free in the starting living room
+      await page.mouse.click(box.x + (5.5 * box.width) / grid.cols, box.y + (3.5 * box.height) / grid.rows);
+      await page.waitForTimeout(300);
+      const after = await page.evaluate(() => window.bridge.getState().rooms.layouts.salon.items.length);
+      if (after !== before + 1) throw new Error(`placing an item did not add one: ${before} -> ${after}`);
+      const countText = await page.$eval('.room-count', e => e.textContent.trim());
+      if (countText !== `${after} placed`) throw new Error(`item count shows "${countText}", expected "${after} placed"`);
+    });
+
+    await screen('world_garden', 'garden', async () => {
+      await page.waitForSelector('.garden-walk-btn', { timeout: 3000 });
+      if (await page.$eval('.garden-walk-btn', b => b.disabled)) throw new Error('walk button is disabled');
+    });
+
+    await screen('world_farm', 'farm', async () => {
+      await page.waitForSelector('.farm-plot', { timeout: 3000 });
+      const plots = await page.$$eval('.farm-plot', b => b.length);
+      if (plots !== 4) throw new Error(`farm shows ${plots} plots, expected 4`);
+      await page.click('.farm-plot[data-plot="0"]');
+      await page.click('[data-plant="parsley"]');
+      await page.waitForTimeout(300);
+      if (!(await page.$eval('.farm-plot[data-plot="0"]', b => b.classList.contains('is-growing')))) throw new Error('planting did not change plot 1 to growing');
+      if (!(await page.$eval('[data-harvest-all]', b => b.disabled))) throw new Error('Harvest all is enabled although nothing is ripe');
+    });
+
+    await screen('world_market', 'market', async () => {
+      await page.waitForSelector('.market-cap-bar', { timeout: 3000 });
+      await page.click('[data-tab="sell"]');
+      await page.waitForSelector('[data-sell="carrot"]:not([disabled])', { timeout: 3000 });
+      const before = await page.evaluate(() => ({ owned: window.bridge.getState().inventory.carrot, capLeft: window.bridge.getState().market.capLeft }));
+      await page.click('[data-sell="carrot"]');
+      await page.waitForTimeout(300);
+      const after = await page.evaluate(() => ({ owned: window.bridge.getState().inventory.carrot, capLeft: window.bridge.getState().market.capLeft }));
+      if (!(after.owned < before.owned)) throw new Error(`selling did not reduce owned carrot: ${before.owned} -> ${after.owned}`);
+      if (!(after.capLeft < before.capLeft)) throw new Error(`selling did not reduce the cap left: ${before.capLeft} -> ${after.capLeft}`);
+    });
+
+    await screen('world_pigs', 'pigs', async () => {
+      await page.waitForSelector('.pigs-grid .pig-card', { timeout: 3000 });
+    });
+
+    await page.close();
+  }
+}
+
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const featuresDir = path.join(ROOT, 'web', 'home', 'features');
@@ -449,6 +564,8 @@ function serve() {
     if (devTestVisible) throw new Error('#btnDevTest is visible in release WebView2 mode');
     await relPage.close();
   });
+
+  await worldSmoke(browser, base, errors);
 
   await browser.close();
   server.close();

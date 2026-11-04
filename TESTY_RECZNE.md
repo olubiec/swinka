@@ -126,3 +126,26 @@ Przed testem: `tools/build.ps1`, potem `src/Cuy/bin/Debug/Cuy.exe`. Save: `%AppD
 7. Obserwuj Jamesa na pulpicie (na pulpicie, nie w Domku) przy dźwiękach i ruchu myszy. Oczekiwane: James płoszy się wcześniej (przy większym dystansie kursora) niż Kuki.
 8. Odpal Racucha (adopcja z ofert, jeśli dostępny) i sprawdź sztuczkę popcorn w Domku i na pulpicie. Oczekiwane: Racuch wykonuje popcorn częściej niż inne świnki.
 9. Zapisz wyniki w kolumnie „Wpisz wynik” (data, wersja Windows, co zobaczyłaś/zobaczyłeś, ewentualne linie `[Pigs]` z logu).
+
+## 9. Świat: dom, ogród, park, farma, targ
+
+Przed testem: `tools/build.ps1`, potem `src/Cuy/bin/Debug/Cuy.exe`. Save: `%AppData%\Cuy\save.json`, log: `%LocalAppData%\Cuy\logs\cuy.log`. Zamykaj Cuy przed każdą edycją save.json. Do przeczekiwania czasu używaj cofania znaczników czasu w save (krok 9), nie zmieniaj zegara systemowego.
+
+1. Uruchom Cuy. Oczekiwane: pasek miejsc u góry sceny pokazuje pięć miejsc; zablokowane mają kłódkę i koszt w koniczynach.
+2. W salonie ustaw kanapę i donicę: przeciągnij przedmiot na siatkę, kliknij komórkę, obróć klawiszem F, usuń Delete. Oczekiwane: przedmioty przesuwają się po siatce, licznik „N placed” zgadza się z liczbą ustawionych przedmiotów, a Delete je usuwa.
+3. Ustaw meble tak, by komfort salonu był wysoki (kilka mebli i roślin). Obserwuj nastrój świnki przez ok. 10 min. Oczekiwane: po osiągnięciu wysokiego komfortu nastrój spada wyraźnie wolniej niż przed ustawieniem.
+4. Kup sypialnię w sklepie. Oczekiwane: sypialnia jest odblokowana, koniczyny zmniejszają się o cenę, a zakup jest zapisany po odświeżeniu widoku.
+5. Odblokuj Ogród (zapłać koniczynami, potwierdź drugim kliknięciem). Oczekiwane: przycisk „Go for a walk” jest aktywny; ogród pokazuje dekoracje.
+6. Wyślij świnkę na spacer trzy razy. Oczekiwane: po każdym spacerze pojawia się tekst wyniku spaceru; po trzecim razie świnka odmawia (zapisz dokładny tekst odmowy).
+7. Odblokuj Farmę. Oczekiwane: farma pokazuje cztery działki.
+8. Zasadź sałatę/pietruszkę na pierwszej działce (menu „Plant”), potem podlej. Oczekiwane: działka zmienia stan na rosnący i pokazuje odliczanie; po podlaniu odliczanie maleje szybciej, a przycisk „Harvest all” pozostaje nieaktywny, dopóki nic nie dojrzało.
+9. Przyspiesz czas: zamknij Cuy, w save.json cofnij o godzinę znaczniki czasu zasadzenia i gotowości działki (nazwy pól sprawdź w pliku i zapisz je w wyniku), zapisz plik, uruchom Cuy. Oczekiwane: działka jest gotowa („ready”).
+10. Zbierz plony („Harvest all” albo przycisk na działce). Oczekiwane: w ekwipunku przybywa plonów, działka wraca do pustego stanu, „Harvest all” znów nieaktywny, gdy nic nie dojrzało.
+11. Nakarm świnkę zebranym plonem z menu jedzenia. Oczekiwane: pasek głodu lub witaminy rośnie, plon zmniejsza się o jeden w ekwipunku.
+12. Sprzedawaj na Targu, aż pojawi się komunikat o limicie. Oczekiwane: pasek dziennego limitu maleje przy każdej sprzedaży; po wyczerpaniu limitu pojawia się komunikat o zamkniętym limicie na dziś i przyciski „Sell” są nieaktywne (zapisz tekst komunikatu).
+13. Zrealizuj zamówienie z Targu (dostawa). Oczekiwane: po dostawie pojawia się nagroda w koniczynach lub przedmiocie, a zamówienie zmienia status na dostarczone.
+14. Otwórz dzisiejsze promocje na Targu (daily specials). Oczekiwane: lista promocji na dziś z cenami; zmiany dnia (po cofnięciu daty w save) zmieniają listę.
+15. Zamknij i ponownie uruchom Cuy. Oczekiwane: meble w salonie i ogrodzie, odblokowane miejsca, sypialnia, działki i stan roślin, ilość plonów i koniczyn są takie same jak przed zamknięciem.
+16. Zapisz świnkę w trybie pamięci (My Pigs, krok z sekcji 8) i otwórz Ogród. Oczekiwane: w kąciku pamięci pojawia się świnka pamiątkowa z tabliczką.
+17. Zminimalizuj Cuy, przyspiesz czas na farmie (krok 9) tak, by plon dojrzał, i poczekaj. Oczekiwane: pojawia się powiadomienie systemowe „Something is ready on the farm!”.
+18. Zapisz wyniki w kolumnie „Wpisz wynik” (data, wersja Windows, dokładne teksty komunikatów, nazwy pól czasu z save.json, ewentualne linie `[World]` z logu).
