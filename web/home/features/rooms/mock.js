@@ -4,6 +4,7 @@
 // W25-07 adds pig rooms (rooms.pigRooms, layouts keyed 'pig:<pigId>'), colour variants, room names,
 // storage, transfers and ?memorial=1 (Ned gets a memorial room).
 // W26-07 adds the shared bedroom: state dorm, layout 'dorm', messages dorm_unlock, dorm_move_in, dorm_move_out, dorm_upgrade.
+// W27-08 adds pig homes: state homes { pigs, rooms } (docs/contracts/homes.md) and the message pig_home.
 (function () {
   'use strict';
   const bridge = window.bridge;
@@ -78,6 +79,49 @@
     { cols: 20, rows: 10, wallRows: 2, cost: 1800 }
   ];
 
+  // Pig homes (W27-08). Locations follow a 20 s slot, like PigWander; a tied pig stays in its room.
+  const HOME_SLOT_MS = 20000;
+  const HOME_ACTIVITIES = ['sleep', 'eat', 'play', 'rest', 'explore'];
+  const HOME_ROOM_NAMES = { salon: 'Living room', garden: 'Garden', park: 'Park', dorm: 'Shared bedroom' };
+
+  // Rooms a pig can be tied to: the living room, unlocked garden and park, and the dorm when it is open.
+  function homeRoomsOf(st) {
+    const out = [{ id: 'salon', name: HOME_ROOM_NAMES.salon }];
+    ['garden', 'park'].forEach((id) => {
+      const p = findPlace(st, id);
+      if (p && p.unlocked) out.push({ id: id, name: HOME_ROOM_NAMES[id] });
+    });
+    if (st.dorm && st.dorm.unlocked) out.push({ id: DORM_ID, name: HOME_ROOM_NAMES.dorm });
+    return out;
+  }
+
+  // Recomputes state homes for the adopted pigs. The stored choices live in st.homeModes (not sent as part of homes).
+  function ensureHomes(st) {
+    const rooms = homeRoomsOf(st);
+    const modes = st.homeModes || (st.homeModes = {});
+    const slot = Math.floor(Date.now() / HOME_SLOT_MS);
+    const adopted = (st.rooms.pigRooms || []).filter((r) => r.adopted !== false);
+    st.homes = {
+      rooms: rooms,
+      pigs: adopted.map((r, i) => {
+        const pick = modes[r.pigId] || { mode: 'free', room: null };
+        const tied = !r.memorial && pick.mode === 'room' && rooms.some((x) => x.id === pick.room);
+        let location = r.roomId;
+        if (!r.memorial) location = tied ? pick.room : rooms[(i + slot) % rooms.length].id;
+        return {
+          pigId: r.pigId,
+          name: r.displayName,
+          mode: tied ? 'room' : 'free',
+          room: tied ? pick.room : null,
+          location: location,
+          activity: r.memorial ? 'rest' : HOME_ACTIVITIES[(i + slot) % HOME_ACTIVITIES.length],
+          memorial: !!r.memorial,
+          portrait: 'sprites/portraits/' + r.pigId + '.png'
+        };
+      })
+    };
+  }
+
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
 
   function defaultLayouts() {
@@ -119,6 +163,7 @@
     }
     ensureDorm(st);
     rebuildCatalog(st);
+    ensureHomes(st);
     return st;
   }
 
@@ -499,6 +544,27 @@
     d.level += 1;
     ensureDorm(st);
     this.dispatchMessage({ type: 'toast', text: 'The shared bedroom grew' });
+  });
+
+  // Home switch: roam ('free') or stay in a room. Unknown and memorial pigs are ignored; a room the pig cannot use gets a toast.
+  bridge.registerMockHandler('pig_home', function (st, action) {
+    ensureRooms(st);
+    const pigId = typeof action.pigId === 'string' ? action.pigId : '';
+    if (!pigId || pigId.length > 64) return;
+    const pr = pigRoomOf(st, PIG_ROOM_PREFIX + pigId);
+    if (!pr || pr.adopted === false || pr.memorial) return;
+    const modes = st.homeModes || (st.homeModes = {});
+    if (action.mode === 'free') {
+      modes[pigId] = { mode: 'free', room: null };
+    } else if (action.mode === 'room') {
+      const room = typeof action.room === 'string' ? action.room : '';
+      if (!room || room.length > 64) return;
+      if (!homeRoomsOf(st).some((r) => r.id === room)) { this.dispatchMessage({ type: 'toast', text: 'That room is not available' }); return; }
+      modes[pigId] = { mode: 'room', room: room };
+    } else {
+      return;
+    }
+    ensureHomes(st);
   });
 
   // Exposed for the feature and for tests; reads only.
