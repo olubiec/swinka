@@ -2,7 +2,21 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 6px;
+  padding: 4px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.icon-pig {
+  --i: 24;
+}
+
+.pig-portrait,
+.feature-pigs .pig-portrait {
+  image-rendering: pixelated;
+  width: 32px;
+  height: 32px;
+  display: block;
 }
 
 .pigs-header {
@@ -13,13 +27,14 @@
   border: 3px solid var(--c-contour-dark);
   border-radius: 8px;
   padding: 8px 12px;
+  box-sizing: border-box;
 }
 
 .pigs-stats {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--c-contour-dark);
 }
 
@@ -28,16 +43,33 @@
   color: var(--c-white);
   padding: 6px 10px;
   font-size: 11px;
+  white-space: nowrap;
 }
 
 .btn-adopt-pig:hover:not(:disabled) {
   background: var(--c-leaf-dark);
 }
 
-.pigs-grid {
+.pigs-section-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-contour-dark);
+  margin-top: 4px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 2px solid var(--c-wood);
+  padding-bottom: 2px;
+}
+
+.pigs-grid,
+.pigs-offers-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .pig-card {
@@ -50,6 +82,7 @@
   align-items: center;
   gap: 6px;
   position: relative;
+  box-sizing: border-box;
 }
 
 .pig-card.pig-active {
@@ -57,29 +90,71 @@
   box-shadow: 0 0 0 2px var(--c-leaf);
 }
 
+.pig-card.pig-memorial {
+  background: #fff8e7;
+  border-color: #d4a373;
+}
+
 .pig-card-header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 2px;
+  width: 100%;
 }
 
 .pig-card-name {
   font-weight: 700;
   font-size: 13px;
   color: var(--c-contour-dark);
+  text-align: center;
+  word-break: break-word;
+}
+
+.pig-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+}
+
+.pig-stage-badge {
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--c-wood-light);
+  border: 1px solid var(--c-contour-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  text-transform: capitalize;
+  color: var(--c-contour-dark);
+}
+
+.pig-card-age {
+  font-size: 9px;
+  color: var(--c-wood-dark);
 }
 
 .pig-card-breed {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--c-wood-dark);
   text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
 }
 
 .pig-card-portrait {
-  padding: 6px;
+  padding: 4px;
   background: var(--c-wood-light);
   border: 2px solid var(--c-contour-dark);
   border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
 }
 
 .pig-card-traits {
@@ -87,6 +162,7 @@
   flex-wrap: wrap;
   gap: 4px;
   justify-content: center;
+  width: 100%;
 }
 
 .pig-trait-badge {
@@ -95,6 +171,8 @@
   border-radius: 4px;
   border: 1px solid var(--c-contour-dark);
   text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
 }
 
 .pig-trait-badge.discovered {
@@ -107,27 +185,222 @@
   color: #777;
 }
 
+.pig-card-blurb {
+  font-size: 9px;
+  color: var(--c-contour-dark);
+  text-align: center;
+  font-style: italic;
+  padding: 2px 4px;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.pig-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  margin-top: auto;
+}
+
 .btn-toggle-active {
   font-size: 10px;
-  padding: 4px 8px;
+  padding: 4px 6px;
+  width: 100%;
 }
 
-
-.pig-card-canvas {
-  display: block;
-  width: 96px;
-  height: 96px;
-  image-rendering: pixelated;
+.pig-memorial-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.pig-trait-badge .pixel-icon {
-  margin-right: 2px;
+.btn-memorial-toggle {
+  font-size: 10px;
+  padding: 3px 6px;
+  width: 100%;
+  background: var(--c-cream-dark);
+  color: var(--c-contour-dark);
 }
 
-.pig-card-breed .pixel-icon {
-  margin-right: 3px;
+.btn-memorial-toggle:hover:not(:disabled) {
+  background: var(--c-wood-light);
 }
 
-.btn-adopt-pig {
-  white-space: nowrap;
+.pig-memorial-status {
+  font-size: 9px;
+  font-weight: 700;
+  color: #8c5a2b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  padding: 2px;
+}
+
+.memorial-confirm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 9px;
+  background: var(--c-wood-light);
+  border: 1px solid var(--c-contour-dark);
+  border-radius: 4px;
+  padding: 3px 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.memorial-confirm-msg {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--c-contour-dark);
+  line-height: 1.1;
+  word-break: break-word;
+}
+
+.memorial-confirm-buttons {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.btn-confirm-yes {
+  background: var(--c-leaf);
+  color: var(--c-white);
+  font-size: 9px;
+  padding: 2px 5px;
+}
+
+.btn-confirm-no {
+  background: var(--c-red);
+  color: var(--c-white);
+  font-size: 9px;
+  padding: 2px 5px;
+}
+
+/* Offers styling */
+.pig-offer-card {
+  background: var(--c-cream);
+}
+
+.pig-offer-card.offer-locked {
+  background: var(--c-cream-dark);
+  opacity: 0.9;
+}
+
+.pig-offer-card.offer-adopted {
+  background: #f0f0f0;
+}
+
+.offer-locked-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--c-contour-dark);
+  font-weight: 700;
+  margin: 2px 0;
+}
+
+.offer-adopted-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--c-leaf-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.btn-adopt-named {
+  background: var(--c-leaf);
+  color: var(--c-white);
+  font-size: 10px;
+  padding: 4px 6px;
+  width: 100%;
+}
+
+.btn-adopt-named:hover:not(:disabled) {
+  background: var(--c-leaf-dark);
+}
+
+.btn-adopt-memory {
+  background: var(--c-wood-light);
+  color: var(--c-contour-dark);
+  font-size: 9px;
+  padding: 3px 6px;
+  width: 100%;
+}
+
+.btn-adopt-memory:hover:not(:disabled) {
+  background: var(--c-cream-dark);
+}
+
+/* Starter Group Card */
+.pig-offer-group-card {
+  grid-column: 1 / -1;
+  background: var(--c-cream);
+  border: 3px solid var(--c-leaf-dark);
+}
+
+.offer-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--c-contour-dark);
+  border-bottom: 2px dashed var(--c-contour-dark);
+  padding-bottom: 4px;
+  width: 100%;
+}
+
+.offer-group-pigs {
+  display: flex;
+  gap: 12px;
+  justify-content: space-around;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.offer-group-pig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 120px;
+  max-width: 160px;
+}
+
+.offer-pig-name {
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--c-contour-dark);
+}
+
+.btn-adopt-group {
+  background: var(--c-leaf);
+  color: var(--c-white);
+  font-size: 11px;
+  padding: 6px 12px;
+  width: 100%;
+}
+
+.btn-adopt-group:hover:not(:disabled) {
+  background: var(--c-leaf-dark);
+}
+
+.btn-locked {
+  background: var(--c-cream-dark);
+  color: #777;
+  font-size: 10px;
+  padding: 4px 6px;
+  width: 100%;
 }
