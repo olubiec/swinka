@@ -322,6 +322,80 @@ function serve() {
     await page.waitForTimeout(200);
   });
 
+  await step('26_pigs_collection', async () => {
+    await page.evaluate(() => {
+      if (window.bridge && window.bridge.mockTimer) {
+        clearInterval(window.bridge.mockTimer);
+        window.bridge.mockTimer = null;
+      }
+      window.CuyHome.openFeature('pigs');
+    });
+    await page.waitForTimeout(400);
+
+    const checkResult = await page.evaluate(() => {
+      const container = document.querySelector('#modalBody .feature-pigs-container');
+      if (!container) return { error: 'feature-pigs-container not found' };
+
+      const rosterNames = Array.from(container.querySelectorAll('.pigs-grid .pig-card .pig-card-name')).map(el => el.textContent.trim());
+      if (!rosterNames.includes('Kuki') || !rosterNames.includes('Ned')) {
+        return { error: 'Expected roster to contain Kuki and Ned, got: ' + JSON.stringify(rosterNames) };
+      }
+
+      const lockedCards = Array.from(container.querySelectorAll('.pigs-offers-grid .pig-offer-card.offer-locked')).filter(el => {
+        const r = el.getBoundingClientRect();
+        const s = window.getComputedStyle(el);
+        return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden';
+      });
+      if (lockedCards.length !== 3) {
+        return { error: 'Expected 3 visible locked offer cards, got: ' + lockedCards.length };
+      }
+
+      const adoptBothBtn = container.querySelector('.btn-adopt-group');
+      if (adoptBothBtn) {
+        const r = adoptBothBtn.getBoundingClientRect();
+        const s = window.getComputedStyle(adoptBothBtn);
+        if (r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden') {
+          return { error: '"Adopt both" button should not be shown when already adopted' };
+        }
+      }
+
+      for (const card of lockedCards) {
+        const padlock = card.querySelector('.icon-padlock');
+        if (!padlock) {
+          return { error: 'Locked offer card missing .icon-padlock: ' + card.dataset.offerId };
+        }
+      }
+
+      return { ok: true };
+    });
+
+    if (checkResult.error) throw new Error(checkResult.error);
+
+    await assertLayout(page, '26_pigs_collection_open');
+
+    await page.evaluate(() => {
+      const btn = document.querySelector('.pigs-grid .pig-card[data-pig-id="kuki"] .btn-memorial-toggle[data-action="ask"]');
+      if (!btn) throw new Error('Memorial toggle button not found for kuki');
+      btn.click();
+    });
+    await page.waitForTimeout(200);
+
+    const confirmVisible = await page.evaluate(() => {
+      const confirmRow = document.getElementById('memorialConfirm_kuki');
+      if (!confirmRow) return false;
+      const s = window.getComputedStyle(confirmRow);
+      const r = confirmRow.getBoundingClientRect();
+      return s.display !== 'none' && s.visibility !== 'hidden' && r.width > 0 && r.height > 0 && confirmRow.textContent.includes('Forever in the family?');
+    });
+    if (!confirmVisible) throw new Error('Memorial confirmation did not appear for kuki');
+
+    await assertLayout(page, '26_pigs_collection_memorial_confirm');
+    await page.screenshot({ path: path.join(OUT, '26_pigs_collection_open.png') });
+
+    await page.evaluate(() => window.CuyHome.closeFeature && window.CuyHome.closeFeature());
+    await page.waitForTimeout(200);
+  });
+
   await step('30_firststart', async () => {
     const newPage = await browser.newPage({ viewport: { width: 420, height: 640 } });
     await newPage.addInitScript(() => {
