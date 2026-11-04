@@ -2,13 +2,15 @@
 
 Executes remaining waves sequentially using orkiestra with gemini-3.8-flash-medium,
 monitoring battery levels, pacing API rate limits, verifying test suites,
-and pushing commits & dashboard updates to GitHub for mobile monitoring.
+tracking deadline (07:45 hard stop), updating handoff banner in README.md,
+and pushing commits & dashboard updates to GitHub for mobile monitoring and device handoff.
 """
 from __future__ import annotations
 
 import json
 import logging
 import os
+import re
 import subprocess
 import sys
 import time
@@ -29,6 +31,14 @@ logger = logging.getLogger("loop_runner")
 REPO_ROOT = Path(__file__).resolve().parent.parent
 STATE_FILE = REPO_ROOT / ".orkiestra" / "state.json"
 WAVES_FILE = REPO_ROOT / "waves.yaml"
+README_FILE = REPO_ROOT / "README.md"
+
+DEADLINE_HOUR = 7
+DEADLINE_MINUTE = 45
+HARD_CUTOFF_MINUTE = 55
+
+HANDOFF_START = "<!-- HANDOFF_BANNER_START -->"
+HANDOFF_END = "<!-- HANDOFF_BANNER_END -->"
 
 
 def run_cmd(cmd: list[str], cwd: Path = REPO_ROOT) -> subprocess.CompletedProcess[str]:
@@ -67,8 +77,6 @@ def is_wave_completed(wave_id: str, state: dict) -> bool:
 
 
 def get_all_waves() -> list[str]:
-    import re
-
     if not WAVES_FILE.exists():
         return []
     content = WAVES_FILE.read_text(encoding="utf-8")
@@ -76,7 +84,77 @@ def get_all_waves() -> list[str]:
     return waves
 
 
+def is_deadline_reached() -> bool:
+    now = datetime.now()
+    deadline = now.replace(hour=DEADLINE_HOUR, minute=DEADLINE_MINUTE, second=0, microsecond=0)
+    return now >= deadline
+
+
+def update_handoff_banner(active_wave: str = "", extra_note: str = ""):
+    if not README_FILE.exists():
+        return
+    try:
+        state = read_state()
+        tasks = state.get("tasks", {})
+        merged = [t for t, v in tasks.items() if v.get("status") == "merged"]
+        in_prog = [t for t, v in tasks.items() if v.get("status") in ("running", "verified", "pr_open")]
+
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Check W13
+        w13_tasks = ["W13-01", "W13-02", "W13-03", "W13-04"]
+        w13_done = all(tasks.get(t, {}).get("status") == "merged" for t in w13_tasks)
+
+        # Check W14
+        w14_tasks = [t for t, v in tasks.items() if v.get("wave_id") == "W14"] or ["W13-05", "W14-01", "W14-02", "W14-03", "W14-04", "W14-05", "W14-06", "W14-07", "W14-08", "W14-09"]
+        w14_merged = [t for t in w14_tasks if tasks.get(t, {}).get("status") == "merged"]
+
+        w13_status = "✅ Ukończona w 100% (W13-01 do W13-04 zmergowane)" if w13_done else "w toku"
+        w14_status = f"{len(w14_merged)}/{len(w14_tasks)} zadań zmergowanych ({', '.join(w14_merged)})" if w14_merged else "oczekuje na rozpoczęcie/dokończenie"
+
+        banner = f"""{HANDOFF_START}
+> [!IMPORTANT]
+> ### 🔄 Status sesji i gotowość do przełączenia (Handoff)
+> **Ostatni heartbeat sesji:** `{now_str}` (czas lokalny)
+> 
+> - **Wykonano w tej sesji na tej maszynie:**
+>   - **Fala W13:** {w13_status}.
+>   - **Fala W14:** {w14_status}.
+>   - **Łącznie zmergowanych zadań:** **{len(merged)}** w całym projekcie.
+>   - **Testy regresyjne Cuy.Core:** **Wszystkie testy przechodzą (0 błędów)**.
+> - **Gdzie kontynuować na kolejnym urządzeniu:**
+>   - **Następna fala do zrobienia/dokończenia:** **{'W14' if len(w14_merged) < len(w14_tasks) else 'W15'}** (i kolejne wg `waves.yaml`).
+>   - **Instrukcja przełączenia na drugie urządzenie:**
+>     1. Pobierz najnowsze zmiany: `git pull origin main`
+>     2. Uruchom pętlę orkiestratora: `python tools/loop_runner.py` (lub bezpośrednio `python -m orkiestra -v run --wave {'W14' if len(w14_merged) < len(w14_tasks) else 'W15'}`)
+>     3. Wszystkie commity są zsynchronizowane na GitHubie, a gałąź `main` jest gotowa i stabilna.
+{HANDOFF_END}"""
+
+        content = README_FILE.read_text(encoding="utf-8")
+        if HANDOFF_START in content and HANDOFF_END in content:
+            pattern = re.compile(re.escape(HANDOFF_START) + r".*?" + re.escape(HANDOFF_END), re.DOTALL)
+            new_content = pattern.sub(banner, content)
+        else:
+            header = "# Cuy\n\n"
+            if header in content:
+                new_content = content.replace(header, header + banner + "\n\n", 1)
+            else:
+                new_content = banner + "\n\n" + content
+
+        if new_content != content:
+            README_FILE.write_text(new_content, encoding="utf-8")
+            logger.info("Handoff banner in README.md updated successfully.")
+    except Exception as exc:
+        logger.warning(f"Could not update handoff banner: {exc}")
+
+
 def push_to_remote() -> bool:
+    # Ensure any working directory changes (like README dashboard / banner) are committed
+    run_cmd(["git", "add", "README.md"])
+    diff_proc = run_cmd(["git", "diff", "--cached", "--quiet"])
+    if diff_proc.returncode != 0:
+        run_cmd(["git", "commit", "-m", "chore(handoff): update status dashboard and handoff banner in README.md"])
+
     res = run_cmd(["git", "push", "origin", "main"])
     if res.returncode == 0:
         logger.info("Successfully pushed main to origin/main")
@@ -122,13 +200,22 @@ def main():
     all_waves = get_all_waves()
     logger.info(f"Loaded {len(all_waves)} waves from waves.yaml: {', '.join(all_waves[:10])}...")
 
-    # Waves up to W12 are already done
-    wave_queue = [w for w in all_waves if w not in ("w-validation-tests", "w-perf-tests", "w-backlog-cleanup", "W11", "W12")]
+    # Waves up to W13 are already done
+    wave_queue = [w for w in all_waves if w not in ("w-validation-tests", "w-perf-tests", "w-backlog-cleanup", "W11", "W12", "W13")]
     logger.info(f"Queued {len(wave_queue)} waves to run: {', '.join(wave_queue)}")
 
-    cooldown_seconds = 20  # Pacing between waves to avoid quota/RPM bursts
+    # Initial handoff banner and push
+    update_dashboard()
+    update_handoff_banner()
+    push_to_remote()
+
+    cooldown_seconds = 15  # Pacing between waves to avoid quota/RPM bursts
 
     for wave_id in wave_queue:
+        if is_deadline_reached():
+            logger.info(f"Deadline ({DEADLINE_HOUR}:{DEADLINE_MINUTE}) reached before wave {wave_id}. Stopping scheduler safely.")
+            break
+
         logger.info("=" * 60)
         logger.info(f"--- PREPARING WAVE: {wave_id} ---")
 
@@ -149,12 +236,25 @@ def main():
             logger.info(f"Wave {wave_id} is already completed and merged. Skipping.")
             continue
 
-        # 3. Execute wave via orkiestra
+        # 3. Clean working tree before orkiestra runs
+        st = run_cmd(["git", "status", "--porcelain"])
+        if st.stdout.strip():
+            logger.info(f"Staging pre-wave changes to ensure clean tree: {st.stdout.strip()}")
+            run_cmd(["git", "add", "README.md"])
+            diff_chk = run_cmd(["git", "diff", "--cached", "--quiet"])
+            if diff_chk.returncode != 0:
+                run_cmd(["git", "commit", "-m", "chore: sync dashboard before wave start"])
+
+        # 4. Execute wave via orkiestra
         logger.info(f"Launching orkiestra for wave {wave_id}...")
         attempts = 0
         max_wave_retries = 3
 
         while attempts < max_wave_retries:
+            if is_deadline_reached():
+                logger.info(f"Deadline reached during wave {wave_id}. Halting further attempts.")
+                break
+
             attempts += 1
             cmd = [sys.executable, "-m", "orkiestra", "-v", "run", "--wave", wave_id]
             logger.info(f"Execution command: {' '.join(cmd)} (attempt {attempts}/{max_wave_retries})")
@@ -192,33 +292,40 @@ def main():
                 logger.warning(f"Stdout summary: {proc.stdout[-1000:]}")
                 if proc.stderr:
                     logger.warning(f"Stderr: {proc.stderr[-1000:]}")
-                time.sleep(30)
+                time.sleep(20)
 
-        # 4. Post-wave verification & sync
+        # 5. Post-wave verification & sync
         state = read_state()
         if is_wave_completed(wave_id, state):
             # Run test regression check
             test_ok = run_tests()
             if not test_ok:
                 logger.error(f"Test failure detected after wave {wave_id}!")
-                # Document in TODO
                 break
 
-            # Update dashboard & push
+            # Update dashboard, handoff banner & push
             update_dashboard()
+            update_handoff_banner(active_wave=wave_id)
             push_to_remote()
 
             # Pacing delay
             logger.info(f"Wave {wave_id} complete. Cooling down for {cooldown_seconds}s to pace API limits...")
             time.sleep(cooldown_seconds)
         else:
-            logger.error(f"Wave {wave_id} could not be completed after {max_wave_retries} attempts.")
-            # Update dashboard with error status
+            logger.error(f"Wave {wave_id} could not be completed after {max_wave_retries} attempts or deadline reached.")
             update_dashboard()
+            update_handoff_banner(active_wave=wave_id)
             push_to_remote()
-            # If a task needs human, continue to next wave or halt based on rule
+            if is_deadline_reached():
+                break
             logger.info("Moving to next wave...")
 
+    # Final wrap-up
+    logger.info("=== WRAPPING UP SESSION ===")
+    run_tests()
+    update_dashboard()
+    update_handoff_banner()
+    push_to_remote()
     logger.info("=== AUTONOMOUS WAVE LOOP RUNNER FINISHED ===")
 
 

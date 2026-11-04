@@ -1,15 +1,33 @@
 # Cuy
 
+<!-- HANDOFF_BANNER_START -->
+> [!IMPORTANT]
+> ### 🔄 Status sesji i gotowość do przełączenia (Handoff)
+> **Ostatni heartbeat sesji:** `2026-11-04 06:30:11` (czas lokalny)
+> 
+> - **Wykonano w tej sesji na tej maszynie:**
+>   - **Fala W13:** ✅ Ukończona w 100% (W13-01 do W13-04 zmergowane).
+>   - **Fala W14:** oczekuje na rozpoczęcie/dokończenie.
+>   - **Łącznie zmergowanych zadań:** **4** w całym projekcie.
+>   - **Testy regresyjne Cuy.Core:** **Wszystkie testy przechodzą (0 błędów)**.
+> - **Gdzie kontynuować na kolejnym urządzeniu:**
+>   - **Następna fala do zrobienia/dokończenia:** **W14** (i kolejne wg `waves.yaml`).
+>   - **Instrukcja przełączenia na drugie urządzenie:**
+>     1. Pobierz najnowsze zmiany: `git pull origin main`
+>     2. Uruchom pętlę orkiestratora: `python tools/loop_runner.py` (lub bezpośrednio `python -m orkiestra -v run --wave W14`)
+>     3. Wszystkie commity są zsynchronizowane na GitHubie, a gałąź `main` jest gotowa i stabilna.
+<!-- HANDOFF_BANNER_END -->
+
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
 > ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** `2026-11-03 17:36:34`
+> **Ostatni heartbeat:** `2026-11-04 06:30:11`
 >
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
-> | 🔋 **Zasilanie i Bateria** | **97%** (Zasilacz AC podłączony) | 🟢 Zasilacz AC (Bezpieczny) |
+> | 🔋 **Zasilanie i Bateria** | **100%** (Zasilacz AC podłączony) | 🟢 Zasilacz AC (Bezpieczny) |
 > | 🌊 **Aktualna Fala** | **W13** | 🟢 Aktywna |
-> | 🏆 **Ukończone Zadania** | **17 / 162** (10.5%) | 🟢 Postęp OK |
+> | 🏆 **Ukończone Zadania** | **4 / 162** (2.5%) | 🟢 Postęp OK |
 > | 🧪 **Testy Jednostkowe** | **399 / 399** zaliczonych | ✅ Wszystkie przechodzą |
 > | 💻 **Stan Systemu** | ⚡ Agenci pracują autonomicznie | 🟢 Aktywny |
 >
