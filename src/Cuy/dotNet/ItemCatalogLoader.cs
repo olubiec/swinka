@@ -103,6 +103,7 @@ namespace Cuy
                 if (!string.IsNullOrEmpty(jsonPath))
                 {
                     var filesToLoad = new List<string> { jsonPath };
+                    var loaded = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { jsonPath };
                     try
                     {
                         string dir = Path.GetDirectoryName(jsonPath);
@@ -110,7 +111,21 @@ namespace Cuy
                         {
                             var extraFiles = Directory.GetFiles(dir, "items_*.json");
                             Array.Sort(extraFiles); // alphabetical
-                            filesToLoad.AddRange(extraFiles);
+                            foreach (var f in extraFiles)
+                            {
+                                if (loaded.Add(f))
+                                    filesToLoad.Add(f);
+                            }
+
+                            string[] knownExtras = new[] { "items_shop.json", "items_decor.json", "items_farm.json" };
+                            foreach (var extra in knownExtras)
+                            {
+                                string p = Path.Combine(dir, extra);
+                                if (File.Exists(p) && loaded.Add(p))
+                                {
+                                    filesToLoad.Add(p);
+                                }
+                            }
                         }
                     }
                     catch (Exception ex)

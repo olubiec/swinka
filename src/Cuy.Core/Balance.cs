@@ -92,6 +92,18 @@ namespace Cuy.Core
         /// <summary>The arrival schedule runs.</summary>
         public bool ArrivalsActive { get; set; } = false;
 
+        /// <summary>Places and travel features are active.</summary>
+        public bool PlacesActive { get; set; } = false;
+
+        /// <summary>The farm feature is active.</summary>
+        public bool FarmActive { get; set; } = false;
+
+        /// <summary>The market feature is active.</summary>
+        public bool MarketActive { get; set; } = false;
+
+        /// <summary>World decorations are active.</summary>
+        public bool WorldDecorActive { get; set; } = false;
+
         public static Balance CreateDefault()
         {
             return new Balance();

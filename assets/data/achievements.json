@@ -22,6 +22,14 @@
     { "id": "daily_trio", "title": "Active Day", "text": "Play 3 minigames in a single day.", "category": "play", "hidden": false, "rule": { "kind": "minigames_today", "name": "daily_minigames", "atLeast": 3 }, "reward": 100 },
     { "id": "new_friend", "title": "New Friend", "text": "A new guinea pig joins the family.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "pigs_arrived", "atLeast": 1 }, "reward": 50 },
     { "id": "full_house", "title": "Full House", "text": "The whole family has arrived.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "pigs_arrived", "atLeast": 3 }, "reward": 150 },
-    { "id": "forever_family", "title": "Forever in the Family", "text": "A special friend stays close, always.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "memorial_pigs", "atLeast": 1 }, "reward": 50 }
+    { "id": "forever_family", "title": "Forever in the Family", "text": "A special friend stays close, always.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "memorial_pigs", "atLeast": 1 }, "reward": 50 },
+    { "id": "first_harvest", "title": "First Harvest", "text": "Harvest your first crop.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "harvests", "atLeast": 1 }, "reward": 25 },
+    { "id": "green_thumb", "title": "Green Thumb", "text": "Harvest 25 crops.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "harvests", "atLeast": 25 }, "reward": 75 },
+    { "id": "market_regular", "title": "Market Regular", "text": "Sell 20 units at the market.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "units_sold", "atLeast": 20 }, "reward": 50 },
+    { "id": "tidy_nest", "title": "Tidy Nest", "text": "Place 10 items.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "items_placed", "atLeast": 10 }, "reward": 50 },
+    { "id": "garden_party", "title": "Garden Party", "text": "Unlock the garden.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "places_unlocked", "atLeast": 1 }, "reward": 50 },
+    { "id": "grand_park", "title": "Grand Park", "text": "Unlock the park.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "places_unlocked", "atLeast": 2 }, "reward": 100 },
+    { "id": "full_farm", "title": "Full Farm", "text": "Own 24 garden plots.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "plots_owned", "atLeast": 24 }, "reward": 150 },
+    { "id": "home_designer", "title": "Home Designer", "text": "Place 30 items.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "items_placed", "atLeast": 30 }, "reward": 75 }
   ]
 }

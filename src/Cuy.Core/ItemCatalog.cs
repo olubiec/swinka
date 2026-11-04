@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Cuy.Core.Time;
 using Newtonsoft.Json.Linq;
 
 namespace Cuy.Core
@@ -213,11 +215,107 @@ namespace Cuy.Core
             }
         }
 
+        /// <summary>
+        /// Returns true if the category represents an edible food (food, vegetable, treat, chew_stick, care).
+        /// Non-food categories like seed, equipment, furniture, toy are not edible.
+        /// </summary>
+        public static bool IsFoodCategory(string category)
+        {
+            if (string.IsNullOrEmpty(category)) return false;
+            return string.Equals(category, "food", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(category, "vegetable", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(category, "treat", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(category, "chew_stick", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(category, "care", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Returns true if the item is present in this catalog and belongs to an edible food category.
+        /// </summary>
+        public bool IsFood(string itemId)
+        {
+            var def = GetItem(itemId);
+            return def != null && IsFoodCategory(def.Category);
+        }
+
+        /// <summary>
+        /// Feeds an item to the pet if valid and edible, applying effects to needs, bond, and daily limits.
+        /// Returns true if eaten, false if unknown, not edible (like seeds/toys), or refused (daily limit, full, etc.).
+        /// </summary>
+        public bool Feed(Pet pet, string itemId)
+        {
+            if (pet == null || string.IsNullOrEmpty(itemId)) return false;
+
+            var def = GetItem(itemId);
+            if (def == null) return false;
+
+            // Only food can be fed (seeds, toys, equipment cannot be eaten)
+            if (!IsFoodCategory(def.Category)) return false;
+
+            if (pet.RefusesTreats && (string.Equals(def.Category, "treat", StringComparison.OrdinalIgnoreCase)
+                                   || string.Equals(def.Category, "vegetable", StringComparison.OrdinalIgnoreCase)))
+            {
+                return false;
+            }
+
+            string todayStr = pet.Clock.LocalNow().ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
+            string eatenCounterKey = $"ate_{def.Id}_{todayStr}";
+
+            if (def.DailyLimit.HasValue)
+            {
+                int eatenToday = 0;
+                pet.State.Stats.Counters.TryGetValue(eatenCounterKey, out eatenToday);
+                if (eatenToday >= def.DailyLimit.Value)
+                {
+                    return false;
+                }
+            }
+
+            double fullnessEffect = def.GetEffect("fullness");
+            if (fullnessEffect > 0.0 && pet.Needs.Satiety >= 95.0)
+            {
+                return false;
+            }
+
+            // Consume from inventory if present
+            if (!def.IsUnlimited && pet.GetItemCount(def.Id) > 0)
+            {
+                pet.TryRemoveItem(def.Id, 1);
+            }
+
+            // Apply need effects
+            foreach (var eff in def.Effects)
+            {
+                if (NeedNames.TryParseDataKey(eff.Key, out Need need))
+                {
+                    pet.ChangeNeed(need, eff.Value);
+                }
+            }
+
+            pet.AddBondPoints(1);
+            if (string.Equals(def.Id, "hay", StringComparison.OrdinalIgnoreCase))
+            {
+                pet.RefillHay();
+                pet.Count("hay_refills");
+            }
+            if (!def.IsUnlimited)
+            {
+                pet.Count(eatenCounterKey);
+            }
+            pet.RecordFoodEaten(def.Id);
+            if (string.Equals(def.Category, "treat", StringComparison.OrdinalIgnoreCase))
+            {
+                pet.RecordTreat(def.Id);
+            }
+
+            return true;
+        }
+
         public static ItemCatalog LoadDefault()
         {
             // 1. Check the file system
             string baseDir = AppDomain.CurrentDomain.BaseDirectory ?? Directory.GetCurrentDirectory();
-            string[] candidatePaths = new[]
+            var candidatePaths = new List<string>
             {
                 Path.Combine(baseDir, "assets", "data"),
                 Path.Combine(baseDir),
@@ -225,8 +323,19 @@ namespace Cuy.Core
                 Path.Combine(baseDir, "..", "..", "assets", "data"),
                 Path.Combine(baseDir, "..", "..", "..", "assets", "data"),
                 Path.Combine(baseDir, "..", "..", "..", "..", "assets", "data"),
+                Path.Combine(baseDir, "..", "..", "..", "..", "..", "assets", "data"),
+                Path.Combine(baseDir, "..", "..", "..", "..", "..", "..", "assets", "data"),
                 Path.Combine(Directory.GetCurrentDirectory(), "assets", "data")
             };
+
+            string cur = baseDir;
+            while (!string.IsNullOrEmpty(cur))
+            {
+                candidatePaths.Add(Path.Combine(cur, "assets", "data"));
+                var parent = Path.GetDirectoryName(cur);
+                if (parent == cur) break;
+                cur = parent;
+            }
 
             foreach (var dirPath in candidatePaths)
             {
@@ -239,13 +348,29 @@ namespace Cuy.Core
                         if (File.Exists(itemsFile))
                         {
                             var jsons = new List<string>();
+                            var loadedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
                             jsons.Add(File.ReadAllText(itemsFile));
+                            loadedPaths.Add(Path.GetFullPath(itemsFile));
 
                             var extraFiles = Directory.GetFiles(fullDirPath, "items_*.json");
                             Array.Sort(extraFiles); // alphabetical
                             foreach (var f in extraFiles)
                             {
-                                jsons.Add(File.ReadAllText(f));
+                                if (loadedPaths.Add(Path.GetFullPath(f)))
+                                {
+                                    jsons.Add(File.ReadAllText(f));
+                                }
+                            }
+
+                            string[] knownExtras = new[] { "items_shop.json", "items_decor.json", "items_farm.json" };
+                            foreach (var extra in knownExtras)
+                            {
+                                string p = Path.Combine(fullDirPath, extra);
+                                if (File.Exists(p) && loadedPaths.Add(Path.GetFullPath(p)))
+                                {
+                                    jsons.Add(File.ReadAllText(p));
+                                }
                             }
 
                             return LoadJsonFiles(jsons);
