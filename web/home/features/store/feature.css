@@ -1,0 +1,282 @@
+/* Home store page. Scoped to the modal body with class feature-store. */
+.feature-store .store-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  color: var(--text, #2b2118);
+}
+
+.feature-store .store-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.feature-store .store-title {
+  margin: 0;
+  font-size: 1.25em;
+}
+
+.feature-store .store-balance {
+  margin: 0;
+  font-weight: bold;
+}
+
+.feature-store .store-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 12px;
+}
+
+.feature-store .store-field,
+.feature-store .store-check {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.9em;
+}
+
+.feature-store .store-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.feature-store .store-price {
+  display: flex;
+  gap: 6px;
+  border: 1px solid var(--line, #c9b59a);
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin: 0;
+}
+
+.feature-store .store-price legend {
+  font-size: 0.9em;
+  padding: 0 4px;
+}
+
+.feature-store .store-price label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85em;
+}
+
+.feature-store input,
+.feature-store select {
+  font: inherit;
+  min-height: 32px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.feature-store input[type="number"] {
+  width: 84px;
+}
+
+.feature-store .store-layout {
+  display: grid;
+  grid-template-columns: minmax(120px, 180px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.feature-store .store-categories ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature-store .store-categories button {
+  width: 100%;
+  text-align: left;
+  min-height: 36px;
+  padding: 4px 8px;
+  border: 1px solid var(--line, #c9b59a);
+  border-radius: 6px;
+  background: var(--panel, #fffaf2);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.feature-store .store-categories button[aria-pressed="true"] {
+  background: var(--accent, #f2c26b);
+  font-weight: bold;
+}
+
+.feature-store .store-count {
+  margin: 0 0 6px;
+  font-size: 0.85em;
+}
+
+.feature-store .store-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.feature-store .store-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line, #c9b59a);
+  border-radius: 8px;
+  background: var(--panel, #fffaf2);
+}
+
+.feature-store .store-card.is-locked {
+  opacity: 0.75;
+}
+
+.feature-store .store-card-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.feature-store .store-icon {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+}
+
+.feature-store .store-name {
+  margin: 0;
+  font-size: 1em;
+  overflow-wrap: anywhere;
+}
+
+.feature-store .store-meta,
+.feature-store .store-counts {
+  margin: 0;
+  font-size: 0.85em;
+}
+
+.feature-store .store-card-price {
+  margin: 0;
+  font-weight: bold;
+}
+
+.feature-store .store-locked {
+  margin: 0;
+  font-size: 0.85em;
+  color: var(--muted, #6b5a48);
+}
+
+/* Padlock drawn with CSS, no emoji or image. */
+.feature-store .store-lock {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 12px;
+  height: 10px;
+  margin-left: auto;
+  border: 2px solid currentColor;
+  border-radius: 2px;
+  position: relative;
+}
+
+.feature-store .store-lock::before {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: -7px;
+  width: 8px;
+  height: 7px;
+  border: 2px solid currentColor;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+
+.feature-store .store-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.feature-store .store-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.feature-store .store-stepper button {
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.feature-store .store-stepper input {
+  width: 56px;
+  text-align: center;
+}
+
+.feature-store .store-buy {
+  min-height: 32px;
+  padding: 4px 14px;
+  font: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.feature-store button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.feature-store button:focus-visible,
+.feature-store input:focus-visible,
+.feature-store select:focus-visible {
+  outline: 2px solid var(--focus, #2d6cdf);
+  outline-offset: 2px;
+}
+
+.feature-store .store-empty {
+  grid-column: 1 / -1;
+  padding: 16px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Phone width: stack the category list above the grid, no horizontal scroll. */
+@media (max-width: 560px) {
+  .feature-store .store-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .feature-store .store-categories ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .feature-store .store-categories li {
+    flex: 0 0 auto;
+  }
+
+  .feature-store .store-categories button {
+    width: auto;
+  }
+
+  .feature-store .store-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .feature-store input[type="number"] {
+    width: 72px;
+  }
+}
