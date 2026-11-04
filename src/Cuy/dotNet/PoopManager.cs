@@ -39,7 +39,7 @@ namespace Cuy
             _pet = controller.Pet ?? throw new ArgumentNullException(nameof(controller.Pet));
 
             // Random time until the next poop (40-90 game minutes)
-            _timeUntilNextPoop = TimeSpan.FromMinutes(_random.Next(40, 91));
+            _timeUntilNextPoop = NextInterval();
             _elapsedGameTime = TimeSpan.Zero;
         }
 
@@ -91,10 +91,23 @@ namespace Cuy
                 if (_elapsedGameTime >= _timeUntilNextPoop)
                 {
                     _elapsedGameTime = TimeSpan.Zero;
-                    _timeUntilNextPoop = TimeSpan.FromMinutes(_random.Next(40, 91));
+                    _timeUntilNextPoop = NextInterval();
                     TrySpawnPoop();
                 }
             }
+        }
+
+        private TimeSpan NextInterval()
+        {
+            double baseMinutes = _random.Next(40, 91);
+            double poopRate = _pet?.ActiveModifiers.PoopRate ?? 1.0;
+            if (poopRate <= 0.0 || double.IsNaN(poopRate) || double.IsInfinity(poopRate))
+            {
+                poopRate = 1.0;
+            }
+
+            double minutes = Math.Max(10.0, baseMinutes / poopRate);
+            return TimeSpan.FromMinutes(minutes);
         }
 
         /// <summary>
