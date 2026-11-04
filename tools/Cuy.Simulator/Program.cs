@@ -7,6 +7,7 @@ using System.Text;
 using Cuy.Core;
 using Cuy.Core.AI;
 using Cuy.Core.Economy;
+using Cuy.Core.Pigs;
 using Cuy.Core.Save;
 using Cuy.Core.Time;
 
@@ -28,6 +29,7 @@ namespace Cuy.Simulator
             public DateTime StartLocal = DateTime.Today.AddHours(8);
             public string SaveDir;
             public bool Full;
+            public bool Collection;
         }
 
         private static readonly Dictionary<string, int> EventCounts = new Dictionary<string, int>();
@@ -51,6 +53,11 @@ namespace Cuy.Simulator
             if (o.Full)
             {
                 return RunFullSimulation(o);
+            }
+
+            if (o.Collection)
+            {
+                return RunCollectionSimulation(writeReport: true);
             }
 
             bool tempDir = o.SaveDir == null;
@@ -211,6 +218,54 @@ namespace Cuy.Simulator
             public int BirthdaysCelebrated;
         }
 
+        private static ProfileStats CreateProfileStats(string name)
+        {
+            switch (name)
+            {
+                case "Casual":
+                    return new ProfileStats
+                    {
+                        Name = "Casual",
+                        PcFrom = 19,
+                        PcTo = 21,
+                        MinigamesPerDay = 2,
+                        MinigameScore = 120,
+                        HayRefillsPerDay = 1,
+                        VeggiesPerDay = 1,
+                        PetsPerDay = 3,
+                        CareTasksPerDay = 1
+                    };
+                case "Regular":
+                    return new ProfileStats
+                    {
+                        Name = "Regular",
+                        PcFrom = 9,
+                        PcTo = 17,
+                        MinigamesPerDay = 4,
+                        MinigameScore = 140,
+                        HayRefillsPerDay = 3,
+                        VeggiesPerDay = 2,
+                        PetsPerDay = 9,
+                        CareTasksPerDay = 3
+                    };
+                case "Heavy":
+                    return new ProfileStats
+                    {
+                        Name = "Heavy",
+                        PcFrom = 8,
+                        PcTo = 22,
+                        MinigamesPerDay = 10,
+                        MinigameScore = 180,
+                        HayRefillsPerDay = 3,
+                        VeggiesPerDay = 4,
+                        PetsPerDay = 18,
+                        CareTasksPerDay = 6
+                    };
+                default:
+                    throw new ArgumentException("Unknown profile: " + name);
+            }
+        }
+
         private static int RunFullSimulation(Options o)
         {
             Console.WriteLine("==========================================================================================");
@@ -220,42 +275,9 @@ namespace Cuy.Simulator
 
             var profiles = new[]
             {
-                new ProfileStats
-                {
-                    Name = "Casual",
-                    PcFrom = 19,
-                    PcTo = 21,
-                    MinigamesPerDay = 2,
-                    MinigameScore = 120,
-                    HayRefillsPerDay = 1,
-                    VeggiesPerDay = 1,
-                    PetsPerDay = 3,
-                    CareTasksPerDay = 1
-                },
-                new ProfileStats
-                {
-                    Name = "Regular",
-                    PcFrom = 9,
-                    PcTo = 17,
-                    MinigamesPerDay = 4,
-                    MinigameScore = 140,
-                    HayRefillsPerDay = 3,
-                    VeggiesPerDay = 2,
-                    PetsPerDay = 9,
-                    CareTasksPerDay = 3
-                },
-                new ProfileStats
-                {
-                    Name = "Heavy",
-                    PcFrom = 8,
-                    PcTo = 22,
-                    MinigamesPerDay = 10,
-                    MinigameScore = 180,
-                    HayRefillsPerDay = 3,
-                    VeggiesPerDay = 4,
-                    PetsPerDay = 18,
-                    CareTasksPerDay = 6
-                }
+                CreateProfileStats("Casual"),
+                CreateProfileStats("Regular"),
+                CreateProfileStats("Heavy")
             };
 
             foreach (var prof in profiles)
@@ -337,12 +359,266 @@ namespace Cuy.Simulator
             // Exploit Check
             RunExploitCheck();
 
+            Console.WriteLine();
+            int collectionResult = RunCollectionSimulation(writeReport: true);
+            if (collectionResult != 0)
+            {
+                return collectionResult;
+            }
+
             return 0;
         }
 
-        private static void RunProfileSimulation(ProfileStats prof, int days)
+        private sealed class CollectionPairResult
         {
-            string tempDir = Path.Combine(Path.GetTempPath(), "CuySimFull_" + prof.Name);
+            public string PairLabel;
+            public string Pig1Id;
+            public string Pig2Id;
+            public ProfileStats Casual;
+            public ProfileStats Regular;
+            public ProfileStats Heavy;
+            public double CasualDiffPct;
+            public double RegularDiffPct;
+            public double HeavyDiffPct;
+            public double CasualEarnedDiffPct;
+            public double RegularEarnedDiffPct;
+            public double HeavyEarnedDiffPct;
+            public PigModifiers Modifiers;
+            public bool WithinTolerance;
+        }
+
+        private static int RunCollectionSimulation(bool writeReport)
+        {
+            Console.WriteLine("------------------------------------------------------------------------------------------");
+            Console.WriteLine(" COLLECTION PAIRS 60-DAY ECONOMY INVARIANTS (PigModifiersActive = true)");
+            Console.WriteLine(" Target: Every pair from the collection stays within +-10% of the single-pig baseline");
+            Console.WriteLine("------------------------------------------------------------------------------------------");
+
+            var catalog = NamedPigCatalog.LoadDefault();
+            var baselineCasual = CreateProfileStats("Casual");
+            var baselineRegular = CreateProfileStats("Regular");
+            var baselineHeavy = CreateProfileStats("Heavy");
+
+            RunProfileSimulation(baselineCasual, 60, null, catalog, pigModifiersActive: false);
+            RunProfileSimulation(baselineRegular, 60, null, catalog, pigModifiersActive: false);
+            RunProfileSimulation(baselineHeavy, 60, null, catalog, pigModifiersActive: false);
+
+            var pigIds = catalog.Pigs.Select(p => p.Id).ToList();
+            var pairs = new List<Tuple<string, string>>();
+
+            // Starter pair Kuki + Ned first, then every other pair in catalog order
+            for (int i = 0; i < pigIds.Count; i++)
+            {
+                for (int j = i + 1; j < pigIds.Count; j++)
+                {
+                    pairs.Add(Tuple.Create(pigIds[i], pigIds[j]));
+                }
+            }
+
+            var results = new List<CollectionPairResult>();
+            bool allPass = true;
+
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture,
+                "{0,-18} | {1,-19} | {2,-19} | {3,-19} | {4,-16} | {5}",
+                "Pair", "Casual Earned (Δ%)", "Regular Earned (Δ%)", "Heavy Earned (Δ%)", "Regular Final", "Status"));
+            Console.WriteLine(new string('-', 108));
+
+            foreach (var pair in pairs)
+            {
+                var def1 = catalog.Find(pair.Item1);
+                var def2 = catalog.Find(pair.Item2);
+                string label = (def1 != null ? def1.Name : pair.Item1) + " + " + (def2 != null ? def2.Name : pair.Item2);
+
+                var cStats = CreateProfileStats("Casual");
+                var rStats = CreateProfileStats("Regular");
+                var hStats = CreateProfileStats("Heavy");
+
+                var pairIds = new[] { pair.Item1, pair.Item2 };
+                RunProfileSimulation(cStats, 60, pairIds, catalog, pigModifiersActive: true);
+                RunProfileSimulation(rStats, 60, pairIds, catalog, pigModifiersActive: true);
+                RunProfileSimulation(hStats, 60, pairIds, catalog, pigModifiersActive: true);
+
+                var modsList = new List<PigModifiers>();
+                if (def1?.Modifiers != null) modsList.Add(PigModifiers.FromDictionary(def1.Modifiers));
+                if (def2?.Modifiers != null) modsList.Add(PigModifiers.FromDictionary(def2.Modifiers));
+                var activeMods = PigModifiers.AverageClamped(modsList, catalog.ModifierMin, catalog.ModifierMax);
+
+                double cEarnedDiff = baselineCasual.TotalEarnedClovers > 0
+                    ? ((cStats.TotalEarnedClovers - baselineCasual.TotalEarnedClovers) * 100.0 / baselineCasual.TotalEarnedClovers)
+                    : 0.0;
+                double rEarnedDiff = baselineRegular.TotalEarnedClovers > 0
+                    ? ((rStats.TotalEarnedClovers - baselineRegular.TotalEarnedClovers) * 100.0 / baselineRegular.TotalEarnedClovers)
+                    : 0.0;
+                double hEarnedDiff = baselineHeavy.TotalEarnedClovers > 0
+                    ? ((hStats.TotalEarnedClovers - baselineHeavy.TotalEarnedClovers) * 100.0 / baselineHeavy.TotalEarnedClovers)
+                    : 0.0;
+
+                double cFinalDiff = baselineCasual.FinalClovers > 0
+                    ? ((cStats.FinalClovers - baselineCasual.FinalClovers) * 100.0 / baselineCasual.FinalClovers)
+                    : 0.0;
+                double rFinalDiff = baselineRegular.FinalClovers > 0
+                    ? ((rStats.FinalClovers - baselineRegular.FinalClovers) * 100.0 / baselineRegular.FinalClovers)
+                    : 0.0;
+                double hFinalDiff = baselineHeavy.FinalClovers > 0
+                    ? ((hStats.FinalClovers - baselineHeavy.FinalClovers) * 100.0 / baselineHeavy.FinalClovers)
+                    : 0.0;
+
+                bool pass = Math.Abs(cEarnedDiff) <= 10.0 &&
+                            Math.Abs(rEarnedDiff) <= 10.0 &&
+                            Math.Abs(hEarnedDiff) <= 10.0 &&
+                            Math.Abs(cFinalDiff) <= 10.0 &&
+                            Math.Abs(rFinalDiff) <= 10.0 &&
+                            Math.Abs(hFinalDiff) <= 10.0;
+
+                if (!pass)
+                {
+                    allPass = false;
+                }
+
+                var res = new CollectionPairResult
+                {
+                    PairLabel = label,
+                    Pig1Id = pair.Item1,
+                    Pig2Id = pair.Item2,
+                    Casual = cStats,
+                    Regular = rStats,
+                    Heavy = hStats,
+                    CasualDiffPct = cFinalDiff,
+                    RegularDiffPct = rFinalDiff,
+                    HeavyDiffPct = hFinalDiff,
+                    CasualEarnedDiffPct = cEarnedDiff,
+                    RegularEarnedDiffPct = rEarnedDiff,
+                    HeavyEarnedDiffPct = hEarnedDiff,
+                    Modifiers = activeMods,
+                    WithinTolerance = pass
+                };
+                results.Add(res);
+
+                Console.WriteLine(string.Format(CultureInfo.InvariantCulture,
+                    "{0,-18} | {1,5} ({2,6:+0.0;-0.0;+0.0}%)     | {3,5} ({4,6:+0.0;-0.0;+0.0}%)     | {5,5} ({6,6:+0.0;-0.0;+0.0}%)     | {7,5} ({8,6:+0.0;-0.0;+0.0}%) | {9}",
+                    label,
+                    cStats.TotalEarnedClovers, cEarnedDiff,
+                    rStats.TotalEarnedClovers, rEarnedDiff,
+                    hStats.TotalEarnedClovers, hEarnedDiff,
+                    rStats.FinalClovers, rFinalDiff,
+                    pass ? "PASS" : "FAIL"));
+            }
+
+            if (writeReport)
+            {
+                UpdateEconomyReportWithCollectionSection(baselineCasual, baselineRegular, baselineHeavy, results);
+            }
+
+            if (allPass)
+            {
+                Console.WriteLine(">> COLLECTION ECONOMY INVARIANT RESULT: ALL PAIRS WITHIN +-10% OF BASELINE [PASS]");
+                return 0;
+            }
+            else
+            {
+                Console.WriteLine(">> COLLECTION ECONOMY INVARIANT RESULT: PAIR DEVIATED BY MORE THAN 10% [FAIL]");
+                return 1;
+            }
+        }
+
+        private static string FindRepoRoot()
+        {
+            string[] starts = new[]
+            {
+                Directory.GetCurrentDirectory(),
+                AppDomain.CurrentDomain.BaseDirectory
+            };
+
+            foreach (var start in starts)
+            {
+                string dir = start;
+                while (!string.IsNullOrEmpty(dir))
+                {
+                    if (File.Exists(Path.Combine(dir, "Cuy.sln")))
+                    {
+                        return dir;
+                    }
+                    dir = Path.GetDirectoryName(dir);
+                }
+            }
+            return null;
+        }
+
+        private static void UpdateEconomyReportWithCollectionSection(
+            ProfileStats baselineCasual,
+            ProfileStats baselineRegular,
+            ProfileStats baselineHeavy,
+            List<CollectionPairResult> results)
+        {
+            string repoRoot = FindRepoRoot();
+            if (repoRoot == null) return;
+
+            string reportPath = Path.Combine(repoRoot, "docs", "economy-report.md");
+            if (!File.Exists(reportPath)) return;
+
+            string existing = File.ReadAllText(reportPath, Encoding.UTF8);
+            string marker = "\r\n---\r\n\r\n## 7. Collection Pairs Balance";
+            string altMarker = "\n---\n\n## 7. Collection Pairs Balance";
+
+            int idx = existing.IndexOf(marker, StringComparison.Ordinal);
+            if (idx < 0) idx = existing.IndexOf(altMarker, StringComparison.Ordinal);
+
+            string prefix = idx >= 0 ? existing.Substring(0, idx) : existing.TrimEnd('\r', '\n');
+            bool useCrlf = existing.Contains("\r\n");
+            string nl = useCrlf ? "\r\n" : "\n";
+
+            var sb = new StringBuilder();
+            sb.Append(prefix);
+            sb.Append(nl);
+            sb.Append(nl);
+            sb.Append("---").Append(nl);
+            sb.Append(nl);
+            sb.Append("## 7. Collection Pairs Balance (60 Days, `PigModifiersActive = true`)").Append(nl);
+            sb.Append("All ten active pairs from `assets/data/pigs_named.json` (starting with `Kuki + Ned` and every other pair in the collection) were simulated over 60 days across all three player profiles with `Balance.PigModifiersActive = true` and `Balance.PerPigAgeActive = true`, compared against the single-pig baseline (tolerance: $\\pm 10\\%$).").Append(nl);
+            sb.Append(nl);
+            sb.Append("| Active Pair | Modifiers (`minigame` / `poop` / `bond` / `appetite`) | Casual Clovers ($\\Delta\\%$) | Regular Clovers ($\\Delta\\%$) | Heavy Clovers ($\\Delta\\%$) | Regular Final Balance ($\\Delta\\%$) | Status |").Append(nl);
+            sb.Append("| :--- | :---: | :---: | :---: | :---: | :---: | :---: |").Append(nl);
+            sb.Append(string.Format(CultureInfo.InvariantCulture,
+                "| **Single-Pig Baseline** | `1.00 / 1.00 / 1.00 / 1.00` | {0:N0} 🍀 (+0.0%) | {1:N0} 🍀 (+0.0%) | {2:N0} 🍀 (+0.0%) | {3:N0} 🍀 (+0.0%) | **BASELINE** |",
+                baselineCasual.TotalEarnedClovers,
+                baselineRegular.TotalEarnedClovers,
+                baselineHeavy.TotalEarnedClovers,
+                baselineRegular.FinalClovers)).Append(nl);
+
+            foreach (var r in results)
+            {
+                string modSummary = string.Format(CultureInfo.InvariantCulture,
+                    "`{0:0.00} / {1:0.00} / {2:0.00} / {3:0.00}`",
+                    r.Modifiers.MinigameScore,
+                    r.Modifiers.PoopRate,
+                    r.Modifiers.BondGain,
+                    r.Modifiers.Appetite);
+
+                sb.Append(string.Format(CultureInfo.InvariantCulture,
+                    "| **{0}** | {1} | {2:N0} 🍀 ({3:+0.0;-0.0;+0.0}%) | {4:N0} 🍀 ({5:+0.0;-0.0;+0.0}%) | {6:N0} 🍀 ({7:+0.0;-0.0;+0.0}%) | {8:N0} 🍀 ({9:+0.0;-0.0;+0.0}%) | **{10}** |",
+                    r.PairLabel,
+                    modSummary,
+                    r.Casual.TotalEarnedClovers, r.CasualEarnedDiffPct,
+                    r.Regular.TotalEarnedClovers, r.RegularEarnedDiffPct,
+                    r.Heavy.TotalEarnedClovers, r.HeavyEarnedDiffPct,
+                    r.Regular.FinalClovers, r.RegularDiffPct,
+                    r.WithinTolerance ? "PASS" : "FAIL")).Append(nl);
+            }
+
+            File.WriteAllText(reportPath, sb.ToString(), new UTF8Encoding(false));
+        }
+
+        private static void RunProfileSimulation(
+            ProfileStats prof,
+            int days,
+            IReadOnlyList<string> activeNamedPigIds = null,
+            NamedPigCatalog catalog = null,
+            bool pigModifiersActive = false)
+        {
+            string suffix = activeNamedPigIds != null && activeNamedPigIds.Count > 0
+                ? "_" + string.Join("_", activeNamedPigIds)
+                : "";
+            string tempDir = Path.Combine(Path.GetTempPath(), "CuySimFull_" + prof.Name + suffix);
             if (Directory.Exists(tempDir))
             {
                 try { Directory.Delete(tempDir, true); } catch { }
@@ -355,6 +631,8 @@ namespace Cuy.Simulator
             balance.HayRackActive = true;
             balance.DiaryActive = true;
             balance.BirthdayRewardsActive = true;
+            balance.PigModifiersActive = pigModifiersActive;
+            balance.PerPigAgeActive = pigModifiersActive;
 
             prof.CloversBySource["daily_gift"] = 0;
             prof.CloversBySource["minigames"] = 0;
@@ -373,6 +651,43 @@ namespace Cuy.Simulator
                 // Open session for the day
                 session = GameSession.Open(clock, tempDir, balance);
                 var pet = session.Pet;
+                if (catalog != null)
+                {
+                    pet.NamedPigs = catalog;
+                }
+                if (!pigModifiersActive)
+                {
+                    balance.PigModifiersActive = false;
+                    balance.PerPigAgeActive = false;
+                }
+
+                if (day == 1 && activeNamedPigIds != null && activeNamedPigIds.Count > 0)
+                {
+                    var cat = catalog ?? pet.NamedPigs;
+                    var rng = new Random(42);
+                    pet.State.Roster.Clear();
+                    pet.State.ActivePigIds.Clear();
+                    foreach (var pigId in activeNamedPigIds)
+                    {
+                        var def = cat?.Find(pigId);
+                        if (def != null)
+                        {
+                            var profile = new PigProfile(def.Name, def.Breed, def.PaletteId)
+                            {
+                                NamedId = def.Id,
+                                BornAtUtc = PigLife.BornAtFor(clock.UtcNow, def.StartAgeYears, balance.PigDaysPerRealDay),
+                                ArrivedAtUtc = clock.UtcNow,
+                                LegendAtYears = LegendRoll.RollFor(def, rng),
+                                Traits = def.Traits != null ? new List<string>(def.Traits) : new List<string>()
+                            };
+                            pet.State.Roster.Add(profile);
+                            if (pet.State.ActivePigIds.Count < 2)
+                            {
+                                pet.State.ActivePigIds.Add(profile.Id);
+                            }
+                        }
+                    }
+                }
 
                 // 1. Claim Daily Gift
                 int gift = pet.ClaimDailyGift();
@@ -449,7 +764,10 @@ namespace Cuy.Simulator
                 }
 
                 // 8. Poop Cleaning
-                int poops = Math.Max(1, (prof.PcTo - prof.PcFrom) / 3);
+                int basePoops = Math.Max(1, (prof.PcTo - prof.PcFrom) / 3);
+                int poops = pigModifiersActive
+                    ? Math.Max(1, (int)Math.Round(basePoops * pet.ActiveModifiers.PoopRate, MidpointRounding.AwayFromZero))
+                    : basePoops;
                 for (int pc = 0; pc < poops; pc++)
                 {
                     pet.AddClovers(1);
@@ -474,8 +792,9 @@ namespace Cuy.Simulator
                 if (pet.State.BirthdaysCelebrated > oldBirthdays)
                 {
                     prof.BirthdaysCelebrated = pet.State.BirthdaysCelebrated;
-                    prof.CloversBySource["birthdays"] += 50;
-                    prof.TotalEarnedClovers += 50;
+                    int newBirthdays = Math.Min(3, pet.State.BirthdaysCelebrated - oldBirthdays);
+                    prof.CloversBySource["birthdays"] += 50 * newBirthdays;
+                    prof.TotalEarnedClovers += 50 * newBirthdays;
                 }
 
                 // 11. Spending (Sinks)
@@ -718,6 +1037,10 @@ namespace Cuy.Simulator
                         o.Full = true;
                         o.Days = 60;
                         break;
+                    case "--collection":
+                        o.Collection = true;
+                        o.Days = 60;
+                        break;
                     case "--pc":
                         var parts = Next(args, ref i).Split('-');
                         if (parts.Length != 2) throw new FormatException("--pc expects an hour range, e.g. 9-17");
@@ -757,14 +1080,15 @@ namespace Cuy.Simulator
 
         private static void PrintHelp()
         {
-            Console.WriteLine("Usage: Cuy.Simulator [days] [--full] [--pc FROM-TO] [--care] [--every HOURS] [--start \"YYYY-MM-DD HH:MM\"] [--save FOLDER]");
-            Console.WriteLine("  --full     run full 60-day economy & progression simulation (3 profiles + exploit check)");
-            Console.WriteLine("  days       game days to fast-forward (default 7)");
-            Console.WriteLine("  --pc 9-17  hours the computer is on; offline rules outside them (default 0-24)");
-            Console.WriteLine("  --care     simple care: hay every 2 h, bell pepper twice a day, petting every hour");
-            Console.WriteLine("  --every 24 print the state every N game hours (default 1)");
-            Console.WriteLine("  --start    simulation start (default today 08:00)");
-            Console.WriteLine("  --save     save folder; default %TEMP%\\CuySimulator (cleared at start)");
+            Console.WriteLine("Usage: Cuy.Simulator [days] [--full] [--collection] [--pc FROM-TO] [--care] [--every HOURS] [--start \"YYYY-MM-DD HH:MM\"] [--save FOLDER]");
+            Console.WriteLine("  --full       run full 60-day economy & progression simulation (3 profiles + exploit check + collection)");
+            Console.WriteLine("  --collection run 60-day collection pair economy invariant check and update docs/economy-report.md");
+            Console.WriteLine("  days         game days to fast-forward (default 7)");
+            Console.WriteLine("  --pc 9-17    hours the computer is on; offline rules outside them (default 0-24)");
+            Console.WriteLine("  --care       simple care: hay every 2 h, bell pepper twice a day, petting every hour");
+            Console.WriteLine("  --every 24   print the state every N game hours (default 1)");
+            Console.WriteLine("  --start      simulation start (default today 08:00)");
+            Console.WriteLine("  --save       save folder; default %TEMP%\\CuySimulator (cleared at start)");
         }
     }
 }
