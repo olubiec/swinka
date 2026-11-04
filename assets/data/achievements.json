@@ -30,6 +30,9 @@
     { "id": "garden_party", "title": "Garden Party", "text": "Unlock the garden.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "places_unlocked", "atLeast": 1 }, "reward": 50 },
     { "id": "grand_park", "title": "Grand Park", "text": "Unlock the park.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "places_unlocked", "atLeast": 2 }, "reward": 100 },
     { "id": "full_farm", "title": "Full Farm", "text": "Own 24 garden plots.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "plots_owned", "atLeast": 24 }, "reward": 150 },
-    { "id": "home_designer", "title": "Home Designer", "text": "Place 30 items.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "items_placed", "atLeast": 30 }, "reward": 75 }
+    { "id": "home_designer", "title": "Home Designer", "text": "Place 30 items.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "items_placed", "atLeast": 30 }, "reward": 75 },
+    { "id": "own_room", "title": "Own Room", "text": "Furnish a pig's room with 5 items.", "category": "care", "hidden": false, "rule": { "kind": "counter", "name": "pig_room_items", "atLeast": 5 }, "reward": 25 },
+    { "id": "every_pig_home", "title": "Every Pig Home", "text": "Furnish 5 pig rooms.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "pig_rooms_furnished", "atLeast": 5 }, "reward": 100 },
+    { "id": "shared_nest", "title": "Shared Nest", "text": "Unlock the shared bedroom.", "category": "social", "hidden": false, "rule": { "kind": "counter", "name": "dorm_unlocked", "atLeast": 1 }, "reward": 75 }
   ]
 }

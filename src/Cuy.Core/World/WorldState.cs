@@ -49,12 +49,47 @@ namespace Cuy.Core.World
             get => _market ?? (_market = new MarketState());
             set => _market = value ?? new MarketState();
         }
+
+        /// <summary>Pig id -> the pig's own room layout while the pig lives in the shared bedroom.</summary>
+        private Dictionary<string, RoomLayout> _parked;
+        public Dictionary<string, RoomLayout> Parked
+        {
+            get => _parked ?? (_parked = new Dictionary<string, RoomLayout>());
+            set => _parked = value ?? new Dictionary<string, RoomLayout>();
+        }
+
+        /// <summary>Pig id -> shared room id. Absent = the pig has its own room.</summary>
+        private Dictionary<string, string> _roomShare;
+        public Dictionary<string, string> RoomShare
+        {
+            get => _roomShare ?? (_roomShare = new Dictionary<string, string>());
+            set => _roomShare = value ?? new Dictionary<string, string>();
+        }
+
+        /// <summary>Pig ids whose room was created.</summary>
+        private HashSet<string> _pigRoomsEnsured;
+        public HashSet<string> PigRoomsEnsured
+        {
+            get => _pigRoomsEnsured ?? (_pigRoomsEnsured = new HashSet<string>());
+            set => _pigRoomsEnsured = value ?? new HashSet<string>();
+        }
+
+        /// <summary>Variants bought with clovers, keys '&lt;itemId&gt;:&lt;variant&gt;'.</summary>
+        private HashSet<string> _unlockedVariants;
+        public HashSet<string> UnlockedVariants
+        {
+            get => _unlockedVariants ?? (_unlockedVariants = new HashSet<string>());
+            set => _unlockedVariants = value ?? new HashSet<string>();
+        }
     }
 
     public class RoomLayout
     {
         public string Wallpaper { get; set; } = string.Empty;
         public string Floor { get; set; } = string.Empty;
+
+        /// <summary>Room name chosen by the game; null = use the catalog name.</summary>
+        public string Name { get; set; }
 
         private List<PlacedItem> _items;
         public List<PlacedItem> Items
@@ -71,6 +106,9 @@ namespace Cuy.Core.World
         public int X { get; set; }
         public int Y { get; set; }
         public bool Flip { get; set; }
+
+        /// <summary>Colour variant 0..3; 0 = the default look.</summary>
+        public int Variant { get; set; } = 0;
     }
 
     public class FarmState

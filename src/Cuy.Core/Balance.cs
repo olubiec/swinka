@@ -104,6 +104,12 @@ namespace Cuy.Core
         /// <summary>World decorations are active.</summary>
         public bool WorldDecorActive { get; set; } = false;
 
+        /// <summary>Each pig has its own room (assets/data/pig_rooms.json). Switched on by the app later, not in GameSession.Open.</summary>
+        public bool PigRoomsActive { get; set; } = false;
+
+        /// <summary>The shared bedroom (dorm) for pigs is active.</summary>
+        public bool DormActive { get; set; } = false;
+
         public static Balance CreateDefault()
         {
             return new Balance();
