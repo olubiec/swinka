@@ -16,6 +16,7 @@ namespace Cuy.Behaviors
         private DateTime _lastShakeTime = DateTime.MinValue;
         private DateTime _lastFleeTime = DateTime.MinValue;
         private DateTime _lastApproachTime = DateTime.MinValue;
+        private int _recentShakeCount;
 
         private bool _isFreezing;
         private TimeSpan _freezeRemaining;
@@ -137,13 +138,32 @@ namespace Cuy.Behaviors
                 return;
             }
 
-            // Normal pig: second shake within 10s causes flee (if cooldown >= 5m)
-            if ((now - _lastShakeTime) < TimeSpan.FromSeconds(10) && (now - _lastFleeTime) >= TimeSpan.FromMinutes(5))
+            // Normal pig: shake threshold divided by Pet.ActiveModifiers.Startle (clamped to at least 40% of original)
+            const double baseShakes = 2.0;
+            double startle = (_ctx?.Pet != null) ? _ctx.Pet.ActiveModifiers.Startle : 1.0;
+            if (startle <= 0.0 || double.IsNaN(startle) || double.IsInfinity(startle))
             {
+                startle = 1.0;
+            }
+
+            double effectiveThreshold = Math.Max(baseShakes * 0.4, baseShakes / startle);
+            int shakesNeeded = Math.Max(1, (int)Math.Round(effectiveThreshold, MidpointRounding.AwayFromZero));
+
+            if ((now - _lastShakeTime) > TimeSpan.FromSeconds(10))
+            {
+                _recentShakeCount = 0;
+            }
+            _recentShakeCount++;
+            _lastShakeTime = now;
+
+            if (_recentShakeCount >= shakesNeeded && (now - _lastFleeTime) >= TimeSpan.FromMinutes(5))
+            {
+                _recentShakeCount = 0;
                 _lastFleeTime = now;
                 _isFleeing = true;
+                _isFreezing = false;
                 _fleeWaitRemaining = TimeSpan.FromSeconds(_random.Next(5, 21)); // 5-20 s
-                _ctx.Log("[Fear] second shake within 10s, fleeing to edge");
+                _ctx.Log($"[Fear] shake threshold reached ({shakesNeeded} shake(s) within 10s), fleeing to edge");
                 SoundManager.Instance?.PlayFear();
                 pet.PlayAnimationByName("flee");
 
@@ -156,7 +176,6 @@ namespace Cuy.Behaviors
             }
             else
             {
-                _lastShakeTime = now;
                 _ctx.Log("[Fear] mouse shake detected, startle and freeze");
                 SoundManager.Instance?.PlayFear();
                 pet.PlayAnimationByName("startle");
@@ -180,6 +199,8 @@ namespace Cuy.Behaviors
                 _isFleeing = false;
                 _ctx?.ActivePet?.Show();
             }
+
+            _recentShakeCount = 0;
         }
     }
 }
