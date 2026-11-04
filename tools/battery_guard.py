@@ -127,15 +127,28 @@ def run_git(args: list[str], cwd: Path = REPO_ROOT) -> subprocess.CompletedProce
 
 
 def read_orkiestra_summary() -> dict:
+    current_wave = "W19"
+    log_res = run_git(["log", "-n", "10", "--format=%s"])
+    if log_res.returncode == 0:
+        for line in log_res.stdout.splitlines():
+            m = re.match(r"^(W\d+[a-z]?):", line)
+            if m:
+                # If W18 was last committed, current wave is W19
+                last_wave = m.group(1)
+                if last_wave == "W18":
+                    current_wave = "W19"
+                else:
+                    current_wave = last_wave
+                break
+
     if not STATE_FILE.exists():
-        return {"current_wave": "W12", "merged": [], "in_progress": [], "pending": [], "total": 162}
+        return {"current_wave": current_wave, "merged": [], "in_progress": [], "pending": [], "total": 162}
     try:
         data = json.loads(STATE_FILE.read_text(encoding="utf-8"))
         tasks = data.get("tasks", {})
         merged = [t for t, v in tasks.items() if v.get("status") == "merged"]
         in_progress = [t for t, v in tasks.items() if v.get("status") in ("running", "verified", "pr_open")]
         pending = [t for t, v in tasks.items() if v.get("status") == "pending"]
-        current_wave = data.get("current_wave", "W12")
         return {
             "current_wave": current_wave,
             "merged": merged,
@@ -146,7 +159,7 @@ def read_orkiestra_summary() -> dict:
         }
     except Exception as exc:
         logger.warning(f"Błąd odczytu {STATE_FILE}: {exc}")
-        return {"current_wave": "błąd", "merged": [], "in_progress": [], "pending": [], "total": 162}
+        return {"current_wave": current_wave, "merged": [], "in_progress": [], "pending": [], "total": 162}
 
 
 def generate_dashboard_markdown(battery: BatteryStatus, is_stopped: bool = False, reason: str = "") -> str:
@@ -323,7 +336,10 @@ def sync_heartbeat(battery: BatteryStatus) -> None:
         run_git(["add", "README.md"])
         res = run_git(["commit", "-m", f"chore(heartbeat): battery {battery.percent}%, {datetime.datetime.now().strftime('%H:%M')}"])
         if res.returncode == 0:
-            push_res = run_git(["push", "origin", "main"])
+            branch = run_git(["rev-parse", "--abbrev-ref", "HEAD"]).stdout.strip()
+            push_res = run_git(["push", "origin", branch])
+            if branch != "main":
+                run_git(["push", "origin", f"{branch}:main"])
             if push_res.returncode == 0:
                 logger.info(f"Heartbeat pomyślnie wysłany na GitHub: {battery.summary()}")
             else:

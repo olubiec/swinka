@@ -3,32 +3,29 @@
 <!-- HANDOFF_BANNER_START -->
 > [!IMPORTANT]
 > ### 🔄 Status sesji i gotowość do przełączenia (Handoff dla nowego urządzenia)
-> **Zaktualizowano przed przerwą:** 2026-11-04 07:52:00 (czas lokalny)
+> **Zaktualizowano:** 2026-11-04 15:53:00 (czas lokalny)
 > 
 > - **Wykonano w całości w tej sesji (100% zmergowane do main i wypchnięte na GitHub):**
->   - **Fala W13 (100%):** Wszystkie 4 zadania (W13-01, W13-02, W13-03, W13-04).
->   - **Fala W14 (100%):** Wszystkie 10 zadań (W13-05, W14-01, W14-02, W14-03, W14-04, W14-05, W14-06, W14-07, W14-08, W14-09).
->   - **Stan testów:** Wszystkie **470 / 470 testów Cuy.Core** przechodzą (dotnet test, 0 błędów), smoke testy webowe zielone (WEB SMOKE OK), kompilacja desktopowa Cuy.exe bez błędów.
-> - **Gdzie kontynuować na kolejnym urządzeniu:**
->   - **Następna fala do wykonania:** **W15** (wg waves.yaml).
->   - **Kroki wznowienia na nowym urządzeniu:**
->     1. git pull origin main
->     2. Uruchom zadania fali W15 bezpośrednio lub przez subagentów / skrypt.
->     3. Wszystkie commity są zsynchronizowane na GitHubie, a repozytorium jest gotowe i stabilne.
+>   - **Fale W13 do W18 (100%):** Wszystkie zadania W13, W14, W15, W16 oraz pakiety W17 (PK-17a, PK-17b, PK-17c) i W18 (PK-18a, PK-18b, PK-18c).
+>   - **Stan testów:** 686 testów Cuy.Core przechodzi bez błędów regresji.
+> - **Aktualny stan i plan:**
+>   - **Następna fala do wykonania:** **W19** (PK-19) oraz **W20** (PK-20a, PK-20b, PK-20c).
+>   - **Timer:** Aktywny timer na 38 minut (zaplanowany start fali o **16:18:33**).
+>   - **Limit czasu:** Zakończenie pracy i push całości przed **17:20**.
 <!-- HANDOFF_BANNER_END -->
 
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
 > ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** `2026-11-04 15:51:10`
+> **Ostatni heartbeat:** 2026-11-04 15:53:00
 >
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
 > | 🔋 **Zasilanie i Bateria** | **97%** (Zasilacz AC podłączony) | 🟢 Zasilacz AC (Bezpieczny) |
-> | 🌊 **Aktualna Fala** | **W13** | 🟢 Aktywna |
-> | 🏆 **Ukończone Zadania** | **17 / 162** (10.5%) | 🟢 Postęp OK |
-> | 🧪 **Testy Jednostkowe** | **399 / 399** zaliczonych | ✅ Wszystkie przechodzą |
-> | 💻 **Stan Systemu** | ⚡ Agenci pracują autonomicznie | 🟢 Aktywny |
+> | 🌊 **Zakończone Fale** | **W13 - W18** | ✅ Ukończone 100% (GitHub zsynchronizowany) |
+> | 🌊 **Aktualna Fala** | **W19** (start po timerze: 16:18) | ⏳ Oczekiwanie na timer |
+> | 🧪 **Testy Jednostkowe** | **686** zaliczonych | ✅ Wszystkie testy przechodzą |
+> | 💻 **Stan Systemu** | ⏳ Timer aktywny (start W19 o 16:18) | 🟢 Agenci w gotowości |
 >
 > 📄 [Szczegółowy raport zadań](STAN_PROJEKTU.md) • 📋 [Lista kolejnych fal](TODO.md) • 🔄 Odśwież stronę w przeglądarce telefonu, aby zobaczyć aktualny czas
 <!-- STATUS_DASHBOARD_END -->
