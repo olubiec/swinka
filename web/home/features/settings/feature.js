@@ -139,7 +139,7 @@
 
     elNotifyHarvest.addEventListener('change', (e) => {
       if (root.Sound) root.Sound.click();
-      sendMsg({ type: 'set_setting', key: 'notifyHarvest', value: e.target.checked });
+      sendMsg({ type: 'settings_notify_harvest', on: e.target.checked });
     });
 
     elAutostart.addEventListener('change', (e) => {

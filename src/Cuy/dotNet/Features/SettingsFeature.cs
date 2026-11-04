@@ -25,6 +25,7 @@ namespace Cuy.Features
             settings["petSize"] = Program.MyData.GetScale() == 1 ? "small" : "big";
             settings["sounds"] = SoundManager.Instance == null || SoundManager.Instance.SoundsEnabled;
             settings["autostart"] = AutoStart.IsEnabled;
+            settings["notifyHarvest"] = brain == null || brain.NotifyHarvest;
 
             if (SoundManager.Instance != null)
             {
@@ -140,6 +141,15 @@ namespace Cuy.Features
                     {
                         BrainController.Log(string.Format("[Settings] ignored quiet_hours (invalid time format): {0} - {1}", startRaw, endRaw));
                     }
+                }
+                return true;
+            }
+            if (type == "settings_notify_harvest")
+            {
+                bool? on = message["on"]?.ToObject<bool>();
+                if (on.HasValue && brain != null)
+                {
+                    brain.NotifyHarvest = on.Value;
                 }
                 return true;
             }

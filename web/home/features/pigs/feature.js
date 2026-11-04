@@ -79,7 +79,9 @@
   }
 
   function isGardenUnlocked(state) {
-    return !!(state && state.garden && state.garden.unlocked);
+    const places = (state && state.places && state.places.places) || [];
+    const garden = places.find(p => p && p.id === 'garden');
+    return !!(garden && garden.unlocked);
   }
 
   function render(container, api, state) {
@@ -536,8 +538,8 @@
     container.querySelectorAll('.btn-memory-corner').forEach(btn => {
       btn.addEventListener('click', () => {
         if (root.Sound) root.Sound.click();
-        if (typeof api.openFeature === 'function') {
-          api.openFeature('garden');
+        if (window.CuyHome && typeof window.CuyHome.openFeature === 'function') {
+          window.CuyHome.openFeature('garden');
         }
       });
     });

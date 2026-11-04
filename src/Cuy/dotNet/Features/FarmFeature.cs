@@ -19,6 +19,37 @@ namespace Cuy.Features
             {
                 brain.Pet.Balance.FarmActive = true;
             }
+            if (brain != null)
+            {
+                brain.HarvestReadyCheck = () => HasHarvestReady(brain);
+            }
+        }
+
+        // True when the farm is open and at least one plot is ripe or an orchard slot has stock (harvest notice).
+        private static bool HasHarvestReady(BrainController brain)
+        {
+            var pet = brain?.Pet;
+            if (pet == null) return false;
+
+            var farm = pet.EnsureWorld().Farm;
+            if (farm == null) return false;
+            if (!(PlaceUnlock.IsUnlocked(pet.EnsureWorld(), pet.PlaceCatalog, "farm") || farm.PlotsOwned > 0)) return false;
+
+            var nowUtc = pet.Clock != null ? pet.Clock.UtcNow : DateTime.UtcNow;
+            for (int i = 0; i < farm.PlotsOwned; i++)
+            {
+                var ps = (farm.Plots != null && i < farm.Plots.Count) ? farm.Plots[i] : null;
+                if (!string.IsNullOrEmpty(ps?.CropId) && FarmEngine.IsRipe(pet.FarmConfig, farm, nowUtc, i)) return true;
+            }
+
+            if (farm.Orchard != null)
+            {
+                foreach (var os in farm.Orchard)
+                {
+                    if (os != null && !string.IsNullOrEmpty(os.CropId) && os.Stock > 0) return true;
+                }
+            }
+            return false;
         }
 
         public override void Tick(TimeSpan gameElapsed, BrainController brain)

@@ -231,9 +231,20 @@ namespace Cuy
 
                 DateTime today = DateTime.Now.Date;
                 if (_lastHarvestNoticeDay == today) return;
+
+                int dayKey = today.Year * 10000 + today.Month * 100 + today.Day;
+                var counters = Pet?.State?.Stats?.Counters;
+                if (counters != null && counters.TryGetValue("harvest_notice_day", out int storedDay) && storedDay == dayKey)
+                {
+                    _lastHarvestNoticeDay = today;
+                    return;
+                }
+
+                if (SoundManager.Instance != null && SoundManager.Instance.IsFullScreenOrBusy()) return;
                 if (!HarvestReadyCheck()) return;
 
                 _lastHarvestNoticeDay = today;
+                if (counters != null) counters["harvest_notice_day"] = dayKey;
                 Log("[Harvest] Notified: something is ready on the farm.");
                 PostToast("Something is ready on the farm!");
             }
