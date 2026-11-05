@@ -17,6 +17,10 @@ namespace Cuy
         private Timer motionTimer;
         private Point dragAnchor;
         private double tossUpdatedAt;
+        private const double FallCacheMs = 75;     // window list reuse during a toss (D2.2)
+        private double fallCacheAt = double.NegativeInfinity;
+        private readonly List<IntPtr> fallHandles = new List<IntPtr>();
+        private readonly List<Rectangle> fallRects = new List<Rectangle>();
         private static readonly bool perfEnabled = Environment.GetEnvironmentVariable("CUY_PERF") == "1";
         private readonly double[] perfTickMs = new double[300];
         private int perfCount, perfIndex, perfSlowGaps;
