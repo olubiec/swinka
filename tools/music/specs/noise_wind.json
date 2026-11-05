@@ -21,13 +21,13 @@
       "voice": "noise_wind",
       "db": -18,
       "pattern": "",
-      "part": "pętla szumu noise_wind, 14.0 s; poziom zastępczy, do ustalenia"
+      "part": "pętla szumu noise_wind, 14.0 s; poziom naturalny generatora (tools/music/noise), ustalony"
     }
   ],
   "drums": null,
   "fx": [],
   "master": {
-    "lufs": -24,
+    "lufs": -31.4,
     "ceiling_dbtp": -1
   },
   "loop": {

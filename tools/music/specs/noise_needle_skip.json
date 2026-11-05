@@ -21,13 +21,13 @@
       "voice": "noise_needle_skip",
       "db": -18,
       "pattern": "",
-      "part": "pętla szumu noise_needle_skip, 0.3 s; poziom zastępczy, do ustalenia"
+      "part": "pętla szumu noise_needle_skip, 0.3 s; poziom naturalny generatora (tools/music/noise), ustalony"
     }
   ],
   "drums": null,
   "fx": [],
   "master": {
-    "lufs": -24,
+    "lufs": -70.0,
     "ceiling_dbtp": -1
   },
   "loop": {

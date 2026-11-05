@@ -21,13 +21,13 @@
       "voice": "noise_vinyl_crackle",
       "db": -18,
       "pattern": "",
-      "part": "pętla szumu noise_vinyl_crackle, 8.0 s; poziom zastępczy, do ustalenia"
+      "part": "pętla szumu noise_vinyl_crackle, 8.0 s; poziom naturalny generatora (tools/music/noise), ustalony"
     }
   ],
   "drums": null,
   "fx": [],
   "master": {
-    "lufs": -24,
+    "lufs": -46.9,
     "ceiling_dbtp": -1
   },
   "loop": {

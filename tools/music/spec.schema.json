@@ -97,7 +97,7 @@
       "additionalProperties": false,
       "required": ["lufs", "ceiling_dbtp"],
       "properties": {
-        "lufs": { "type": "number", "minimum": -26, "maximum": -12 },
+        "lufs": { "type": "number", "minimum": -80, "maximum": -12 },
         "ceiling_dbtp": { "type": "number", "const": -1 }
       }
     },
