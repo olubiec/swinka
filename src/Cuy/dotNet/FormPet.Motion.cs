@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Cuy.Core.Physics;
 
 namespace Cuy
 {
@@ -67,38 +68,22 @@ namespace Cuy
 
         private void AdvanceToss(double now)
         {
-            // Preserve the original force units (pixels per 30 ms), but integrate
-            // continuously. Bound pauses to 50 ms so an interrupted UI cannot teleport.
-            double dt = Math.Max(0, Math.Min(50, now - tossUpdatedAt)) / 30.0;
+            // Physics lives in Cuy.Core (TossPhysics). Pauses are bounded to 50 ms inside the step.
+            var state = new TossState { X = PositionX, Y = PositionY, VelX = TossForce.X, VelY = tossVertVel };
+            var bounds = new TossBounds { Screen = ScreenArea, Width = Width, Height = Height, FootOffsetY = CurrentAnimation.Start.OffsetY };
+            // FallDetect reads PositionX, so the probe gets the X the step has already reached.
+            TossStepResult step = TossPhysics.Step(state, now - tossUpdatedAt, bounds, (x, downStep) => { PositionX = x; return FallDetect(downStep); });
             tossUpdatedAt = now;
-            if (dt == 0) return;
-            Rectangle area = ScreenArea;
-            double nextX = PositionX + TossForce.X * dt;
-            double right = area.Right - Width;
-            if (nextX < area.Left || nextX > right)
-            {
-                double edge = nextX < area.Left ? area.Left : right;
-                // Consume the remaining travel after impact instead of pausing a frame.
-                nextX = edge - (nextX - edge) * .3;
-                TossForce.X *= -.3f;
-            }
-            PositionX = Math.Max(area.Left, Math.Min(right, nextX));
-            double dy = tossVertVel * dt + .75 * dt * dt;
-            tossVertVel += 1.5 * dt;
-            int windowTop = dy > 0 ? FallDetect((int)Math.Ceiling(dy)) : -1;
-            double ground = area.Bottom - Height;
-            bool land = PositionY + dy >= ground;
-            if (windowTop != -1 && windowTop - Height <= ground)
-            {
-                ground = windowTop - Height;
-                land = true;
-            }
-            PositionY = land ? ground : PositionY + dy;
+            if (!step.Stepped) return;
+            PositionX = step.State.X;
+            PositionY = step.State.Y;
+            TossForce.X = (float)step.State.VelX;
+            tossVertVel = step.State.VelY;
             // Same sink as the walking animations, so the feet touch the taskbar and landing does not jump.
-            OffsetY = CurrentAnimation.Start.OffsetY;
+            OffsetY = step.OffsetY;
             motion.Reset(PositionX, PositionY + OffsetY, now);
             RenderMotion(now);
-            if (land)
+            if (step.Landed)
             {
                 if ((TossForce.X < 0 && !spritesFlipped) || (TossForce.X > 0 && spritesFlipped)) // face the throw direction
                 {
@@ -106,7 +91,7 @@ namespace Cuy
                     spritesFlipped = !spritesFlipped;
                 }
                 IsTossing = false;
-                SetNewAnimation(tossVertVel < 40 ? Animations.AnimationFallSoft : Animations.AnimationFallHard);
+                SetNewAnimation(step.Soft ? Animations.AnimationFallSoft : Animations.AnimationFallHard);
                 pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[0]);
                 SyncFollowHook();
             }
