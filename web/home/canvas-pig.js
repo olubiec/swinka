@@ -179,8 +179,9 @@
       this.paletteId = 'tricolor';
       const onLoad = () => { this.isLoaded = true; this.showBubble('Ready!', 2000); };
       const first = window.CuySprites.image(this.breed, this.stageKey);
-      first.addEventListener('load', onLoad);
+      // The sheet is shared by every instance: a listener left on it after it loaded would keep old instances alive.
       if (window.CuySprites.loaded(first)) onLoad();
+      else first.addEventListener('load', onLoad, { once: true });
       window.CuySprites.image('smooth', 'baby');
       window.CuySprites.init();
 
@@ -388,6 +389,7 @@
     }
 
     loop(now) {
+      if (this.stopped) return;
       const dt = Math.min(100, now - this.lastTime);
       this.lastTime = now;
 
@@ -395,6 +397,11 @@
       this.render();
 
       requestAnimationFrame((t) => this.loop(t));
+    }
+
+    // Stops the frame loop of a preview that is replaced (decor mini preview); otherwise every instance loops forever.
+    destroy() {
+      this.stopped = true;
     }
 
     update(dt) {

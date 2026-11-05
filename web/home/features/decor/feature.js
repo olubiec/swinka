@@ -423,6 +423,11 @@
       this.container = container;
       this.render();
     },
+    // Called by app.js when the modal closes: no more re-renders (and no mini preview loops) while hidden.
+    close() {
+      if (this.mini) { this.mini.destroy(); this.mini = null; }
+      this.container = null;
+    },
     onState(state) {
       if (window.CuyDecorRenderer) window.CuyDecorRenderer.setC(state);
       if (this.container && this.container.isConnected) {
@@ -430,6 +435,7 @@
       }
     },
     render() {
+      if (this.mini) { this.mini.destroy(); this.mini = null; }
       if (!this.container) return;
 
       const st = this.api.getState();
@@ -499,9 +505,9 @@
         ctx.fillRect(0, 0, 240, 130);
 
         if (window.PigCanvas) {
-          const miniRoom = new window.PigCanvas(cvs, st);
-          miniRoom.updateState(st);
-          miniRoom.render();
+          this.mini = new window.PigCanvas(cvs, st);
+          this.mini.updateState(st);
+          this.mini.render();
         } else {
           ctx.fillStyle = '#9c6636'; ctx.fillRect(0, 0, 240, 96);
           ctx.fillStyle = '#eedb7c'; ctx.fillRect(0, 96, 240, 34);

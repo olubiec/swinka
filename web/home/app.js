@@ -854,6 +854,7 @@
     if (window.Minigry && window.Minigry.activeGame && !window.Minigry.isPaused) {
       window.Minigry.pause();
     }
+    if (window.CuyHome) window.CuyHome.closeFeature();
     elements.modalBackdrop.classList.remove('active');
   }
 
