@@ -2,7 +2,7 @@
   "id": "rec_s4_taniec_a1",
   "kind": "record",
   "title": "Taniec w klatce · A1 podpisowy",
-  "role": "płyta serii 4; najszybszy utwór w grze; własny motyw (nie Nyan Cat: nie zbliżać się do jego skali, rytmu i linii); legenda v7: progresja unikalna (im-ivm9-bIIM-im + IV-I-V-vi(wzgl.) + iv-III-vsus4-VI-iv-i-III-VI), jeden instrument (BNJ)",
+  "role": "płyta serii 4; najszybszy utwór w grze; własny motyw (nie Nyan Cat: nie zbliżać się do jego skali, rytmu i linii); legenda v7: progresja unikalna (i-VI-III-VII-i-VI69-III7-VII + i-iv-v-iv + I-V-vi-V(wzgl.) + im-V-bVIIM-IV-bVIM-bIIIM-ivm-V + bIIIM-ii-bIIM-I(wzgl.) + I-V-bVIIM-IV(wzgl.)), jeden instru",
   "bpm": 130,
   "meter": 4,
   "key": "C",
@@ -17,83 +17,83 @@
     },
     {
       "bar": 2,
-      "sym": "Fm7"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Dbmaj7#11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Cm11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 5,
-      "sym": "Cm9"
+      "sym": "Cm11"
     },
     {
       "bar": 6,
-      "sym": "Fm11"
+      "sym": "Ab6/9"
     },
     {
       "bar": 7,
-      "sym": "Dbmaj9"
+      "sym": "Eb9"
     },
     {
       "bar": 8,
-      "sym": "Cm11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 9,
-      "sym": "Abmaj13#11"
-    },
-    {
-      "bar": 10,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 11,
-      "sym": "Bb13"
-    },
-    {
-      "bar": 12,
       "sym": "Cm9"
     },
     {
-      "bar": 13,
-      "sym": "Abmaj13#11"
+      "bar": 10,
+      "sym": "Cm9"
     },
     {
-      "bar": 14,
-      "sym": "Ebmaj9#11"
-    },
-    {
-      "bar": 15,
-      "sym": "Bb9sus4"
-    },
-    {
-      "bar": 16,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 17,
+      "bar": 11,
       "sym": "Fm9"
     },
     {
+      "bar": 12,
+      "sym": "Fm9"
+    },
+    {
+      "bar": 13,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 14,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 15,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 16,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 17,
+      "sym": "Ebmaj9"
+    },
+    {
       "bar": 18,
-      "sym": "Ebmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 19,
-      "sym": "G13sus4"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 20,
-      "sym": "Abmaj9"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 21,
-      "sym": "Fm11"
+      "sym": "Cm9"
     },
     {
       "bar": 22,
@@ -101,11 +101,11 @@
     },
     {
       "bar": 23,
-      "sym": "Ebmaj9#11"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 24,
-      "sym": "Abmaj9#11"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 25,
@@ -113,67 +113,67 @@
     },
     {
       "bar": 26,
-      "sym": "Fm7"
+      "sym": "G7alt"
     },
     {
       "bar": 27,
-      "sym": "Dbmaj7#11"
+      "sym": "Amaj9"
     },
     {
       "bar": 28,
-      "sym": "Cm11"
+      "sym": "F9"
     },
     {
       "bar": 29,
-      "sym": "Cm9"
+      "sym": "G7alt"
     },
     {
       "bar": 30,
-      "sym": "Fm11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 31,
-      "sym": "Dbmaj9"
+      "sym": "Fm11"
     },
     {
       "bar": 32,
-      "sym": "Cm11"
+      "sym": "G7alt"
     },
     {
       "bar": 33,
-      "sym": "Abmaj13#11"
+      "sym": "F#maj9"
     },
     {
       "bar": 34,
-      "sym": "Ebmaj9"
+      "sym": "F#maj9"
     },
     {
       "bar": 35,
-      "sym": "Bb13"
+      "sym": "Fm11"
     },
     {
       "bar": 36,
-      "sym": "Cm9"
+      "sym": "Fm11"
     },
     {
       "bar": 37,
-      "sym": "Abmaj13#11"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 38,
-      "sym": "Ebmaj9#11"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 39,
-      "sym": "Bb9sus4"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 40,
-      "sym": "Cm11"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 41,
-      "sym": "Fm9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 42,
@@ -181,23 +181,23 @@
     },
     {
       "bar": 43,
-      "sym": "G13sus4"
+      "sym": "Bb13sus4"
     },
     {
       "bar": 44,
-      "sym": "Abmaj9"
+      "sym": "Bb13sus4"
     },
     {
       "bar": 45,
-      "sym": "Fm11"
+      "sym": "Db13"
     },
     {
       "bar": 46,
-      "sym": "Cm9"
+      "sym": "Db13"
     },
     {
       "bar": 47,
-      "sym": "Ebmaj9#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 48,
@@ -209,63 +209,63 @@
     },
     {
       "bar": 50,
-      "sym": "Fm7"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 51,
-      "sym": "Dbmaj7#11"
-    },
-    {
-      "bar": 52,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 53,
-      "sym": "Cm9"
-    },
-    {
-      "bar": 54,
-      "sym": "Fm11"
-    },
-    {
-      "bar": 55,
-      "sym": "Dbmaj9"
-    },
-    {
-      "bar": 56,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 57,
-      "sym": "Abmaj13#11"
-    },
-    {
-      "bar": 58,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 59,
-      "sym": "Bb13"
-    },
-    {
-      "bar": 60,
-      "sym": "Cm9"
-    },
-    {
-      "bar": 61,
-      "sym": "Abmaj13#11"
-    },
-    {
-      "bar": 62,
       "sym": "Ebmaj9#11"
     },
     {
+      "bar": 52,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 53,
+      "sym": "Cm11"
+    },
+    {
+      "bar": 54,
+      "sym": "Ab6/9"
+    },
+    {
+      "bar": 55,
+      "sym": "Eb9"
+    },
+    {
+      "bar": 56,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 57,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 58,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 59,
+      "sym": "Fm9"
+    },
+    {
+      "bar": 60,
+      "sym": "Fm9"
+    },
+    {
+      "bar": 61,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 62,
+      "sym": "Gm11"
+    },
+    {
       "bar": 63,
-      "sym": "Bb9sus4"
+      "sym": "Fm11"
     },
     {
       "bar": 64,
-      "sym": "Cm11"
+      "sym": "Bbmaj9"
     }
   ],
   "layers": [
@@ -274,7 +274,7 @@
       "voice": "BNJ",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; gotowe progresje SHLD: im-ivm9-bIIM-im + IV-I-V-vi(wzgl.) + iv-III-vsus4-VI-iv-i-III-VI",
+      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

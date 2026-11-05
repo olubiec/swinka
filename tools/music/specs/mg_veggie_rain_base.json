@@ -13,27 +13,27 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj13#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Fmaj13#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Cmaj9#11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 4,
-      "sym": "Cmaj9#11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Em9"
+      "sym": "G9sus4"
     },
     {
       "bar": 6,
-      "sym": "Em9"
+      "sym": "G9sus4"
     },
     {
       "bar": 7,
@@ -45,35 +45,35 @@
     },
     {
       "bar": 9,
-      "sym": "Cmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 10,
-      "sym": "Cmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 11,
-      "sym": "Fmaj13#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 12,
-      "sym": "Fmaj13#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 13,
-      "sym": "G13sus4"
+      "sym": "Fmaj9"
     },
     {
       "bar": 14,
-      "sym": "G13sus4"
+      "sym": "Fmaj9"
     },
     {
       "bar": 15,
-      "sym": "Fmaj13#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 16,
-      "sym": "Fmaj13#11"
+      "sym": "Gmaj9"
     }
   ],
   "layers": [

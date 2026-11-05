@@ -2,7 +2,7 @@
   "id": "place_room_default",
   "kind": "room",
   "title": "Pokój: domyślny (3 motywy bez nastroju)",
-  "role": "ciepły neutralny; legenda v7: progresja unikalna (IV-vi-IV-vi + Isus2-I-vi7-visus4), jeden instrument (EP)",
+  "role": "ciepły neutralny; legenda v7: progresja unikalna (I-V-vi-iii-IV-I-IV-V + I-bVIIM-I-I-bVIM-V + I-IV-Isus2-IV + im-bIIM-bIIIM-bIIM(wzgl.)), jeden instrument (EP)",
   "bpm": 80,
   "meter": 4,
   "key": "A",
@@ -13,11 +13,11 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dmaj9#11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Dmaj9#11"
+      "sym": "E13sus4"
     },
     {
       "bar": 3,
@@ -25,7 +25,7 @@
     },
     {
       "bar": 4,
-      "sym": "F#m11"
+      "sym": "C#m9"
     },
     {
       "bar": 5,
@@ -33,111 +33,111 @@
     },
     {
       "bar": 6,
-      "sym": "Dmaj9#11"
+      "sym": "Amaj13"
     },
     {
       "bar": 7,
-      "sym": "F#m9"
+      "sym": "Dmaj13#11"
     },
     {
       "bar": 8,
-      "sym": "F#m9"
+      "sym": "E13sus4"
     },
     {
       "bar": 9,
-      "sym": "Asus2"
+      "sym": "Amaj13"
     },
     {
       "bar": 10,
-      "sym": "Asus2"
+      "sym": "Amaj13"
     },
     {
       "bar": 11,
-      "sym": "Amaj13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 12,
-      "sym": "Amaj13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 13,
-      "sym": "F#m11"
+      "sym": "Amaj9"
     },
     {
       "bar": 14,
-      "sym": "F#m11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 15,
-      "sym": "F#sus4"
+      "sym": "Fmaj9"
     },
     {
       "bar": 16,
-      "sym": "F#sus4"
+      "sym": "E13"
     },
     {
       "bar": 17,
-      "sym": "Dmaj9#11"
+      "sym": "Amaj13"
     },
     {
       "bar": 18,
-      "sym": "Dmaj9#11"
+      "sym": "Amaj13"
     },
     {
       "bar": 19,
-      "sym": "F#m11"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "F#m11"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 21,
-      "sym": "Dmaj9#11"
+      "sym": "Asus2"
     },
     {
       "bar": 22,
-      "sym": "Dmaj9#11"
+      "sym": "Asus2"
     },
     {
       "bar": 23,
-      "sym": "F#m9"
+      "sym": "Dmaj13#11"
     },
     {
       "bar": 24,
-      "sym": "F#m9"
+      "sym": "Dmaj13#11"
     },
     {
       "bar": 25,
-      "sym": "Asus2"
+      "sym": "F#m11"
     },
     {
       "bar": 26,
-      "sym": "Asus2"
+      "sym": "F#m11"
     },
     {
       "bar": 27,
-      "sym": "Amaj13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 28,
-      "sym": "Amaj13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 29,
-      "sym": "F#m11"
+      "sym": "G#maj9"
     },
     {
       "bar": 30,
-      "sym": "F#m11"
+      "sym": "G#maj9"
     },
     {
       "bar": 31,
-      "sym": "F#sus4"
+      "sym": "Gmaj9"
     },
     {
       "bar": 32,
-      "sym": "F#sus4"
+      "sym": "Gmaj9"
     }
   ],
   "layers": [

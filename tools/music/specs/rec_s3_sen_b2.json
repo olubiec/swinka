@@ -2,7 +2,7 @@
   "id": "rec_s3_sen_b2",
   "kind": "record",
   "title": "Sen o sianiu · B2 nastrojowy",
-  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: progresja unikalna (I-IV-Isus2-IV + bIIM-ivm-biii-im), jeden instrument (TRI)",
+  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: progresja unikalna (I-iii-vi-Isus4 + I-IV-bIIIM-bVIM + im-bviim-bVIM-bIIM(wzgl.)), jeden instrument (TRI)",
   "bpm": 44,
   "meter": 4,
   "key": "F",
@@ -13,83 +13,83 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj9#11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 2,
-      "sym": "Fmaj9#11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 3,
-      "sym": "Bbmaj13#11"
+      "sym": "Am11"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj13#11"
+      "sym": "Am11"
     },
     {
       "bar": 5,
-      "sym": "Fsus2"
+      "sym": "Dm11"
     },
     {
       "bar": 6,
-      "sym": "Fsus2"
+      "sym": "Dm11"
     },
     {
       "bar": 7,
-      "sym": "Bbmaj13#11"
+      "sym": "Fsus4"
     },
     {
       "bar": 8,
-      "sym": "Bbmaj13#11"
+      "sym": "Fsus4"
     },
     {
       "bar": 9,
-      "sym": "Gbmaj9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 10,
-      "sym": "Gbmaj9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 11,
-      "sym": "Bbm9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Bbm9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 13,
-      "sym": "Abm11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 14,
-      "sym": "Abm11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Fm9"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "Fm9"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 17,
-      "sym": "Fmaj9#11"
+      "sym": "Dm11"
     },
     {
       "bar": 18,
-      "sym": "Fmaj9#11"
+      "sym": "Dm11"
     },
     {
       "bar": 19,
-      "sym": "Bbmaj13#11"
+      "sym": "Bm11"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj13#11"
+      "sym": "Fsus4"
     }
   ],
   "layers": [
@@ -98,7 +98,7 @@
       "voice": "TRI",
       "db": -3,
       "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; gotowe progresje SHLD: I-IV-Isus2-IV + bIIM-ivm-biii-im",
+      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],

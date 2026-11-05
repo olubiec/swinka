@@ -2,7 +2,7 @@
   "id": "rec_s1_kubek_a2",
   "kind": "record",
   "title": "Kubek z parą · A2 spokojny",
-  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: progresja unikalna (I-vi-I-IV + VI7-VII-i-v-VI7-VII-i-iv7(wzgl.) + im-bVIIM-IV-im(wzgl.)), jeden instrument (HARP)",
+  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: progresja unikalna (vi-V-IV-V + i-iv-VI-v(wzgl.) + vi-viim-V-vi-#IVdim-V + i-VI-III-VII(wzgl.) + im-bVIM-im-IV(wzgl.)), jeden instrument (HARP)",
   "bpm": 83,
   "meter": 4,
   "key": "F",
@@ -13,163 +13,163 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj9#11"
+      "sym": "Dm11"
     },
     {
       "bar": 2,
-      "sym": "Fmaj9#11"
+      "sym": "Dm11"
     },
     {
       "bar": 3,
-      "sym": "Dm9"
+      "sym": "C9sus4"
     },
     {
       "bar": 4,
-      "sym": "Dm9"
+      "sym": "C9sus4"
     },
     {
       "bar": 5,
-      "sym": "Fmaj9"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 6,
-      "sym": "Fmaj9"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 7,
-      "sym": "Bbmaj13#11"
+      "sym": "C13"
     },
     {
       "bar": 8,
-      "sym": "Bbmaj13#11"
+      "sym": "C13"
     },
     {
       "bar": 9,
-      "sym": "Bb13"
+      "sym": "Dm11"
     },
     {
       "bar": 10,
-      "sym": "Cmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 11,
-      "sym": "Dm9"
+      "sym": "Gm11"
     },
     {
       "bar": 12,
-      "sym": "Am9"
+      "sym": "Gm11"
     },
     {
       "bar": 13,
-      "sym": "Bb9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 14,
-      "sym": "Cmaj9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 16,
-      "sym": "Gm7"
-    },
-    {
-      "bar": 17,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 18,
-      "sym": "Bmaj7#11"
-    },
-    {
-      "bar": 19,
-      "sym": "G13"
-    },
-    {
-      "bar": 20,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 21,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 22,
-      "sym": "Bmaj9"
-    },
-    {
-      "bar": 23,
-      "sym": "G9"
-    },
-    {
-      "bar": 24,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 25,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 26,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 27,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 28,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 29,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 30,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 31,
-      "sym": "Bbmaj13#11"
-    },
-    {
-      "bar": 32,
-      "sym": "Bbmaj13#11"
-    },
-    {
-      "bar": 33,
-      "sym": "Bb13"
-    },
-    {
-      "bar": 34,
-      "sym": "Cmaj9"
-    },
-    {
-      "bar": 35,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 36,
       "sym": "Am9"
     },
     {
+      "bar": 16,
+      "sym": "Am9"
+    },
+    {
+      "bar": 17,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 18,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 19,
+      "sym": "Em11"
+    },
+    {
+      "bar": 20,
+      "sym": "Em11"
+    },
+    {
+      "bar": 21,
+      "sym": "C13"
+    },
+    {
+      "bar": 22,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 23,
+      "sym": "Bdim7"
+    },
+    {
+      "bar": 24,
+      "sym": "C13sus4"
+    },
+    {
+      "bar": 25,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 26,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 27,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 28,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 29,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 30,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 31,
+      "sym": "C13"
+    },
+    {
+      "bar": 32,
+      "sym": "C13"
+    },
+    {
+      "bar": 33,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 34,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 35,
+      "sym": "A7alt"
+    },
+    {
+      "bar": 36,
+      "sym": "A7alt"
+    },
+    {
       "bar": 37,
-      "sym": "Bb9"
+      "sym": "Dm9"
     },
     {
       "bar": 38,
-      "sym": "Cmaj9"
+      "sym": "Dm9"
     },
     {
       "bar": 39,
-      "sym": "Dm11"
+      "sym": "G13"
     },
     {
       "bar": 40,
-      "sym": "Bbmaj13#11"
+      "sym": "G13"
     }
   ],
   "layers": [
@@ -178,7 +178,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: I-vi-I-IV + VI7-VII-i-v-VI7-VII-i-iv7(wzgl.) + im-bVIIM-IV-im(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; pełna forma z gotowych progresji SHLD (5 sekcji)",
       "stem": "base"
     }
   ],

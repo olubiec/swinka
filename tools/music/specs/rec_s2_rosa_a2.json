@@ -2,7 +2,7 @@
   "id": "rec_s2_rosa_a2",
   "kind": "record",
   "title": "Rosa · A2 spokojny",
-  "role": "płyta serii 2; krople rosy (dzwonki); legenda v7: progresja unikalna (bIIIM-ii-bIIM-I + bIIM-ivm-biii-im), jeden instrument (XYL)",
+  "role": "płyta serii 2; krople rosy (dzwonki); legenda v7: progresja unikalna (I-vi-IV-V + I-V-IV-vi + VI7-VII6-i-VII6(wzgl.) + i-iv-v-iv(wzgl.)), jeden instrument (XYL)",
   "bpm": 65,
   "meter": 4,
   "key": "G",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Bbmaj9#11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 2,
-      "sym": "Bbmaj9#11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "Em9"
     },
     {
       "bar": 4,
-      "sym": "Am11"
+      "sym": "Em9"
     },
     {
       "bar": 5,
-      "sym": "Abmaj7#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "Abmaj7#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "Gmaj9"
+      "sym": "D13sus4"
     },
     {
       "bar": 8,
-      "sym": "Gmaj9"
+      "sym": "D13sus4"
     },
     {
       "bar": 9,
-      "sym": "Abmaj9"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Cm9"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Bbm11"
+      "sym": "D9sus4"
     },
     {
       "bar": 12,
-      "sym": "Gm11"
+      "sym": "D9sus4"
     },
     {
       "bar": 13,
-      "sym": "Abmaj9"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 14,
-      "sym": "Cm9"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 15,
-      "sym": "Bbm9"
+      "sym": "Em11"
     },
     {
       "bar": 16,
-      "sym": "Gm11"
+      "sym": "Em11"
     },
     {
       "bar": 17,
-      "sym": "Bbmaj9#11"
+      "sym": "C9"
     },
     {
       "bar": 18,
-      "sym": "Bbmaj9#11"
+      "sym": "C9"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "D6/9"
     },
     {
       "bar": 20,
-      "sym": "Am11"
+      "sym": "D6/9"
     },
     {
       "bar": 21,
-      "sym": "Abmaj7#11"
+      "sym": "Em11"
     },
     {
       "bar": 22,
-      "sym": "Abmaj7#11"
+      "sym": "Em11"
     },
     {
       "bar": 23,
-      "sym": "Gmaj9"
+      "sym": "D6/9"
     },
     {
       "bar": 24,
-      "sym": "Gmaj9"
+      "sym": "D6/9"
     },
     {
       "bar": 25,
-      "sym": "Abmaj9"
+      "sym": "Em9"
     },
     {
       "bar": 26,
-      "sym": "Cm9"
+      "sym": "Em9"
     },
     {
       "bar": 27,
-      "sym": "Bbm11"
+      "sym": "Am9"
     },
     {
       "bar": 28,
-      "sym": "Gm11"
+      "sym": "Am9"
     },
     {
       "bar": 29,
-      "sym": "Abmaj9"
+      "sym": "Bm11"
     },
     {
       "bar": 30,
-      "sym": "Cm9"
+      "sym": "Bm11"
     },
     {
       "bar": 31,
-      "sym": "Bbm9"
+      "sym": "Am9"
     },
     {
       "bar": 32,
-      "sym": "Gm11"
+      "sym": "Am9"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "XYL",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; gotowe progresje SHLD: bIIIM-ii-bIIM-I + bIIM-ivm-biii-im",
+      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; pełna forma z gotowych progresji SHLD (4 sekcji)",
       "stem": "base"
     }
   ],

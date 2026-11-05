@@ -13,67 +13,67 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Em9"
+      "sym": "Em11"
     },
     {
       "bar": 2,
-      "sym": "Em9"
+      "sym": "Em11"
     },
     {
       "bar": 3,
-      "sym": "C#m11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 4,
-      "sym": "C#m11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 5,
-      "sym": "B13"
+      "sym": "Cmaj9"
     },
     {
       "bar": 6,
-      "sym": "B13"
+      "sym": "Cmaj9"
     },
     {
       "bar": 7,
-      "sym": "Fmaj7#11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 8,
-      "sym": "Fmaj7#11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 9,
-      "sym": "Cmaj9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 10,
-      "sym": "Cmaj9"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Em9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 12,
-      "sym": "Em9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 13,
-      "sym": "Bm11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 14,
-      "sym": "Bm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Gmaj9"
+      "sym": "D13"
     },
     {
       "bar": 16,
-      "sym": "Gmaj9"
+      "sym": "Dsus2"
     }
   ],
   "layers": [

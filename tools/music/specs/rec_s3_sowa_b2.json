@@ -2,7 +2,7 @@
   "id": "rec_s3_sowa_b2",
   "kind": "record",
   "title": "Sowa · B2 nastrojowy",
-  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (VII-iv-v-i + ivm-bIIIM-iim7-V(wzgl.)), jeden instrument (BELL)",
+  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (im-vm-isus4-I + VI-VII-i-III-VII-VI-iv-i + iv-v-VI-VII), jeden instrument (BELL)",
   "bpm": 48,
   "meter": 4,
   "key": "D",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj9"
+      "sym": "Dm9"
     },
     {
       "bar": 2,
-      "sym": "Cmaj9"
+      "sym": "Dm9"
     },
     {
       "bar": 3,
-      "sym": "Gm11"
+      "sym": "Am9"
     },
     {
       "bar": 4,
-      "sym": "Gm11"
+      "sym": "Am9"
     },
     {
       "bar": 5,
-      "sym": "Am11"
+      "sym": "Dsus4"
     },
     {
       "bar": 6,
-      "sym": "Am11"
+      "sym": "Dsus4"
     },
     {
       "bar": 7,
-      "sym": "Dm11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 8,
-      "sym": "Dm11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 9,
-      "sym": "Bbm9"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 10,
-      "sym": "Bbm9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 11,
-      "sym": "Abmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 12,
-      "sym": "Abmaj9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 13,
-      "sym": "Gm7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 14,
-      "sym": "Gm7"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "C9sus4"
+      "sym": "Gm11"
     },
     {
       "bar": 16,
-      "sym": "C9sus4"
+      "sym": "Dm11"
     },
     {
       "bar": 17,
-      "sym": "Cmaj9"
+      "sym": "Gm11"
     },
     {
       "bar": 18,
-      "sym": "Cmaj9"
+      "sym": "Gm11"
     },
     {
       "bar": 19,
-      "sym": "Gm11"
+      "sym": "Am9"
     },
     {
       "bar": 20,
-      "sym": "Gm11"
+      "sym": "Am9"
     },
     {
       "bar": 21,
-      "sym": "Am11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 22,
-      "sym": "Am11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 23,
-      "sym": "Dm11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 24,
-      "sym": "Dm11"
+      "sym": "Cmaj9"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "BELL",
       "db": -3,
       "pattern": "chords.rolled(0.4)",
-      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; gotowe progresje SHLD: VII-iv-v-i + ivm-bIIIM-iim7-V(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],

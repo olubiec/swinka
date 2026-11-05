@@ -2,7 +2,7 @@
   "id": "rec_s1_poranek_a2",
   "kind": "record",
   "title": "Poranek w sianie · A2 spokojny",
-  "role": "płyta serii 1; poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny; legenda v7: progresja unikalna (iim7-V7-iiim7-vi7-iim7-V7 + im-vm-bVIIM-IV(wzgl.)), jeden instrument (ACC)",
+  "role": "płyta serii 1; poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny; legenda v7: progresja unikalna (I-bVIIM-bVIM-IV-IVsus4-IV + I-I7-Idom7-IV + im-vm-isus4-I(wzgl.) + vi-IV-I-V), jeden instrument (ACC)",
   "bpm": 70,
   "meter": 4,
   "key": "C",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dm9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Dm9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "G7alt"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 4,
-      "sym": "G7alt"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 5,
-      "sym": "Em11"
+      "sym": "Abmaj9"
     },
     {
       "bar": 6,
-      "sym": "Am7"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "Dm7"
+      "sym": "Fsus4"
     },
     {
       "bar": 8,
-      "sym": "G7b13"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 9,
-      "sym": "Am9"
+      "sym": "Cmaj13"
     },
     {
       "bar": 10,
-      "sym": "Am9"
+      "sym": "Cmaj13"
     },
     {
       "bar": 11,
-      "sym": "Em9"
+      "sym": "C9"
     },
     {
       "bar": 12,
-      "sym": "Em9"
+      "sym": "C9"
     },
     {
       "bar": 13,
-      "sym": "F#maj7#11"
+      "sym": "C13"
     },
     {
       "bar": 14,
-      "sym": "F#maj7#11"
+      "sym": "C13"
     },
     {
       "bar": 15,
-      "sym": "D13"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 16,
-      "sym": "D13"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 17,
-      "sym": "Dm9"
+      "sym": "Am9"
     },
     {
       "bar": 18,
-      "sym": "Dm9"
+      "sym": "Am9"
     },
     {
       "bar": 19,
-      "sym": "G7alt"
+      "sym": "Em9"
     },
     {
       "bar": 20,
-      "sym": "G7alt"
+      "sym": "Em9"
     },
     {
       "bar": 21,
-      "sym": "Em11"
+      "sym": "Asus4"
     },
     {
       "bar": 22,
-      "sym": "Am7"
+      "sym": "Asus4"
     },
     {
       "bar": 23,
-      "sym": "Dm7"
+      "sym": "Amaj9"
     },
     {
       "bar": 24,
-      "sym": "G7b13"
+      "sym": "Amaj9"
     },
     {
       "bar": 25,
-      "sym": "Am9"
+      "sym": "Am11"
     },
     {
       "bar": 26,
-      "sym": "Am9"
+      "sym": "Am11"
     },
     {
       "bar": 27,
-      "sym": "Em9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 28,
-      "sym": "Em9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 29,
-      "sym": "F#maj7#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 30,
-      "sym": "F#maj7#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 31,
-      "sym": "D13"
+      "sym": "G13"
     },
     {
       "bar": 32,
-      "sym": "D13"
+      "sym": "G13"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "ACC",
       "db": -12,
       "pattern": "chords.rolled(0.2)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; gotowe progresje SHLD: iim7-V7-iiim7-vi7-iim7-V7 + im-vm-bVIIM-IV(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; pełna forma z gotowych progresji SHLD (4 sekcji)",
       "stem": "base"
     }
   ],

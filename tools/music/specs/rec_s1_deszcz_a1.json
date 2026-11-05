@@ -2,7 +2,7 @@
   "id": "rec_s1_deszcz_a1",
   "kind": "record",
   "title": "Deszcz na dachu · A1 podpisowy",
-  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (I-bVIM-bVIIM-ivm + I-vi-IV-iii), jeden instrument (BNJ)",
+  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (I-bVIM-bVIIM-ivm + I-vi-IV-iii + V-vi-IV-I + im-bVIIM-IV-im(wzgl.)), jeden instrument (BNJ)",
   "bpm": 66,
   "meter": 4,
   "key": "Eb",
@@ -13,11 +13,11 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Ebmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 2,
-      "sym": "Ebmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 3,
@@ -45,11 +45,11 @@
     },
     {
       "bar": 9,
-      "sym": "Ebmaj9"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 10,
-      "sym": "Ebmaj9"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 11,
@@ -61,11 +61,11 @@
     },
     {
       "bar": 13,
-      "sym": "Abmaj13#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 14,
-      "sym": "Abmaj13#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 15,
@@ -77,67 +77,67 @@
     },
     {
       "bar": 17,
-      "sym": "Ebmaj9#11"
+      "sym": "Bb13"
     },
     {
       "bar": 18,
-      "sym": "Ebmaj9#11"
+      "sym": "Bb13"
     },
     {
       "bar": 19,
-      "sym": "Bmaj9#11"
+      "sym": "Cm9"
     },
     {
       "bar": 20,
-      "sym": "Bmaj9#11"
+      "sym": "Cm9"
     },
     {
       "bar": 21,
-      "sym": "Dbmaj9"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 22,
-      "sym": "Dbmaj9"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 23,
-      "sym": "Abm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "Abm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 25,
-      "sym": "Ebmaj9"
+      "sym": "Cm11"
     },
     {
       "bar": 26,
-      "sym": "Ebmaj9"
+      "sym": "Cm11"
     },
     {
       "bar": 27,
-      "sym": "Cm9"
+      "sym": "Amaj9"
     },
     {
       "bar": 28,
-      "sym": "Cm9"
+      "sym": "Amaj9"
     },
     {
       "bar": 29,
-      "sym": "Abmaj13#11"
+      "sym": "F13"
     },
     {
       "bar": 30,
-      "sym": "Abmaj13#11"
+      "sym": "F13"
     },
     {
       "bar": 31,
-      "sym": "Gm9"
+      "sym": "Cm9"
     },
     {
       "bar": 32,
-      "sym": "Gm9"
+      "sym": "Cm9"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "BNJ",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; gotowe progresje SHLD: I-bVIM-bVIIM-ivm + I-vi-IV-iii",
+      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; pełna forma z gotowych progresji SHLD (4 sekcji)",
       "stem": "base"
     }
   ],

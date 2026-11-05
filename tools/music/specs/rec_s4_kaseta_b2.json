@@ -2,7 +2,7 @@
   "id": "rec_s4_kaseta_b2",
   "kind": "record",
   "title": "Kaseta mixtape · B2 nastrojowy",
-  "role": "płyta serii 4; falowanie taśmy wypieczone w dźwięk; legenda v7: progresja unikalna (VI7-VII6-i-VII6 + vi-IV-iii-V(wzgl.)), jeden instrument (PAD)",
+  "role": "płyta serii 4; falowanie taśmy wypieczone w dźwięk; legenda v7: progresja unikalna (i-III-iv-VI + I-V-IV-vi(wzgl.) + I-I7-I9-IV-ivm(wzgl.) + im-bVIM-im-IV), jeden instrument (PAD)",
   "bpm": 80,
   "meter": 4,
   "key": "D",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Bb13"
+      "sym": "Dm9"
     },
     {
       "bar": 2,
-      "sym": "C6/9"
+      "sym": "Dm9"
     },
     {
       "bar": 3,
-      "sym": "Dm11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "C6/9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Bb13"
+      "sym": "Gm9"
     },
     {
       "bar": 6,
-      "sym": "C6/9"
+      "sym": "Gm9"
     },
     {
       "bar": 7,
-      "sym": "Dm11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 8,
-      "sym": "C6/9"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 9,
-      "sym": "Dm11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Dm11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Bbmaj13#11"
+      "sym": "C13"
     },
     {
       "bar": 12,
-      "sym": "Bbmaj13#11"
+      "sym": "C13"
     },
     {
       "bar": 13,
-      "sym": "Am11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 14,
-      "sym": "Am11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "C13"
+      "sym": "Dm11"
     },
     {
       "bar": 16,
-      "sym": "C13"
+      "sym": "Dm11"
     },
     {
       "bar": 17,
-      "sym": "Bb13"
+      "sym": "Fmaj9"
     },
     {
       "bar": 18,
-      "sym": "C6/9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 19,
-      "sym": "Dm11"
+      "sym": "F13"
     },
     {
       "bar": 20,
-      "sym": "C6/9"
+      "sym": "F13"
     },
     {
       "bar": 21,
-      "sym": "Bb13"
+      "sym": "F9"
     },
     {
       "bar": 22,
-      "sym": "C6/9"
+      "sym": "F9"
     },
     {
       "bar": 23,
-      "sym": "Dm11"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 24,
-      "sym": "C6/9"
+      "sym": "Bbm9"
     },
     {
       "bar": 25,
@@ -117,27 +117,27 @@
     },
     {
       "bar": 27,
-      "sym": "Bbmaj13#11"
+      "sym": "A7b13"
     },
     {
       "bar": 28,
-      "sym": "Bbmaj13#11"
+      "sym": "A7b13"
     },
     {
       "bar": 29,
-      "sym": "Am11"
+      "sym": "Dm9"
     },
     {
       "bar": 30,
-      "sym": "Am11"
+      "sym": "Dm9"
     },
     {
       "bar": 31,
-      "sym": "C13"
+      "sym": "G9"
     },
     {
       "bar": 32,
-      "sym": "C13"
+      "sym": "G9"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "PAD",
       "db": -3,
       "pattern": "chords.rolled(0.4)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; gotowe progresje SHLD: VI7-VII6-i-VII6 + vi-IV-iii-V(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; pełna forma z gotowych progresji SHLD (4 sekcji)",
       "stem": "base"
     }
   ],

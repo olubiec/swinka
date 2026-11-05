@@ -2,7 +2,7 @@
   "id": "rec_s4_disco_b1",
   "kind": "record",
   "title": "Disco gryzoń · B1 energiczny",
-  "role": "płyta serii 4; four-on-the-floor i arpeggio cyklu kwintowego; legenda v7: progresja unikalna (i-VI-iv-v + im-bIIM-ivm-IIIM-bIIM-ivm-IIIM-IIIM + I-I7-Idom7-IV(wzgl.)), jeden instrument (EP)",
+  "role": "płyta serii 4; four-on-the-floor i arpeggio cyklu kwintowego; legenda v7: progresja unikalna (i-III-iv-VI + im-ii-vm-IV + v-VI-III-i + VI-VII-i-III + im-bIIM-ivm-IIIM-bIIM-ivm-IIIM-IIIM + v-VI-v-i), jeden instrument (EP)",
   "bpm": 130,
   "meter": 4,
   "key": "A",
@@ -17,111 +17,111 @@
     },
     {
       "bar": 2,
-      "sym": "Fmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 3,
-      "sym": "Dm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Em9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Am9"
+      "sym": "Dm9"
     },
     {
       "bar": 6,
-      "sym": "Fmaj9#11"
+      "sym": "Dm9"
     },
     {
       "bar": 7,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 8,
-      "sym": "Em11"
-    },
-    {
-      "bar": 9,
-      "sym": "Am11"
-    },
-    {
-      "bar": 10,
-      "sym": "Bbmaj7#11"
-    },
-    {
-      "bar": 11,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 12,
-      "sym": "Cmaj9"
-    },
-    {
-      "bar": 13,
-      "sym": "Bbmaj7#11"
-    },
-    {
-      "bar": 14,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 15,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 16,
-      "sym": "Cmaj9"
-    },
-    {
-      "bar": 17,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 18,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 19,
-      "sym": "C9"
-    },
-    {
-      "bar": 20,
-      "sym": "C9"
-    },
-    {
-      "bar": 21,
-      "sym": "C13"
-    },
-    {
-      "bar": 22,
-      "sym": "C13"
-    },
-    {
-      "bar": 23,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 24,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 25,
-      "sym": "Am11"
-    },
-    {
-      "bar": 26,
       "sym": "Fmaj9"
     },
     {
+      "bar": 8,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 9,
+      "sym": "Am9"
+    },
+    {
+      "bar": 10,
+      "sym": "Am9"
+    },
+    {
+      "bar": 11,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 12,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 13,
+      "sym": "Em11"
+    },
+    {
+      "bar": 14,
+      "sym": "Em11"
+    },
+    {
+      "bar": 15,
+      "sym": "D9"
+    },
+    {
+      "bar": 16,
+      "sym": "D9"
+    },
+    {
+      "bar": 17,
+      "sym": "Em9"
+    },
+    {
+      "bar": 18,
+      "sym": "Em9"
+    },
+    {
+      "bar": 19,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 20,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 21,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 23,
+      "sym": "Am9"
+    },
+    {
+      "bar": 24,
+      "sym": "Am9"
+    },
+    {
+      "bar": 25,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 26,
+      "sym": "Fmaj9#11"
+    },
+    {
       "bar": 27,
-      "sym": "Dm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 28,
-      "sym": "Em9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 29,
@@ -129,15 +129,15 @@
     },
     {
       "bar": 30,
-      "sym": "Fmaj9#11"
+      "sym": "Am9"
     },
     {
       "bar": 31,
-      "sym": "Dm9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "Em11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 33,
@@ -149,19 +149,19 @@
     },
     {
       "bar": 35,
-      "sym": "Dm9"
+      "sym": "Dm11"
     },
     {
       "bar": 36,
-      "sym": "Cmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 37,
-      "sym": "Bbmaj7#11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 38,
-      "sym": "Dm9"
+      "sym": "Dm11"
     },
     {
       "bar": 39,
@@ -173,35 +173,35 @@
     },
     {
       "bar": 41,
-      "sym": "Cmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 42,
-      "sym": "Cmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 43,
-      "sym": "C9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 44,
-      "sym": "C9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 45,
-      "sym": "C13"
+      "sym": "Em11"
     },
     {
       "bar": 46,
-      "sym": "C13"
+      "sym": "Em11"
     },
     {
       "bar": 47,
-      "sym": "Fmaj9#11"
+      "sym": "Am9"
     },
     {
       "bar": 48,
-      "sym": "Fmaj9#11"
+      "sym": "Am9"
     },
     {
       "bar": 49,
@@ -209,31 +209,31 @@
     },
     {
       "bar": 50,
-      "sym": "Fmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 51,
-      "sym": "Dm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 52,
-      "sym": "Em9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 53,
-      "sym": "Am9"
-    },
-    {
-      "bar": 54,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 55,
       "sym": "Dm9"
     },
     {
+      "bar": 54,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 55,
+      "sym": "Fmaj9"
+    },
+    {
       "bar": 56,
-      "sym": "Em11"
+      "sym": "Fmaj9"
     }
   ],
   "layers": [
@@ -242,7 +242,7 @@
       "voice": "EP",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; gotowe progresje SHLD: i-VI-iv-v + im-bIIM-ivm-IIIM-bIIM-ivm-IIIM-IIIM + I-I7-Idom7-IV(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

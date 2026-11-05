@@ -2,7 +2,7 @@
   "id": "rec_s2_pietruszka_a2",
   "kind": "record",
   "title": "Pietruszka funk · A2 spokojny",
-  "role": "płyta serii 2; staccato bas i wah; legenda v7: progresja unikalna (iv-i-v-VI + i-VII-i-v-III-VII-i-v + i-vdim-iv-VI), jeden instrument (GLK)",
+  "role": "płyta serii 2; staccato bas i wah; legenda v7: progresja unikalna (i-VII-VI-III + Isus2-I-vi7-visus4(wzgl.) + bVIM-bIIIM-bVIIM-IV-I(wzgl.) + i-VII-i-v + V-IV-vi-I(wzgl.)), jeden instrument (GLK)",
   "bpm": 90,
   "meter": 4,
   "key": "E",
@@ -13,91 +13,91 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Am11"
-    },
-    {
-      "bar": 2,
-      "sym": "Am11"
-    },
-    {
-      "bar": 3,
-      "sym": "Em11"
-    },
-    {
-      "bar": 4,
-      "sym": "Em11"
-    },
-    {
-      "bar": 5,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 6,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 7,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 8,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 9,
-      "sym": "Em11"
-    },
-    {
-      "bar": 10,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 11,
       "sym": "Em9"
     },
     {
-      "bar": 12,
-      "sym": "Bm9"
+      "bar": 2,
+      "sym": "Em9"
     },
     {
-      "bar": 13,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 14,
+      "bar": 3,
       "sym": "D13"
     },
     {
+      "bar": 4,
+      "sym": "D13"
+    },
+    {
+      "bar": 5,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 6,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 7,
+      "sym": "Gmaj9#11"
+    },
+    {
+      "bar": 8,
+      "sym": "Gmaj9#11"
+    },
+    {
+      "bar": 9,
+      "sym": "Gsus2"
+    },
+    {
+      "bar": 10,
+      "sym": "Gsus2"
+    },
+    {
+      "bar": 11,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 12,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 13,
+      "sym": "Em7"
+    },
+    {
+      "bar": 14,
+      "sym": "Em7"
+    },
+    {
       "bar": 15,
-      "sym": "Em11"
+      "sym": "Esus4"
     },
     {
       "bar": 16,
-      "sym": "Bm11"
+      "sym": "Esus4"
     },
     {
       "bar": 17,
-      "sym": "Em11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Em11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Bdim7"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "Bdim7"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 21,
-      "sym": "Am9"
+      "sym": "F13"
     },
     {
       "bar": 22,
-      "sym": "Am9"
+      "sym": "F13"
     },
     {
       "bar": 23,
@@ -105,71 +105,71 @@
     },
     {
       "bar": 24,
-      "sym": "Cmaj9#11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 25,
-      "sym": "Am11"
+      "sym": "Em11"
     },
     {
       "bar": 26,
-      "sym": "Am11"
+      "sym": "Em11"
     },
     {
       "bar": 27,
-      "sym": "Em11"
-    },
-    {
-      "bar": 28,
-      "sym": "Em11"
-    },
-    {
-      "bar": 29,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 30,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 31,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 32,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 33,
-      "sym": "Em11"
-    },
-    {
-      "bar": 34,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 35,
-      "sym": "Em9"
-    },
-    {
-      "bar": 36,
-      "sym": "Bm9"
-    },
-    {
-      "bar": 37,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 38,
       "sym": "D13"
     },
     {
-      "bar": 39,
+      "bar": 28,
+      "sym": "D13"
+    },
+    {
+      "bar": 29,
+      "sym": "Em9"
+    },
+    {
+      "bar": 30,
+      "sym": "Em9"
+    },
+    {
+      "bar": 31,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 32,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 33,
+      "sym": "D9sus4"
+    },
+    {
+      "bar": 34,
+      "sym": "D9sus4"
+    },
+    {
+      "bar": 35,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 36,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 37,
       "sym": "Em11"
     },
     {
+      "bar": 38,
+      "sym": "Em11"
+    },
+    {
+      "bar": 39,
+      "sym": "Gmaj9"
+    },
+    {
       "bar": 40,
-      "sym": "Cmaj9#11"
+      "sym": "Gmaj9"
     }
   ],
   "layers": [
@@ -178,7 +178,7 @@
       "voice": "GLK",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (GLK), akordy rozłożone; gotowe progresje SHLD: iv-i-v-VI + i-VII-i-v-III-VII-i-v + i-vdim-iv-VI",
+      "part": "jedna warstwa, jeden instrument (GLK), akordy rozłożone; pełna forma z gotowych progresji SHLD (5 sekcji)",
       "stem": "base"
     }
   ],

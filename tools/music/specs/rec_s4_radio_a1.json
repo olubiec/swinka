@@ -2,7 +2,7 @@
   "id": "rec_s4_radio_a1",
   "kind": "record",
   "title": "Radio FM · A1 podpisowy",
-  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (vi-IV-I-V + i-III-VII-VI(wzgl.) + im-ii-vm-IV(wzgl.)), jeden instrument (PAD)",
+  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (I-bVIM-bVIIM-ivm + IV-V-ii-im-bIIIM-IV + V-I-vi-V + ii-IV-vi-V + im-bIIM-ivm-IIIM-bIIM-ivm-IIIM-IIIM(wzgl.) + im-vm-bVIIM-IV(wzgl.)), jeden instrument (PAD)",
   "bpm": 96,
   "meter": 4,
   "key": "C",
@@ -13,143 +13,143 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Am9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Am9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Fmaj13#11"
+      "sym": "Abmaj9"
     },
     {
       "bar": 4,
-      "sym": "Fmaj13#11"
+      "sym": "Abmaj9"
     },
     {
       "bar": 5,
-      "sym": "Cmaj13"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 6,
-      "sym": "Cmaj13"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 7,
-      "sym": "G13"
+      "sym": "Fm9"
     },
     {
       "bar": 8,
-      "sym": "G13"
+      "sym": "Fm9"
     },
     {
       "bar": 9,
-      "sym": "Am11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 10,
-      "sym": "Am11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 11,
-      "sym": "Cmaj9#11"
+      "sym": "G9sus4"
     },
     {
       "bar": 12,
-      "sym": "Cmaj9#11"
+      "sym": "G9sus4"
     },
     {
       "bar": 13,
-      "sym": "Gmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 14,
-      "sym": "Gmaj9"
+      "sym": "Cm11"
     },
     {
       "bar": 15,
-      "sym": "Fmaj9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "Fmaj9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 17,
-      "sym": "Am11"
+      "sym": "G13sus4"
     },
     {
       "bar": 18,
-      "sym": "Am11"
+      "sym": "G13sus4"
     },
     {
       "bar": 19,
-      "sym": "Bm11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 20,
-      "sym": "Bm11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 21,
-      "sym": "Em11"
+      "sym": "Am9"
     },
     {
       "bar": 22,
-      "sym": "Em11"
+      "sym": "Am9"
     },
     {
       "bar": 23,
-      "sym": "D13"
+      "sym": "G13"
     },
     {
       "bar": 24,
-      "sym": "D13"
+      "sym": "G13"
     },
     {
       "bar": 25,
-      "sym": "Am9"
+      "sym": "Dm9"
     },
     {
       "bar": 26,
-      "sym": "Am9"
+      "sym": "Dm9"
     },
     {
       "bar": 27,
-      "sym": "Fmaj13#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 28,
-      "sym": "Fmaj13#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 29,
-      "sym": "Cmaj13"
+      "sym": "Am9"
     },
     {
       "bar": 30,
-      "sym": "Cmaj13"
+      "sym": "Am9"
     },
     {
       "bar": 31,
-      "sym": "G13"
+      "sym": "G9sus4"
     },
     {
       "bar": 32,
-      "sym": "G13"
+      "sym": "G9sus4"
     },
     {
       "bar": 33,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 34,
-      "sym": "Am11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 35,
-      "sym": "Cmaj9#11"
+      "sym": "Dm11"
     },
     {
       "bar": 36,
@@ -157,51 +157,51 @@
     },
     {
       "bar": 37,
-      "sym": "Gmaj9"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 38,
-      "sym": "Gmaj9"
+      "sym": "Dm9"
     },
     {
       "bar": 39,
-      "sym": "Fmaj9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 40,
-      "sym": "Fmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 41,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 42,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 43,
-      "sym": "Bm11"
+      "sym": "Em11"
     },
     {
       "bar": 44,
-      "sym": "Bm11"
+      "sym": "Em11"
     },
     {
       "bar": 45,
-      "sym": "Em11"
+      "sym": "F#maj9"
     },
     {
       "bar": 46,
-      "sym": "Em11"
+      "sym": "F#maj9"
     },
     {
       "bar": 47,
-      "sym": "D13"
+      "sym": "D9"
     },
     {
       "bar": 48,
-      "sym": "D13"
+      "sym": "D9"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "PAD",
       "db": -3,
       "pattern": "chords.rolled(0.4)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; gotowe progresje SHLD: vi-IV-I-V + i-III-VII-VI(wzgl.) + im-ii-vm-IV(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

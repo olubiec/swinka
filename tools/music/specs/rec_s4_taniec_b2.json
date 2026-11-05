@@ -2,7 +2,7 @@
   "id": "rec_s4_taniec_b2",
   "kind": "record",
   "title": "Taniec w klatce · B2 nastrojowy",
-  "role": "płyta serii 4; najszybszy utwór w grze; własny motyw (nie Nyan Cat: nie zbliżać się do jego skali, rytmu i linii); legenda v7: progresja unikalna (i-VI-iv-III + i-VII-VIadd9-VII-i-v-VI-VIIsus4 + VI-VII-i-III-VII-VI-iv-i), jeden instrument (P25)",
+  "role": "płyta serii 4; najszybszy utwór w grze; własny motyw (nie Nyan Cat: nie zbliżać się do jego skali, rytmu i linii); legenda v7: progresja unikalna (im-bVIM-ivm-V + ivm-bIIIM-iim7-V(wzgl.) + im-vm-ivm-bIIM7 + I-bIIIM-bVIIM-I(wzgl.) + v-VI-v-i + iv-III-VII-i), jeden instrument (P25)",
   "bpm": 104,
   "meter": 4,
   "key": "C",
@@ -17,171 +17,171 @@
     },
     {
       "bar": 2,
-      "sym": "Abmaj9"
+      "sym": "Cm9"
     },
     {
       "bar": 3,
-      "sym": "Fm11"
+      "sym": "G13"
     },
     {
       "bar": 4,
-      "sym": "Ebmaj9#11"
+      "sym": "G13"
     },
     {
       "bar": 5,
-      "sym": "Cm9"
-    },
-    {
-      "bar": 6,
-      "sym": "Abmaj9"
-    },
-    {
-      "bar": 7,
-      "sym": "Fm9"
-    },
-    {
-      "bar": 8,
-      "sym": "Ebmaj9#11"
-    },
-    {
-      "bar": 9,
-      "sym": "Cm9"
-    },
-    {
-      "bar": 10,
-      "sym": "Bb13"
-    },
-    {
-      "bar": 11,
-      "sym": "Abadd9"
-    },
-    {
-      "bar": 12,
-      "sym": "Bb13"
-    },
-    {
-      "bar": 13,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 14,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 15,
-      "sym": "Abmaj9#11"
-    },
-    {
-      "bar": 16,
-      "sym": "Bbsus4"
-    },
-    {
-      "bar": 17,
-      "sym": "Abmaj9"
-    },
-    {
-      "bar": 18,
-      "sym": "Bb13"
-    },
-    {
-      "bar": 19,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 20,
-      "sym": "Ebmaj9#11"
-    },
-    {
-      "bar": 21,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 22,
-      "sym": "Abmaj9"
-    },
-    {
-      "bar": 23,
-      "sym": "Fm9"
-    },
-    {
-      "bar": 24,
-      "sym": "Cm9"
-    },
-    {
-      "bar": 25,
-      "sym": "Cm9"
-    },
-    {
-      "bar": 26,
-      "sym": "Abmaj9"
-    },
-    {
-      "bar": 27,
       "sym": "Fm11"
     },
     {
-      "bar": 28,
-      "sym": "Ebmaj9#11"
+      "bar": 6,
+      "sym": "Fm11"
     },
     {
-      "bar": 29,
-      "sym": "Cm9"
+      "bar": 7,
+      "sym": "G13"
     },
     {
-      "bar": 30,
-      "sym": "Abmaj9"
+      "bar": 8,
+      "sym": "G13"
     },
     {
-      "bar": 31,
+      "bar": 9,
+      "sym": "Abm11"
+    },
+    {
+      "bar": 10,
+      "sym": "Abm11"
+    },
+    {
+      "bar": 11,
+      "sym": "F#maj9"
+    },
+    {
+      "bar": 12,
+      "sym": "F#maj9"
+    },
+    {
+      "bar": 13,
       "sym": "Fm9"
     },
     {
-      "bar": 32,
-      "sym": "Ebmaj9#11"
+      "bar": 14,
+      "sym": "Fm9"
     },
     {
-      "bar": 33,
+      "bar": 15,
+      "sym": "Bb9sus4"
+    },
+    {
+      "bar": 16,
+      "sym": "Bb9sus4"
+    },
+    {
+      "bar": 17,
       "sym": "Cm9"
     },
     {
+      "bar": 18,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 19,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 20,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 21,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 22,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 23,
+      "sym": "Dbmaj13"
+    },
+    {
+      "bar": 24,
+      "sym": "Dbmaj13"
+    },
+    {
+      "bar": 25,
+      "sym": "Ebmaj13"
+    },
+    {
+      "bar": 26,
+      "sym": "Ebmaj13"
+    },
+    {
+      "bar": 27,
+      "sym": "F#maj9#11"
+    },
+    {
+      "bar": 28,
+      "sym": "F#maj9#11"
+    },
+    {
+      "bar": 29,
+      "sym": "Dbmaj9"
+    },
+    {
+      "bar": 30,
+      "sym": "Dbmaj9"
+    },
+    {
+      "bar": 31,
+      "sym": "Ebmaj13"
+    },
+    {
+      "bar": 32,
+      "sym": "Ebmaj13"
+    },
+    {
+      "bar": 33,
+      "sym": "Gm11"
+    },
+    {
       "bar": 34,
-      "sym": "Bb13"
+      "sym": "Gm11"
     },
     {
       "bar": 35,
-      "sym": "Abadd9"
-    },
-    {
-      "bar": 36,
-      "sym": "Bb13"
-    },
-    {
-      "bar": 37,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 38,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 39,
       "sym": "Abmaj9#11"
     },
     {
+      "bar": 36,
+      "sym": "Abmaj9#11"
+    },
+    {
+      "bar": 37,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 38,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 39,
+      "sym": "Cm9"
+    },
+    {
       "bar": 40,
-      "sym": "Bbsus4"
+      "sym": "Cm9"
     },
     {
       "bar": 41,
-      "sym": "Abmaj9"
+      "sym": "Fm9"
     },
     {
       "bar": 42,
-      "sym": "Bb13"
+      "sym": "Fm9"
     },
     {
       "bar": 43,
-      "sym": "Cm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 44,
@@ -189,15 +189,15 @@
     },
     {
       "bar": 45,
-      "sym": "Bbmaj9"
+      "sym": "Bb13"
     },
     {
       "bar": 46,
-      "sym": "Abmaj9"
+      "sym": "Bb13"
     },
     {
       "bar": 47,
-      "sym": "Fm9"
+      "sym": "Cm9"
     },
     {
       "bar": 48,
@@ -210,7 +210,7 @@
       "voice": "P25",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (P25), akordy rozłożone; gotowe progresje SHLD: i-VI-iv-III + i-VII-VIadd9-VII-i-v-VI-VIIsus4 + VI-VII-i-III-VII-VI-iv-i",
+      "part": "jedna warstwa, jeden instrument (P25), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

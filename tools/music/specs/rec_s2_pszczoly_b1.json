@@ -2,7 +2,7 @@
   "id": "rec_s2_pszczoly_b1",
   "kind": "record",
   "title": "Pszczoły · B1 energiczny",
-  "role": "płyta serii 2; bzyczący bordun, wchodzi od taktu 9; legenda v7: progresja unikalna (bIIM-bVIM-biii-bviim + I-V-vi-ii + I-iii-IV-vi), jeden instrument (HARP)",
+  "role": "płyta serii 2; bzyczący bordun, wchodzi od taktu 9; legenda v7: progresja unikalna (vi-bVIM-bVIIM-I + I-IIIM-vi-V + VI-i-v-III(wzgl.) + VI-VII-i-III-VII-VI-iv-i(wzgl.) + I-vi-I-IV + Isus2-I-vi7-visus4), jeden instrument (HARP)",
   "bpm": 121,
   "meter": 4,
   "key": "A",
@@ -13,11 +13,11 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Bbmaj7#11"
+      "sym": "F#m11"
     },
     {
       "bar": 2,
-      "sym": "Bbmaj7#11"
+      "sym": "F#m11"
     },
     {
       "bar": 3,
@@ -29,71 +29,71 @@
     },
     {
       "bar": 5,
-      "sym": "Cm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 6,
-      "sym": "Cm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 7,
-      "sym": "Gm11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 8,
-      "sym": "Gm11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 9,
-      "sym": "Amaj13"
+      "sym": "Amaj9"
     },
     {
       "bar": 10,
-      "sym": "Amaj13"
+      "sym": "Amaj9"
     },
     {
       "bar": 11,
-      "sym": "E9sus4"
+      "sym": "C#7alt"
     },
     {
       "bar": 12,
-      "sym": "E9sus4"
+      "sym": "C#7alt"
     },
     {
       "bar": 13,
-      "sym": "F#m11"
+      "sym": "F#m9"
     },
     {
       "bar": 14,
-      "sym": "F#m11"
+      "sym": "F#m9"
     },
     {
       "bar": 15,
-      "sym": "Bm11"
+      "sym": "E9sus4"
     },
     {
       "bar": 16,
-      "sym": "Bm11"
+      "sym": "E9sus4"
     },
     {
       "bar": 17,
-      "sym": "Amaj13"
+      "sym": "Dmaj9"
     },
     {
       "bar": 18,
-      "sym": "C#m11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 19,
-      "sym": "Dmaj13#11"
+      "sym": "F#m9"
     },
     {
       "bar": 20,
-      "sym": "F#m11"
+      "sym": "F#m9"
     },
     {
       "bar": 21,
-      "sym": "Amaj9#11"
+      "sym": "C#m11"
     },
     {
       "bar": 22,
@@ -101,107 +101,107 @@
     },
     {
       "bar": 23,
-      "sym": "Dmaj13#11"
-    },
-    {
-      "bar": 24,
-      "sym": "F#m9"
-    },
-    {
-      "bar": 25,
-      "sym": "Bbmaj7#11"
-    },
-    {
-      "bar": 26,
-      "sym": "Bbmaj7#11"
-    },
-    {
-      "bar": 27,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 28,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 29,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 30,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 31,
-      "sym": "Gm11"
-    },
-    {
-      "bar": 32,
-      "sym": "Gm11"
-    },
-    {
-      "bar": 33,
-      "sym": "Amaj13"
-    },
-    {
-      "bar": 34,
-      "sym": "Amaj13"
-    },
-    {
-      "bar": 35,
-      "sym": "E9sus4"
-    },
-    {
-      "bar": 36,
-      "sym": "E9sus4"
-    },
-    {
-      "bar": 37,
-      "sym": "F#m11"
-    },
-    {
-      "bar": 38,
-      "sym": "F#m11"
-    },
-    {
-      "bar": 39,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 40,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 41,
-      "sym": "Amaj13"
-    },
-    {
-      "bar": 42,
-      "sym": "C#m11"
-    },
-    {
-      "bar": 43,
-      "sym": "Dmaj13#11"
-    },
-    {
-      "bar": 44,
-      "sym": "F#m11"
-    },
-    {
-      "bar": 45,
       "sym": "Amaj9#11"
     },
     {
-      "bar": 46,
-      "sym": "C#m11"
+      "bar": 24,
+      "sym": "Amaj9#11"
     },
     {
-      "bar": 47,
+      "bar": 25,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 26,
+      "sym": "Emaj9"
+    },
+    {
+      "bar": 27,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 28,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 29,
+      "sym": "Emaj9"
+    },
+    {
+      "bar": 30,
+      "sym": "Dmaj9#11"
+    },
+    {
+      "bar": 31,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 32,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 33,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 34,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 35,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 36,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 37,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 38,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 39,
       "sym": "Dmaj13#11"
     },
     {
-      "bar": 48,
+      "bar": 40,
+      "sym": "Dmaj13#11"
+    },
+    {
+      "bar": 41,
+      "sym": "Asus2"
+    },
+    {
+      "bar": 42,
+      "sym": "Asus2"
+    },
+    {
+      "bar": 43,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 44,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 45,
       "sym": "F#m9"
+    },
+    {
+      "bar": 46,
+      "sym": "F#m9"
+    },
+    {
+      "bar": 47,
+      "sym": "F#sus4"
+    },
+    {
+      "bar": 48,
+      "sym": "F#sus4"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: bIIM-bVIM-biii-bviim + I-V-vi-ii + I-iii-IV-vi",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

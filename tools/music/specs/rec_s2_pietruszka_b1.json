@@ -2,7 +2,7 @@
   "id": "rec_s2_pietruszka_b1",
   "kind": "record",
   "title": "Pietruszka funk · B1 energiczny",
-  "role": "płyta serii 2; staccato bas i wah; legenda v7: progresja unikalna (im-vm-bVIIM-IV + I-bVIM-bVIIM-ivm(wzgl.) + i-i-iv-iv-v7-ii5-v-v7), jeden instrument (BOX)",
+  "role": "płyta serii 2; staccato bas i wah; legenda v7: progresja unikalna (im-VIM-IIIM-bIIM + I-IV-vii-iii-vi-ii-V-I(wzgl.) + bIIM-ivm-biii-im(wzgl.) + I-I7-I9-IV-ivm(wzgl.) + im-viim/i-im-bii/i + ii-V-I-IV(wzgl.)), jeden instrument (BOX)",
   "bpm": 108,
   "meter": 4,
   "key": "E",
@@ -13,195 +13,195 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Em11"
+      "sym": "Em9"
     },
     {
       "bar": 2,
-      "sym": "Bm11"
+      "sym": "Em9"
     },
     {
       "bar": 3,
-      "sym": "C#maj7#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "A13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Em11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 6,
-      "sym": "Bm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 7,
-      "sym": "C#maj7#11"
+      "sym": "Fmaj7#11"
     },
     {
       "bar": 8,
-      "sym": "A9"
+      "sym": "Fmaj7#11"
     },
     {
       "bar": 9,
-      "sym": "Gmaj9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 10,
-      "sym": "Gmaj9"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 11,
-      "sym": "Ebmaj9"
+      "sym": "F#m11"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj9"
+      "sym": "Bm9"
     },
     {
       "bar": 13,
-      "sym": "Fmaj9"
+      "sym": "Em11"
     },
     {
       "bar": 14,
-      "sym": "Fmaj9"
+      "sym": "Am9"
     },
     {
       "bar": 15,
-      "sym": "Cm11"
+      "sym": "D9sus4"
     },
     {
       "bar": 16,
-      "sym": "Cm11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 17,
-      "sym": "Em11"
+      "sym": "G#maj9"
     },
     {
       "bar": 18,
-      "sym": "Em9"
+      "sym": "G#maj9"
     },
     {
       "bar": 19,
-      "sym": "Am9"
+      "sym": "Cm11"
     },
     {
       "bar": 20,
-      "sym": "Am11"
+      "sym": "Cm11"
     },
     {
       "bar": 21,
-      "sym": "Bm9"
+      "sym": "Bbm9"
     },
     {
       "bar": 22,
-      "sym": "F#m9"
+      "sym": "Bbm9"
     },
     {
       "bar": 23,
-      "sym": "Bm11"
+      "sym": "Gm11"
     },
     {
       "bar": 24,
-      "sym": "Bm7"
+      "sym": "Gm11"
     },
     {
       "bar": 25,
-      "sym": "Em11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 26,
-      "sym": "Bm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 27,
-      "sym": "C#maj7#11"
+      "sym": "G9"
     },
     {
       "bar": 28,
-      "sym": "A13"
+      "sym": "G9"
     },
     {
       "bar": 29,
-      "sym": "Em11"
+      "sym": "G13"
     },
     {
       "bar": 30,
-      "sym": "Bm11"
+      "sym": "G13"
     },
     {
       "bar": 31,
-      "sym": "C#maj7#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "A9"
+      "sym": "Cm9"
     },
     {
       "bar": 33,
-      "sym": "Gmaj9"
-    },
-    {
-      "bar": 34,
-      "sym": "Gmaj9"
-    },
-    {
-      "bar": 35,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 36,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 37,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 38,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 39,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 40,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 41,
-      "sym": "Em11"
-    },
-    {
-      "bar": 42,
       "sym": "Em9"
     },
     {
-      "bar": 43,
-      "sym": "Am9"
+      "bar": 34,
+      "sym": "Em9"
     },
     {
-      "bar": 44,
+      "bar": 35,
+      "sym": "Dm9/E"
+    },
+    {
+      "bar": 36,
+      "sym": "Dm9/E"
+    },
+    {
+      "bar": 37,
+      "sym": "Em9"
+    },
+    {
+      "bar": 38,
+      "sym": "Em9"
+    },
+    {
+      "bar": 39,
+      "sym": "Fm11/E"
+    },
+    {
+      "bar": 40,
+      "sym": "Fm11/E"
+    },
+    {
+      "bar": 41,
       "sym": "Am11"
     },
     {
+      "bar": 42,
+      "sym": "Am11"
+    },
+    {
+      "bar": 43,
+      "sym": "D13sus4"
+    },
+    {
+      "bar": 44,
+      "sym": "D13sus4"
+    },
+    {
       "bar": 45,
-      "sym": "Bm9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 46,
-      "sym": "F#m9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 47,
-      "sym": "Bm11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 48,
-      "sym": "Bm7"
+      "sym": "Cmaj13#11"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "BOX",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; gotowe progresje SHLD: im-vm-bVIIM-IV + I-bVIM-bVIIM-ivm(wzgl.) + i-i-iv-iv-v7-ii5-v-v7",
+      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

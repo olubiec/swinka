@@ -2,7 +2,7 @@
   "id": "rec_s4_radio_b1",
   "kind": "record",
   "title": "Radio FM · B1 energiczny",
-  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (iii-vi-IV-I + IV-I-ii-vi + i-VII-VI-III(wzgl.)), jeden instrument (TRI)",
+  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (I-iii-IV-vi + IV-vi-iii-I + vi-ii-V-I + VI-III-i-v(wzgl.) + I-bIIIM-IV-I + vi-IV-iii-V), jeden instrument (TRI)",
   "bpm": 104,
   "meter": 4,
   "key": "C",
@@ -13,19 +13,19 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Em11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Em11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "Em9"
     },
     {
       "bar": 4,
-      "sym": "Am11"
+      "sym": "Em9"
     },
     {
       "bar": 5,
@@ -37,11 +37,11 @@
     },
     {
       "bar": 7,
-      "sym": "Cmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 8,
-      "sym": "Cmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 9,
@@ -53,27 +53,27 @@
     },
     {
       "bar": 11,
-      "sym": "Cmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 12,
-      "sym": "Cmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 13,
-      "sym": "Dm9"
+      "sym": "Em11"
     },
     {
       "bar": 14,
-      "sym": "Dm9"
+      "sym": "Em11"
     },
     {
       "bar": 15,
-      "sym": "Am11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "Am11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 17,
@@ -81,95 +81,95 @@
     },
     {
       "bar": 18,
-      "sym": "G13"
-    },
-    {
-      "bar": 19,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 20,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 21,
       "sym": "Am9"
     },
     {
+      "bar": 19,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 20,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 21,
+      "sym": "G9sus4"
+    },
+    {
       "bar": 22,
-      "sym": "Gmaj9"
+      "sym": "G9sus4"
     },
     {
       "bar": 23,
-      "sym": "Fmaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "Cmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 25,
-      "sym": "Em11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 26,
-      "sym": "Em11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 27,
-      "sym": "Am11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 28,
-      "sym": "Am11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 29,
-      "sym": "Fmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 30,
-      "sym": "Fmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 31,
-      "sym": "Cmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 32,
-      "sym": "Cmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 33,
-      "sym": "Fmaj13#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 34,
-      "sym": "Fmaj13#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 35,
-      "sym": "Cmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 36,
-      "sym": "Cmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 37,
-      "sym": "Dm9"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 38,
-      "sym": "Dm9"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 39,
-      "sym": "Am11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 40,
-      "sym": "Am11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 41,
@@ -177,31 +177,31 @@
     },
     {
       "bar": 42,
-      "sym": "G13"
-    },
-    {
-      "bar": 43,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 44,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 45,
       "sym": "Am9"
     },
     {
+      "bar": 43,
+      "sym": "Fmaj13#11"
+    },
+    {
+      "bar": 44,
+      "sym": "Fmaj13#11"
+    },
+    {
+      "bar": 45,
+      "sym": "Em11"
+    },
+    {
       "bar": 46,
-      "sym": "Gmaj9"
+      "sym": "Em11"
     },
     {
       "bar": 47,
-      "sym": "Fmaj9#11"
+      "sym": "G13"
     },
     {
       "bar": 48,
-      "sym": "Cmaj9"
+      "sym": "G13"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "TRI",
       "db": -3,
       "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; gotowe progresje SHLD: iii-vi-IV-I + IV-I-ii-vi + i-VII-VI-III(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

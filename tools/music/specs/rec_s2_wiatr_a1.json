@@ -2,7 +2,7 @@
   "id": "rec_s2_wiatr_a1",
   "kind": "record",
   "title": "Wiatr w trawie · A1 podpisowy",
-  "role": "płyta serii 2; szeroki pad i wiatr; legenda v7: progresja unikalna (I-I7-Idom7-IV-ivm-I-ivm6-Vdom7 + I-IV-vi-V), jeden instrument (XYL)",
+  "role": "płyta serii 2; szeroki pad i wiatr; legenda v7: progresja unikalna (I-V-ivm-bVIM + im-bVIIM-bIIM-vm(wzgl.) + bIIM-bVIM-biii-bviim), jeden instrument (XYL)",
   "bpm": 58,
   "meter": 4,
   "key": "D",
@@ -17,15 +17,15 @@
     },
     {
       "bar": 2,
-      "sym": "D9"
+      "sym": "Dmaj13"
     },
     {
       "bar": 3,
-      "sym": "D13"
+      "sym": "A13sus4"
     },
     {
       "bar": 4,
-      "sym": "Gmaj9#11"
+      "sym": "A13sus4"
     },
     {
       "bar": 5,
@@ -33,79 +33,79 @@
     },
     {
       "bar": 6,
-      "sym": "Dmaj9#11"
-    },
-    {
-      "bar": 7,
-      "sym": "Gm6"
-    },
-    {
-      "bar": 8,
-      "sym": "A9"
-    },
-    {
-      "bar": 9,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 10,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 11,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 12,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 13,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 14,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 15,
-      "sym": "A13"
-    },
-    {
-      "bar": 16,
-      "sym": "A13"
-    },
-    {
-      "bar": 17,
-      "sym": "Dmaj13"
-    },
-    {
-      "bar": 18,
-      "sym": "D9"
-    },
-    {
-      "bar": 19,
-      "sym": "D13"
-    },
-    {
-      "bar": 20,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 21,
       "sym": "Gm11"
     },
     {
+      "bar": 7,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 8,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 9,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 10,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 11,
+      "sym": "Abmaj7#11"
+    },
+    {
+      "bar": 12,
+      "sym": "Abmaj7#11"
+    },
+    {
+      "bar": 13,
+      "sym": "Cmaj7#11"
+    },
+    {
+      "bar": 14,
+      "sym": "Cmaj7#11"
+    },
+    {
+      "bar": 15,
+      "sym": "F#m9"
+    },
+    {
+      "bar": 16,
+      "sym": "F#m9"
+    },
+    {
+      "bar": 17,
+      "sym": "Ebmaj7#11"
+    },
+    {
+      "bar": 18,
+      "sym": "Ebmaj7#11"
+    },
+    {
+      "bar": 19,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 20,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 21,
+      "sym": "Fm9"
+    },
+    {
       "bar": 22,
-      "sym": "Dmaj9#11"
+      "sym": "Fm9"
     },
     {
       "bar": 23,
-      "sym": "Gm6"
+      "sym": "Cm9"
     },
     {
       "bar": 24,
-      "sym": "A9"
+      "sym": "Cm9"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "XYL",
       "db": -3,
       "pattern": "chords.rolled(0.2)",
-      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; gotowe progresje SHLD: I-I7-Idom7-IV-ivm-I-ivm6-Vdom7 + I-IV-vi-V",
+      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],

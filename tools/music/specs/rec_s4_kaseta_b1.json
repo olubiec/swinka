@@ -2,7 +2,7 @@
   "id": "rec_s4_kaseta_b1",
   "kind": "record",
   "title": "Kaseta mixtape · B1 energiczny",
-  "role": "płyta serii 4; falowanie taśmy wypieczone w dźwięk; legenda v7: progresja unikalna (VI-III-i-v + i-VI-III-VII + IV-I-V-vi(wzgl.)), jeden instrument (ACC)",
+  "role": "płyta serii 4; falowanie taśmy wypieczone w dźwięk; legenda v7: progresja unikalna (i-VI-iv-v + VI7-VII6-i-VII6 + I-vi-ii-V(wzgl.) + im-ii-vm-IV + iv-III-VII-i + IV-vi-I-V(wzgl.)), jeden instrument (ACC)",
   "bpm": 108,
   "meter": 4,
   "key": "D",
@@ -13,51 +13,51 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Bbmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 2,
-      "sym": "Bbmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 3,
-      "sym": "Fmaj9#11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Fmaj9#11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Dm11"
+      "sym": "Gm11"
     },
     {
       "bar": 6,
-      "sym": "Dm11"
+      "sym": "Gm11"
     },
     {
       "bar": 7,
-      "sym": "Am9"
+      "sym": "Am11"
     },
     {
       "bar": 8,
-      "sym": "Am9"
+      "sym": "Am11"
     },
     {
       "bar": 9,
-      "sym": "Dm11"
+      "sym": "Bb13"
     },
     {
       "bar": 10,
-      "sym": "Bbmaj9"
+      "sym": "Bb13"
     },
     {
       "bar": 11,
-      "sym": "Fmaj9"
+      "sym": "C6/9"
     },
     {
       "bar": 12,
-      "sym": "C13"
+      "sym": "C6/9"
     },
     {
       "bar": 13,
@@ -65,87 +65,87 @@
     },
     {
       "bar": 14,
-      "sym": "Bbmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 15,
-      "sym": "Fmaj9"
+      "sym": "C6/9"
     },
     {
       "bar": 16,
-      "sym": "C13"
+      "sym": "C6/9"
     },
     {
       "bar": 17,
-      "sym": "Bbmaj13#11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 18,
-      "sym": "Bbmaj13#11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 19,
-      "sym": "Fmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 20,
-      "sym": "Fmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 21,
-      "sym": "C13"
+      "sym": "Gm9"
     },
     {
       "bar": 22,
-      "sym": "C13"
+      "sym": "Gm9"
     },
     {
       "bar": 23,
-      "sym": "Dm11"
+      "sym": "C13"
     },
     {
       "bar": 24,
-      "sym": "Dm11"
+      "sym": "C13"
     },
     {
       "bar": 25,
-      "sym": "Bbmaj9"
+      "sym": "Dm9"
     },
     {
       "bar": 26,
-      "sym": "Bbmaj9"
+      "sym": "Dm9"
     },
     {
       "bar": 27,
-      "sym": "Fmaj9#11"
+      "sym": "Em11"
     },
     {
       "bar": 28,
-      "sym": "Fmaj9#11"
+      "sym": "Em11"
     },
     {
       "bar": 29,
-      "sym": "Dm11"
+      "sym": "Am9"
     },
     {
       "bar": 30,
-      "sym": "Dm11"
+      "sym": "Am9"
     },
     {
       "bar": 31,
-      "sym": "Am9"
+      "sym": "G9"
     },
     {
       "bar": 32,
-      "sym": "Am9"
+      "sym": "G9"
     },
     {
       "bar": 33,
-      "sym": "Dm11"
+      "sym": "Gm11"
     },
     {
       "bar": 34,
-      "sym": "Bbmaj9"
+      "sym": "Gm11"
     },
     {
       "bar": 35,
@@ -153,23 +153,23 @@
     },
     {
       "bar": 36,
-      "sym": "C13"
-    },
-    {
-      "bar": 37,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 38,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 39,
       "sym": "Fmaj9"
     },
     {
-      "bar": 40,
+      "bar": 37,
       "sym": "C13"
+    },
+    {
+      "bar": 38,
+      "sym": "C13"
+    },
+    {
+      "bar": 39,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 40,
+      "sym": "Dm9"
     },
     {
       "bar": 41,
@@ -181,27 +181,27 @@
     },
     {
       "bar": 43,
-      "sym": "Fmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 44,
-      "sym": "Fmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 45,
-      "sym": "C13"
+      "sym": "Fmaj9"
     },
     {
       "bar": 46,
-      "sym": "C13"
+      "sym": "Fmaj9"
     },
     {
       "bar": 47,
-      "sym": "Dm11"
+      "sym": "C9sus4"
     },
     {
       "bar": 48,
-      "sym": "Dm11"
+      "sym": "C9sus4"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "ACC",
       "db": -12,
       "pattern": "chords.rolled(0.3)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; gotowe progresje SHLD: VI-III-i-v + i-VI-III-VII + IV-I-V-vi(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

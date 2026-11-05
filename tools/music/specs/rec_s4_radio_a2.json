@@ -2,7 +2,7 @@
   "id": "rec_s4_radio_a2",
   "kind": "record",
   "title": "Radio FM · A2 spokojny",
-  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (I-vi-IV-V + i-VII-i-v(wzgl.) + I-vi-ii-V), jeden instrument (P12)",
+  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (I-IV-vii-iii-vi-ii-V-I + VI7-VII-i-v-VI7-VII-i-iv7(wzgl.) + ii-VI-i-iv(wzgl.) + I-V-vi-V + i7-VI-III7-VII6-i-i7-III7-iv7(wzgl.)), jeden instrument (P12)",
   "bpm": 86,
   "meter": 4,
   "key": "C",
@@ -17,95 +17,95 @@
     },
     {
       "bar": 2,
-      "sym": "Cmaj9#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "Bm11"
     },
     {
       "bar": 4,
-      "sym": "Am11"
+      "sym": "Em9"
     },
     {
       "bar": 5,
-      "sym": "Fmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 6,
-      "sym": "Fmaj9#11"
+      "sym": "Dm9"
     },
     {
       "bar": 7,
-      "sym": "G9sus4"
+      "sym": "G13sus4"
     },
     {
       "bar": 8,
-      "sym": "G9sus4"
+      "sym": "Cmaj9"
     },
     {
       "bar": 9,
-      "sym": "Am9"
+      "sym": "F9"
     },
     {
       "bar": 10,
-      "sym": "Am9"
+      "sym": "G13"
     },
     {
       "bar": 11,
-      "sym": "Gmaj9"
+      "sym": "Am9"
     },
     {
       "bar": 12,
-      "sym": "Gmaj9"
+      "sym": "Em11"
     },
     {
       "bar": 13,
-      "sym": "Am9"
+      "sym": "F13"
     },
     {
       "bar": 14,
-      "sym": "Am9"
+      "sym": "G13"
     },
     {
       "bar": 15,
-      "sym": "Em11"
+      "sym": "Am11"
     },
     {
       "bar": 16,
-      "sym": "Em11"
+      "sym": "Dm11"
     },
     {
       "bar": 17,
-      "sym": "Cmaj9"
+      "sym": "Bm11"
     },
     {
       "bar": 18,
-      "sym": "Cmaj9"
+      "sym": "Bm11"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 20,
-      "sym": "Am11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 21,
-      "sym": "Dm9"
+      "sym": "Am11"
     },
     {
       "bar": 22,
-      "sym": "Dm9"
+      "sym": "Am11"
     },
     {
       "bar": 23,
-      "sym": "G9sus4"
+      "sym": "Dm9"
     },
     {
       "bar": 24,
-      "sym": "G9sus4"
+      "sym": "Dm9"
     },
     {
       "bar": 25,
@@ -117,47 +117,47 @@
     },
     {
       "bar": 27,
-      "sym": "Am11"
+      "sym": "G9sus4"
     },
     {
       "bar": 28,
-      "sym": "Am11"
+      "sym": "G9sus4"
     },
     {
       "bar": 29,
-      "sym": "Fmaj9#11"
+      "sym": "Am9"
     },
     {
       "bar": 30,
-      "sym": "Fmaj9#11"
+      "sym": "Am9"
     },
     {
       "bar": 31,
-      "sym": "G9sus4"
+      "sym": "G13sus4"
     },
     {
       "bar": 32,
-      "sym": "G9sus4"
+      "sym": "G13sus4"
     },
     {
       "bar": 33,
-      "sym": "Am9"
+      "sym": "Am7"
     },
     {
       "bar": 34,
-      "sym": "Am9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 35,
-      "sym": "Gmaj9"
+      "sym": "C9"
     },
     {
       "bar": 36,
-      "sym": "Gmaj9"
+      "sym": "G6/9"
     },
     {
       "bar": 37,
-      "sym": "Am9"
+      "sym": "Am11"
     },
     {
       "bar": 38,
@@ -165,11 +165,11 @@
     },
     {
       "bar": 39,
-      "sym": "Em11"
+      "sym": "C9"
     },
     {
       "bar": 40,
-      "sym": "G9sus4"
+      "sym": "Dm11"
     }
   ],
   "layers": [
@@ -178,7 +178,7 @@
       "voice": "P12",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (P12), akordy rozłożone; gotowe progresje SHLD: I-vi-IV-V + i-VII-i-v(wzgl.) + I-vi-ii-V",
+      "part": "jedna warstwa, jeden instrument (P12), akordy rozłożone; pełna forma z gotowych progresji SHLD (5 sekcji)",
       "stem": "base"
     }
   ],

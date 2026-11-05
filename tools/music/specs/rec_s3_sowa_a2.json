@@ -2,7 +2,7 @@
   "id": "rec_s3_sowa_a2",
   "kind": "record",
   "title": "Sowa · A2 spokojny",
-  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (im-viim/i-im-bii/i + ii-bIIM-I-bVIIM(wzgl.)), jeden instrument (ACC)",
+  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (i-VII-v-VI + VII-iv-v-i + im-ivm9-bIIM-im), jeden instrument (ACC)",
   "bpm": 54,
   "meter": 4,
   "key": "D",
@@ -21,59 +21,59 @@
     },
     {
       "bar": 3,
-      "sym": "Cm11/D"
+      "sym": "C13"
     },
     {
       "bar": 4,
-      "sym": "Cm11/D"
+      "sym": "C13"
     },
     {
       "bar": 5,
-      "sym": "Dm11"
+      "sym": "Am11"
     },
     {
       "bar": 6,
-      "sym": "Dm11"
+      "sym": "Am11"
     },
     {
       "bar": 7,
-      "sym": "Ebm9/D"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "Ebm9/D"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 9,
-      "sym": "Gm11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 10,
-      "sym": "Gm11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 11,
-      "sym": "F#maj7#11"
+      "sym": "Gm9"
     },
     {
       "bar": 12,
-      "sym": "F#maj7#11"
+      "sym": "Gm9"
     },
     {
       "bar": 13,
-      "sym": "Fmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 14,
-      "sym": "Fmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 15,
-      "sym": "Ebmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 16,
-      "sym": "Ebmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 17,
@@ -85,27 +85,27 @@
     },
     {
       "bar": 19,
-      "sym": "Cm11/D"
+      "sym": "Gm9"
     },
     {
       "bar": 20,
-      "sym": "Cm11/D"
+      "sym": "Gm9"
     },
     {
       "bar": 21,
-      "sym": "Dm11"
+      "sym": "Ebmaj7#11"
     },
     {
       "bar": 22,
-      "sym": "Dm11"
+      "sym": "Ebmaj7#11"
     },
     {
       "bar": 23,
-      "sym": "Ebm9/D"
+      "sym": "Dm9"
     },
     {
       "bar": 24,
-      "sym": "Ebm9/D"
+      "sym": "Dm9"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "ACC",
       "db": -12,
       "pattern": "chords.rolled(0.2)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; gotowe progresje SHLD: im-viim/i-im-bii/i + ii-bIIM-I-bVIIM(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],

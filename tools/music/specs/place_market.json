@@ -2,7 +2,7 @@
   "id": "place_market",
   "kind": "place",
   "title": "Targ (także sklep)",
-  "role": "targ i sklep; legenda v7: progresja unikalna (bIIIM-ii-bIIM-I + I-V-ivm-bVIM), jeden instrument (BNJ)",
+  "role": "targ i sklep; legenda v7: progresja unikalna (I-IV-ii-V + iv-VI-v-VII(wzgl.) + I-I-IM-5-IM-5-IV-IV-V-Vsus2 + I-bIIIM-bVIIM-I), jeden instrument (BNJ)",
   "bpm": 116,
   "meter": 4,
   "key": "Bb",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dbmaj9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Cm11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Bmaj7#11"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj9"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Dbmaj9"
+      "sym": "Cm9"
     },
     {
       "bar": 6,
-      "sym": "Cm11"
+      "sym": "Cm9"
     },
     {
       "bar": 7,
-      "sym": "Bmaj9"
+      "sym": "F13sus4"
     },
     {
       "bar": 8,
-      "sym": "Bbmaj9"
+      "sym": "F13sus4"
     },
     {
       "bar": 9,
-      "sym": "Bbmaj13"
+      "sym": "Cm11"
     },
     {
       "bar": 10,
-      "sym": "Bbmaj13"
+      "sym": "Cm11"
     },
     {
       "bar": 11,
-      "sym": "F13"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "F13"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 13,
-      "sym": "Ebm11"
+      "sym": "Dm11"
     },
     {
       "bar": 14,
-      "sym": "Ebm11"
+      "sym": "Dm11"
     },
     {
       "bar": 15,
-      "sym": "Gbmaj9"
+      "sym": "F13"
     },
     {
       "bar": 16,
-      "sym": "Gbmaj9"
+      "sym": "F13"
     },
     {
       "bar": 17,
-      "sym": "Dbmaj9"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 18,
-      "sym": "Cm11"
+      "sym": "Bbmaj13"
     },
     {
       "bar": 19,
-      "sym": "Bmaj7#11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj9"
+      "sym": "Bbmaj13"
     },
     {
       "bar": 21,
-      "sym": "Dbmaj9"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 22,
-      "sym": "Cm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 23,
-      "sym": "Bmaj9"
+      "sym": "F9sus4"
     },
     {
       "bar": 24,
-      "sym": "Bbmaj9"
+      "sym": "Fsus2"
     },
     {
       "bar": 25,
-      "sym": "Bbmaj13"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 26,
-      "sym": "Bbmaj13"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 27,
-      "sym": "F13"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 28,
-      "sym": "F13"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 29,
-      "sym": "Ebm11"
+      "sym": "Abmaj9"
     },
     {
       "bar": 30,
-      "sym": "Ebm11"
+      "sym": "Abmaj9"
     },
     {
       "bar": 31,
-      "sym": "Gbmaj9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "Gbmaj9"
+      "sym": "Bbmaj9#11"
     }
   ],
   "layers": [

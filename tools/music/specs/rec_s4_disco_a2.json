@@ -2,7 +2,7 @@
   "id": "rec_s4_disco_a2",
   "kind": "record",
   "title": "Disco gryzoń · A2 spokojny",
-  "role": "płyta serii 4; four-on-the-floor i arpeggio cyklu kwintowego; legenda v7: progresja unikalna (i-III-iv-VI + i-v-iv-VII + i-iv-III-VI), jeden instrument (BNJ)",
+  "role": "płyta serii 4; four-on-the-floor i arpeggio cyklu kwintowego; legenda v7: progresja unikalna (i-v-iv-VII + I-vi-IV-iii(wzgl.) + i-VII-VI-III + IV-I-IV6-Iadd9(wzgl.) + i-iv-VI-v + i-iv-VII-i), jeden instrument (BNJ)",
   "bpm": 108,
   "meter": 4,
   "key": "A",
@@ -13,19 +13,19 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 2,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 3,
-      "sym": "Cmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 4,
-      "sym": "Cmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 5,
@@ -37,139 +37,139 @@
     },
     {
       "bar": 7,
-      "sym": "Fmaj9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 8,
-      "sym": "Fmaj9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 9,
-      "sym": "Am11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 10,
-      "sym": "Am11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 11,
-      "sym": "Em9"
+      "sym": "Am9"
     },
     {
       "bar": 12,
-      "sym": "Em9"
+      "sym": "Am9"
     },
     {
       "bar": 13,
-      "sym": "Dm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 14,
-      "sym": "Dm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Gmaj9"
+      "sym": "Em11"
     },
     {
       "bar": 16,
-      "sym": "Gmaj9"
+      "sym": "Em11"
     },
     {
       "bar": 17,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 18,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 19,
-      "sym": "Dm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 20,
-      "sym": "Dm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 21,
-      "sym": "Cmaj9#11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 22,
-      "sym": "Cmaj9#11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 23,
-      "sym": "Fmaj9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 24,
-      "sym": "Fmaj9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 25,
-      "sym": "Am11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 26,
-      "sym": "Am11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 27,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 28,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 29,
-      "sym": "Dm11"
+      "sym": "F6/9"
     },
     {
       "bar": 30,
-      "sym": "Dm11"
+      "sym": "F6/9"
     },
     {
       "bar": 31,
-      "sym": "Fmaj9"
+      "sym": "Cadd9"
     },
     {
       "bar": 32,
-      "sym": "Fmaj9"
+      "sym": "Cadd9"
     },
     {
       "bar": 33,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 34,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 35,
-      "sym": "Em9"
+      "sym": "Dm9"
     },
     {
       "bar": 36,
-      "sym": "Em9"
+      "sym": "Dm9"
     },
     {
       "bar": 37,
-      "sym": "Dm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 38,
-      "sym": "Dm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 39,
-      "sym": "Gmaj9"
+      "sym": "Em9"
     },
     {
       "bar": 40,
-      "sym": "Gmaj9"
+      "sym": "Em9"
     },
     {
       "bar": 41,
@@ -189,19 +189,19 @@
     },
     {
       "bar": 45,
-      "sym": "Cmaj9#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 46,
-      "sym": "Cmaj9#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 47,
-      "sym": "Fmaj9"
+      "sym": "Am9"
     },
     {
       "bar": 48,
-      "sym": "Fmaj9"
+      "sym": "Am9"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "BNJ",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; gotowe progresje SHLD: i-III-iv-VI + i-v-iv-VII + i-iv-III-VI",
+      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

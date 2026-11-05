@@ -2,7 +2,7 @@
   "id": "rec_s1_cichy_a1",
   "kind": "record",
   "title": "Cichy kąt · A1 podpisowy",
-  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (vi-bVIM-bVIIM-I + im-vm-isus4-I(wzgl.)), jeden instrument (HARP)",
+  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (vi-bVIM-bVIIM-I + im-vm-isus4-I(wzgl.) + i-VII-VI-III(wzgl.)), jeden instrument (HARP)",
   "bpm": 60,
   "meter": 4,
   "key": "C",
@@ -77,35 +77,35 @@
     },
     {
       "bar": 17,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 18,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 19,
-      "sym": "Abmaj9"
+      "sym": "G13"
     },
     {
       "bar": 20,
-      "sym": "Abmaj9"
+      "sym": "G13"
     },
     {
       "bar": 21,
-      "sym": "Bb13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 22,
-      "sym": "Bb13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 23,
-      "sym": "Cmaj13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "Cmaj13"
+      "sym": "Cmaj9#11"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: vi-bVIM-bVIIM-I + im-vm-isus4-I(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],

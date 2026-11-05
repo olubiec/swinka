@@ -2,7 +2,7 @@
   "id": "rec_s4_taniec_a2",
   "kind": "record",
   "title": "Taniec w klatce · A2 spokojny",
-  "role": "płyta serii 4; najszybszy utwór w grze; własny motyw (nie Nyan Cat: nie zbliżać się do jego skali, rytmu i linii); legenda v7: progresja unikalna (VI-III-i-v + i-III-VII-iv + IV-vi-iii-I(wzgl.)), jeden instrument (EP)",
+  "role": "płyta serii 4; najszybszy utwór w grze; własny motyw (nie Nyan Cat: nie zbliżać się do jego skali, rytmu i linii); legenda v7: progresja unikalna (im-VIM-IIIM-bIIM + V-vi-IV-I(wzgl.) + bviim-I/bVII-bviim-I/bVII(wzgl.) + I-IV-vii-iii-vi-ii-V-I(wzgl.) + VII-iv-v-i + I-bVIIM-IV-V(wzgl.)), jeden instrum",
   "bpm": 117,
   "meter": 4,
   "key": "C",
@@ -13,103 +13,103 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Abmaj9#11"
+      "sym": "Cm11"
     },
     {
       "bar": 2,
-      "sym": "Abmaj9#11"
+      "sym": "Cm11"
     },
     {
       "bar": 3,
-      "sym": "Ebmaj9"
+      "sym": "Abmaj9"
     },
     {
       "bar": 4,
-      "sym": "Ebmaj9"
+      "sym": "Abmaj9"
     },
     {
       "bar": 5,
-      "sym": "Cm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "Cm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "Gm11"
+      "sym": "Dbmaj7#11"
     },
     {
       "bar": 8,
-      "sym": "Gm11"
+      "sym": "Dbmaj7#11"
     },
     {
       "bar": 9,
-      "sym": "Cm11"
+      "sym": "Bb13sus4"
     },
     {
       "bar": 10,
-      "sym": "Cm11"
+      "sym": "Bb13sus4"
     },
     {
       "bar": 11,
-      "sym": "Ebmaj9"
+      "sym": "Cm9"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj9"
+      "sym": "Cm9"
     },
     {
       "bar": 13,
-      "sym": "Bbmaj9"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 14,
-      "sym": "Bbmaj9"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 15,
-      "sym": "Fm9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "Fm9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 17,
-      "sym": "Abmaj9#11"
+      "sym": "Dbm11"
     },
     {
       "bar": 18,
-      "sym": "Abmaj9#11"
+      "sym": "Dbm11"
     },
     {
       "bar": 19,
-      "sym": "Cm11"
+      "sym": "Ebmaj9#11/Db"
     },
     {
       "bar": 20,
-      "sym": "Cm11"
+      "sym": "Ebmaj9#11/Db"
     },
     {
       "bar": 21,
-      "sym": "Gm9"
+      "sym": "Dbm9"
     },
     {
       "bar": 22,
-      "sym": "Gm9"
+      "sym": "Dbm9"
     },
     {
       "bar": 23,
-      "sym": "Ebmaj9#11"
+      "sym": "Ebmaj13/Db"
     },
     {
       "bar": 24,
-      "sym": "Ebmaj9#11"
+      "sym": "Ebmaj13/Db"
     },
     {
       "bar": 25,
-      "sym": "Abmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 26,
@@ -117,11 +117,11 @@
     },
     {
       "bar": 27,
-      "sym": "Ebmaj9"
+      "sym": "Dm9"
     },
     {
       "bar": 28,
-      "sym": "Ebmaj9"
+      "sym": "Gm11"
     },
     {
       "bar": 29,
@@ -129,79 +129,79 @@
     },
     {
       "bar": 30,
-      "sym": "Cm11"
+      "sym": "Fm11"
     },
     {
       "bar": 31,
-      "sym": "Gm11"
+      "sym": "Bb13sus4"
     },
     {
       "bar": 32,
-      "sym": "Gm11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 33,
-      "sym": "Cm11"
+      "sym": "Bb13"
     },
     {
       "bar": 34,
-      "sym": "Cm11"
+      "sym": "Bb13"
     },
     {
       "bar": 35,
-      "sym": "Ebmaj9"
+      "sym": "Fm11"
     },
     {
       "bar": 36,
-      "sym": "Ebmaj9"
+      "sym": "Fm11"
     },
     {
       "bar": 37,
-      "sym": "Bbmaj9"
+      "sym": "Gm11"
     },
     {
       "bar": 38,
-      "sym": "Bbmaj9"
+      "sym": "Gm11"
     },
     {
       "bar": 39,
-      "sym": "Fm9"
+      "sym": "Cm11"
     },
     {
       "bar": 40,
-      "sym": "Fm9"
+      "sym": "Cm11"
     },
     {
       "bar": 41,
-      "sym": "Abmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 42,
-      "sym": "Abmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 43,
-      "sym": "Cm11"
+      "sym": "Db13"
     },
     {
       "bar": 44,
-      "sym": "Cm11"
+      "sym": "Db13"
     },
     {
       "bar": 45,
-      "sym": "Gm9"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 46,
-      "sym": "Gm9"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 47,
-      "sym": "Ebmaj9#11"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 48,
-      "sym": "Ebmaj9#11"
+      "sym": "Bb9sus4"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "EP",
       "db": -3,
       "pattern": "chords.rolled(0.2)",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; gotowe progresje SHLD: VI-III-i-v + i-III-VII-iv + IV-vi-iii-I(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

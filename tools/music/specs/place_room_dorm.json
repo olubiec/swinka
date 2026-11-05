@@ -2,7 +2,7 @@
   "id": "place_room_dorm",
   "kind": "room",
   "title": "Pokój: wspólna sypialnia",
-  "role": "miękka kołysanka zespołowa; legenda v7: progresja unikalna (I-V-vi-iii-IV-I-IV-V + im-bIIM-im7-bviim(wzgl.)), jeden instrument (BOX)",
+  "role": "miękka kołysanka zespołowa; legenda v7: progresja unikalna (ii-V-I-IV + I-bIIIM-bVIM-bVIIM + I-bVIIM-I-I-bVIM-V + V-IV-vi-I), jeden instrument (BOX)",
   "bpm": 64,
   "meter": 4,
   "key": "G",
@@ -13,23 +13,23 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gmaj13"
+      "sym": "Am9"
     },
     {
       "bar": 2,
-      "sym": "D13"
+      "sym": "Am9"
     },
     {
       "bar": 3,
-      "sym": "Em11"
+      "sym": "D13"
     },
     {
       "bar": 4,
-      "sym": "Bm9"
+      "sym": "D13"
     },
     {
       "bar": 5,
-      "sym": "Cmaj13#11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 6,
@@ -37,71 +37,71 @@
     },
     {
       "bar": 7,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 8,
-      "sym": "D9sus4"
-    },
-    {
-      "bar": 9,
-      "sym": "Em9"
-    },
-    {
-      "bar": 10,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 11,
-      "sym": "Em7"
-    },
-    {
-      "bar": 12,
-      "sym": "Dbm11"
-    },
-    {
-      "bar": 13,
-      "sym": "Em9"
-    },
-    {
-      "bar": 14,
-      "sym": "Fmaj7#11"
-    },
-    {
-      "bar": 15,
-      "sym": "Em11"
-    },
-    {
-      "bar": 16,
-      "sym": "Dbm9"
-    },
-    {
-      "bar": 17,
-      "sym": "Gmaj13"
-    },
-    {
-      "bar": 18,
-      "sym": "D13"
-    },
-    {
-      "bar": 19,
-      "sym": "Em11"
-    },
-    {
-      "bar": 20,
-      "sym": "Bm9"
-    },
-    {
-      "bar": 21,
       "sym": "Cmaj13#11"
     },
     {
+      "bar": 8,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 9,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 10,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 11,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 12,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 13,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 14,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 15,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 16,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 17,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 19,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 20,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 21,
+      "sym": "Gmaj9#11"
+    },
+    {
       "bar": 22,
-      "sym": "Gmaj13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 23,
-      "sym": "Cmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 24,
@@ -109,35 +109,35 @@
     },
     {
       "bar": 25,
-      "sym": "Em9"
+      "sym": "D13sus4"
     },
     {
       "bar": 26,
-      "sym": "Fmaj9"
+      "sym": "D13sus4"
     },
     {
       "bar": 27,
-      "sym": "Em7"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 28,
-      "sym": "Dbm11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 29,
-      "sym": "Em9"
-    },
-    {
-      "bar": 30,
-      "sym": "Fmaj7#11"
-    },
-    {
-      "bar": 31,
       "sym": "Em11"
     },
     {
+      "bar": 30,
+      "sym": "Em11"
+    },
+    {
+      "bar": 31,
+      "sym": "Gmaj9"
+    },
+    {
       "bar": 32,
-      "sym": "Dbm9"
+      "sym": "Gmaj9"
     }
   ],
   "layers": [

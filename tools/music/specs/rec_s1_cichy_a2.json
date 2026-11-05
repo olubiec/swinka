@@ -2,7 +2,7 @@
   "id": "rec_s1_cichy_a2",
   "kind": "record",
   "title": "Cichy kąt · A2 spokojny",
-  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (I-I-IV-iii + vi-viim-V-vi-#IVdim-V), jeden instrument (XYL)",
+  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (I-V-vi-IV + I-bIIIM-bVIM-bVIIM + im-ivm9-bIIM-im-vm-ivm7-bIIM-im7(wzgl.)), jeden instrument (XYL)",
   "bpm": 54,
   "meter": 4,
   "key": "C",
@@ -17,95 +17,95 @@
     },
     {
       "bar": 2,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj13"
     },
     {
       "bar": 3,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 4,
-      "sym": "Em11"
-    },
-    {
-      "bar": 5,
-      "sym": "Cmaj9"
-    },
-    {
-      "bar": 6,
-      "sym": "Cmaj13"
-    },
-    {
-      "bar": 7,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 8,
-      "sym": "Em11"
-    },
-    {
-      "bar": 9,
-      "sym": "Am9"
-    },
-    {
-      "bar": 10,
-      "sym": "Am9"
-    },
-    {
-      "bar": 11,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 12,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 13,
-      "sym": "G9sus4"
-    },
-    {
-      "bar": 14,
-      "sym": "Am11"
-    },
-    {
-      "bar": 15,
-      "sym": "F#dim7"
-    },
-    {
-      "bar": 16,
       "sym": "G13"
     },
     {
-      "bar": 17,
+      "bar": 4,
+      "sym": "G13"
+    },
+    {
+      "bar": 5,
+      "sym": "Am11"
+    },
+    {
+      "bar": 6,
+      "sym": "Am11"
+    },
+    {
+      "bar": 7,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 8,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 9,
       "sym": "Cmaj13"
+    },
+    {
+      "bar": 10,
+      "sym": "Cmaj13"
+    },
+    {
+      "bar": 11,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 12,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 13,
+      "sym": "Abmaj9#11"
+    },
+    {
+      "bar": 14,
+      "sym": "Abmaj9#11"
+    },
+    {
+      "bar": 15,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 16,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 17,
+      "sym": "Am9"
     },
     {
       "bar": 18,
-      "sym": "Cmaj9#11"
+      "sym": "Dm9"
     },
     {
       "bar": 19,
-      "sym": "Fmaj13#11"
+      "sym": "Bbmaj7#11"
     },
     {
       "bar": 20,
-      "sym": "Em11"
+      "sym": "Am11"
     },
     {
       "bar": 21,
-      "sym": "Cmaj9"
+      "sym": "Em11"
     },
     {
       "bar": 22,
-      "sym": "Cmaj13"
+      "sym": "Dm7"
     },
     {
       "bar": 23,
-      "sym": "Fmaj13#11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 24,
-      "sym": "Em11"
+      "sym": "Am9"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "XYL",
       "db": -3,
       "pattern": "chords.rolled(0.2)",
-      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; gotowe progresje SHLD: I-I-IV-iii + vi-viim-V-vi-#IVdim-V",
+      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],

@@ -2,7 +2,7 @@
   "id": "rec_s2_rosa_b2",
   "kind": "record",
   "title": "Rosa · B2 nastrojowy",
-  "role": "płyta serii 2; krople rosy (dzwonki); legenda v7: progresja unikalna (I-IIIM-vi-V + i-VII-i-v(wzgl.)), jeden instrument (BELL)",
+  "role": "płyta serii 2; krople rosy (dzwonki); legenda v7: progresja unikalna (ii-bIIM-I-bVIIM + I-IV-vi-V + i-III-VII-VI(wzgl.)), jeden instrument (BELL)",
   "bpm": 58,
   "meter": 4,
   "key": "G",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gmaj13"
+      "sym": "Am9"
     },
     {
       "bar": 2,
-      "sym": "B7alt"
+      "sym": "Am9"
     },
     {
       "bar": 3,
-      "sym": "Em9"
+      "sym": "Abmaj9"
     },
     {
       "bar": 4,
-      "sym": "D13sus4"
+      "sym": "Abmaj9"
     },
     {
       "bar": 5,
-      "sym": "Gmaj9"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "B7b13"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "Em9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 8,
-      "sym": "D13"
+      "sym": "Fmaj9"
     },
     {
       "bar": 9,
-      "sym": "Em9"
-    },
-    {
-      "bar": 10,
-      "sym": "D13"
-    },
-    {
-      "bar": 11,
-      "sym": "Em9"
-    },
-    {
-      "bar": 12,
-      "sym": "Bm9"
-    },
-    {
-      "bar": 13,
-      "sym": "Em11"
-    },
-    {
-      "bar": 14,
-      "sym": "D13"
-    },
-    {
-      "bar": 15,
-      "sym": "Em9"
-    },
-    {
-      "bar": 16,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 17,
       "sym": "Gmaj13"
     },
     {
+      "bar": 10,
+      "sym": "Gmaj13"
+    },
+    {
+      "bar": 11,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 12,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 13,
+      "sym": "Em9"
+    },
+    {
+      "bar": 14,
+      "sym": "Em9"
+    },
+    {
+      "bar": 15,
+      "sym": "D9sus4"
+    },
+    {
+      "bar": 16,
+      "sym": "D9sus4"
+    },
+    {
+      "bar": 17,
+      "sym": "Em9"
+    },
+    {
       "bar": 18,
-      "sym": "B7alt"
+      "sym": "Em9"
     },
     {
       "bar": 19,
-      "sym": "Em9"
-    },
-    {
-      "bar": 20,
-      "sym": "D13sus4"
-    },
-    {
-      "bar": 21,
       "sym": "Gmaj9"
     },
     {
+      "bar": 20,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 21,
+      "sym": "D13"
+    },
+    {
       "bar": 22,
-      "sym": "B7b13"
+      "sym": "D13"
     },
     {
       "bar": 23,
-      "sym": "Em9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "D13"
+      "sym": "Cmaj9#11"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "BELL",
       "db": -3,
       "pattern": "chords.rolled(0.4)",
-      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; gotowe progresje SHLD: I-IIIM-vi-V + i-VII-i-v(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],

@@ -2,7 +2,7 @@
   "id": "rec_s1_cichy_b1",
   "kind": "record",
   "title": "Cichy kąt · B1 energiczny",
-  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (IV-I-IV6-Iadd9 + vi-ii-V-I), jeden instrument (BNJ)",
+  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (IV-I-IV6-Iadd9 + iv-VI-v-VII(wzgl.) + im-bVIM-im-IV(wzgl.) + I-I-IV-iii), jeden instrument (BNJ)",
   "bpm": 65,
   "meter": 4,
   "key": "C",
@@ -13,19 +13,19 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj9#11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 2,
-      "sym": "Fmaj9#11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 3,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 4,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 5,
@@ -37,107 +37,107 @@
     },
     {
       "bar": 7,
-      "sym": "Cmaj9"
+      "sym": "Cadd9"
     },
     {
       "bar": 8,
-      "sym": "Cmaj9"
+      "sym": "Cadd9"
     },
     {
       "bar": 9,
-      "sym": "Am9"
+      "sym": "Dm9"
     },
     {
       "bar": 10,
-      "sym": "Am9"
+      "sym": "Dm9"
     },
     {
       "bar": 11,
-      "sym": "Dm9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 12,
-      "sym": "Dm9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 13,
-      "sym": "G13sus4"
+      "sym": "Em9"
     },
     {
       "bar": 14,
-      "sym": "G13sus4"
+      "sym": "Em9"
     },
     {
       "bar": 15,
-      "sym": "Cmaj9#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 16,
-      "sym": "Cmaj9#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 17,
-      "sym": "Fmaj9#11"
+      "sym": "Am9"
     },
     {
       "bar": 18,
-      "sym": "Fmaj9#11"
+      "sym": "Am9"
     },
     {
       "bar": 19,
-      "sym": "Cmaj9#11"
+      "sym": "E13"
     },
     {
       "bar": 20,
-      "sym": "Cmaj9#11"
+      "sym": "E13"
     },
     {
       "bar": 21,
-      "sym": "F6/9"
+      "sym": "Am11"
     },
     {
       "bar": 22,
-      "sym": "F6/9"
+      "sym": "Am11"
     },
     {
       "bar": 23,
-      "sym": "Cmaj9"
+      "sym": "D9"
     },
     {
       "bar": 24,
-      "sym": "Cmaj9"
+      "sym": "D9"
     },
     {
       "bar": 25,
-      "sym": "Am9"
+      "sym": "Cmaj13"
     },
     {
       "bar": 26,
-      "sym": "Am9"
+      "sym": "Cmaj13"
     },
     {
       "bar": 27,
-      "sym": "Dm9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 28,
-      "sym": "Dm9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 29,
-      "sym": "G13sus4"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 30,
-      "sym": "G13sus4"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 31,
-      "sym": "Cmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 32,
-      "sym": "Cmaj9#11"
+      "sym": "Em9"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "BNJ",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; gotowe progresje SHLD: IV-I-IV6-Iadd9 + vi-ii-V-I",
+      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; pełna forma z gotowych progresji SHLD (4 sekcji)",
       "stem": "base"
     }
   ],

@@ -211,10 +211,7 @@ def section_from(idx, base_pc, rng, scale):
     """8 taktów z gotowej progresji: akordy rozłożone na 8 taktów (po 1-3 takty), 4-akordowe czasem grane dwa razy po 1 takcie."""
     toks = READY[idx]["nums"][:8]
     n = len(toks)
-    if n <= 4 and 8 % n == 0 and rng.random() < 0.35:
-        seq = [(t, 1) for t in toks] * (8 // n)
-    else:
-        seq = [(t, 8 // n + (1 if i < 8 % n else 0)) for i, t in enumerate(toks)]
+    seq = [(t, 8 // n + (1 if i < 8 % n else 0)) for i, t in enumerate(toks)]  # bez pętli: każdy akord raz, rozciągnięty na 8 taktów
     bars, prev = [], None
     for tok, dur in seq:
         off, q, b = token_chord(tok, scale, rng, prev)
@@ -252,7 +249,7 @@ def build_unit(tonic_pc, mode, n_sec, rng, usage, cap, prefs):
 
 
 def make_progression(key, tonic, mode, bars, accepted, usage, prefs, limit=0.3125):
-    n_sec = 1 if bars <= 8 else (3 if bars >= 40 else 2)
+    n_sec = max(1, min(6, -(-bars // 8)))  # pełna forma: każde 8 taktów to inna gotowa progresja, bez powtarzania pętli
     tpc = T.root_pc(tonic)
     for attempt in range(8000):
         rng = random.Random("ready|%s|%d" % (key, attempt))
@@ -379,7 +376,7 @@ def apply(table_rows=None):
                     lay["voice"] = voice
                     lay["pattern"] = rng.choice(PATTERNS[voice])
                     lay["db"] = -12 if voice == "ACC" else -3
-                    lay["part"] = "jedna warstwa, jeden instrument (%s), akordy rozłożone; gotowe progresje SHLD: %s" % (voice, tag)
+                    lay["part"] = "jedna warstwa, jeden instrument (%s), akordy rozłożone; pełna forma z gotowych progresji SHLD (%d sekcji)" % (voice, tag.count(" + ") + 1)
                     spec["fx"] = jitter_chain(spec["fx"], random.Random("fx|%s|0" % key), 1.0)
                 else:
                     # pokoje i belki: efekty zostają, jitter tylko przy kolizji odcisku (idempotentne)

@@ -2,7 +2,7 @@
   "id": "rec_s1_cichy_b2",
   "kind": "record",
   "title": "Cichy kąt · B2 nastrojowy",
-  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (vi-bVIIM-im-bVIM + I-bVIIM-bVIM-IV-IVsus4-IV), jeden instrument (ACC)",
+  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (vi-bVIIM-im-bVIM + I-bVIIM-bVIM-IV-IVsus4-IV + iv-VI-v-VII(wzgl.)), jeden instrument (ACC)",
   "bpm": 48,
   "meter": 4,
   "key": "C",
@@ -77,35 +77,35 @@
     },
     {
       "bar": 17,
-      "sym": "Am9"
+      "sym": "Dm11"
     },
     {
       "bar": 18,
-      "sym": "Am9"
+      "sym": "Dm11"
     },
     {
       "bar": 19,
-      "sym": "Bbmaj9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj9"
+      "sym": "Fmaj9"
     },
     {
       "bar": 21,
-      "sym": "Cm11"
+      "sym": "Em9"
     },
     {
       "bar": 22,
-      "sym": "Cm11"
+      "sym": "Em9"
     },
     {
       "bar": 23,
-      "sym": "Abmaj9#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 24,
-      "sym": "Abmaj9#11"
+      "sym": "Gmaj9"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "ACC",
       "db": -12,
       "pattern": "chords.rolled(0.3)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; gotowe progresje SHLD: vi-bVIIM-im-bVIM + I-bVIIM-bVIM-IV-IVsus4-IV",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],

@@ -2,7 +2,7 @@
   "id": "rec_s2_pietruszka_a1",
   "kind": "record",
   "title": "Pietruszka funk · A1 podpisowy",
-  "role": "płyta serii 2; staccato bas i wah; legenda v7: progresja unikalna (i-VI-iv-v + im-vm-ivm-bIIM7 + i-VI-VII-iv), jeden instrument (CEL)",
+  "role": "płyta serii 2; staccato bas i wah; legenda v7: progresja unikalna (i-VI-III-VII-i-VI69-III7-VII + im-bIIM-bIIIM-bIIM + i-VI-VII-v + I-IV-bIIIM-bVIM(wzgl.) + IV-I-V-vi(wzgl.) + v-VI-III-i), jeden instrument (CEL)",
   "bpm": 100,
   "meter": 4,
   "key": "E",
@@ -13,19 +13,19 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Em11"
+      "sym": "Em9"
     },
     {
       "bar": 2,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 3,
-      "sym": "Am9"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Bm9"
+      "sym": "Dmaj9"
     },
     {
       "bar": 5,
@@ -33,27 +33,27 @@
     },
     {
       "bar": 6,
-      "sym": "Cmaj9#11"
+      "sym": "C6/9"
     },
     {
       "bar": 7,
-      "sym": "Am11"
+      "sym": "G13"
     },
     {
       "bar": 8,
-      "sym": "Bm9"
+      "sym": "Dmaj9"
     },
     {
       "bar": 9,
-      "sym": "Em9"
+      "sym": "Em11"
     },
     {
       "bar": 10,
-      "sym": "Bm9"
+      "sym": "Em11"
     },
     {
       "bar": 11,
-      "sym": "Am11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 12,
@@ -61,15 +61,15 @@
     },
     {
       "bar": 13,
-      "sym": "Em9"
+      "sym": "F#maj7#11"
     },
     {
       "bar": 14,
-      "sym": "Bm11"
+      "sym": "F#maj7#11"
     },
     {
       "bar": 15,
-      "sym": "Am11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 16,
@@ -85,11 +85,11 @@
     },
     {
       "bar": 19,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 20,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 21,
@@ -101,83 +101,83 @@
     },
     {
       "bar": 23,
-      "sym": "Am11"
+      "sym": "Bm9"
     },
     {
       "bar": 24,
-      "sym": "Am11"
+      "sym": "Bm9"
     },
     {
       "bar": 25,
-      "sym": "Em11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 26,
-      "sym": "Cmaj9#11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 27,
-      "sym": "Am9"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 28,
-      "sym": "Bm9"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 29,
-      "sym": "Em9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 30,
-      "sym": "Cmaj9#11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 31,
-      "sym": "Am11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "Bm9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 33,
-      "sym": "Em9"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 34,
-      "sym": "Bm9"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 35,
-      "sym": "Am11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 36,
-      "sym": "Fmaj9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 37,
-      "sym": "Em9"
+      "sym": "D9sus4"
     },
     {
       "bar": 38,
-      "sym": "Bm11"
+      "sym": "D9sus4"
     },
     {
       "bar": 39,
-      "sym": "Am11"
+      "sym": "Em11"
     },
     {
       "bar": 40,
-      "sym": "Fmaj9"
+      "sym": "Em11"
     },
     {
       "bar": 41,
-      "sym": "Em11"
+      "sym": "Bm9"
     },
     {
       "bar": 42,
-      "sym": "Em11"
+      "sym": "Bm9"
     },
     {
       "bar": 43,
@@ -189,19 +189,19 @@
     },
     {
       "bar": 45,
-      "sym": "D13"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 46,
-      "sym": "D13"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 47,
-      "sym": "Am11"
+      "sym": "Em11"
     },
     {
       "bar": 48,
-      "sym": "Am11"
+      "sym": "Em11"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "CEL",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (CEL), akordy rozłożone; gotowe progresje SHLD: i-VI-iv-v + im-vm-ivm-bIIM7 + i-VI-VII-iv",
+      "part": "jedna warstwa, jeden instrument (CEL), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",
       "stem": "base"
     }
   ],

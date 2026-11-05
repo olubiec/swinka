@@ -2,7 +2,7 @@
   "id": "rec_s3_swietliki_b2",
   "kind": "record",
   "title": "Świetliki · B2 nastrojowy",
-  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (I-im-bVII6-bVIM + im-bIIM-vm-im7(wzgl.)), jeden instrument (TRI)",
+  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (bVIM-bVIIm-im-bIIM + I-vi-I-IV + VII-iv-v-i(wzgl.) + I-vi-ii-IV), jeden instrument (TRI)",
   "bpm": 72,
   "meter": 4,
   "key": "A",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Amaj13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Amaj13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "G13"
     },
     {
       "bar": 4,
-      "sym": "Am11"
+      "sym": "G13"
     },
     {
       "bar": 5,
-      "sym": "G6/9"
+      "sym": "Am9"
     },
     {
       "bar": 6,
-      "sym": "G6/9"
+      "sym": "Am9"
     },
     {
       "bar": 7,
-      "sym": "Fmaj9"
+      "sym": "Bbmaj7#11"
     },
     {
       "bar": 8,
-      "sym": "Fmaj9"
+      "sym": "Bbmaj7#11"
     },
     {
       "bar": 9,
-      "sym": "F#m11"
+      "sym": "Amaj13"
     },
     {
       "bar": 10,
-      "sym": "Gmaj7#11"
+      "sym": "Amaj13"
     },
     {
       "bar": 11,
-      "sym": "C#m11"
+      "sym": "F#m11"
     },
     {
       "bar": 12,
-      "sym": "F#m7"
+      "sym": "F#m11"
     },
     {
       "bar": 13,
-      "sym": "F#m9"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 14,
-      "sym": "Gmaj9"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 15,
-      "sym": "C#m9"
+      "sym": "Dmaj13#11"
     },
     {
       "bar": 16,
-      "sym": "F#m11"
+      "sym": "Dmaj13#11"
     },
     {
       "bar": 17,
-      "sym": "Amaj13"
+      "sym": "Emaj9"
     },
     {
       "bar": 18,
-      "sym": "Amaj13"
+      "sym": "Emaj9"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "Bm9"
     },
     {
       "bar": 20,
-      "sym": "Am11"
+      "sym": "Bm9"
     },
     {
       "bar": 21,
-      "sym": "G6/9"
-    },
-    {
-      "bar": 22,
-      "sym": "G6/9"
-    },
-    {
-      "bar": 23,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 24,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 25,
-      "sym": "F#m11"
-    },
-    {
-      "bar": 26,
-      "sym": "Gmaj7#11"
-    },
-    {
-      "bar": 27,
-      "sym": "C#m11"
-    },
-    {
-      "bar": 28,
-      "sym": "F#m7"
-    },
-    {
-      "bar": 29,
-      "sym": "F#m9"
-    },
-    {
-      "bar": 30,
-      "sym": "Gmaj9"
-    },
-    {
-      "bar": 31,
       "sym": "C#m9"
     },
     {
-      "bar": 32,
+      "bar": 22,
+      "sym": "C#m9"
+    },
+    {
+      "bar": 23,
       "sym": "F#m11"
+    },
+    {
+      "bar": 24,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 25,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 26,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 27,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 28,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 29,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 30,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 31,
+      "sym": "Dmaj13#11"
+    },
+    {
+      "bar": 32,
+      "sym": "Dmaj13#11"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "TRI",
       "db": -3,
       "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; gotowe progresje SHLD: I-im-bVII6-bVIM + im-bIIM-vm-im7(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; pełna forma z gotowych progresji SHLD (4 sekcji)",
       "stem": "base"
     }
   ],

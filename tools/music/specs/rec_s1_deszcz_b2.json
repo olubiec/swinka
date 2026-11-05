@@ -2,7 +2,7 @@
   "id": "rec_s1_deszcz_b2",
   "kind": "record",
   "title": "Deszcz na dachu · B2 nastrojowy",
-  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (I-I7-I9-IV-ivm + im-bIIM-biim6-ivm(wzgl.)), jeden instrument (BOX)",
+  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (I-V-vi-IV + im-bVIIM-IV-im(wzgl.) + iii-vi-IV-I), jeden instrument (BOX)",
   "bpm": 53,
   "meter": 4,
   "key": "Eb",
@@ -13,35 +13,35 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Ebmaj9#11"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 2,
-      "sym": "Ebmaj9#11"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 3,
-      "sym": "Eb9"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 4,
-      "sym": "Eb9"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 5,
-      "sym": "Eb13"
+      "sym": "Cm9"
     },
     {
       "bar": 6,
-      "sym": "Eb13"
+      "sym": "Cm9"
     },
     {
       "bar": 7,
-      "sym": "Abmaj9#11"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 8,
-      "sym": "Abm11"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 9,
@@ -53,59 +53,59 @@
     },
     {
       "bar": 11,
-      "sym": "Dbmaj9"
+      "sym": "Amaj9"
     },
     {
       "bar": 12,
-      "sym": "Dbmaj9"
+      "sym": "Amaj9"
     },
     {
       "bar": 13,
-      "sym": "Dbm6"
+      "sym": "F13"
     },
     {
       "bar": 14,
-      "sym": "Dbm6"
+      "sym": "F13"
     },
     {
       "bar": 15,
-      "sym": "Fm11"
+      "sym": "Cm11"
     },
     {
       "bar": 16,
-      "sym": "Fm11"
+      "sym": "Cm11"
     },
     {
       "bar": 17,
-      "sym": "Ebmaj9#11"
+      "sym": "Gm9"
     },
     {
       "bar": 18,
-      "sym": "Ebmaj9#11"
+      "sym": "Gm9"
     },
     {
       "bar": 19,
-      "sym": "Eb9"
+      "sym": "Cm11"
     },
     {
       "bar": 20,
-      "sym": "Eb9"
+      "sym": "Cm11"
     },
     {
       "bar": 21,
-      "sym": "Eb13"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 22,
-      "sym": "Eb13"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 23,
-      "sym": "Abmaj9#11"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 24,
-      "sym": "Abm11"
+      "sym": "Ebmaj13"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "BOX",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; gotowe progresje SHLD: I-I7-I9-IV-ivm + im-bIIM-biim6-ivm(wzgl.)",
+      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],

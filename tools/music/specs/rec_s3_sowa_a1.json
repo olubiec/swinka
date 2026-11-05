@@ -2,7 +2,7 @@
   "id": "rec_s3_sowa_a1",
   "kind": "record",
   "title": "Sowa · A1 podpisowy",
-  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (VI-iv-i-v + i-VII-VI-III-iv-VI-VII-i), jeden instrument (HARP)",
+  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (im-bIIIM-IV-V + im-V-bVIIM-IV-bVIM-bIIIM-ivm-V + im-bIIIM-bVIM-V), jeden instrument (HARP)",
   "bpm": 60,
   "meter": 4,
   "key": "D",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Bbmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 2,
-      "sym": "Gm9"
+      "sym": "Dm11"
     },
     {
       "bar": 3,
-      "sym": "Dm9"
+      "sym": "Emaj9"
     },
     {
       "bar": 4,
-      "sym": "Am11"
+      "sym": "Emaj9"
     },
     {
       "bar": 5,
-      "sym": "Bbmaj9#11"
+      "sym": "G13"
     },
     {
       "bar": 6,
-      "sym": "Gm9"
+      "sym": "G13"
     },
     {
       "bar": 7,
-      "sym": "Dm11"
+      "sym": "A7alt"
     },
     {
       "bar": 8,
-      "sym": "Am11"
+      "sym": "A7alt"
     },
     {
       "bar": 9,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 10,
-      "sym": "C13"
-    },
-    {
-      "bar": 11,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 12,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 13,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 14,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 15,
-      "sym": "Cmaj9"
-    },
-    {
-      "bar": 16,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 17,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 18,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 19,
       "sym": "Dm9"
     },
     {
-      "bar": 20,
-      "sym": "Am11"
+      "bar": 10,
+      "sym": "A7alt"
     },
     {
-      "bar": 21,
-      "sym": "Bbmaj9#11"
+      "bar": 11,
+      "sym": "Bmaj9"
     },
     {
-      "bar": 22,
-      "sym": "Gm9"
+      "bar": 12,
+      "sym": "G9"
     },
     {
-      "bar": 23,
+      "bar": 13,
+      "sym": "A7alt"
+    },
+    {
+      "bar": 14,
+      "sym": "Emaj9"
+    },
+    {
+      "bar": 15,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 16,
+      "sym": "A13"
+    },
+    {
+      "bar": 17,
       "sym": "Dm11"
     },
     {
+      "bar": 18,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 19,
+      "sym": "Emaj9"
+    },
+    {
+      "bar": 20,
+      "sym": "Emaj9"
+    },
+    {
+      "bar": 21,
+      "sym": "A7alt"
+    },
+    {
+      "bar": 22,
+      "sym": "A7alt"
+    },
+    {
+      "bar": 23,
+      "sym": "A7b13"
+    },
+    {
       "bar": 24,
-      "sym": "Am11"
+      "sym": "A7b13"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: VI-iv-i-v + i-VII-VI-III-iv-VI-VII-i",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",
       "stem": "base"
     }
   ],
