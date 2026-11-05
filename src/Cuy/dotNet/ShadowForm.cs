@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -41,13 +40,11 @@ namespace Cuy
 
             IntPtr screenDc = GetDC(IntPtr.Zero);
             IntPtr memDc = CreateCompatibleDC(screenDc);
-            IntPtr hBitmap = IntPtr.Zero;
             IntPtr oldBitmap = IntPtr.Zero;
 
             try
             {
-                hBitmap = bitmap.GetHbitmap(Color.FromArgb(0));  // Grab a GDI handle from this GDI+ bitmap
-                oldBitmap = SelectObject(memDc, hBitmap);
+                oldBitmap = SelectObject(memDc, GetCachedHBitmap(bitmap));
 
                 Size size = new Size(bitmap.Width, bitmap.Height);
                 Point pointSource = new Point(0, 0);
@@ -66,13 +63,32 @@ namespace Cuy
             finally
             {
                 ReleaseDC(IntPtr.Zero, screenDc);
-                if (hBitmap != IntPtr.Zero)
-                {
-                    SelectObject(memDc, oldBitmap);
-                    DeleteObject(hBitmap);
-                }
+                if (oldBitmap != IntPtr.Zero) SelectObject(memDc, oldBitmap);
                 DeleteDC(memDc);
             }
+        }
+
+        // GDI handle of the bitmap last passed to SetBitmap. Update makes a new Bitmap whenever the shape changes,
+        // so the handle is only rebuilt then; moving the window does not need it.
+        private static Bitmap _hBitmapSource;
+        private static IntPtr _hBitmap = IntPtr.Zero;
+
+        private static IntPtr GetCachedHBitmap(Bitmap bitmap)
+        {
+            if (_hBitmap == IntPtr.Zero || _hBitmapSource != bitmap)
+            {
+                ReleaseCachedHBitmap();
+                _hBitmap = bitmap.GetHbitmap(Color.FromArgb(0));  // Grab a GDI handle from this GDI+ bitmap
+                _hBitmapSource = bitmap;
+            }
+            return _hBitmap;
+        }
+
+        private static void ReleaseCachedHBitmap()
+        {
+            if (_hBitmap != IntPtr.Zero) DeleteObject(_hBitmap);
+            _hBitmap = IntPtr.Zero;
+            _hBitmapSource = null;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -118,15 +134,12 @@ namespace Cuy
         [DllImport("gdi32.dll", ExactSpelling = true, SetLastError = true)]
         private static extern bool DeleteObject(IntPtr hObject);
 
-        private static double _lastWindowCacheTime = 0;
-        private static Dictionary<IntPtr, ShadowNativeMethods.RECT> _windowCache = new Dictionary<IntPtr, ShadowNativeMethods.RECT>();
         private static int _lastScale = -1;
         private static Bitmap _cachedBitmap;
         private static int _cachedWidth = -1;
         private static int _cachedHeight = -1;
         private static byte _lastMaxAlpha = 0;
         private static bool _bitmapDirty = true;
-        private static readonly uint OurProcessId = (uint)Process.GetCurrentProcess().Id;
 
         public static void Update(FormPet pet)
         {
@@ -153,47 +166,14 @@ namespace Cuy
             int defaultGroundY = workingArea.Bottom;
             int feetY = pet.Top + 59 * scale;
 
-            double now = (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
-            if (now - _lastWindowCacheTime > 250)
-            {
-                _windowCache.Clear();
-                uint ourProcessId = OurProcessId;
-                ShadowNativeMethods.EnumWindows(delegate (IntPtr hWnd, IntPtr lParam)
-                {
-                    if (hWnd == pet.Handle || (_instance != null && hWnd == _instance.Handle)) return true;
-
-                    ShadowNativeMethods.GetWindowThreadProcessId(hWnd, out uint windowProcessId);
-                    if (windowProcessId == ourProcessId) return true;
-
-                    if (ShadowNativeMethods.IsWindowVisible(hWnd) && !ShadowNativeMethods.IsIconic(hWnd))
-                    {
-                        int exStyle = ShadowNativeMethods.GetWindowLong(hWnd, -20); // GWL_EXSTYLE
-                        if ((exStyle & 0x00000080) != 0) // WS_EX_TOOLWINDOW
-                            return true;
-
-                        if (ShadowNativeMethods.GetWindowRect(new HandleRef(null, hWnd), out ShadowNativeMethods.RECT rct))
-                        {
-                            if (rct.Right - rct.Left > 0 && rct.Bottom - rct.Top > 0)
-                            {
-                                _windowCache[hWnd] = rct;
-                            }
-                        }
-                    }
-                    return true;
-                }, IntPtr.Zero);
-                _lastWindowCacheTime = now;
-            }
-
             int groundY = defaultGroundY;
-            foreach (var kvp in _windowCache)
+            foreach (Rectangle rct in pet.GetFallWindowRects())
             {
-                var rct = kvp.Value;
+                if (rct.Width <= 0 || rct.Height <= 0) continue;
                 if (petCenterX >= rct.Left && petCenterX <= rct.Right)
                 {
                     if (rct.Top >= feetY && rct.Top < groundY)
                     {
-                        // Check if it's not a Cuy app window. ShadowNativeMethods.GetWindowThreadProcessId could check process ID.
-                        // We will rely on it being visually a window below.
                         groundY = rct.Top;
                     }
                 }
@@ -220,19 +200,22 @@ namespace Cuy
 
             if (_cachedBitmap == null || _cachedWidth != shadowWidth || _cachedHeight != shadowHeight || _lastScale != scale || _lastMaxAlpha != maxAlpha)
             {
+                ReleaseCachedHBitmap();
                 if (_cachedBitmap != null) _cachedBitmap.Dispose();
                 _cachedBitmap = new Bitmap(shadowWidth, shadowHeight, PixelFormat.Format32bppPArgb);
                 using (Graphics g = Graphics.FromImage(_cachedBitmap))
                 {
                     g.SmoothingMode = SmoothingMode.AntiAlias;
-                    GraphicsPath path = new GraphicsPath();
-                    path.AddEllipse(0, 0, shadowWidth, shadowHeight);
-                    using (PathGradientBrush pgb = new PathGradientBrush(path))
+                    using (GraphicsPath path = new GraphicsPath())
                     {
-                        pgb.CenterPoint = new PointF(shadowWidth / 2f, shadowHeight / 2f);
-                        pgb.CenterColor = Color.FromArgb(maxAlpha, 43, 23, 18); // #2b1712
-                        pgb.SurroundColors = new Color[] { Color.FromArgb(0, 43, 23, 18) };
-                        g.FillPath(pgb, path);
+                        path.AddEllipse(0, 0, shadowWidth, shadowHeight);
+                        using (PathGradientBrush pgb = new PathGradientBrush(path))
+                        {
+                            pgb.CenterPoint = new PointF(shadowWidth / 2f, shadowHeight / 2f);
+                            pgb.CenterColor = Color.FromArgb(maxAlpha, 43, 23, 18); // #2b1712
+                            pgb.SurroundColors = new Color[] { Color.FromArgb(0, 43, 23, 18) };
+                            g.FillPath(pgb, path);
+                        }
                     }
                 }
                 _cachedWidth = shadowWidth;
@@ -272,6 +255,7 @@ namespace Cuy
                 _cachedBitmap.Dispose();
                 _cachedBitmap = null;
             }
+            ReleaseCachedHBitmap();
             if (_instance != null)
             {
                 _instance.Dispose();
@@ -281,38 +265,8 @@ namespace Cuy
 
     internal static class ShadowNativeMethods
     {
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int Left, Top, Right, Bottom;
-        }
-
-        public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsWindowVisible(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsIconic(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetWindowRect(HandleRef hWnd, out RECT lpRect);
-
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        [DllImport("user32.dll")]
-        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
     }
 }
 

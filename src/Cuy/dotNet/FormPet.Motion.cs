@@ -75,6 +75,20 @@ namespace Cuy
             followFallback.Enabled = hookedWindow != IntPtr.Zero;
         }
 
+        /// <summary>
+        /// Window rectangles for ShadowForm. Reuses the FallDetect list while it is younger than FallCacheMs (D2.3).
+        /// </summary>
+        internal IList<Rectangle> GetFallWindowRects()
+        {
+            double nowMs = motionClock.Elapsed.TotalMilliseconds;
+            if (nowMs - fallCacheAt >= FallCacheMs)
+            {
+                RefreshFallWindows();
+                fallCacheAt = nowMs;
+            }
+            return fallRects;
+        }
+
         private void AdvanceToss(double now)
         {
             // Physics lives in Cuy.Core (TossPhysics). Pauses are bounded to 50 ms inside the step.
