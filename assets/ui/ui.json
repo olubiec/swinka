@@ -117,6 +117,357 @@
     8,
     8
    ]
+  },
+  "btn_green": {
+   "file": "ui/btn_green.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "btn_green_pressed": {
+   "file": "ui/btn_green_pressed.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "btn_blue": {
+   "file": "ui/btn_blue.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "btn_blue_pressed": {
+   "file": "ui/btn_blue_pressed.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "btn_rose": {
+   "file": "ui/btn_rose.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "btn_rose_pressed": {
+   "file": "ui/btn_rose_pressed.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "btn_red": {
+   "file": "ui/btn_red.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "btn_red_pressed": {
+   "file": "ui/btn_red_pressed.png",
+   "size": [
+    24,
+    16
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "tab_off": {
+   "file": "ui/tab_off.png",
+   "size": [
+    20,
+    14
+   ],
+   "slice": [
+    5,
+    5,
+    5,
+    0
+   ]
+  },
+  "tab_on": {
+   "file": "ui/tab_on.png",
+   "size": [
+    20,
+    14
+   ],
+   "slice": [
+    5,
+    5,
+    5,
+    0
+   ]
+  },
+  "close_btn": {
+   "file": "ui/close_btn.png",
+   "size": [
+    16,
+    16
+   ],
+   "slice": [
+    5,
+    5,
+    5,
+    5
+   ]
+  },
+  "close_btn_pressed": {
+   "file": "ui/close_btn_pressed.png",
+   "size": [
+    16,
+    16
+   ],
+   "slice": [
+    5,
+    5,
+    5,
+    5
+   ]
+  },
+  "bar_groove": {
+   "file": "ui/bar_groove.png",
+   "size": [
+    16,
+    8
+   ],
+   "slice": [
+    3,
+    3,
+    3,
+    3
+   ]
+  },
+  "bar_fill_high": {
+   "file": "ui/bar_fill_high.png",
+   "size": [
+    4,
+    6
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "bar_fill_mid": {
+   "file": "ui/bar_fill_mid.png",
+   "size": [
+    4,
+    6
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "bar_fill_low": {
+   "file": "ui/bar_fill_low.png",
+   "size": [
+    4,
+    6
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "badge": {
+   "file": "ui/badge.png",
+   "size": [
+    16,
+    12
+   ],
+   "slice": [
+    4,
+    4,
+    4,
+    4
+   ]
+  },
+  "field": {
+   "file": "ui/field.png",
+   "size": [
+    16,
+    14
+   ],
+   "slice": [
+    4,
+    4,
+    4,
+    4
+   ]
+  },
+  "card": {
+   "file": "ui/card.png",
+   "size": [
+    16,
+    16
+   ],
+   "slice": [
+    5,
+    5,
+    5,
+    5
+   ]
+  },
+  "tooltip": {
+   "file": "ui/tooltip.png",
+   "size": [
+    16,
+    16
+   ],
+   "slice": [
+    5,
+    5,
+    5,
+    5
+   ]
+  },
+  "slot": {
+   "file": "ui/slot.png",
+   "size": [
+    20,
+    20
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "slot_on": {
+   "file": "ui/slot_on.png",
+   "size": [
+    20,
+    20
+   ],
+   "slice": [
+    6,
+    6,
+    6,
+    6
+   ]
+  },
+  "toggle_off": {
+   "file": "ui/toggle_off.png",
+   "size": [
+    24,
+    12
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "toggle_on": {
+   "file": "ui/toggle_on.png",
+   "size": [
+    24,
+    12
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "dot_empty": {
+   "file": "ui/dot_empty.png",
+   "size": [
+    8,
+    8
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "dot_full": {
+   "file": "ui/dot_full.png",
+   "size": [
+    8,
+    8
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "bar_wood": {
+   "file": "ui/bar_wood.png",
+   "size": [
+    16,
+    16
+   ],
+   "slice": [
+    5,
+    5,
+    5,
+    5
+   ]
   }
  }
 }

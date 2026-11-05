@@ -35,3 +35,7 @@ G. Ikona aplikacji: assets/app-icon/ (generator tools/art/world/app_icon.py), po
 tiles_c1.py (kafle C1), icons_auto.py (ikony C2/C3, --apply tylko dopisuje brakujące), decor_c4.py (dekor C4), icons_a.py (ikony B10), app_icon.py, garden_a.py, meadow.py, park_bg.py, build_tiles.py, build_lights_contract.py.
 Kontrola: python3 tools/art/style_check.py; node tools/qa/check-assets.js; node tools/qa/check-icons.js; node tools/qa/lights-test.js.
 Arkusze podglądu: docs/album/przebudowa/ (c1_kafle.png, c4_dekor.png i wcześniejsze).
+
+5. INTERFEJS (UI-1, 5.11.2026)
+Audyt: strona Home nie używa gotowych ramek 9-slice (zmienne --ui-* są 'initial'), kolory są pomarańczowe spoza palety. Przygotowane: 27 nowych elementów w assets/ui/ (przyciski w 4 kolorach + wciśnięte, zakładki, zamknij, paski, plakietka, pole, karta, tooltip, slot, przełącznik, kropki serii, belka modala), tokeny assets/ui/ui_tokens.css, wzorzec docs/ui/preview.html (+ preview.png), opis stylu i inwentarz: docs/UI_DESIGN.md. Zadanie dla kodu: G18 w docs/PLAN.md (po G17; najpierw naprawić --icon-count, bo przesunięte ikony widać na każdym ekranie). Generator: tools/art/world/ui_kit.py.
+

@@ -1,0 +1,31 @@
+/* Tokeny interfejsu "papier i drewno" - tylko kolory z palety cuy-hay-house (42 kolory). Zrodlo prawdy: docs/UI_DESIGN.md */
+:root {
+  /* drewno */
+  --ui-wood-0: #47281c; --ui-wood-1: #6f4328; --ui-wood-2: #9b6238; --ui-wood-3: #c58a52; --ui-wood-4: #e3b27a;
+  /* papier / len */
+  --ui-linen-0: #b79d78; --ui-linen-1: #d9c096; --ui-linen-2: #efdcb8; --ui-linen-3: #fbf0d9;
+  /* siano (akcent glowny, nagrody) */
+  --ui-hay-0: #a97a2f; --ui-hay-1: #d1a548; --ui-hay-2: #e9c871; --ui-hay-3: #f6e2a0;
+  /* akcenty akcji */
+  --ui-moss-1: #475f3f; --ui-moss-2: #6c8050; --ui-moss-3: #97a569; --ui-moss-4: #c3c98a;   /* zielony: graj, potwierdz */
+  --ui-dusk-1: #3f5a68; --ui-dusk-2: #5f7f87; --ui-dusk-3: #8da9a8; --ui-dusk-4: #b9c9c4;   /* niebieski: czysc, informacja */
+  --ui-rose-0: #f2b5a0; --ui-rose-1: #d98a86; --ui-rose-2: #a65a68;                          /* roz: zabawa, relacje */
+  --ui-brick-1: #8c4237; --ui-brick-2: #b8604a; --ui-brick-3: #d9876b;                       /* czerwien: zamknij, ostrzezenie */
+  --ui-flame-2: #ffd166;                                                                      /* zloto: koniczyny, nagroda */
+  --ui-plum-0: #241824; --ui-plum-1: #382538; --ui-plum-2: #54394f; --ui-plum-3: #7a5a6b;    /* tlo, cienie, dymek */
+
+  /* role */
+  --ui-text: var(--ui-wood-0);          /* tekst na papierze */
+  --ui-text-soft: var(--ui-wood-2);     /* podpisy, hinty */
+  --ui-text-on-wood: var(--ui-linen-3); /* tekst na drewnie i belce */
+  --ui-ink-gold: var(--ui-hay-2);       /* naglowek na ciemnym tle */
+  --ui-bg: var(--ui-plum-0);            /* tlo okna */
+  --ui-bg-dots: var(--ui-plum-1);
+  --ui-border: var(--ui-wood-0);        /* kontur wszystkich elementow */
+  --ui-good: var(--ui-moss-3); --ui-warn: var(--ui-hay-1); --ui-bad: var(--ui-brick-2);
+
+  --ui-font: 'Pixelify Sans', monospace;
+  --ui-fs-s: 10px; --ui-fs-m: 12px; --ui-fs-l: 16px; --ui-fs-xl: 24px;   /* tylko te rozmiary, 1 px = 1 piksel gry */
+  --ui-grid: 4px;                                                          /* odstepy: wielokrotnosci 4 */
+  --ui-shadow: 0 3px 0 var(--ui-plum-0);                                   /* twardy cien pod elementem */
+}

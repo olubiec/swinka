@@ -1,0 +1,72 @@
+<!doctype html><meta charset="utf-8"><title>Podgląd UI Cuy</title>
+<link rel="stylesheet" href="../../assets/ui/ui_tokens.css">
+<style>
+@font-face{font-family:'Pixelify Sans';src:url('../../web/home/fonts/PixelifySans-Regular.ttf');font-weight:400}
+@font-face{font-family:'Pixelify Sans';src:url('../../web/home/fonts/PixelifySans-Bold.ttf');font-weight:700}
+*{box-sizing:border-box;image-rendering:pixelated}
+body{margin:0;padding:16px;background:var(--ui-bg);background-image:radial-gradient(var(--ui-bg-dots) 1px,transparent 1px);background-size:6px 6px;font:12px var(--ui-font);color:var(--ui-text);display:flex;gap:16px;flex-wrap:wrap}
+.win{width:300px;display:flex;flex-direction:column;gap:8px}
+.nine{border-style:solid;border-width:6px;border-image-slice:6 fill;border-image-repeat:stretch}
+.panel{border-width:8px;border-image:url(../../assets/ui/panel_paper.png) 8 fill/8px;padding:6px;color:var(--ui-text)}
+.wood{border-style:solid;border-width:5px;border-image:url(../../assets/ui/bar_wood.png) 5 fill/5px;padding:2px 4px;color:var(--ui-text-on-wood)}
+.banner{border-style:solid;border-width:0 12px;border-image:url(../../assets/ui/header_banner.png) 0 12 fill/0 12px;height:24px;line-height:24px;text-align:center;font-weight:700;font-size:12px;color:var(--ui-text-on-wood);letter-spacing:1px}
+.btn{display:block;width:100%;border-style:solid;border-width:6px;border-image:url(../../assets/ui/btn_normal.png) 6 fill/6px;font:700 12px var(--ui-font);color:var(--ui-text);padding:2px 4px;text-align:center;background:none;cursor:pointer}
+.btn:active{border-image-source:url(../../assets/ui/btn_pressed.png);padding-top:4px}
+.btn.green{border-image-source:url(../../assets/ui/btn_green.png);color:var(--ui-linen-3)}.btn.blue{border-image-source:url(../../assets/ui/btn_blue.png);color:var(--ui-linen-3)}
+.btn.rose{border-image-source:url(../../assets/ui/btn_rose.png);color:var(--ui-plum-0)}.btn.red{border-image-source:url(../../assets/ui/btn_red.png);color:var(--ui-linen-3)}
+.btn.green:active{border-image-source:url(../../assets/ui/btn_green_pressed.png)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.tabs{display:flex;gap:2px;margin-bottom:-4px;position:relative;z-index:1}
+.tab{border-style:solid;border-width:5px 5px 0;border-image:url(../../assets/ui/tab_off.png) 5 5 0 fill/5px 5px 0;font:700 10px var(--ui-font);color:var(--ui-linen-3);padding:3px 6px}
+.tab.on{border-image-source:url(../../assets/ui/tab_on.png);color:var(--ui-text);padding-bottom:5px}
+.card{border-style:solid;border-width:5px;border-image:url(../../assets/ui/card.png) 5 fill/5px;padding:2px 4px}
+.bar{height:14px;border-style:solid;border-width:3px;border-image:url(../../assets/ui/bar_groove.png) 3 fill/3px;margin-top:2px}
+.bar i{display:block;height:8px;margin:-1px;background:url(../../assets/ui/bar_fill_high.png) repeat-x;background-size:4px 8px}
+.bar i.mid{background-image:url(../../assets/ui/bar_fill_mid.png)}.bar i.low{background-image:url(../../assets/ui/bar_fill_low.png)}
+.row{display:flex;justify-content:space-between;font-size:10px;font-weight:700}
+.badge{display:inline-block;border-style:solid;border-width:4px;border-image:url(../../assets/ui/badge.png) 4 fill/4px;font:700 10px var(--ui-font);padding:0 2px}
+.x{width:16px;height:16px;background:url(../../assets/ui/close_btn.png);border:0;padding:0}
+.hd{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:12px;color:var(--ui-text-on-wood)}
+.field{border-style:solid;border-width:4px;border-image:url(../../assets/ui/field.png) 4 fill/4px;padding:2px 4px;font-size:12px;color:var(--ui-text-soft)}
+.slot{width:36px;height:36px;border-style:solid;border-width:6px;border-image:url(../../assets/ui/slot.png) 6 fill/6px;text-align:center;font-size:10px}
+.slot.on{border-image-source:url(../../assets/ui/slot_on.png)}
+.tip{border-style:solid;border-width:5px;border-image:url(../../assets/ui/tooltip.png) 5 fill/5px;color:var(--ui-linen-3);font-size:12px;padding:2px 4px;align-self:flex-start}
+.tg{width:24px;height:12px;display:inline-block;vertical-align:middle}
+.dots{display:flex;gap:2px}.dots b{width:8px;height:8px;background:url(../../assets/ui/dot_empty.png)}.dots b.f{background-image:url(../../assets/ui/dot_full.png)}
+h6{margin:0;font:700 10px var(--ui-font);color:var(--ui-ink-gold)}
+.sep{height:4px;background:url(../../assets/ui/sep_h.png) repeat-x;background-size:32px 4px;margin:4px 0}
+</style>
+<div class="win">
+ <div class="banner">CUY'S HOME</div>
+ <div class="wood"><div class="hd"><span>Ned · Age: 8 days</span><span class="badge" style="color:var(--ui-text)">♥ 68</span></div></div>
+ <div class="panel">
+  <h6 style="color:var(--ui-text-soft)">NEEDS</h6>
+  <div class="card"><div class="row"><span>Fullness</span><span>88%</span></div><div class="bar"><i style="width:88%"></i></div></div>
+  <div class="card" style="margin-top:4px"><div class="row"><span>Cleanliness</span><span>62%</span></div><div class="bar"><i class="mid" style="width:62%"></i></div></div>
+  <div class="card" style="margin-top:4px"><div class="row"><span>Energy</span><span>22%</span></div><div class="bar"><i class="low" style="width:22%"></i></div></div>
+ </div>
+ <div class="grid3"><button class="btn">Feed</button><button class="btn blue">Clean</button><button class="btn rose">Call</button><button class="btn green">Shop</button><button class="btn rose">Games</button><button class="btn">More</button></div>
+</div>
+<div class="win">
+ <div class="wood"><div class="hd"><span>Shop</span><button class="x"></button></div></div>
+ <div class="tabs"><span class="tab on">Food</span><span class="tab">Toys</span><span class="tab">Home</span><span class="tab">Care</span></div>
+ <div class="panel" style="padding-top:10px">
+  <div style="display:flex;gap:4px"><div class="slot on">🥕</div><div class="slot">🌿</div><div class="slot">🍓</div><div class="slot"></div></div>
+  <div class="sep"></div>
+  <div class="card"><div class="row"><span>Carrot</span><span class="badge">12 ✿</span></div></div>
+  <div style="height:6px"></div><button class="btn green">Buy</button>
+ </div>
+ <div class="wood"><div class="hd"><span>Daily gift</span><button class="x"></button></div></div>
+ <div class="panel" style="text-align:center">Day 3 in a row!<div class="dots" style="justify-content:center;margin:6px 0"><b class="f"></b><b class="f"></b><b class="f"></b><b></b><b></b><b></b><b></b></div><button class="btn green">Claim</button></div>
+</div>
+<div class="win">
+ <div class="wood"><div class="hd"><span>Settings</span><button class="x"></button></div></div>
+ <div class="panel">
+  <div class="row" style="font-size:12px;margin-bottom:4px"><span>Sound</span><img class="tg" src="../../assets/ui/toggle_on.png"></div>
+  <div class="row" style="font-size:12px;margin-bottom:4px"><span>Music</span><img class="tg" src="../../assets/ui/toggle_off.png"></div>
+  <div class="sep"></div>
+  <div class="field">Name your guinea pig…</div><div style="height:6px"></div>
+  <div style="display:flex;gap:4px"><button class="btn red">Cancel</button><button class="btn green">Let's go</button></div>
+ </div>
+ <div class="tip">Something tasty? Wheek!</div>
+</div>

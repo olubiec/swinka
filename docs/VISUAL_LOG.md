@@ -211,3 +211,6 @@ Ręczna weryfikacja (człowiek, na Windows; pola do zaznaczenia):
 - C5: wąsy kędzierzawe (R1) i ucho Glena NIE zrobione: wymagają zmiany `pig.py`/`coatgen.py` i ponownego eksportu 25 arkuszy; zostają opcjonalne.
 - Lint `style_check.py`: 0 naruszeń. `check-assets.js` i `check-icons.js`: zostaje tylko `icon-pig` (kod, G17).
 
+
+## UI-1 Interfejs (5.11.2026)
+Audyt ekranów (zrzuty Playwright), 27 nowych elementów 9-slice (`ui_kit.py`), `ui_tokens.css`, `docs/UI_DESIGN.md`, wzorzec `docs/ui/preview.html`; zadanie G18 dla kodu. Lint 0, `check-assets.js` OK.
