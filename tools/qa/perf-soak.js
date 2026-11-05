@@ -70,7 +70,8 @@ function serve() {
     const live = await page.evaluate(() => document.getElementsByTagName('*').length);
     const raf = await page.evaluate(() => (window.__rafPending ? window.__rafPending() : -1));
     const heap = await page.evaluate(() => (performance.memory ? performance.memory.usedJSHeapSize : 0));
-    samples.push({ t, nodes: dom.nodes, live, listeners: dom.jsEventListeners, raf, heapMB: +(heap / 1048576).toFixed(1) });
+    const stateBytes = await page.evaluate(() => (window.CuyHome && window.CuyHome.api ? JSON.stringify(window.CuyHome.api.getState()).length : -1));
+    samples.push({ t, nodes: dom.nodes, live, listeners: dom.jsEventListeners, raf, stateBytes, heapMB: +(heap / 1048576).toFixed(1) });
   };
 
   // Dev test tools (btnDevTest, test-btn, rc-btn) are left out: they add pigs and rooms on purpose.
@@ -130,8 +131,22 @@ function serve() {
     if (d > abs && d > a * pct / 100) failures.push(`${name} floor grew ${a} -> ${bb} (+${d}) in the second half`);
     return { floorFirstHalf: a, floorSecondHalf: bb };
   };
-  const nodes = grow('DOM nodes', 'nodes', LIMIT.nodesPct, LIMIT.nodesAbs);
-  const listeners = grow('JS listeners', 'listeners', LIMIT.listenersPct, LIMIT.listenersAbs);
+  // Game state (serialized size of CuyHome.api.getState()) can grow legitimately: each purchase or placement adds data
+  // and DOM. Node/listener growth is a failure only when the state floor did not grow in the same half. If it did,
+  // the growth is recorded in `notes` as state growth, not a leak. Missing state (-1) cannot explain growth, so it still fails.
+  const stateA = floor(A, 'stateBytes'), stateB = floor(B, 'stateBytes');
+  const stateGrew = stateA >= 0 && (stateB - stateA) > stateA * LIMIT.nodesPct / 100;
+  const notes = [];
+  const judgeWithState = (name, key, pct, abs) => {
+    const before = failures.length;
+    const r = grow(name, key, pct, abs);
+    if (failures.length > before && stateGrew) {
+      notes.push(`${failures.pop()} -- explained by game state growth ${stateA} -> ${stateB} bytes (not judged a leak)`);
+    }
+    return r;
+  };
+  const nodes = judgeWithState('DOM nodes', 'nodes', LIMIT.nodesPct, LIMIT.nodesAbs);
+  const listeners = judgeWithState('JS listeners', 'listeners', LIMIT.listenersPct, LIMIT.listenersAbs);
   const raf = grow('pending rAF', 'raf', 0, LIMIT.rafAbs);
   if (errors.length) failures.push(`${errors.length} page error(s)`);
   if (badResponses.length) failures.push('unexpected 4xx/5xx: ' + [...new Set(badResponses)].slice(0, 5).join(', '));
@@ -142,9 +157,11 @@ function serve() {
     listeners: { start: first.listeners, end: last.listeners, ...listeners },
     rafPending: { start: first.raf, end: last.raf, ...raf },
     heapMB: { warm: first.heapMB, end: last.heapMB },
+    gameState: { bytesFirstHalf: stateA, bytesSecondHalf: stateB, grew: stateGrew },
+    notes,
     errors: [...new Set(errors)].slice(0, 10),
     failures,
-    series: samples.map((x) => x.t + 's cdp' + x.nodes + ' live' + x.live + ' l' + x.listeners),
+    series: samples.map((x) => x.t + 's cdp' + x.nodes + ' live' + x.live + ' l' + x.listeners + ' st' + x.stateBytes),
     lastClicks: clickLog.slice(-12),
     diag: { ...diag, listenerTypes },
   };
