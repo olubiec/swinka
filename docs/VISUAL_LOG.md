@@ -230,3 +230,24 @@ Błąd w mojej pierwszej wersji: dorobiłem ogólnie "bogate" UI zamiast trzyma�
 - `tools/art/world/icons_legend.py` (13 ikon `x_*`): mosiężne medaliony (materiał "mosiądz": ciemna rama, jasny odblask), automatyczna faza.
 - Ramki rzadkości płyt 32x32 (drewno z gwoździami / mosiądz z ciepłym kamieniem / berry ze złotem); kontur `outline.fg` także w `records_m2/m3` i `music_ui_m4`.
 - Dokończenie UI-4: `shop_panel` (markiza z patchworku zamiast pasów, feston, rama z desek, gwoździe nierówno), ikony `m_feed`, `m_tricks`, `m_diary` i chevrony przerobione na materiały i fazę wg legendy (`icons_legend.py`, teraz 19 ikon). Nie ruszone: pozostałe proste ikony i ewentualne dalsze zagęszczenie detali.
+
+## S3 weryfikacja końcowa (5.11.2026)
+Zrzuty 420x640 @2x w `docs/qa/screens/s3_*.png`. Przegląd wizualny (Read) i testy automatyczne (`visual-matrix`: 68 komórek, 0 znalezisk; 4 viewporty 360/420/800/1280 w skrypcie).
+
+| Element | Plik | Wynik | Uwagi |
+|---|---|---|---|
+| Home (bez modala) | s3_home.png | PASS | scena, potrzeby, menu akcji czytelne |
+| Menu akcji | s3_menu.png | PASS | przyciski i tło bg:menu bez obcięć |
+| Park | s3_park.png | PASS | scena parku z parkiem, pusta lista dekoracji (stan mock) |
+| Ogród (polana) | s3_garden.png | PASS | polana wspólna widoczna; żywopłot (`garden:hedge`) nie jest w stanie mock, sprawdzony w arkuszu przedmiotów |
+| Farma | s3_farm.png | PASS | działki, sad, ceny ulepszeń bez obcięć |
+| Pokoje | s3_rooms.png | PASS | plan salonu, lista przedmiotów |
+| Sklep: Dom | s3_shop_home.png | FAIL -> PASS | "undefined" przy cenie i opisie (mock bez pól); naprawione w `decor/feature.js` (commit 09cc8a8) |
+| Sklep: Jedzenie | s3_shop.png | PASS (uwaga) | pusta zakładka w stanie mock; dane gry nie są w mock |
+| Dekoracje | s3_decor.png | PASS | tapeta, podłoga, roślina, świnka w pokoju |
+| Świnki | s3_pigs.png | FAIL -> PASS | przycisk "Adoptuj (80)" łamał się na 3 wiersze; naprawione (commit 5a983bb) |
+| Ustawienia | s3_settings.png | FAIL -> PASS | etykiety ciemne na drewnie (1.7:1); naprawione tokenami --ui-* (commit 1e5ed2b), teraz 7.4:1 |
+| 26 nowych przedmiotów | s3_items26.png | PASS | wszystkie 26 sprite'ów czytelnych, rozmiary zgodne z atlasem, brak brakujących |
+| Rasy x stadia (8 ras x baby/adult/senior) | s3_pig_stages.png | PASS | ten sam kadr idle 0 z arkuszy `assets/sprites`; brak brakujących arkuszy |
+
+Testy automatyczne (S3): `check-assets` OK, `check-css-vars` OK, `plan-audit` OK, `data-check` OK, `style_check` 0 naruszeń, `anim-test` 60 x 5 OK, `palette-test` OK, `web-smoke` OK, `visual-matrix` 68 komórek bez znalezisk, Core 1029/1029.
