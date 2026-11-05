@@ -6,7 +6,10 @@ Ten folder zawiera narzędzia instalacyjne i skrypty auto-aktualizacji dla gry *
 
 ## 📦 Sposoby uruchomienia i instalacji
 
-### Opcja 1: Automatyczny Instalator (`Cuy-Installer.cmd`)
+### Opcja 0 (zalecana): `Cuy-Setup-<wersja>.exe` z GitHub Releases
+Zwykły kreator instalacji (Inno Setup, skrypt `Cuy.iss`): bez uprawnień administratora, skróty w Menu Start i opcjonalnie na Pulpicie, opcjonalny autostart, deinstalacja w „Aplikacje i funkcje”. Uruchomiony na zainstalowanej wersji robi aktualizację w miejscu; zapis w `%AppData%\Cuy` zostaje. Plik buduje workflow `.github/workflows/release.yml` po wypchnięciu taga `vX.Y.Z` zgodnego z `AssemblyVersion`.
+
+### Opcja 1: Skrypt `Cuy-Installer.cmd`
 1. Kliknij dwukrotnie plik `Cuy-Installer.cmd`.
 2. Skrypt automatycznie:
    - Tworzy katalog gry w `%LocalAppData%\Programs\Cuy`.

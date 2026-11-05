@@ -1,0 +1,90 @@
+# Builds Cuy on Windows and publishes a GitHub Release: Cuy-Setup-<ver>.exe (installer + updater),
+# Cuy-<ver>-portable.zip (also what the in-app updater downloads) and Cuy.exe.
+# Run by pushing a tag vMAJOR.MINOR.PATCH that matches AssemblyVersion in src/Cuy/Properties/AssemblyInfo.cs,
+# or by hand (workflow_dispatch) to build the files without publishing.
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: ver
+        shell: bash
+        run: |
+          V=$(grep -oP 'AssemblyVersion\("\K[0-9]+\.[0-9]+\.[0-9]+' src/Cuy/Properties/AssemblyInfo.cs)
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "${GITHUB_REF_NAME}" != "v$V" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match AssemblyVersion $V" >&2
+            exit 1
+          fi
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Build, test and package (dist/Cuy_v1.zip)
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File tools/package.ps1
+
+      - name: Name the files
+        shell: powershell
+        run: |
+          $v = '${{ steps.ver.outputs.version }}'
+          Copy-Item dist/Cuy_v1.zip "dist/Cuy-$v-portable.zip"
+          Copy-Item dist/Cuy_v1/Cuy.exe dist/Cuy.exe
+
+      - name: Build the installer (Inno Setup)
+        shell: powershell
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) { choco install innosetup -y --no-progress }
+          $iscc = (Get-Command iscc -ErrorAction SilentlyContinue).Source
+          if (-not $iscc) { $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
+          & $iscc "/DAppVersion=${{ steps.ver.outputs.version }}" "/DSourceDir=$PWD\dist\Cuy_v1" "/DOutDir=$PWD\dist" installer\Cuy.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Checksums
+        shell: powershell
+        run: |
+          Get-ChildItem dist/Cuy-Setup-*.exe, dist/Cuy-*-portable.zip | ForEach-Object {
+            "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)"
+          } | Set-Content dist/SHA256SUMS.txt
+          Get-Content dist/SHA256SUMS.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Cuy-release-files
+          path: |
+            dist/Cuy-Setup-*.exe
+            dist/Cuy-*-portable.zip
+            dist/Cuy.exe
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Cuy ${{ steps.ver.outputs.version }}
+          generate_release_notes: true
+          body: |
+            ## Instalacja / Install
+            - **Cuy-Setup-${{ steps.ver.outputs.version }}.exe** – instalator (bez uprawnień administratora). Uruchomiony na zainstalowanej wersji robi aktualizację; zapis gry w `%AppData%\Cuy` zostaje.
+            - **Cuy-${{ steps.ver.outputs.version }}-portable.zip** – wersja przenośna (rozpakuj i uruchom `Cuy.exe`). Tego pliku używa też aktualizacja w grze.
+            - Wymaga Windows 10/11 z WebView2 Runtime i .NET Framework 4.8.
+            - Windows SmartScreen może ostrzec o nieznanym wydawcy (plik nie jest podpisany): „Więcej informacji” → „Uruchom mimo to”.
+          files: |
+            dist/Cuy-Setup-*.exe
+            dist/Cuy-*-portable.zip
+            dist/Cuy.exe
+            dist/SHA256SUMS.txt
