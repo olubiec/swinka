@@ -17,3 +17,4 @@
 ## Zatwierdzone wyjątki od zakazu zmian asercji (5.11.2026, właściciel)
 - `WorldItemCatalogTests.RealCatalog_LoadsAllItems_CountAtLeast50`: 55 → 81 (katalog po handoverze grafik, +26 pozycji).
 - `PigRoomsMigrationTests.ThreeRosterPigsGetThreeRooms_AndSecondCallCreatesNone`: klucze pokoi `NamedId ?? Id` (Kuki → `kuki`), zgodnie z docs/qa/DECISIONS.md D1.
+- 2026-11-05 · `tests/Cuy.Core.Tests/GameSessionWorldTests.cs`, `Open_OldSaveWithEquippedDecor_PlacesLegacyItems_AndReopenKeepsThem`: przed: `Assert.True(itemCount > 0)` (tapeta i podłoga zakładały przedmioty w salonie); po: `Assert.Equal("floor_wood_light", floor)` plus sprawdzenie `salon.Wallpaper` i `salon.Floor` po ponownym otwarciu. Powód: tapeta i podłoga są polami salonu (`salon.Wallpaper`, `salon.Floor`), a nie umieszczonymi przedmiotami; `LegacyDecorMigrationTests` definiuje 4 umieszczenia dla sześciu slotów. Decyzja właściciela (przekazana Claude): zachowanie migracji bez zmian.

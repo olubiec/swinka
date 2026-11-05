@@ -62,21 +62,24 @@ namespace Cuy.Core.Tests
             new SaveSystem(_testDir).Save(state);
 
             string wallpaper;
+            string floor;
             int itemCount;
             using (var first = GameSession.Open(new ManualClock(Start.AddDays(1)), _testDir))
             {
                 var salon = first.Pet.State.World.Rooms["salon"];
                 wallpaper = salon.Wallpaper;
+                floor = salon.Floor;
                 itemCount = salon.Items.Count;
             }
 
             Assert.Equal("wallpaper_mint", wallpaper);
-            Assert.True(itemCount > 0);
+            Assert.Equal("floor_wood_light", floor);
 
             using (var second = GameSession.Open(new ManualClock(Start.AddDays(2)), _testDir))
             {
                 var salon = second.Pet.State.World.Rooms["salon"];
                 Assert.Equal(wallpaper, salon.Wallpaper);
+                Assert.Equal(floor, salon.Floor);
                 Assert.Equal(itemCount, salon.Items.Count);
             }
         }
