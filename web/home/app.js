@@ -764,6 +764,7 @@
         <span class="pixel-icon icon-house x2"></span>
         <span class="shop-name">Album</span>
       </button>
+      <div class="ui-sep-h" aria-hidden="true"></div>
     `;
 
     // Then registered features

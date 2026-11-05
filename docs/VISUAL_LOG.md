@@ -251,3 +251,6 @@ Zrzuty 420x640 @2x w `docs/qa/screens/s3_*.png`. Przegląd wizualny (Read) i tes
 | Rasy x stadia (8 ras x baby/adult/senior) | s3_pig_stages.png | PASS | ten sam kadr idle 0 z arkuszy `assets/sprites`; brak brakujących arkuszy |
 
 Testy automatyczne (S3): `check-assets` OK, `check-css-vars` OK, `plan-audit` OK, `data-check` OK, `style_check` 0 naruszeń, `anim-test` 60 x 5 OK, `palette-test` OK, `web-smoke` OK, `visual-matrix` 68 komórek bez znalezisk, Core 1029/1029.
+
+## B1 Wąsy i ucho Glena: re-eksport grafiki (5.11.2026)
+Decyzja D4 (fala B): bez zmian w kodzie. Wąsy kędzierzawe (R1, C5) i ucho Glena nie są w arkuszach świnek (25 arkuszy, `pig.py`/`coatgen.py`). Kod (`web/home/canvas-pig.js`) nie ma mapowania tych cech, więc nic w grze się nie zmienia. Do zrobienia przez grafika: wygenerować wąsy i ucho w `pig.py`/`coatgen.py` i ponownie wyeksportować 25 arkuszy. Do tego czasu Glen i pozostałe świnki rysowane są bez wąsów i z uchem jak dotąd.

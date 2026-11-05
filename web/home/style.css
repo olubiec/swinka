@@ -598,6 +598,7 @@ body.webview-mode .game-device {
 .hay-rack-mini-fill.low {
   background: var(--c-red);
 }
+/* btn_blue = "clean and information" in the style legend (Clean, Album); blue is not used for other actions. */
 .btn-clean {
   border-image-source: var(--ui-btn_blue);
   color: var(--ui-linen-3);
@@ -1472,7 +1473,6 @@ body.webview-mode .game-device {
   --ui-btn_rose: initial;
   --ui-btn_rose_pressed: initial;
   --ui-btn_red: initial;
-  --ui-btn_red_pressed: initial;
   --ui-tab_off: initial;
   --ui-tab_on: initial;
   --ui-close_btn: initial;
@@ -1499,11 +1499,6 @@ body.webview-mode .game-device {
   --ui-mp_knob: initial;
   --ui-mp_thumb: initial;
   --ui-shelf_plank: initial;
-  --ui-badge_wear_mint: initial;
-  --ui-badge_wear_worn: initial;
-  --ui-badge_wear_scratched: initial;
-  --ui-badge_wear_cracked: initial;
-  --ui-badge_wear_warped: initial;
 }
 
 .ui-panel-paper {
@@ -1557,6 +1552,15 @@ body.webview-mode .game-device {
   background-repeat: repeat-y;
   background-size: 4px 32px;
   image-rendering: pixelated;
+}
+
+/* Separators in lists: the More list (Album row, rule, feature buttons) and the food drawer. */
+.album-grid > :first-child,
+.album-grid .ui-sep-h {
+  grid-column: 1 / -1;
+}
+.food-drawer .ui-sep-h {
+  margin-bottom: 6px;
 }
 
 /* Tabs (assets/ui tab_off / tab_on): place bar and room tabs. Shape is the tab piece, its bottom edge is open (slice 0). */
