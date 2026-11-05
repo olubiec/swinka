@@ -69,7 +69,7 @@ namespace Cuy.Core.Music
         }
     }
 
-    /// <summary>playerPlaced: JSON object room id -> record id (non-empty strings). Other entries are dropped.</summary>
+    /// <summary>playerPlaced: JSON object room id -> player id (non-empty strings, see contract.js). Other entries are dropped.</summary>
     public sealed class RecordPlacementConverter : JsonConverter<Dictionary<string, string>>
     {
         public override Dictionary<string, string> ReadJson(JsonReader reader, Type objectType,
@@ -81,8 +81,8 @@ namespace Cuy.Core.Music
             foreach (var prop in obj.Properties())
             {
                 if (string.IsNullOrEmpty(prop.Name) || prop.Value.Type != JTokenType.String) continue;
-                string recordId = prop.Value.Value<string>();
-                if (!string.IsNullOrEmpty(recordId)) result[prop.Name] = recordId;
+                string playerId = prop.Value.Value<string>();
+                if (!string.IsNullOrEmpty(playerId)) result[prop.Name] = playerId;
             }
             return result;
         }

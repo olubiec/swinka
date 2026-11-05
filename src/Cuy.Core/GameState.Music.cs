@@ -14,7 +14,7 @@ namespace Cuy.Core
         [JsonConverter(typeof(RecordIdListConverter))]
         public List<string> PlayerOwned { get; set; } = new List<string>();
 
-        /// <summary>Music players placed in rooms: room id -> record id in the player. Missing in old saves = empty.</summary>
+        /// <summary>Music players placed in rooms: room id -> player id (the player standing in the room, see contract.js). Missing in old saves = empty.</summary>
         [JsonConverter(typeof(RecordPlacementConverter))]
         public Dictionary<string, string> PlayerPlaced { get; set; } = new Dictionary<string, string>();
 

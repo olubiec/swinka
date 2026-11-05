@@ -1,5 +1,5 @@
-// Unit test: music economy (A6): prices (prices.js), buying records and players with clovers, the starter
-// player once, old saves, the shop items and the queue fed into the mini player engine (world.syncEngine).
+// Unit test: music economy (A6): prices (prices.js, parity with C#), the purchase message (C# checks the balance),
+// the starter player once, old saves, the shop items and the queue fed into the mini player engine (world.syncEngine).
 // Usage: node tools/qa/music-economy-test.js
 'use strict';
 const assert = require('assert');
@@ -32,37 +32,34 @@ const tests = {
       [120, 250, 400, 600, 900, 1400]);
     assert.strictEqual(Prices.playerPrice('player_unknown'), null);
   },
-  'buying a record subtracts the price and adds one copy'() {
-    const r = Economy.buyRecord({}, 100, common.id, 'common');
-    assert.strictEqual(r.ok, true);
-    assert.strictEqual(r.clovers, 100 - Prices.recordPrice('common'));
-    assert.strictEqual(r.save.records[common.id], 1);
-    const again = Economy.buyRecord(r.save, 1000, common.id, 'common');
-    assert.strictEqual(again.save.records[common.id], 2, 'a second copy counts up');
+  'buy sends musicBuy with kind and itemId to C# and changes no balance here'() {
+    const sent = [];
+    global.window = { bridge: { send(m) { sent.push(m); } } };
+    try {
+      assert.strictEqual(Economy.buy({ music: { kind: 'record', itemId: common.id } }), true);
+      assert.strictEqual(Economy.buy({ music: { kind: 'player', itemId: 'player_portable' } }), true);
+    } finally {
+      delete global.window;
+    }
+    assert.deepStrictEqual(sent, [
+      { type: 'musicBuy', kind: 'record', itemId: common.id },
+      { type: 'musicBuy', kind: 'player', itemId: 'player_portable' }
+    ]);
   },
-  'no funds blocks the record purchase and changes nothing'() {
-    const price = Prices.recordPrice('common');
-    const r = Economy.buyRecord({ records: {} }, price - 1, common.id, 'common');
-    assert.strictEqual(r.ok, false);
-    assert.strictEqual(r.reason, 'no_funds');
-    assert.strictEqual(r.clovers, price - 1);
-    assert.strictEqual(r.save, null);
+  'buy without a bridge or an item does nothing'() {
+    assert.strictEqual(Economy.buy(null), false);
+    assert.strictEqual(Economy.buy({ id: 'x' }), false, 'an item without music fields is not bought');
   },
-  'unique record is not for sale'() {
-    const r = Economy.buyRecord({}, 99999, unique.id, unique.rarity);
-    assert.strictEqual(r.ok, false);
-    assert.strictEqual(r.reason, 'not_for_sale');
-  },
-  'buying a player subtracts the price, owns it once and blocks the second buy'() {
-    const r = Economy.buyPlayer({ playerOwned: [] }, 500, 'player_portable');
-    assert.strictEqual(r.ok, true);
-    assert.strictEqual(r.clovers, 250);
-    assert.deepStrictEqual(r.save.playerOwned, ['player_portable']);
-    const dup = Economy.buyPlayer(r.save, r.clovers, 'player_portable');
-    assert.strictEqual(dup.reason, 'owned');
-    const placed = Economy.buyPlayer({ playerPlaced: { room1: 'player_portable' } }, 500, 'player_portable');
-    assert.strictEqual(placed.reason, 'owned', 'a placed player counts as owned');
-    assert.strictEqual(Economy.buyPlayer({}, 249, 'player_portable').reason, 'no_funds');
+  'prices.js has the same numbers as C# MusicPrices.cs (parity, TODO-D3)'() {
+    const cs = fs.readFileSync(path.join(ROOT, 'src', 'Cuy.Core', 'Music', 'MusicPrices.cs'), 'utf8');
+    const recordsPart = cs.slice(cs.indexOf('RecordPriceByRarity'), cs.indexOf('PlayerPriceById'));
+    const playersPart = cs.slice(cs.indexOf('PlayerPriceById'));
+    const pairs = (text) => Array.from(text.matchAll(/\{ "(\w+)", (\d+) \}/g)).map((m) => [m[1], Number(m[2])]);
+    const csRecords = pairs(recordsPart);
+    const csPlayers = pairs(playersPart);
+    assert.ok(csRecords.length >= 2 && csPlayers.length === 6, 'C# table found');
+    assert.deepStrictEqual(csRecords, Object.entries(Prices.RECORD_PRICE));
+    assert.deepStrictEqual(csPlayers, Object.entries(Prices.PLAYER_PRICE));
   },
   'starter player is granted once to a new save'() {
     const s = Economy.starterSave({});
@@ -85,8 +82,7 @@ const tests = {
   },
   'bad input does not throw'() {
     assert.deepStrictEqual(Economy.starterSave(null).playerOwned, ['player_turntable']);
-    assert.strictEqual(Economy.buyRecord(null, NaN, common.id, 'common').ok, false);
-    assert.strictEqual(Economy.buyPlayer(undefined, 1e9, 'player_jukebox').ok, true);
+    assert.strictEqual(Economy.buy(undefined), false);
   },
   'shop items: players with price, owned flag and the purchase message'() {
     const list = World.setDesign(design) && World.getPlayers();

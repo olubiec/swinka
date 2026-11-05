@@ -1,8 +1,8 @@
-// Music economy (A6): buying records and players with clovers, the one-time starter player, and the
-// shop items for the existing shop (features/shop). Pure rules first (Node tests, no DOM); the browser part
-// (shopItems, buy) is at the end. Browser: window.CuyMusicEconomy. Prices: prices.js (TODO-D3).
+// Music economy (A6): the one-time starter player, the shop items for the existing shop (features/shop) and
+// the purchase request. The balance and the save are owned by C# (MusicShop.cs / MusicFeature.cs): buy sends
+// musicBuy and the new state comes back through the bridge. Prices shown here: prices.js (TODO-D3, same numbers as C#).
 // Save fields: records, playerOwned, playerPlaced (contract.js) and musicVersion (1 = starter granted).
-// The C# side (GameState.Music.cs) applies the same starter rule on load; the price check on purchase is in C#.
+// The C# side (GameState.Music.cs) applies the same starter rule on load.
 (function (root, factory) {
   const api = factory(
     typeof module === 'object' && module.exports && typeof require === 'function'
@@ -35,41 +35,6 @@
       playerOwned: known ? s.playerOwned : s.playerOwned.concat([starter]),
       musicVersion: MUSIC_VERSION
     });
-  }
-
-  function failed(reason, clovers) {
-    return { ok: false, reason, clovers, save: null, price: null };
-  }
-
-  // Buys one copy of a record. rarity comes from the manifest entry (common / rare / unique).
-  function buyRecord(save, clovers, recordId, rarity) {
-    const bal = Number.isFinite(clovers) ? clovers : 0;
-    if (typeof recordId !== 'string' || recordId === '') return failed('unknown_item', bal);
-    const price = Prices.recordPrice(rarity);
-    if (price === null) return failed('not_for_sale', bal);
-    if (bal < price) return failed('no_funds', bal);
-    const s = Contract.migrateMusicSave(save);
-    const records = Object.assign({}, s.records, { [recordId]: (s.records[recordId] || 0) + 1 });
-    return { ok: true, reason: '', clovers: bal - price, save: Object.assign({}, s, { records }), price };
-  }
-
-  // Buys a player. An owned or placed player cannot be bought again (one of each).
-  function buyPlayer(save, clovers, playerId) {
-    const bal = Number.isFinite(clovers) ? clovers : 0;
-    const price = Prices.playerPrice(playerId);
-    if (price === null) return failed('unknown_item', bal);
-    const s = Contract.migrateMusicSave(save);
-    if (s.playerOwned.includes(playerId) || Object.values(s.playerPlaced).includes(playerId)) {
-      return failed('owned', bal);
-    }
-    if (bal < price) return failed('no_funds', bal);
-    return {
-      ok: true,
-      reason: '',
-      clovers: bal - price,
-      save: Object.assign({}, s, { playerOwned: s.playerOwned.concat([playerId]) }),
-      price
-    };
   }
 
   // ---- Browser: shop items and the purchase message (not run in Node) ----
@@ -112,7 +77,8 @@
     return items;
   }
 
-  // Sends the purchase to the C# side through the bridge (the C# side checks the price and the balance).
+  // Sends the purchase to the C# side (MusicFeature). The C# side checks the price, the balance and the ownership,
+  // then pushes the new state; this file never changes the balance.
   function buy(item) {
     if (!item || !item.music || !window.bridge || typeof window.bridge.send !== 'function') return false;
     window.bridge.send({ type: 'musicBuy', kind: item.music.kind, itemId: item.music.itemId });
@@ -135,8 +101,6 @@
   return {
     MUSIC_VERSION,
     starterSave,
-    buyRecord,
-    buyPlayer,
     shopItems,
     buy
   };

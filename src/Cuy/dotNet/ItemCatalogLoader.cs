@@ -215,7 +215,7 @@ namespace Cuy
             map[id] = def;
         }
 
-        private static string FindFile(string relativePath)
+        internal static string FindFile(string relativePath)
         {
             string baseDir = AppDomain.CurrentDomain.BaseDirectory;
             string[] searchPaths = new string[]
