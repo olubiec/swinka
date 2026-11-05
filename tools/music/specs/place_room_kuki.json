@@ -1,190 +1,180 @@
 {
-  "id": "place_room_kuki",
-  "kind": "room",
-  "title": "Pokój: łąka (calm meadow)",
-  "role": "pastoralny, przewiewny",
-  "bpm": 72,
-  "meter": 4,
-  "key": "G",
-  "mode": "major",
-  "bars": 32,
-  "swing": 50,
-  "seed": 33196,
-  "chords": [
-    {
-      "bar": 1,
-      "sym": "Gmaj7"
-    },
-    {
-      "bar": 2,
-      "sym": "Cmaj7"
-    },
-    {
-      "bar": 3,
-      "sym": "Am7"
-    },
-    {
-      "bar": 4,
-      "sym": "D7sus"
-    },
-    {
-      "bar": 5,
-      "sym": "Gmaj7"
-    },
-    {
-      "bar": 6,
-      "sym": "Cmaj7"
-    },
-    {
-      "bar": 7,
-      "sym": "Am7"
-    },
-    {
-      "bar": 8,
-      "sym": "D7sus"
-    },
-    {
-      "bar": 9,
-      "sym": "Em7"
-    },
-    {
-      "bar": 10,
-      "sym": "Cmaj7"
-    },
-    {
-      "bar": 11,
-      "sym": "Gmaj7/B"
-    },
-    {
-      "bar": 12,
-      "sym": "Am7 D7"
-    },
-    {
-      "bar": 13,
-      "sym": "Gmaj7"
-    },
-    {
-      "bar": 14,
-      "sym": "Cmaj7"
-    },
-    {
-      "bar": 15,
-      "sym": "Am7"
-    },
-    {
-      "bar": 16,
-      "sym": "D7sus"
-    },
-    {
-      "bar": 17,
-      "sym": "Gmaj7"
-    },
-    {
-      "bar": 18,
-      "sym": "Cmaj7"
-    },
-    {
-      "bar": 19,
-      "sym": "Am7"
-    },
-    {
-      "bar": 20,
-      "sym": "D7sus"
-    },
-    {
-      "bar": 21,
-      "sym": "Em7"
-    },
-    {
-      "bar": 22,
-      "sym": "Cmaj7"
-    },
-    {
-      "bar": 23,
-      "sym": "Gmaj7/B"
-    },
-    {
-      "bar": 24,
-      "sym": "Am7 D7"
-    },
-    {
-      "bar": 25,
-      "sym": "Gmaj7"
-    },
-    {
-      "bar": 26,
-      "sym": "Cmaj7"
-    },
-    {
-      "bar": 27,
-      "sym": "Am7"
-    },
-    {
-      "bar": 28,
-      "sym": "D7sus"
-    },
-    {
-      "bar": 29,
-      "sym": "Gmaj7"
-    },
-    {
-      "bar": 30,
-      "sym": "Cmaj7"
-    },
-    {
-      "bar": 31,
-      "sym": "Am7"
-    },
-    {
-      "bar": 32,
-      "sym": "D7sus"
-    }
-  ],
-  "layers": [
-    {
-      "role": "mel",
-      "voice": "P12",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia pentatoniczna z ozdobnikami. Wzór (opis): wg szkieletu 'pas' + nuty przygodne"
-    },
-    {
-      "role": "pad",
-      "voice": "PAD",
-      "db": -9,
-      "pattern": "",
-      "part": "pad. Wzór (opis): długie akordy"
-    },
-    {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -8,
-      "pattern": "",
-      "part": "bas co 2 takty. Wzór (opis): korzeń"
-    },
-    {
-      "role": "noise",
-      "voice": "noise_wind",
-      "db": -26,
-      "pattern": "",
-      "part": "wiatr. Wzór (opis): ciągły",
-      "from_bar": 1
-    }
-  ],
-  "drums": null,
-  "fx": [
-    {
-      "fx": "REV-M",
-      "wet": 0.14,
-      "on": "all"
-    }
-  ],
-  "master": {
-    "lufs": -18,
-    "ceiling_dbtp": -1
+ "id": "place_room_kuki",
+ "kind": "room",
+ "title": "Pokój: łąka (calm meadow)",
+ "role": "pastoralny, przewiewny; legenda v7: jeden instrument (HARP), pełne progresje, bez warstw rytmicznych",
+ "bpm": 72,
+ "meter": 4,
+ "key": "G",
+ "mode": "major",
+ "bars": 32,
+ "swing": 50,
+ "seed": 33196,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "Gmaj9#11"
   },
-  "loop": {
-    "enabled": true
+  {
+   "bar": 2,
+   "sym": "Amaj13"
   },
-  "stem_of": null
+  {
+   "bar": 3,
+   "sym": "Bm11"
+  },
+  {
+   "bar": 4,
+   "sym": "Cmaj13#11"
+  },
+  {
+   "bar": 5,
+   "sym": "Gmaj7/B"
+  },
+  {
+   "bar": 6,
+   "sym": "Am11/D"
+  },
+  {
+   "bar": 7,
+   "sym": "Gmaj13"
+  },
+  {
+   "bar": 8,
+   "sym": "D6/9"
+  },
+  {
+   "bar": 9,
+   "sym": "Cmaj9#11"
+  },
+  {
+   "bar": 10,
+   "sym": "Dmaj13"
+  },
+  {
+   "bar": 11,
+   "sym": "Em11"
+  },
+  {
+   "bar": 12,
+   "sym": "Fmaj13#11"
+  },
+  {
+   "bar": 13,
+   "sym": "Cmaj7/E"
+  },
+  {
+   "bar": 14,
+   "sym": "Dm11/G"
+  },
+  {
+   "bar": 15,
+   "sym": "Cmaj13"
+  },
+  {
+   "bar": 16,
+   "sym": "G6/9"
+  },
+  {
+   "bar": 17,
+   "sym": "Gmaj9#11"
+  },
+  {
+   "bar": 18,
+   "sym": "Amaj13"
+  },
+  {
+   "bar": 19,
+   "sym": "Bm11"
+  },
+  {
+   "bar": 20,
+   "sym": "Cmaj13#11"
+  },
+  {
+   "bar": 21,
+   "sym": "Gmaj7/B"
+  },
+  {
+   "bar": 22,
+   "sym": "Am11/D"
+  },
+  {
+   "bar": 23,
+   "sym": "Gmaj13"
+  },
+  {
+   "bar": 24,
+   "sym": "D6/9"
+  },
+  {
+   "bar": 25,
+   "sym": "Cmaj9#11"
+  },
+  {
+   "bar": 26,
+   "sym": "Dmaj13"
+  },
+  {
+   "bar": 27,
+   "sym": "Em11"
+  },
+  {
+   "bar": 28,
+   "sym": "Fmaj13#11"
+  },
+  {
+   "bar": 29,
+   "sym": "Cmaj7/E"
+  },
+  {
+   "bar": 30,
+   "sym": "Dm11/G"
+  },
+  {
+   "bar": 31,
+   "sym": "Cmaj13"
+  },
+  {
+   "bar": 32,
+   "sym": "G6/9"
+  }
+ ],
+ "layers": [
+  {
+   "role": "chd",
+   "voice": "HARP",
+   "db": -3,
+   "pattern": "chords.rolled(0.25)",
+   "part": "jedna warstwa, jeden instrument (HARP); legenda v7 rodzina LYD G, forma A B (B = kwarta wyżej)"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "CHORUS(2)",
+   "on": "all"
+  },
+  {
+   "fx": "REV-L",
+   "wet": 0.45,
+   "on": "all"
+  },
+  {
+   "fx": "LP(6000)",
+   "on": "all"
+  },
+  {
+   "fx": "WIDTH(1.5)",
+   "on": "all"
+  }
+ ],
+ "master": {
+  "lufs": -18,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
 }

@@ -108,14 +108,14 @@ BUILD = {
 # --- do zbudowania później: id -> (instrument, wzór, rodzina, tonika) ---
 ROOMS = {
     "place_room_bedroom": ("CEL", "chords.rolled(0.3)", "DORQ", "D"),
-    "place_room_default": ("EP", "chords.rolled(0.2)", "SOUL", "A"),
+    "place_room_default": ("EP", "chords.rolled(0.2)", "PEDAL", "A"),
     "place_room_dorm": ("BOX", "chords.rolled(0.3)", "LULL", "G"),
     "place_room_glen": ("EP", "chords.rolled(0.2)", "MODAL", "Eb"),
     "place_room_james": ("PAD", "chords.rolled(0.35)", "DORSOUL", "D"),
     "place_room_kuki": ("HARP", "chords.rolled(0.25)", "LYD", "G"),
     "place_room_ned": ("BNJ", "chords.arp8", "BACKDOOR", "Bb"),
     "place_room_playroom": ("XYL", "chords.arp8", "THIRDS", "C"),
-    "place_room_racuch": ("BOX", "chords.arp8", "MODAL", "C"),
+    "place_room_racuch": ("BOX", "chords.arp8", "PHRYG", "C"),
     "place_room_salon": ("EP", "chords.rolled(0.2)", "SOUL", "F"),
 }
 SERIES = {

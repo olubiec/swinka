@@ -128,6 +128,8 @@ Po fali: lead uruchamia `build_manifest.py` i `music-audit.js` (stan: 1+2+9+4+5+
 | PM-20 | MT-101 `s1_poranek`, MT-102 `s1_marchewka`, MT-103 `s1_deszcz` (po 4 utwory) | 85-120 s, -16 LUFS, wiersze przeglądu |
 | PM-21 | MT-104 `s1_kubek`, MT-105 `s1_nocna`, MT-106 `s1_cichy` | j.w. |
 
+Stan MW-5 (pokoje, MT-32…41): zrobione 10 specyfikacji `place_room_*` (jedna warstwa, jeden instrument, legenda v7, bez perkusji i szumu, pogłos REV). Różne rodziny: SOUL, DORQ, LULL, MODAL, DORSOUL, LYD, BACKDOOR, THIRDS, PEDAL, PHRYG. Pomiar: -18 LUFS (kryjówka -24, schemat nie zna -26), TP ≤ -1,2 dBTP, szew bez kliknięcia. Seria 1 (MT-101…106) nie zrobiona.
+
 **Bramka G3 (człowiek, 40 min): seria 1 jako wzorzec płyt.** Sprawdzamy, czy A1/A2 to „ta sama płyta”, B1 żwawszy, B2 spokojny. Zatwierdzona seria 1 jest wzorcem dla serii 2-4.
 
 ### MW-6: serie 2 i 3 (4 agentów, po 3 płyty = 12 plików)

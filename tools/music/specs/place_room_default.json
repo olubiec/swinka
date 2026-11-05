@@ -1,195 +1,188 @@
 {
-  "id": "place_room_default",
-  "kind": "room",
-  "title": "Pokój: domyślny (3 motywy bez nastroju)",
-  "role": "ciepły neutralny",
-  "bpm": 80,
-  "meter": 4,
-  "key": "A",
-  "mode": "major",
-  "bars": 32,
-  "swing": 50,
-  "seed": 26598,
-  "chords": [
-    {
-      "bar": 1,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 2,
-      "sym": "F#m9"
-    },
-    {
-      "bar": 3,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 4,
-      "sym": "E13"
-    },
-    {
-      "bar": 5,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 6,
-      "sym": "F#m9"
-    },
-    {
-      "bar": 7,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 8,
-      "sym": "E13"
-    },
-    {
-      "bar": 9,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 10,
-      "sym": "C#m7"
-    },
-    {
-      "bar": 11,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 12,
-      "sym": "E13sus E13"
-    },
-    {
-      "bar": 13,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 14,
-      "sym": "C#m7"
-    },
-    {
-      "bar": 15,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 16,
-      "sym": "E13sus E13"
-    },
-    {
-      "bar": 17,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 18,
-      "sym": "F#m9"
-    },
-    {
-      "bar": 19,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 20,
-      "sym": "E13"
-    },
-    {
-      "bar": 21,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 22,
-      "sym": "F#m9"
-    },
-    {
-      "bar": 23,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 24,
-      "sym": "E13"
-    },
-    {
-      "bar": 25,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 26,
-      "sym": "C#m7"
-    },
-    {
-      "bar": 27,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 28,
-      "sym": "E13sus E13"
-    },
-    {
-      "bar": 29,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 30,
-      "sym": "C#m7"
-    },
-    {
-      "bar": 31,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 32,
-      "sym": "E13sus E13"
-    }
-  ],
-  "layers": [
-    {
-      "role": "mel",
-      "voice": "P12",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia. Wzór (opis): wg szkieletu 'std'"
-    },
-    {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -6,
-      "pattern": "",
-      "part": "bas. Wzór (opis): korzeń na 1"
-    },
-    {
-      "role": "orn",
-      "voice": "BELL",
-      "db": -10,
-      "pattern": "",
-      "part": "dzwonek. Wzór (opis): co 4 takty",
-      "from_bar": 4
-    },
-    {
-      "role": "pad",
-      "voice": "PAD",
-      "db": -12,
-      "pattern": "",
-      "part": "pad. Wzór (opis): długie akordy"
-    }
-  ],
-  "drums": {
-    "kit": "offshk",
-    "levels": {
-      "SHK": -22
-    }
+ "id": "place_room_default",
+ "kind": "room",
+ "title": "Pokój: domyślny (3 motywy bez nastroju)",
+ "role": "ciepły neutralny; legenda v7: jeden instrument (EP), pełne progresje, bez warstw rytmicznych",
+ "bpm": 80,
+ "meter": 4,
+ "key": "A",
+ "mode": "major",
+ "bars": 32,
+ "swing": 50,
+ "seed": 26598,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "Amaj9"
   },
-  "fx": [
-    {
-      "fx": "REV-S",
-      "wet": 0.1,
-      "on": "all"
-    }
-  ],
-  "master": {
-    "lufs": -18,
-    "ceiling_dbtp": -1
+  {
+   "bar": 2,
+   "sym": "B/A"
   },
-  "loop": {
-    "enabled": true
+  {
+   "bar": 3,
+   "sym": "C#m11/A"
   },
-  "stem_of": null
+  {
+   "bar": 4,
+   "sym": "Dmaj7#11/A"
+  },
+  {
+   "bar": 5,
+   "sym": "Amaj9"
+  },
+  {
+   "bar": 6,
+   "sym": "G/A"
+  },
+  {
+   "bar": 7,
+   "sym": "Bm11/A"
+  },
+  {
+   "bar": 8,
+   "sym": "E/A"
+  },
+  {
+   "bar": 9,
+   "sym": "Dmaj9"
+  },
+  {
+   "bar": 10,
+   "sym": "E/D"
+  },
+  {
+   "bar": 11,
+   "sym": "F#m11/D"
+  },
+  {
+   "bar": 12,
+   "sym": "Gmaj7#11/D"
+  },
+  {
+   "bar": 13,
+   "sym": "Dmaj9"
+  },
+  {
+   "bar": 14,
+   "sym": "C/D"
+  },
+  {
+   "bar": 15,
+   "sym": "Em11/D"
+  },
+  {
+   "bar": 16,
+   "sym": "A/D"
+  },
+  {
+   "bar": 17,
+   "sym": "Amaj9"
+  },
+  {
+   "bar": 18,
+   "sym": "B/A"
+  },
+  {
+   "bar": 19,
+   "sym": "C#m11/A"
+  },
+  {
+   "bar": 20,
+   "sym": "Dmaj7#11/A"
+  },
+  {
+   "bar": 21,
+   "sym": "Amaj9"
+  },
+  {
+   "bar": 22,
+   "sym": "G/A"
+  },
+  {
+   "bar": 23,
+   "sym": "Bm11/A"
+  },
+  {
+   "bar": 24,
+   "sym": "E/A"
+  },
+  {
+   "bar": 25,
+   "sym": "Dmaj9"
+  },
+  {
+   "bar": 26,
+   "sym": "E/D"
+  },
+  {
+   "bar": 27,
+   "sym": "F#m11/D"
+  },
+  {
+   "bar": 28,
+   "sym": "Gmaj7#11/D"
+  },
+  {
+   "bar": 29,
+   "sym": "Dmaj9"
+  },
+  {
+   "bar": 30,
+   "sym": "C/D"
+  },
+  {
+   "bar": 31,
+   "sym": "Em11/D"
+  },
+  {
+   "bar": 32,
+   "sym": "A/D"
+  }
+ ],
+ "layers": [
+  {
+   "role": "chd",
+   "voice": "EP",
+   "db": -3,
+   "pattern": "chords.rolled(0.2)",
+   "part": "jedna warstwa, jeden instrument (EP); legenda v7 rodzina PEDAL A, forma A B (B = kwarta wyżej)"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "SAT(1.5)",
+   "on": "all"
+  },
+  {
+   "fx": "CHORUS(3)",
+   "on": "all"
+  },
+  {
+   "fx": "REV-L",
+   "wet": 0.4,
+   "on": "all"
+  },
+  {
+   "fx": "LP(4000)",
+   "on": "all"
+  },
+  {
+   "fx": "SHELF(-2)",
+   "on": "all"
+  },
+  {
+   "fx": "WIDTH(1.4)",
+   "on": "all"
+  }
+ ],
+ "master": {
+  "lufs": -18,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
 }

@@ -1,187 +1,180 @@
 {
-  "id": "place_room_ned",
-  "kind": "room",
-  "title": "Pokój: kąt przekąsek (snack nook)",
-  "role": "swing, chrupanie",
-  "bpm": 104,
-  "meter": 4,
-  "key": "Bb",
-  "mode": "major",
-  "bars": 32,
-  "swing": 62,
-  "seed": 78917,
-  "chords": [
-    {
-      "bar": 1,
-      "sym": "Bb6"
-    },
-    {
-      "bar": 2,
-      "sym": "Gm7"
-    },
-    {
-      "bar": 3,
-      "sym": "Cm7 F7"
-    },
-    {
-      "bar": 4,
-      "sym": "Bb6"
-    },
-    {
-      "bar": 6,
-      "sym": "Gm7"
-    },
-    {
-      "bar": 7,
-      "sym": "Cm7 F7"
-    },
-    {
-      "bar": 8,
-      "sym": "Bb6"
-    },
-    {
-      "bar": 9,
-      "sym": "Eb6"
-    },
-    {
-      "bar": 10,
-      "sym": "Cm7"
-    },
-    {
-      "bar": 11,
-      "sym": "Dm7 G7"
-    },
-    {
-      "bar": 12,
-      "sym": "Cm7 F7"
-    },
-    {
-      "bar": 13,
-      "sym": "Eb6"
-    },
-    {
-      "bar": 14,
-      "sym": "Cm7"
-    },
-    {
-      "bar": 15,
-      "sym": "Dm7 G7"
-    },
-    {
-      "bar": 16,
-      "sym": "Cm7 F7"
-    },
-    {
-      "bar": 17,
-      "sym": "Bb6"
-    },
-    {
-      "bar": 18,
-      "sym": "Gm7"
-    },
-    {
-      "bar": 19,
-      "sym": "Cm7 F7"
-    },
-    {
-      "bar": 20,
-      "sym": "Bb6"
-    },
-    {
-      "bar": 22,
-      "sym": "Gm7"
-    },
-    {
-      "bar": 23,
-      "sym": "Cm7 F7"
-    },
-    {
-      "bar": 24,
-      "sym": "Bb6"
-    },
-    {
-      "bar": 25,
-      "sym": "Eb6"
-    },
-    {
-      "bar": 26,
-      "sym": "Cm7"
-    },
-    {
-      "bar": 27,
-      "sym": "Dm7 G7"
-    },
-    {
-      "bar": 28,
-      "sym": "Cm7 F7"
-    },
-    {
-      "bar": 29,
-      "sym": "Eb6"
-    },
-    {
-      "bar": 30,
-      "sym": "Cm7"
-    },
-    {
-      "bar": 31,
-      "sym": "Dm7 G7"
-    },
-    {
-      "bar": 32,
-      "sym": "Cm7 F7"
-    }
-  ],
-  "layers": [
-    {
-      "role": "mel",
-      "voice": "P25",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia. Wzór (opis): wg szkieletu 'syn'"
-    },
-    {
-      "role": "chd",
-      "voice": "P25",
-      "db": -4,
-      "pattern": "",
-      "part": "stabsy „blacha” (Bb D F). Wzór (opis): na „i” 2 i 4"
-    },
-    {
-      "role": "bass",
-      "voice": "PIZ",
-      "db": -3,
-      "pattern": "",
-      "part": "bas pizzicato walking. Wzór (opis): 4 ćwierćnuty"
-    },
-    {
-      "role": "orn",
-      "voice": "XYL",
-      "db": -8,
-      "pattern": "",
-      "part": "figura „chrupania”: 4 szesnastki staccato D6 D6 D6 D6. Wzór (opis): w taktach 8 i 24 na 4. ćwierćnucie",
-      "from_bar": 8
-    }
-  ],
-  "drums": {
-    "kit": "brush",
-    "levels": {
-      "BRSH": -14
-    }
+ "id": "place_room_ned",
+ "kind": "room",
+ "title": "Pokój: kąt przekąsek (snack nook)",
+ "role": "swing, chrupanie; legenda v7: jeden instrument (BNJ), pełne progresje, bez warstw rytmicznych",
+ "bpm": 104,
+ "meter": 4,
+ "key": "Bb",
+ "mode": "major",
+ "bars": 32,
+ "swing": 58,
+ "seed": 78917,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "Bbmaj9"
   },
-  "fx": [
-    {
-      "fx": "REV-S",
-      "wet": 0.1,
-      "on": "all"
-    }
-  ],
-  "master": {
-    "lufs": -18,
-    "ceiling_dbtp": -1
+  {
+   "bar": 2,
+   "sym": "Gm11"
   },
-  "loop": {
-    "enabled": true
+  {
+   "bar": 3,
+   "sym": "Ebm9"
   },
-  "stem_of": null
+  {
+   "bar": 4,
+   "sym": "Ab13"
+  },
+  {
+   "bar": 5,
+   "sym": "Bbmaj13"
+  },
+  {
+   "bar": 6,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 7,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 8,
+   "sym": "F13sus4"
+  },
+  {
+   "bar": 9,
+   "sym": "Ebmaj9"
+  },
+  {
+   "bar": 10,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 11,
+   "sym": "Abm9"
+  },
+  {
+   "bar": 12,
+   "sym": "Db13"
+  },
+  {
+   "bar": 13,
+   "sym": "Ebmaj13"
+  },
+  {
+   "bar": 14,
+   "sym": "Gm11"
+  },
+  {
+   "bar": 15,
+   "sym": "Abmaj9#11"
+  },
+  {
+   "bar": 16,
+   "sym": "Bb13sus4"
+  },
+  {
+   "bar": 17,
+   "sym": "Bbmaj9"
+  },
+  {
+   "bar": 18,
+   "sym": "Gm11"
+  },
+  {
+   "bar": 19,
+   "sym": "Ebm9"
+  },
+  {
+   "bar": 20,
+   "sym": "Ab13"
+  },
+  {
+   "bar": 21,
+   "sym": "Bbmaj13"
+  },
+  {
+   "bar": 22,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 23,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 24,
+   "sym": "F13sus4"
+  },
+  {
+   "bar": 25,
+   "sym": "Ebmaj9"
+  },
+  {
+   "bar": 26,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 27,
+   "sym": "Abm9"
+  },
+  {
+   "bar": 28,
+   "sym": "Db13"
+  },
+  {
+   "bar": 29,
+   "sym": "Ebmaj13"
+  },
+  {
+   "bar": 30,
+   "sym": "Gm11"
+  },
+  {
+   "bar": 31,
+   "sym": "Abmaj9#11"
+  },
+  {
+   "bar": 32,
+   "sym": "Bb13sus4"
+  }
+ ],
+ "layers": [
+  {
+   "role": "chd",
+   "voice": "BNJ",
+   "db": -3,
+   "pattern": "chords.arp8",
+   "part": "jedna warstwa, jeden instrument (BNJ); legenda v7 rodzina BACKDOOR Bb, forma A B (B = kwarta wyżej)"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "TAPE(0.2)",
+   "on": "all"
+  },
+  {
+   "fx": "REV-M",
+   "wet": 0.25,
+   "on": "all"
+  },
+  {
+   "fx": "LP(5000)",
+   "on": "all"
+  },
+  {
+   "fx": "WIDTH(1.2)",
+   "on": "all"
+  }
+ ],
+ "master": {
+  "lufs": -18,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
 }
