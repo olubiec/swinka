@@ -22,7 +22,7 @@
 }
 
 :root {
-  /* Guinea pig palette from pig.py and PLAN.md */
+  /* Stare --c-* (paleta z pig.py): style.css juz ich nie uzywa; features/ i minigames/ jeszcze tak - usuwane w C11. Nowe kolory: --ui-* z assets/ui/ui_tokens.css. */
   --c-orange-light: #f7b46e;
   --c-orange:       #e98c42;
   --c-orange-dark:  #c8692f;
@@ -57,9 +57,9 @@
   --font-pixel: 'Pixelify Sans', monospace, sans-serif;
 
   /* Pixel shadows */
-  --pixel-shadow-sm: 0 2px 0 var(--c-contour-dark);
-  --pixel-shadow-md: 0 3px 0 var(--c-contour-dark);
-  --pixel-shadow-lg: 0 4px 0 var(--c-contour-dark);
+  --pixel-shadow-sm: 0 2px 0 var(--ui-wood-0);
+  --pixel-shadow-md: 0 3px 0 var(--ui-wood-0);
+  --pixel-shadow-lg: 0 4px 0 var(--ui-wood-0);
 }
 
 /* Base reset */
@@ -82,7 +82,7 @@ body {
     radial-gradient(#382b24 15%, transparent 16%);
   background-size: 16px 16px;
   background-position: 0 0, 8px 8px;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   font-family: var(--font-pixel);
   min-height: 100vh;
   display: flex;
@@ -121,14 +121,14 @@ body.webview-mode .game-device {
   width: 100%;
   max-width: 420px;
   min-height: 620px;
-  background: var(--c-cream);
-  border: 4px solid var(--c-contour-dark);
+  background: var(--ui-linen-2);
+  border: 4px solid var(--ui-wood-0);
   border-radius: 12px;
   box-shadow: 
     0 10px 0 #181210,
     0 16px 24px rgba(0,0,0,0.4),
-    inset 3px 3px 0 var(--c-white),
-    inset -3px -3px 0 var(--c-cream-dark);
+    inset 3px 3px 0 var(--ui-linen-3),
+    inset -3px -3px 0 var(--ui-linen-1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -137,7 +137,7 @@ body.webview-mode .game-device {
 
 /* Top title and status bar (casing bar) */
 .game-header {
-  background: var(--c-wood-dark);
+  background: var(--ui-wood-2);
   border-style: solid;
   border-width: 12px 0;
   border-color: transparent;
@@ -146,8 +146,8 @@ body.webview-mode .game-device {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: var(--c-white);
-  box-shadow: inset 0 2px 0 var(--c-wood-light);
+  color: var(--ui-linen-3);
+  box-shadow: inset 0 2px 0 var(--ui-wood-4);
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
@@ -169,7 +169,7 @@ body.webview-mode .game-device {
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  text-shadow: 1px 1px 0 var(--c-contour-dark);
+  text-shadow: 1px 1px 0 var(--ui-wood-0);
 }
 
 .header-right {
@@ -196,10 +196,10 @@ body.webview-mode .game-device {
 }
 
 .header-btn {
-  background: var(--c-wood);
-  border: 2px solid var(--c-contour-dark);
+  background: var(--ui-wood-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 4px;
-  color: var(--c-white);
+  color: var(--ui-linen-3);
   font-family: var(--font-pixel);
   font-size: 12px;
   font-weight: 700;
@@ -209,12 +209,12 @@ body.webview-mode .game-device {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 0 var(--c-contour-dark);
+  box-shadow: 0 2px 0 var(--ui-wood-0);
   transition: transform 0.05s;
 }
 
 .header-btn:hover {
-  background: var(--c-wood-light);
+  background: var(--ui-wood-4);
 }
 
 .header-btn:active {
@@ -227,8 +227,8 @@ body.webview-mode .game-device {
    ========================================================================== */
 
 .pet-identity-card {
-  background: linear-gradient(180deg, var(--c-wood-light) 0%, var(--c-wood) 100%);
-  border-bottom: 3px solid var(--c-contour-dark);
+  background: linear-gradient(180deg, var(--ui-wood-4) 0%, var(--ui-wood-3) 100%);
+  border-bottom: 3px solid var(--ui-wood-0);
   padding: 8px 12px;
   display: flex;
   justify-content: space-between;
@@ -251,13 +251,13 @@ body.webview-mode .game-device {
 .pet-name {
   font-size: 22px;
   font-weight: 700;
-  color: var(--c-white);
+  color: var(--ui-linen-3);
   text-shadow: 
-    -1px -1px 0 var(--c-contour-dark),
-     1px -1px 0 var(--c-contour-dark),
-    -1px  1px 0 var(--c-contour-dark),
-     1px  1px 0 var(--c-contour-dark),
-     0 2px 0 var(--c-contour-dark);
+    -1px -1px 0 var(--ui-wood-0),
+     1px -1px 0 var(--ui-wood-0),
+    -1px  1px 0 var(--ui-wood-0),
+     1px  1px 0 var(--ui-wood-0),
+     0 2px 0 var(--ui-wood-0);
   letter-spacing: 0.5px;
 }
 
@@ -265,12 +265,12 @@ body.webview-mode .game-device {
   font-size: 13px;
   font-weight: 700;
   color: #3b2210;
-  background: var(--c-cream);
-  border: 1px solid var(--c-contour-dark);
+  background: var(--ui-linen-2);
+  border: 1px solid var(--ui-wood-0);
   border-radius: 4px;
   padding: 1px 6px;
   display: inline-block;
-  box-shadow: inset 1px 1px 0 var(--c-white);
+  box-shadow: inset 1px 1px 0 var(--ui-linen-3);
 }
 
 .identity-badges {
@@ -285,26 +285,26 @@ body.webview-mode .game-device {
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 4px;
-  border: 2px solid var(--c-contour-dark);
-  color: var(--c-white);
-  text-shadow: 1px 1px 0 var(--c-contour-dark);
-  box-shadow: 0 2px 0 var(--c-contour-dark);
+  border: 2px solid var(--ui-wood-0);
+  color: var(--ui-linen-3);
+  text-shadow: 1px 1px 0 var(--ui-wood-0);
+  box-shadow: 0 2px 0 var(--ui-wood-0);
 }
 
-.stage-baby  { background: var(--c-leaf); }
-.stage-junior { background: var(--c-orange); }
-.stage-adult { background: var(--c-rust); }
+.stage-baby  { background: var(--ui-moss-3); }
+.stage-junior { background: var(--ui-hay-1); }
+.stage-adult { background: var(--ui-brick-2); }
 .stage-senior  { background: #8c8479; }
-.stage-legend { background: var(--c-gold); color: #493305; text-shadow: none; border-color: #5a3e05; }
+.stage-legend { background: var(--ui-flame-2); color: #493305; text-shadow: none; border-color: #5a3e05; }
 
 .bond-indicator {
   font-size: 11px;
   font-weight: 700;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   background: rgba(255, 255, 255, 0.7);
   padding: 3px 6px;
   border-radius: 4px;
-  border: 1px solid var(--c-contour-dark);
+  border: 1px solid var(--ui-wood-0);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -315,29 +315,29 @@ body.webview-mode .game-device {
 .bond-header {
   font-size: 11px;
   font-weight: 700;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   line-height: 1.1;
 }
 
 .bond-bar-track {
   width: 100%;
   height: 4px;
-  background: var(--c-cream-dark);
-  border: 1px solid var(--c-contour-dark);
+  background: var(--ui-linen-1);
+  border: 1px solid var(--ui-wood-0);
   border-radius: 2px;
   overflow: hidden;
 }
 
 .bond-bar-fill {
   height: 100%;
-  background: var(--c-pink);
+  background: var(--ui-rose-0);
   transition: width 0.3s ease;
 }
 
 .bond-sub {
   font-size: 9px;
   font-weight: 400;
-  color: var(--c-contour);
+  color: var(--ui-wood-0);
   white-space: nowrap;
   line-height: 1;
 }
@@ -349,8 +349,8 @@ body.webview-mode .game-device {
 .stage-viewport {
   position: relative;
   width: 100%;
-  background: var(--c-contour-dark);
-  border-bottom: 3px solid var(--c-contour-dark);
+  background: var(--ui-wood-0);
+  border-bottom: 3px solid var(--ui-wood-0);
   overflow: hidden;
   line-height: 0;
   /* Fixed height, never shrunk by the flex column: otherwise the floor and the pig get cropped. */
@@ -374,7 +374,7 @@ body.webview-mode .game-device {
   bottom: 6px;
   right: 8px;
   background: rgba(43, 23, 18, 0.75);
-  color: var(--c-white);
+  color: var(--ui-linen-3);
   font-size: 10px;
   line-height: 1.2;  /* the stage sets line-height 0, which clipped the text */
   padding: 2px 6px;
@@ -389,8 +389,8 @@ body.webview-mode .game-device {
 
 .needs-section {
   padding: 10px 12px;
-  background: var(--c-cream);
-  border-bottom: 3px solid var(--c-contour-dark);
+  background: var(--ui-linen-2);
+  border-bottom: 3px solid var(--ui-wood-0);
 }
 
 .needs-header {
@@ -403,15 +403,15 @@ body.webview-mode .game-device {
 .section-label {
   font-size: 13px;
   font-weight: 700;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
   letter-spacing: 0.5px;
 }
 
 .health-badge {
   font-size: 12px;
   font-weight: 700;
-  background: var(--c-white);
-  border: 1px solid var(--c-contour-dark);
+  background: var(--ui-linen-3);
+  border: 1px solid var(--ui-wood-0);
   padding: 1px 6px;
   border-radius: 4px;
   display: flex;
@@ -453,13 +453,13 @@ body.webview-mode .game-device {
 .need-name {
   font-size: 12px;
   font-weight: 700;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
 }
 
 .need-percent {
   font-size: 12px;
   font-weight: 700;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   font-variant-numeric: tabular-nums;
 }
 
@@ -496,17 +496,17 @@ body.webview-mode .game-device {
    - Low (<35%): warning bell pepper red
 */
 .progress-fill.level-high {
-  background-color: var(--c-leaf);
+  background-color: var(--ui-moss-3);
   background-image: var(--ui-bar_fill_high);
 }
 
 .progress-fill.level-mid {
-  background-color: var(--c-gold);
+  background-color: var(--ui-flame-2);
   background-image: var(--ui-bar_fill_mid);
 }
 
 .progress-fill.level-low {
-  background-color: var(--c-red);
+  background-color: var(--ui-brick-2);
   background-image: var(--ui-bar_fill_low);
   animation: pulse-alert 1.2s infinite ease-in-out;
 }
@@ -523,7 +523,7 @@ body.webview-mode .game-device {
 .actions-section {
   padding: 10px 12px 12px;
   /* bg:menu (assets/world/bg/menu.png, 256x144) at 3x, centred behind the menu buttons */
-  background: var(--c-cream-dark) url('../../assets/world/bg/menu.png') center / 768px 432px no-repeat;
+  background: var(--ui-linen-1) url('../../assets/world/bg/menu.png') center / 768px 432px no-repeat;
   image-rendering: pixelated;
   flex: 1;
   display: flex;
@@ -550,7 +550,7 @@ body.webview-mode .game-device {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   font-family: var(--font-pixel);
   font-size: 13px;
   font-weight: 700;
@@ -581,8 +581,8 @@ body.webview-mode .game-device {
 .hay-rack-mini {
   width: 36px;
   height: 4px;
-  background: var(--c-cream-dark);
-  border: 1px solid var(--c-contour-dark);
+  background: var(--ui-linen-1);
+  border: 1px solid var(--ui-wood-0);
   border-radius: 2px;
   overflow: hidden;
   margin-top: 1px;
@@ -591,12 +591,12 @@ body.webview-mode .game-device {
 .hay-rack-mini-fill {
   height: 100%;
   width: 0%;
-  background: var(--c-hay-shadow);
+  background: var(--ui-hay-0);
   transition: width 0.2s ease;
 }
 
 .hay-rack-mini-fill.low {
-  background: var(--c-red);
+  background: var(--ui-brick-2);
 }
 /* btn_blue = "clean and information" in the style legend (Clean, Album); blue is not used for other actions. */
 .btn-clean {
@@ -636,11 +636,11 @@ body.webview-mode .game-device {
   right: 10px;
   bottom: calc(100% + 6px);
   z-index: 30;
-  background: var(--c-white);
-  border: 3px solid var(--c-contour-dark);
+  background: var(--ui-linen-3);
+  border: 3px solid var(--ui-wood-0);
   border-radius: 8px;
   padding: 8px;
-  box-shadow: 0 4px 0 var(--c-contour-dark);
+  box-shadow: 0 4px 0 var(--ui-wood-0);
 }
 
 .food-drawer-close {
@@ -649,7 +649,7 @@ body.webview-mode .game-device {
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   padding: 0 4px;
 }
 
@@ -657,7 +657,7 @@ body.webview-mode .game-device {
   margin: 6px 0 0;
   font-size: 11px;
   text-align: center;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
 }
 .food-empty[hidden] { display: none; }
 
@@ -674,7 +674,7 @@ body.webview-mode .game-device {
 .food-drawer-title {
   font-size: 12px;
   font-weight: 700;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
   margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
@@ -687,7 +687,7 @@ body.webview-mode .game-device {
 }
 
 .food-item-btn {
-  background: var(--c-cream);
+  background: var(--ui-linen-2);
   border: 6px solid transparent;
   border-image: var(--ui-slot) 6 fill / 6px;
   border-radius: 6px;
@@ -700,11 +700,11 @@ body.webview-mode .game-device {
   font-family: var(--font-pixel);
   font-size: 11px;
   font-weight: 700;
-  box-shadow: 0 2px 0 var(--c-contour-dark);
+  box-shadow: 0 2px 0 var(--ui-wood-0);
 }
 
 .food-item-btn:hover {
-  background: var(--c-orange-light);
+  background: var(--ui-hay-2);
   border-image-source: var(--ui-slot_on);
 }
 
@@ -1090,7 +1090,7 @@ body.webview-mode .game-device {
 }
 
 .modal-card {
-  background: var(--c-cream);
+  background: var(--ui-linen-2);
   border-style: solid;
   border-width: 8px;
   border-image: var(--ui-panel_wood) 8 / 8px;
@@ -1100,21 +1100,21 @@ body.webview-mode .game-device {
   max-height: 85vh;
   overflow-y: auto;
   box-shadow: 
-    0 8px 0 var(--c-contour-dark),
-    inset 2px 2px 0 var(--c-white),
-    inset -2px -2px 0 var(--c-cream-dark);
+    0 8px 0 var(--ui-wood-0),
+    inset 2px 2px 0 var(--ui-linen-3),
+    inset -2px -2px 0 var(--ui-linen-1);
   display: flex;
   flex-direction: column;
 }
 
 .modal-header {
-  background: var(--c-wood-dark);
-  color: var(--c-white);
+  background: var(--ui-wood-2);
+  color: var(--ui-linen-3);
   padding: 8px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 5px solid var(--c-wood-dark);
+  border: 5px solid var(--ui-wood-2);
   border-image: var(--ui-bar_wood) 5 fill / 5px;
   font-size: 15px;
   font-weight: 700;
@@ -1128,7 +1128,7 @@ body.webview-mode .game-device {
   background-size: 16px 16px;
   background-repeat: no-repeat;
   border: 0;
-  color: var(--c-white);
+  color: var(--ui-linen-3);
   font-family: var(--font-pixel);
   font-size: 13px;
   font-weight: 700;
@@ -1146,7 +1146,7 @@ body.webview-mode .game-device {
 
 .modal-body {
   padding: 12px;
-  background: var(--c-cream);
+  background: var(--ui-linen-2);
   border: 0;
   border-image: var(--ui-panel_paper) 8 fill / 8px;
   font-size: 13px;
@@ -1178,8 +1178,8 @@ body.webview-mode .game-device {
 }
 
 .shop-item, .game-item {
-  background: var(--c-white);
-  border: 2px solid var(--c-contour-dark);
+  background: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   padding: 8px;
   display: flex;
@@ -1190,16 +1190,16 @@ body.webview-mode .game-device {
 }
 
 .shop-item-btn {
-  background: var(--c-leaf);
-  color: var(--c-white);
-  border: 2px solid var(--c-contour-dark);
+  background: var(--ui-moss-3);
+  color: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 4px;
   padding: 4px 8px;
   font-family: var(--font-pixel);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 0 var(--c-contour-dark);
+  box-shadow: 0 2px 0 var(--ui-wood-0);
   margin-top: 4px;
 }
 
@@ -1208,8 +1208,8 @@ body.webview-mode .game-device {
 
 /* Album stickers */
 .album-card {
-  background: var(--c-white);
-  border: 2px solid var(--c-contour-dark);
+  background: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   padding: 6px;
   display: flex;
@@ -1245,9 +1245,9 @@ body.webview-mode .game-device {
 }
 
 .test-btn {
-  background: var(--c-wood);
-  color: var(--c-white);
-  border: 1px solid var(--c-contour-dark);
+  background: var(--ui-wood-3);
+  color: var(--ui-linen-3);
+  border: 1px solid var(--ui-wood-0);
   border-radius: 3px;
   padding: 3px 6px;
   font-family: var(--font-pixel);
@@ -1255,7 +1255,7 @@ body.webview-mode .game-device {
   cursor: pointer;
 }
 
-.test-btn:hover { background: var(--c-wood-light); }
+.test-btn:hover { background: var(--ui-wood-4); }
 
 /* ==========================================================================
    FIRST RUN: welcome, intro, gift letter
@@ -1272,7 +1272,7 @@ body.webview-mode .game-device {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: var(--c-hay);
+  background: var(--ui-hay-2);
 }
 
 .onboard-view[hidden],
@@ -1282,8 +1282,8 @@ body.webview-mode .game-device {
 }
 
 .onboard-card {
-  background: var(--c-cream);
-  border: 4px solid var(--c-contour-dark);
+  background: var(--ui-linen-2);
+  border: 4px solid var(--ui-wood-0);
   border-radius: 10px;
   width: 100%;
   max-height: 100%;
@@ -1291,19 +1291,19 @@ body.webview-mode .game-device {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   font-family: var(--font-pixel);
   text-align: center;
   box-shadow:
-    0 8px 0 var(--c-contour-dark),
-    inset 2px 2px 0 var(--c-white),
-    inset -2px -2px 0 var(--c-cream-dark);
+    0 8px 0 var(--ui-wood-0),
+    inset 2px 2px 0 var(--ui-linen-3),
+    inset -2px -2px 0 var(--ui-linen-1);
 }
 
 .onboard-card h2 {
   margin: 0;
   font-size: 26px;
-  color: var(--c-rust-deep);
+  color: var(--ui-brick-1);
 }
 
 .onboard-card p {
@@ -1317,7 +1317,7 @@ body.webview-mode .game-device {
   font-size: 18px;
   text-align: center;
   padding: 6px 8px;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   background: none;
   border: 4px solid transparent;
   border-image: var(--ui-field) 4 fill / 4px;
@@ -1327,12 +1327,12 @@ body.webview-mode .game-device {
 }
 
 .onboard-input:focus {
-  outline: 2px solid var(--c-orange-dark);
+  outline: 2px solid var(--ui-hay-0);
   outline-offset: 1px;
 }
 
 .onboard-error {
-  color: var(--c-red-dark);
+  color: var(--ui-brick-1);
   font-size: 13px;
 }
 
@@ -1346,7 +1346,7 @@ body.webview-mode .game-device {
   font-size: 18px;
   line-height: 1.4;
   padding: 24px 8px;
-  background: var(--c-white);
+  background: var(--ui-linen-3);
   border: 5px solid transparent;
   border-image: var(--ui-tooltip) 5 fill / 5px;
   border-radius: 0;
@@ -1360,8 +1360,8 @@ body.webview-mode .game-device {
   font-size: 14px;
   line-height: 1.5;
   padding: 10px;
-  background: var(--c-white);
-  border: 3px solid var(--c-contour-dark);
+  background: var(--ui-linen-3);
+  border: 3px solid var(--ui-wood-0);
   border-radius: 8px;
 }
 
@@ -1371,7 +1371,7 @@ body.webview-mode .game-device {
   margin: 8px auto 0;
   background: none;
   border: none;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   font-family: var(--font-pixel);
   font-size: 11px;
   text-decoration: underline;
@@ -1433,7 +1433,7 @@ body.webview-mode .game-device {
   cursor: pointer;
 }
 .places-bar .place-btn:hover { border-image-source: var(--ui-tab_on); }
-.places-bar .place-btn:focus-visible { outline: 3px solid var(--c-leaf-dark); outline-offset: 1px; }
+.places-bar .place-btn:focus-visible { outline: 3px solid var(--ui-moss-1); outline-offset: 1px; }
 .places-bar .place-btn.is-locked { opacity: 0.6; }
 .places-bar .place-btn.is-pending { border-image-source: var(--ui-tab_on); }
 .places-bar .place-btn .pixel-icon { flex: none; }
@@ -1502,24 +1502,24 @@ body.webview-mode .game-device {
 }
 
 .ui-panel-paper {
-  background: var(--c-cream);
-  border: 4px solid var(--c-contour-dark);
+  background: var(--ui-linen-2);
+  border: 4px solid var(--ui-wood-0);
   border-image: var(--ui-panel_paper) 8 fill / 8px;
   image-rendering: pixelated;
 }
 
 .ui-panel-wood {
-  background: var(--c-wood);
-  border: 4px solid var(--c-wood-deep);
+  background: var(--ui-wood-3);
+  border: 4px solid var(--ui-wood-1);
   border-image: var(--ui-panel_wood) 8 fill / 8px;
   image-rendering: pixelated;
 }
 
 .ui-btn {
-  background: var(--c-wood-light);
-  border: 3px solid var(--c-contour-dark);
+  background: var(--ui-wood-4);
+  border: 3px solid var(--ui-wood-0);
   border-image: var(--ui-btn_normal) 6 fill / 6px;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   font-family: var(--font-pixel);
   font-weight: 700;
   cursor: pointer;
@@ -1527,7 +1527,7 @@ body.webview-mode .game-device {
 }
 
 .ui-btn:hover {
-  background: var(--c-orange-light);
+  background: var(--ui-hay-2);
   border-image: var(--ui-btn_hover) 6 fill / 6px;
 }
 
@@ -1538,7 +1538,7 @@ body.webview-mode .game-device {
 /* Separators are tiled, not 9-sliced (slice 0), so they use background-image. */
 .ui-sep-h {
   height: 4px;
-  background-color: var(--c-wood-dark);
+  background-color: var(--ui-wood-2);
   background-image: var(--ui-sep_h);
   background-repeat: repeat-x;
   background-size: 32px 4px;
@@ -1547,7 +1547,7 @@ body.webview-mode .game-device {
 
 .ui-sep-v {
   width: 4px;
-  background-color: var(--c-wood-dark);
+  background-color: var(--ui-wood-2);
   background-image: var(--ui-sep_v);
   background-repeat: repeat-y;
   background-size: 4px 32px;
@@ -1588,7 +1588,7 @@ body.webview-mode .game-device {
   width: 48px;
   height: 24px;
   margin: 0;
-  background-color: var(--c-contour-dark);
+  background-color: var(--ui-wood-0);
   background-image: var(--ui-toggle_off);
   background-size: 48px 24px;
   background-repeat: no-repeat;
@@ -1614,9 +1614,9 @@ body.webview-mode .game-device {
 }
 
 .ui-banner {
-  background: var(--c-wood-dark);
-  color: var(--c-white);
-  border: 3px solid var(--c-contour-dark);
+  background: var(--ui-wood-2);
+  color: var(--ui-linen-3);
+  border: 3px solid var(--ui-wood-0);
   border-image: var(--ui-header_banner) 0 12 0 12 fill / 0 12px 0 12px;
   image-rendering: pixelated;
 }
