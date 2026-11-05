@@ -160,10 +160,23 @@ namespace Cuy
         public static void ShowHome()
         {
             BrainController.Log("[HomeWindow] ShowHome() called.");
-            if (WebView2Missing) return;
-            if (_instance == null || _instance.IsDisposed)
+            if (WebView2Missing)
             {
-                _instance = new HomeWindow();
+                MessageBox.Show(WebView2MissingMessage, "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            try
+            {
+                if (_instance == null || _instance.IsDisposed)
+                {
+                    _instance = new HomeWindow();
+                }
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[ERROR] HomeWindow create: " + ex);
+                MessageBox.Show("Home could not open: " + ex.Message + "\nLog: %LocalAppData%\\Cuy\\logs\\cuy.log", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
 
             _instance.PositionNearTray();
@@ -270,7 +283,7 @@ namespace Cuy
                 _webView = new WebView2
                 {
                     Dock = DockStyle.Fill,
-                    DefaultBackgroundColor = Color.Transparent
+                    DefaultBackgroundColor = Color.FromArgb(255, 0x24, 0x1d, 0x1a) // opaque: a transparent WebView can render as an invisible window
                 };
                 this.Controls.Add(_webView);
 
@@ -373,7 +386,9 @@ namespace Cuy
                 _webView.CoreWebView2.NavigationCompleted += (s, e) =>
                 {
                     _isWebViewReady = true;
-                    BrainController.Log("[HomeWindow] Navigation to https://cuy.home/index.html done.");
+                    BrainController.Log("[HomeWindow] Navigation to https://cuy.home/index.html done. success=" + e.IsSuccess + " status=" + e.WebErrorStatus);
+                    if (!e.IsSuccess)
+                        MessageBox.Show("Home page failed to load (" + e.WebErrorStatus + ").\nLog: %LocalAppData%\\Cuy\\logs\\cuy.log", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     SendStateToWebView();
                 };
 
@@ -382,6 +397,7 @@ namespace Cuy
             catch (Exception ex)
             {
                 BrainController.Log("[HomeWindow] WebView2 init error: " + ex.ToString());
+                MessageBox.Show("Home could not start: " + ex.Message + "\nLog: %LocalAppData%\\Cuy\\logs\\cuy.log", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
