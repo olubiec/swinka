@@ -19,17 +19,17 @@ const unique = manifest.records.find((r) => r.rarity === 'unique');
 assert.ok(common && rare && unique, 'manifest has common, rare and unique records');
 
 const tests = {
-  'prices: records 40-80 (common) and 150-300 (rare), unique not for sale'() {
+  'prices: records 40-80 (common) and 150-300 (rare), unique at the rare price'() {
     assert.ok(Prices.recordPrice('common') >= 40 && Prices.recordPrice('common') <= 80);
     assert.ok(Prices.recordPrice('rare') >= 150 && Prices.recordPrice('rare') <= 300);
-    assert.strictEqual(Prices.recordPrice(unique.rarity), null);
+    assert.strictEqual(Prices.recordPrice(unique.rarity), 150);
     assert.strictEqual(Prices.recordPrice('nonsense'), null);
   },
-  'prices: six players 120 / 250 / 400 / 600 / 900 / 1400 in design order'() {
+  'prices: six players 120 / 200 / 400 / 600 / 900 / 1400 in design order'() {
     const ids = Object.keys(design.players);
     assert.strictEqual(ids.length, 6);
     assert.deepStrictEqual(ids.map((id) => Prices.playerPrice(id)).sort((a, b) => a - b),
-      [120, 250, 400, 600, 900, 1400]);
+      [120, 200, 400, 600, 900, 1400]);
     assert.strictEqual(Prices.playerPrice('player_unknown'), null);
   },
   'buy sends musicBuy with kind and itemId to C# and changes no balance here'() {
@@ -88,7 +88,7 @@ const tests = {
     const list = World.setDesign(design) && World.getPlayers();
     const items = Economy.shopItems({ music: { playerOwned: ['player_portable'] } }, list);
     const portable = items.find((i) => i.music.itemId === 'player_portable');
-    assert.strictEqual(portable.price, 250);
+    assert.strictEqual(portable.price, 200);
     assert.strictEqual(portable.owned, 1);
     assert.deepStrictEqual(portable.music, { kind: 'player', itemId: 'player_portable' });
     assert.strictEqual(items.find((i) => i.music.itemId === 'player_jukebox').price, 1400);
