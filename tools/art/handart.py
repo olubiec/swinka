@@ -256,15 +256,12 @@ def _update_json(path, fn):
 def register_item(item_id, place, im, rel_file=None, atlas=ATLAS_FILE, world_dir=WORLD_DIR, **extra):
     """Zapisuje PNG do <world_dir>/<place>/<id>.png i wpis w atlas.json.
     Rozmiar musi byc wielokrotnoscia 16 (siatka). Kotwica: dol-srodek.
-    Stare pole file_x2 zostaje nietkniete (usuwa je dopiero B13)."""
+    Pole file_x2 nie jest juz zapisywane (po G14)."""
     w, h = im.size
     if w % 16 or h % 16:
         raise ValueError(f"{item_id}: rozmiar {w}x{h} nie jest wielokrotnoscia 16")
     rel = rel_file or f"{place}/{item_id}.png"
     save_png(im, Path(world_dir) / rel)
-    old = json.loads(Path(atlas).read_text(encoding="utf-8"))["items"].get(item_id, {})
-    if old.get("file_x2"):  # do B13 kod moze czytac _x2: trzymamy go zgodnym z nowym obrazem
-        save_png(im.resize((w * 2, h * 2), Image.NEAREST), Path(world_dir) / old["file_x2"])
 
     def upd(d):
         e = d["items"].setdefault(item_id, {})

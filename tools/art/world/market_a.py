@@ -116,8 +116,6 @@ def build_items():
         im = fn()
         rel = f"market/{mid}.png"
         H.save_png(im, H.WORLD_DIR / rel)
-        old = H.WORLD_DIR / f"market/{mid}_x2.png"
-        if old.exists(): H.save_png(im.resize((im.width * 2, im.height * 2), H.Image.NEAREST), old)
         def upd(d, mid=mid, rel=rel, im=im):
             d["market"][mid] = {"file": rel, "size": [im.width, im.height]}
         H._update_json(H.TILES_FILE, upd)

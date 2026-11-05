@@ -30,9 +30,6 @@ def reg(named):
     for n, im in named:
         H.break_checkers(im)
         H.register_tile(n, im)
-        x2 = H.WORLD_DIR / f"tiles/{n}_x2.png"
-        if x2.exists():                       # do B13 stary _x2 zgodny z nowym obrazem
-            H.save_png(im.resize((32, 32), Image.NEAREST), x2)
 
 
 def materialy():

@@ -131,9 +131,6 @@ def build(tod, extra=(), pigs=()):
 def build_all():
     for tod in ("morning", "day", "evening", "night"):
         H.save_png(build(tod), H.WORLD_DIR / f"bg/park_{tod}.png")
-        old = H.WORLD_DIR / f"bg/park_{tod}_x2.png"
-        if old.exists():
-            H.save_png(build(tod).resize((W * 2, HT * 2), Image.NEAREST), old)
 
 
 if __name__ == "__main__":

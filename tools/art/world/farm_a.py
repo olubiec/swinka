@@ -218,7 +218,6 @@ def build_sheet():
             assert im.size == (w, h), (name, im.size, (w, h))
             sheet.alpha_composite(im, (x, y))
     H.save_png(sheet, FARM_DIR / "farm.png")
-    H.save_png(sheet.resize((sheet.width * 2, sheet.height * 2), Image.NEAREST), FARM_DIR / "farm_x2.png")
     return sheet, frames
 
 

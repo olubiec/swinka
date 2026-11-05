@@ -76,6 +76,5 @@ def build():
 if __name__ == "__main__":
     im = build()
     H.save_png(im, H.WORLD_DIR / "bg/market.png")
-    H.save_png(im.resize((W * 2, HT * 2), Image.NEAREST), H.WORLD_DIR / "bg/market_x2.png")
     S = Path("/tmp/claude-0/-home-user/06cc83a8-7800-529c-8cf3-9903bd86f472/scratchpad")
     im.convert("RGB").resize((W * 4, HT * 4), Image.NEAREST).save(S / "b8-3.png")

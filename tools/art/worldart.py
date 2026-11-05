@@ -50,12 +50,10 @@ def finish(im, outline=True):
         im.outline()
     return im
 
-def save_png(im, path, x2=True):
+def save_png(im, path):
     from PIL import Image
     os.makedirs(os.path.dirname(path), exist_ok=True)
     Image.fromarray(im.a, 'RGBA').save(path, optimize=True)
-    if x2:
-        Image.fromarray(np.repeat(np.repeat(im.a, 2, 0), 2, 1), 'RGBA').save(path.replace('.png', '_x2.png'), optimize=True)
 
 def sheet(ims, cols, pad=2, bg=(236, 228, 214, 255), scale=3):
     from PIL import Image
@@ -71,7 +69,7 @@ def sheet(ims, cols, pad=2, bg=(236, 228, 214, 255), scale=3):
 
 
 def pack(groups, root, name, width=256):
-    """groups: {id: [Im,...]} -> root/name.png atlas + root/name.json (id -> frames [x,y,w,h]). Also x2 atlas."""
+    """groups: {id: [Im,...]} -> root/name.png atlas + root/name.json (id -> frames [x,y,w,h])."""
     import json
     from PIL import Image
     x = y = rowh = 0; pl = {}
@@ -86,7 +84,6 @@ def pack(groups, root, name, width=256):
         at[py:py + h, px_:px_ + w] = groups[id][i].a
     os.makedirs(root, exist_ok=True)
     Image.fromarray(at, 'RGBA').save(os.path.join(root, name + '.png'), optimize=True)
-    Image.fromarray(np.repeat(np.repeat(at, 2, 0), 2, 1), 'RGBA').save(os.path.join(root, name + '_x2.png'), optimize=True)
     meta = {id: [list(pl[(id, i)]) for i in range(len(fr))] for id, fr in groups.items()}
-    json.dump({'atlas': name + '.png', 'atlas_x2': name + '_x2.png', 'size': [width, H_], 'frames': meta}, open(os.path.join(root, name + '.json'), 'w'), indent=1)
+    json.dump({'atlas': name + '.png', 'size': [width, H_], 'frames': meta}, open(os.path.join(root, name + '.json'), 'w'), indent=1)
     return meta

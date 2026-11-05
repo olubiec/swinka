@@ -141,7 +141,6 @@ if __name__ == "__main__":
     import layout_check as _LC; _LC.report("sad", PLACED)
     H._update_json(H.TILES_FILE, lambda d: d["bg"].__setitem__("orchard", {"file": "bg/orchard.png", "size": [W, HT]}))
     oi.convert("RGB").resize((W * 3, HT * 3), Image.NEAREST).save(H.ROOT / "docs/album/przebudowa/b14-4_sad.png")
-    H.save_png(im.resize((W * 2, HT * 2), Image.NEAREST), H.WORLD_DIR / "bg/farm_x2.png")
     overview(H.ROOT / "docs/album/przebudowa/b7-6_przeglad_farmy.png")
     import layout_check as LC
     S = Path("/tmp/claude-0/-home-user/06cc83a8-7800-529c-8cf3-9903bd86f472/scratchpad")

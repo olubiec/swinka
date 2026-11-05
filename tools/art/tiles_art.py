@@ -188,8 +188,8 @@ def promo(i):
 
 def build(root):
     base = os.path.join(root, 'world'); meta = {'bg': {}, 'tiles': {}, 'market': {}}
-    def put(sub, id, im, x2=True):
-        save_png(im, os.path.join(base, sub, id + '.png'), x2); meta[sub][id] = {'file': f'{sub}/{id}.png', 'size': [im.w, im.h]}
+    def put(sub, id, im):
+        save_png(im, os.path.join(base, sub, id + '.png')); meta[sub][id] = {'file': f'{sub}/{id}.png', 'size': [im.w, im.h]}
     bgs = {}
     for k in TIMES:
         for n, fn in (('garden', bg_garden), ('park', bg_park)):
@@ -202,7 +202,7 @@ def build(root):
     for f in range(4): tl[f'water_{f}'] = water_tile(f)
     for m in range(16): tl[f'fence_{m:02d}'] = fence_tile(m)
     tl.update(room_tiles())
-    for k, im in tl.items(): put('tiles', k, im, True)
+    for k, im in tl.items(): put('tiles', k, im)
     ms = memory_stone(); put('tiles', 'memory_stone', ms)
     mk = {'stall_basic': stall(False), 'stall_big': stall(True), 'order_board': order_board()}
     for i in range(3): mk[f'promo_{i + 1}'] = promo(i)
