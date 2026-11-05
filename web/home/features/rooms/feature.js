@@ -84,8 +84,6 @@
   let lightsData = null;
   let lightsRequested = false;
 
-  // The 1x file is always drawn (never the _x2 file), scaled by an integer factor.
-  function oneX(rel) { return String(rel).replace(/_x2(\.[a-z0-9]+)$/i, '$1'); }
 
   function rgbCss(rgb, alpha) {
     return 'rgba(' + Math.round(rgb[0]) + ', ' + Math.round(rgb[1]) + ', ' + Math.round(rgb[2]) + ', ' + (alpha == null ? 1 : alpha) + ')';
@@ -180,7 +178,7 @@
       const r = Math.max(1, (a.radiusCells || 2) * CELL * k);
       let alpha = a.strength == null ? 0.6 : a.strength;
       if (a.flicker) { alpha *= 0.85 + 0.15 * Math.sin(now / 160 + i); S.animating = true; }
-      const mask = typeof a.mask === 'string' ? loadImage(oneX(a.mask)) : null;
+      const mask = typeof a.mask === 'string' ? loadImage(a.mask) : null;
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       if (mask && mask.ok) {
@@ -197,9 +195,9 @@
       ctx.restore();
       // Sprite strip: frames side by side, frame width = the item's atlas width, anchored like the item.
       // A lit lamp (evening, night or toggled on) shows its *_on strip; otherwise its one-frame base sprite.
-      const onSheet = a.on && typeof a.on_file === 'string' ? loadImage(oneX(a.on_file)) : null;
+      const onSheet = a.on && typeof a.on_file === 'string' ? loadImage(a.on_file) : null;
       const useOn = !!(onSheet && onSheet.ok);
-      const sheet = useOn ? onSheet : (typeof a.file === 'string' ? loadImage(oneX(a.file)) : null);
+      const sheet = useOn ? onSheet : (typeof a.file === 'string' ? loadImage(a.file) : null);
       const entry = atlas && atlas.items ? atlas.items[it.itemId] : null;
       const sw = entry && entry.size ? entry.size[0] : (sheet && sheet.ok ? sheet.img.naturalWidth : 0);
       if (sheet && sheet.ok && sw > 0) {

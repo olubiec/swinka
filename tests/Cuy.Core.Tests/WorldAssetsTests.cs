@@ -136,7 +136,7 @@ namespace Cuy.Core.Tests
                 string id = (string)crop["id"];
                 bool perennial = string.Equals((string)crop["kind"], "perennial", StringComparison.OrdinalIgnoreCase);
 
-                // Annual crops use frames "crop_<id>" (4 frames, 16x16 at 1x = 32x32 in farm_x2.png).
+                // Annual crops use frames "crop_<id>" (4 frames, 16x16 each in farm.png).
                 // Perennial crops are trees drawn as "tree_<id>" (16x32 frames).
                 string key = "crop_" + id;
                 int expectedFrames = 4;
