@@ -111,10 +111,11 @@
 
   // Room layer: draws each placed player at its spot, animated while canPlayMusic(save).
   // sheetOf(playerId) -> {off: Image, on: Image}; now in ms. Returns how many players were drawn.
+  // scene.state is the game state the room canvas gets (the root); the music save sits under its "music" key.
   function drawPlayers(ctx, scene, sheetOf, now) {
-    const state = scene && scene.state ? scene.state : {};
-    const placed = placedList(state);
-    const live = canPlayMusic(state);
+    const save = scene && scene.state && scene.state.music ? scene.state.music : {};
+    const placed = placedList(save);
+    const live = canPlayMusic(save);
     const floorY = scene && Number.isFinite(scene.floorY) ? scene.floorY : FLOOR_Y;
     let drawn = 0;
     placed.forEach((e, i) => {

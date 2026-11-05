@@ -91,22 +91,24 @@ const sheets = {
   player_jukebox: { off: img(32, 32), on: img(128, 32) }
 };
 const sheetOf = (id) => sheets[id] || { off: { complete: false, naturalWidth: 0 } };
-const sceneOff = { state: { playerPlaced: { home: 'player_turntable', kitchen: 'player_jukebox' }, records: {} } };
+// The room scene carries the game state; the music save is under state.music (as the canvas gets it).
+const sceneOff = { state: { music: { playerPlaced: { home: 'player_turntable', kitchen: 'player_jukebox' }, records: {} } } };
 let ctx = mockCtx();
 assert.strictEqual(World.drawPlayers(ctx, sceneOff, sheetOf, 0), 2);
 assert.strictEqual(ctx.calls[0][0], sheets.player_turntable.off, 'static sprite without records');
 assert.strictEqual(ctx.calls[0][1], 12);
 assert.strictEqual(ctx.calls[0][2], 119 - 16, 'bottom on the floor line');
 assert.strictEqual(ctx.calls[1][1], 52, 'second player at the second spot');
-const sceneOn = { state: { playerPlaced: sceneOff.state.playerPlaced, records: { s1_cichy: 1 } } };
+const sceneOn = { state: { music: { playerPlaced: sceneOff.state.music.playerPlaced, records: { s1_cichy: 1 } } } };
 ctx = mockCtx();
 World.drawPlayers(ctx, sceneOn, sheetOf, 260); // frame 1 of 4
 assert.strictEqual(ctx.calls[0][0], sheets.player_turntable.on);
 assert.deepStrictEqual(ctx.calls[0].slice(1, 5), [32, 0, 32, 16], 'animated frame cut from the on sheet');
 // Old save and empty room: nothing is drawn, no throw.
 ctx = mockCtx();
-assert.strictEqual(World.drawPlayers(ctx, { state: old }, sheetOf, 0), 0);
+assert.strictEqual(World.drawPlayers(ctx, { state: { music: old } }, sheetOf, 0), 0);
 assert.strictEqual(World.drawPlayers(ctx, { state: {} }, sheetOf, 0), 0);
+assert.strictEqual(World.drawPlayers(ctx, { state: sceneOff.state.music }, sheetOf, 0), 0, 'a bare save at the root is not the scene');
 assert.strictEqual(World.drawPlayers(ctx, undefined, sheetOf, 0), 0);
 assert.strictEqual(ctx.calls.length, 0);
 
