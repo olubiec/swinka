@@ -1,297 +1,292 @@
 {
-  "id": "bed_evening",
-  "kind": "bed",
-  "title": "Belka wieczór (17-22)",
-  "role": "lo-fi jazz wieczorny",
-  "bpm": 76,
-  "meter": 4,
-  "key": "Bb",
-  "mode": "major",
-  "bars": 56,
-  "swing": 64,
-  "seed": 3437,
-  "chords": [
-    {
-      "bar": 1,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 2,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 3,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 4,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 5,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 6,
-      "sym": "Ebm9 Ab13"
-    },
-    {
-      "bar": 7,
-      "sym": "Dm7 G7♭9"
-    },
-    {
-      "bar": 8,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 9,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 10,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 11,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 12,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 13,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 14,
-      "sym": "Ebm9 Ab13"
-    },
-    {
-      "bar": 15,
-      "sym": "Dm7 G7♭9"
-    },
-    {
-      "bar": 16,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 17,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 18,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 19,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 20,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 21,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 22,
-      "sym": "Ebm9 Ab13"
-    },
-    {
-      "bar": 23,
-      "sym": "Dm7 G7♭9"
-    },
-    {
-      "bar": 24,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 25,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 26,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 27,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 28,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 29,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 30,
-      "sym": "Ebm9 Ab13"
-    },
-    {
-      "bar": 31,
-      "sym": "Dm7 G7♭9"
-    },
-    {
-      "bar": 32,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 33,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 34,
-      "sym": "Cm9"
-    },
-    {
-      "bar": 35,
-      "sym": "F13"
-    },
-    {
-      "bar": 36,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 37,
-      "sym": "Em7♭5 A7♭9"
-    },
-    {
-      "bar": 38,
-      "sym": "Dm9 G7"
-    },
-    {
-      "bar": 39,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 40,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 41,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 42,
-      "sym": "Cm9"
-    },
-    {
-      "bar": 43,
-      "sym": "F13"
-    },
-    {
-      "bar": 44,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 45,
-      "sym": "Em7♭5 A7♭9"
-    },
-    {
-      "bar": 46,
-      "sym": "Dm9 G7"
-    },
-    {
-      "bar": 47,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 48,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 50,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 51,
-      "sym": "Cm9 F13"
-    },
-    {
-      "bar": 52,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 53,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 54,
-      "sym": "Ebm9 Ab13"
-    },
-    {
-      "bar": 55,
-      "sym": "Dm7 G7♭9"
-    },
-    {
-      "bar": 56,
-      "sym": "Cm9 Bbmaj9"
-    }
-  ],
-  "layers": [
-    {
-      "role": "chd",
-      "voice": "EP",
-      "db": -3,
-      "pattern": "",
-      "part": "akordy rozłożone, voicing blisko. Wzór (opis): arpeggio ósemkami w swingu"
-    },
-    {
-      "role": "mel",
-      "voice": "EP",
-      "db": -5,
-      "pattern": "",
-      "part": "melodia wyżej (A4-D5), nuty długie, wejście co drugi takt; można BELL. Wzór (opis): co 2 takty, półnuty; solo nie dłuższe niż 4 takty",
-      "from_bar": 3
-    },
-    {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -4,
-      "pattern": "",
-      "part": "walking bass ćwierćnutami (korzeń-kwinta-przejście). Wzór (opis): 4 ćwierćnuty"
-    },
-    {
-      "role": "noise",
-      "voice": "noise_vinyl_crackle",
-      "db": -42,
-      "pattern": "",
-      "part": "trzask winylu. Wzór (opis): ciągły, bardzo cicho",
-      "from_bar": 1
-    }
-  ],
-  "drums": {
-    "kit": "brush",
-    "levels": {
-      "BRSH": -14,
-      "SHK": -14
-    }
+ "id": "bed_evening",
+ "kind": "bed",
+ "title": "Belka wieczór (17-22)",
+ "role": "lo-fi jazz wieczorny; legenda v7: jeden instrument (EP), pełne progresje, bez warstw rytmicznych",
+ "bpm": 76,
+ "meter": 4,
+ "key": "Bb",
+ "mode": "major",
+ "bars": 56,
+ "swing": 64,
+ "seed": 3437,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "Bbmaj9#11"
   },
-  "fx": [
-    {
-      "fx": "TAPE(0.2)",
-      "on": "all"
-    },
-    {
-      "fx": "LP(8000)",
-      "on": "all"
-    },
-    {
-      "fx": "REV-S",
-      "wet": 0.12,
-      "on": "all"
-    }
-  ],
-  "master": {
-    "lufs": -20,
-    "ceiling_dbtp": -1
+  {
+   "bar": 2,
+   "sym": "Gm11"
   },
-  "loop": {
-    "enabled": true
+  {
+   "bar": 3,
+   "sym": "Cm11"
   },
-  "stem_of": null
+  {
+   "bar": 4,
+   "sym": "F7b13"
+  },
+  {
+   "bar": 5,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 6,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 7,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 8,
+   "sym": "F13sus4"
+  },
+  {
+   "bar": 9,
+   "sym": "Ebmaj13#11"
+  },
+  {
+   "bar": 10,
+   "sym": "Ebm9"
+  },
+  {
+   "bar": 11,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 12,
+   "sym": "G7alt"
+  },
+  {
+   "bar": 13,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 14,
+   "sym": "B13"
+  },
+  {
+   "bar": 15,
+   "sym": "Bbmaj13"
+  },
+  {
+   "bar": 16,
+   "sym": "F9sus4"
+  },
+  {
+   "bar": 17,
+   "sym": "Bbmaj9#11"
+  },
+  {
+   "bar": 18,
+   "sym": "Gm11"
+  },
+  {
+   "bar": 19,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 20,
+   "sym": "F7b13"
+  },
+  {
+   "bar": 21,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 22,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 23,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 24,
+   "sym": "F13sus4"
+  },
+  {
+   "bar": 25,
+   "sym": "Ebmaj13#11"
+  },
+  {
+   "bar": 26,
+   "sym": "Ebm9"
+  },
+  {
+   "bar": 27,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 28,
+   "sym": "G7alt"
+  },
+  {
+   "bar": 29,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 30,
+   "sym": "B13"
+  },
+  {
+   "bar": 31,
+   "sym": "Bbmaj13"
+  },
+  {
+   "bar": 32,
+   "sym": "F9sus4"
+  },
+  {
+   "bar": 33,
+   "sym": "Bbmaj9#11"
+  },
+  {
+   "bar": 34,
+   "sym": "Gm11"
+  },
+  {
+   "bar": 35,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 36,
+   "sym": "F7b13"
+  },
+  {
+   "bar": 37,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 38,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 39,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 40,
+   "sym": "F13sus4"
+  },
+  {
+   "bar": 41,
+   "sym": "Ebmaj13#11"
+  },
+  {
+   "bar": 42,
+   "sym": "Ebm9"
+  },
+  {
+   "bar": 43,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 44,
+   "sym": "G7alt"
+  },
+  {
+   "bar": 45,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 46,
+   "sym": "B13"
+  },
+  {
+   "bar": 47,
+   "sym": "Bbmaj13"
+  },
+  {
+   "bar": 48,
+   "sym": "F9sus4"
+  },
+  {
+   "bar": 49,
+   "sym": "Bbmaj9#11"
+  },
+  {
+   "bar": 50,
+   "sym": "Gm11"
+  },
+  {
+   "bar": 51,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 52,
+   "sym": "F7b13"
+  },
+  {
+   "bar": 53,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 54,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 55,
+   "sym": "Cm11"
+  },
+  {
+   "bar": 56,
+   "sym": "F13sus4"
+  }
+ ],
+ "layers": [
+  {
+   "role": "chd",
+   "voice": "EP",
+   "db": -3,
+   "pattern": "chords.rolled(0.2)",
+   "part": "jedna warstwa, jeden instrument (EP); legenda v7, progresja A|B w docs/music_legend.md"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "SAT(2.5)",
+   "on": "all"
+  },
+  {
+   "fx": "TAPE(0.3)",
+   "on": "all"
+  },
+  {
+   "fx": "CHORUS(3)",
+   "on": "all"
+  },
+  {
+   "fx": "REV-L",
+   "wet": 0.4,
+   "on": "all"
+  },
+  {
+   "fx": "LOFI(12)",
+   "on": "all"
+  },
+  {
+   "fx": "LP(2800)",
+   "on": "all"
+  },
+  {
+   "fx": "SHELF(-4)",
+   "on": "all"
+  },
+  {
+   "fx": "WIDTH(1.4)",
+   "on": "all"
+  }
+ ],
+ "master": {
+  "lufs": -20,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
 }

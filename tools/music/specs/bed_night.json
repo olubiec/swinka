@@ -1,88 +1,196 @@
 {
-  "id": "bed_night",
-  "kind": "bed",
-  "title": "Belka noc (22-6, tylko z włączonym „Muzyka w nocy”)",
-  "role": "pozytywka, prawie cisza",
-  "bpm": 54,
-  "meter": 4,
-  "key": "D",
-  "mode": "dorian",
-  "bars": 36,
-  "swing": 50,
-  "seed": 98637,
-  "chords": [
-    {
-      "bar": 1,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 9,
-      "sym": "Em7"
-    },
-    {
-      "bar": 13,
-      "sym": "G6/D"
-    },
-    {
-      "bar": 17,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 25,
-      "sym": "Bbmaj7"
-    },
-    {
-      "bar": 29,
-      "sym": "C6/9"
-    },
-    {
-      "bar": 33,
-      "sym": "Dm9"
-    }
-  ],
-  "layers": [
-    {
-      "role": "mel",
-      "voice": "BOX",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia pentatoniczna D-F-G-A-C, symetryczne frazy. Wzór (opis): 1 nuta na takt, półnuta"
-    },
-    {
-      "role": "pad",
-      "voice": "PAD",
-      "db": -16,
-      "pattern": "",
-      "part": "bardzo cichy pad na D3-A3. Wzór (opis): długie akordy",
-      "register": "D3-A3"
-    },
-    {
-      "role": "orn",
-      "voice": "CEL",
-      "db": -20,
-      "pattern": "",
-      "part": "gwiazdki: pojedyncze nuty 4 oktawy wyżej. Wzór (opis): losowo co 8-14 s",
-      "from_bar": 5
-    }
-  ],
-  "drums": null,
-  "fx": [
-    {
-      "fx": "REV-L",
-      "wet": 0.3,
-      "on": "all"
-    },
-    {
-      "fx": "LP(4000)",
-      "on": "all"
-    }
-  ],
-  "master": {
-    "lufs": -20,
-    "ceiling_dbtp": -1
+ "id": "bed_night",
+ "kind": "bed",
+ "title": "Belka noc (22-6, tylko z włączonym „Muzyka w nocy”)",
+ "role": "pozytywka, prawie cisza; legenda v7: jeden instrument (CEL), pełne progresje, bez warstw rytmicznych",
+ "bpm": 54,
+ "meter": 4,
+ "key": "D",
+ "mode": "dorian",
+ "bars": 36,
+ "swing": 50,
+ "seed": 98637,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "Dsowhat"
   },
-  "loop": {
-    "enabled": true
+  {
+   "bar": 2,
+   "sym": "Ebsowhat"
   },
-  "stem_of": null
+  {
+   "bar": 3,
+   "sym": "Dsowhat"
+  },
+  {
+   "bar": 4,
+   "sym": "Gmaj13#11"
+  },
+  {
+   "bar": 5,
+   "sym": "Em11"
+  },
+  {
+   "bar": 6,
+   "sym": "Fmaj13#11"
+  },
+  {
+   "bar": 7,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 8,
+   "sym": "A9sus4"
+  },
+  {
+   "bar": 9,
+   "sym": "Em11"
+  },
+  {
+   "bar": 10,
+   "sym": "A9sus4"
+  },
+  {
+   "bar": 11,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 12,
+   "sym": "Bbmaj9#11"
+  },
+  {
+   "bar": 13,
+   "sym": "Gm13"
+  },
+  {
+   "bar": 14,
+   "sym": "C13sus4"
+  },
+  {
+   "bar": 15,
+   "sym": "Fmaj13#11"
+  },
+  {
+   "bar": 16,
+   "sym": "A7b13"
+  },
+  {
+   "bar": 17,
+   "sym": "Dsowhat"
+  },
+  {
+   "bar": 18,
+   "sym": "Ebsowhat"
+  },
+  {
+   "bar": 19,
+   "sym": "Dsowhat"
+  },
+  {
+   "bar": 20,
+   "sym": "Gmaj13#11"
+  },
+  {
+   "bar": 21,
+   "sym": "Em11"
+  },
+  {
+   "bar": 22,
+   "sym": "Fmaj13#11"
+  },
+  {
+   "bar": 23,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 24,
+   "sym": "A9sus4"
+  },
+  {
+   "bar": 25,
+   "sym": "Em11"
+  },
+  {
+   "bar": 26,
+   "sym": "A9sus4"
+  },
+  {
+   "bar": 27,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 28,
+   "sym": "Bbmaj9#11"
+  },
+  {
+   "bar": 29,
+   "sym": "Gm13"
+  },
+  {
+   "bar": 30,
+   "sym": "C13sus4"
+  },
+  {
+   "bar": 31,
+   "sym": "Fmaj13#11"
+  },
+  {
+   "bar": 32,
+   "sym": "A7b13"
+  },
+  {
+   "bar": 33,
+   "sym": "Dsowhat"
+  },
+  {
+   "bar": 34,
+   "sym": "Ebsowhat"
+  },
+  {
+   "bar": 35,
+   "sym": "Dsowhat"
+  },
+  {
+   "bar": 36,
+   "sym": "Gmaj13#11"
+  }
+ ],
+ "layers": [
+  {
+   "role": "chd",
+   "voice": "CEL",
+   "db": -3,
+   "pattern": "chords.rolled(0.3)",
+   "part": "jedna warstwa, jeden instrument (CEL); legenda v7, progresja A|B w docs/music_legend.md"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "CHORUS(2)",
+   "on": "all"
+  },
+  {
+   "fx": "REV-L",
+   "wet": 0.45,
+   "on": "all"
+  },
+  {
+   "fx": "LP(6000)",
+   "on": "all"
+  },
+  {
+   "fx": "WIDTH(1.5)",
+   "on": "all"
+  }
+ ],
+ "master": {
+  "lufs": -20,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
 }

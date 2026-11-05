@@ -1,171 +1,196 @@
 {
-  "id": "place_garden_evening",
-  "kind": "place",
-  "title": "Ogród wieczór",
-  "role": "ogród wieczorem",
-  "bpm": 69,
-  "meter": 4,
-  "key": "E",
-  "mode": "mixolydian",
-  "bars": 32,
-  "swing": 60,
-  "seed": 92558,
-  "chords": [
-    {
-      "bar": 1,
-      "sym": "E7"
-    },
-    {
-      "bar": 2,
-      "sym": "D"
-    },
-    {
-      "bar": 3,
-      "sym": "A"
-    },
-    {
-      "bar": 4,
-      "sym": "E7"
-    },
-    {
-      "bar": 6,
-      "sym": "D"
-    },
-    {
-      "bar": 7,
-      "sym": "A"
-    },
-    {
-      "bar": 8,
-      "sym": "E7"
-    },
-    {
-      "bar": 10,
-      "sym": "Bm7"
-    },
-    {
-      "bar": 11,
-      "sym": "A"
-    },
-    {
-      "bar": 12,
-      "sym": "E7"
-    },
-    {
-      "bar": 14,
-      "sym": "Bm7"
-    },
-    {
-      "bar": 15,
-      "sym": "A"
-    },
-    {
-      "bar": 16,
-      "sym": "E7"
-    },
-    {
-      "bar": 18,
-      "sym": "D"
-    },
-    {
-      "bar": 19,
-      "sym": "A"
-    },
-    {
-      "bar": 20,
-      "sym": "E7"
-    },
-    {
-      "bar": 22,
-      "sym": "D"
-    },
-    {
-      "bar": 23,
-      "sym": "A"
-    },
-    {
-      "bar": 24,
-      "sym": "E7"
-    },
-    {
-      "bar": 26,
-      "sym": "Bm7"
-    },
-    {
-      "bar": 27,
-      "sym": "A"
-    },
-    {
-      "bar": 28,
-      "sym": "E7"
-    },
-    {
-      "bar": 30,
-      "sym": "Bm7"
-    },
-    {
-      "bar": 31,
-      "sym": "A"
-    },
-    {
-      "bar": 32,
-      "sym": "E7"
-    }
-  ],
-  "layers": [
-    {
-      "role": "mel",
-      "voice": "P12",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia długimi nutami, ciepły filtr 3 kHz. Wzór (opis): wg szkieletu 'pas'"
-    },
-    {
-      "role": "pad",
-      "voice": "PAD",
-      "db": -8,
-      "pattern": "",
-      "part": "pad na E-B. Wzór (opis): długie akordy"
-    },
-    {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -6,
-      "pattern": "",
-      "part": "bas, wchodzi późno. Wzór (opis): korzeń na 1",
-      "from_bar": 9
-    },
-    {
-      "role": "noise",
-      "voice": "noise_crickets",
-      "db": -22,
-      "pattern": "",
-      "part": "świerszcze. Wzór (opis): ciągłe",
-      "from_bar": 1
-    },
-    {
-      "role": "orn",
-      "voice": "BELL",
-      "db": -14,
-      "pattern": "",
-      "part": "pojedyncza nuta G#5. Wzór (opis): co 8 taktów",
-      "from_bar": 8
-    }
-  ],
-  "drums": null,
-  "fx": [
-    {
-      "fx": "REV-S",
-      "wet": 0.12,
-      "on": "all"
-    }
-  ],
-  "master": {
-    "lufs": -18,
-    "ceiling_dbtp": -1
+ "id": "place_garden_evening",
+ "kind": "place",
+ "title": "Ogród wieczór",
+ "role": "ogród wieczorem; legenda v7: jeden instrument (EP), pełne progresje, bez warstw rytmicznych",
+ "bpm": 69,
+ "meter": 4,
+ "key": "E",
+ "mode": "mixolydian",
+ "bars": 32,
+ "swing": 60,
+ "seed": 92558,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "E9sus4"
   },
-  "loop": {
-    "enabled": true
+  {
+   "bar": 2,
+   "sym": "Dmaj9#11"
   },
-  "stem_of": null
+  {
+   "bar": 3,
+   "sym": "Amaj13#11"
+  },
+  {
+   "bar": 4,
+   "sym": "Bm11"
+  },
+  {
+   "bar": 5,
+   "sym": "C#m11"
+  },
+  {
+   "bar": 6,
+   "sym": "Dmaj7#11"
+  },
+  {
+   "bar": 7,
+   "sym": "Amaj7/C#"
+  },
+  {
+   "bar": 8,
+   "sym": "B13sus4"
+  },
+  {
+   "bar": 9,
+   "sym": "Amaj9#11"
+  },
+  {
+   "bar": 10,
+   "sym": "Am9"
+  },
+  {
+   "bar": 11,
+   "sym": "G#m11"
+  },
+  {
+   "bar": 12,
+   "sym": "C#7alt"
+  },
+  {
+   "bar": 13,
+   "sym": "F#m11"
+  },
+  {
+   "bar": 14,
+   "sym": "F13"
+  },
+  {
+   "bar": 15,
+   "sym": "Emaj13"
+  },
+  {
+   "bar": 16,
+   "sym": "B9sus4"
+  },
+  {
+   "bar": 17,
+   "sym": "E9sus4"
+  },
+  {
+   "bar": 18,
+   "sym": "Dmaj9#11"
+  },
+  {
+   "bar": 19,
+   "sym": "Amaj13#11"
+  },
+  {
+   "bar": 20,
+   "sym": "Bm11"
+  },
+  {
+   "bar": 21,
+   "sym": "C#m11"
+  },
+  {
+   "bar": 22,
+   "sym": "Dmaj7#11"
+  },
+  {
+   "bar": 23,
+   "sym": "Amaj7/C#"
+  },
+  {
+   "bar": 24,
+   "sym": "B13sus4"
+  },
+  {
+   "bar": 25,
+   "sym": "Amaj9#11"
+  },
+  {
+   "bar": 26,
+   "sym": "Am9"
+  },
+  {
+   "bar": 27,
+   "sym": "G#m11"
+  },
+  {
+   "bar": 28,
+   "sym": "C#7alt"
+  },
+  {
+   "bar": 29,
+   "sym": "F#m11"
+  },
+  {
+   "bar": 30,
+   "sym": "F13"
+  },
+  {
+   "bar": 31,
+   "sym": "Emaj13"
+  },
+  {
+   "bar": 32,
+   "sym": "B9sus4"
+  }
+ ],
+ "layers": [
+  {
+   "role": "chd",
+   "voice": "EP",
+   "db": -3,
+   "pattern": "chords.rolled(0.2)",
+   "part": "jedna warstwa, jeden instrument (EP); legenda v7, progresja A|B w docs/music_legend.md"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "SAT(2.5)",
+   "on": "all"
+  },
+  {
+   "fx": "TAPE(0.3)",
+   "on": "all"
+  },
+  {
+   "fx": "CHORUS(3)",
+   "on": "all"
+  },
+  {
+   "fx": "REV-L",
+   "wet": 0.4,
+   "on": "all"
+  },
+  {
+   "fx": "LOFI(12)",
+   "on": "all"
+  },
+  {
+   "fx": "LP(2800)",
+   "on": "all"
+  },
+  {
+   "fx": "SHELF(-4)",
+   "on": "all"
+  },
+  {
+   "fx": "WIDTH(1.4)",
+   "on": "all"
+  }
+ ],
+ "master": {
+  "lufs": -18,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
 }
