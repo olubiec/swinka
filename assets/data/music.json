@@ -740,7 +740,7 @@
       "bpm": 60,
       "bars": 5,
       "meter": 4,
-      "target_lufs": -24,
+      "target_lufs": -28.9,
       "loop": {
         "enabled": true,
         "start_s": null,
@@ -767,7 +767,7 @@
       "bpm": 60,
       "bars": 4,
       "meter": 4,
-      "target_lufs": -24,
+      "target_lufs": -34.4,
       "loop": {
         "enabled": true,
         "start_s": null,
@@ -794,7 +794,7 @@
       "bpm": 60,
       "bars": 1,
       "meter": 4,
-      "target_lufs": -24,
+      "target_lufs": -32.7,
       "loop": {
         "enabled": false,
         "start_s": null,
@@ -821,7 +821,7 @@
       "bpm": 60,
       "bars": 1,
       "meter": 4,
-      "target_lufs": -24,
+      "target_lufs": -29.4,
       "loop": {
         "enabled": false,
         "start_s": null,
@@ -848,7 +848,7 @@
       "bpm": 60,
       "bars": 1,
       "meter": 4,
-      "target_lufs": -24,
+      "target_lufs": -70.0,
       "loop": {
         "enabled": false,
         "start_s": null,
@@ -875,7 +875,7 @@
       "bpm": 60,
       "bars": 3,
       "meter": 4,
-      "target_lufs": -24,
+      "target_lufs": -27.5,
       "loop": {
         "enabled": true,
         "start_s": null,
@@ -902,7 +902,7 @@
       "bpm": 60,
       "bars": 3,
       "meter": 4,
-      "target_lufs": -24,
+      "target_lufs": -52.8,
       "loop": {
         "enabled": true,
         "start_s": null,
@@ -929,7 +929,7 @@
       "bpm": 60,
       "bars": 2,
       "meter": 4,
-      "target_lufs": -24,
+      "target_lufs": -46.9,
       "loop": {
         "enabled": true,
         "start_s": null,
@@ -956,7 +956,7 @@
       "bpm": 60,
       "bars": 4,
       "meter": 4,
-      "target_lufs": -24,
+      "target_lufs": -31.4,
       "loop": {
         "enabled": true,
         "start_s": null,
