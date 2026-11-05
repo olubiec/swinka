@@ -1,6 +1,6 @@
 {
  "version": 3,
- "note": "24 plyty w 4 seriach po 6. Dysk 16x16, rekaw 24x24, ramka albumu 28x28 (frame_<rzadkosc>.png: wood=common, mosiadz=rare, berry=unique), sleeve_empty.png = pusty slot (cien). Stan uszkodzenia (mint/worn/scratched/cracked/warped) jest STALA cecha egzemplarza, nie rosnie od grania. Pola 'tracks', cena i dzwieki dostarcza kod/agent audio (patrz docs/PRZEKAZANIE_ODTWARZACZE.md). Ekonomia do dopracowania.",
+ "note": "24 plyty w 4 seriach po 6. Dysk 16x16, rekaw 24x24, ramka albumu 32x32 (frame_<rzadkosc>.png: wood=common, mosiadz=rare, berry=unique), sleeve_empty.png = pusty slot (cien). Stan uszkodzenia (mint/worn/scratched/cracked/warped) jest STALA cecha egzemplarza, nie rosnie od grania. Pola 'tracks', cena i dzwieki dostarcza kod/agent audio (patrz docs/PRZEKAZANIE_ODTWARZACZE.md). Ekonomia do dopracowania.",
  "records": [
   {
    "id": "s1_poranek",

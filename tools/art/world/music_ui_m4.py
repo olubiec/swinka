@@ -149,12 +149,12 @@ def preview():
     for k in range(10):
         x, y = 12 + k * 32, 80
         if k < 7:
-            r = show[k]; im.alpha_composite(M3.frame(r[3]), (x, y)); im.alpha_composite(Image.open(M2.OUT / "sleeve" / f"{r[0]}.png").convert("RGBA"), (x + 2, y + 2))
+            r = show[k]; im.alpha_composite(M3.frame(r[3]), (x, y)); im.alpha_composite(Image.open(M2.OUT / "sleeve" / f"{r[0]}.png").convert("RGBA"), (x + 4, y + 4))
         else:
-            im.alpha_composite(M3.empty_slot(), (x + 2, y + 2))
+            im.alpha_composite(M3.empty_slot(), (x + 4, y + 4))
     for k in range(4):
         r = M3.NEW[8 + k]
-        im.alpha_composite(M3.frame(r[3]), (12 + k * 32, 114)); im.alpha_composite(Image.open(M2.OUT / "sleeve" / f"{r[0]}.png").convert("RGBA"), (14 + k * 32, 116))
+        im.alpha_composite(M3.frame(r[3]), (12 + k * 32, 114)); im.alpha_composite(Image.open(M2.OUT / "sleeve" / f"{r[0]}.png").convert("RGBA"), (16 + k * 32, 118))
     for k in range(4): im.alpha_composite(M3.empty_slot(), (142 + k * 32, 116))
     for k, n in enumerate(("m_player_turntable", "m_player_portable", "m_player_gramophone", "m_player_cassette", "m_player_jukebox", "m_player_boombox")):
         nine(im, L("slot_on" if k == 0 else "slot"), 12 + k * 24, 150, 20, 20, [4] * 4); im.alpha_composite(I(n), (14 + k * 24, 152))

@@ -7,7 +7,7 @@ Zakres graficzny jest gotowy (M1-M4). Design i zasady: `docs/PLAN_ODTWARZACZ.md`
 |---|---|
 | 6 odtwarzaczy, stan wyłączony i `_on` (4 klatki) | `assets/world/house/player_*.png`, światła w `assets/data/lights.json` |
 | 24 płyty x 5 stanów (dysk 16x16) | `assets/records/<id>_<mint|worn|scratched|cracked|warped>.png` |
-| Rękawy 24x24, ramki rzadkości 28x28, pusty slot | `assets/records/sleeve/`, `frame_common/rare/unique.png`, `sleeve_empty.png` |
+| Rękawy 24x24, ramki rzadkości 32x32, pusty slot | `assets/records/sleeve/`, `frame_common/rare/unique.png`, `sleeve_empty.png` |
 | Manifest 24 płyt (id, seria, rzadkość, pliki, ikona) | `assets/records/manifest.json` (v3) |
 | Ikony: 6 `m_player_*`, 8 sterowania, 24 `rec_<id>`; `play`/`pause` istnieją | `icons_16.png` indeksy 278-315, `icons.json`, `docs/icons_css_block.css` |
 | UI: `mp_panel`, `mp_display`, `mp_btn`, `mp_btn_pressed`, `mp_knob`, `mp_thumb`, `shelf_plank`, `badge_wear_*` | `assets/ui/` (wpisy w `ui.json`, 9-slice) |

@@ -72,3 +72,6 @@ Audyt: przyciski menu mają dziś przypadkowe ikony (Clean = `poop`, Call i More
 Wzorzec użycia: `docs/ui/preview.html` (czwarta kolumna: siatka akcji z ikonami, lista More, zestaw systemowych). Ikony na przyciskach rysować w 2x (32 px), w listach 2x, w plakietkach 1x; zawsze `image-rendering: pixelated`.
 
 Zadania dla kodu (do G18): podmienić klasy ikon w `index.html` (6 przycisków) i `icon:` w funkcjach wg tabeli, dopisać reguły z `docs/icons_css_block.css`, ustawić `--icon-count` = 278.
+
+## 6. Szlif "legendarny" (UI-4)
+Elementy z §3 mają bogatsze wnętrze (faza, okucia, inlay, polysk), te same pliki i `slice`. Ikony systemowe to mosiężne medaliony z cieniowaną tarczą. Ramki rzadkości płyt mają teraz 32x32 (margines 4 px). Szczegóły: `docs/VISUAL_LOG.md` (UI-4), generatory `ui_legend.py` i `icons_legend.py`.
