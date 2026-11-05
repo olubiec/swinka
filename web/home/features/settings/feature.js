@@ -15,6 +15,21 @@
           </div>
 
           <div class="settings-row">
+            <label for="settingsMusicOn">Music</label>
+            <input type="checkbox" id="settingsMusicOn" class="retro-toggle">
+          </div>
+
+          <div class="settings-row volume-row">
+            <label for="settingsMusicVolume">Music volume</label>
+            <input type="range" id="settingsMusicVolume" class="retro-range" min="0" max="100" step="1">
+          </div>
+
+          <div class="settings-row">
+            <label for="settingsMusicAtNight">Music at night</label>
+            <input type="checkbox" id="settingsMusicAtNight" class="retro-toggle">
+          </div>
+
+          <div class="settings-row">
             <label for="settingsQuietHours">Quiet hours</label>
             <input type="checkbox" id="settingsQuietHours" class="retro-toggle">
           </div>
@@ -104,6 +119,25 @@
       const val = parseInt(e.target.value, 10) / 100;
       if (api.send) api.send('settings_volume', { value: val });
       if (root.Sound) root.Sound.click();
+    });
+
+    // Music settings: one message with all three values (PK-35).
+    const elMusicOn = document.getElementById('settingsMusicOn');
+    const elMusicVolume = document.getElementById('settingsMusicVolume');
+    const elMusicAtNight = document.getElementById('settingsMusicAtNight');
+    function sendMusic() {
+      if (!api.send) return;
+      api.send('settings_music', {
+        on: elMusicOn.checked,
+        volume: parseInt(elMusicVolume.value, 10) / 100,
+        atNight: elMusicAtNight.checked
+      });
+    }
+    [elMusicOn, elMusicVolume, elMusicAtNight].forEach((el) => {
+      el.addEventListener('change', (e) => {
+        if (root.Sound) root.Sound.click();
+        sendMusic();
+      });
     });
 
     function updateQuietHours() {
@@ -224,6 +258,17 @@
       const vol = typeof s.volume === 'number' ? s.volume : 0.7;
       elVolume.value = Math.round(vol * 100);
     }
+
+    // Music defaults when the save has no fields (old saves): on, 60 %, night off.
+    const elMusicOn = document.getElementById('settingsMusicOn');
+    const elMusicVolume = document.getElementById('settingsMusicVolume');
+    const elMusicAtNight = document.getElementById('settingsMusicAtNight');
+    if (elMusicOn) elMusicOn.checked = s.musicOn !== false;
+    if (elMusicVolume) {
+      const mv = typeof s.musicVolume === 'number' ? s.musicVolume : 0.6;
+      elMusicVolume.value = Math.round(mv * 100);
+    }
+    if (elMusicAtNight) elMusicAtNight.checked = s.musicAtNight === true;
 
     const elQuietHours = document.getElementById('settingsQuietHours');
     const elQuietHoursFrom = document.getElementById('settingsQuietHoursFrom');
