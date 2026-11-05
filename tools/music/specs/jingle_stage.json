@@ -1,0 +1,59 @@
+{
+  "id": "jingle_stage",
+  "kind": "jingle",
+  "title": "Jingle zmiany etapu życia (MT-13)",
+  "role": "zdarzenie StageChanged (Pet.cs:163); wersja bazowa, bez pętli",
+  "bpm": 96,
+  "meter": 4,
+  "key": "G",
+  "mode": "major",
+  "bars": 2,
+  "swing": 50,
+  "seed": 13013,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "G"
+    },
+    {
+      "bar": 2,
+      "sym": "Gmaj9"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "GLK",
+      "part": "arpeggio w górę i podpis Cuy (szkielet A, takt 1)",
+      "db": -2,
+      "pattern": "melody.skeleton",
+      "register": "G4-A5"
+    },
+    {
+      "role": "pad",
+      "voice": "BELL",
+      "part": "akord Gmaj9 przytrzymany w drugim takcie",
+      "db": -9,
+      "pattern": "chords.sustain",
+      "from_bar": 2
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.16,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -14,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": false,
+    "start_s": 0.0,
+    "end_s": 4.9
+  },
+  "stem_of": null
+}

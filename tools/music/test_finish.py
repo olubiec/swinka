@@ -1,6 +1,6 @@
 """Testy zamykania utworu (MT-05, PM-06). Uruchom: python3 tools/music/test_finish.py
 
-Wymaga ffmpeg z libvorbis. Sprawdza: szew pętli (5 kopii), LUFS ±0,5 od master.lufs,
+Wymaga ffmpeg z libvorbis. Sprawdza: szew pętli (5 kopii) i dokładną długość pętli, limiter sufitu próbek, LUFS ±0,5 od master.lufs,
 true peak ≤ -1 dBTP, zawinięcie ogona, pętla wyłączona zachowuje ogon.
 """
 import os
@@ -49,11 +49,14 @@ def test_loop_seam_is_inaudible():
     spec = base_spec()
     n = F.body_length(spec, SR)
     t = np.arange(n) / SR
-    tone = 0.4 * np.sin(2 * np.pi * 440 * t)  # 440 Hz * 4 s = 1760 pełnych cykli
+    # niecałkowita liczba cykli: próbki na początku i końcu są niezerowe
+    tone = 0.4 * np.sin(2 * np.pi * 440.5 * t + 0.7) + 0.2 * np.cos(2 * np.pi * 1234.0 * t)
+    assert abs(tone[0]) > 0.1 and abs(tone[-1]) > 0.1, "test signal must be non-zero at the ends"
     audio = np.stack([tone, tone])
     with tempfile.TemporaryDirectory() as d:
         out = F.finish(audio, spec, out_path=os.path.join(d, "loop.ogg"), sr=SR)
         x = decode(out)
+    assert x.shape[1] == n, "loop length %d != %d" % (x.shape[1], n)
     diffs = np.abs(np.diff(x[0]))
     typical = np.median(diffs)
     seam = np.abs(x[0, -1] - x[0, 0])
@@ -61,6 +64,15 @@ def test_loop_seam_is_inaudible():
     five = np.concatenate([x[0]] * 5)
     seams = np.abs(five[len(x[0]) - 1::len(x[0])][:4] - five[len(x[0])::len(x[0])][:4])
     assert np.all(seams < 3.0 * typical + 1e-3), "repeated seams click"
+
+
+def test_limiter_keeps_sample_peak_under_ceiling():
+    rng = np.random.default_rng(3)
+    x = rng.standard_normal((2, 20000)) * 0.6
+    x[:, 5000] = 2.0  # pojedynczy szczyt
+    y = F.limit_peaks(x, SR)
+    ceiling = 10.0 ** (F.CEILING_DBFS / 20.0)
+    assert np.max(np.abs(y)) <= ceiling + 1e-9, "peak %.4f > %.4f" % (np.max(np.abs(y)), ceiling)
 
 
 def test_lufs_and_true_peak_on_target():
@@ -72,7 +84,7 @@ def test_lufs_and_true_peak_on_target():
         out = F.finish(audio, spec, out_path=os.path.join(d, "lufs.ogg"), sr=SR)
         lufs, tp = F.measure_file(out)
     assert abs(lufs - (-18.0)) <= 0.5, "LUFS %.2f" % lufs
-    assert tp <= -1.0 + 0.05, "true peak %.2f dBTP" % tp
+    assert tp <= F.TP_TARGET_DBTP, "true peak %.2f dBTP" % tp
 
 
 def test_non_loop_keeps_tail():

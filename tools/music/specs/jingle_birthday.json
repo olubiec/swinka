@@ -1,0 +1,82 @@
+{
+  "id": "jingle_birthday",
+  "kind": "jingle",
+  "title": "Jingle urodzin (MT-12)",
+  "role": "zdarzenie Birthday (Pet.cs:177); bez pętli, ogon pogłosu w całości",
+  "bpm": 108,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 2,
+  "swing": 50,
+  "seed": 12012,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "C"
+    },
+    {
+      "bar": 2,
+      "sym": "Cmaj9"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "GLK",
+      "part": "motyw Cuy C5 D5 E5 G5 (szkielet A, takt 1)",
+      "db": -3,
+      "pattern": "melody.skeleton",
+      "register": "C5-A5"
+    },
+    {
+      "role": "orn",
+      "voice": "P12",
+      "part": "motyw oktawę niżej (unisono z GLK)",
+      "db": -9,
+      "pattern": "melody.skeleton",
+      "register": "C4-A4"
+    },
+    {
+      "role": "chd",
+      "voice": "P25",
+      "part": "odpowiedź imprezowa: staccato na offbeatach",
+      "db": -24,
+      "pattern": "chords.offbeat_2_4",
+      "from_bar": 2
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "part": "bas C3 długie nuty",
+      "db": -12,
+      "pattern": "bass.root_fifth"
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "part": "akord końcowy Cmaj9 przytrzymany",
+      "db": -12,
+      "pattern": "chords.sustain",
+      "from_bar": 2
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.16,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -14,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": false,
+    "start_s": 0.0,
+    "end_s": 5.0
+  },
+  "stem_of": null
+}

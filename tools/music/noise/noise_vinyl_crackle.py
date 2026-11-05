@@ -77,7 +77,7 @@ def write_oneshot(audio, out_path):
     # sprawiają, że cała treść (w tym fade-out) wraca, a koniec jest w ciszy
     audio = np.concatenate([audio, np.zeros((2, 2 * F.codec_delay(SR)))], axis=1)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    F._encode(audio, SR, out_path, 0.0)
+    F._encode(audio, SR, out_path)
     return F.measure_file(out_path)
 
 
@@ -116,7 +116,7 @@ def write_loop(audio, out_path):
     więc finish nie zmienia poziomu (spec: bez normalizacji LUFS)."""
     with tempfile.TemporaryDirectory() as tmp:
         probe = os.path.join(tmp, "raw.ogg")
-        F._encode(audio, SR, probe, 0.0)
+        F._encode(audio, SR, probe)
         raw_lufs, _ = F.measure_file(probe)
     spec = {"id": "noise_vinyl_crackle", "kind": "noise", "bars": 1, "meter": 4, "bpm": 60,
             "master": {"lufs": round(raw_lufs, 1), "ceiling_dbtp": -1},

@@ -102,7 +102,7 @@ def write(audio):
         out *= limit / peak
     with tempfile.TemporaryDirectory() as tmp:
         probe = os.path.join(tmp, "probe.ogg")
-        finish._encode(out, SR, probe, 0.0)
+        finish._encode(out, SR, probe)
         lufs, _ = finish.measure_file(probe)
     spec = {
         "id": NAME, "kind": "noise", "title": "Szum: wiatr (pętla)", "bars": 1,

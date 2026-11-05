@@ -5,10 +5,11 @@ Kontrakt: finish(audio, spec, out_path=None, sr=44100) -> path   (tools/music/CO
 Kroki:
 1. Długość ciała: loop.end_s, jeśli podany; inaczej bars * meter * 60 / bpm.
 2. Pętla (loop.enabled): ogon poza ciałem (pogłos) dodawany na początek (zawinięcie).
-3. Cięcie na zerowym przejściu (najbliższym końca ciała, ±10 ms), mikrofade 2 ms na obu końcach.
+3. Mikrofade 2 ms na obu końcach (długość pętli dokładnie body_len, szew bez kliknięcia).
 4. Głośność: zmierzona przez ffmpeg `ebur128` (BS.1770 zintegrowana), korekta do master.lufs.
-5. Limiter `alimiter` (limit -1 dBTP) i kodowanie libvorbis do OGG. Pętla kontrolna: do 4 przebiegów,
-   aż LUFS mieści się w ±0,2 i szczyt true peak ≤ -1 dBTP.
+5. Limiter wyprzedzający w numpy (sufit próbek CEILING_DBFS, bez opóźnienia) i kodowanie libvorbis do OGG
+   o dokładnie n próbkach. Pętla kontrolna: do MAX_PASSES przebiegów, aż LUFS mieści się w ±0,2
+   i szczyt true peak ≤ -1 dBTP.
 
 Wymaga ffmpeg z libvorbis (w kontenerze jest). Bez ffmpeg funkcja zgłasza RuntimeError.
 """
@@ -22,11 +23,15 @@ import numpy as np
 
 SR_DEFAULT = 44100
 MICROFADE_S = 0.002
-ZERO_SEARCH_S = 0.010
-LIMIT_DBTP = -1.0
+LIMIT_DBTP = -1.0  # sufit spec (master.ceiling_dbtp)
+TP_TARGET_DBTP = -1.05  # twardy cel po kodowaniu: true peak <= tej wartości
+TP_AIM_DBTP = -1.15  # wartość, do której obniżamy sufit próbek po przekroczeniu
+CEILING_DBFS = -1.5  # sufit próbek limitera; zapas na międzypróbkowe szczyty (true peak)
+LOOK_S = 0.005  # wyprzedzenie limitera (połowa okna)
+MAX_LEN_TRIES = 4
 LUFS_TOL = 0.2
-MAX_PASSES = 4
-LAST_REPORT = {}  # ostatni wynik finish(): lufs, true_peak_dbtp, gain_db, path
+MAX_PASSES = 8
+LAST_REPORT = {}  # ostatni wynik finish(): lufs, true_peak_dbtp, gain_db, delay, path
 OUT_DIR_BY_KIND = {
     "theme": "home", "bed": "beds", "place": "places", "room": "places",
     "minigame": "minigames", "jingle": "jingles", "noise": "noise",
@@ -122,15 +127,62 @@ def measure_file(path):
     return lufs, tp
 
 
-def _encode(audio, sr, out_path, gain_db):
-    limit = 10.0 ** (LIMIT_DBTP / 20.0)
-    af = "volume=%.3fdB,alimiter=limit=%.4f:level=0" % (gain_db, limit)
+def _sliding_min(a, w):
+    """Minimum w kolejnych próbek: wynik[i] = min(a[i:i+w]) (długość len(a)-w+1)."""
+    b, p = a, 1
+    while 2 * p <= w:  # doubling: b[i] = min(a[i:i+p])
+        b = np.minimum(b[:-p], b[p:])
+        p *= 2
+    return np.minimum(b[:len(b) - (w - p)], b[w - p:])
+
+
+def limit_peaks(audio, sr, ceiling_dbfs=CEILING_DBFS):
+    """Limiter wyprzedzający w numpy (bez opóźnienia): gain-envelope, która nigdy nie przekracza sufitu.
+
+    Dla każdej próbki z przekroczeniem wymagany gain = sufit/szczyt. Minimum z okna ±LOOK_S,
+    potem średnia z tego samego okna: w każdym szczycie gain <= wymagany, a zmiany są łagodne.
+    """
+    ceiling = 10.0 ** (ceiling_dbfs / 20.0)
+    peak = np.max(np.abs(audio), axis=0)
+    over = peak > ceiling
+    if not over.any():
+        return audio
+    req = np.ones(audio.shape[1])
+    req[over] = ceiling / peak[over]
+    w_half = max(1, int(round(LOOK_S * sr)))
+    w = 2 * w_half + 1
+    m = _sliding_min(np.pad(req, w_half, mode="edge"), w)
+    cs = np.concatenate([[0.0], np.cumsum(np.pad(m, w_half, mode="edge"))])
+    gain = (cs[w:] - cs[:-w]) / w
+    return audio * gain[None, :]
+
+
+def _decoded_len(path):
+    return _decode(path).shape[1]
+
+
+def _write_ogg(audio, sr, out_path):
     code, err = _run_ffmpeg([
         "-f", "f32le", "-ar", str(sr), "-ac", "2", "-i", "pipe:0",
-        "-af", af, "-c:a", "libvorbis", "-q:a", "6", "-ar", str(sr), "-y", out_path,
+        "-c:a", "libvorbis", "-q:a", "6", "-ar", str(sr), "-y", out_path,
     ], stdin_bytes=_raw_bytes(audio))
     if code != 0:
         raise RuntimeError("ffmpeg encode failed: " + err[-300:])
+
+
+def _encode(audio, sr, out_path):
+    """Koduje (2, n) do OGG o dokładnie n próbkach (bez limitera: alimiter dawał 219 próbek opóźnienia).
+
+    libvorbis (ffmpeg) czasem gubi kilka próbek z końca. Dopisujemy ciszę do wejścia i szukamy
+    najmniejszej długości wejścia m >= n, dla której dekodowanie daje dokładnie n próbek.
+    """
+    n = audio.shape[1]
+    for extra in range(MAX_LEN_TRIES):
+        inp = np.concatenate([audio, np.zeros((2, extra))], axis=1) if extra else audio
+        _write_ogg(inp, sr, out_path)
+        if _decoded_len(out_path) == n:
+            return
+    raise RuntimeError("nie udało się zapisać OGG o dokładnie %d próbkach" % n)
 
 
 def default_out_path(spec):
@@ -159,7 +211,7 @@ def codec_delay(sr):
     imp[:, 20000] = 0.5
     with tempfile.TemporaryDirectory() as tmpdir:
         path = os.path.join(tmpdir, "delay.ogg")
-        _encode(imp, sr, path, 0.0)
+        _write_ogg(imp, sr, path)
         x = _decode(path)[0]
     _DELAY[sr] = int(np.argmax(np.abs(x))) - 20000
     return _DELAY[sr]
@@ -175,37 +227,36 @@ def finish(audio, spec, out_path=None, sr=SR_DEFAULT):
 
     body_len = body_length(spec, sr)
     loop = spec.get("loop", {})
-    delay = codec_delay(sr)
     if loop.get("enabled"):
-        body = wrap_tail(audio, body_len)
-        cut = nearest_zero_cross(body[0], body_len, int(ZERO_SEARCH_S * sr))
-        src = microfade(body[:, :cut].copy(), sr)
-        pad = body[:, cut:cut + delay]
+        # dokładnie body_len próbek; szew domykają mikrofady 2 ms na obu końcach (zero na szwie)
+        src = microfade(wrap_tail(audio, body_len), sr)
     else:
         src = microfade(audio.copy(), sr)
-        pad = np.zeros((2, delay))
-    # Kodek opóźnia dźwięk o `delay` próbek i gubi tyle próbek z końca. Dopisanie `delay` próbek
-    # na koniec sprawia, że cała treść wraca, a szew pętli zostaje zerowy.
-    if pad.shape[1] < delay:
-        pad = np.concatenate([pad, np.zeros((2, delay - pad.shape[1]))], axis=1)
-    enc = np.clip(np.concatenate([src, pad], axis=1), -1.0, 1.0)
 
     out_path = out_path or default_out_path(spec)
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     target = float(spec["master"]["lufs"])
+    delay = codec_delay(sr)
 
-    gain = 0.0
+    gain = 0.0  # dB, korekta głośności do master.lufs
+    ceiling = CEILING_DBFS  # sufit próbek limitera; obniżany, gdy true peak po kodowaniu jest za wysoki
     with tempfile.TemporaryDirectory() as tmpdir:
         probe = os.path.join(tmpdir, "probe.ogg")
         lufs, tp = None, None
         for _ in range(MAX_PASSES):
-            _encode(enc, sr, probe, gain)
+            gain_lin = 10.0 ** (gain / 20.0)
+            limited = limit_peaks(np.clip(src * gain_lin, -4.0, 4.0), sr, ceiling)
+            _encode(limited, sr, probe)
             lufs, tp = measure_file(probe)
             ok_lufs = abs(lufs - target) <= LUFS_TOL
-            ok_tp = tp <= LIMIT_DBTP + 0.05
+            ok_tp = tp <= TP_TARGET_DBTP
             if ok_lufs and ok_tp:
                 break
-            gain += target - lufs
+            if not ok_lufs:
+                gain += target - lufs
+            if not ok_tp:
+                # przesunięcie tp względem sufitu (międzypróbkowe szczyty) zostaje takie samo
+                ceiling = TP_AIM_DBTP - (tp - ceiling)
         shutil.copyfile(probe, out_path)
     LAST_REPORT.clear()
     LAST_REPORT.update({"lufs": lufs, "true_peak_dbtp": tp, "gain_db": gain, "delay": delay,
