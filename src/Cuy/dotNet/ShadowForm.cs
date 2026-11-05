@@ -125,6 +125,8 @@ namespace Cuy
         private static int _cachedWidth = -1;
         private static int _cachedHeight = -1;
         private static byte _lastMaxAlpha = 0;
+        private static bool _bitmapDirty = true;
+        private static readonly uint OurProcessId = (uint)Process.GetCurrentProcess().Id;
 
         public static void Update(FormPet pet)
         {
@@ -152,10 +154,10 @@ namespace Cuy
             int feetY = pet.Top + 59 * scale;
 
             double now = (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalMilliseconds;
-            if (now - _lastWindowCacheTime > 100)
+            if (now - _lastWindowCacheTime > 250)
             {
                 _windowCache.Clear();
-                uint ourProcessId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+                uint ourProcessId = OurProcessId;
                 ShadowNativeMethods.EnumWindows(delegate (IntPtr hWnd, IntPtr lParam)
                 {
                     if (hWnd == pet.Handle || (_instance != null && hWnd == _instance.Handle)) return true;
@@ -199,6 +201,8 @@ namespace Cuy
 
             int h = groundY - feetY;
             if (h < 0) h = 0;
+            // Quantize the height so the shadow bitmap is rebuilt every 24 px of fall, not on every frame.
+            h = h / 24 * 24;
 
             int bodyWidth = 38 * scale;
             double widthFactor = 1.0 - (h / 500.0);
@@ -235,6 +239,7 @@ namespace Cuy
                 _cachedHeight = shadowHeight;
                 _lastScale = scale;
                 _lastMaxAlpha = maxAlpha;
+                _bitmapDirty = true;
             }
 
             int shadowX = petCenterX - shadowWidth / 2;
@@ -249,10 +254,15 @@ namespace Cuy
             {
                 // we don't activate
                 ShadowNativeMethods.ShowWindow(_instance.Handle, 8); // SW_SHOWNA
+                _bitmapDirty = true;
             }
 
             // Update layered window
-            _instance.SetBitmap(_cachedBitmap);
+            if (_bitmapDirty)
+            {
+                _instance.SetBitmap(_cachedBitmap);
+                _bitmapDirty = false;
+            }
         }
 
         public static void DisposeShadow()

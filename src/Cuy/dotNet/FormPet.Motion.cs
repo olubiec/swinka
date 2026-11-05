@@ -218,7 +218,8 @@ namespace Cuy
             double now = motionClock.Elapsed.TotalMilliseconds;
             if (!motion.Initialized) motion.Reset(Left, Top, now);
             SyncFollowHook();
-            motion.MoveTo(PositionX, PositionY + OffsetY, now, milliseconds);
+            // 15% slack: a late animation tick (WinForms timers jitter by ~15 ms) must not stall the pet at the target.
+            motion.MoveTo(PositionX, PositionY + OffsetY, now, milliseconds * 1.15);
             SetMotionTimer(true);
         }
 
@@ -227,7 +228,6 @@ namespace Cuy
             PointF p = motion.Sample(now);
             Point position = new Point((int)Math.Round(p.X), (int)Math.Round(p.Y));
             if (Location != position) Location = position;
-            ShadowForm.Update(this);
         }
 
         private void MotionTimer_Tick(object sender, EventArgs e)
