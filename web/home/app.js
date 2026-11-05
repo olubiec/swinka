@@ -606,6 +606,8 @@
     // Escape: closes an open dialog or the Home window
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        // A feature (e.g. the Rooms plan) already used this Escape for its own overlay.
+        if (e.defaultPrevented) return;
         if (elements.modalBackdrop && elements.modalBackdrop.classList.contains('active')) {
           closeModal();
         } else if (window.bridge && window.bridge.isWebView2) {
