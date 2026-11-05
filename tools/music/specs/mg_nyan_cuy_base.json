@@ -79,7 +79,7 @@
   "layers": [
     {
       "role": "bass",
-      "voice": "BNJ",
+      "voice": "BASW",
       "db": -3,
       "pattern": "bass.walking",
       "part": "stem base: bas, jeden instrument BNJ (legenda v7, progresja z minigry)",

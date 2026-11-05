@@ -79,7 +79,7 @@
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "RHO",
       "db": -3,
       "pattern": "chords.offbeat_2_4",
       "part": "stem rhythm: rytm, jeden instrument EP (legenda v7, progresja z minigry)",

@@ -207,7 +207,7 @@
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "RHO",
       "db": -3,
       "pattern": "chords.rolled(0.3)",
       "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; pełna forma z gotowych progresji SHLD (6 sekcji)",

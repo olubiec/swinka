@@ -79,7 +79,7 @@
   "layers": [
     {
       "role": "bass",
-      "voice": "EP",
+      "voice": "BASW",
       "db": -3,
       "pattern": "bass.walking",
       "part": "stem base: bas, jeden instrument EP (legenda v7, progresja z minigry)",
@@ -88,7 +88,7 @@
     },
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "RHO",
       "db": -3,
       "pattern": "chords.offbeat_2_4",
       "part": "stem rhythm: rytm, jeden instrument EP (legenda v7, progresja z minigry)",
@@ -97,7 +97,7 @@
     },
     {
       "role": "mel",
-      "voice": "EP",
+      "voice": "RHO",
       "db": -3,
       "pattern": "random.pentatonic_walk",
       "part": "stem lead: prowadzenie, jeden instrument EP (legenda v7, progresja z minigry)",

@@ -111,7 +111,7 @@
   "layers": [
     {
       "role": "chd",
-      "voice": "PAD",
+      "voice": "PADW",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
       "part": "jedna warstwa, jeden instrument (PAD); legenda v7 rodzina DORSOUL D, forma A B (B = kwarta wyżej)"

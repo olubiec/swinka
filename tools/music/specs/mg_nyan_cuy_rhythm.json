@@ -79,7 +79,7 @@
   "layers": [
     {
       "role": "chd",
-      "voice": "BNJ",
+      "voice": "RHO",
       "db": -3,
       "pattern": "chords.arp8",
       "part": "stem rhythm: rytm, jeden instrument BNJ (legenda v7, progresja z minigry)",

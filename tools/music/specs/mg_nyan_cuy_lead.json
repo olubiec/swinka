@@ -79,7 +79,7 @@
   "layers": [
     {
       "role": "mel",
-      "voice": "BNJ",
+      "voice": "RHO",
       "db": -3,
       "pattern": "melody.skeleton",
       "part": "stem lead: prowadzenie, jeden instrument BNJ (legenda v7, progresja z minigry)",

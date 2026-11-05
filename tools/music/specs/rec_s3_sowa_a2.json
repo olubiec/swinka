@@ -111,7 +111,7 @@
   "layers": [
     {
       "role": "chd",
-      "voice": "ACC",
+      "voice": "PADW",
       "db": -12,
       "pattern": "chords.rolled(0.2)",
       "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; pełna forma z gotowych progresji SHLD (3 sekcji)",

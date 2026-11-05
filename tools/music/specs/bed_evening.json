@@ -239,7 +239,7 @@
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "RHO",
       "db": -3,
       "pattern": "chords.rolled(0.2)",
       "part": "jedna warstwa, jeden instrument (EP); legenda v7, progresja A|B w docs/music_legend.md"

@@ -79,7 +79,7 @@
   "layers": [
     {
       "role": "bass",
-      "voice": "BNJ",
+      "voice": "BASW",
       "db": -3,
       "pattern": "bass.walking",
       "part": "stem base: bas, jeden instrument BNJ (legenda v7, progresja z minigry)",
@@ -88,7 +88,7 @@
     },
     {
       "role": "chd",
-      "voice": "BNJ",
+      "voice": "RHO",
       "db": -3,
       "pattern": "chords.arp8",
       "part": "stem rhythm: rytm, jeden instrument BNJ (legenda v7, progresja z minigry)",
@@ -97,7 +97,7 @@
     },
     {
       "role": "mel",
-      "voice": "BNJ",
+      "voice": "RHO",
       "db": -3,
       "pattern": "melody.skeleton",
       "part": "stem lead: prowadzenie, jeden instrument BNJ (legenda v7, progresja z minigry)",
