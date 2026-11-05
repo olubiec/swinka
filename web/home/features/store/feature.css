@@ -4,7 +4,7 @@
   flex-direction: column;
   gap: 12px;
   min-width: 0;
-  color: var(--text, #2b2118);
+  color: var(--c-contour-dark);
 }
 
 .feature-store .store-head {
@@ -49,7 +49,7 @@
 .feature-store .store-price {
   display: flex;
   gap: 6px;
-  border: 1px solid var(--line, #c9b59a);
+  border: 1px solid var(--c-wood-dark);
   border-radius: 6px;
   padding: 4px 8px;
   margin: 0;
@@ -99,16 +99,16 @@
   text-align: left;
   min-height: 36px;
   padding: 4px 8px;
-  border: 1px solid var(--line, #c9b59a);
+  border: 1px solid var(--c-wood-dark);
   border-radius: 6px;
-  background: var(--panel, #fffaf2);
+  background: var(--c-white);
   color: inherit;
   font: inherit;
   cursor: pointer;
 }
 
 .feature-store .store-categories button[aria-pressed="true"] {
-  background: var(--accent, #f2c26b);
+  background: var(--c-hay);
   font-weight: bold;
 }
 
@@ -133,9 +133,9 @@
   gap: 4px;
   min-width: 0;
   padding: 10px;
-  border: 1px solid var(--line, #c9b59a);
+  border: 1px solid var(--c-wood-dark);
   border-radius: 8px;
-  background: var(--panel, #fffaf2);
+  background: var(--c-white);
 }
 
 .feature-store .store-card.is-locked {
@@ -175,7 +175,7 @@
 .feature-store .store-locked {
   margin: 0;
   font-size: 0.85em;
-  color: var(--muted, #6b5a48);
+  color: var(--c-wood-deep);
 }
 
 /* Padlock drawn with CSS, no emoji or image. */
@@ -242,7 +242,7 @@
 .feature-store button:focus-visible,
 .feature-store input:focus-visible,
 .feature-store select:focus-visible {
-  outline: 2px solid var(--focus, #2d6cdf);
+  outline: 2px solid var(--c-blue-dark);
   outline-offset: 2px;
 }
 

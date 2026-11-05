@@ -13,7 +13,7 @@
 .feature-market .market-cap-fill { display: block; height: 100%; background: var(--c-hay-shadow); }
 .feature-market .market-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
 .feature-market .market-tab {
-  padding: 6px 2px; border: 2px solid var(--c-wood-dark); border-radius: 6px; background: var(--c-cream);
+  padding: 6px 2px; min-width: 24px; min-height: 24px; border: 2px solid var(--c-wood-dark); border-radius: 6px; background: var(--c-cream);
   color: var(--c-wood-deep); font: inherit; font-size: 11px; font-weight: 700; cursor: pointer;
 }
 .feature-market .market-tab.is-current { background: var(--c-leaf); color: var(--c-white); border-color: var(--c-leaf-dark); }

@@ -791,7 +791,7 @@ async function roamingStoreSmoke(browser, base, errors) {
 
     // Memorial toggle on Kuki: confirmation row must appear, then cancel it again
     await page.click('.pigs-grid .pig-card[data-pig-id="kuki"] .btn-memorial-toggle');
-    await page.waitForTimeout(200);
+    await page.waitForSelector('#memorialConfirm_kuki', { state: 'visible', timeout: 3000 }).catch(() => {});
     if (!(await page.isVisible('#memorialConfirm_kuki'))) throw new Error('Memorial confirmation did not appear for Kuki');
     await page.click('#memorialConfirm_kuki .btn-confirm-no');
     await page.waitForTimeout(200);

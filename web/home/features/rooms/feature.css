@@ -14,6 +14,8 @@
 .feature-rooms .room-title {
   font-weight: 700;
   color: var(--c-wood-deep);
+  min-width: 24px;
+  min-height: 24px;
 }
 .feature-rooms .room-count,
 .feature-rooms .room-hint,

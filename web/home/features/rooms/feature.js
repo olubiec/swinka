@@ -13,6 +13,7 @@
   const PLACE_LABELS = { salon: 'Living room', garden: 'Garden', park: 'Park', dorm: 'Shared bedroom' };
   const PIG_PREFIX = 'pig:';
   let dormRequested = false;
+  let customizeRequested = false;
   const FLOOR_COLORS = {
     floor_wood: '#e6b073', floor_straw: '#eedb7c', floor_fleece: '#f8eddd',
     floor_grass: '#7fbf4a', floor_soil: '#9c6636', floor_stone: '#b8b0a3'
@@ -327,6 +328,27 @@
       </div>`;
     bindTabs(container, tabs);
     mountDorm(container, st);
+  }
+
+  // The customize panel (customize.js + customize.css) is loaded once, on demand; the page is drawn again when it arrives.
+  function loadCustomizePanel() {
+    if (!document.querySelector('link[data-room-customize]')) {
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = 'features/rooms/customize.css';
+      l.dataset.roomCustomize = '1';
+      document.head.appendChild(l);
+    }
+    if (customizeRequested || window.RoomCustomize) return;
+    customizeRequested = true;
+    const s = document.createElement('script');
+    s.src = 'features/rooms/customize.js';
+    s.onload = () => {
+      // Re-announce the picked item so the panel knows which one is selected
+      if (S.selectedUid) document.dispatchEvent(new CustomEvent('room-select', { detail: { uid: S.selectedUid } }));
+      if (S.container && S.container.isConnected) render();
+    };
+    document.head.appendChild(s);
   }
 
   // House plan overlay (W27-06 / W27-08). plan.js is loaded on demand; Esc closes the pig card first, then the plan.
@@ -889,6 +911,8 @@
     const customize = container.querySelector('.room-customize');
     if (window.RoomCustomize && typeof window.RoomCustomize.mount === 'function') {
       window.RoomCustomize.mount(customize, { state: st, roomId: S.place, send: send });
+    } else {
+      loadCustomizePanel();
     }
     S.period = lightPeriod();
     ensureLights();

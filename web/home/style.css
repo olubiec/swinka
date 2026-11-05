@@ -743,6 +743,7 @@ body.webview-mode .game-device {
 .icon-need-cleanliness { --i: 22; }
 .icon-need-teeth { --i: 23; }
 .icon-pig-head { --i: 24; }
+.icon-pig { --i: 24; } /* placeholder: pig_head art until a dedicated pig icon is drawn */
 .icon-dandelion { --i: 25; }
 .icon-apple { --i: 26; }
 .icon-hay-ball { --i: 27; }
@@ -944,8 +945,10 @@ body.webview-mode .game-device {
   font-family: var(--font-pixel);
   font-size: 13px;
   font-weight: 700;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
   cursor: pointer;
   display: flex;
   align-items: center;
