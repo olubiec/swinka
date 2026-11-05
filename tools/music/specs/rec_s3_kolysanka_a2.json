@@ -1,0 +1,223 @@
+{
+  "id": "rec_s3_kolysanka_a2",
+  "kind": "record",
+  "title": "Kołysanka · A2 spokojny",
+  "role": "zabawkowa orkiestra",
+  "bpm": 90,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 40,
+  "swing": 50,
+  "seed": 8196,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "C"
+    },
+    {
+      "bar": 2,
+      "sym": "G"
+    },
+    {
+      "bar": 3,
+      "sym": "Am"
+    },
+    {
+      "bar": 4,
+      "sym": "F"
+    },
+    {
+      "bar": 5,
+      "sym": "C"
+    },
+    {
+      "bar": 6,
+      "sym": "G"
+    },
+    {
+      "bar": 7,
+      "sym": "Am"
+    },
+    {
+      "bar": 8,
+      "sym": "F"
+    },
+    {
+      "bar": 9,
+      "sym": "C"
+    },
+    {
+      "bar": 10,
+      "sym": "Em"
+    },
+    {
+      "bar": 11,
+      "sym": "F"
+    },
+    {
+      "bar": 12,
+      "sym": "G7"
+    },
+    {
+      "bar": 13,
+      "sym": "C"
+    },
+    {
+      "bar": 14,
+      "sym": "Em"
+    },
+    {
+      "bar": 15,
+      "sym": "F"
+    },
+    {
+      "bar": 16,
+      "sym": "G7"
+    },
+    {
+      "bar": 17,
+      "sym": "C"
+    },
+    {
+      "bar": 18,
+      "sym": "G"
+    },
+    {
+      "bar": 19,
+      "sym": "Am"
+    },
+    {
+      "bar": 20,
+      "sym": "F"
+    },
+    {
+      "bar": 21,
+      "sym": "C"
+    },
+    {
+      "bar": 22,
+      "sym": "G"
+    },
+    {
+      "bar": 23,
+      "sym": "Am"
+    },
+    {
+      "bar": 24,
+      "sym": "F"
+    },
+    {
+      "bar": 25,
+      "sym": "C"
+    },
+    {
+      "bar": 26,
+      "sym": "Em"
+    },
+    {
+      "bar": 27,
+      "sym": "F"
+    },
+    {
+      "bar": 28,
+      "sym": "G7"
+    },
+    {
+      "bar": 29,
+      "sym": "C"
+    },
+    {
+      "bar": 30,
+      "sym": "Em"
+    },
+    {
+      "bar": 31,
+      "sym": "F"
+    },
+    {
+      "bar": 32,
+      "sym": "G7"
+    },
+    {
+      "bar": 33,
+      "sym": "C"
+    },
+    {
+      "bar": 34,
+      "sym": "G"
+    },
+    {
+      "bar": 35,
+      "sym": "Am"
+    },
+    {
+      "bar": 36,
+      "sym": "F"
+    },
+    {
+      "bar": 37,
+      "sym": "C"
+    },
+    {
+      "bar": 38,
+      "sym": "G"
+    },
+    {
+      "bar": 39,
+      "sym": "Am"
+    },
+    {
+      "bar": 40,
+      "sym": "F"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "XYL",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia. Wzór (opis): wg szkieletu 'std'"
+    },
+    {
+      "role": "chd",
+      "voice": "BOX",
+      "db": -6,
+      "pattern": "",
+      "part": "akompaniament. Wzór (opis): arpeggio ósemkami"
+    },
+    {
+      "role": "bass",
+      "voice": "PIZ",
+      "db": -6,
+      "pattern": "",
+      "part": "bas pizzicato. Wzór (opis): ćwierćnuty 1 i 3"
+    }
+  ],
+  "drums": {
+    "kit": "gentle",
+    "levels": {
+      "KICK": -18,
+      "SHK": -20
+    }
+  },
+  "fx": [
+    {
+      "fx": "TAPE(0.3)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(8000)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

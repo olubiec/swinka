@@ -1,0 +1,135 @@
+{
+  "id": "mg_menu",
+  "kind": "minigame",
+  "title": "Minigra: menu (bez stemów)",
+  "role": "krótki wesoły shuffle",
+  "bpm": 112,
+  "meter": 4,
+  "key": "G",
+  "mode": "major",
+  "bars": 16,
+  "swing": 62,
+  "seed": 67372,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "G"
+    },
+    {
+      "bar": 2,
+      "sym": "Em7"
+    },
+    {
+      "bar": 3,
+      "sym": "C"
+    },
+    {
+      "bar": 4,
+      "sym": "D7"
+    },
+    {
+      "bar": 5,
+      "sym": "G"
+    },
+    {
+      "bar": 6,
+      "sym": "Em7"
+    },
+    {
+      "bar": 7,
+      "sym": "C"
+    },
+    {
+      "bar": 8,
+      "sym": "D7"
+    },
+    {
+      "bar": 9,
+      "sym": "G"
+    },
+    {
+      "bar": 10,
+      "sym": "Em7"
+    },
+    {
+      "bar": 11,
+      "sym": "C"
+    },
+    {
+      "bar": 12,
+      "sym": "D7"
+    },
+    {
+      "bar": 13,
+      "sym": "G"
+    },
+    {
+      "bar": 14,
+      "sym": "Em7"
+    },
+    {
+      "bar": 15,
+      "sym": "C"
+    },
+    {
+      "bar": 16,
+      "sym": "D7"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "P25",
+      "db": -2,
+      "pattern": "",
+      "part": "melodia. Wzór (opis): wg szkieletu 'hop'",
+      "from_bar": 1
+    },
+    {
+      "role": "chd",
+      "voice": "BNJ",
+      "db": -8,
+      "pattern": "",
+      "part": "akompaniament. Wzór (opis): ósemki w shuffle",
+      "from_bar": 1
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -4,
+      "pattern": "",
+      "part": "bas. Wzór (opis): korzeń na 1 i 3",
+      "from_bar": 1
+    },
+    {
+      "role": "orn",
+      "voice": "GLK",
+      "db": -10,
+      "pattern": "",
+      "part": "akcent. Wzór (opis): ostatnia ćwierćnuta co 4. taktu",
+      "from_bar": 4
+    }
+  ],
+  "drums": {
+    "kit": "shuffle",
+    "levels": {
+      "BRSH": -12,
+      "KICK": -14
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.08,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

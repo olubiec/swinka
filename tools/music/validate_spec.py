@@ -4,6 +4,7 @@
 Użycie:
   python3 tools/music/validate_spec.py            # wszystkie tools/music/specs/*.json
   python3 tools/music/validate_spec.py id1 id2    # tools/music/specs/<id>.json (lub _<id>.json)
+  python3 tools/music/validate_spec.py --drafts   # szkice z catalog2spec.py: puste layers[].pattern dozwolone
 
 Wymaga pakietu jsonschema (pip install jsonschema). Kod wyjścia 0 = wszystko poprawne, 1 = błędy, 2 = brak zależności.
 """
@@ -75,11 +76,19 @@ def main(argv):
         print("Brak pakietu jsonschema: pip install jsonschema")
         return 2
 
+    args = argv[1:]
+    drafts = "--drafts" in args
+    args = [a for a in args if a != "--drafts"]
+
     with open(SCHEMA_PATH, encoding="utf-8") as f:
         schema = json.load(f)
+    if drafts:
+        # Szkic (MW-1, PM-04): pattern może być pusty; reszta schematu bez zmian.
+        pat = schema["properties"]["layers"]["items"]["properties"]["pattern"]
+        pat["pattern"] = "^$|" + pat["pattern"]
     validator = jsonschema.Draft202012Validator(schema)
 
-    paths = resolve_paths(argv[1:])
+    paths = resolve_paths(args)
     if not paths:
         print("Brak specyfikacji do sprawdzenia.")
         return 0

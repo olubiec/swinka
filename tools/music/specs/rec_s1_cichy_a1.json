@@ -1,0 +1,163 @@
+{
+  "id": "rec_s1_cichy_a1",
+  "kind": "record",
+  "title": "Cichy kąt · A1 podpisowy",
+  "role": "najprostsza płyta: sama pozytywka",
+  "bpm": 60,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 24,
+  "swing": 50,
+  "seed": 75697,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 2,
+      "sym": "Am7"
+    },
+    {
+      "bar": 3,
+      "sym": "Dm7"
+    },
+    {
+      "bar": 4,
+      "sym": "G7"
+    },
+    {
+      "bar": 5,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 6,
+      "sym": "Am7"
+    },
+    {
+      "bar": 7,
+      "sym": "Dm7"
+    },
+    {
+      "bar": 8,
+      "sym": "G7"
+    },
+    {
+      "bar": 9,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 10,
+      "sym": "Am7"
+    },
+    {
+      "bar": 11,
+      "sym": "Dm7"
+    },
+    {
+      "bar": 12,
+      "sym": "G7"
+    },
+    {
+      "bar": 13,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 14,
+      "sym": "Am7"
+    },
+    {
+      "bar": 15,
+      "sym": "Dm7"
+    },
+    {
+      "bar": 16,
+      "sym": "G7"
+    },
+    {
+      "bar": 17,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 18,
+      "sym": "Am7"
+    },
+    {
+      "bar": 19,
+      "sym": "Dm7"
+    },
+    {
+      "bar": 20,
+      "sym": "G7"
+    },
+    {
+      "bar": 21,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 22,
+      "sym": "Am7"
+    },
+    {
+      "bar": 23,
+      "sym": "Dm7"
+    },
+    {
+      "bar": 24,
+      "sym": "G7"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BOX",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia. Wzór (opis): wg szkieletu 'pas'"
+    },
+    {
+      "role": "chd",
+      "voice": "BOX",
+      "db": -6,
+      "pattern": "",
+      "part": "akord rozłożony (arpeggio w górę, ósemki). Wzór (opis): jedna nuta na ćwierćnutę"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_room_tone",
+      "db": -40,
+      "pattern": "",
+      "part": "cisza pokoju. Wzór (opis): ciągły",
+      "from_bar": 1
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "TAPE(0.2)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(9000)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-S",
+      "wet": 0.12,
+      "on": "all"
+    },
+    {
+      "fx": "VINYL(-46)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

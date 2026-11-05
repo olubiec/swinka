@@ -1,0 +1,145 @@
+{
+  "id": "rec_s2_wiatr_b1",
+  "kind": "record",
+  "title": "Wiatr w trawie · B1 energiczny",
+  "role": "szeroki pad i wiatr",
+  "bpm": 63,
+  "meter": 4,
+  "key": "D",
+  "mode": "major",
+  "bars": 24,
+  "swing": 50,
+  "seed": 57737,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 2,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 3,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 4,
+      "sym": "A13sus"
+    },
+    {
+      "bar": 5,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 6,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 7,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 8,
+      "sym": "A13sus"
+    },
+    {
+      "bar": 9,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 10,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 11,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 12,
+      "sym": "A13sus"
+    },
+    {
+      "bar": 13,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 14,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 15,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 16,
+      "sym": "A13sus"
+    },
+    {
+      "bar": 17,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 19,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 20,
+      "sym": "A13sus"
+    },
+    {
+      "bar": 21,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 23,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 24,
+      "sym": "A13sus"
+    }
+  ],
+  "layers": [
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -3,
+      "pattern": "",
+      "part": "pad szeroki, filtr przemiatany 600 Hz-2 kHz (LFO 0,05 Hz). Wzór (opis): długie akordy"
+    },
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -8,
+      "pattern": "",
+      "part": "rzadka melodia: 1 nuta na takt. Wzór (opis): po motywie w taktach 1-2"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_wind",
+      "db": -22,
+      "pattern": "",
+      "part": "wiatr. Wzór (opis): pętla",
+      "from_bar": 1
+    }
+  ],
+  "drums": null,
+  "fx": [],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

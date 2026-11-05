@@ -1,0 +1,37 @@
+{
+  "id": "noise_room_tone",
+  "kind": "noise",
+  "title": "Szum: ton pokoju (pętla)",
+  "bpm": 60,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 3,
+  "swing": 50,
+  "seed": 71229,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "C"
+    }
+  ],
+  "layers": [
+    {
+      "role": "noise",
+      "voice": "noise_room_tone",
+      "db": -18,
+      "pattern": "",
+      "part": "pętla szumu noise_room_tone, 10.0 s; poziom zastępczy, do ustalenia"
+    }
+  ],
+  "drums": null,
+  "fx": [],
+  "master": {
+    "lufs": -24,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

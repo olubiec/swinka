@@ -1,0 +1,302 @@
+{
+  "id": "rec_s4_taniec_a2",
+  "kind": "record",
+  "title": "Taniec w klatce · A2 spokojny",
+  "role": "najszybszy utwór w grze; własny motyw (nie Nyan Cat: nie zbliżać się do jego skali, rytmu i linii)",
+  "bpm": 117,
+  "meter": 4,
+  "key": "C",
+  "mode": "minor",
+  "bars": 60,
+  "swing": 50,
+  "seed": 69987,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Cm"
+    },
+    {
+      "bar": 2,
+      "sym": "Ab"
+    },
+    {
+      "bar": 3,
+      "sym": "Eb"
+    },
+    {
+      "bar": 4,
+      "sym": "Bb"
+    },
+    {
+      "bar": 5,
+      "sym": "Cm"
+    },
+    {
+      "bar": 6,
+      "sym": "Ab"
+    },
+    {
+      "bar": 7,
+      "sym": "Eb"
+    },
+    {
+      "bar": 8,
+      "sym": "Bb"
+    },
+    {
+      "bar": 9,
+      "sym": "Cm"
+    },
+    {
+      "bar": 10,
+      "sym": "Ab"
+    },
+    {
+      "bar": 11,
+      "sym": "Eb"
+    },
+    {
+      "bar": 12,
+      "sym": "Bb"
+    },
+    {
+      "bar": 13,
+      "sym": "Cm"
+    },
+    {
+      "bar": 14,
+      "sym": "Ab"
+    },
+    {
+      "bar": 15,
+      "sym": "Eb"
+    },
+    {
+      "bar": 16,
+      "sym": "Bb"
+    },
+    {
+      "bar": 17,
+      "sym": "Fm"
+    },
+    {
+      "bar": 18,
+      "sym": "Ab"
+    },
+    {
+      "bar": 19,
+      "sym": "Bb"
+    },
+    {
+      "bar": 20,
+      "sym": "Cm"
+    },
+    {
+      "bar": 21,
+      "sym": "Fm"
+    },
+    {
+      "bar": 22,
+      "sym": "Ab"
+    },
+    {
+      "bar": 23,
+      "sym": "Bb"
+    },
+    {
+      "bar": 24,
+      "sym": "Cm"
+    },
+    {
+      "bar": 26,
+      "sym": "Ab"
+    },
+    {
+      "bar": 27,
+      "sym": "Eb"
+    },
+    {
+      "bar": 28,
+      "sym": "Bb"
+    },
+    {
+      "bar": 29,
+      "sym": "Cm"
+    },
+    {
+      "bar": 30,
+      "sym": "Ab"
+    },
+    {
+      "bar": 31,
+      "sym": "Eb"
+    },
+    {
+      "bar": 32,
+      "sym": "Bb"
+    },
+    {
+      "bar": 33,
+      "sym": "Cm"
+    },
+    {
+      "bar": 34,
+      "sym": "Ab"
+    },
+    {
+      "bar": 35,
+      "sym": "Eb"
+    },
+    {
+      "bar": 36,
+      "sym": "Bb"
+    },
+    {
+      "bar": 37,
+      "sym": "Cm"
+    },
+    {
+      "bar": 38,
+      "sym": "Ab"
+    },
+    {
+      "bar": 39,
+      "sym": "Eb"
+    },
+    {
+      "bar": 40,
+      "sym": "Bb"
+    },
+    {
+      "bar": 41,
+      "sym": "Fm"
+    },
+    {
+      "bar": 42,
+      "sym": "Ab"
+    },
+    {
+      "bar": 43,
+      "sym": "Bb"
+    },
+    {
+      "bar": 44,
+      "sym": "Cm"
+    },
+    {
+      "bar": 45,
+      "sym": "Fm"
+    },
+    {
+      "bar": 46,
+      "sym": "Ab"
+    },
+    {
+      "bar": 47,
+      "sym": "Bb"
+    },
+    {
+      "bar": 48,
+      "sym": "Cm"
+    },
+    {
+      "bar": 50,
+      "sym": "Ab"
+    },
+    {
+      "bar": 51,
+      "sym": "Eb"
+    },
+    {
+      "bar": 52,
+      "sym": "Bb"
+    },
+    {
+      "bar": 53,
+      "sym": "Cm"
+    },
+    {
+      "bar": 54,
+      "sym": "Ab"
+    },
+    {
+      "bar": 55,
+      "sym": "Eb"
+    },
+    {
+      "bar": 56,
+      "sym": "Bb"
+    },
+    {
+      "bar": 57,
+      "sym": "Cm"
+    },
+    {
+      "bar": 58,
+      "sym": "Ab"
+    },
+    {
+      "bar": 59,
+      "sym": "Eb"
+    },
+    {
+      "bar": 60,
+      "sym": "Bb"
+    }
+  ],
+  "layers": [
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -3,
+      "pattern": "",
+      "part": "bas ósemkami z synkopą. Wzór (opis): ósemki, synkopa na „i” 2"
+    },
+    {
+      "role": "mel",
+      "voice": "P50",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia własna (pentatonika c-moll), motyw Cuy w odwróceniu w taktach 1-2. Wzór (opis): wg szkieletu 'stc'"
+    },
+    {
+      "role": "orn",
+      "voice": "P25",
+      "db": -8,
+      "pattern": "",
+      "part": "kontrmelodia. Wzór (opis): przeciwny kontur do melodii",
+      "from_bar": 9
+    },
+    {
+      "role": "orn",
+      "voice": "GLK",
+      "db": -9,
+      "pattern": "",
+      "part": "hook. Wzór (opis): co 4 takty",
+      "from_bar": 9
+    }
+  ],
+  "drums": {
+    "kit": "four",
+    "levels": {
+      "KICK": -3,
+      "SNR": -3,
+      "HAT": -12
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.08,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

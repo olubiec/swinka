@@ -1,0 +1,199 @@
+{
+  "id": "place_room_dorm",
+  "kind": "room",
+  "title": "Pokój: wspólna sypialnia",
+  "role": "miękka kołysanka zespołowa",
+  "bpm": 64,
+  "meter": 4,
+  "key": "G",
+  "mode": "major",
+  "bars": 32,
+  "swing": 50,
+  "seed": 42941,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 2,
+      "sym": "Em7"
+    },
+    {
+      "bar": 3,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 4,
+      "sym": "D13"
+    },
+    {
+      "bar": 5,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 6,
+      "sym": "Em7"
+    },
+    {
+      "bar": 7,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 8,
+      "sym": "D13"
+    },
+    {
+      "bar": 9,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 10,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 11,
+      "sym": "Am7"
+    },
+    {
+      "bar": 12,
+      "sym": "D13"
+    },
+    {
+      "bar": 13,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 14,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 15,
+      "sym": "Am7"
+    },
+    {
+      "bar": 16,
+      "sym": "D13"
+    },
+    {
+      "bar": 17,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Em7"
+    },
+    {
+      "bar": 19,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 20,
+      "sym": "D13"
+    },
+    {
+      "bar": 21,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Em7"
+    },
+    {
+      "bar": 23,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 24,
+      "sym": "D13"
+    },
+    {
+      "bar": 25,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 26,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 27,
+      "sym": "Am7"
+    },
+    {
+      "bar": 28,
+      "sym": "D13"
+    },
+    {
+      "bar": 29,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 30,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 31,
+      "sym": "Am7"
+    },
+    {
+      "bar": 32,
+      "sym": "D13"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BOX",
+      "db": -3,
+      "pattern": "",
+      "part": "temat kanonu (od taktu 1). Wzór (opis): szkielet 'pas', 8 taktów, powtarzany co 8"
+    },
+    {
+      "role": "mel",
+      "voice": "CEL",
+      "db": -6,
+      "pattern": "",
+      "part": "ten sam temat, opóźnienie 2 takty. Wzór (opis): wejście takt 3",
+      "from_bar": 3
+    },
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -9,
+      "pattern": "",
+      "part": "ten sam temat, opóźnienie 4 takty, ciepły filtr 2 kHz. Wzór (opis): wejście takt 5",
+      "from_bar": 5
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -12,
+      "pattern": "",
+      "part": "pad. Wzór (opis): długie akordy"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -8,
+      "pattern": "",
+      "part": "bas. Wzór (opis): korzeń na 1",
+      "from_bar": 9
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "REV-M",
+      "wet": 0.16,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

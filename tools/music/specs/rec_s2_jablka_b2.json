@@ -1,0 +1,233 @@
+{
+  "id": "rec_s2_jablka_b2",
+  "kind": "record",
+  "title": "Zimowe jabłka · B2 nastrojowy",
+  "role": "folkowy walc zimowy z kryształkami",
+  "bpm": 72,
+  "meter": 3,
+  "key": "A",
+  "mode": "minor",
+  "bars": 48,
+  "swing": 50,
+  "seed": 16941,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Am"
+    },
+    {
+      "bar": 2,
+      "sym": "Dm"
+    },
+    {
+      "bar": 3,
+      "sym": "E7"
+    },
+    {
+      "bar": 4,
+      "sym": "Am"
+    },
+    {
+      "bar": 6,
+      "sym": "Dm"
+    },
+    {
+      "bar": 7,
+      "sym": "E7"
+    },
+    {
+      "bar": 8,
+      "sym": "Am"
+    },
+    {
+      "bar": 9,
+      "sym": "F"
+    },
+    {
+      "bar": 10,
+      "sym": "C"
+    },
+    {
+      "bar": 11,
+      "sym": "G"
+    },
+    {
+      "bar": 12,
+      "sym": "E7"
+    },
+    {
+      "bar": 13,
+      "sym": "F"
+    },
+    {
+      "bar": 14,
+      "sym": "C"
+    },
+    {
+      "bar": 15,
+      "sym": "G"
+    },
+    {
+      "bar": 16,
+      "sym": "E7"
+    },
+    {
+      "bar": 17,
+      "sym": "Am"
+    },
+    {
+      "bar": 18,
+      "sym": "Dm"
+    },
+    {
+      "bar": 19,
+      "sym": "E7"
+    },
+    {
+      "bar": 20,
+      "sym": "Am"
+    },
+    {
+      "bar": 22,
+      "sym": "Dm"
+    },
+    {
+      "bar": 23,
+      "sym": "E7"
+    },
+    {
+      "bar": 24,
+      "sym": "Am"
+    },
+    {
+      "bar": 26,
+      "sym": "Dm"
+    },
+    {
+      "bar": 27,
+      "sym": "E7"
+    },
+    {
+      "bar": 28,
+      "sym": "Am"
+    },
+    {
+      "bar": 29,
+      "sym": "F"
+    },
+    {
+      "bar": 30,
+      "sym": "C"
+    },
+    {
+      "bar": 31,
+      "sym": "G"
+    },
+    {
+      "bar": 32,
+      "sym": "E7"
+    },
+    {
+      "bar": 33,
+      "sym": "F"
+    },
+    {
+      "bar": 34,
+      "sym": "C"
+    },
+    {
+      "bar": 35,
+      "sym": "G"
+    },
+    {
+      "bar": 36,
+      "sym": "E7"
+    },
+    {
+      "bar": 37,
+      "sym": "Am"
+    },
+    {
+      "bar": 38,
+      "sym": "Dm"
+    },
+    {
+      "bar": 39,
+      "sym": "E7"
+    },
+    {
+      "bar": 40,
+      "sym": "Am"
+    },
+    {
+      "bar": 42,
+      "sym": "Dm"
+    },
+    {
+      "bar": 43,
+      "sym": "E7"
+    },
+    {
+      "bar": 44,
+      "sym": "Am"
+    },
+    {
+      "bar": 46,
+      "sym": "Dm"
+    },
+    {
+      "bar": 47,
+      "sym": "E7"
+    },
+    {
+      "bar": 48,
+      "sym": "Am"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -2,
+      "pattern": "",
+      "part": "szarpnięcia melodii. Wzór (opis): wg szkieletu 'wlz'"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -4,
+      "pattern": "",
+      "part": "bas na 1. Wzór (opis): ćwierćnuta na 1"
+    },
+    {
+      "role": "chd",
+      "voice": "P12",
+      "db": -8,
+      "pattern": "",
+      "part": "akord na 2-3. Wzór (opis): ćwierćnuty 2 i 3"
+    },
+    {
+      "role": "orn",
+      "voice": "BELL",
+      "db": -12,
+      "pattern": "",
+      "part": "zimowe kryształki. Wzór (opis): pojedyncza nuta co 8 taktów (E6)",
+      "from_bar": 5
+    }
+  ],
+  "drums": {
+    "kit": "waltz",
+    "levels": {
+      "BRSH": -16
+    }
+  },
+  "fx": [],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

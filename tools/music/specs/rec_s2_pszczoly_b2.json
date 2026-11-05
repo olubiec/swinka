@@ -1,0 +1,270 @@
+{
+  "id": "rec_s2_pszczoly_b2",
+  "kind": "record",
+  "title": "Pszczoły · B2 nastrojowy",
+  "role": "bzyczący bordun, wchodzi od taktu 9",
+  "bpm": 90,
+  "meter": 4,
+  "key": "A",
+  "mode": "major",
+  "bars": 52,
+  "swing": 50,
+  "seed": 92954,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "A"
+    },
+    {
+      "bar": 2,
+      "sym": "D"
+    },
+    {
+      "bar": 3,
+      "sym": "A"
+    },
+    {
+      "bar": 4,
+      "sym": "E7"
+    },
+    {
+      "bar": 5,
+      "sym": "A"
+    },
+    {
+      "bar": 6,
+      "sym": "D"
+    },
+    {
+      "bar": 7,
+      "sym": "A"
+    },
+    {
+      "bar": 8,
+      "sym": "E7"
+    },
+    {
+      "bar": 9,
+      "sym": "A"
+    },
+    {
+      "bar": 10,
+      "sym": "F#m"
+    },
+    {
+      "bar": 11,
+      "sym": "D"
+    },
+    {
+      "bar": 12,
+      "sym": "E7 A"
+    },
+    {
+      "bar": 13,
+      "sym": "A"
+    },
+    {
+      "bar": 14,
+      "sym": "F#m"
+    },
+    {
+      "bar": 15,
+      "sym": "D"
+    },
+    {
+      "bar": 16,
+      "sym": "E7 A"
+    },
+    {
+      "bar": 17,
+      "sym": "A"
+    },
+    {
+      "bar": 18,
+      "sym": "D"
+    },
+    {
+      "bar": 19,
+      "sym": "A"
+    },
+    {
+      "bar": 20,
+      "sym": "E7"
+    },
+    {
+      "bar": 21,
+      "sym": "A"
+    },
+    {
+      "bar": 22,
+      "sym": "D"
+    },
+    {
+      "bar": 23,
+      "sym": "A"
+    },
+    {
+      "bar": 24,
+      "sym": "E7"
+    },
+    {
+      "bar": 25,
+      "sym": "A"
+    },
+    {
+      "bar": 26,
+      "sym": "F#m"
+    },
+    {
+      "bar": 27,
+      "sym": "D"
+    },
+    {
+      "bar": 28,
+      "sym": "E7 A"
+    },
+    {
+      "bar": 29,
+      "sym": "A"
+    },
+    {
+      "bar": 30,
+      "sym": "F#m"
+    },
+    {
+      "bar": 31,
+      "sym": "D"
+    },
+    {
+      "bar": 32,
+      "sym": "E7 A"
+    },
+    {
+      "bar": 33,
+      "sym": "A"
+    },
+    {
+      "bar": 34,
+      "sym": "D"
+    },
+    {
+      "bar": 35,
+      "sym": "A"
+    },
+    {
+      "bar": 36,
+      "sym": "E7"
+    },
+    {
+      "bar": 37,
+      "sym": "A"
+    },
+    {
+      "bar": 38,
+      "sym": "D"
+    },
+    {
+      "bar": 39,
+      "sym": "A"
+    },
+    {
+      "bar": 40,
+      "sym": "E7"
+    },
+    {
+      "bar": 41,
+      "sym": "A"
+    },
+    {
+      "bar": 42,
+      "sym": "F#m"
+    },
+    {
+      "bar": 43,
+      "sym": "D"
+    },
+    {
+      "bar": 44,
+      "sym": "E7 A"
+    },
+    {
+      "bar": 45,
+      "sym": "A"
+    },
+    {
+      "bar": 46,
+      "sym": "F#m"
+    },
+    {
+      "bar": 47,
+      "sym": "D"
+    },
+    {
+      "bar": 48,
+      "sym": "E7 A"
+    },
+    {
+      "bar": 49,
+      "sym": "A"
+    },
+    {
+      "bar": 50,
+      "sym": "D"
+    },
+    {
+      "bar": 51,
+      "sym": "A"
+    },
+    {
+      "bar": 52,
+      "sym": "E7"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BNJ",
+      "db": -2,
+      "pattern": "",
+      "part": "melodia szybka, ósemki. Wzór (opis): wg szkieletu 'stc'"
+    },
+    {
+      "role": "chd",
+      "voice": "BNJ",
+      "db": -8,
+      "pattern": "",
+      "part": "akord rozłożony. Wzór (opis): ósemki"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -5,
+      "pattern": "",
+      "part": "bas root-fifth. Wzór (opis): korzeń na 1, kwinta na 3"
+    },
+    {
+      "role": "orn",
+      "voice": "BUZZ",
+      "db": -14,
+      "pattern": "",
+      "part": "dodatkowy głos płyty rzadkiej: bordun na A3 (sinus 220 Hz + FM 40 Hz), LFO panoramy 0,15 Hz. Wzór (opis): ciągły",
+      "from_bar": 9
+    }
+  ],
+  "drums": {
+    "kit": "brush",
+    "levels": {
+      "BRSH": -14,
+      "HAT": -14
+    }
+  },
+  "fx": [],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

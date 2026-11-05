@@ -1,0 +1,171 @@
+{
+  "id": "place_garden_evening",
+  "kind": "place",
+  "title": "Ogród wieczór",
+  "role": "ogród wieczorem",
+  "bpm": 69,
+  "meter": 4,
+  "key": "E",
+  "mode": "mixolydian",
+  "bars": 32,
+  "swing": 60,
+  "seed": 92558,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "E7"
+    },
+    {
+      "bar": 2,
+      "sym": "D"
+    },
+    {
+      "bar": 3,
+      "sym": "A"
+    },
+    {
+      "bar": 4,
+      "sym": "E7"
+    },
+    {
+      "bar": 6,
+      "sym": "D"
+    },
+    {
+      "bar": 7,
+      "sym": "A"
+    },
+    {
+      "bar": 8,
+      "sym": "E7"
+    },
+    {
+      "bar": 10,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 11,
+      "sym": "A"
+    },
+    {
+      "bar": 12,
+      "sym": "E7"
+    },
+    {
+      "bar": 14,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 15,
+      "sym": "A"
+    },
+    {
+      "bar": 16,
+      "sym": "E7"
+    },
+    {
+      "bar": 18,
+      "sym": "D"
+    },
+    {
+      "bar": 19,
+      "sym": "A"
+    },
+    {
+      "bar": 20,
+      "sym": "E7"
+    },
+    {
+      "bar": 22,
+      "sym": "D"
+    },
+    {
+      "bar": 23,
+      "sym": "A"
+    },
+    {
+      "bar": 24,
+      "sym": "E7"
+    },
+    {
+      "bar": 26,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 27,
+      "sym": "A"
+    },
+    {
+      "bar": 28,
+      "sym": "E7"
+    },
+    {
+      "bar": 30,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 31,
+      "sym": "A"
+    },
+    {
+      "bar": 32,
+      "sym": "E7"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia długimi nutami, ciepły filtr 3 kHz. Wzór (opis): wg szkieletu 'pas'"
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -8,
+      "pattern": "",
+      "part": "pad na E-B. Wzór (opis): długie akordy"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -6,
+      "pattern": "",
+      "part": "bas, wchodzi późno. Wzór (opis): korzeń na 1",
+      "from_bar": 9
+    },
+    {
+      "role": "noise",
+      "voice": "noise_crickets",
+      "db": -22,
+      "pattern": "",
+      "part": "świerszcze. Wzór (opis): ciągłe",
+      "from_bar": 1
+    },
+    {
+      "role": "orn",
+      "voice": "BELL",
+      "db": -14,
+      "pattern": "",
+      "part": "pojedyncza nuta G#5. Wzór (opis): co 8 taktów",
+      "from_bar": 8
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.12,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

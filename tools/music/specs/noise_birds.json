@@ -1,0 +1,37 @@
+{
+  "id": "noise_birds",
+  "kind": "noise",
+  "title": "Szum: ptaki (pętla)",
+  "bpm": 60,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 5,
+  "swing": 50,
+  "seed": 380,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "C"
+    }
+  ],
+  "layers": [
+    {
+      "role": "noise",
+      "voice": "noise_birds",
+      "db": -18,
+      "pattern": "",
+      "part": "pętla szumu noise_birds, 20.0 s; poziom zastępczy, do ustalenia"
+    }
+  ],
+  "drums": null,
+  "fx": [],
+  "master": {
+    "lufs": -24,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

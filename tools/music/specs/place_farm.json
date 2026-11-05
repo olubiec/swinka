@@ -1,0 +1,152 @@
+{
+  "id": "place_farm",
+  "kind": "place",
+  "title": "Farma",
+  "role": "farma (shuffle, slide)",
+  "bpm": 100,
+  "meter": 4,
+  "key": "A",
+  "mode": "major",
+  "bars": 32,
+  "swing": 66,
+  "seed": 97033,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "A"
+    },
+    {
+      "bar": 5,
+      "sym": "D"
+    },
+    {
+      "bar": 7,
+      "sym": "A"
+    },
+    {
+      "bar": 9,
+      "sym": "E7"
+    },
+    {
+      "bar": 10,
+      "sym": "D"
+    },
+    {
+      "bar": 11,
+      "sym": "A"
+    },
+    {
+      "bar": 12,
+      "sym": "E7"
+    },
+    {
+      "bar": 13,
+      "sym": "A"
+    },
+    {
+      "bar": 17,
+      "sym": "D"
+    },
+    {
+      "bar": 19,
+      "sym": "A"
+    },
+    {
+      "bar": 21,
+      "sym": "E7"
+    },
+    {
+      "bar": 22,
+      "sym": "D"
+    },
+    {
+      "bar": 23,
+      "sym": "A"
+    },
+    {
+      "bar": 24,
+      "sym": "E7"
+    },
+    {
+      "bar": 25,
+      "sym": "A"
+    },
+    {
+      "bar": 26,
+      "sym": "D"
+    },
+    {
+      "bar": 27,
+      "sym": "A"
+    },
+    {
+      "bar": 29,
+      "sym": "D"
+    },
+    {
+      "bar": 30,
+      "sym": "A"
+    },
+    {
+      "bar": 31,
+      "sym": "E7"
+    },
+    {
+      "bar": 32,
+      "sym": "A"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BNJ",
+      "db": -2,
+      "pattern": "",
+      "part": "melodia + ślizgi P12 (portamento 90 ms). Wzór (opis): wg szkieletu 'syn'; slide na ostatniej nucie fraz"
+    },
+    {
+      "role": "chd",
+      "voice": "BNJ",
+      "db": -7,
+      "pattern": "",
+      "part": "akompaniament shuffle, trójdźwięk. Wzór (opis): ćwierć-triola"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -5,
+      "pattern": "",
+      "part": "bas root-fifth. Wzór (opis): korzeń na 1, kwinta na 3"
+    },
+    {
+      "role": "orn",
+      "voice": "P12",
+      "db": -8,
+      "pattern": "",
+      "part": "kogutowe nawoływanie A5-E6. Wzór (opis): raz w takcie 17",
+      "from_bar": 17
+    }
+  ],
+  "drums": {
+    "kit": "shuffle",
+    "levels": {
+      "BRSH": -14,
+      "HAT": -22
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.1,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

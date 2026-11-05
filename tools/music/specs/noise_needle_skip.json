@@ -1,0 +1,37 @@
+{
+  "id": "noise_needle_skip",
+  "kind": "noise",
+  "title": "Szum: przeskok igły (jednorazowy)",
+  "bpm": 60,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 1,
+  "swing": 50,
+  "seed": 25,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "C"
+    }
+  ],
+  "layers": [
+    {
+      "role": "noise",
+      "voice": "noise_needle_skip",
+      "db": -18,
+      "pattern": "",
+      "part": "pętla szumu noise_needle_skip, 0.3 s; poziom zastępczy, do ustalenia"
+    }
+  ],
+  "drums": null,
+  "fx": [],
+  "master": {
+    "lufs": -24,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": false
+  },
+  "stem_of": null
+}

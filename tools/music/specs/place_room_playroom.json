@@ -1,0 +1,176 @@
+{
+  "id": "place_room_playroom",
+  "kind": "room",
+  "title": "Pokój: pokój zabaw",
+  "role": "zabawna pozytywka i ksylofon",
+  "bpm": 100,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 32,
+  "swing": 50,
+  "seed": 40304,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "C"
+    },
+    {
+      "bar": 2,
+      "sym": "G7"
+    },
+    {
+      "bar": 3,
+      "sym": "C"
+    },
+    {
+      "bar": 4,
+      "sym": "F"
+    },
+    {
+      "bar": 5,
+      "sym": "C"
+    },
+    {
+      "bar": 6,
+      "sym": "Am"
+    },
+    {
+      "bar": 7,
+      "sym": "D7 G7"
+    },
+    {
+      "bar": 8,
+      "sym": "C"
+    },
+    {
+      "bar": 10,
+      "sym": "G7"
+    },
+    {
+      "bar": 11,
+      "sym": "C"
+    },
+    {
+      "bar": 12,
+      "sym": "F"
+    },
+    {
+      "bar": 13,
+      "sym": "C"
+    },
+    {
+      "bar": 14,
+      "sym": "Am"
+    },
+    {
+      "bar": 15,
+      "sym": "D7 G7"
+    },
+    {
+      "bar": 16,
+      "sym": "C"
+    },
+    {
+      "bar": 17,
+      "sym": "F"
+    },
+    {
+      "bar": 18,
+      "sym": "C"
+    },
+    {
+      "bar": 19,
+      "sym": "G"
+    },
+    {
+      "bar": 20,
+      "sym": "C"
+    },
+    {
+      "bar": 21,
+      "sym": "F"
+    },
+    {
+      "bar": 22,
+      "sym": "Dm7 G7"
+    },
+    {
+      "bar": 23,
+      "sym": "C"
+    },
+    {
+      "bar": 26,
+      "sym": "G7"
+    },
+    {
+      "bar": 27,
+      "sym": "C"
+    },
+    {
+      "bar": 28,
+      "sym": "F"
+    },
+    {
+      "bar": 29,
+      "sym": "C"
+    },
+    {
+      "bar": 30,
+      "sym": "Am"
+    },
+    {
+      "bar": 31,
+      "sym": "D7 G7"
+    },
+    {
+      "bar": 32,
+      "sym": "C"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "XYL",
+      "db": -2,
+      "pattern": "",
+      "part": "melodia staccato, potem zabawne powtórki. Wzór (opis): wg szkieletu 'hop'"
+    },
+    {
+      "role": "orn",
+      "voice": "BOX",
+      "db": -8,
+      "pattern": "",
+      "part": "kontrapunkt. Wzór (opis): długie nuty nad melodią",
+      "from_bar": 9
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -4,
+      "pattern": "",
+      "part": "bas „skok”. Wzór (opis): korzeń-oktawa"
+    }
+  ],
+  "drums": {
+    "kit": "offshk",
+    "levels": {
+      "SHK": -20
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.08,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

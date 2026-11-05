@@ -1,0 +1,162 @@
+{
+  "id": "rec_s3_sowa_a1",
+  "kind": "record",
+  "title": "Sowa · A1 podpisowy",
+  "role": "straszkowa, ale łagodna: „hu-hu” sowy",
+  "bpm": 60,
+  "meter": 4,
+  "key": "D",
+  "mode": "minor",
+  "bars": 24,
+  "swing": 50,
+  "seed": 85967,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Dm"
+    },
+    {
+      "bar": 2,
+      "sym": "Bb"
+    },
+    {
+      "bar": 3,
+      "sym": "Gm"
+    },
+    {
+      "bar": 4,
+      "sym": "A7"
+    },
+    {
+      "bar": 5,
+      "sym": "Dm"
+    },
+    {
+      "bar": 6,
+      "sym": "Bb"
+    },
+    {
+      "bar": 7,
+      "sym": "Gm"
+    },
+    {
+      "bar": 8,
+      "sym": "A7"
+    },
+    {
+      "bar": 9,
+      "sym": "Dm"
+    },
+    {
+      "bar": 10,
+      "sym": "Bb"
+    },
+    {
+      "bar": 11,
+      "sym": "Gm"
+    },
+    {
+      "bar": 12,
+      "sym": "A7"
+    },
+    {
+      "bar": 13,
+      "sym": "Dm"
+    },
+    {
+      "bar": 14,
+      "sym": "Bb"
+    },
+    {
+      "bar": 15,
+      "sym": "Gm"
+    },
+    {
+      "bar": 16,
+      "sym": "A7"
+    },
+    {
+      "bar": 17,
+      "sym": "Dm"
+    },
+    {
+      "bar": 18,
+      "sym": "Bb"
+    },
+    {
+      "bar": 19,
+      "sym": "Gm"
+    },
+    {
+      "bar": 20,
+      "sym": "A7"
+    },
+    {
+      "bar": 21,
+      "sym": "Dm"
+    },
+    {
+      "bar": 22,
+      "sym": "Bb"
+    },
+    {
+      "bar": 23,
+      "sym": "Gm"
+    },
+    {
+      "bar": 24,
+      "sym": "A7"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BOX",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia kołysanki. Wzór (opis): wg szkieletu 'pas'"
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -8,
+      "pattern": "",
+      "part": "pad niski na D2-A2. Wzór (opis): długie akordy w niskim rejestrze",
+      "register": "D2-A3"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -10,
+      "pattern": "",
+      "part": "bas bardzo wolny. Wzór (opis): korzeń co 2 takty"
+    },
+    {
+      "role": "orn",
+      "voice": "BELL",
+      "db": -10,
+      "pattern": "",
+      "part": "„hu-hu”: dwie nuty D5 A4. Wzór (opis): co 8 taktów, 2. połowa taktu",
+      "from_bar": 5
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "TAPE(0.3)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(8000)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

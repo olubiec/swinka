@@ -1,0 +1,123 @@
+{
+  "id": "place_room_bedroom",
+  "kind": "room",
+  "title": "Pokój: sypialnia",
+  "role": "wolna kołysanka",
+  "bpm": 60,
+  "meter": 4,
+  "key": "D",
+  "mode": "dorian",
+  "bars": 24,
+  "swing": 50,
+  "seed": 57896,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 2,
+      "sym": "Em7"
+    },
+    {
+      "bar": 3,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 4,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 6,
+      "sym": "Em7"
+    },
+    {
+      "bar": 7,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 8,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 10,
+      "sym": "Em7"
+    },
+    {
+      "bar": 11,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 12,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 14,
+      "sym": "Em7"
+    },
+    {
+      "bar": 15,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 16,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 18,
+      "sym": "Em7"
+    },
+    {
+      "bar": 19,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 20,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 22,
+      "sym": "Em7"
+    },
+    {
+      "bar": 23,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 24,
+      "sym": "Dm9"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BOX",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia D-F-G-A. Wzór (opis): 1 nuta na takt, półnuta"
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -14,
+      "pattern": "",
+      "part": "pad. Wzór (opis): długie akordy"
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "REV-L",
+      "wet": 0.28,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

@@ -1,0 +1,217 @@
+{
+  "id": "rec_s1_marchewka_a1",
+  "kind": "record",
+  "title": "Marchewkowy beat · A1 podpisowy",
+  "role": "chrupanie w hi-hat (otwarty hat na „i” 4)",
+  "bpm": 84,
+  "meter": 4,
+  "key": "G",
+  "mode": "major",
+  "bars": 36,
+  "swing": 56,
+  "seed": 84316,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 2,
+      "sym": "Em9"
+    },
+    {
+      "bar": 3,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 4,
+      "sym": "D13"
+    },
+    {
+      "bar": 5,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 6,
+      "sym": "Em9"
+    },
+    {
+      "bar": 7,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 8,
+      "sym": "D13"
+    },
+    {
+      "bar": 9,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 10,
+      "sym": "Em9"
+    },
+    {
+      "bar": 11,
+      "sym": "Am9"
+    },
+    {
+      "bar": 12,
+      "sym": "D13"
+    },
+    {
+      "bar": 13,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 14,
+      "sym": "Em9"
+    },
+    {
+      "bar": 15,
+      "sym": "Am9"
+    },
+    {
+      "bar": 16,
+      "sym": "D13"
+    },
+    {
+      "bar": 17,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Em9"
+    },
+    {
+      "bar": 19,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 20,
+      "sym": "D13"
+    },
+    {
+      "bar": 21,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Em9"
+    },
+    {
+      "bar": 23,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 24,
+      "sym": "D13"
+    },
+    {
+      "bar": 25,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 26,
+      "sym": "Em9"
+    },
+    {
+      "bar": 27,
+      "sym": "Am9"
+    },
+    {
+      "bar": 28,
+      "sym": "D13"
+    },
+    {
+      "bar": 29,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 30,
+      "sym": "Em9"
+    },
+    {
+      "bar": 31,
+      "sym": "Am9"
+    },
+    {
+      "bar": 32,
+      "sym": "D13"
+    },
+    {
+      "bar": 33,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 34,
+      "sym": "Em9"
+    },
+    {
+      "bar": 35,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 36,
+      "sym": "D13"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -3,
+      "pattern": "",
+      "part": "frazy trzynutowe wskazujące w górę (G4 A4 B4, A4 B4 D5). Wzór (opis): wg szkieletu 'std'"
+    },
+    {
+      "role": "bass",
+      "voice": "PIZ",
+      "db": -3,
+      "pattern": "",
+      "part": "bas szarpany synkopowany. Wzór (opis): kroki 1, „i” 2, 3, „i” 4 (siatka 16: 1, 7, 9, 15)"
+    },
+    {
+      "role": "chd",
+      "voice": "EP",
+      "db": -8,
+      "pattern": "",
+      "part": "akordy. Wzór (opis): na „i” 2 i 4"
+    }
+  ],
+  "drums": {
+    "kit": "lofi",
+    "levels": {
+      "KICK": -12,
+      "SNR": -12,
+      "HAT": -14
+    }
+  },
+  "fx": [
+    {
+      "fx": "TAPE(0.2)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(9000)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-S",
+      "wet": 0.12,
+      "on": "all"
+    },
+    {
+      "fx": "VINYL(-46)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

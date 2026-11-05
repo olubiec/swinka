@@ -1,0 +1,187 @@
+{
+  "id": "place_park",
+  "kind": "place",
+  "title": "Park",
+  "role": "park (3/4, folkowy walc)",
+  "bpm": 96,
+  "meter": 3,
+  "key": "D",
+  "mode": "major",
+  "bars": 32,
+  "swing": 50,
+  "seed": 49983,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "D"
+    },
+    {
+      "bar": 2,
+      "sym": "A7"
+    },
+    {
+      "bar": 3,
+      "sym": "D"
+    },
+    {
+      "bar": 4,
+      "sym": "G"
+    },
+    {
+      "bar": 5,
+      "sym": "D"
+    },
+    {
+      "bar": 6,
+      "sym": "Bm"
+    },
+    {
+      "bar": 7,
+      "sym": "Em7 A7"
+    },
+    {
+      "bar": 8,
+      "sym": "D"
+    },
+    {
+      "bar": 10,
+      "sym": "A7"
+    },
+    {
+      "bar": 11,
+      "sym": "D"
+    },
+    {
+      "bar": 12,
+      "sym": "G"
+    },
+    {
+      "bar": 13,
+      "sym": "D"
+    },
+    {
+      "bar": 14,
+      "sym": "Bm"
+    },
+    {
+      "bar": 15,
+      "sym": "Em7 A7"
+    },
+    {
+      "bar": 16,
+      "sym": "D"
+    },
+    {
+      "bar": 17,
+      "sym": "G"
+    },
+    {
+      "bar": 18,
+      "sym": "D"
+    },
+    {
+      "bar": 19,
+      "sym": "Em7"
+    },
+    {
+      "bar": 20,
+      "sym": "A7"
+    },
+    {
+      "bar": 21,
+      "sym": "D"
+    },
+    {
+      "bar": 22,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 23,
+      "sym": "A7"
+    },
+    {
+      "bar": 24,
+      "sym": "D"
+    },
+    {
+      "bar": 26,
+      "sym": "A7"
+    },
+    {
+      "bar": 27,
+      "sym": "D"
+    },
+    {
+      "bar": 28,
+      "sym": "G"
+    },
+    {
+      "bar": 29,
+      "sym": "D"
+    },
+    {
+      "bar": 30,
+      "sym": "Bm"
+    },
+    {
+      "bar": 31,
+      "sym": "Em7 A7"
+    },
+    {
+      "bar": 32,
+      "sym": "D"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -2,
+      "pattern": "",
+      "part": "melodia prosta; motyw w taktach 1-2 (D5 E5 F#5 A5). Wzór (opis): wg szkieletu 'wlz' o oktawę wyżej"
+    },
+    {
+      "role": "chd",
+      "voice": "P12",
+      "db": -6,
+      "pattern": "",
+      "part": "akompaniament „oom-pa-pa”. Wzór (opis): akord na 2 i 3"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -5,
+      "pattern": "",
+      "part": "bas na 1. Wzór (opis): korzeń"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_dzieci",
+      "db": -34,
+      "pattern": "",
+      "part": "dalekie głosy dzieci: szum formantowy 800/1500 Hz. Wzór (opis): losowo co 6-10 s, 1-2 s",
+      "from_bar": 5
+    }
+  ],
+  "drums": {
+    "kit": "waltz",
+    "levels": {
+      "BRSH": -16
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.1,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

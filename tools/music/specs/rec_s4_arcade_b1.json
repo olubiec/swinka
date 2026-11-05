@@ -1,0 +1,285 @@
+{
+  "id": "rec_s4_arcade_b1",
+  "kind": "record",
+  "title": "Arcade · B1 energiczny",
+  "role": "chiptune dance",
+  "bpm": 146,
+  "meter": 4,
+  "key": "G",
+  "mode": "major",
+  "bars": 56,
+  "swing": 50,
+  "seed": 36045,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "G"
+    },
+    {
+      "bar": 2,
+      "sym": "D"
+    },
+    {
+      "bar": 3,
+      "sym": "Em"
+    },
+    {
+      "bar": 4,
+      "sym": "C"
+    },
+    {
+      "bar": 5,
+      "sym": "G"
+    },
+    {
+      "bar": 6,
+      "sym": "D"
+    },
+    {
+      "bar": 7,
+      "sym": "Em"
+    },
+    {
+      "bar": 8,
+      "sym": "C"
+    },
+    {
+      "bar": 9,
+      "sym": "G"
+    },
+    {
+      "bar": 10,
+      "sym": "D"
+    },
+    {
+      "bar": 11,
+      "sym": "Em"
+    },
+    {
+      "bar": 12,
+      "sym": "C"
+    },
+    {
+      "bar": 13,
+      "sym": "G"
+    },
+    {
+      "bar": 14,
+      "sym": "D"
+    },
+    {
+      "bar": 15,
+      "sym": "Em"
+    },
+    {
+      "bar": 16,
+      "sym": "C"
+    },
+    {
+      "bar": 17,
+      "sym": "Am"
+    },
+    {
+      "bar": 18,
+      "sym": "C"
+    },
+    {
+      "bar": 19,
+      "sym": "D"
+    },
+    {
+      "bar": 20,
+      "sym": "G"
+    },
+    {
+      "bar": 21,
+      "sym": "Am"
+    },
+    {
+      "bar": 22,
+      "sym": "C"
+    },
+    {
+      "bar": 23,
+      "sym": "D"
+    },
+    {
+      "bar": 24,
+      "sym": "G"
+    },
+    {
+      "bar": 26,
+      "sym": "D"
+    },
+    {
+      "bar": 27,
+      "sym": "Em"
+    },
+    {
+      "bar": 28,
+      "sym": "C"
+    },
+    {
+      "bar": 29,
+      "sym": "G"
+    },
+    {
+      "bar": 30,
+      "sym": "D"
+    },
+    {
+      "bar": 31,
+      "sym": "Em"
+    },
+    {
+      "bar": 32,
+      "sym": "C"
+    },
+    {
+      "bar": 33,
+      "sym": "G"
+    },
+    {
+      "bar": 34,
+      "sym": "D"
+    },
+    {
+      "bar": 35,
+      "sym": "Em"
+    },
+    {
+      "bar": 36,
+      "sym": "C"
+    },
+    {
+      "bar": 37,
+      "sym": "G"
+    },
+    {
+      "bar": 38,
+      "sym": "D"
+    },
+    {
+      "bar": 39,
+      "sym": "Em"
+    },
+    {
+      "bar": 40,
+      "sym": "C"
+    },
+    {
+      "bar": 41,
+      "sym": "Am"
+    },
+    {
+      "bar": 42,
+      "sym": "C"
+    },
+    {
+      "bar": 43,
+      "sym": "D"
+    },
+    {
+      "bar": 44,
+      "sym": "G"
+    },
+    {
+      "bar": 45,
+      "sym": "Am"
+    },
+    {
+      "bar": 46,
+      "sym": "C"
+    },
+    {
+      "bar": 47,
+      "sym": "D"
+    },
+    {
+      "bar": 48,
+      "sym": "G"
+    },
+    {
+      "bar": 50,
+      "sym": "D"
+    },
+    {
+      "bar": 51,
+      "sym": "Em"
+    },
+    {
+      "bar": 52,
+      "sym": "C"
+    },
+    {
+      "bar": 53,
+      "sym": "G"
+    },
+    {
+      "bar": 54,
+      "sym": "D"
+    },
+    {
+      "bar": 55,
+      "sym": "Em"
+    },
+    {
+      "bar": 56,
+      "sym": "C"
+    }
+  ],
+  "layers": [
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -3,
+      "pattern": "",
+      "part": "bas ósemkami. Wzór (opis): ósemki na korzeniu"
+    },
+    {
+      "role": "mel",
+      "voice": "P25",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia. Wzór (opis): wg szkieletu 'stc'"
+    },
+    {
+      "role": "pad",
+      "voice": "P50",
+      "db": -8,
+      "pattern": "",
+      "part": "arpeggio. Wzór (opis): szesnastki w górę"
+    },
+    {
+      "role": "orn",
+      "voice": "GLK",
+      "db": -10,
+      "pattern": "",
+      "part": "akcent. Wzór (opis): co 8 taktów",
+      "from_bar": 9
+    }
+  ],
+  "drums": {
+    "kit": "four",
+    "levels": {
+      "KICK": -3,
+      "SNR": -3,
+      "HAT": -12
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.08,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

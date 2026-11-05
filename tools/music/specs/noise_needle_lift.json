@@ -1,0 +1,37 @@
+{
+  "id": "noise_needle_lift",
+  "kind": "noise",
+  "title": "Szum: podniesienie igły (jednorazowy)",
+  "bpm": 60,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 1,
+  "swing": 50,
+  "seed": 44296,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "C"
+    }
+  ],
+  "layers": [
+    {
+      "role": "noise",
+      "voice": "noise_needle_lift",
+      "db": -18,
+      "pattern": "",
+      "part": "pętla szumu noise_needle_lift, 0.6 s; poziom zastępczy, do ustalenia"
+    }
+  ],
+  "drums": null,
+  "fx": [],
+  "master": {
+    "lufs": -24,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": false
+  },
+  "stem_of": null
+}

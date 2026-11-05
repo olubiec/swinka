@@ -1,0 +1,143 @@
+{
+  "id": "rec_s3_ksiezyc_a2",
+  "kind": "record",
+  "title": "Księżyc · A2 spokojny",
+  "role": "długi pogłos, lidyjska #11",
+  "bpm": 47,
+  "meter": 4,
+  "key": "F",
+  "mode": "lydian",
+  "bars": 20,
+  "swing": 50,
+  "seed": 63119,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 2,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 3,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 4,
+      "sym": "Em7"
+    },
+    {
+      "bar": 5,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 6,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 7,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 8,
+      "sym": "Em7"
+    },
+    {
+      "bar": 9,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 10,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 11,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 12,
+      "sym": "Em7"
+    },
+    {
+      "bar": 13,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 14,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 15,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 16,
+      "sym": "Em7"
+    },
+    {
+      "bar": 17,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 18,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 19,
+      "sym": "Fmaj7#11"
+    },
+    {
+      "bar": 20,
+      "sym": "Em7"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BELL",
+      "db": -3,
+      "pattern": "",
+      "part": "rozległa melodia, długie nuty (cel: A5 C6 E6 w 2. połowie). Wzór (opis): wg szkieletu 'pas'"
+    },
+    {
+      "role": "orn",
+      "voice": "CEL",
+      "db": -8,
+      "pattern": "",
+      "part": "dublowanie melodii oktawę wyżej. Wzór (opis): unison +12",
+      "from_bar": 5
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -10,
+      "pattern": "",
+      "part": "pad. Wzór (opis): długie akordy"
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "TAPE(0.3)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(8000)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-L",
+      "wet": 0.5,
+      "on": "BELL"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

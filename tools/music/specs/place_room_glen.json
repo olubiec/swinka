@@ -1,0 +1,187 @@
+{
+  "id": "place_room_glen",
+  "kind": "room",
+  "title": "Pokój: kącik czytelniczy",
+  "role": "ballada jazzowa",
+  "bpm": 68,
+  "meter": 4,
+  "key": "Eb",
+  "mode": "major",
+  "bars": 32,
+  "swing": 60,
+  "seed": 32038,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 2,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 3,
+      "sym": "Fm9 Bb13"
+    },
+    {
+      "bar": 4,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 6,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 7,
+      "sym": "Fm9 Bb13"
+    },
+    {
+      "bar": 8,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 9,
+      "sym": "Abmaj9"
+    },
+    {
+      "bar": 10,
+      "sym": "Abm6"
+    },
+    {
+      "bar": 11,
+      "sym": "Gm7 C7♭9"
+    },
+    {
+      "bar": 12,
+      "sym": "Fm9 Bb13"
+    },
+    {
+      "bar": 13,
+      "sym": "Abmaj9"
+    },
+    {
+      "bar": 14,
+      "sym": "Abm6"
+    },
+    {
+      "bar": 15,
+      "sym": "Gm7 C7♭9"
+    },
+    {
+      "bar": 16,
+      "sym": "Fm9 Bb13"
+    },
+    {
+      "bar": 17,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 19,
+      "sym": "Fm9 Bb13"
+    },
+    {
+      "bar": 20,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 23,
+      "sym": "Fm9 Bb13"
+    },
+    {
+      "bar": 24,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 25,
+      "sym": "Abmaj9"
+    },
+    {
+      "bar": 26,
+      "sym": "Abm6"
+    },
+    {
+      "bar": 27,
+      "sym": "Gm7 C7♭9"
+    },
+    {
+      "bar": 28,
+      "sym": "Fm9 Bb13"
+    },
+    {
+      "bar": 29,
+      "sym": "Abmaj9"
+    },
+    {
+      "bar": 30,
+      "sym": "Abm6"
+    },
+    {
+      "bar": 31,
+      "sym": "Gm7 C7♭9"
+    },
+    {
+      "bar": 32,
+      "sym": "Fm9 Bb13"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "EP",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia. Wzór (opis): wg szkieletu 'bal'"
+    },
+    {
+      "role": "chd",
+      "voice": "EP",
+      "db": -3,
+      "pattern": "",
+      "part": "akordy. Wzór (opis): rozłożone"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -7,
+      "pattern": "",
+      "part": "bas co 2 takty. Wzór (opis): korzeń"
+    },
+    {
+      "role": "orn",
+      "voice": "BELL",
+      "db": -16,
+      "pattern": "",
+      "part": "pojedyncze nuty w tle. Wzór (opis): co 4 takty",
+      "from_bar": 3
+    }
+  ],
+  "drums": {
+    "kit": "brush",
+    "levels": {
+      "BRSH": -16
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.12,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

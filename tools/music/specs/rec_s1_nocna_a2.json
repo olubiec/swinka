@@ -1,0 +1,269 @@
+{
+  "id": "rec_s1_nocna_a2",
+  "kind": "record",
+  "title": "Nocna ścieżka · A2 spokojny",
+  "role": "blues dorycki, walking bass i blue-note dzwonka",
+  "bpm": 110,
+  "meter": 4,
+  "key": "D",
+  "mode": "dorian",
+  "bars": 56,
+  "swing": 66,
+  "seed": 37904,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 2,
+      "sym": "G13"
+    },
+    {
+      "bar": 3,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 4,
+      "sym": "G13"
+    },
+    {
+      "bar": 5,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 6,
+      "sym": "G13"
+    },
+    {
+      "bar": 7,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 8,
+      "sym": "G13"
+    },
+    {
+      "bar": 9,
+      "sym": "Em9"
+    },
+    {
+      "bar": 10,
+      "sym": "A13"
+    },
+    {
+      "bar": 11,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 13,
+      "sym": "Em9"
+    },
+    {
+      "bar": 14,
+      "sym": "A13"
+    },
+    {
+      "bar": 15,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 18,
+      "sym": "G13"
+    },
+    {
+      "bar": 19,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 20,
+      "sym": "G13"
+    },
+    {
+      "bar": 21,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 22,
+      "sym": "G13"
+    },
+    {
+      "bar": 23,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 24,
+      "sym": "G13"
+    },
+    {
+      "bar": 25,
+      "sym": "Em9"
+    },
+    {
+      "bar": 26,
+      "sym": "A13"
+    },
+    {
+      "bar": 27,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 29,
+      "sym": "Em9"
+    },
+    {
+      "bar": 30,
+      "sym": "A13"
+    },
+    {
+      "bar": 31,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 34,
+      "sym": "G13"
+    },
+    {
+      "bar": 35,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 36,
+      "sym": "G13"
+    },
+    {
+      "bar": 37,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 38,
+      "sym": "G13"
+    },
+    {
+      "bar": 39,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 40,
+      "sym": "G13"
+    },
+    {
+      "bar": 41,
+      "sym": "Em9"
+    },
+    {
+      "bar": 42,
+      "sym": "A13"
+    },
+    {
+      "bar": 43,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 45,
+      "sym": "Em9"
+    },
+    {
+      "bar": 46,
+      "sym": "A13"
+    },
+    {
+      "bar": 47,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 50,
+      "sym": "G13"
+    },
+    {
+      "bar": 51,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 52,
+      "sym": "G13"
+    },
+    {
+      "bar": 53,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 54,
+      "sym": "G13"
+    },
+    {
+      "bar": 55,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 56,
+      "sym": "G13"
+    }
+  ],
+  "layers": [
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -3,
+      "pattern": "",
+      "part": "walking bass ćwierćnutami (korzeń-kwinta-przejście). Wzór (opis): 4 ćwierćnuty/takt"
+    },
+    {
+      "role": "chd",
+      "voice": "EP",
+      "db": -6,
+      "pattern": "",
+      "part": "stabsy. Wzór (opis): na „i” 2 i 4"
+    },
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia dorycka (D-F-G-A-C). Wzór (opis): wg szkieletu 'syn'"
+    },
+    {
+      "role": "orn",
+      "voice": "BELL",
+      "db": -12,
+      "pattern": "",
+      "part": "dodatkowy głos płyty rzadkiej: blue-note (Ab jako przejście do G), pojedyncza nuta. Wzór (opis): co 8 taktów, 2. połowa taktu",
+      "from_bar": 9
+    }
+  ],
+  "drums": {
+    "kit": "shuffle",
+    "levels": {
+      "SNR": -12,
+      "KICK": -14,
+      "HAT": -14
+    }
+  },
+  "fx": [
+    {
+      "fx": "TAPE(0.2)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(9000)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-S",
+      "wet": 0.12,
+      "on": "all"
+    },
+    {
+      "fx": "VINYL(-46)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

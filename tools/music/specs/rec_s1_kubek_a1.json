@@ -1,0 +1,227 @@
+{
+  "id": "rec_s1_kubek_a1",
+  "kind": "record",
+  "title": "Kubek z parą · A1 podpisowy",
+  "role": "bossa nova z parą nad kubkiem",
+  "bpm": 92,
+  "meter": 4,
+  "key": "F",
+  "mode": "major",
+  "bars": 40,
+  "swing": 50,
+  "seed": 68158,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 2,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 3,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 4,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 6,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 7,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 8,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 9,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 10,
+      "sym": "Am7 D7♭9"
+    },
+    {
+      "bar": 11,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 12,
+      "sym": "C13"
+    },
+    {
+      "bar": 13,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 14,
+      "sym": "Am7 D7♭9"
+    },
+    {
+      "bar": 15,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 16,
+      "sym": "C13"
+    },
+    {
+      "bar": 17,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 19,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 20,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 23,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 24,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 25,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 26,
+      "sym": "Am7 D7♭9"
+    },
+    {
+      "bar": 27,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 28,
+      "sym": "C13"
+    },
+    {
+      "bar": 29,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 30,
+      "sym": "Am7 D7♭9"
+    },
+    {
+      "bar": 31,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 32,
+      "sym": "C13"
+    },
+    {
+      "bar": 33,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 34,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 35,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 36,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 38,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 39,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 40,
+      "sym": "Fmaj9"
+    }
+  ],
+  "layers": [
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -4,
+      "pattern": "",
+      "part": "bossanowy bas. Wzór (opis): wzór (1, -, 5, 5) na 4 ćwierćnuty"
+    },
+    {
+      "role": "chd",
+      "voice": "P25",
+      "db": -6,
+      "pattern": "",
+      "part": "akordy w rytmie bossy. Wzór (opis): ósemki X..X..X. (kroki 1,4,7 co pół taktu)"
+    },
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia lekka. Wzór (opis): wg szkieletu 'syn'"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_para",
+      "db": -30,
+      "pattern": "",
+      "part": "para z kubka: szum różowy HP(3 kHz), obwiednia narastająca i opadająca co 4 takty. Wzór (opis): generowany w locie",
+      "from_bar": 1
+    }
+  ],
+  "drums": {
+    "kit": "bossa",
+    "levels": {
+      "BRSH": -12
+    }
+  },
+  "fx": [
+    {
+      "fx": "TAPE(0.2)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(9000)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-S",
+      "wet": 0.12,
+      "on": "all"
+    },
+    {
+      "fx": "VINYL(-46)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

@@ -1,0 +1,111 @@
+{
+  "id": "place_room_james",
+  "kind": "room",
+  "title": "Pokój: kryjówka (safe hideout)",
+  "role": "najciszej ze wszystkich pokoi",
+  "bpm": 56,
+  "meter": 4,
+  "key": "D",
+  "mode": "dorian",
+  "bars": 24,
+  "swing": 50,
+  "seed": 65667,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 3,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 4,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 7,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 8,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 11,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 12,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 15,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 16,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 19,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 20,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 23,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 24,
+      "sym": "Dm9"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BOX",
+      "db": -6,
+      "pattern": "",
+      "part": "pojedyncze nuty D5, A5, F5. Wzór (opis): 1 nuta na 2 takty"
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -18,
+      "pattern": "",
+      "part": "pad. Wzór (opis): długie akordy"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_room_tone",
+      "db": -34,
+      "pattern": "",
+      "part": "ton pokoju. Wzór (opis): ciągły",
+      "from_bar": 1
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "REV-L",
+      "wet": 0.3,
+      "on": "all"
+    },
+    {
+      "fx": "LP(3500)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -24,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

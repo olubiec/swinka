@@ -1,0 +1,209 @@
+{
+  "id": "rec_s1_poranek_b2",
+  "kind": "record",
+  "title": "Poranek w sianie · B2 nastrojowy",
+  "role": "poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny",
+  "bpm": 62,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 32,
+  "swing": 58,
+  "seed": 18182,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 2,
+      "sym": "Am9"
+    },
+    {
+      "bar": 3,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 4,
+      "sym": "G13"
+    },
+    {
+      "bar": 5,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 6,
+      "sym": "Am9"
+    },
+    {
+      "bar": 7,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 8,
+      "sym": "G13"
+    },
+    {
+      "bar": 9,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 10,
+      "sym": "Em7"
+    },
+    {
+      "bar": 11,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 12,
+      "sym": "G13sus G13"
+    },
+    {
+      "bar": 13,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 14,
+      "sym": "Em7"
+    },
+    {
+      "bar": 15,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 16,
+      "sym": "G13sus G13"
+    },
+    {
+      "bar": 17,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Am9"
+    },
+    {
+      "bar": 19,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 20,
+      "sym": "G13"
+    },
+    {
+      "bar": 21,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Am9"
+    },
+    {
+      "bar": 23,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 24,
+      "sym": "G13"
+    },
+    {
+      "bar": 25,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 26,
+      "sym": "Em7"
+    },
+    {
+      "bar": 27,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 28,
+      "sym": "G13sus G13"
+    },
+    {
+      "bar": 29,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 30,
+      "sym": "Em7"
+    },
+    {
+      "bar": 31,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 32,
+      "sym": "G13sus G13"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia, dłuższe nuty pentatoniczne C-D-E-G-A. Wzór (opis): wg szkieletu 'pas'"
+    },
+    {
+      "role": "chd",
+      "voice": "EP",
+      "db": -6,
+      "pattern": "",
+      "part": "akordy na „i” 2 i 4 (kroki 7 i 15 siatki 16). Wzór (opis): krótkie, zanik 600 ms"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -4,
+      "pattern": "",
+      "part": "wolny puls: korzeń na 1, kwinta na 3. Wzór (opis): półnuty"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_birds",
+      "db": -24,
+      "pattern": "",
+      "part": "ćwierkanie w tle. Wzór (opis): pętla przez cały utwór",
+      "from_bar": 1
+    }
+  ],
+  "drums": {
+    "kit": "lofi",
+    "levels": {
+      "KICK": -12,
+      "HAT": -16,
+      "SNR": -14
+    }
+  },
+  "fx": [
+    {
+      "fx": "TAPE(0.2)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(9000)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-S",
+      "wet": 0.12,
+      "on": "all"
+    },
+    {
+      "fx": "VINYL(-46)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

@@ -1,0 +1,189 @@
+{
+  "id": "rec_s2_rosa_b1",
+  "kind": "record",
+  "title": "Rosa · B1 energiczny",
+  "role": "krople rosy (dzwonki)",
+  "bpm": 78,
+  "meter": 4,
+  "key": "G",
+  "mode": "major",
+  "bars": 32,
+  "swing": 50,
+  "seed": 83963,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 2,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 3,
+      "sym": "Am7"
+    },
+    {
+      "bar": 4,
+      "sym": "D7sus"
+    },
+    {
+      "bar": 5,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 6,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 7,
+      "sym": "Am7"
+    },
+    {
+      "bar": 8,
+      "sym": "D7sus"
+    },
+    {
+      "bar": 9,
+      "sym": "Em7"
+    },
+    {
+      "bar": 10,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 11,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 12,
+      "sym": "D7"
+    },
+    {
+      "bar": 13,
+      "sym": "Em7"
+    },
+    {
+      "bar": 14,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 15,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 16,
+      "sym": "D7"
+    },
+    {
+      "bar": 17,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 18,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 19,
+      "sym": "Am7"
+    },
+    {
+      "bar": 20,
+      "sym": "D7sus"
+    },
+    {
+      "bar": 21,
+      "sym": "Gmaj7"
+    },
+    {
+      "bar": 22,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 23,
+      "sym": "Am7"
+    },
+    {
+      "bar": 24,
+      "sym": "D7sus"
+    },
+    {
+      "bar": 25,
+      "sym": "Em7"
+    },
+    {
+      "bar": 26,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 27,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 28,
+      "sym": "D7"
+    },
+    {
+      "bar": 29,
+      "sym": "Em7"
+    },
+    {
+      "bar": 30,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 31,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 32,
+      "sym": "D7"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "P12",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia pastoralna. Wzór (opis): wg szkieletu 'pas'"
+    },
+    {
+      "role": "orn",
+      "voice": "BELL",
+      "db": -10,
+      "pattern": "",
+      "part": "krople rosy: pojedyncze nuty losowo (G6, D6). Wzór (opis): losowo z seed, 1 nuta na 1-3 takty",
+      "from_bar": 3
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -9,
+      "pattern": "",
+      "part": "pad. Wzór (opis): długie akordy"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -8,
+      "pattern": "",
+      "part": "bas co 2 takty (korzeń). Wzór (opis): takty nieparzyste"
+    }
+  ],
+  "drums": {
+    "kit": "gentle",
+    "levels": {
+      "SHK": -22
+    }
+  },
+  "fx": [],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

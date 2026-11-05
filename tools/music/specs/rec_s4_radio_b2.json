@@ -1,0 +1,228 @@
+{
+  "id": "rec_s4_radio_b2",
+  "kind": "record",
+  "title": "Radio FM · B2 nastrojowy",
+  "role": "ballada radiowa ze strojeniem eteru",
+  "bpm": 77,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 40,
+  "swing": 50,
+  "seed": 37525,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "C"
+    },
+    {
+      "bar": 2,
+      "sym": "Em"
+    },
+    {
+      "bar": 3,
+      "sym": "F"
+    },
+    {
+      "bar": 4,
+      "sym": "G"
+    },
+    {
+      "bar": 5,
+      "sym": "C"
+    },
+    {
+      "bar": 6,
+      "sym": "Em"
+    },
+    {
+      "bar": 7,
+      "sym": "F"
+    },
+    {
+      "bar": 8,
+      "sym": "G"
+    },
+    {
+      "bar": 9,
+      "sym": "Am"
+    },
+    {
+      "bar": 10,
+      "sym": "Em"
+    },
+    {
+      "bar": 11,
+      "sym": "F"
+    },
+    {
+      "bar": 12,
+      "sym": "G"
+    },
+    {
+      "bar": 13,
+      "sym": "Am"
+    },
+    {
+      "bar": 14,
+      "sym": "Em"
+    },
+    {
+      "bar": 15,
+      "sym": "F"
+    },
+    {
+      "bar": 16,
+      "sym": "G"
+    },
+    {
+      "bar": 17,
+      "sym": "C"
+    },
+    {
+      "bar": 18,
+      "sym": "Em"
+    },
+    {
+      "bar": 19,
+      "sym": "F"
+    },
+    {
+      "bar": 20,
+      "sym": "G"
+    },
+    {
+      "bar": 21,
+      "sym": "C"
+    },
+    {
+      "bar": 22,
+      "sym": "Em"
+    },
+    {
+      "bar": 23,
+      "sym": "F"
+    },
+    {
+      "bar": 24,
+      "sym": "G"
+    },
+    {
+      "bar": 25,
+      "sym": "Am"
+    },
+    {
+      "bar": 26,
+      "sym": "Em"
+    },
+    {
+      "bar": 27,
+      "sym": "F"
+    },
+    {
+      "bar": 28,
+      "sym": "G"
+    },
+    {
+      "bar": 29,
+      "sym": "Am"
+    },
+    {
+      "bar": 30,
+      "sym": "Em"
+    },
+    {
+      "bar": 31,
+      "sym": "F"
+    },
+    {
+      "bar": 32,
+      "sym": "G"
+    },
+    {
+      "bar": 33,
+      "sym": "C"
+    },
+    {
+      "bar": 34,
+      "sym": "Em"
+    },
+    {
+      "bar": 35,
+      "sym": "F"
+    },
+    {
+      "bar": 36,
+      "sym": "G"
+    },
+    {
+      "bar": 37,
+      "sym": "C"
+    },
+    {
+      "bar": 38,
+      "sym": "Em"
+    },
+    {
+      "bar": 39,
+      "sym": "F"
+    },
+    {
+      "bar": 40,
+      "sym": "G"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "P50",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia (pusty, radiowy, filtr 6 kHz). Wzór (opis): wg szkieletu 'bal'"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -5,
+      "pattern": "",
+      "part": "bas. Wzór (opis): ćwierćnuty korzeń"
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -10,
+      "pattern": "",
+      "part": "pad. Wzór (opis): długie akordy"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_eter",
+      "db": -42,
+      "pattern": "",
+      "part": "szum eteru (biały HP(5 kHz)) z wolnym „strojeniem” (przesunięcie filtra, LFO 0,03 Hz). Wzór (opis): ciągły",
+      "from_bar": 1
+    }
+  ],
+  "drums": {
+    "kit": "ballad",
+    "levels": {
+      "KICK": -10,
+      "SNR": -12
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.08,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -16,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

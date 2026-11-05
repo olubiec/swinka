@@ -1,0 +1,187 @@
+{
+  "id": "place_room_salon",
+  "kind": "room",
+  "title": "Pokój: salon",
+  "role": "przytulne lo-fi, drewno i lampka",
+  "bpm": 76,
+  "meter": 4,
+  "key": "F",
+  "mode": "major",
+  "bars": 32,
+  "swing": 58,
+  "seed": 43220,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 2,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 3,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 4,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 6,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 7,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 8,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 9,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 10,
+      "sym": "Am7 D7♭9"
+    },
+    {
+      "bar": 11,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 12,
+      "sym": "C13sus C13"
+    },
+    {
+      "bar": 13,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 14,
+      "sym": "Am7 D7♭9"
+    },
+    {
+      "bar": 15,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 16,
+      "sym": "C13sus C13"
+    },
+    {
+      "bar": 17,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 19,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 20,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 23,
+      "sym": "Gm9 C13"
+    },
+    {
+      "bar": 24,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 25,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 26,
+      "sym": "Am7 D7♭9"
+    },
+    {
+      "bar": 27,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 28,
+      "sym": "C13sus C13"
+    },
+    {
+      "bar": 29,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 30,
+      "sym": "Am7 D7♭9"
+    },
+    {
+      "bar": 31,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 32,
+      "sym": "C13sus C13"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "EP",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia (pianino puls 25%). Wzór (opis): 4-nutowe frazy; wg szkieletu 'bal'"
+    },
+    {
+      "role": "chd",
+      "voice": "EP",
+      "db": -6,
+      "pattern": "",
+      "part": "akordy. Wzór (opis): rozłożone"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -5,
+      "pattern": "",
+      "part": "bas. Wzór (opis): korzeń na 1 i 3"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_vinyl_crackle",
+      "db": -42,
+      "pattern": "",
+      "part": "ciepły trzask winylu na wejściu. Wzór (opis): takty 1-4: -34, potem -42",
+      "from_bar": 1
+    }
+  ],
+  "drums": {
+    "kit": "brush",
+    "levels": {
+      "BRSH": -14
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.12,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

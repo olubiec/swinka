@@ -1,0 +1,195 @@
+{
+  "id": "place_garden_day",
+  "kind": "place",
+  "title": "Ogród dzień",
+  "role": "ogród w dzień (w nocy filtr LP 1,8 kHz -6 dB w kodzie)",
+  "bpm": 88,
+  "meter": 4,
+  "key": "G",
+  "mode": "major",
+  "bars": 32,
+  "swing": 58,
+  "seed": 13848,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "G"
+    },
+    {
+      "bar": 2,
+      "sym": "Em7"
+    },
+    {
+      "bar": 3,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 4,
+      "sym": "D7"
+    },
+    {
+      "bar": 5,
+      "sym": "G"
+    },
+    {
+      "bar": 6,
+      "sym": "Em7"
+    },
+    {
+      "bar": 7,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 8,
+      "sym": "D7"
+    },
+    {
+      "bar": 9,
+      "sym": "G"
+    },
+    {
+      "bar": 10,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 11,
+      "sym": "Am7"
+    },
+    {
+      "bar": 12,
+      "sym": "D7sus D7"
+    },
+    {
+      "bar": 13,
+      "sym": "G"
+    },
+    {
+      "bar": 14,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 15,
+      "sym": "Am7"
+    },
+    {
+      "bar": 16,
+      "sym": "D7sus D7"
+    },
+    {
+      "bar": 17,
+      "sym": "G"
+    },
+    {
+      "bar": 18,
+      "sym": "Em7"
+    },
+    {
+      "bar": 19,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 20,
+      "sym": "D7"
+    },
+    {
+      "bar": 21,
+      "sym": "G"
+    },
+    {
+      "bar": 22,
+      "sym": "Em7"
+    },
+    {
+      "bar": 23,
+      "sym": "Cmaj7"
+    },
+    {
+      "bar": 24,
+      "sym": "D7"
+    },
+    {
+      "bar": 25,
+      "sym": "G"
+    },
+    {
+      "bar": 26,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 27,
+      "sym": "Am7"
+    },
+    {
+      "bar": 28,
+      "sym": "D7sus D7"
+    },
+    {
+      "bar": 29,
+      "sym": "G"
+    },
+    {
+      "bar": 30,
+      "sym": "Bm7"
+    },
+    {
+      "bar": 31,
+      "sym": "Am7"
+    },
+    {
+      "bar": 32,
+      "sym": "D7sus D7"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BNJ",
+      "db": -2,
+      "pattern": "",
+      "part": "melodia pentatoniczna G-A-B-D-E. Wzór (opis): szarpnięcie w synkopie („i” 2); wg szkieletu 'syn'"
+    },
+    {
+      "role": "chd",
+      "voice": "BNJ",
+      "db": -8,
+      "pattern": "",
+      "part": "akord rozłożony. Wzór (opis): ósemki"
+    },
+    {
+      "role": "bass",
+      "voice": "TRI",
+      "db": -5,
+      "pattern": "",
+      "part": "bas ćwierćnutami root-fifth. Wzór (opis): korzeń na 1, kwinta na 3"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_birds",
+      "db": -22,
+      "pattern": "",
+      "part": "ptaki. Wzór (opis): ciągłe",
+      "from_bar": 1
+    }
+  ],
+  "drums": {
+    "kit": "offshk",
+    "levels": {
+      "SHK": -18
+    }
+  },
+  "fx": [
+    {
+      "fx": "REV-S",
+      "wet": 0.1,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}
