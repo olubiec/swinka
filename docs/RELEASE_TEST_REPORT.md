@@ -30,6 +30,14 @@ Gałąź: `claude/friendly-hawking-5z7tef`. Kod gry testowany: `ebfdf84` (ta sam
   - Korekta: wcześniejszy wniosek „stan płaski, nie ma wycieku” był zbyt pochopny. Podłoga rośnie monotonicznie w czasie. Różnica między podłogą po GC (1710) a żywymi elementami (560) oznacza, że część odłączonych węzłów jest nadal trzymana w pamięci. To wygląda na realny wyciek powiązany z akcjami gry.
   - Sonda pojedynczych funkcji (`tools/qa/feature-leak-probe.js`, 20 cykli otwierania i zamykania): brak wzrostu na cykl. `pigs` dał +296 węzłów i +19 listenerów zarówno przy 8, jak i przy 20 cyklach, czyli jednorazowe zamontowanie. Wzrost z soaka nie pochodzi więc z samego otwierania ekranów, tylko z interakcji akcji gry (sadzenie, rynek, farma, zakupy). Źródło nie zostało wskazane.
   - Zmiany w narzędziu: `a58156d` (stan gry w próbkach, reguła wyjaśniania przez stan z progiem 5%).
+  - **Ponowny pomiar perf-soak 180 s (ten sam seed 4242, 194 kliknięcia):** FAIL. Podłoga DOM (po GC) 690 → 809, +119; listenery 111 → 163, +52; rAF stały (1 → 1). Stan gry 14543 → 14557 B, płaski. Heap 6,7 → 9,9 MB.
+  - Badanie przyczyny (bez poprawki, bo źródła nie wskazano):
+    - Akcje gry w izolacji (`tools/qa/action-leak-probe.js`, po 60–200 powtórzeń): stepper i zakup na rynku, zakładki rynku, zakładka sprzedaży, pasek miejsc (otwieranie ekranów), grządki i podlewanie na farmie, zakup w sklepie. Każda klasa osobno jest płaska lub oscyluje, bez monotonicznego wzrostu. Mieszana sekwencja tych pięciu akcji też oscyluje (węzły 879–1196, listenery 110–155). Wzrost pojawia się więc dopiero przy pełnej losowej sekwencji soaka.
+    - Migawki sterty (CDP `HeapProfiler`) po 60 s: odłączone węzły to 70–300 elementów. Trzymają je głównie wpisy mapy `id` dokumentu (`TreeOrderedMap`), dwa obiekty `Range` i domknięcia z kontekstem (`btn` w pętli `renderPlacesBar` i w liście jedzenia). Są to ograniczone, nie rosnące zbiory.
+    - Węzły tekstowe w widoku są zależne od stanu: ekrany zostają w DOM po zamknięciu modala (`modalBody` nie jest czyszczony przy zamknięciu), więc podłoga zależy od tego, który ekran był ostatnio otwarty. Nie widać w tym jednego, stale rosnącego elementu.
+    - Znane, lecz niepotwierdzone w tym soaku: `features/vet/feature.js` dodaje `api.onMessage('toast')` przy każdym otwarciu i nie zdejmuje go przy zamknięciu (domknięcia trzymają `container`, nie odłączone węzły).
+  - Nieznane: który element losowej sekwencji powoduje wzrost. Następny krok: migawki sterty w połowie i na końcu dłuższego przebiegu, porównanie węzłów odłączonych z różnicą ich trzymających.
+  - Pozostałe skrypty QA po zmianach (bez zmian w kodzie gry): `web-smoke` OK, `resource-loss` OK, `econ-gate` OK, `economy-sim` exit 0, `feature-leak-probe` exit 0 (bez oceny).
 
 ## Fala 3 (muzyka pominięta)
 - `soak.js` (60 s): 25 kliknięć, zero błędów JS, zero nieoczekiwanych 4xx. Heap 7,8 → 19,9 MB, węzły DOM 275 → 367. Wzrost heapu (7,8 → 19,9 MB) i węzłów (275 → 367) nie został przypisany do przyczyny; w tak krótkim przebiegu nie da się rozstrzygnąć, czy to wyciek. Wymaga dłuższego przebiegu (pozycja 1 poniżej).
@@ -39,7 +47,7 @@ Gałąź: `claude/friendly-hawking-5z7tef`. Kod gry testowany: `ebfdf84` (ta sam
 - `visual-matrix.js`: exit 0; `BUTTON.mp_btn` 20×20 px (cel dotyku poniżej minimum). Element muzyki (poza zakresem).
 
 ## Otwarte pozycje
-1. **perf-soak: FAIL przy 60 s i 180 s.** Podłoga DOM i listenerów rośnie w czasie, a stan gry jest płaski. Odłączone węzły są trzymane w pamięci (podłoga po GC 1710 vs 560 żywych). Źródło nieznane: sondy pojedynczych ekranów są czyste, więc trzeba zbadać akcje gry (sadzenie, rynek, farma, zakupy) osobną sondą. **Blokuje wydanie**, dopóki nie zostanie wyjaśnione.
+1. **perf-soak: FAIL przy 60 s i 180 s (ponownie potwierdzone: podłoga DOM 690 → 809, listenery 111 → 163).** Stan gry jest płaski, a pojedyncze klasy akcji gry nie rosną monotonicznie (`tools/qa/action-leak-probe.js`). Odłączone węzły są ograniczone (70–300 elementów w migawce), więc większość wzrostu to zawartość widoku zależna od ostatnio otwartego ekranu. Nieznane: która część losowej sekwencji daje monotoniczny wzrost. Kolejny krok: dłuższy przebieg z migawkami sterty w połowie i na końcu. **Blokuje wydanie**, dopóki nie zostanie wyjaśnione.
 2. Odtwarzacz muzyki: `.mp_title` (przycięcie) i `mp_btn` (rozmiar) — do poprawy przy wydaniu muzyki.
 3. `paths-test`: 26 znanych błędów HTTP.
 4. Balans ekonomii: profile `exploit`/`smart` powyżej 365 dni; `casual` pierwszy L2 około dnia 90.
