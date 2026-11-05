@@ -2,18 +2,18 @@
   "id": "rec_s1_nocna_b2",
   "kind": "record",
   "title": "Nocna ścieżka · B2 nastrojowy",
-  "role": "blues dorycki, walking bass i blue-note dzwonka",
+  "role": "płyta serii 1; blues dorycki, walking bass i blue-note dzwonka; legenda v7: DORSOUL D, jeden instrument (EP)",
   "bpm": 98,
   "meter": 4,
   "key": "D",
   "mode": "dorian",
-  "bars": 56,
-  "swing": 66,
+  "bars": 40,
+  "swing": 50,
   "seed": 36723,
   "chords": [
     {
       "bar": 1,
-      "sym": "Dm9"
+      "sym": "Dm11"
     },
     {
       "bar": 2,
@@ -21,51 +21,63 @@
     },
     {
       "bar": 3,
-      "sym": "Dm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "G13"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Dm9"
+      "sym": "Dm13"
     },
     {
       "bar": 6,
-      "sym": "G13"
+      "sym": "Em11"
     },
     {
       "bar": 7,
-      "sym": "Dm9"
+      "sym": "A7b13"
     },
     {
       "bar": 8,
-      "sym": "G13"
+      "sym": "G#9#11"
     },
     {
       "bar": 9,
-      "sym": "Em9"
+      "sym": "Gm11"
     },
     {
       "bar": 10,
-      "sym": "A13"
+      "sym": "C13"
     },
     {
       "bar": 11,
-      "sym": "Dm9"
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 12,
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 13,
-      "sym": "Em9"
+      "sym": "Gm13"
     },
     {
       "bar": 14,
-      "sym": "A13"
+      "sym": "Am11"
     },
     {
       "bar": 15,
-      "sym": "Dm9"
+      "sym": "D7b13"
+    },
+    {
+      "bar": 16,
+      "sym": "C#9#11"
+    },
+    {
+      "bar": 17,
+      "sym": "Dm11"
     },
     {
       "bar": 18,
@@ -73,51 +85,63 @@
     },
     {
       "bar": 19,
-      "sym": "Dm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "G13"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 21,
-      "sym": "Dm9"
+      "sym": "Dm13"
     },
     {
       "bar": 22,
-      "sym": "G13"
+      "sym": "Em11"
     },
     {
       "bar": 23,
-      "sym": "Dm9"
+      "sym": "A7b13"
     },
     {
       "bar": 24,
-      "sym": "G13"
+      "sym": "G#9#11"
     },
     {
       "bar": 25,
-      "sym": "Em9"
+      "sym": "Gm11"
     },
     {
       "bar": 26,
-      "sym": "A13"
+      "sym": "C13"
     },
     {
       "bar": 27,
-      "sym": "Dm9"
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 28,
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 29,
-      "sym": "Em9"
+      "sym": "Gm13"
     },
     {
       "bar": 30,
-      "sym": "A13"
+      "sym": "Am11"
     },
     {
       "bar": 31,
-      "sym": "Dm9"
+      "sym": "D7b13"
+    },
+    {
+      "bar": 32,
+      "sym": "C#9#11"
+    },
+    {
+      "bar": 33,
+      "sym": "Dm11"
     },
     {
       "bar": 34,
@@ -125,120 +149,40 @@
     },
     {
       "bar": 35,
-      "sym": "Dm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "G13"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 37,
-      "sym": "Dm9"
+      "sym": "Dm13"
     },
     {
       "bar": 38,
-      "sym": "G13"
+      "sym": "Em11"
     },
     {
       "bar": 39,
-      "sym": "Dm9"
+      "sym": "A7b13"
     },
     {
       "bar": 40,
-      "sym": "G13"
-    },
-    {
-      "bar": 41,
-      "sym": "Em9"
-    },
-    {
-      "bar": 42,
-      "sym": "A13"
-    },
-    {
-      "bar": 43,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 45,
-      "sym": "Em9"
-    },
-    {
-      "bar": 46,
-      "sym": "A13"
-    },
-    {
-      "bar": 47,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 50,
-      "sym": "G13"
-    },
-    {
-      "bar": 51,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 52,
-      "sym": "G13"
-    },
-    {
-      "bar": 53,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 54,
-      "sym": "G13"
-    },
-    {
-      "bar": 55,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 56,
-      "sym": "G13"
+      "sym": "G#9#11"
     }
   ],
   "layers": [
     {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -3,
-      "pattern": "",
-      "part": "walking bass ćwierćnutami (korzeń-kwinta-przejście). Wzór (opis): 4 ćwierćnuty/takt"
-    },
-    {
       "role": "chd",
       "voice": "EP",
-      "db": -6,
-      "pattern": "",
-      "part": "stabsy. Wzór (opis): na „i” 2 i 4"
-    },
-    {
-      "role": "mel",
-      "voice": "P12",
       "db": -3,
-      "pattern": "",
-      "part": "melodia dorycka (D-F-G-A-C). Wzór (opis): wg szkieletu 'syn'"
-    },
-    {
-      "role": "orn",
-      "voice": "BELL",
-      "db": -12,
-      "pattern": "",
-      "part": "dodatkowy głos płyty rzadkiej: blue-note (Ab jako przejście do G), pojedyncza nuta. Wzór (opis): co 8 taktów, 2. połowa taktu",
-      "from_bar": 9
+      "pattern": "chords.rolled(0.20)",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
-  "drums": {
-    "kit": "shuffle",
-    "levels": {
-      "SNR": -12,
-      "KICK": -14,
-      "HAT": -14
-    }
-  },
+  "drums": null,
   "fx": [
     {
       "fx": "TAPE(0.2)",
@@ -250,7 +194,7 @@
     },
     {
       "fx": "REV-S",
-      "wet": 0.12,
+      "wet": 0.18,
       "on": "all"
     },
     {

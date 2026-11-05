@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Specyfikacje płyt serii 2-4 (MW-6, MW-7): 18 płyt x 4 warianty = 72 utwory.
+"""Specyfikacje płyt serii 1-4 (MW-5 seria 1, MW-6, MW-7): 24 płyty x 4 warianty = 96 utworów.
 
 Jeden instrument, jedna warstwa (akordy rozłożone, chords.rolled), pełne progresje z legendy v7
 (legend_progs.SERIES: rodzina + tonika na płytę; forma A/B przez legend_progs.form_future).
@@ -7,7 +7,7 @@ Warianty (a1, a2, b1, b2) różnią się tempem (catalog_records.tempi), rozło�
 i efektami (pogłos, jasność LP, szerokość). Bez perkusji i szumów.
 
 Użycie:
-  python3 tools/music/gen_records_mw67.py          # zapisuje tools/music/specs/rec_s[234]_*.json
+  python3 tools/music/gen_records_mw67.py          # zapisuje tools/music/specs/rec_s[1234]_*.json
 Walidacja: python3 tools/music/validate_spec.py rec_s2_rosa_a1 ...
 """
 import copy
@@ -22,7 +22,7 @@ import gen_prompts as G  # noqa: E402
 import legend_progs as LP  # noqa: E402
 
 SPECS_DIR = os.path.join(HERE, "specs")
-SERIES_IDS = [sid for sid in LP.SERIES if sid.split("_")[0] in ("s2", "s3", "s4")]
+SERIES_IDS = [sid for sid in LP.SERIES if sid.split("_")[0] in ("s1", "s2", "s3", "s4")]
 
 # indeks w tempi (a1, a2, b1, b2), etykieta, przesunięcie roll, przesunięcie pogłosu, rozjaśnienie LP
 VARIANTS = [
@@ -36,6 +36,7 @@ VARIANTS = [
 # efekty serii z katalogu (catalog_records.SERIES[n]["fx"]): kolejność = kolejność łańcucha
 TAPE_WET = {"s3_sen": 0.5, "s4_kaseta": 0.3}
 SERIES_FX = {
+    1: [("TAPE", 0.2), ("LP", 9000), ("REV-S", 0.12), ("VINYL", -46)],
     2: [("CHORUS", 2), ("LP", 6000), ("REV-M", 0.14), ("WIDTH", 1.5)],
     3: [("TAPE", 0.3), ("LP", 8000), ("CHORUS", 2), ("REV-L", 0.25), ("WIDTH", 1.3)],
     4: [("SAT", 2.0), ("SHELF", -2), ("REV-S", 0.08), ("WIDTH", 1.3)],
@@ -125,7 +126,7 @@ def build(sid, variant):
         }],
         "drums": None,
         "fx": fx_chain(sid, series, rev_d, lp_up),
-        "master": {"lufs": -18, "ceiling_dbtp": -1},
+        "master": {"lufs": -16 if series == 1 else -18, "ceiling_dbtp": -1},
         "loop": {"enabled": True},
         "stem_of": None,
     }

@@ -1,0 +1,133 @@
+{
+  "id": "mg_menu",
+  "kind": "minigame",
+  "title": "Menu gry (pełna pętla)",
+  "role": "menu minigier: jedna pętla, legenda v7, jedna warstwa na partię",
+  "bpm": 112,
+  "meter": 4,
+  "key": "G",
+  "mode": "major",
+  "bars": 16,
+  "swing": 58,
+  "seed": 67373,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "G6/9"
+    },
+    {
+      "bar": 2,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 3,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 4,
+      "sym": "D13sus4"
+    },
+    {
+      "bar": 5,
+      "sym": "Em11"
+    },
+    {
+      "bar": 6,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 7,
+      "sym": "Am11"
+    },
+    {
+      "bar": 8,
+      "sym": "Db13"
+    },
+    {
+      "bar": 9,
+      "sym": "G6/9"
+    },
+    {
+      "bar": 10,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 11,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 12,
+      "sym": "D13sus4"
+    },
+    {
+      "bar": 13,
+      "sym": "Em11"
+    },
+    {
+      "bar": 14,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 15,
+      "sym": "Am11"
+    },
+    {
+      "bar": 16,
+      "sym": "Db13"
+    }
+  ],
+  "layers": [
+    {
+      "role": "bass",
+      "voice": "PIZ",
+      "db": -3,
+      "pattern": "bass.root_fifth",
+      "part": "stem base: bas, jeden instrument PIZ (legenda v7, progresja z minigry)",
+      "from_bar": 1,
+      "stem": "base"
+    },
+    {
+      "role": "chd",
+      "voice": "PIZ",
+      "db": -3,
+      "pattern": "chords.offbeat_2_4",
+      "part": "stem rhythm: rytm, jeden instrument PIZ (legenda v7, progresja z minigry)",
+      "from_bar": 1,
+      "stem": "rhythm"
+    },
+    {
+      "role": "mel",
+      "voice": "PIZ",
+      "db": -3,
+      "pattern": "random.pentatonic_walk",
+      "part": "stem lead: prowadzenie, jeden instrument PIZ (legenda v7, progresja z minigry)",
+      "from_bar": 1,
+      "stem": "lead",
+      "register": "G4-G5"
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "SAT(1.5)"
+    },
+    {
+      "fx": "REV-M",
+      "wet": 0.2
+    },
+    {
+      "fx": "LP(6000)"
+    },
+    {
+      "fx": "WIDTH(1.3)"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

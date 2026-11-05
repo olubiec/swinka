@@ -2,13 +2,13 @@
   "id": "rec_s1_marchewka_b1",
   "kind": "record",
   "title": "Marchewkowy beat · B1 energiczny",
-  "role": "chrupanie w hi-hat (otwarty hat na „i” 4)",
+  "role": "płyta serii 1; chrupanie w hi-hat (otwarty hat na „i” 4); legenda v7: BACKDOOR G, jeden instrument (BNJ)",
   "bpm": 91,
   "meter": 4,
   "key": "G",
   "mode": "major",
-  "bars": 36,
-  "swing": 56,
+  "bars": 40,
+  "swing": 50,
   "seed": 29311,
   "chords": [
     {
@@ -17,63 +17,63 @@
     },
     {
       "bar": 2,
-      "sym": "Em9"
+      "sym": "Em11"
     },
     {
       "bar": 3,
-      "sym": "Cmaj9"
+      "sym": "Cm9"
     },
     {
       "bar": 4,
-      "sym": "D13"
+      "sym": "F13"
     },
     {
       "bar": 5,
-      "sym": "Gmaj9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 6,
-      "sym": "Em9"
+      "sym": "Bm11"
     },
     {
       "bar": 7,
-      "sym": "Cmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "D13"
+      "sym": "D13sus4"
     },
     {
       "bar": 9,
-      "sym": "Bm7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 10,
-      "sym": "Em9"
+      "sym": "Am11"
     },
     {
       "bar": 11,
-      "sym": "Am9"
+      "sym": "Fm9"
     },
     {
       "bar": 12,
-      "sym": "D13"
+      "sym": "Bb13"
     },
     {
       "bar": 13,
-      "sym": "Bm7"
+      "sym": "Cmaj13"
     },
     {
       "bar": 14,
-      "sym": "Em9"
+      "sym": "Em11"
     },
     {
       "bar": 15,
-      "sym": "Am9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "D13"
+      "sym": "G13sus4"
     },
     {
       "bar": 17,
@@ -81,63 +81,63 @@
     },
     {
       "bar": 18,
-      "sym": "Em9"
+      "sym": "Em11"
     },
     {
       "bar": 19,
-      "sym": "Cmaj9"
+      "sym": "Cm9"
     },
     {
       "bar": 20,
-      "sym": "D13"
+      "sym": "F13"
     },
     {
       "bar": 21,
-      "sym": "Gmaj9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 22,
-      "sym": "Em9"
+      "sym": "Bm11"
     },
     {
       "bar": 23,
-      "sym": "Cmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "D13"
+      "sym": "D13sus4"
     },
     {
       "bar": 25,
-      "sym": "Bm7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 26,
-      "sym": "Em9"
+      "sym": "Am11"
     },
     {
       "bar": 27,
-      "sym": "Am9"
+      "sym": "Fm9"
     },
     {
       "bar": 28,
-      "sym": "D13"
+      "sym": "Bb13"
     },
     {
       "bar": 29,
-      "sym": "Bm7"
+      "sym": "Cmaj13"
     },
     {
       "bar": 30,
-      "sym": "Em9"
+      "sym": "Em11"
     },
     {
       "bar": 31,
-      "sym": "Am9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "D13"
+      "sym": "G13sus4"
     },
     {
       "bar": 33,
@@ -145,55 +145,51 @@
     },
     {
       "bar": 34,
-      "sym": "Em9"
+      "sym": "Em11"
     },
     {
       "bar": 35,
-      "sym": "Cmaj9"
+      "sym": "Cm9"
     },
     {
       "bar": 36,
-      "sym": "D13"
+      "sym": "F13"
+    },
+    {
+      "bar": 37,
+      "sym": "Gmaj13"
+    },
+    {
+      "bar": 38,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 39,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 40,
+      "sym": "D13sus4"
     }
   ],
   "layers": [
     {
-      "role": "mel",
-      "voice": "P12",
-      "db": -3,
-      "pattern": "",
-      "part": "frazy trzynutowe wskazujące w górę (G4 A4 B4, A4 B4 D5). Wzór (opis): wg szkieletu 'std'"
-    },
-    {
-      "role": "bass",
-      "voice": "PIZ",
-      "db": -3,
-      "pattern": "",
-      "part": "bas szarpany synkopowany. Wzór (opis): kroki 1, „i” 2, 3, „i” 4 (siatka 16: 1, 7, 9, 15)"
-    },
-    {
       "role": "chd",
-      "voice": "EP",
-      "db": -8,
-      "pattern": "",
-      "part": "akordy. Wzór (opis): na „i” 2 i 4"
+      "voice": "BNJ",
+      "db": -3,
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
-  "drums": {
-    "kit": "lofi",
-    "levels": {
-      "KICK": -12,
-      "SNR": -12,
-      "HAT": -14
-    }
-  },
+  "drums": null,
   "fx": [
     {
       "fx": "TAPE(0.2)",
       "on": "all"
     },
     {
-      "fx": "LP(9000)",
+      "fx": "LP(10500)",
       "on": "all"
     },
     {

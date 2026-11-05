@@ -2,183 +2,155 @@
   "id": "rec_s1_poranek_a1",
   "kind": "record",
   "title": "Poranek w sianie · A1 podpisowy",
-  "role": "poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny",
+  "role": "płyta serii 1; poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny; legenda v7: LYD C, jeden instrument (HARP)",
   "bpm": 78,
   "meter": 4,
   "key": "C",
   "mode": "major",
   "bars": 32,
-  "swing": 58,
+  "swing": 50,
   "seed": 9247,
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Am9"
+      "sym": "Dmaj13"
     },
     {
       "bar": 3,
-      "sym": "Dm9"
+      "sym": "Em11"
     },
     {
       "bar": 4,
-      "sym": "G13"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Cmaj9"
+      "sym": "Cmaj7/E"
     },
     {
       "bar": 6,
-      "sym": "Am9"
+      "sym": "Dm11/G"
     },
     {
       "bar": 7,
-      "sym": "Dm9"
+      "sym": "Cmaj13"
     },
     {
       "bar": 8,
-      "sym": "G13"
+      "sym": "G6/9"
     },
     {
       "bar": 9,
-      "sym": "Fmaj9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Em7"
+      "sym": "Gmaj13"
     },
     {
       "bar": 11,
-      "sym": "Dm9"
+      "sym": "Am11"
     },
     {
       "bar": 12,
-      "sym": "G13sus G13"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 13,
-      "sym": "Fmaj9"
+      "sym": "Fmaj7/A"
     },
     {
       "bar": 14,
-      "sym": "Em7"
+      "sym": "Gm11/C"
     },
     {
       "bar": 15,
-      "sym": "Dm9"
+      "sym": "Fmaj13"
     },
     {
       "bar": 16,
-      "sym": "G13sus G13"
+      "sym": "C6/9"
     },
     {
       "bar": 17,
-      "sym": "Cmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Am9"
+      "sym": "Dmaj13"
     },
     {
       "bar": 19,
-      "sym": "Dm9"
+      "sym": "Em11"
     },
     {
       "bar": 20,
-      "sym": "G13"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 21,
-      "sym": "Cmaj9"
+      "sym": "Cmaj7/E"
     },
     {
       "bar": 22,
-      "sym": "Am9"
+      "sym": "Dm11/G"
     },
     {
       "bar": 23,
-      "sym": "Dm9"
+      "sym": "Cmaj13"
     },
     {
       "bar": 24,
-      "sym": "G13"
+      "sym": "G6/9"
     },
     {
       "bar": 25,
-      "sym": "Fmaj9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 26,
-      "sym": "Em7"
+      "sym": "Gmaj13"
     },
     {
       "bar": 27,
-      "sym": "Dm9"
+      "sym": "Am11"
     },
     {
       "bar": 28,
-      "sym": "G13sus G13"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 29,
-      "sym": "Fmaj9"
+      "sym": "Fmaj7/A"
     },
     {
       "bar": 30,
-      "sym": "Em7"
+      "sym": "Gm11/C"
     },
     {
       "bar": 31,
-      "sym": "Dm9"
+      "sym": "Fmaj13"
     },
     {
       "bar": 32,
-      "sym": "G13sus G13"
+      "sym": "C6/9"
     }
   ],
   "layers": [
     {
-      "role": "mel",
-      "voice": "P12",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia, dłuższe nuty pentatoniczne C-D-E-G-A. Wzór (opis): wg szkieletu 'pas'"
-    },
-    {
       "role": "chd",
-      "voice": "EP",
-      "db": -6,
-      "pattern": "",
-      "part": "akordy na „i” 2 i 4 (kroki 7 i 15 siatki 16). Wzór (opis): krótkie, zanik 600 ms"
-    },
-    {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -4,
-      "pattern": "",
-      "part": "wolny puls: korzeń na 1, kwinta na 3. Wzór (opis): półnuty"
-    },
-    {
-      "role": "noise",
-      "voice": "noise_birds",
-      "db": -24,
-      "pattern": "",
-      "part": "ćwierkanie w tle. Wzór (opis): pętla przez cały utwór",
-      "from_bar": 1
+      "voice": "HARP",
+      "db": -3,
+      "pattern": "chords.rolled(0.25)",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
-  "drums": {
-    "kit": "lofi",
-    "levels": {
-      "KICK": -12,
-      "HAT": -16,
-      "SNR": -14
-    }
-  },
+  "drums": null,
   "fx": [
     {
       "fx": "TAPE(0.2)",

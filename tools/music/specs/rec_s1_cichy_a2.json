@@ -2,7 +2,7 @@
   "id": "rec_s1_cichy_a2",
   "kind": "record",
   "title": "Cichy kąt · A2 spokojny",
-  "role": "najprostsza płyta: sama pozytywka",
+  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: PEDAL C, jeden instrument (BOX)",
   "bpm": 54,
   "meter": 4,
   "key": "C",
@@ -13,123 +13,109 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 2,
-      "sym": "Am7"
+      "sym": "D/C"
     },
     {
       "bar": 3,
-      "sym": "Dm7"
+      "sym": "Em11/C"
     },
     {
       "bar": 4,
-      "sym": "G7"
+      "sym": "Fmaj7#11/C"
     },
     {
       "bar": 5,
-      "sym": "Cmaj7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 6,
-      "sym": "Am7"
+      "sym": "Bb/C"
     },
     {
       "bar": 7,
-      "sym": "Dm7"
+      "sym": "Dm11/C"
     },
     {
       "bar": 8,
-      "sym": "G7"
+      "sym": "G/C"
     },
     {
       "bar": 9,
-      "sym": "Cmaj7"
+      "sym": "Fmaj9"
     },
     {
       "bar": 10,
-      "sym": "Am7"
+      "sym": "G/F"
     },
     {
       "bar": 11,
-      "sym": "Dm7"
+      "sym": "Am11/F"
     },
     {
       "bar": 12,
-      "sym": "G7"
+      "sym": "Bbmaj7#11/F"
     },
     {
       "bar": 13,
-      "sym": "Cmaj7"
+      "sym": "Fmaj9"
     },
     {
       "bar": 14,
-      "sym": "Am7"
+      "sym": "Eb/F"
     },
     {
       "bar": 15,
-      "sym": "Dm7"
+      "sym": "Gm11/F"
     },
     {
       "bar": 16,
-      "sym": "G7"
+      "sym": "C/F"
     },
     {
       "bar": 17,
-      "sym": "Cmaj7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 18,
-      "sym": "Am7"
+      "sym": "D/C"
     },
     {
       "bar": 19,
-      "sym": "Dm7"
+      "sym": "Em11/C"
     },
     {
       "bar": 20,
-      "sym": "G7"
+      "sym": "Fmaj7#11/C"
     },
     {
       "bar": 21,
-      "sym": "Cmaj7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 22,
-      "sym": "Am7"
+      "sym": "Bb/C"
     },
     {
       "bar": 23,
-      "sym": "Dm7"
+      "sym": "Dm11/C"
     },
     {
       "bar": 24,
-      "sym": "G7"
+      "sym": "G/C"
     }
   ],
   "layers": [
     {
-      "role": "mel",
-      "voice": "BOX",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia. Wzór (opis): wg szkieletu 'pas'"
-    },
-    {
       "role": "chd",
       "voice": "BOX",
-      "db": -6,
-      "pattern": "",
-      "part": "akord rozłożony (arpeggio w górę, ósemki). Wzór (opis): jedna nuta na ćwierćnutę"
-    },
-    {
-      "role": "noise",
-      "voice": "noise_room_tone",
-      "db": -40,
-      "pattern": "",
-      "part": "cisza pokoju. Wzór (opis): ciągły",
-      "from_bar": 1
+      "db": -3,
+      "pattern": "chords.rolled(0.35)",
+      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
   "drums": null,
@@ -144,7 +130,7 @@
     },
     {
       "fx": "REV-S",
-      "wet": 0.12,
+      "wet": 0.16,
       "on": "all"
     },
     {
