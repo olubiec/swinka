@@ -519,11 +519,14 @@ namespace Cuy
             string idxFile = Path.Combine(featuresDir, "index.json");
             if (!File.Exists(idxFile)) throw new Exception("features/index.json missing");
             var ids = JArray.Parse(File.ReadAllText(idxFile)).Select(t => (string)t).ToList();
-            var dirs = Directory.GetDirectories(featuresDir).Select(Path.GetFileName).ToList();
-            foreach (var d in dirs)
+            // Folders without feature.js (e.g. music, the player module) are not Home features and are not listed in index.json.
+            var dirs = Directory.GetDirectories(featuresDir)
+                .Where(d => File.Exists(Path.Combine(d, "feature.js")))
+                .Select(Path.GetFileName).ToList();
+            foreach (var id in ids)
             {
-                if (!File.Exists(Path.Combine(featuresDir, d, "feature.js")))
-                    throw new Exception("missing feature.js in " + d);
+                if (!dirs.Contains(id))
+                    throw new Exception("missing feature.js in " + id);
             }
             if (ids.Count != dirs.Count || ids.Except(dirs).Any())
                 throw new Exception("feature ids mismatch between index.json and directories");
@@ -596,7 +599,7 @@ namespace Cuy
 
         private static void CheckBreedSheets()
         {
-            string[] breeds = { "smooth", "chubby", "skinny", "rosette", "peruvian" };
+            string[] breeds = { "smooth_chubby", "smooth_lean", "teddy_normal", "teddy_chubby", "rosette_normal", "rosette_lean", "peruvian_normal" };
             string[] stages = { "baby", "junior", "adult", "senior", "legend" };
             foreach (var breed in breeds)
             {
