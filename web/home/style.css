@@ -138,7 +138,10 @@ body.webview-mode .game-device {
 /* Top title and status bar (casing bar) */
 .game-header {
   background: var(--c-wood-dark);
-  border-bottom: 3px solid var(--c-contour-dark);
+  border-style: solid;
+  border-width: 12px 0;
+  border-color: transparent;
+  border-image: var(--ui-header_banner) 12 0 fill / 12px 0;
   padding: 6px 10px;
   display: flex;
   align-items: center;
@@ -538,7 +541,7 @@ body.webview-mode .game-device {
   background: none;
   border-style: solid;
   border-width: 6px;
-  border-image: url('../../assets/ui/btn_normal.png') 6 fill / 6px stretch;
+  border-image: var(--ui-btn_normal) 6 fill / 6px;
   border-radius: 0;
   padding: 8px 4px 6px;
   display: flex;
@@ -559,18 +562,20 @@ body.webview-mode .game-device {
 
 .game-btn:hover {
   filter: brightness(1.08);
+  border-image-source: var(--ui-btn_hover);
 }
 
 .game-btn:active {
   transform: translateY(2px);
-  border-image-source: url('../../assets/ui/btn_pressed.png');
+  border-image-source: var(--ui-btn_pressed);
 }
 
 /* Colour accents for the buttons */
 .btn-feed {
-  border-image-source: url('../../assets/ui/btn_green.png');
+  border-image-source: var(--ui-btn_green);
   color: var(--ui-linen-3);
 }
+.btn-feed:active { border-image-source: var(--ui-btn_green_pressed); }
 
 .hay-rack-mini {
   width: 36px;
@@ -593,23 +598,27 @@ body.webview-mode .game-device {
   background: var(--c-red);
 }
 .btn-clean {
-  border-image-source: url('../../assets/ui/btn_blue.png');
+  border-image-source: var(--ui-btn_blue);
   color: var(--ui-linen-3);
 }
+.btn-clean:active { border-image-source: var(--ui-btn_blue_pressed); }
 .btn-call {
-  border-image-source: url('../../assets/ui/btn_normal.png');
+  border-image-source: var(--ui-btn_normal);
 }
 .btn-shop {
-  border-image-source: url('../../assets/ui/btn_green.png');
+  border-image-source: var(--ui-btn_green);
   color: var(--ui-linen-3);
 }
+.btn-shop:active { border-image-source: var(--ui-btn_green_pressed); }
 .btn-minigames {
-  border-image-source: url('../../assets/ui/btn_rose.png');
+  border-image-source: var(--ui-btn_rose);
 }
+.btn-minigames:active { border-image-source: var(--ui-btn_rose_pressed); }
 .btn-album {
-  border-image-source: url('../../assets/ui/btn_blue.png');
+  border-image-source: var(--ui-btn_blue);
   color: var(--ui-linen-3);
 }
+.btn-album:active { border-image-source: var(--ui-btn_blue_pressed); }
 
 /* ==========================================================================
    SLIDE-OUT FEEDING PANEL
@@ -677,7 +686,8 @@ body.webview-mode .game-device {
 
 .food-item-btn {
   background: var(--c-cream);
-  border: 2px solid var(--c-contour-dark);
+  border: 6px solid transparent;
+  border-image: var(--ui-slot) 6 fill / 6px;
   border-radius: 6px;
   padding: 6px 2px 4px;
   display: flex;
@@ -693,6 +703,7 @@ body.webview-mode .game-device {
 
 .food-item-btn:hover {
   background: var(--c-orange-light);
+  border-image-source: var(--ui-slot_on);
 }
 
 .food-item-btn:active {
@@ -712,7 +723,7 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
-  --icon-count: 278; /* total icons */
+  --icon-count: 316; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
@@ -755,7 +766,46 @@ body.webview-mode .game-device {
 .icon-need-cleanliness { --i: 22; }
 .icon-need-teeth { --i: 23; }
 .icon-pig-head { --i: 24; }
-/* C2/C3/UI-2: --icon-count = 278 */
+/* C2/C3/UI-2/M4: --icon-count = 316 */
+.icon-m-player-turntable { --i: 278; }
+.icon-m-player-portable { --i: 279; }
+.icon-m-player-gramophone { --i: 280; }
+.icon-m-player-cassette { --i: 281; }
+.icon-m-player-jukebox { --i: 282; }
+.icon-m-player-boombox { --i: 283; }
+.icon-x-next { --i: 284; }
+.icon-x-prev { --i: 285; }
+.icon-x-shuffle { --i: 286; }
+.icon-x-volume { --i: 287; }
+.icon-x-repeat { --i: 288; }
+.icon-x-scratch { --i: 289; }
+.icon-x-dance { --i: 290; }
+.icon-x-radio { --i: 291; }
+.icon-rec-s1-poranek { --i: 292; }
+.icon-rec-s1-marchewka { --i: 293; }
+.icon-rec-s1-deszcz { --i: 294; }
+.icon-rec-s1-kubek { --i: 295; }
+.icon-rec-s1-nocna { --i: 296; }
+.icon-rec-s1-cichy { --i: 297; }
+.icon-rec-s2-rosa { --i: 298; }
+.icon-rec-s2-pietruszka { --i: 299; }
+.icon-rec-s2-pszczoly { --i: 300; }
+.icon-rec-s2-wiatr { --i: 301; }
+.icon-rec-s2-dynia { --i: 302; }
+.icon-rec-s2-jablka { --i: 303; }
+.icon-rec-s3-ksiezyc { --i: 304; }
+.icon-rec-s3-swietliki { --i: 305; }
+.icon-rec-s3-sowa { --i: 306; }
+.icon-rec-s3-kolysanka { --i: 307; }
+.icon-rec-s3-tupot { --i: 308; }
+.icon-rec-s3-sen { --i: 309; }
+.icon-rec-s4-disco { --i: 310; }
+.icon-rec-s4-synth { --i: 311; }
+.icon-rec-s4-kaseta { --i: 312; }
+.icon-rec-s4-radio { --i: 313; }
+.icon-rec-s4-arcade { --i: 314; }
+.icon-rec-s4-taniec { --i: 315; }
+.icon-pig { --i: 24; } /* alias: icon-pig -> pig_head (index 24) */
 .icon-sofa-cosy { --i: 174; }
 .icon-armchair { --i: 175; }
 .icon-bookshelf { --i: 176; }
@@ -1041,7 +1091,7 @@ body.webview-mode .game-device {
   background: var(--c-cream);
   border-style: solid;
   border-width: 8px;
-  border-image: url('../../assets/ui/panel_wood.png') 8 / 8px stretch;
+  border-image: var(--ui-panel_wood) 8 / 8px;
   border-radius: 0;
   width: 100%;
   max-width: 380px;
@@ -1062,13 +1112,19 @@ body.webview-mode .game-device {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 3px solid var(--c-contour-dark);
+  border: 5px solid var(--c-wood-dark);
+  border-image: var(--ui-bar_wood) 5 fill / 5px;
   font-size: 15px;
   font-weight: 700;
 }
 
+.modal-close-btn:active { background-image: var(--ui-close_btn_pressed); }
+
 .modal-close-btn {
-  background: url('../../assets/ui/close_btn.png') center / 16px 16px no-repeat;
+  background-image: var(--ui-close_btn);
+  background-position: center;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
   border: 0;
   color: var(--c-white);
   font-family: var(--font-pixel);
@@ -1088,6 +1144,9 @@ body.webview-mode .game-device {
 
 .modal-body {
   padding: 12px;
+  background: var(--c-cream);
+  border: 0;
+  border-image: var(--ui-panel_paper) 8 fill / 8px;
   font-size: 13px;
   line-height: 1.4;
   display: flex;
@@ -1286,8 +1345,9 @@ body.webview-mode .game-device {
   line-height: 1.4;
   padding: 24px 8px;
   background: var(--c-white);
-  border: 3px solid var(--c-contour-dark);
-  border-radius: 8px;
+  border: 5px solid transparent;
+  border-image: var(--ui-tooltip) 5 fill / 5px;
+  border-radius: 0;
 }
 
 .letter-text {
@@ -1404,19 +1464,45 @@ body.webview-mode .game-device {
   --ui-sep_v: initial;
   --ui-header_banner: initial;
   --ui-shop_panel: initial;
-  --ui-tab_on: initial;
+  --ui-btn_green: initial;
+  --ui-btn_green_pressed: initial;
+  --ui-btn_blue: initial;
+  --ui-btn_blue_pressed: initial;
+  --ui-btn_rose: initial;
+  --ui-btn_rose_pressed: initial;
+  --ui-btn_red: initial;
+  --ui-btn_red_pressed: initial;
   --ui-tab_off: initial;
-  --ui-badge: initial;
-  --ui-card: initial;
-  --ui-field: initial;
+  --ui-tab_on: initial;
+  --ui-close_btn: initial;
+  --ui-close_btn_pressed: initial;
   --ui-bar_groove: initial;
   --ui-bar_fill_high: initial;
   --ui-bar_fill_mid: initial;
   --ui-bar_fill_low: initial;
-  --ui-toggle_on: initial;
+  --ui-badge: initial;
+  --ui-field: initial;
+  --ui-card: initial;
+  --ui-tooltip: initial;
+  --ui-slot: initial;
+  --ui-slot_on: initial;
   --ui-toggle_off: initial;
-  --ui-dot_full: initial;
+  --ui-toggle_on: initial;
   --ui-dot_empty: initial;
+  --ui-dot_full: initial;
+  --ui-bar_wood: initial;
+  --ui-mp_panel: initial;
+  --ui-mp_display: initial;
+  --ui-mp_btn: initial;
+  --ui-mp_btn_pressed: initial;
+  --ui-mp_knob: initial;
+  --ui-mp_thumb: initial;
+  --ui-shelf_plank: initial;
+  --ui-badge_wear_mint: initial;
+  --ui-badge_wear_worn: initial;
+  --ui-badge_wear_scratched: initial;
+  --ui-badge_wear_cracked: initial;
+  --ui-badge_wear_warped: initial;
 }
 
 .ui-panel-paper {

@@ -13,6 +13,9 @@
     wallpaper_cream: '#fffdf8', wallpaper_mint: '#cfeedb', wallpaper_lilac: '#e2d6f0'
   };
 
+  // Floor and wall swatches show the tile texture (assets/world/tiles); the colour above is the fallback while it loads or when the file is missing.
+  const TILE_BASE = window.chrome && window.chrome.webview ? 'https://cuy.assets/' : '../../assets/';
+
   let selectedUid = null;  // set from the room-select event that feature.js dispatches
   let mounted = null;      // { container, ctx } of the latest mount
 
@@ -99,7 +102,7 @@
     const buttons = ids.map((id) => {
       const on = id === current;
       return `<button type="button" class="rc-skin${on ? ' is-current' : ''}" data-action="skin" data-slot="${slot}" data-item="${esc(id)}" aria-pressed="${on}" aria-label="${esc(skinName(id))}">` +
-        `<span class="rc-chip rc-chip-skin" style="background:${esc(SKIN_COLORS[id] || '#dddddd')}" aria-hidden="true"></span>` +
+        `<span class="rc-chip rc-chip-skin" style="background-color:${esc(SKIN_COLORS[id] || '#dddddd')};background-image:url('${TILE_BASE}world/tiles/${esc(id)}.png');background-size:100% 100%;image-rendering:pixelated" aria-hidden="true"></span>` +
         `<span class="rc-price">${esc(skinName(id))}</span></button>`;
     }).join('');
     return `<div class="rc-swatches" role="group" aria-label="${slot === 'floor' ? 'Floors' : 'Wallpapers'}">${buttons}</div>`;

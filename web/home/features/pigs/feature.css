@@ -271,6 +271,8 @@
   color: var(--c-white);
   font-size: 9px;
   padding: 2px 5px;
+  border: 3px solid transparent;
+  border-image: var(--ui-btn_green) 6 fill / 3px;
 }
 
 .btn-confirm-no {
@@ -278,6 +280,8 @@
   color: var(--c-white);
   font-size: 9px;
   padding: 2px 5px;
+  border: 3px solid transparent;
+  border-image: var(--ui-btn_red) 6 fill / 3px;
 }
 
 /* Offers styling */

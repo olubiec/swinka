@@ -80,6 +80,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 12px;
+  padding: 8px;
+  border: 8px solid transparent;
+  border-image: var(--ui-shop_panel) 8 18 8 8 fill / 8px;
 }
 
 .feature-shop .feature-shop-item {

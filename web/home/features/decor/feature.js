@@ -49,6 +49,19 @@
     return sp.img.complete && sp.img.naturalWidth > 0 ? sp : null;
   }
 
+  // Wall and floor textures: assets/world/tiles/<item id>.png (16x16, repeated). Null until loaded or when the file is missing; the flat drawing below is the fallback.
+  const tileCache = {};
+  function tilePattern(ctx, id) {
+    if (!tileCache[id]) {
+      const img = new Image();
+      img.src = ASSETS + 'world/tiles/' + id + '.png';
+      tileCache[id] = { img, pat: null };
+    }
+    const t = tileCache[id];
+    if (!t.pat && t.img.complete && t.img.naturalWidth > 0) t.pat = ctx.createPattern(t.img, 'repeat');
+    return t.pat;
+  }
+
   function getLook(itemId) {
     if (currentState && currentState.shop && currentState.shop.items) {
       const it = currentState.shop.items.find(i => i.id === itemId);
@@ -64,11 +77,14 @@
       const eq = currentState?.decor?.equipped?.wallpaper;
       if (!eq) return;
       scene.skipDefaultWall = true;
-      const look = getLook(eq);
-      if (!look) return;
-
       const width = 240;
       const height = 96;
+
+      const wallTex = tilePattern(ctx, eq);
+      if (wallTex) { ctx.fillStyle = wallTex; ctx.fillRect(0, 0, width, height); return; }
+
+      const look = getLook(eq);
+      if (!look) return;
 
       if (look.pattern === 'stripes') {
         ctx.fillStyle = look.color1 || '#fff';
@@ -130,12 +146,15 @@
       const eq = currentState?.decor?.equipped?.floor;
       if (!eq) return;
       scene.skipDefaultFloor = true;
-      const look = getLook(eq);
-      if (!look) return;
-
       const width = 240;
       const startY = 96;
       const height = 130 - startY;
+
+      const floorTex = tilePattern(ctx, eq);
+      if (floorTex) { ctx.fillStyle = floorTex; ctx.fillRect(0, startY, width, height); return; }
+
+      const look = getLook(eq);
+      if (!look) return;
 
       if (look.type === 'wood_light') {
         ctx.fillStyle = '#d4ae7f';
