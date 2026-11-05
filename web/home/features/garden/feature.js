@@ -193,13 +193,16 @@
         ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r);
       }
       ctx.restore();
-      // Sprite strip: frames side by side, frame width = the item's atlas width, anchored like the item
-      const sheet = typeof a.file === 'string' ? loadImage(oneX(a.file)) : null;
+      // Sprite strip: frames side by side, frame width = the item's atlas width, anchored like the item.
+      // A lit lamp (evening, night or toggled on) shows its *_on strip; otherwise its one-frame base sprite.
+      const onSheet = a.on && typeof a.on_file === 'string' ? loadImage(oneX(a.on_file)) : null;
+      const useOn = !!(onSheet && onSheet.ok);
+      const sheet = useOn ? onSheet : (typeof a.file === 'string' ? loadImage(oneX(a.file)) : null);
       const entry = atlas && atlas.items ? atlas.items[it.itemId] : null;
       const sw = entry && entry.size ? entry.size[0] : (sheet && sheet.ok ? sheet.img.naturalWidth : 0);
       if (sheet && sheet.ok && sw > 0) {
         const sh = sheet.img.naturalHeight;
-        const frames = a.frames || Math.max(1, Math.floor(sheet.img.naturalWidth / sw));
+        const frames = useOn ? (a.frames || 1) : Math.max(1, Math.floor(sheet.img.naturalWidth / sw));
         const idx = Math.floor((now / 1000) * (a.fps || 1)) % frames;
         const dw = sw * k;
         const dh = sh * k;
