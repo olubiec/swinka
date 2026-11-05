@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -8,6 +9,8 @@ namespace Cuy.Core.Physics
     /// </summary>
     public sealed class DragVelocity
     {
+        /// <summary>Largest toss force per axis, in pixels per 30 ms.</summary>
+        public const float MaxForce = 120f;
         private struct Sample { public double Time, X, Y; }
         private readonly List<Sample> samples = new List<Sample>();
         public void Reset(double x, double y, double now)
@@ -26,7 +29,11 @@ namespace Cuy.Core.Physics
             Sample first = samples[0], last = samples[samples.Count - 1];
             double elapsed = last.Time - first.Time;
             if (elapsed < 8 || now - last.Time > 80) return Vector2.Zero;
-            return new Vector2((float)((last.X - first.X) / elapsed * 30), (float)((last.Y - first.Y) / elapsed * 30));
+            return new Vector2(ClampForce((float)((last.X - first.X) / elapsed * 30)), ClampForce((float)((last.Y - first.Y) / elapsed * 30)));
+        }
+        private static float ClampForce(float value)
+        {
+            return Math.Max(-MaxForce, Math.Min(MaxForce, value));
         }
     }
 }
