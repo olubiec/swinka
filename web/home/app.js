@@ -725,6 +725,7 @@
           console.error('[feature ' + id + ']', err);
         }
       }
+      if (window.CuyPlaceMusic) window.CuyPlaceMusic.enterFeature(id, arg);
       this.currentFeatureId = id;
     },
     closeFeature() {

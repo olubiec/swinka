@@ -359,8 +359,13 @@
       this.activeGameId = gameId;
       this.currentScore = 0;
       this.isPaused = false;
-      this.musicTrack = this.musicTrack === 'games_1' ? 'games_2' : 'games_1';
-      if (window.CuyMusic) window.CuyMusic.play(this.musicTrack);
+      // Per-game track from gameDef.musicTrack; the default toggles games_1/games_2 only for games that set none.
+      let track = gameDef.musicTrack;
+      if (!track) {
+        this.musicTrack = this.musicTrack === 'games_1' ? 'games_2' : 'games_1';
+        track = this.musicTrack;
+      }
+      if (window.CuyMusic) window.CuyMusic.play(track);
 
       const container = customConfig.container || this.rootElement || document.getElementById('modalBody');
       if (!container) {

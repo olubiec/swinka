@@ -307,6 +307,7 @@
     name: 'Veggie Memory',
     icon: 'game-veggie-memory',
     desc: 'Calm card-matching pairs. No rush, exercise your memory!',
+    musicTrack: 'calm',
     start: start
   });
 

@@ -17,7 +17,7 @@
     "cracked": "s1_poranek_cracked.png",
     "warped": "s1_poranek_warped.png"
    },
-   "tracks": 0
+   "tracks": "calm"
   },
   {
    "id": "s1_marchewka",
@@ -34,7 +34,7 @@
     "cracked": "s1_marchewka_cracked.png",
     "warped": "s1_marchewka_warped.png"
    },
-   "tracks": 0
+   "tracks": "calm"
   },
   {
    "id": "s1_deszcz",
@@ -51,7 +51,7 @@
     "cracked": "s1_deszcz_cracked.png",
     "warped": "s1_deszcz_warped.png"
    },
-   "tracks": 0
+   "tracks": "calm"
   },
   {
    "id": "s1_kubek",
@@ -68,7 +68,7 @@
     "cracked": "s1_kubek_cracked.png",
     "warped": "s1_kubek_warped.png"
    },
-   "tracks": 0
+   "tracks": "calm"
   },
   {
    "id": "s1_nocna",
@@ -85,7 +85,7 @@
     "cracked": "s1_nocna_cracked.png",
     "warped": "s1_nocna_warped.png"
    },
-   "tracks": 0
+   "tracks": "calm"
   },
   {
    "id": "s1_cichy",
@@ -102,7 +102,7 @@
     "cracked": "s1_cichy_cracked.png",
     "warped": "s1_cichy_warped.png"
    },
-   "tracks": 0
+   "tracks": "calm"
   },
   {
    "id": "s2_rosa",
@@ -119,7 +119,7 @@
     "cracked": "s2_rosa_cracked.png",
     "warped": "s2_rosa_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_1"
   },
   {
    "id": "s2_pietruszka",
@@ -136,7 +136,7 @@
     "cracked": "s2_pietruszka_cracked.png",
     "warped": "s2_pietruszka_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_1"
   },
   {
    "id": "s2_pszczoly",
@@ -153,7 +153,7 @@
     "cracked": "s2_pszczoly_cracked.png",
     "warped": "s2_pszczoly_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_1"
   },
   {
    "id": "s2_wiatr",
@@ -170,7 +170,7 @@
     "cracked": "s2_wiatr_cracked.png",
     "warped": "s2_wiatr_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_1"
   },
   {
    "id": "s2_dynia",
@@ -187,7 +187,7 @@
     "cracked": "s2_dynia_cracked.png",
     "warped": "s2_dynia_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_1"
   },
   {
    "id": "s2_jablka",
@@ -204,7 +204,7 @@
     "cracked": "s2_jablka_cracked.png",
     "warped": "s2_jablka_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_1"
   },
   {
    "id": "s3_ksiezyc",
@@ -221,7 +221,7 @@
     "cracked": "s3_ksiezyc_cracked.png",
     "warped": "s3_ksiezyc_warped.png"
    },
-   "tracks": 0
+   "tracks": "menu"
   },
   {
    "id": "s3_swietliki",
@@ -238,7 +238,7 @@
     "cracked": "s3_swietliki_cracked.png",
     "warped": "s3_swietliki_warped.png"
    },
-   "tracks": 0
+   "tracks": "menu"
   },
   {
    "id": "s3_sowa",
@@ -255,7 +255,7 @@
     "cracked": "s3_sowa_cracked.png",
     "warped": "s3_sowa_warped.png"
    },
-   "tracks": 0
+   "tracks": "menu"
   },
   {
    "id": "s3_kolysanka",
@@ -272,7 +272,7 @@
     "cracked": "s3_kolysanka_cracked.png",
     "warped": "s3_kolysanka_warped.png"
    },
-   "tracks": 0
+   "tracks": "menu"
   },
   {
    "id": "s3_tupot",
@@ -289,7 +289,7 @@
     "cracked": "s3_tupot_cracked.png",
     "warped": "s3_tupot_warped.png"
    },
-   "tracks": 0
+   "tracks": "menu"
   },
   {
    "id": "s3_sen",
@@ -306,7 +306,7 @@
     "cracked": "s3_sen_cracked.png",
     "warped": "s3_sen_warped.png"
    },
-   "tracks": 0
+   "tracks": "menu"
   },
   {
    "id": "s4_disco",
@@ -323,7 +323,7 @@
     "cracked": "s4_disco_cracked.png",
     "warped": "s4_disco_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_2"
   },
   {
    "id": "s4_synth",
@@ -340,7 +340,7 @@
     "cracked": "s4_synth_cracked.png",
     "warped": "s4_synth_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_2"
   },
   {
    "id": "s4_kaseta",
@@ -357,7 +357,7 @@
     "cracked": "s4_kaseta_cracked.png",
     "warped": "s4_kaseta_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_2"
   },
   {
    "id": "s4_radio",
@@ -374,7 +374,7 @@
     "cracked": "s4_radio_cracked.png",
     "warped": "s4_radio_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_2"
   },
   {
    "id": "s4_arcade",
@@ -391,7 +391,7 @@
     "cracked": "s4_arcade_cracked.png",
     "warped": "s4_arcade_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_2"
   },
   {
    "id": "s4_taniec",
@@ -408,7 +408,7 @@
     "cracked": "s4_taniec_cracked.png",
     "warped": "s4_taniec_warped.png"
    },
-   "tracks": 0
+   "tracks": "games_2"
   }
  ]
 }

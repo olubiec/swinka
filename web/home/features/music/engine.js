@@ -188,7 +188,9 @@
         if (my !== gen) return;
         if (!list.length) { status = 'silent'; return; } // load() already warned
         const id = queue[index];
-        const entry = contract.trackForRecord(id, list);
+        const eco = root_.CuyMusicEconomy;
+        const explicit = eco && typeof eco.recordTrack === 'function' ? eco.recordTrack(id) : null;
+        const entry = contract.trackForRecord(id, list, explicit);
         if (!entry) return skip('no track for record ' + id);
         const url = base + entry.file;
         let a;

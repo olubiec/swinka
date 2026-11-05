@@ -822,6 +822,7 @@
     S.drag = null;
     S.hover = null;
     setSelectedUid(null);
+    if (window.CuyPlaceMusic) window.CuyPlaceMusic.enter(id);
     render();
     if (focusTab && S.container) {
       const tab = S.container.querySelector('.room-tab[data-room="' + id + '"]');

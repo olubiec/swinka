@@ -26,10 +26,15 @@
     return h >>> 0;
   }
 
-  // D2: index = hash(record id) mod 5. Returns the manifest entry, or null when the manifest is short.
-  function trackForRecord(recordId, tracks) {
+  // Explicit track first: explicitId is the record's "tracks" field in assets/records/manifest.json (a track id).
+  // Without it (or when it is not in the list), D2: index = hash(record id) mod 5. Returns the entry, or null.
+  function trackForRecord(recordId, tracks, explicitId) {
     if (typeof recordId !== 'string' || recordId === '') return null;
     if (!Array.isArray(tracks)) return null;
+    if (typeof explicitId === 'string' && explicitId !== '') {
+      const hit = tracks.find((t) => t && t.id === explicitId);
+      if (hit) return hit;
+    }
     const entry = tracks[hashId(recordId) % TRACK_POOL_SIZE];
     return entry === undefined ? null : entry;
   }

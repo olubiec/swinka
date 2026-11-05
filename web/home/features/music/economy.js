@@ -108,12 +108,19 @@
     return r && typeof r.name === 'string' && r.name !== '' ? r.name : null;
   }
 
+  // Track id from the manifest "tracks" field, or null when the record has none (or the manifest is not loaded).
+  function recordTrack(id) {
+    const r = manifestRecords.find((x) => x.id === id);
+    return r && typeof r.tracks === 'string' && r.tracks !== '' ? r.tracks : null;
+  }
+
   return {
     MUSIC_VERSION,
     starterSave,
     shopItems,
     buy,
     manifest,
-    recordName
+    recordName,
+    recordTrack
   };
 });

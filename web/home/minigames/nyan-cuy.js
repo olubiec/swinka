@@ -152,31 +152,8 @@
         this.scheduleTreatSpawn();
         this.scheduleObstacleSpawn();
 
-        // 9. Audio lifecycle
-        if (root.NyanAudio && typeof root.NyanAudio.startMusic === 'function') {
-          root.NyanAudio.startMusic();
-        }
-
-        this.events.on('pause', () => {
-          if (root.NyanAudio && typeof root.NyanAudio.stopMusic === 'function') {
-            root.NyanAudio.stopMusic();
-          }
-        });
-        this.events.on('resume', () => {
-          if (!ended && root.NyanAudio && typeof root.NyanAudio.startMusic === 'function') {
-            root.NyanAudio.startMusic();
-          }
-        });
-        this.events.on('shutdown', () => {
-          if (root.NyanAudio && typeof root.NyanAudio.stopMusic === 'function') {
-            root.NyanAudio.stopMusic();
-          }
-        });
-        this.events.on('destroy', () => {
-          if (root.NyanAudio && typeof root.NyanAudio.stopMusic === 'function') {
-            root.NyanAudio.stopMusic();
-          }
-        });
+        // 9. Music: the minigame API plays the CuyMusic track (gameDef.musicTrack) and handles
+        // pause/resume/end. The synth BGM in nyan-audio.js is not started, so only one BGM plays.
       }
 
       flap() {
@@ -300,9 +277,6 @@
         if (ended) return;
         ended = true;
 
-        if (root.NyanAudio && typeof root.NyanAudio.stopMusic === 'function') {
-          root.NyanAudio.stopMusic();
-        }
         if (root.Sound && typeof root.Sound.click === 'function') {
           root.Sound.click();
         }
@@ -523,6 +497,7 @@
     name: 'Nyan Cuy',
     icon: 'game-nyan-cuy',
     desc: 'Fly through space leaving a rainbow trail! Wheek at the stars!',
+    musicTrack: 'games_1',
     start: start
   });
 

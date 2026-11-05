@@ -193,6 +193,7 @@
     name: 'Veggie Rain',
     icon: 'game-veggie-rain',
     desc: 'Catch the veggies! Onions and chocolate are bad for guinea pigs.',
+    musicTrack: 'games_2',
     start: start
   });
 })(typeof window !== 'undefined' ? window : this);

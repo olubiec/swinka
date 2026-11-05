@@ -386,6 +386,7 @@
     name: 'Hay Maze',
     icon: 'game-hay-maze',
     desc: 'Guide your guinea pig through the hay maze to the bell pepper!',
+    musicTrack: 'games_2',
     start: start
   });
 
