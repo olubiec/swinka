@@ -1,6 +1,6 @@
 // Six record players in the room (A5): placing and picking up (playerOwned <-> playerPlaced), the record queue
-// and the sound gate (only with a placed player), plus the room sprites. Pure model first (Node tests, no DOM);
-// the draw and the browser start are at the end. Browser: window.CuyMusicWorld.
+// and the room sprites. Pure model first (Node tests, no DOM); the draw and the browser start are at the end.
+// Browser: window.CuyMusicWorld. Placing and picking up are decided in C# (MusicPlacement.cs); this file only sends them.
 // Saves: playerOwned [playerId], playerPlaced {roomId: playerId}, records {recordId: count} (contract.js).
 (function (root, factory) {
   const api = factory(
@@ -17,6 +17,7 @@
   const SPOT_X = [12, 52, 92, 132, 172, 200]; // room x of the first, second, ... placed player
   const FRAME_MS = 250; // animation step of the *_on sheets
   const SPRITE_DIR = 'world/house/'; // relative to the assets base (assets/world/house/<id>.png, <id>_on.png)
+  const PLAYER_ROOM = 'salon'; // the room where the shop's place / pick up button puts the player (house living room)
 
   let players = []; // from players_design.json, cheapest first: {id, name, price, range}
 
@@ -68,7 +69,9 @@
     return Object.keys(s.records).filter((id) => s.records[id] > 0).sort();
   }
 
-  // Sound needs a placed player and at least one record. Without hardware there is no sound.
+  // Sprites animate only while a placed player and at least one record exist (drawing only, see drawPlayers).
+  // The sound does NOT need a placed player (decision for A8): the mini player is in the pig's UI, so playback
+  // works as soon as a record is owned. The room hardware only changes how the room looks.
   function canPlayMusic(save) {
     return placedList(save).length > 0 && recordQueue(save).length > 0;
   }
@@ -98,14 +101,14 @@
     return Object.assign({}, s, { playerOwned: owned, playerPlaced: placed });
   }
 
-  // Points the mini player (A4 engine) at the record queue. Silent (empty queue) without a placed player.
-  // Same save state as the last call: nothing happens, so playback is not restarted by the poll.
-  let lastKey = null;
+  // Points the mini player (A4 engine) at the record queue, from the owned records only (A8 decision: no placed
+  // player needed). Same save state as the last call: nothing happens, so playback is not restarted by the poll.
+  const lastKeys = new WeakMap(); // per engine: the last queue sent to it
   function syncEngine(engine, save) {
-    const queue = canPlayMusic(save) ? recordQueue(save) : [];
+    const queue = recordQueue(save);
     const key = queue.join(',');
-    if (key === lastKey) return queue.length;
-    lastKey = key;
+    if (lastKeys.get(engine) === key) return queue.length;
+    lastKeys.set(engine, key);
     return engine.setQueue(queue);
   }
 
@@ -157,6 +160,19 @@
   function browserBase() {
     const isWebView = window.chrome && window.chrome.webview;
     return isWebView ? 'https://cuy.assets/' : '../../assets/';
+  }
+
+  // Browser: the place / pick up requests of the shop shelf (C# answers with the new state through the bridge).
+  function requestPlace(playerId) {
+    if (!window.bridge || typeof window.bridge.send !== 'function') return false;
+    window.bridge.send({ type: 'musicPlace', roomId: PLAYER_ROOM, playerId });
+    return true;
+  }
+
+  function requestPickUp() {
+    if (!window.bridge || typeof window.bridge.send !== 'function') return false;
+    window.bridge.send({ type: 'musicPickUp', roomId: PLAYER_ROOM });
+    return true;
   }
 
   function registerLayer() {
@@ -227,6 +243,9 @@
     pickUpPlayer,
     syncEngine,
     drawPlayers,
-    registerLayer
+    registerLayer,
+    requestPlace,
+    requestPickUp,
+    PLAYER_ROOM
   };
 });

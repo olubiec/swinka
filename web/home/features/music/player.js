@@ -180,7 +180,9 @@
     if (typeof document === 'undefined' || !window.CuyMusicEngine) return null;
     const host = document.querySelector('.pet-identity-card');
     if (!host || host.querySelector('.mp_panel')) return null;
-    autoMounted = mount(host, {});
+    // Titles come from the manifest (economy.js), not the raw record id. Read on each poll, so it may load late.
+    const nameOf = (id) => (window.CuyMusicEconomy ? window.CuyMusicEconomy.recordName(id) : null);
+    autoMounted = mount(host, { nameOf });
     return autoMounted;
   }
   // The engine of the auto-mounted panel (null until it is mounted); world.js feeds its queue from the save.

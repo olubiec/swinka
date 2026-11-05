@@ -8,7 +8,8 @@ using Newtonsoft.Json.Linq;
 namespace Cuy.Features
 {
     // Exposes the music save fields (A1 model in GameState.Music.cs) to the Home page as state["music"],
-    // and handles purchases (musicBuy, A6): the C# side checks the price, the balance and the ownership.
+    // and handles purchases (musicBuy, A6): the C# side checks the price, the balance and the ownership,
+    // and placing / picking up the players in rooms (musicPlace / musicPickUp, A5, MusicPlacement.cs).
     public class MusicFeature : HomeFeatureBase
     {
         private static IReadOnlyDictionary<string, string> _recordRarity;
@@ -30,6 +31,8 @@ namespace Cuy.Features
 
         public override bool HandleMessage(string type, JObject message, BrainController brain)
         {
+            if (type == "musicPlace") return HandlePlace(message, brain);
+            if (type == "musicPickUp") return HandlePickUp(message, brain);
             if (type != "musicBuy") return false;
 
             var pet = brain?.Pet;
@@ -57,6 +60,58 @@ namespace Cuy.Features
             HomeWindow.PostToPage(new { type = "toast", text = "Bought!" });
             BrainController.Log($"[MusicFeature] Bought {kind} {itemId} for {check.Price} clovers.");
             return true;
+        }
+
+        // musicPlace {roomId, playerId} (A5): owned player -> standing in the room. Refusals change nothing.
+        private static bool HandlePlace(JObject message, BrainController brain)
+        {
+            var pet = brain?.Pet;
+            if (pet == null) return true;
+
+            string roomId = message.Value<string>("roomId");
+            string playerId = message.Value<string>("playerId");
+            MusicPlaceError error = MusicPlacement.Place(pet.State, roomId, playerId);
+            if (error != MusicPlaceError.None)
+            {
+                HomeWindow.PostToPage(new { type = "toast", text = PlaceErrorText(error) });
+                BrainController.Log($"[MusicFeature] Place {playerId} in {roomId} refused: {error}.");
+                return true;
+            }
+
+            brain.Session.AutoSaver.SaveNow();
+            BrainController.Log($"[MusicFeature] Placed {playerId} in {roomId}.");
+            return true;
+        }
+
+        // musicPickUp {roomId} (A5): the player in the room goes back to the owned list.
+        private static bool HandlePickUp(JObject message, BrainController brain)
+        {
+            var pet = brain?.Pet;
+            if (pet == null) return true;
+
+            string roomId = message.Value<string>("roomId");
+            MusicPlaceError error = MusicPlacement.PickUp(pet.State, roomId);
+            if (error != MusicPlaceError.None)
+            {
+                HomeWindow.PostToPage(new { type = "toast", text = PlaceErrorText(error) });
+                BrainController.Log($"[MusicFeature] Pick up in {roomId} refused: {error}.");
+                return true;
+            }
+
+            brain.Session.AutoSaver.SaveNow();
+            BrainController.Log($"[MusicFeature] Picked up the player in {roomId}.");
+            return true;
+        }
+
+        private static string PlaceErrorText(MusicPlaceError error)
+        {
+            switch (error)
+            {
+                case MusicPlaceError.RoomOccupied: return "A player already stands there";
+                case MusicPlaceError.NotOwned: return "You do not own this player";
+                case MusicPlaceError.NothingInRoom: return "Nothing to pick up here";
+                default: return "Cannot place the player here";
+            }
         }
 
         // Record rarities come from the manifest (the same file the browser reads). Loaded once; empty if missing.

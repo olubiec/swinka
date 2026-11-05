@@ -101,7 +101,7 @@ const tests = {
     assert.deepStrictEqual(engine.q, [common.id]);
     const none = { q: null, setQueue(q) { this.q = q; return q.length; } };
     World.syncEngine(none, { records: { [common.id]: 1 } });
-    assert.deepStrictEqual(none.q, [], 'no placed player: silent queue');
+    assert.deepStrictEqual(none.q, [common.id], 'no placed player: the queue still plays (A8)');
   }
 };
 

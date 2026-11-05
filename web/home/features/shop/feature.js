@@ -91,8 +91,13 @@
       html += `</div>`;
     }
 
+    // Toys tab: the record shelf and the player button (features/music/shelf.js) go under the grid.
+    if (currentTab === 'toy') html += `<div class="music-shelf-host"></div>`;
+
     html += `</div>`;
     container.innerHTML = html;
+    const shelfHost = container.querySelector('.music-shelf-host');
+    if (shelfHost && window.CuyMusicShelf) window.CuyMusicShelf.mountShop(shelfHost);
 
     // Attach events
     container.querySelectorAll('.feature-shop-tab').forEach(btn => {

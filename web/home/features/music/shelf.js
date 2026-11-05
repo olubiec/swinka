@@ -121,5 +121,37 @@
     container.appendChild(root);
   }
 
-  return { STATE, EMPTY_HINT, iconClassFor, buildShelfModel, renderShelf };
+  // ---- Browser: the shelf in the shop's Toys tab, with the place / pick up button (not run in Node) ----
+  // Save from the bridge state, manifest from economy.js, the playing record from the mini player engine.
+  // The shop re-renders on every state update, so the shelf is drawn again with it.
+  function mountShop(host) {
+    if (!host || typeof window === 'undefined') return;
+    const doc = host.ownerDocument;
+    const bridgeState = window.bridge && typeof window.bridge.getState === 'function' ? window.bridge.getState() : null;
+    const save = Contract.migrateMusicSave(bridgeState && bridgeState.music ? bridgeState.music : {});
+    const player = window.CuyMusicPlayer;
+    const engine = player && typeof player.autoEngine === 'function' ? player.autoEngine() : null;
+    const st = engine ? engine.getState() : {};
+    const playing = st.status === 'playing' || st.status === 'waiting' ? st.recordId : '';
+    const manifest = window.CuyMusicEconomy ? window.CuyMusicEconomy.manifest() : null;
+    renderShelf(host, buildShelfModel(manifest, save, playing));
+
+    const world = window.CuyMusicWorld;
+    const placed = world ? save.playerPlaced[world.PLAYER_ROOM] : undefined;
+    const spare = save.playerOwned[0];
+    const btn = doc.createElement('button');
+    btn.type = 'button';
+    btn.className = 'feature-shop-btn shelf-player-btn';
+    if (placed) {
+      btn.textContent = 'Pick up player';
+      btn.addEventListener('click', () => world.requestPickUp());
+    } else {
+      btn.textContent = 'Place player in living room';
+      btn.disabled = !spare;
+      btn.addEventListener('click', () => world.requestPlace(spare));
+    }
+    host.appendChild(btn);
+  }
+
+  return { STATE, EMPTY_HINT, iconClassFor, buildShelfModel, renderShelf, mountShop };
 });

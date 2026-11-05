@@ -98,10 +98,22 @@
     else document.addEventListener('DOMContentLoaded', loadManifest);
   }
 
+  // Manifest for the shelf and the mini player names (read once from assets/records/manifest.json).
+  function manifest() {
+    return { records: manifestRecords.slice() };
+  }
+
+  function recordName(id) {
+    const r = manifestRecords.find((x) => x.id === id);
+    return r && typeof r.name === 'string' && r.name !== '' ? r.name : null;
+  }
+
   return {
     MUSIC_VERSION,
     starterSave,
     shopItems,
-    buy
+    buy,
+    manifest,
+    recordName
   };
 });

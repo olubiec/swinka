@@ -65,20 +65,22 @@ assert.strictEqual(World.canPlayMusic(Object.assign({}, withPlayer, { records: {
 // Placed id that is not in the design is ignored.
 assert.strictEqual(World.canPlayMusic(Object.assign({}, rec, { playerPlaced: { home: 'player_x' } })), false);
 
-// 5. Engine sync: queue goes to the engine only with a placed player; same state does not reset it.
+// 5. Engine sync: the queue follows the owned records (A8: no placed player needed); same state does not reset it.
 function fakeEngine() {
   return { calls: [], setQueue(q) { this.calls.push(q.slice()); return q.length; } };
 }
 const eng = fakeEngine();
 World.syncEngine(eng, rec);
-assert.deepStrictEqual(eng.calls[eng.calls.length - 1], [], 'silent without hardware');
+assert.deepStrictEqual(eng.calls[eng.calls.length - 1], ['s1_cichy', 's1_nocna'], 'queue without hardware (A8)');
 World.syncEngine(eng, withPlayer);
 assert.deepStrictEqual(eng.calls[eng.calls.length - 1], ['s1_cichy', 's1_nocna']);
 const count = eng.calls.length;
 World.syncEngine(eng, withPlayer);
 assert.strictEqual(eng.calls.length, count, 'unchanged state is not sent again');
 World.syncEngine(eng, Object.assign({}, withPlayer, { playerPlaced: {} }));
-assert.deepStrictEqual(eng.calls[eng.calls.length - 1], [], 'picked up, silent again');
+assert.strictEqual(eng.calls.length, count, 'picked up: same queue, nothing sent again');
+World.syncEngine(eng, Object.assign({}, withPlayer, { records: {} }));
+assert.deepStrictEqual(eng.calls[eng.calls.length - 1], [], 'no records: empty queue');
 
 // 6. Room draw with a mock ctx: sprite per placed player, animation frames only while playing.
 function img(w, h) { return { complete: true, naturalWidth: w, naturalHeight: h }; }
