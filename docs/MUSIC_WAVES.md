@@ -6,7 +6,9 @@ Cel: wszystkie 144 pliki audio (140 twórczych + 4 `_full`) i kod odtwarzania, w
 
 ---
 
-> **Reguła stylu (od Single-layer v4, wiążąca także dla belek MW-4):** jeden instrument na utwór, pełne progresje z gotowych rodzin (`docs/music_progressions.md`), efekty (pogłos, taśma, chorus, szerokość stereo), bez wielowarstwowych "kolekcji" dźwięków. Wzór wzorcowy: `theme_cuy` (PAD, `chords.rolled`, zob. `docs/music_review/MT-11.md`).
+> **Reguła stylu (od Single-layer v4, wiążąca także dla belek MW-4):** jeden instrument na utwór, pełne progresje z gotowych rodzin (`docs/music_progressions.md`), efekty (pogłos, taśma, chorus, szerokość stereo), bez wielowarstwowych "kolekcji" dźwięków. Wzór wzorcowy: `theme_cuy` (EP, `chords.rolled`, zob. `docs/music_review/MT-11.md`).
+>
+> **Legenda harmoniczna v7 (wiążąca dla akordów i progresji wszystkich utworów):** [`docs/music_legend.md`](music_legend.md): słownik akordów, techniki progresji, zasady voice-leadingu i tabela "utwór -> instrument, tempo, tonacja, progresja takt po takcie, FX, długość". Kod: `tools/music/theory.py`, `tools/music/legend_progs.py`.
 
 
 ## 1. Zasady równoległości

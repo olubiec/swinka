@@ -66,6 +66,29 @@ def test_spelling_and_slash():
     print("  pisownia, slash chordy, błąd nieznanej jakości OK")
 
 
+def test_legend_progressions():
+    import json
+    import legend_progs as L
+    syms = L.all_symbols()
+    for sym in syms:
+        notes, bass = T.chord_notes(sym)
+        assert len(notes) <= 6 and len(sym) <= 24, sym
+    here = os.path.dirname(os.path.abspath(__file__))
+    theme = json.load(open(os.path.join(here, "specs", "theme_cuy.json"), encoding="utf-8"))
+    assert [c["sym"] for c in theme["chords"]] == L.THEME and len(L.THEME) == theme["bars"]
+    for sid, chords in L.JINGLES.items():
+        spec = json.load(open(os.path.join(here, "specs", sid + ".json"), encoding="utf-8"))
+        assert [c["sym"] for c in spec["chords"]] == chords, sid
+        assert len(spec["layers"]) == 1, sid
+    for sid, (voice, pattern, fx, a, b) in L.BUILD.items():
+        spec = json.load(open(os.path.join(here, "specs", sid + ".json"), encoding="utf-8"))
+        want = L.form_chords(a, b, spec["bars"])
+        assert [c["sym"] for c in spec["chords"]] == want, sid
+        assert len(spec["layers"]) == 1 and spec["layers"][0]["voice"] == voice, sid
+    assert L.family("LYD", "A")[1] == "Bmaj13" and L.family("SOUL", "Eb")[7] == "E9#11"
+    print("  legenda: %d symboli parsuje się (<= 6 głosów), specyfikacje zgodne z legend_progs" % len(syms))
+
+
 if __name__ == "__main__":
     for name, fn in sorted(globals().items()):
         if name.startswith("test_") and callable(fn):
