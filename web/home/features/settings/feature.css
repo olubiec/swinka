@@ -13,7 +13,8 @@
 }
 
 .feature-settings .settings-group {
-  background: var(--c-wood);
+  background: var(--ui-wood-1);
+  color: var(--ui-text-on-wood);
   border: 4px solid var(--c-contour-dark);
   border-radius: 8px;
   padding: 10px;
@@ -117,7 +118,7 @@
 .feature-settings .settings-group-title {
   font-weight: 700;
   font-size: 14px;
-  color: var(--c-contour-dark);
+  color: var(--ui-ink-gold);
 }
 
 .feature-settings .update-badge {
@@ -135,7 +136,7 @@
 
 .feature-settings .update-current-version {
   font-size: 13px;
-  color: var(--c-contour-dark);
+  color: var(--ui-text-on-wood);
 }
 
 .feature-settings .update-status-msg {
