@@ -14,7 +14,7 @@ R = H.rect
 
 def mp_panel():  # korpus mini-odtwarzacza: drewno z mosieznymi nitami w rogach
     im = H.canvas(24, 24)
-    R(im, 0, 0, 23, 23, "wood.0"); R(im, 1, 1, 22, 22, "wood.2"); H.hline(im, 1, 22, 1, "wood.3"); H.vline(im, 1, 1, 22, "wood.3")
+    R(im, 0, 0, 23, 23, "outline.fg"); R(im, 1, 1, 22, 22, "wood.2"); H.hline(im, 1, 22, 1, "wood.3"); H.vline(im, 1, 1, 22, "wood.3")
     H.hline(im, 1, 22, 22, "wood.1"); H.vline(im, 22, 1, 22, "wood.1")
     for x, y in ((3, 3), (20, 3), (3, 20), (20, 20)): P(im, x, y, "hay.2"); P(im, x + 1, y + 1, "hay.0") if x < 20 else None
     for x, y in ((3, 3), (20, 3), (3, 20), (20, 20)): P(im, x, y, "hay.3")
@@ -23,7 +23,7 @@ def mp_panel():  # korpus mini-odtwarzacza: drewno z mosieznymi nitami w rogach
 
 def mp_display():  # ciemne okienko tytulu i czasu (LCD): plum + zielony kontur
     im = H.canvas(16, 16)
-    R(im, 0, 0, 15, 15, "wood.0"); R(im, 1, 1, 14, 14, "plum.0"); H.hline(im, 1, 14, 1, "plum.1"); H.hline(im, 1, 14, 14, "moss.1"); H.vline(im, 14, 1, 14, "moss.1")
+    R(im, 0, 0, 15, 15, "outline.fg"); R(im, 1, 1, 14, 14, "plum.0"); H.hline(im, 1, 14, 1, "plum.1"); H.hline(im, 1, 14, 14, "moss.1"); H.vline(im, 14, 1, 14, "moss.1")
     K.cut(im, 16, 16, 0, 15); return im
 
 
@@ -32,7 +32,7 @@ def mp_btn(pressed=False):  # okragly przycisk sterowania 20x20, mosiezna obwodk
     for y in range(20):
         for x in range(20):
             d = ((x - 9.5) ** 2 + (y - 9.5 - top * .5) ** 2) ** .5
-            if d <= 9.6: P(im, x, y, "wood.0")
+            if d <= 9.6: P(im, x, y, "outline.fg")
             if d <= 8.6: P(im, x, y, "hay.1" if (x + y < 19) != pressed else "hay.0")
             if d <= 7.2: P(im, x, y, "wood.2")
             if d <= 7.2 and x + y < 17 and not pressed: P(im, x, y, "wood.3") if d > 5.8 else None
@@ -44,7 +44,7 @@ def mp_knob():  # galka glosnosci 16x16 z kreska
     for y in range(16):
         for x in range(16):
             d = ((x - 7.5) ** 2 + (y - 7.5) ** 2) ** .5
-            if d <= 7.4: P(im, x, y, "wood.0")
+            if d <= 7.4: P(im, x, y, "outline.fg")
             if d <= 6.4: P(im, x, y, "hay.1")
             if d <= 5.0: P(im, x, y, "wood.2" if x + y > 12 else "wood.3")
     for y in range(3, 8): P(im, 7, y, "linen.3")
@@ -53,13 +53,13 @@ def mp_knob():  # galka glosnosci 16x16 z kreska
 
 def mp_thumb():  # suwak postepu 8x10 (drewniany klocek z mosiezna kreska)
     im = H.canvas(8, 10)
-    R(im, 0, 0, 7, 9, "wood.0"); R(im, 1, 1, 6, 8, "wood.3"); H.vline(im, 1, 1, 8, "wood.4"); H.vline(im, 6, 1, 8, "wood.2"); H.vline(im, 3, 2, 7, "hay.2"); H.vline(im, 4, 2, 7, "hay.0")
+    R(im, 0, 0, 7, 9, "outline.fg"); R(im, 1, 1, 6, 8, "wood.3"); H.vline(im, 1, 1, 8, "wood.4"); H.vline(im, 6, 1, 8, "wood.2"); H.vline(im, 3, 2, 7, "hay.2"); H.vline(im, 4, 2, 7, "hay.0")
     K.cut(im, 8, 10); return im
 
 
 def shelf_plank():  # polka na plyty: deska 16x8, powtarzac w poziomie
     im = H.canvas(16, 8)
-    R(im, 0, 0, 15, 7, "wood.0"); R(im, 0, 1, 15, 6, "wood.2"); H.hline(im, 0, 15, 1, "wood.3"); H.hline(im, 0, 15, 6, "wood.1")
+    R(im, 0, 0, 15, 7, "outline.fg"); R(im, 0, 1, 15, 6, "wood.2"); H.hline(im, 0, 15, 1, "wood.3"); H.hline(im, 0, 15, 6, "wood.1")
     for x in (4, 11): P(im, x, 3, "wood.1")
     P(im, 7, 4, "wood.3"); P(im, 13, 3, "wood.3")
     return im
@@ -67,7 +67,7 @@ def shelf_plank():  # polka na plyty: deska 16x8, powtarzac w poziomie
 
 def wear_badge(state):  # znaczek stanu 8x8
     im = H.canvas(8, 8)
-    R(im, 0, 0, 7, 7, "wood.0"); R(im, 1, 1, 6, 6, {"mint": "moss.3", "worn": "hay.2", "scratched": "flame.2", "cracked": "brick.2", "warped": "dusk.3"}[state])
+    R(im, 0, 0, 7, 7, "outline.fg"); R(im, 1, 1, 6, 6, {"mint": "moss.3", "worn": "hay.2", "scratched": "flame.2", "cracked": "brick.2", "warped": "dusk.3"}[state])
     for x, y in {"mint": ((3, 2), (4, 2), (3, 3), (4, 3), (3, 4), (4, 4), (2, 3), (5, 3)), "worn": ((2, 3), (3, 4), (5, 2), (4, 5)),
                  "scratched": ((5, 2), (4, 3), (3, 4), (2, 5)), "cracked": ((3, 1), (3, 2), (4, 3), (3, 4), (4, 5)), "warped": ((2, 3), (3, 2), (4, 4), (5, 3))}[state]:
         P(im, x, y, "linen.3" if state in ("mint", "worn", "scratched") else "plum.0")

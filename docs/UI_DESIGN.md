@@ -22,7 +22,7 @@ Stan wyjściowy (zrzuty ekranu strony Home w przeglądarce): świat jest w palec
 ## 2. Kierunek: "papier i drewno z domku z siana"
 Interfejs wygląda jak drewniana szafka z papierowymi karteczkami, w tych samych 42 kolorach co świat. Zasady:
 1. **Trzy materiały.** Drewno (belki nagłówków, zakładki, sloty), papier/len (treść, karty, pola), siano (akcenty, nagrody, aktywna zakładka). Nic spoza palety.
-2. **Kontur zawsze `wood.0` (#47281c)**, 1 px, z "ściętymi" rogami (rogi w `plum.1`). Światło z lewej góry (jasna krawędź u góry i z lewej), cień twardy 1–3 px w dół, bez rozmyć i gradientów.
+2. **Kontur zawsze `outline.fg` (#3a1d17, wg legendy stylu)**, 1 px, z "ściętymi" rogami (rogi w `plum.1`). Światło z lewej góry (jasna krawędź u góry i z lewej), cień twardy 1–3 px w dół, bez rozmyć i gradientów.
 3. **Kolor = znaczenie akcji.** Siano/żółty: karmienie, neutralne. Mech/zielony: potwierdź, graj, kup. Pył/niebieski: czyść, informacja. Róż: zabawa, relacje. Cegła/czerwony: zamknij, anuluj, ostrzeżenie. Złoto: koniczyny i nagrody.
 4. **Tekst** zawsze Pixelify Sans, tylko rozmiary 10 / 12 / 16 / 24 px (1 px CSS = 1 piksel gry), ciemny `wood.0` na papierze, jasny `linen.3` na drewnie i kolorowych przyciskach, złoty `hay.2` tylko w nagłówkach na ciemnym tle.
 5. **Siatka 4 px**: odstępy i rozmiary to wielokrotności 4; ramki to 9-slice z `assets/ui/`, rysowane `border-image` z `image-rendering: pixelated`.
@@ -73,5 +73,5 @@ Wzorzec użycia: `docs/ui/preview.html` (czwarta kolumna: siatka akcji z ikonami
 
 Zadania dla kodu (do G18): podmienić klasy ikon w `index.html` (6 przycisków) i `icon:` w funkcjach wg tabeli, dopisać reguły z `docs/icons_css_block.css`, ustawić `--icon-count` = 278.
 
-## 6. Szlif "legendarny" (UI-4)
-Elementy z §3 mają bogatsze wnętrze (faza, okucia, inlay, polysk), te same pliki i `slice`. Ikony systemowe to mosiężne medaliony z cieniowaną tarczą. Ramki rzadkości płyt mają teraz 32x32 (margines 4 px). Szczegóły: `docs/VISUAL_LOG.md` (UI-4), generatory `ui_legend.py` i `icons_legend.py`.
+## 6. Szlif wg legendy stylu (UI-4)
+Elementy z §3 przerobione zgodnie z `docs/STYL_SWIATA.md`: kontur `outline.fg` (wcześniej błędnie `wood.0`), rogi ścięte o 1-2 px, światło lewa-góra, cień w stronę plum, ręczna robota (szew z siana, tasma kartonowa przez narożniki, gwoździe i sęk rozmieszczone nierówno, dzianinowy ścieg "v" w paskach), grube ramy z desek. Te same pliki i `slice`. Uwaga dla kodu: detale są w narożnikach (środek 9-slice jest jednolity); `sep_h/v` i `bar_fill_*` są kaflami do powtarzania (`border-image-repeat: repeat`/`background-repeat`).

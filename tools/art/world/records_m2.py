@@ -48,7 +48,7 @@ def fleck_pos(seed, n=9):
 def disc16(state, vin, fleck, lab, seed):
     base, groove, sheen, rimhi = vin
     light_vinyl = base.split(".")[0] in ("linen", "hay") or base == "flame.0"
-    contrast = "wood.0" if light_vinyl else "linen.3"
+    contrast = "outline.fg" if light_vinyl else "linen.3"
     im = H.canvas(16, 16)
     cx, cy = 7.5, 7.5; rx, ry = (7.8, 6.0) if state == "warped" else (7.8, 7.8)
     if state == "warped": cy = 8.0

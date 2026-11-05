@@ -1,6 +1,10 @@
-"""UI-4 "legendarny" szlif interfejsu: te same pliki, rozmiary i slice co w ui_a.py/ui_kit.py (kod nie wymaga zmian),
-ale bogatsze wnetrze: fazowane ramy z 3-4 tonami, mosiezne okucia na rogach, wciete sloty, polysk na przyciskach,
-grawerowane paski, inlay z siana na papierze. Uzycie: python3 tools/art/world/ui_legend.py"""
+"""UI-4 (v2): interfejs wg LEGENDY STYLU "domek z siana" (docs/STYL_SWIATA.md), nie wg ogolnego "ladnego UI":
+- kontur pierwszego planu = outline.fg #3a1d17 (nie wood.0), rogi sciete o 1-2 px,
+- cien = krok w dol + przesuniecie w plum, swiatlo = krok w gore ku hay (nigdy "ten sam kolor ciemniejszy"),
+- reczna robota: szew z siana, naszywki, tasma kartonowa hay[2], gwozdzie, sek, nieidealna symetria (kazdy rog inny),
+- materialy z biblioteki (pkt 5): drewno (deski, jasna krawedz, ciemna szczelina), karton (tasma, brzeg), papier,
+  dzianina ("v" scieg), mosiadz (ciemna rama, jasny odblask, nit); max 4-5 tonow na material.
+Te same pliki, rozmiary i slice co w ui_a.py/ui_kit.py. Uzycie: python3 tools/art/world/ui_legend.py"""
 import json
 import sys
 from pathlib import Path
@@ -9,247 +13,308 @@ import handart as H
 import ui_a as U
 
 UI = U.UI_DIR
-CUT = "plum.1"
+O = "outline.fg"
 
 
-def ring(im, i, tl, br, w=None, h=None):
-    """Ramka 1 px na glebokosci i: tl = gora+lewo, br = dol+prawo (faza)."""
-    w = im.width if w is None else w; h = im.height if h is None else h
-    x0, y0, x1, y1 = i, i, w - 1 - i, h - 1 - i
-    H.hline(im, x0, x1, y0, tl); H.vline(im, x0, y0, y1, tl)
-    H.hline(im, x0, x1, y1, br); H.vline(im, x1, y0, y1, br)
-    H.put(im, x0, y1, br if tl != br else tl); H.put(im, x1, y0, tl if tl != br else br)
+def rnd(w, h, r=1, tone=O):
+    """Prostokat z konturem i rogami sciętymi o r px (r=1: 1 px, r=2: 2 px)."""
+    im = H.canvas(w, h)
+    H.rect(im, 0, 0, w - 1, h - 1, O)
+    return im
 
 
-def cut4(im, d=0):
+def round_corners(im, r=1, which="tlrb", y0=0, y1=None):
     w, h = im.size
-    for x, y in ((d, d), (w - 1 - d, d), (d, h - 1 - d), (w - 1 - d, h - 1 - d)): H.put(im, x, y, CUT)
+    y1 = h - 1 if y1 is None else y1
+    for (cx, cy, sx, sy, key) in ((0, y0, 1, 1, "t"), (w - 1, y0, -1, 1, "r"), (0, y1, 1, -1, "l"), (w - 1, y1, -1, -1, "b")):
+        if key not in "tlrb" or key not in which:
+            continue
+        im.putpixel((cx, cy), (0, 0, 0, 0))
+        if r >= 2:
+            im.putpixel((cx + sx, cy), (0, 0, 0, 0)); im.putpixel((cx, cy + sy), (0, 0, 0, 0))
+            H.put(im, cx + sx, cy + sy, O)
 
 
-def cap(im, x, y, n=6):
-    """Mosiezne okucie rogu n x n (n=6): kontur, siano, polysk, cien, nit."""
-    H.rect(im, x, y, x + n - 1, y + n - 1, "wood.0")
-    H.rect(im, x + 1, y + 1, x + n - 2, y + n - 2, "hay.2")
-    H.hline(im, x + 1, x + n - 2, y + 1, "hay.3"); H.vline(im, x + 1, y + 1, y + n - 2, "hay.3")
-    H.hline(im, x + 1, x + n - 2, y + n - 2, "hay.1"); H.vline(im, x + n - 2, y + 2, y + n - 2, "hay.1")
-    c = (n - 1) // 2
-    H.put(im, x + c, y + c, "wood.0"); H.put(im, x + c - 1, y + c - 1, "hay.3"); H.put(im, x + c + 1, y + c + 1, "hay.1")
+def nail(im, x, y):
+    """Gwozdz mosiezny 2x2: jasny czubek, cien (hay), obok ciemny otwor."""
+    H.put(im, x, y, "hay.3"); H.put(im, x + 1, y, "hay.2"); H.put(im, x, y + 1, "hay.1"); H.put(im, x + 1, y + 1, "hay.0")
 
 
-def mirror_caps(im, n=6):
+def knot(im, x, y):
+    """Sek w deskach: ciemny owal z jasnym oczkiem."""
+    for dx, dy in ((0, 0), (1, 0), (2, 0), (0, 1), (1, 1), (2, 1)): H.put(im, x + dx, y + dy, "wood.1")
+    H.put(im, x + 1, y, "wood.0"); H.put(im, x + 1, y + 1, "wood.2")
+
+
+def tape(im, x, y, vertical=False):
+    """Pasek tasmy kartonowej hay[2] z ciemniejszym brzegiem, lekko krzywo."""
+    pts = [(x + i, y + (1 if i > 3 else 0)) for i in range(6)] if not vertical else [(x + (1 if i > 3 else 0), y + i) for i in range(6)]
+    for px, py in pts:
+        H.put(im, px, py, "hay.2")
+        if vertical: H.put(im, px + 1, py, "hay.1")
+        else: H.put(im, px, py + 1, "hay.1")
+    H.put(im, pts[0][0], pts[0][1], "hay.3")
+
+
+def photo_tape(im, cx, cy, sx, sy):
+    """Tasma kartonowa przez narozn (jak przyklejone zdjecie): pas po przekatnej, hay[2] z cieniem hay[1] i odblaskiem hay[3]."""
+    for i in range(0, 9):
+        for j in range(0, 9):
+            d = i + j
+            if 4 <= d <= 6:
+                x, y = cx + sx * i, cy + sy * j
+                if 0 <= x < im.width and 0 <= y < im.height:
+                    H.put(im, x, y, "hay.3" if d == 4 else ("hay.2" if d == 5 else "hay.1"))
+
+
+def plank_edge_h(im, x0, x1, y, light=True):
+    H.hline(im, x0, x1, y, "wood.3" if light else "wood.1")
+
+
+def frame_planks(im, n=6):
+    """Rama z desek 6 px: kontur, jasna krawedz, deska z nitkami sloju, ciemna dolna krawedz, wewnetrzny kontur."""
     w, h = im.size
-    cap(im, 0, 0, n); cap(im, w - n, 0, n); cap(im, 0, h - n, n); cap(im, w - n, h - n, n)
+    H.rect(im, 0, 0, w - 1, h - 1, O)
+    H.rect(im, 1, 1, w - 2, h - 2, "wood.2")
+    H.hline(im, 1, w - 2, 1, "wood.3"); H.vline(im, 1, 1, h - 2, "wood.3")
+    H.hline(im, 1, w - 2, h - 2, "wood.1"); H.vline(im, w - 2, 1, h - 2, "wood.1")
+    for y in (3,): H.hline(im, 2, w - 3, y, "wood.1")                                # szczelina miedzy deskami
+    H.hline(im, 2, w - 3, 4, "wood.3") if False else None
+    H.rect(im, n, n, w - 1 - n, h - 1 - n, O)
 
 
 def panel_wood():
+    """Skrzynka z desek: gruba rama, wnetrze z cieniem w plum, gwozdzie nierowno, sek, tasma."""
     im = H.canvas(24, 24)
-    ring(im, 0, "wood.0", "wood.0"); ring(im, 1, "wood.3", "wood.1"); ring(im, 2, "wood.2", "wood.1")
-    H.rect(im, 3, 3, 20, 20, "wood.2"); ring(im, 3, "wood.0", "wood.3")
-    H.rect(im, 4, 4, 19, 19, "wood.1")
-    for y in (8, 13, 17): H.hline(im, 4, 19, y, "wood.2")
-    H.hline(im, 4, 19, 5, "wood.0")
-    mirror_caps(im, 8)
-    cut4(im)
+    frame_planks(im)
+    H.rect(im, 7, 7, 16, 16, "wood.1")
+    H.hline(im, 7, 16, 7, "plum.1"); H.vline(im, 7, 7, 16, "plum.1"); H.hline(im, 7, 16, 16, "wood.2"); H.vline(im, 16, 8, 16, "wood.2")
+    nail(im, 2, 1); nail(im, 20, 3); nail(im, 3, 20)
+    knot(im, 19, 19)
+    photo_tape(im, 0, 0, 1, 1) if False else None
+    round_corners(im, 2)
     return im
 
 
 def panel_paper():
+    """Kartka w drewnianej ramie: gruba rama z desek, papier z cieniem pod rama, tasma przez rogi, gwozdz, zagiety rog."""
     im = H.canvas(24, 24)
-    ring(im, 0, "wood.0", "wood.0"); ring(im, 1, "wood.3", "wood.1"); ring(im, 2, "wood.2", "wood.1")
-    ring(im, 3, "hay.1", "hay.1")                                       # inlay z siana
-    ring(im, 4, "wood.0", "wood.0")
-    H.rect(im, 5, 5, 18, 18, "linen.3")
-    H.hline(im, 5, 18, 5, "linen.1"); H.vline(im, 5, 5, 18, "linen.1"); H.hline(im, 6, 18, 6, "linen.2"); H.vline(im, 6, 6, 18, "linen.2")
-    H.hline(im, 5, 18, 18, "linen.2"); H.vline(im, 18, 5, 18, "linen.2")
-    mirror_caps(im, 7)
-    for (x, y, dx, dy) in ((6, 6, 1, 1), (17, 6, -1, 1), (6, 17, 1, -1), (17, 17, -1, -1)):   # nawias ozdobny na papierze
-        H.put(im, x, y, "hay.2"); H.put(im, x + dx, y, "hay.2"); H.put(im, x, y + dy, "hay.2")
-    cut4(im)
+    frame_planks(im)
+    H.rect(im, 7, 7, 16, 16, "linen.3")
+    H.hline(im, 7, 16, 7, "linen.1"); H.vline(im, 7, 7, 16, "linen.1")
+    photo_tape(im, 0, 0, 1, 1)                                                # tasma przez lewy gorny narozn
+    nail(im, 20, 2)                                                           # gwozdz w prawym gornym
+    photo_tape(im, 23, 23, -1, -1)                                            # tasma przez prawy dolny
+    nail(im, 2, 20)
+    round_corners(im, 2)
     return im
 
 
 def btn(tones, pressed=False, hover=False):
+    """Naszywka z filcu/skory: kontur, swiatlo lewa-gora, szew wokol (jasniejszy ton), cien w plum u dolu."""
     lt, base, sh, edge = tones
-    w, h = 24, 16
-    im = H.canvas(w, h); t = 1 if pressed else 0
-    H.rect(im, 0, t, w - 1, h - 1, "wood.0"); H.rect(im, 1, t + 1, w - 2, h - 2, base)
+    w, h = 24, 16; t = 1 if pressed else 0
+    im = H.canvas(w, h)
+    H.rect(im, 0, t, w - 1, h - 1, O); H.rect(im, 1, t + 1, w - 2, h - 2, base)
     if pressed:
-        H.hline(im, 1, w - 2, t + 1, sh); H.hline(im, 1, w - 2, t + 2, sh)
-        H.vline(im, 1, t + 1, h - 2, sh)
+        H.hline(im, 1, w - 2, t + 1, sh); H.vline(im, 1, t + 1, h - 2, sh)
     else:
-        H.hline(im, 2, w - 3, 1, lt); H.hline(im, 2, w - 3, 2, lt)
-        H.vline(im, 1, 2, h - 5, lt); H.vline(im, w - 2, 3, h - 5, sh)
-        H.hline(im, 1, w - 2, h - 4, sh); H.hline(im, 1, w - 2, h - 3, edge); H.hline(im, 2, w - 3, h - 2, "wood.1" if hover is False else "hay.1")
-        if hover: H.put(im, 2, 2, "linen.3"); H.put(im, w - 3, 2, "linen.3")
-    for x, y in ((0, t), (w - 1, t), (0, h - 1), (w - 1, h - 1)): H.put(im, x, y, CUT)
+        H.hline(im, 1, w - 2, 1, lt); H.vline(im, 1, 1, h - 4, lt)
+        H.vline(im, w - 2, 2, h - 4, sh); H.hline(im, 1, w - 2, h - 4, sh); H.hline(im, 1, w - 2, h - 3, edge); H.hline(im, 1, w - 2, h - 2, "plum.1")
+    sy = t + 3                                                                 # szew: kreska 1 px wewnatrz, jasny ton
+    seam = "hay.2" if hover else lt
+    for x in range(3, w - 3): H.put(im, x, sy, seam)
+    for y in range(sy + 1, h - 5 + t): H.put(im, 3, y, seam); H.put(im, w - 4, y, seam)
+    H.hline(im, 3, w - 4, h - 5 + t, seam)
+    H.put(im, 4, sy, base); H.put(im, w - 6, sy, base)                         # przerwy w szwie (reczna robota)
+    H.put(im, w - 2, 1 + t, "hay.3")                                           # jeden odblask
+    round_corners(im, 2, y0=t)
     return im
 
 
 def tab(on):
     w, h = 20, 14
     im = H.canvas(w, h); top = 0 if on else 1
-    H.rect(im, 0, top, w - 1, h - 1, "wood.0")
+    H.rect(im, 0, top, w - 1, h - 1, O)
     H.rect(im, 1, top + 1, w - 2, h - 1, "hay.2" if on else "wood.2")
-    H.hline(im, 2, w - 3, top + 1, "hay.3" if on else "wood.3")
-    H.hline(im, 2, w - 3, top + 2, "linen.3" if on else "wood.2")
-    H.vline(im, 1, top + 2, h - 2, "hay.3" if on else "wood.3"); H.vline(im, w - 2, top + 3, h - 2, "hay.1" if on else "wood.1")
-    if on: H.hline(im, 1, w - 2, h - 1, "hay.2")
+    H.hline(im, 1, w - 2, top + 1, "hay.3" if on else "wood.3"); H.vline(im, 1, top + 1, h - 1, "hay.3" if on else "wood.3")
+    H.vline(im, w - 2, top + 2, h - 1, "hay.1" if on else "wood.1")
+    if on:
+        H.hline(im, 1, w - 2, h - 1, "hay.2")
+        for x in range(4, w - 4, 2): H.put(im, x, top + 3, "hay.1")           # szew
     else:
-        H.hline(im, 1, w - 2, h - 2, "wood.1"); H.hline(im, 1, w - 2, h - 1, "wood.0")
-    for x in (0, w - 1): H.put(im, x, top, CUT)
+        H.hline(im, 1, w - 2, h - 2, "wood.1"); H.hline(im, 1, w - 2, h - 1, O)
+        H.put(im, 3, top + 3, "wood.1"); H.put(im, 4, top + 3, "wood.1")      # sek
+    round_corners(im, 1, "tl" , top)
     return im
 
 
 def close(pressed=False):
-    w = 16
-    im = H.canvas(w, w); t = 1 if pressed else 0
-    H.rect(im, 0, t, 15, 15, "wood.0"); H.rect(im, 1, t + 1, 14, 14, "brick.2")
+    w = 16; t = 1 if pressed else 0
+    im = H.canvas(w, w)
+    H.rect(im, 0, t, 15, 15, O); H.rect(im, 1, t + 1, 14, 14, "brick.2")
     if not pressed:
-        ring(im, 1, "brick.3", "brick.1", w, w); H.hline(im, 2, 13, 2, "brick.3"); H.put(im, 2, 2, "rose.2")
+        H.hline(im, 1, 14, 1, "brick.3"); H.vline(im, 1, 1, 12, "brick.3")
+        H.hline(im, 1, 14, 12, "brick.1"); H.hline(im, 1, 14, 13, "plum.1"); H.vline(im, 14, 2, 12, "brick.1")
     for k in range(7):
-        H.put(im, 5 + k, 5 + k + t, "brick.0"); H.put(im, 11 - k, 5 + k + t, "brick.0")     # cien ikS
-    for k in range(7):
-        H.put(im, 4 + k, 4 + k + t, "linen.3"); H.put(im, 10 - k, 4 + k + t, "linen.3")
-    for x, y in ((0, t), (15, t), (0, 15), (15, 15)): H.put(im, x, y, CUT)
+        H.put(im, 4 + k, 4 + k + t, "linen.3"); H.put(im, 10 - k, 4 + k + t, "linen.3")            # krzyz z nici
+    H.put(im, 4, 4 + t, "hay.2"); H.put(im, 10, 4 + t, "linen.2"); H.put(im, 4, 10 + t, "linen.2"); H.put(im, 10, 10 + t, "hay.2")
+    round_corners(im, 1, "tlrb", t)
     return im
 
 
 def groove():
+    """Rowek z ciemnego drewna (plum): cien u gory-lewej, jasna listwa u dolu."""
     im = H.canvas(16, 8)
-    H.rect(im, 0, 0, 15, 7, "wood.0"); H.rect(im, 1, 1, 14, 6, "plum.2")
+    H.rect(im, 0, 0, 15, 7, O); H.rect(im, 1, 1, 14, 6, "plum.2")
     H.hline(im, 1, 14, 1, "plum.0"); H.hline(im, 1, 14, 2, "plum.1"); H.hline(im, 1, 14, 6, "plum.3")
-    cut4(im)
+    round_corners(im, 1)
     return im
 
 
-def fill(c, stripe=True):
+def fill(c):
+    """Wypelnienie paska jak dzianina: gorna krawedz jasna, dol w plum, rzad "v" scieg (kafel 4 px powtarzany)."""
     im = H.canvas(4, 6)
-    H.rect(im, 0, 0, 3, 5, c[1]); H.hline(im, 0, 3, 0, c[0]); H.hline(im, 0, 3, 1, c[0]); H.hline(im, 0, 3, 5, c[2]); H.hline(im, 0, 3, 4, c[2])
+    H.rect(im, 0, 0, 3, 5, c[1]); H.hline(im, 0, 3, 0, c[0]); H.hline(im, 0, 3, 5, "plum.1"); H.hline(im, 0, 3, 4, c[2])
+    H.put(im, 0, 2, c[0]); H.put(im, 1, 3, c[2]); H.put(im, 2, 3, c[2]); H.put(im, 3, 2, c[0])
     return im
 
 
 def badge():
+    """Metka z papieru z tasma na rogu."""
     im = H.canvas(16, 12)
-    H.rect(im, 0, 0, 15, 11, "wood.0"); H.rect(im, 1, 1, 14, 10, "hay.1")
-    H.rect(im, 2, 2, 13, 9, "linen.2"); H.hline(im, 2, 13, 2, "linen.1"); H.vline(im, 2, 2, 9, "linen.1")
-    H.hline(im, 3, 13, 9, "linen.3"); H.vline(im, 13, 3, 9, "linen.3")
-    H.hline(im, 1, 14, 1, "hay.3"); H.vline(im, 1, 1, 10, "hay.3")
-    cut4(im)
+    H.rect(im, 0, 0, 15, 11, O); H.rect(im, 1, 1, 14, 10, "linen.3")
+    H.hline(im, 1, 14, 1, "linen.2"); H.vline(im, 1, 1, 10, "linen.2")
+    H.hline(im, 1, 14, 10, "linen.1"); H.vline(im, 14, 2, 10, "linen.1")
+    H.put(im, 1, 1, "hay.2"); H.put(im, 2, 1, "hay.2"); H.put(im, 1, 2, "hay.2")
+    round_corners(im, 1)
     return im
 
 
 def field():
+    """Pole tekstu: wglebienie w papierze, cien w plum z gory-lewej, szew z siana u dolu."""
     im = H.canvas(16, 14)
-    H.rect(im, 0, 0, 15, 13, "wood.0"); H.rect(im, 1, 1, 14, 12, "linen.3")
-    H.hline(im, 1, 14, 1, "wood.1"); H.vline(im, 1, 1, 12, "wood.1"); H.hline(im, 2, 14, 2, "linen.1"); H.vline(im, 2, 2, 12, "linen.1")
-    H.hline(im, 1, 14, 12, "hay.1"); H.hline(im, 2, 13, 11, "linen.2")
-    cut4(im)
+    H.rect(im, 0, 0, 15, 13, O); H.rect(im, 1, 1, 14, 12, "linen.3")
+    H.hline(im, 1, 14, 1, "plum.3"); H.vline(im, 1, 1, 12, "plum.3"); H.hline(im, 2, 14, 2, "linen.1"); H.vline(im, 2, 2, 12, "linen.1")
+    H.hline(im, 1, 14, 12, "linen.2")
+    round_corners(im, 1)
     return im
 
 
 def card():
+    """Karta z kartonu: wood.1 rant, papier, tasma hay[2] w lewym gornym rogu, odgiety prawy dolny rog."""
     im = H.canvas(16, 16)
-    ring(im, 0, "wood.0", "wood.0"); ring(im, 1, "wood.3", "wood.1"); ring(im, 2, "hay.1", "hay.1")
-    H.rect(im, 3, 3, 12, 12, "linen.3"); H.hline(im, 3, 12, 3, "linen.1"); H.vline(im, 3, 3, 12, "linen.1")
-    H.hline(im, 3, 12, 12, "linen.2"); H.vline(im, 12, 3, 12, "linen.2")
-    for x, y in ((1, 1), (14, 1), (1, 14), (14, 14)): H.put(im, x, y, "hay.3")
-    cut4(im)
+    H.rect(im, 0, 0, 15, 15, O); H.rect(im, 1, 1, 14, 14, "wood.1")
+    H.rect(im, 2, 2, 13, 13, "linen.3")
+    H.hline(im, 2, 13, 2, "linen.1"); H.vline(im, 2, 2, 13, "linen.1")
+    H.hline(im, 2, 13, 13, "linen.2"); H.vline(im, 13, 3, 13, "linen.2")
+    H.hline(im, 1, 14, 1, "wood.2"); H.vline(im, 1, 1, 14, "wood.2")
+    H.put(im, 2, 2, "hay.2"); H.put(im, 3, 2, "hay.2"); H.put(im, 2, 3, "hay.2"); H.put(im, 1, 1, "hay.3")
+    H.put(im, 13, 13, "linen.1"); H.put(im, 12, 13, "linen.1"); H.put(im, 13, 12, "linen.1")
+    round_corners(im, 1)
     return im
 
 
 def tooltip():
     im = H.canvas(16, 16)
-    ring(im, 0, "plum.0", "plum.0"); ring(im, 1, "plum.3", "plum.1"); H.rect(im, 2, 2, 13, 13, "plum.2")
-    H.hline(im, 2, 13, 2, "plum.1"); H.put(im, 1, 1, "hay.2"); H.put(im, 14, 14, "hay.1")
-    cut4(im)
+    H.rect(im, 0, 0, 15, 15, O); H.rect(im, 1, 1, 14, 14, "plum.2")
+    H.hline(im, 1, 14, 1, "plum.3"); H.vline(im, 1, 1, 14, "plum.3"); H.hline(im, 1, 14, 14, "plum.1"); H.vline(im, 14, 2, 14, "plum.1")
+    for x in range(3, 13, 2): H.put(im, x, 3, "hay.1")
+    round_corners(im, 1)
     return im
 
 
 def slot(on=False):
     im = H.canvas(20, 20)
     if on:
-        ring(im, 0, "wood.0", "wood.0"); ring(im, 1, "hay.3", "hay.1"); ring(im, 2, "hay.2", "hay.2"); ring(im, 3, "hay.1", "hay.3")
-        H.rect(im, 4, 4, 15, 15, "linen.3"); H.hline(im, 4, 15, 4, "linen.2"); H.vline(im, 4, 4, 15, "linen.2")
-        for x, y in ((2, 2), (17, 2), (2, 17), (17, 17)): H.put(im, x, y, "linen.3")
+        H.rect(im, 0, 0, 19, 19, O); H.rect(im, 1, 1, 18, 18, "hay.2"); H.hline(im, 1, 18, 1, "hay.3"); H.vline(im, 1, 1, 18, "hay.3")
+        H.hline(im, 1, 18, 18, "hay.1"); H.vline(im, 18, 2, 18, "hay.1")
+        H.rect(im, 3, 3, 16, 16, O); H.rect(im, 4, 4, 15, 15, "linen.3")
+        H.hline(im, 4, 15, 4, "linen.1"); H.vline(im, 4, 4, 15, "linen.1")
+        tape(im, 14, 1)
     else:
-        ring(im, 0, "wood.0", "wood.0"); ring(im, 1, "wood.0", "wood.3"); ring(im, 2, "wood.1", "wood.2")
-        H.rect(im, 3, 3, 16, 16, "wood.2"); H.hline(im, 3, 16, 3, "wood.1"); H.vline(im, 3, 3, 16, "wood.1")
-        for x, y in ((2, 2), (17, 2), (2, 17), (17, 17)): H.put(im, x, y, "wood.3")
-    cut4(im)
+        H.rect(im, 0, 0, 19, 19, O); H.rect(im, 1, 1, 18, 18, "wood.2"); H.hline(im, 1, 18, 18, "wood.3"); H.vline(im, 18, 1, 18, "wood.3")
+        H.rect(im, 3, 3, 16, 16, "wood.1"); H.hline(im, 2, 17, 2, "plum.1"); H.vline(im, 2, 2, 17, "plum.1")
+        H.hline(im, 3, 16, 3, "plum.1"); H.vline(im, 3, 3, 16, "plum.1")
+        H.hline(im, 3, 16, 16, "wood.2"); H.vline(im, 16, 4, 16, "wood.2")
+        knot(im, 5, 14)
+    round_corners(im, 1)
     return im
 
 
 def toggle(on):
     im = H.canvas(24, 12)
-    H.rect(im, 0, 0, 23, 11, "wood.0"); H.rect(im, 1, 1, 22, 10, "moss.3" if on else "plum.2")
-    H.hline(im, 1, 22, 1, "moss.2" if on else "plum.1"); H.hline(im, 1, 22, 10, "moss.4" if on else "plum.3")
+    H.rect(im, 0, 0, 23, 11, O); H.rect(im, 1, 1, 22, 10, "moss.2" if on else "plum.2")
+    H.hline(im, 1, 22, 1, "moss.1" if on else "plum.1"); H.hline(im, 1, 22, 10, "moss.3" if on else "plum.3")
     kx = 13 if on else 2
-    H.rect(im, kx, 2, kx + 8, 9, "wood.0"); H.rect(im, kx + 1, 3, kx + 7, 8, "hay.2")
-    H.hline(im, kx + 1, kx + 7, 3, "hay.3"); H.vline(im, kx + 1, 3, 7, "hay.3"); H.hline(im, kx + 1, kx + 7, 8, "hay.1")
-    H.put(im, kx + 4, 5, "wood.0")
-    cut4(im)
+    H.rect(im, kx, 2, kx + 8, 9, O); H.rect(im, kx + 1, 3, kx + 7, 8, "hay.2")
+    H.hline(im, kx + 1, kx + 7, 3, "hay.3"); H.vline(im, kx + 1, 3, 8, "hay.3"); H.hline(im, kx + 1, kx + 7, 8, "hay.1")
+    H.put(im, kx + 4, 5, "hay.0"); H.put(im, kx + 5, 5, "hay.0")                  # nit
+    round_corners(im, 1)
     return im
 
 
 def bar_wood():
+    """Belka okna: deska z jasna krawedzia, szczelina, dwa gwozdzie (nierowno), sek."""
     im = H.canvas(16, 16)
-    ring(im, 0, "wood.0", "wood.0"); ring(im, 1, "wood.3", "wood.1")
-    H.rect(im, 2, 2, 13, 13, "wood.2"); H.hline(im, 2, 13, 2, "wood.3"); H.hline(im, 2, 13, 3, "wood.2")
-    H.hline(im, 2, 13, 12, "wood.1"); H.hline(im, 2, 13, 13, "wood.0")
-    H.hline(im, 2, 13, 5, "wood.2"); H.hline(im, 2, 13, 10, "wood.1")
-    for x in (2, 11): H.rect(im, x, 6, x + 1, 9, "hay.2"); H.put(im, x, 6, "hay.3"); H.put(im, x + 1, 9, "hay.1")  # nity
-    cut4(im)
+    H.rect(im, 0, 0, 15, 15, O); H.rect(im, 1, 1, 14, 14, "wood.2")
+    H.hline(im, 1, 14, 1, "wood.3"); H.vline(im, 1, 1, 14, "wood.3"); H.hline(im, 1, 14, 2, "wood.3")
+    H.hline(im, 1, 14, 13, "wood.1"); H.hline(im, 1, 14, 14, "wood.1"); H.vline(im, 14, 2, 14, "wood.1")
+    H.hline(im, 2, 14, 12, "plum.1")
+    nail(im, 2, 2); nail(im, 12, 1)
+    round_corners(im, 1)
     return im
 
 
 def dot(full):
     im = H.canvas(8, 8)
-    H.rect(im, 0, 0, 7, 7, "wood.0"); H.rect(im, 1, 1, 6, 6, "moss.3" if full else "linen.2")
+    H.rect(im, 0, 0, 7, 7, O); H.rect(im, 1, 1, 6, 6, "moss.3" if full else "linen.2")
     if full:
-        H.hline(im, 1, 6, 1, "moss.4"); H.vline(im, 1, 1, 6, "moss.4"); H.hline(im, 2, 6, 6, "moss.2"); H.put(im, 3, 3, "hay.3")
+        H.hline(im, 1, 5, 1, "moss.4"); H.vline(im, 1, 1, 5, "moss.4"); H.hline(im, 2, 6, 6, "moss.2"); H.put(im, 3, 3, "hay.3")
     else:
         H.hline(im, 1, 6, 1, "linen.1"); H.vline(im, 1, 1, 6, "linen.1")
-    cut4(im)
+    round_corners(im, 1)
     return im
 
 
 def sep_h():
+    """Szew z siana miedzy dwoma liniami: powtarzalny co 4 px."""
     im = H.canvas(32, 4)
-    H.hline(im, 0, 31, 0, "wood.0"); H.hline(im, 0, 31, 1, "wood.2"); H.hline(im, 0, 31, 2, "hay.1"); H.hline(im, 0, 31, 3, "plum.1")
-    for x in range(1, 32, 4): H.put(im, x, 1, "hay.3")
-    for x in (15, 16): H.put(im, x, 1, "hay.3"); H.put(im, x, 2, "hay.3")
+    H.hline(im, 0, 31, 0, O); H.hline(im, 0, 31, 3, "plum.1")
+    for x in range(32): H.put(im, x, 1, "hay.2" if x % 4 < 2 else "hay.1")
+    for x in range(32): H.put(im, x, 2, "wood.2")
     return im
 
 
 def sep_v():
     im = H.canvas(4, 32)
-    H.vline(im, 0, 0, 31, "wood.0"); H.vline(im, 1, 0, 31, "wood.2"); H.vline(im, 2, 0, 31, "hay.1"); H.vline(im, 3, 0, 31, "plum.1")
-    for y in range(1, 32, 4): H.put(im, 1, y, "hay.3")
+    H.vline(im, 0, 0, 31, O); H.vline(im, 3, 0, 31, "plum.1")
+    for y in range(32): H.put(im, 1, y, "hay.2" if y % 4 < 2 else "hay.1")
+    for y in range(32): H.put(im, 2, y, "wood.2")
     return im
 
 
 def header_banner():
+    """Szyld na linach: deska z gwozdziami (nierowno), konce z petla ze sznurka."""
     w, h = 96, 24
     im = H.canvas(w, h)
-    H.rect(im, 0, 2, w - 1, h - 3, "wood.0"); H.rect(im, 1, 3, w - 2, h - 4, "wood.2")
-    H.hline(im, 1, w - 2, 3, "wood.3"); H.hline(im, 1, w - 2, 4, "wood.3"); H.hline(im, 1, w - 2, h - 5, "wood.1"); H.hline(im, 1, w - 2, h - 4, "wood.1")
-    for x in range(12, w - 12, 4): H.hline(im, x, x + 1, 7, "hay.2"); H.hline(im, x, x + 1, h - 8, "hay.2")
-    for x in (0, w - 12):                                                       # mosiezne okucia konca wstegi
-        H.rect(im, x, 1, x + 11, h - 2, "wood.0"); H.rect(im, x + 1, 2, x + 10, h - 3, "hay.2")
-        H.hline(im, x + 1, x + 10, 2, "hay.3"); H.vline(im, x + 1, 2, h - 3, "hay.3"); H.hline(im, x + 1, x + 10, h - 3, "hay.1")
-        H.put(im, x + 3, 5, "wood.0"); H.put(im, x + 8, 5, "wood.0"); H.put(im, x + 3, h - 7, "wood.0"); H.put(im, x + 8, h - 7, "wood.0")
+    H.rect(im, 0, 3, w - 1, h - 4, O); H.rect(im, 1, 4, w - 2, h - 5, "wood.2")
+    H.hline(im, 1, w - 2, 4, "wood.3"); H.hline(im, 1, w - 2, 5, "wood.3"); H.hline(im, 1, w - 2, h - 6, "wood.1"); H.hline(im, 1, w - 2, h - 5, "plum.1")
+    for x in range(14, w - 14, 4): H.hline(im, x, x + 1, 8, "hay.2"); H.hline(im, x, x + 1, h - 9, "hay.2")    # szew z siana
+    for x, y in ((3, 8), (w - 6, 10)): nail(im, x, y)                          # gwozdzie, nierowno
     for x in (0, w - 1):
-        for y in (1, h - 2): H.put(im, x, y, CUT)
-    H.hline(im, 2, w - 3, h - 2, "plum.1")
+        for y in (3, h - 4): im.putpixel((x, y), (0, 0, 0, 0))
+    for sx in (5, w - 6):                                                       # petle sznurka u gory
+        for dy, dx in ((2, 0), (1, 1), (0, 2), (0, 3), (1, 4), (2, 5)): H.put(im, sx - 2 + dx, dy, "hay.2" if dx % 2 else "hay.1")
     return im
 
 
 ITEMS = {
     "panel_wood": (panel_wood, [8] * 4), "panel_paper": (panel_paper, [8] * 4), "header_banner": (header_banner, [12, 0, 12, 0]),
     "sep_h": (sep_h, [0] * 4), "sep_v": (sep_v, [0] * 4),
-    "btn_normal": (lambda: btn(("hay.3", "hay.2", "hay.1", "wood.2")), [6] * 4),
-    "btn_hover": (lambda: btn(("linen.3", "hay.3", "hay.2", "wood.2"), hover=True), [6] * 4),
-    "btn_pressed": (lambda: btn(("hay.1", "hay.1", "hay.0", "wood.2"), True), [6] * 4),
+    "btn_normal": (lambda: btn(("hay.3", "hay.2", "hay.1", "hay.0")), [6] * 4),
+    "btn_hover": (lambda: btn(("linen.3", "hay.3", "hay.2", "hay.0"), hover=True), [6] * 4),
+    "btn_pressed": (lambda: btn(("hay.1", "hay.1", "hay.0", "hay.0"), True), [6] * 4),
 }
 GREEN = ("moss.4", "moss.3", "moss.2", "moss.1"); BLUE = ("dusk.4", "dusk.3", "dusk.2", "dusk.1")
 ROSE = ("rose.2", "rose.1", "rose.0", "berry.1"); RED = ("brick.3", "brick.2", "brick.1", "brick.0")

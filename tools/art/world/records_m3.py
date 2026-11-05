@@ -141,14 +141,14 @@ def sleeve2(rec):
 
 def frame(rar):  # ramka albumu 32x32 (rekaw 24x24 w srodku, margines 4 px): drewno / mosiadz z kamieniem / berry ze zlotem i korona
     im = H.canvas(32, 32)
-    T = {"common": ("wood.0", "wood.3", "wood.2", "wood.1", "hay.2"),
-         "rare": ("wood.0", "hay.3", "hay.2", "hay.1", "dusk.3"),
-         "unique": ("wood.0", "hay.3", "berry.1", "berry.0", "rose.2")}[rar]
+    T = {"common": ("outline.fg", "wood.3", "wood.2", "wood.1", "hay.2"),
+         "rare": ("outline.fg", "hay.3", "hay.2", "hay.1", "flame.1"),
+         "unique": ("outline.fg", "hay.3", "berry.1", "berry.0", "rose.2")}[rar]
     out, lt, base, sh, gem = T
     def ring(i, tl, br):
         H.hline(im, i, 31 - i, i, tl); H.vline(im, i, i, 31 - i, tl); H.hline(im, i, 31 - i, 31 - i, br); H.vline(im, 31 - i, i, 31 - i, br)
     ring(0, out, out); ring(1, lt, sh); ring(2, base, base)
-    ring(3, sh if rar != "common" else "wood.0", lt if rar != "common" else "wood.2")
+    ring(3, sh if rar != "common" else "outline.fg", lt if rar != "common" else "wood.2")
     if rar == "unique":
         ring(1, "hay.3", "hay.1"); ring(2, "berry.1", "berry.1"); ring(3, "berry.0", "rose.1")
     for x, y in ((0, 0), (31, 0), (0, 31), (31, 31)): H.put(im, x, y, "plum.1")
@@ -158,16 +158,16 @@ def frame(rar):  # ramka albumu 32x32 (rekaw 24x24 w srodku, margines 4 px): dre
         for x, y in ((1, 1), (29, 1), (1, 29), (29, 29)): stud(x, y)
     else:
         for x, y in ((0, 0), (26, 0), (0, 26), (26, 26)):                      # okucia rogow 6x6
-            H.rect(im, x, y, x + 5, y + 5, "wood.0"); H.rect(im, x + 1, y + 1, x + 4, y + 4, "hay.2")
+            H.rect(im, x, y, x + 5, y + 5, "outline.fg"); H.rect(im, x + 1, y + 1, x + 4, y + 4, "hay.2")
             H.hline(im, x + 1, x + 4, y + 1, "hay.3"); H.vline(im, x + 1, y + 1, y + 4, "hay.3"); H.hline(im, x + 1, x + 4, y + 4, "hay.1")
-        H.put(im, 2, 2, "wood.0"); H.put(im, 28, 2, "wood.0"); H.put(im, 2, 28, "wood.0"); H.put(im, 28, 28, "wood.0")
+        H.put(im, 2, 2, "outline.fg"); H.put(im, 28, 2, "outline.fg"); H.put(im, 2, 28, "outline.fg"); H.put(im, 28, 28, "outline.fg")
         for x, y in ((0, 0), (31, 0), (0, 31), (31, 31)): H.put(im, x, y, "plum.1")
         # kamien na srodku gornego brzegu
-        H.rect(im, 13, 0, 18, 3, "wood.0"); H.rect(im, 14, 1, 17, 3, gem); H.put(im, 14, 1, "linen.3"); H.hline(im, 14, 17, 3, "rose.0" if rar == "unique" else "dusk.2")
+        H.rect(im, 13, 0, 18, 3, "outline.fg"); H.rect(im, 14, 1, 17, 3, gem); H.put(im, 14, 1, "linen.3"); H.hline(im, 14, 17, 3, "rose.0" if rar == "unique" else "flame.0")
     if rar == "unique":                                                         # korona z iskrami
         for x, y in ((16, 0), (12, 0), (19, 0)): H.put(im, x, y, "hay.3")
         for x, y in ((8, 1), (23, 1), (4, 4)): H.put(im, x, y, "linen.3")
-        H.put(im, 15, 0, "wood.0")
+        H.put(im, 15, 0, "outline.fg")
     return im
 
 

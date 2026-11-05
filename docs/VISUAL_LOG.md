@@ -224,9 +224,8 @@ Uwaga wlasciciela: plyty i czesc ikon menu zbyt proste. Audyt wg legendy (test s
 ## M3 + M4 muzyka (5.11.2026)
 Serie 3-4 (12 płyt x 5 stanów, rękawy), ramki rzadkości, pusty slot, manifest v3 (24 płyty); 38 ikon (278-315: 6 odtwarzaczy, 8 sterowania, 24 płyt); elementy UI odtwarzacza (`mp_*`, `badge_wear_*`, `shelf_plank`), efekty `assets/fx/` (nutki, VU, odkrycie płyty), podgląd `docs/ui/music_preview.png`. Notatki o działaniu, ekonomii i tańcu: `docs/PLAN_ODTWARZACZ.md` §9-11, `docs/PRZEKAZANIE_ODTWARZACZE.md`, `assets/records/players_design.json`. Lint 0, ASSETS/ICONS/LIGHTS OK. Generatory: `records_m3.py`, `icons_music.py`, `music_ui_m4.py`.
 
-## UI-4 szlif "legendarny" (5.11.2026)
-Audyt: panele, przyciski, zakładki, paski i ikony systemowe były płaskie (1 px kontur + 1 ton + 1 krawędź światła). Przerobione bez zmiany nazw, rozmiarów i `slice` (kod nie wymaga poprawek):
-- `tools/art/world/ui_legend.py` nadpisuje 35 elementów `assets/ui/`: faza z 3-4 tonami, mosiężne okucia rogów i nity na panelach, inlay z siana na papierze, wcięte sloty, polysk i dolny rant przycisków, zakładki z połyskiem, wcięte pole tekstu, medalion przycisku zamykania z cieniem X, rowek paska z cieniem, belka z nitami, końcówki wstęgi nagłówka z mosiądzu, separatory z rombem.
-- `tools/art/world/icons_legend.py` nadpisuje 13 ikon (x_close, x_plus, x_minus, x_info, x_help, x_search, x_timer, x_bell, x_menu, x_filter, x_star_empty, x_music_off, x_dot_full): mosiężne medaliony z cieniowaną tarczą, automatyczna faza (światło lewa-góra).
-- Ramki rzadkości płyt: 32x32 (było 28x28; margines 4 px zamiast 2): drewno z nitami / mosiądz z okuciami i kamieniem / berry ze złotem, kamieniem i koroną. Rękaw 24x24 leży 4 px od brzegu.
-- Podglądy odświeżone: `docs/ui/preview.png`, `docs/ui/music_preview.png`.
+## UI-4 szlif wg legendy stylu (5.11.2026)
+Błąd w mojej pierwszej wersji: dorobiłem ogólnie "bogate" UI zamiast trzymać się legendy `docs/STYL_SWIATA.md`, a kontur był `wood.0` (#47281c) zamiast `outline.fg` (#3a1d17). Poprawione:
+- `tools/art/world/ui_legend.py` (35 elementów `assets/ui/`, te same nazwy/rozmiary/`slice`): kontur `outline.fg`, rogi ścięte, cień z przesunięciem w plum, rama z desek 6 px z gwoździami i sękiem (nierówno), tasma kartonowa hay[2] przez narożniki kartki, szew z siana na przyciskach (naszywka z filcu), dzianinowy ścieg "v" w wypełnieniach pasków, szyld na sznurkach, metki i karty z tasmą.
+- `tools/art/world/icons_legend.py` (13 ikon `x_*`): mosiężne medaliony (materiał "mosiądz": ciemna rama, jasny odblask), automatyczna faza.
+- Ramki rzadkości płyt 32x32 (drewno z gwoździami / mosiądz z ciepłym kamieniem / berry ze złotem); kontur `outline.fg` także w `records_m2/m3` i `music_ui_m4`.
