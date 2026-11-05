@@ -107,9 +107,9 @@ namespace Cuy.Core.Tests
         public void OldSaveWithoutMusicFieldsDoesNotThrow()
         {
             var state = new GameState();
-            state.EnsureMusic();
+            state.EnsureMusic(); // grants the starter player (player_turntable)
 
-            Assert.Equal(MusicPlaceError.NotOwned, MusicPlacement.Place(state, Room, Player));
+            Assert.Equal(MusicPlaceError.NotOwned, MusicPlacement.Place(state, Room, Other));
             Assert.Equal(MusicPlaceError.NothingInRoom, MusicPlacement.PickUp(state, Room));
         }
     }
