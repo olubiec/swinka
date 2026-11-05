@@ -88,12 +88,13 @@
   // Contact shadow sprite per life stage (senior and legend use the adult shadow) and its width.
   const PIG_SHADOW_BY_STAGE = { baby: 'baby', junior: 'junior', adult: 'adult', senior: 'adult', legend: 'adult' };
   const PIG_SHADOW_WIDTH = { baby: 30, junior: 38, adult: 46 };
-  // Ambient level per scene period (scene.level, when given, overrides it).
-  const AMBIENT_BY_PERIOD = { day: 1, dusk: 0.8, night: 0.6 };
 
+  // Scene ambient as an [r,g,b] multiplier (0-1): colour x level from lights.json ambient[period].
   function sceneAmbient(scene) {
-    if (typeof scene.level === 'number') return scene.level;
-    return AMBIENT_BY_PERIOD[scene.period] ?? 1;
+    const a = scene.ambient || {};
+    const c = a.color || [1, 1, 1];
+    const level = typeof a.level === 'number' ? a.level : 1;
+    return [c[0] * level, c[1] * level, c[2] * level];
   }
 
   class PigCanvas {
@@ -582,11 +583,20 @@
       // --- 3. ACCESSORIES / HAY RACK / WATER BOTTLE ---
       this.drawProps(ctx);
 
-      // --- 3.5. OWNED TOYS ---
-      this.drawToys(ctx);
+      // --- 3.5. OWNED TOYS (desktop order) ---
+      // Home scene (lightScene): background, furniture and contact shadow are lit together, then the toys
+      // (assets/props, the Pulpit props) are drawn unlit on top of the light, as docs/SWIATLO_SWINEK.md point 4 says.
+      const lit = !!this.lightScene;
+      if (!lit) this.drawToys(ctx);
 
       // Draw 0 <= Z < 10 layers
       this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
+
+      if (lit) {
+        this.drawContactShadow(ctx);
+        this.applySceneLight(ctx, this.lightScene);
+        this.drawToys(ctx);
+      }
 
       // --- 4. THE GUINEA PIG (from the sprite sheet) ---
       this.drawPig(ctx, this.lightScene);
@@ -778,7 +788,7 @@
       }
     }
 
-    // Home scenes pass a light scene {period, sources, origin} to set the pig's lighting; null = desktop look.
+    // Home scenes pass a light scene {ambient: {color, level} from lights.json, sources, origin} to light the scene and the pig; null = desktop look.
     setLightScene(scene) {
       this.lightScene = scene || null;
     }
@@ -805,8 +815,7 @@
       let fx = sx;
       let fy = sy;
       if (lightScene) {
-        // Scene pigs: contact shadow first, then the pig lit by the scene.
-        this.drawContactShadow(ctx);
+        // Scene pigs: the pig lit by the scene (its contact shadow is drawn in render, before the light).
         const lit = this.litFrame(sheet, sx, sy, lightScene);
         if (lit) {
           frame = lit;
@@ -834,6 +843,16 @@
         ctx.drawImage(frame, fx, fy, FRAME_SIZE, FRAME_SIZE, this.pigX, this.pigY, FRAME_SIZE, FRAME_SIZE);
       }
 
+      ctx.restore();
+    }
+
+    // Scene light for the background, furniture and shadow: multiply by the ambient colour (lights.json), no dither.
+    applySceneLight(ctx, scene) {
+      const a = sceneAmbient(scene);
+      ctx.save();
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.fillStyle = `rgb(${Math.round(255 * Math.min(1, a[0]))}, ${Math.round(255 * Math.min(1, a[1]))}, ${Math.round(255 * Math.min(1, a[2]))})`;
+      ctx.fillRect(0, 0, this.sceneWidth, this.sceneHeight);
       ctx.restore();
     }
 
@@ -892,9 +911,9 @@
           if (data[i + 3] === 0) continue;
           const wx = origin.x + px;
           const wy = origin.y + py;
-          light[0] = ambient;
-          light[1] = ambient;
-          light[2] = ambient;
+          light[0] = ambient[0];
+          light[1] = ambient[1];
+          light[2] = ambient[2];
           sources.forEach((src) => {
             const r = src.radius || 40;
             const dist = Math.hypot(src.x - wx, src.y - wy);

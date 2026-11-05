@@ -107,6 +107,23 @@
     document.head.appendChild(script);
   }
 
+  // Home pig light (docs/SWIATLO_SWINEK.md): the ambient of the local hour from assets/data/lights.json, refreshed once a minute.
+  let pigLightData = null;
+  function refreshPigLight() {
+    if (!canvasPig || !pigLightData || !window.Lights) return;
+    const period = window.Lights.periodOf(new Date());
+    canvasPig.setLightScene({ ambient: window.Lights.ambientFor(pigLightData, period), sources: [] });
+  }
+  function initPigLight() {
+    const isWebView = !!(window.chrome && window.chrome.webview);
+    const base = isWebView ? 'https://cuy.assets/' : '../../assets/';
+    fetch(base + 'data/lights.json')
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { pigLightData = j; refreshPigLight(); })
+      .catch(() => { pigLightData = null; });
+    setInterval(refreshPigLight, 60000);
+  }
+
   // App initialisation
   function init() {
     applyUiAssets();
@@ -123,6 +140,7 @@
     const canvasEl = document.getElementById('pigCanvas');
     if (canvasEl && window.PigCanvas) {
       canvasPig = new window.PigCanvas(canvasEl);
+      initPigLight();
     }
 
     // Hook up the bridge listener (works both in WebView2 and in the mock)
