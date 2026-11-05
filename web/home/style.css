@@ -24,6 +24,8 @@
 :root {
   /* 16x16 icon sheet from assets */
   --icons-sheet: url('../../assets/icons/icons_16.png');
+  /* bg:menu image; index.html overrides it in WebView2 (https://cuy.assets/) */
+  --menu-bg: url('../../assets/world/bg/menu.png');
 
   /* Typography */
   --font-pixel: 'Pixelify Sans', monospace, sans-serif;
@@ -496,7 +498,7 @@ body.webview-mode .game-device {
 .actions-section {
   padding: 10px 12px 12px;
   /* bg:menu (assets/world/bg/menu.png, 256x144) at 3x, centred behind the menu buttons */
-  background: var(--ui-linen-1) url('../../assets/world/bg/menu.png') center / 768px 432px no-repeat;
+  background: var(--ui-linen-1) var(--menu-bg) center / 768px 432px no-repeat;
   image-rendering: pixelated;
   flex: 1;
   display: flex;

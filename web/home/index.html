@@ -5,9 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Cuy Home</title>
   <meta name="description" content="Home of a pixel guinea pig: needs, animations, shop and care in a retro game style.">
-  <link rel="icon" type="image/png" sizes="32x32" href="../../assets/app-icon/icon_32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="../../assets/app-icon/icon_16.png">
-  <link rel="stylesheet" href="../../assets/ui/ui_tokens.css">
+  <script>
+    // Static links to assets/: ../../assets/ in the browser, https://cuy.assets/ in WebView2 (see lib/ui-assets.js).
+    var __cuyWv = !!(window.chrome && window.chrome.webview);
+    var __cuyAssets = __cuyWv ? 'https://cuy.assets/' : '../../assets/';
+    document.write('<link rel="icon" type="image/png" sizes="32x32" href="' + __cuyAssets + 'app-icon/icon_32.png">' +
+      '<link rel="icon" type="image/png" sizes="16x16" href="' + __cuyAssets + 'app-icon/icon_16.png">' +
+      '<link rel="stylesheet" href="' + __cuyAssets + 'ui/ui_tokens.css">');
+    // CSS url()s of style.css are relative to the page: before app.js runs they would load from cuy.home in WebView2.
+    if (__cuyWv) {
+      document.documentElement.style.setProperty('--icons-sheet', "url('https://cuy.assets/icons/icons_16.png')");
+      document.documentElement.style.setProperty('--menu-bg', "url('https://cuy.assets/world/bg/menu.png')");
+    }
+  </script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="minigames/minigames.css">
   <link rel="stylesheet" href="features/music/player.css">
