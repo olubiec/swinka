@@ -9,6 +9,7 @@
 
   let currentFactIndex = 0;
   let factInterval = null;
+  let unsubToast = null;
 
   function render(container, api, state) {
     if (!state) return;
@@ -214,8 +215,9 @@
         }
       }, 5000);
 
-      // Listen for toasts
-      api.onMessage('toast', (msg) => {
+      // Listen for toasts (drop the handler from the previous open, if any)
+      if (unsubToast) unsubToast();
+      unsubToast = api.onMessage('toast', (msg) => {
         const toastContainer = container.querySelector('#vet-toast-container');
         if (toastContainer && msg.text) {
           const toast = document.createElement('div');
@@ -234,6 +236,10 @@
       if (factInterval) {
         clearInterval(factInterval);
         factInterval = null;
+      }
+      if (unsubToast) {
+        unsubToast();
+        unsubToast = null;
       }
     },
     onState(state, container, api) {
