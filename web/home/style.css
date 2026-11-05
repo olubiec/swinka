@@ -61,7 +61,7 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 10px;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
@@ -116,7 +116,7 @@ body.webview-mode .game-device {
   border-width: 12px 0;
   border-color: transparent;
   border-image: var(--ui-header_banner) 12 0 fill / 12px 0;
-  padding: 6px 10px;
+  padding: 4px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -203,7 +203,7 @@ body.webview-mode .game-device {
 .pet-identity-card {
   background: linear-gradient(180deg, var(--ui-wood-4) 0%, var(--ui-wood-3) 100%);
   border-bottom: 3px solid var(--ui-wood-0);
-  padding: 8px 12px;
+  padding: 6px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -329,8 +329,8 @@ body.webview-mode .game-device {
   overflow: hidden;
   line-height: 0;
   /* Fixed height, never shrunk by the flex column: otherwise the floor and the pig get cropped. */
-  flex: 0 0 150px;
-  height: 150px;
+  flex: 0 0 132px;
+  height: 132px;
 }
 
 #pigCanvas {
@@ -363,7 +363,7 @@ body.webview-mode .game-device {
    ========================================================================== */
 
 .needs-section {
-  padding: 10px 12px;
+  padding: 8px 12px;
   background: var(--ui-linen-2);
   border-bottom: 3px solid var(--ui-wood-0);
 }
@@ -372,7 +372,7 @@ body.webview-mode .game-device {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .section-label {
@@ -397,7 +397,7 @@ body.webview-mode .game-device {
 .needs-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
 }
 
 .need-card {
@@ -406,7 +406,7 @@ body.webview-mode .game-device {
   border-image: var(--ui-card) 5 fill / 4px;
   image-rendering: pixelated;
   border-radius: 0;
-  padding: 3px 4px;
+  padding: 2px 4px;
   box-shadow: none;
   display: flex;
   flex-direction: column;
@@ -496,7 +496,7 @@ body.webview-mode .game-device {
    ========================================================================== */
 
 .actions-section {
-  padding: 10px 12px 12px;
+  padding: 8px 12px 8px;
   /* bg:menu (assets/world/bg/menu.png, 256x144) at 3x, centred behind the menu buttons */
   background: var(--ui-linen-1) var(--menu-bg) center / 768px 432px no-repeat;
   image-rendering: pixelated;
@@ -509,7 +509,7 @@ body.webview-mode .game-device {
 .actions-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 
 .game-btn {
@@ -519,12 +519,12 @@ body.webview-mode .game-device {
   border-color: var(--ui-border);
   border-image: var(--ui-btn_normal) 6 fill / 6px;
   border-radius: 0;
-  padding: 8px 4px 6px;
+  padding: 4px 4px 3px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   color: var(--ui-wood-0);
   font-family: var(--font-pixel);
   font-size: 13px;

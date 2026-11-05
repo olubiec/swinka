@@ -41,6 +41,9 @@
 
 .mp_title {
   display: block;
+  /* min-width 0: the flex column may shrink the title, so the ellipsis applies instead of pushing the panel. */
+  min-width: 0;
+  max-width: 100%;
   font-family: var(--ui-font);
   font-size: var(--ui-fs-s);
   line-height: 1.2;
