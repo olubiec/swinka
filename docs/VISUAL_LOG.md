@@ -214,3 +214,6 @@ Ręczna weryfikacja (człowiek, na Windows; pola do zaznaczenia):
 
 ## UI-1 Interfejs (5.11.2026)
 Audyt ekranów (zrzuty Playwright), 27 nowych elementów 9-slice (`ui_kit.py`), `ui_tokens.css`, `docs/UI_DESIGN.md`, wzorzec `docs/ui/preview.html`; zadanie G18 dla kodu. Lint 0, `check-assets.js` OK.
+
+## UI-2 Ikony menu (5.11.2026)
+23 ikony menu i systemowe (`icons_ui.py`, indeksy 255-277), tabela miejsce→ikona w `docs/UI_DESIGN.md` §5. Naprawiony R7 dla 6 sprite'ów świateł po dopisaniu do `world_items.json`. Lint 0, check-assets i lights-test OK.

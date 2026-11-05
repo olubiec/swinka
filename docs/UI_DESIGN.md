@@ -55,3 +55,20 @@ Tokeny kolorów i typografii: `assets/ui/ui_tokens.css` (`--ui-*`, wyłącznie k
 4. Naprawić ikony (`--icon-count` = 255 i reguły z `docs/icons_css_block.css`), bo na tle nowego UI przesunięte ikony będą najbardziej rzucać się w oczy.
 5. Funkcje (`features/*/feature.css`) po kolei sprowadzić do tych samych klas; nowych kolorów spoza `--ui-*` nie dodawać (sprawdza `node tools/qa/check-css-vars.js`).
 6. Nowe okno gry nie wymaga zmian grafiki; jeśli któregoś elementu brakuje, zgłosić do `docs/VISUAL_LOG.md` (dorysuję w `ui_kit.py`).
+
+## 5. Ikony interfejsu (UI-2)
+Audyt: przyciski menu mają dziś przypadkowe ikony (Clean = `poop`, Call i More = ta sama `pig-head`, Feed = papryka, Games = piłka), a 16 funkcji w menu More używa `icon-clover`. Brakowało też ikon systemowych (zamknij, plus, minus, info, pomoc, szukaj, zegar, dzwonek, menu, strzałki). Narysowałem 23 ikony 16x16 (`tools/art/world/icons_ui.py`, indeksy 255–277, w `icons.json`; blok CSS dopisany do `docs/icons_css_block.css`, `--icon-count` = 278). Zasady jak dla reszty: paleta 42 kolorów, kontur `wood.0`, światło z lewej góry, jedna sylwetka, bez napisów.
+
+| Miejsce | Ikona | Uwagi |
+|---|---|---|
+| Feed | `m_feed` (miska z sianem) | zamiast `bell-pepper` |
+| Clean | `m_clean` (gąbka z bańkami) | zamiast `poop` |
+| Call | `m_call` (dymek z sercem) | zamiast `pig-head` |
+| Shop | `shop` (straganik) | istnieje |
+| Games | `m_games` (pad) | zamiast `ball` |
+| More | `m_more` (tabliczka z trzema kropkami) | zamiast `pig-head` |
+| Funkcje w More | pigs `pair_pigs`, calendar `calendar`, vet `vet`, coloring `palette`, decor `wallpaper`, tricks `m_tricks`, diary `m_diary`, achievements `trophy`, settings `gear`, rooms `house_plan`, daily `gift`, store `storage`, garden/farm/market `place_*` | `icon:` w `registerFeature` każdej funkcji (dziś prawie wszędzie `icon-clover`) |
+| Systemowe | `x_close`, `x_plus`, `x_minus`, `x_info`, `x_help`, `x_search`, `x_timer`, `x_bell`, `x_menu`, `x_filter`, `x_chevron_up/down/right`, `x_star_empty`, `x_music_off`, `x_dot_full`; istniejące: `back_arrow`, `check`, `padlock`, `gear`, `sound_on/off` | listy, formularze, ustawienia |
+Wzorzec użycia: `docs/ui/preview.html` (czwarta kolumna: siatka akcji z ikonami, lista More, zestaw systemowych). Ikony na przyciskach rysować w 2x (32 px), w listach 2x, w plakietkach 1x; zawsze `image-rendering: pixelated`.
+
+Zadania dla kodu (do G18): podmienić klasy ikon w `index.html` (6 przycisków) i `icon:` w funkcjach wg tabeli, dopisać reguły z `docs/icons_css_block.css`, ustawić `--icon-count` = 278.

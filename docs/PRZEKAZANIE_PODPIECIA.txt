@@ -39,3 +39,7 @@ Arkusze podglądu: docs/album/przebudowa/ (c1_kafle.png, c4_dekor.png i wcześni
 5. INTERFEJS (UI-1, 5.11.2026)
 Audyt: strona Home nie używa gotowych ramek 9-slice (zmienne --ui-* są 'initial'), kolory są pomarańczowe spoza palety. Przygotowane: 27 nowych elementów w assets/ui/ (przyciski w 4 kolorach + wciśnięte, zakładki, zamknij, paski, plakietka, pole, karta, tooltip, slot, przełącznik, kropki serii, belka modala), tokeny assets/ui/ui_tokens.css, wzorzec docs/ui/preview.html (+ preview.png), opis stylu i inwentarz: docs/UI_DESIGN.md. Zadanie dla kodu: G18 w docs/PLAN.md (po G17; najpierw naprawić --icon-count, bo przesunięte ikony widać na każdym ekranie). Generator: tools/art/world/ui_kit.py.
 
+6. IKONY MENU I SYSTEMOWE (UI-2, 5.11.2026)
+23 nowe ikony 16x16 (indeksy 255-277, arkusz 278 pol): m_feed, m_clean, m_call, m_games, m_more, m_tricks, m_diary oraz systemowe x_close, x_plus, x_minus, x_info, x_help, x_search, x_timer, x_bell, x_menu, x_filter, x_chevron_up/down/right, x_star_empty, x_music_off, x_dot_full. Tabela 'miejsce -> ikona' (6 przyciskow akcji, 16 funkcji w More): docs/UI_DESIGN.md par. 5. Reguly CSS: docs/icons_css_block.css, --icon-count = 278. Generator: tools/art/world/icons_ui.py.
+Dodatkowo: po wpisaniu 26 przedmiotow do world_items.json (commit e24d54c) lint R7 zglaszal 6 sprite'ow bez cienia kontaktowego; naprawione (lantern_paper, lamp_salt, lamp_lava, lamp_oil, brazier, plant_trailing + ich warianty _on).
+
