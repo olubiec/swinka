@@ -96,6 +96,125 @@ namespace Cuy
             return _failed ? 1 : 0;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        private struct NativePoint
+        {
+            public int X;
+            public int Y;
+        }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr MonitorFromPoint(NativePoint pt, uint flags);
+
+        [DllImport("shcore.dll")]
+        private static extern int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out uint dpiX, out uint dpiY);
+
+        /// <summary>
+        /// Cuy.exe --diag: writes environment facts to %TEMP%\cuy-diag.json. Opens no windows. Returns 0.
+        /// </summary>
+        public static int Diag()
+        {
+            _assets = FindAssets();
+            string path = Path.Combine(Path.GetTempPath(), "cuy-diag.json");
+            var root = new JObject();
+            root["diagPath"] = path;
+            try
+            {
+                root["version"] = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                root["os"] = Environment.OSVersion.VersionString;
+                root["osVersion"] = Environment.OSVersion.Version.ToString();
+                root["monitors"] = DiagMonitors();
+                root["webView2"] = DiagWebView2Version();
+                root["savePath"] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Cuy");
+                root["spriteSheets"] = _assets == null ? 0 : CountSpriteSheets(_assets);
+            }
+            catch (Exception ex)
+            {
+                root["error"] = ex.Message;
+            }
+
+            try { File.WriteAllText(path, root.ToString(Newtonsoft.Json.Formatting.Indented), new UTF8Encoding(false)); }
+            catch (Exception) { }
+            return 0;
+        }
+
+        private static JArray DiagMonitors()
+        {
+            var list = new JArray();
+            foreach (Screen screen in Screen.AllScreens)
+            {
+                Rectangle b = screen.Bounds;
+                Rectangle w = screen.WorkingArea;
+                string edge = "none";
+                int thickness = 0;
+                if (w.Bottom < b.Bottom) { edge = "bottom"; thickness = b.Bottom - w.Bottom; }
+                else if (w.Top > b.Top) { edge = "top"; thickness = w.Top - b.Top; }
+                else if (w.Left > b.Left) { edge = "left"; thickness = w.Left - b.Left; }
+                else if (w.Right < b.Right) { edge = "right"; thickness = b.Right - w.Right; }
+
+                uint dpi = MonitorDpi(b);
+                var item = new JObject();
+                item["device"] = screen.DeviceName;
+                item["primary"] = screen.Primary;
+                item["bounds"] = DiagRect(b);
+                item["workingArea"] = DiagRect(w);
+                item["dpi"] = (int)dpi;
+                item["scale"] = dpi / 96.0;
+                item["taskbarEdge"] = edge;
+                item["taskbarThickness"] = thickness;
+                list.Add(item);
+            }
+            return list;
+        }
+
+        private static uint MonitorDpi(Rectangle bounds)
+        {
+            try
+            {
+                var pt = new NativePoint { X = bounds.Left + 1, Y = bounds.Top + 1 };
+                IntPtr monitor = MonitorFromPoint(pt, 2); // MONITOR_DEFAULTTONEAREST
+                uint dpiX, dpiY;
+                if (GetDpiForMonitor(monitor, 0, out dpiX, out dpiY) == 0) return dpiX; // MDT_EFFECTIVE_DPI, S_OK
+            }
+            catch (Exception) { }
+            return 0;
+        }
+
+        private static JObject DiagRect(Rectangle r)
+        {
+            var o = new JObject();
+            o["x"] = r.X;
+            o["y"] = r.Y;
+            o["w"] = r.Width;
+            o["h"] = r.Height;
+            return o;
+        }
+
+        private static string DiagWebView2Version()
+        {
+            try
+            {
+                string version = CoreWebView2Environment.GetAvailableBrowserVersionString();
+                return string.IsNullOrEmpty(version) ? null : version;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private static int CountSpriteSheets(string assets)
+        {
+            string sprites = Path.Combine(assets, "sprites");
+            if (!Directory.Exists(sprites)) return 0;
+            int count = 0;
+            foreach (string dir in Directory.GetDirectories(sprites))
+            {
+                if (File.Exists(Path.Combine(dir, "spritesheet.png"))) count++;
+            }
+            return count;
+        }
+
         private static void Warn(string name, string message)
         {
             Lines.Add("WARN " + name + ": " + message);

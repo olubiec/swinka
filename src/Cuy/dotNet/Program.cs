@@ -169,6 +169,12 @@ namespace Cuy
                 return;
             }
 
+            if (Array.Exists(args, x => string.Equals(x, "--diag", StringComparison.OrdinalIgnoreCase)))
+            {
+                Environment.Exit(SelfTest.Diag());
+                return;
+            }
+
             EventWaitHandle showHomeEvent = new EventWaitHandle(false, EventResetMode.AutoReset, ShowHomeEventName);
             try
             {
