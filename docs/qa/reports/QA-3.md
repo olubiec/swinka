@@ -25,7 +25,7 @@ Contracts exist for dorm, farm, homes, market, pigrooms, places, rooms, store. `
 | F3-03 | S2 | Web test | `26_my_pigs` memorial confirmation test is flaky (timing of `#memorialConfirm_kuki`). Either a race in `pigs/feature.js` or a missing wait in the test. |
 | F3-04 | S3 | Web | 8 optional `mock.js` probes produce 404 noise in the console and in the smoke output. |
 | F3-05 | S3 | Docs | 13 features lack a contract in `docs/contracts/`. |
-| F3-06 | S2 | Web | `customize.js`, `dorm.js`, `plan.js` are referenced from `rooms/feature.js` (7 mentions) but not from `index.html`; verify they are loaded at runtime, otherwise customize/dorm/plan screens never open (QA-4 checks the screens). |
+| F3-06 | S2 | Web | `features/rooms/customize.js` and `customize.css` are not loaded anywhere (only mentioned in a comment in `rooms/feature.js` and in `mock.js`); the item customize panel never appears. (Correction after verification: `dorm.js` and `plan.js` ARE loaded on demand by `rooms/feature.js` lines 302 and 354, so they are fine.) |
 | F3-07 | S4 | Soak | Heap grew 6 MB in 150 s (plausibly GC lag); re-measure over 30 min. |
 
 ## Verdict

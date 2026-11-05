@@ -24,9 +24,9 @@ Date: 2026-11-05. Judged against `docs/CONCEPT.md` (17 lines), `docs/GOALS.md`, 
 | Journey | Result |
 |---|---|
 | First launch | `30_firststart` smoke passes; new game gives starter pair with one room each (`GameSessionPigRoomsTests`). OK. |
-| Adopting a second pig | Room is created via `PigAdopted` **only if `AttachPigRooms()` is called**; the session does not call it yet (listed open since W24). Rooms for adopted pigs appear only after the next `EnsurePigRooms`/restart. **S2 (F5-02).** |
+| Adopting a second pig | `GameSession.Open` calls `EnsurePigRooms` and `AttachPigRooms()` (`GameSession.cs:52-54`), so adoption creates a room. OK (an earlier open item in the W24 notes is already resolved). |
 | Memorial | Flow exists (`SetMemorial`, confirmation dialog, memory room), but the memorial UI test is flaky (F3-03) and `OnMemorialChanged` is not wired: a memorial pig's room is not updated until restart (F5-03). |
-| Shared bedroom | Dorm logic and UI done, but `dorm.js`, `plan.js`, `customize.js` are not loaded by `index.html` (F3-06) and the bond bonus is not applied (`DormBondBonus` unused). The headline benefit of buying the dorm (1800 clovers) is therefore absent (F5-04, **S2**). |
+| Shared bedroom | Dorm logic and UI work (`dorm.js`/`plan.js` load on demand). `DormFeature` reports `DormBondBonus` to the UI, but no bond-gain code in `Pet` applies it, so the advertised bond benefit has no gameplay effect (F5-04, S2). `customize.js` is never loaded (F3-06). |
 | Returning after a month | Offline gap handled by existing time code; `ApplyTime` for pig rooms not wired, so comfort/diary hooks for rooms do not run for the gap (F5-05, S3). |
 | Store | Works functionally but looks broken (F4-01). A player will see the Store as the least polished screen. |
 
@@ -40,13 +40,13 @@ Date: 2026-11-05. Judged against `docs/CONCEPT.md` (17 lines), `docs/GOALS.md`, 
 | ID | Sev | Description |
 |---|---|---|
 | F5-01 | S3 | Update check hard-codes version "1.0.0" and uses the network (concept says no internet at runtime). Decide: keep as explicit opt-in click, document it in CONCEPT, read the real assembly version. |
-| F5-02 | S2 | `AttachPigRooms()` not called by the session: newly adopted pigs get no room until restart. |
-| F5-03 | S3 | `OnMemorialChanged` not wired after `SetMemorial`. |
-| F5-04 | S2 | Dorm UI scripts not loaded and bond bonus not applied: a paid feature without its benefit. |
+| F5-02 | - | Withdrawn: `AttachPigRooms()` is called by the session. |
+| F5-03 | S3 | `OnMemorialChanged` is defined (`Pet.MemoryRoom.cs:35`) but never called after `SetMemorial`. |
+| F5-04 | S2 | Dorm bond bonus is shown but not applied in `Pet` bond gain: a paid feature without its benefit. |
 | F5-05 | S3 | `ApplyTime` (rooms) not wired. |
 | F5-06 | S4 | `PROJECT_STATE.md` stale. |
 | F5-07 | S4 | Language policy: Polish docs vs AGENTS.md "English everywhere". |
 | F5-08 | S3 | Early-game reward pacing (first purchase 51-90 days). |
 
 ## Verdict
-The concept is respected in tone, safety and visuals. The biggest conceptual gap is that W24-W27 delivered the rooms/dorm/homes features as code and screens, but their wiring (F5-02, F5-04) is unfinished, so the new headline features are not fully reachable by a player.
+The concept is respected in tone, safety and visuals. The biggest conceptual gap is that the dorm bond bonus (F5-04), the memorial hook (F5-03) and the customize panel (F3-06) are not wired although the rest of the rooms/dorm/homes features is reachable.

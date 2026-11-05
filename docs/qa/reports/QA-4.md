@@ -22,7 +22,7 @@ Date: 2026-11-05. Tool: new `tools/qa/visual-matrix.js` (Chrome headless, every 
 | F4-04 | S3 | UX | Buttons smaller than 24 px: modal close 22x22, `decor-item-btn` 19 px tall, `market-btn`/`market-tab` 19 px tall, `market-step` 12x19, `room-title` 18 px tall. Hard to hit with touch/high-DPI pointer; acceptable only if mouse-only is intended. |
 | F4-05 | S3 | Art | Floor tiles `floor_wood`, `floor_straw`, `floor_fleece`, `floor_grass`, `floor_soil`, ... not in `tiles.json` and many world item icons missing in `icons.json` (same as the 2 failing `WorldAssetsTests`): rooms fall back to flat colour/glyph. |
 | F4-06 | S3 | UX | Rooms screen shows the "Shared bedroom 1800 clovers" chip next to pig chips as if it were a room; it is a purchase and looks like a tab. Consider a distinct style/lock icon. |
-| F4-07 | S4 | Coverage | Not covered by the matrix: day/night variants, 1/3/5-pig states, long Polish names, dorm/plan/customize sub-screens (their JS is not loaded from `index.html`, F3-06), reduced-motion and 150 % text scaling. Listed for a follow-up visual pass on Windows. |
+| F4-07 | S4 | Coverage | Not covered by the matrix: day/night variants, 1/3/5-pig states, long Polish names, dorm/plan/customize sub-screens (opened on demand; customize.js is never loaded, F3-06), reduced-motion and 150 % text scaling. Listed for a follow-up visual pass on Windows. |
 
 ## Verdict
 Visually consistent and crisp except the Store screen (F4-01), which is clearly broken and should be fixed before release. Missing art (F4-03, F4-05, F4-02) degrades gracefully but is visible.
