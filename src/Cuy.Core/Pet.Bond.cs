@@ -53,7 +53,8 @@ namespace Cuy.Core
         public int AddBondPoints(int points)
         {
             if (points <= 0) return 0;
-            int scaled = (int)Math.Round(points * ActiveModifiers.BondGain, MidpointRounding.AwayFromZero);
+            double multiplier = ActiveModifiers.BondGain * (1.0 + BestDormBondBonus());
+            int scaled = (int)Math.Round(points * multiplier, MidpointRounding.AwayFromZero);
             if (scaled <= 0) return 0;
 
             var bond = State.Bond;

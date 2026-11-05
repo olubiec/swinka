@@ -5,7 +5,7 @@
 ## Status
 
 <!-- STATUS -->
-**Stan z 3.11.2026:** fale uruchamia orkiestra w Antigravity z `waves.yaml` (46 fal, 162 zadania; `docs/START_ORKIESTRA.md`). Pętla Julesa wyłączona. Poniższy log dotyczy okresu pętli.
+**State as of QA-6 (2026-11-05):** core tests 1026 total, 1021 pass, 4 known failures (F1-01..F1-04), 1 intentional skip (F3-01); release build clean. Release readiness is not yet reached: persistence is NO-GO until package A fixes the S1 finding F3-01 (save load guard). The store screen (F4-01) and dorm bond/memorial wiring (F5-03/F5-04) are open, and the Windows manual pass (package I) has not run. Next steps are packages A and B, then the decision on C and D. Source: `docs/qa/reports/QA-6.md`.
 <!-- /STATUS -->
 
 ## Log zmian (najnowsze u góry)

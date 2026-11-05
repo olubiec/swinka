@@ -18,6 +18,9 @@ namespace Cuy.Features
         private static string _updateNotes = "";
         private static bool _updateDownloading = false;
 
+        private static string CurrentVersion =>
+            System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+
         public override void AddState(IDictionary<string, object> state, BrainController brain)
         {
             var settings = new Dictionary<string, object>();
@@ -65,7 +68,7 @@ namespace Cuy.Features
             {
                 { "available", _updateAvailable },
                 { "version", _updateVersion },
-                { "currentVersion", "1.0.0" },
+                { "currentVersion", CurrentVersion },
                 { "status", _updateStatus },
                 { "notes", _updateNotes },
                 { "downloading", _updateDownloading }
@@ -195,8 +198,8 @@ namespace Cuy.Features
                             if (method != null)
                             {
                                 object taskObj = method.GetParameters().Length == 1
-                                    ? method.Invoke(null, new object[] { "1.0.0" })
-                                    : method.Invoke(null, new object[] { "1.0.0", "olubiec/swinka" });
+                                    ? method.Invoke(null, new object[] { CurrentVersion })
+                                    : method.Invoke(null, new object[] { CurrentVersion, "olubiec/swinka" });
 
                                 if (taskObj is Task task)
                                 {
@@ -233,7 +236,7 @@ namespace Cuy.Features
                                     var json = JObject.Parse(content);
                                     string tag = json["tag_name"]?.ToString() ?? "1.0.0";
                                     string cleanTag = tag.TrimStart('v');
-                                    if (cleanTag != "1.0.0")
+                                    if (cleanTag != CurrentVersion)
                                     {
                                         _updateAvailable = true;
                                         _updateVersion = tag;
@@ -243,7 +246,7 @@ namespace Cuy.Features
                                     else
                                     {
                                         _updateAvailable = false;
-                                        _updateVersion = "1.0.0";
+                                        _updateVersion = CurrentVersion;
                                         _updateStatus = "up_to_date";
                                     }
                                 }

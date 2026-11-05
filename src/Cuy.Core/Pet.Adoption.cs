@@ -166,6 +166,7 @@ namespace Cuy.Core
             }
 
             profile.Memorial = on;
+            OnMemorialChanged(pigId, on);
 
             if (on)
             {

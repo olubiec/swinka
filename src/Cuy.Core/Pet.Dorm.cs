@@ -126,6 +126,22 @@ namespace Cuy.Core
             return hasNonMemorialRoommate ? PigRooms.Dorm.BondGainBonus : 0;
         }
 
+        /// <summary>Largest <see cref="DormBondBonus"/> of the roster; bond points are shared, so one resident is enough.</summary>
+        private double BestDormBondBonus()
+        {
+            if (!DormEnabled || State.Roster == null) return 0;
+
+            double best = 0;
+            foreach (var pig in State.Roster)
+            {
+                if (pig == null) continue;
+                // Same key as the dorm UI: the named id when the pig has one, else its own id.
+                string pigId = string.IsNullOrEmpty(pig.NamedId) ? pig.Id : pig.NamedId;
+                best = Math.Max(best, DormBondBonus(pigId));
+            }
+            return best;
+        }
+
         private bool IsMemorialPig(string pigId)
         {
             var pig = FindRosterPig(pigId);
