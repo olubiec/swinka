@@ -7,9 +7,9 @@
 
   function renderPigPortrait(id) {
     if (id) {
-      return `<img class="pig-portrait" src="../../assets/sprites/portraits/${id}.png" width="32" height="32" alt="" onerror="this.onerror=null; this.outerHTML='<span class=\\'pixel-icon icon-pig\\'></span>';">`;
+      return `<img class="pig-portrait" src="../../assets/sprites/portraits/${id}.png" width="32" height="32" alt="" onerror="this.onerror=null; this.outerHTML='<span class=\\'pixel-icon icon-pig-head\\'></span>';">`;
     }
-    return `<span class="pixel-icon icon-pig"></span>`;
+    return `<span class="pixel-icon icon-pig-head"></span>`;
   }
 
   function getFallbackOffers(roster) {

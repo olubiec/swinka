@@ -700,7 +700,7 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
-  --icon-count: 161; /* total icons */
+  --icon-count: 255; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
@@ -743,7 +743,99 @@ body.webview-mode .game-device {
 .icon-need-cleanliness { --i: 22; }
 .icon-need-teeth { --i: 23; }
 .icon-pig-head { --i: 24; }
-.icon-pig { --i: 24; } /* placeholder: pig_head art until a dedicated pig icon is drawn */
+/* C2/C3: --icon-count = 255 */
+.icon-sofa-cosy { --i: 174; }
+.icon-armchair { --i: 175; }
+.icon-bookshelf { --i: 176; }
+.icon-side-table { --i: 177; }
+.icon-cushion-big { --i: 178; }
+.icon-toy-basket { --i: 179; }
+.icon-hay-bar-wood { --i: 180; }
+.icon-window-sun { --i: 181; }
+.icon-curtains-dots { --i: 182; }
+.icon-wall-clock { --i: 183; }
+.icon-shelf-small { --i: 184; }
+.icon-hanging-planter { --i: 185; }
+.icon-fairy-lights { --i: 186; }
+.icon-cosy-nook { --i: 187; }
+.icon-fence-wood { --i: 188; }
+.icon-hedge { --i: 189; }
+.icon-flowerbed-tulip { --i: 190; }
+.icon-flowerbed-daisy { --i: 191; }
+.icon-bush-berry { --i: 192; }
+.icon-tree-small { --i: 193; }
+.icon-pond-small { --i: 194; }
+.icon-bench-wood { --i: 195; }
+.icon-bird-bath { --i: 196; }
+.icon-path-stone { --i: 197; }
+.icon-lantern-garden { --i: 198; }
+.icon-arch-rose { --i: 199; }
+.icon-sandbox-pig { --i: 200; }
+.icon-pigloo-garden { --i: 201; }
+.icon-memory-corner { --i: 202; }
+.icon-fountain { --i: 203; }
+.icon-tree-big { --i: 204; }
+.icon-gazebo { --i: 205; }
+.icon-bridge-wood { --i: 206; }
+.icon-lamp-post { --i: 207; }
+.icon-picnic-blanket { --i: 208; }
+.icon-statue-pig { --i: 209; }
+.icon-flower-arch { --i: 210; }
+.icon-pond-big { --i: 211; }
+.icon-tunnel-playground { --i: 212; }
+.icon-bench-park { --i: 213; }
+.icon-path-cobble { --i: 214; }
+.icon-scarecrow { --i: 215; }
+.icon-fence-farm { --i: 216; }
+.icon-wheelbarrow { --i: 217; }
+.icon-signpost { --i: 218; }
+.icon-sig-kuki-blanket { --i: 219; }
+.icon-sig-ned-snack-nook { --i: 220; }
+.icon-sig-james-hideout { --i: 221; }
+.icon-sig-glen-knit-bed { --i: 222; }
+.icon-sig-racuch-hop-pad { --i: 223; }
+.icon-gate-garden { --i: 224; }
+.icon-prop-ball { --i: 225; }
+.icon-prop-tunnel { --i: 226; }
+.icon-prop-hay-ball { --i: 227; }
+.icon-prop-house { --i: 228; }
+.icon-fireplace { --i: 229; }
+.icon-lamp-mushroom { --i: 230; }
+.icon-lamp-floor { --i: 231; }
+.icon-lamp-arc { --i: 232; }
+.icon-lantern-paper { --i: 233; }
+.icon-lamp-salt { --i: 234; }
+.icon-lamp-lava { --i: 235; }
+.icon-pouf-boucle { --i: 236; }
+.icon-lace-curtain { --i: 237; }
+.icon-gramophone { --i: 238; }
+.icon-mug-steam { --i: 239; }
+.icon-rug-fringed { --i: 240; }
+.icon-blanket-folded { --i: 241; }
+.icon-mirror-wavy { --i: 242; }
+.icon-frames-gallery { --i: 243; }
+.icon-plant-pot { --i: 244; }
+.icon-plant-shelf { --i: 245; }
+.icon-plant-trailing { --i: 246; }
+.icon-memory-frame { --i: 247; }
+.icon-willow-tunnel { --i: 248; }
+.icon-torch { --i: 249; }
+.icon-lamp-oil { --i: 250; }
+.icon-brazier { --i: 251; }
+.icon-watering-can { --i: 252; }
+.icon-hay-basket { --i: 253; }
+.icon-stump-seat { --i: 254; }
+.icon-bedroom { --i: 162; }
+.icon-run { --i: 163; }
+.icon-gate { --i: 164; }
+.icon-tray { --i: 165; }
+.icon-house-plan { --i: 167; }
+.icon-storage { --i: 168; }
+.icon-swatch { --i: 169; }
+.icon-wander { --i: 170; }
+.icon-bond { --i: 171; }
+.icon-rename { --i: 172; }
+.icon-color-lock { --i: 173; }
 .icon-dandelion { --i: 25; }
 .icon-apple { --i: 26; }
 .icon-hay-ball { --i: 27; }
@@ -844,7 +936,7 @@ body.webview-mode .game-device {
 .icon-pattern-tortoiseshell { --i: 122; }
 .icon-pattern-belt { --i: 123; }
 .icon-pattern-blaze-only { --i: 124; }
-.icon-candle { --i: 125; }
+.icon-candle { --i: 161; }
 .icon-gift-offer { --i: 126; }
 .icon-paw-walk { --i: 127; }
 .icon-pair-pigs { --i: 128; }

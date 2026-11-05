@@ -25,6 +25,30 @@
     'lamp_star': { type: 'star' }
   };
 
+  // Sprites from assets/world/atlas.json (decor C4 and the older lamp/mushroom). Drawn once loaded; the procedural look is the fallback.
+  const ASSETS = window.chrome && window.chrome.webview ? 'https://cuy.assets/' : '../../assets/';
+  let atlasItems = null;
+  let atlasRequested = false;
+  const spriteCache = {};
+  function spriteOf(itemId) {
+    if (!atlasRequested) {
+      atlasRequested = true;
+      fetch(ASSETS + 'world/atlas.json')
+        .then(r => (r.ok ? r.json() : null))
+        .then(j => { atlasItems = j && j.items ? j.items : null; })
+        .catch(() => { atlasItems = null; });
+    }
+    const e = atlasItems && atlasItems[itemId];
+    if (!e || !e.file || !e.size) return null;
+    if (!spriteCache[itemId]) {
+      const img = new Image();
+      img.src = ASSETS + 'world/' + e.file;
+      spriteCache[itemId] = { img, w: e.size[0], h: e.size[1] };
+    }
+    const sp = spriteCache[itemId];
+    return sp.img.complete && sp.img.naturalWidth > 0 ? sp : null;
+  }
+
   function getLook(itemId) {
     if (currentState && currentState.shop && currentState.shop.items) {
       const it = currentState.shop.items.find(i => i.id === itemId);
@@ -163,6 +187,8 @@
 
       const cx = 120;
       const cy = 114;
+      const rs = spriteOf(eq);
+      if (rs) { ctx.drawImage(rs.img, cx - rs.w / 2, cy - rs.h / 2, rs.w, rs.h); return; }
 
       ctx.save();
       if (look.type === 'round_pink') {
@@ -215,6 +241,8 @@
       const py = 46; // the Home canvas crops the top ~34 px of the 130 px scene, keep wall decor below that
       const pw = 22;
       const ph = 16;
+      const ps = spriteOf(eq);
+      if (ps) { ctx.drawImage(ps.img, px + 3, py, ps.w, ps.h); return; }
 
       ctx.fillStyle = '#5c3a21';
       ctx.fillRect(px, py, pw, ph);
@@ -256,6 +284,8 @@
 
       const px = 205;
       const py = 85;
+      const pls = spriteOf(eq);
+      if (pls) { ctx.drawImage(pls.img, px, py + 16, pls.w, pls.h); return; }
 
       ctx.fillStyle = '#c76b4a';
       ctx.fillRect(px + 4, py + 20, 16, 12);
@@ -311,8 +341,10 @@
       const hr = new Date().getHours();
       const isEvening = hr >= 18 || hr < 7;
 
+      const lsp = spriteOf(eq);
+      if (lsp) ctx.drawImage(lsp.img, lx, ly, lsp.w, lsp.h);
       ctx.save();
-      if (look.type === 'mushroom') {
+      if (lsp) { /* sprite drawn above; the glow below still runs */ } else if (look.type === 'mushroom') {
         ctx.fillStyle = '#dcd6cd';
         ctx.fillRect(lx + 8, ly + 8, 6, 8);
         ctx.fillStyle = '#e8564c';

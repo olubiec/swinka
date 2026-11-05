@@ -110,8 +110,26 @@
     lightsRequested = true;
     fetch(url('data/lights.json'))
       .then(r => (r.ok ? r.json() : null))
-      .then(j => { lightsData = j; redraw(); })
+      .then(j => { lightsData = j ? worldLights(j) : null; redraw(); })
       .catch(() => { lightsData = null; });
+  }
+
+  // lights.json paths are relative to assets/world/ (its contract); the loader works from assets/, so add the prefix here.
+  function worldLights(j) {
+    const w = p => (typeof p === 'string' ? 'world/' + p : p);
+    const sources = {};
+    Object.keys(j.sources || {}).forEach((k) => {
+      const s = j.sources[k];
+      const tods = s.window_tods ? Object.fromEntries(Object.entries(s.window_tods).map(([t, f]) => [t, w(f)])) : undefined;
+      sources[k] = Object.assign({}, s, { file: w(s.file), on_file: w(s.on_file), mask: w(s.mask), window_tods: tods });
+    });
+    return Object.assign({}, j, { sources, dust: j.dust ? Object.assign({}, j.dust, { file: w(j.dust.file) }) : j.dust });
+  }
+
+  // A window has one sprite per time of day (window_tods); other lamps keep their file.
+  function lampSource(s) {
+    const p = lightPeriod();
+    return s.window_tods && s.window_tods[p] ? Object.assign({}, s, { file: s.window_tods[p] }) : s;
   }
 
   // Edit mode (an item picked from the drawer, or an item being moved): no tint and no light.
@@ -127,7 +145,7 @@
     layout.items.forEach((it) => {
       const key = Object.keys(sources).find(id => id === it.itemId || sources[id].item === it.itemId);
       if (!key) return;
-      keyed[it.uid] = sources[key];
+      keyed[it.uid] = lampSource(sources[key]);
       placed.push({ id: it.uid, x: it.x, y: it.y });
     });
     return window.Lights.activeSources(Object.assign({}, lightsData, { sources: keyed }), 'outdoor', placed, lightPeriod(), S.lampToggles);
@@ -271,7 +289,26 @@
     return ['#2e3557', '#4a5480'];
   }
 
+  // Floor and wall sprites from assets/world/tiles.json (16x16, one per cell). The colour stays the fallback until they load.
+  let tileMap = null;
+  let tilesRequested = false;
+  function ensureTiles() {
+    if (tilesRequested) return;
+    tilesRequested = true;
+    fetch(url('world/tiles.json'))
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { tileMap = j && j.tiles ? j.tiles : null; redraw(); })
+      .catch(() => { tileMap = null; });
+  }
+  function tileImg(id) {
+    const e = tileMap && tileMap[id];
+    if (!e) return null;
+    const t = loadImage('world/' + e.file);
+    return t.ok ? t.img : null;
+  }
+
   function drawGrid(canvas, layout) {
+    ensureTiles();
     const ctx = canvas.getContext('2d');
     const k = S.scale;
     const cell = CELL * k;
@@ -290,9 +327,11 @@
     if (bg.ok) ctx.drawImage(bg.img, 0, 0, canvas.width, canvas.height);
 
     const base = FLOOR_COLORS[layout.floor] || FLOOR_COLORS.floor_grass;
+    const ft = tileImg(layout.floor);
     for (let y = 0; y < layout.rows; y++) {
       for (let x = 0; x < layout.cols; x++) {
         ctx.globalAlpha = bg.ok ? 0.35 : 0.9;
+        if (ft) { ctx.drawImage(ft, x * cell, y * cell, cell, cell); continue; }
         ctx.fillStyle = base;
         ctx.fillRect(x * cell, y * cell, cell, cell);
         if ((x + y) % 2 === 0) {

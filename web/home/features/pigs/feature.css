@@ -7,10 +7,6 @@
   width: 100%;
 }
 
-.icon-pig {
-  --i: 24;
-}
-
 .pig-portrait,
 .feature-pigs .pig-portrait {
   image-rendering: pixelated;
