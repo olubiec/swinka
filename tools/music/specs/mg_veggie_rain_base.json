@@ -1,0 +1,114 @@
+{
+ "id": "mg_veggie_rain_base",
+ "kind": "minigame",
+ "title": "Minigra: Veggie Rain, stem base",
+ "role": "stem base; bas; jedna warstwa, jeden instrument (EP); pętla zgodna z mg_veggie_rain",
+ "bpm": 132,
+ "meter": 4,
+ "key": "C",
+ "mode": "major",
+ "bars": 16,
+ "swing": 50,
+ "seed": 80402,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "Cmaj9#11"
+  },
+  {
+   "bar": 2,
+   "sym": "A7b13"
+  },
+  {
+   "bar": 3,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 4,
+   "sym": "G13"
+  },
+  {
+   "bar": 5,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 6,
+   "sym": "Ab13#11"
+  },
+  {
+   "bar": 7,
+   "sym": "Cmaj13"
+  },
+  {
+   "bar": 8,
+   "sym": "G13sus4"
+  },
+  {
+   "bar": 9,
+   "sym": "Cmaj9#11"
+  },
+  {
+   "bar": 10,
+   "sym": "A7b13"
+  },
+  {
+   "bar": 11,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 12,
+   "sym": "G13"
+  },
+  {
+   "bar": 13,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 14,
+   "sym": "Ab13#11"
+  },
+  {
+   "bar": 15,
+   "sym": "Cmaj13"
+  },
+  {
+   "bar": 16,
+   "sym": "G13sus4"
+  }
+ ],
+ "layers": [
+  {
+   "role": "bass",
+   "voice": "EP",
+   "db": -3,
+   "pattern": "bass.walking",
+   "part": "stem base: bas, jeden instrument EP (legenda v7, progresja z minigry)",
+   "from_bar": 1,
+   "stem": "base"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "SAT(1.5)"
+  },
+  {
+   "fx": "REV-M",
+   "wet": 0.2
+  },
+  {
+   "fx": "LP(6000)"
+  },
+  {
+   "fx": "WIDTH(1.3)"
+  }
+ ],
+ "master": {
+  "lufs": -18,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
+}

@@ -1,0 +1,114 @@
+{
+ "id": "mg_menu_rhythm",
+ "kind": "minigame",
+ "title": "Minigra: menu, stem rhythm",
+ "role": "stem rhythm; rytm; jedna warstwa, jeden instrument (PIZ); pętla zgodna z mg_menu",
+ "bpm": 112,
+ "meter": 4,
+ "key": "G",
+ "mode": "major",
+ "bars": 16,
+ "swing": 58,
+ "seed": 67374,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "G6/9"
+  },
+  {
+   "bar": 2,
+   "sym": "Bm11"
+  },
+  {
+   "bar": 3,
+   "sym": "Cmaj13#11"
+  },
+  {
+   "bar": 4,
+   "sym": "D13sus4"
+  },
+  {
+   "bar": 5,
+   "sym": "Em11"
+  },
+  {
+   "bar": 6,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 7,
+   "sym": "Am11"
+  },
+  {
+   "bar": 8,
+   "sym": "Db13"
+  },
+  {
+   "bar": 9,
+   "sym": "G6/9"
+  },
+  {
+   "bar": 10,
+   "sym": "Bm11"
+  },
+  {
+   "bar": 11,
+   "sym": "Cmaj13#11"
+  },
+  {
+   "bar": 12,
+   "sym": "D13sus4"
+  },
+  {
+   "bar": 13,
+   "sym": "Em11"
+  },
+  {
+   "bar": 14,
+   "sym": "Ebmaj9#11"
+  },
+  {
+   "bar": 15,
+   "sym": "Am11"
+  },
+  {
+   "bar": 16,
+   "sym": "Db13"
+  }
+ ],
+ "layers": [
+  {
+   "role": "chd",
+   "voice": "PIZ",
+   "db": -3,
+   "pattern": "chords.offbeat_2_4",
+   "part": "stem rhythm: rytm, jeden instrument PIZ (legenda v7, progresja z minigry)",
+   "from_bar": 1,
+   "stem": "rhythm"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "SAT(1.5)"
+  },
+  {
+   "fx": "REV-M",
+   "wet": 0.2
+  },
+  {
+   "fx": "LP(6000)"
+  },
+  {
+   "fx": "WIDTH(1.3)"
+  }
+ ],
+ "master": {
+  "lufs": -18,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
+}

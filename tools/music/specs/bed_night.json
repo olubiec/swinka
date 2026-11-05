@@ -186,7 +186,7 @@
   }
  ],
  "master": {
-  "lufs": -20,
+  "lufs": -18,
   "ceiling_dbtp": -1
  },
  "loop": {

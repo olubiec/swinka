@@ -118,6 +118,8 @@ Bramka: lead czyta `CONTRACT.md` (10 min) i zamraża.
 
 Po fali: lead uruchamia `build_manifest.py` i `music-audit.js` (stan: 1+2+9+4+5+13+4 = 38 plików).
 
+Stan MW-4 (belki, miejsca, minigry): zrobione 4 belki, 5 miejsc (po jednej warstwie, jeden instrument, legenda v7, pogłos REV) i 15 stemów (5 minigier × base/rhythm/lead, jeden instrument na minigrę, osobne pliki, bez `_full`). Pomiar: -18 LUFS (belki, miejsca, stemy), TP ≤ -1,1 dBTP, szwy czyste, belki 160-192 s, miejsca 66-111 s, minigry 28-53 s. Manifest i `music-audit.js` po fali (lead).
+
 ### MW-5: pokoje i seria 1 płyt (5 agentów)
 
 | Pakiet | Zadania | Odbiór |

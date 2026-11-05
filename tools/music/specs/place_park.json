@@ -7,7 +7,7 @@
  "meter": 3,
  "key": "D",
  "mode": "major",
- "bars": 32,
+ "bars": 40,
  "swing": 58,
  "seed": 49983,
  "chords": [
@@ -138,6 +138,38 @@
   {
    "bar": 32,
    "sym": "A13sus4"
+  },
+  {
+   "bar": 33,
+   "sym": "Dmaj9"
+  },
+  {
+   "bar": 34,
+   "sym": "Bm11"
+  },
+  {
+   "bar": 35,
+   "sym": "Emaj13#11"
+  },
+  {
+   "bar": 36,
+   "sym": "A13sus4"
+  },
+  {
+   "bar": 37,
+   "sym": "F#m11"
+  },
+  {
+   "bar": 38,
+   "sym": "Gmaj13#11"
+  },
+  {
+   "bar": 39,
+   "sym": "Em11"
+  },
+  {
+   "bar": 40,
+   "sym": "A9sus4"
   }
  ],
  "layers": [

@@ -1,0 +1,115 @@
+{
+ "id": "mg_hay_maze_lead",
+ "kind": "minigame",
+ "title": "Minigra: Hay Maze, stem lead",
+ "role": "stem lead; prowadzenie; jedna warstwa, jeden instrument (XYL); pętla zgodna z mg_hay_maze",
+ "bpm": 108,
+ "meter": 4,
+ "key": "A",
+ "mode": "minor",
+ "bars": 16,
+ "swing": 50,
+ "seed": 45014,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "Am11"
+  },
+  {
+   "bar": 2,
+   "sym": "Bbmaj7#11"
+  },
+  {
+   "bar": 3,
+   "sym": "Am9"
+  },
+  {
+   "bar": 4,
+   "sym": "E7b9b13"
+  },
+  {
+   "bar": 5,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 6,
+   "sym": "Bbmaj13#11"
+  },
+  {
+   "bar": 7,
+   "sym": "E7alt"
+  },
+  {
+   "bar": 8,
+   "sym": "Am(maj7)9"
+  },
+  {
+   "bar": 9,
+   "sym": "Dm11"
+  },
+  {
+   "bar": 10,
+   "sym": "Ebmaj7#11"
+  },
+  {
+   "bar": 11,
+   "sym": "Dm9"
+  },
+  {
+   "bar": 12,
+   "sym": "A7b9b13"
+  },
+  {
+   "bar": 13,
+   "sym": "Gm11"
+  },
+  {
+   "bar": 14,
+   "sym": "Ebmaj13#11"
+  },
+  {
+   "bar": 15,
+   "sym": "A7alt"
+  },
+  {
+   "bar": 16,
+   "sym": "Dm(maj7)9"
+  }
+ ],
+ "layers": [
+  {
+   "role": "mel",
+   "voice": "XYL",
+   "db": -3,
+   "pattern": "melody.skeleton",
+   "part": "stem lead: prowadzenie, jeden instrument XYL (legenda v7, progresja z minigry)",
+   "from_bar": 1,
+   "stem": "lead",
+   "register": "A4-E6"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "SAT(1.5)"
+  },
+  {
+   "fx": "REV-M",
+   "wet": 0.2
+  },
+  {
+   "fx": "LP(6000)"
+  },
+  {
+   "fx": "WIDTH(1.3)"
+  }
+ ],
+ "master": {
+  "lufs": -18,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
+}
