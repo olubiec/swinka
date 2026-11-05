@@ -70,3 +70,15 @@ Nowy zapis → półka pusta → kup płytę → pojawia się w ekwipunku → od
 
 ## Kolejność i zależności
 0 (decyzje) → A1 → A2/A3 → A4 → A5 → A6 → A7 → bramka A → B → C (C1 pierwsze) → D (po D3) → E finalnie. E1, E3, E6 mogą ruszyć od razu, bo nie zależą od reszty.
+
+## Decyzje fali 0 (podjęte przez Claude 5.11.2026, nic jeszcze nie wdrożone)
+| # | Decyzja | Uzasadnienie |
+|---|---|---|
+| D1 | Płyty jako ekwipunek: `records: {id: liczba}`, `playerOwned: [id]`, `playerPlaced: {roomId: id}`. Brak pól w starym zapisie = pusty ekwipunek, bez migracji destrukcyjnej. | Zgodne z istniejącym modelem przedmiotów, bezpieczne dla starych zapisów. |
+| D2 | Wspólna pula 5 plików ogg. Płyta dostaje utwór deterministycznie: `indeks = hash(id płyty) mod 5`. Pole `tracks` w manifeście zostaje 0 do czasu dodania nowych nagrań. | Działa bez zmiany `assets/`; później wystarczy wypełnić `tracks`. |
+| D3 | Ceny tymczasowe (`TODO-D3`, w jednym pliku `prices.js`): płyty zwykłe 40-80, rzadkie 150-300 koniczyn; 6 odtwarzaczy rosnąco 120 / 250 / 400 / 600 / 900 / 1400. Wartości ostatecznie ustala symulator (D3e), nie zgadywanie. | Pierwsza płyta w ≤ 2 dni i pierwszy odtwarzacz w ≤ 5 dni to cele do sprawdzenia w symulatorze. |
+| D4 | `decor.png`: nie używać, zostaje w `assets/`. `btn_blue`: użyć wg legendy (Clean, informacja), jeden komentarz w `style.css`. Wąsy i ucho Glena: wpis do `docs/VISUAL_LOG.md` (re-eksport grafiki), bez zmian w kodzie. | Zero ryzyka dla grafiki, brak zmian poza kodem. |
+| D5 | `header_banner` zostaje 12 px; po zrzucie z Windows ewentualne cofnięcie przez jedną zmienną CSS. | Odwracalne jednym wpisem. |
+| D6 | Brakujące `btn_green.png` / `btn_red.png` (404 w smoke, krok 26): najpierw sprawdzić, czy pliki są w `assets/ui/` i brakuje tylko kopii/ścieżki w `web/home`; jeśli brakuje ich naprawdę, opcja 2 (CSS na istniejące `btn_normal`/`btn_*`) jako obejście plus wpis do `VISUAL_LOG.md`. Opcji 3 (lista znanych braków) nie używać, bo ukrywa błąd. | Smoke ma być zielony bez ukrywania problemów. |
+
+Status: decyzje zapisane, brak wdrożenia (na prośbę użytkownika). Pierwszy krok po zgodzie: D6 (naprawa kroku 26), potem fala A.
