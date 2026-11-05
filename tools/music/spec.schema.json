@@ -51,7 +51,7 @@
           "db": { "type": "number", "minimum": -60, "maximum": 0 },
           "pattern": {
             "type": "string",
-            "pattern": "^(bass\\.(root_fifth|walking|bossa|octave8|oom|pedal2bars)|chords\\.(offbeat_2_4|arp8|bossa|stab_i2_i4|oompa|sustain)|orn\\.every_n_bars\\([1-9][0-9]*, *[0-9.]+\\)|random\\.pentatonic_walk|drums\\.(brush_swing|hat_swing)|melody\\.skeleton|noise\\.loop\\([a-z0-9_]+, *-?[0-9.]+\\))$"
+            "pattern": "^(bass\\.(root_fifth|walking|bossa|octave8|oom|pedal2bars)|chords\\.(rolled|offbeat_2_4|arp8|bossa|stab_i2_i4|oompa|sustain)|orn\\.every_n_bars\\([1-9][0-9]*, *[0-9.]+\\)|random\\.pentatonic_walk|drums\\.(brush_swing|hat_swing)|melody\\.skeleton|noise\\.loop\\([a-z0-9_]+, *-?[0-9.]+\\))$"
           },
           "from_bar": { "type": "integer", "minimum": 1, "maximum": 256 },
           "register": { "type": "string", "pattern": "^[A-G][#b]?[0-9]-[A-G][#b]?[0-9]$" },
@@ -86,7 +86,7 @@
         "additionalProperties": false,
         "required": ["fx"],
         "properties": {
-          "fx": { "type": "string", "pattern": "^(REV-[SML]|LP\\([0-9]+\\)|HP\\([0-9]+\\)|TAPE\\([0-9.]+\\)|VINYL\\(-?[0-9.]+\\)|CRUSH|PAN\\(-?[0-9.]+\\)|WIDTH\\([0-9.]+\\))$" },
+          "fx": { "type": "string", "pattern": "^(REV-[SML]|LP\\([0-9]+\\)|HP\\([0-9]+\\)|TAPE\\([0-9.]+\\)|VINYL\\(-?[0-9.]+\\)|CRUSH|PAN\\(-?[0-9.]+\\)|WIDTH\\([0-9.]+\\)|CHORUS(\\([0-9.]+\\))?)$" },
           "wet": { "type": "number", "minimum": 0, "maximum": 1 },
           "on": { "type": "string", "default": "all", "pattern": "^(all|[A-Za-z0-9_]+)$" }
         }

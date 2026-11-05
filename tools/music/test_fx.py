@@ -101,6 +101,15 @@ def test_bad_names_rejected():
         raise AssertionError("accepted %r" % bad)
 
 
+def test_chorus_widens_keeps_length():
+    x = sine(440, 1.0)
+    out = fx.apply([{"fx": "CHORUS(3)"}], x, SR)
+    assert out.shape == x.shape and out.dtype == np.float32
+    assert not np.allclose(out[0], out[1], atol=1e-3), "chorus must decorrelate L/R"
+    assert abs(peak_freq(out) - 440) < 5.0
+    assert fx.apply([{"fx": "CHORUS"}], x, SR).shape == x.shape
+
+
 def main():
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     for t in tests:

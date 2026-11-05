@@ -6,6 +6,9 @@ Cel: wszystkie 144 pliki audio (140 twórczych + 4 `_full`) i kod odtwarzania, w
 
 ---
 
+> **Reguła stylu (od Single-layer v4, wiążąca także dla belek MW-4):** jeden instrument na utwór, pełne progresje z gotowych rodzin (`docs/music_progressions.md`), efekty (pogłos, taśma, chorus, szerokość stereo), bez wielowarstwowych "kolekcji" dźwięków. Wzór wzorcowy: `theme_cuy` (PAD, `chords.rolled`, zob. `docs/music_review/MT-11.md`).
+
+
 ## 1. Zasady równoległości
 
 1. **Własność plików.** Pakiet zapisuje wyłącznie pliki ze swojej kolumny „Pliki własne”. Wspólne pliki (`assets/data/music.json`, `assets/LICENSES/music.md`, `docs/music_review/README.md`) są **generowane** skryptem po fali i nie są edytowane przez agentów.

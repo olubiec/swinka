@@ -196,6 +196,29 @@ def test_brush_and_hat_swing():
     print("  drums.brush_swing i drums.hat_swing: liczba zdarzeń, takt, offbeaty przesunięte swingiem OK")
 
 
+def test_chords_rolled():
+    spec = sample_spec(layers=[{"role": "pad", "voice": "PAD", "db": -6, "pattern": "chords.rolled"}])
+    ev = S.layer_events(spec, spec["layers"][0])
+    by_bar = {}
+    for e in ev:
+        by_bar.setdefault(int(e["t_beats"] // 4), []).append(e)
+    assert sorted(by_bar) == list(range(8))
+    prev = None
+    for bar in range(8):
+        es = sorted(by_bar[bar], key=lambda e: e["t_beats"])
+        mids = [e["midi"] for e in es]
+        assert 5 <= len(mids) <= 5 and mids == sorted(mids), mids
+        assert [e["t_beats"] for e in es] == sorted(e["t_beats"] for e in es)
+        assert es[1]["t_beats"] > es[0]["t_beats"], "brak rozłożenia (roll)"
+        assert all(e["t_beats"] + e["dur_beats"] >= (bar + 1) * 4 for e in es), "akord urywa się przed końcem taktu"
+        if prev is not None:
+            move = sum(abs(a - b) for a, b in zip(mids[1:], prev[1:]))
+            assert move <= 16, "słabe prowadzenie głosów (%d półtonów)" % move
+        prev = mids
+    assert S.build(spec)["pad"].shape[0] == 2
+    print("  chords.rolled: 5 głosów, roll, prowadzenie głosów OK")
+
+
 def test_unsupported_pattern_raises():
     spec = sample_spec()
     spec["layers"][0]["pattern"] = "bass.bossa"
@@ -220,7 +243,7 @@ def test_noise_and_drums_skipped():
 
 def main():
     tests = [test_three_layers_clean, test_event_timing_and_swing, test_loop_seam_and_levels,
-             test_walking_bass, test_arp8, test_brush_and_hat_swing,
+             test_walking_bass, test_arp8, test_brush_and_hat_swing, test_chords_rolled,
              test_unsupported_pattern_raises, test_noise_and_drums_skipped]
     for t in tests:
         print(t.__name__)

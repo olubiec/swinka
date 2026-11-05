@@ -13,6 +13,7 @@ Kontrakt: build(spec) -> {layer: ndarray (2, n) float32}   (tools/music/CONTRACT
   (szumy renderuje tools/music/noise/) i pole `drums` (kick/snare/shaker nie są renderowane;
   BRSH i HAT grają warstwy wzorów `drums.brush_swing` / `drums.hat_swing`).
 """
+import itertools
 import math
 import re
 
@@ -264,7 +265,38 @@ def _p_drums_hat_swing(ctx, args):
     return out
 
 
+def _p_chords_rolled(ctx, args):
+    """Pełne akordy (4-5 głosów, korzeń nisko) z płynnym prowadzeniem głosów: góra akordu wybiera
+    najbliższe wysokości względem poprzedniego akordu. Nuty lekko rozłożone w górę (roll),
+    trzymane do końca taktu (PAD: release zlewa akordy)."""
+    m = ctx["meter"]
+    roll = 0.16
+    out, prev = [], None
+    for bar in _bars(ctx):
+        notes, _ = T.chord_notes(_chord_sym(ctx["chords"], bar))
+        root = _voice_chord(notes[:1], 41)[0]
+        upper = [_pc(n) for n in notes[1:]][:4]
+        if prev is None:
+            tops = sorted(_voice_chord([notes[i] for i in range(1, len(notes))][:4], 60))
+        else:
+            best = None
+            for perm in itertools.permutations(upper):
+                cand = [_fold(_near(pc, p), 55, 79) for pc, p in zip(perm, prev)] if len(perm) == len(prev) else None
+                if cand is None or len(set(cand)) < len(cand):
+                    continue
+                cost = sum(abs(c - p) for c, p in zip(cand, prev))
+                if best is None or cost < best[0]:
+                    best = (cost, cand)
+            tops = sorted(best[1]) if best else sorted(_voice_chord([notes[i] for i in range(1, len(notes))][:4], 60))
+        prev = tops
+        for i, midi in enumerate([root] + tops):
+            t = (bar - 1) * m + i * roll
+            out.append((t, m - i * roll + 0.25, midi, 0.62 if i else 0.55))
+    return out
+
+
 PATTERNS = {
+    "chords.rolled": _p_chords_rolled,
     "chords.sustain": _p_chords_sustain,
     "chords.offbeat_2_4": _p_chords_offbeat_2_4,
     "chords.arp8": _p_chords_arp8,

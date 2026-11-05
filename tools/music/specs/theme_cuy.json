@@ -1,70 +1,186 @@
 {
-  "id": "theme_cuy",
-  "kind": "theme",
-  "title": "Motyw Cuy (także home_main)",
-  "role": "wizytówka gry; pętla głównego widoku Domku; spokojny jazz/ambient z pikselowymi iskrami",
-  "bpm": 82,
-  "meter": 4,
-  "key": "C",
-  "mode": "major",
-  "bars": 32,
-  "swing": 60,
-  "seed": 10724,
-  "chords": [
-    { "bar": 1, "sym": "Cmaj9" },
-    { "bar": 2, "sym": "Am9" },
-    { "bar": 3, "sym": "Dm9" },
-    { "bar": 4, "sym": "G13" },
-    { "bar": 5, "sym": "Cmaj9" },
-    { "bar": 6, "sym": "Am7" },
-    { "bar": 7, "sym": "Dm9" },
-    { "bar": 8, "sym": "G13" },
-    { "bar": 9, "sym": "Fmaj9" },
-    { "bar": 10, "sym": "Em7" },
-    { "bar": 11, "sym": "Am9" },
-    { "bar": 12, "sym": "D7♭9" },
-    { "bar": 13, "sym": "Fmaj9" },
-    { "bar": 14, "sym": "Em7" },
-    { "bar": 15, "sym": "Dm9" },
-    { "bar": 16, "sym": "G13" },
-    { "bar": 17, "sym": "Cmaj9" },
-    { "bar": 18, "sym": "Am9" },
-    { "bar": 19, "sym": "Dm9" },
-    { "bar": 20, "sym": "G13" },
-    { "bar": 21, "sym": "Cmaj9" },
-    { "bar": 22, "sym": "Am7" },
-    { "bar": 23, "sym": "Dm9" },
-    { "bar": 24, "sym": "G13" },
-    { "bar": 25, "sym": "Fmaj9" },
-    { "bar": 26, "sym": "Em7" },
-    { "bar": 27, "sym": "Am9" },
-    { "bar": 28, "sym": "D7♭9" },
-    { "bar": 29, "sym": "Fmaj9" },
-    { "bar": 30, "sym": "Em7" },
-    { "bar": 31, "sym": "Dm9" },
-    { "bar": 32, "sym": "G13" }
-  ],
-  "layers": [
-    { "role": "pad", "voice": "PAD", "db": -12, "pattern": "chords.sustain", "part": "ciepła podkładka: akord na cały takt (I-vi-ii-V z 9., wariant jazzowy)", "register": "C4-G5", "stem": "base" },
-    { "role": "mel", "voice": "HARP", "db": -2, "pattern": "melody.skeleton", "part": "rzadka melodia wg szkieletu std (MT-06), takty 1-2 motyw", "register": "C4-G5", "stem": "lead" },
-    { "role": "chd", "voice": "EP", "db": -7, "pattern": "chords.offbeat_2_4", "part": "Rhodes-like: akordy na offbeatach 2 i 4 (groove, swing 60)", "from_bar": 1, "stem": "rhythm" },
-    { "role": "bass", "voice": "TRI", "db": -6, "pattern": "bass.walking", "part": "bas chodzący: ćwierćnuty korzeń-tercja-kwinta, podejście półtonem do następnego akordu", "from_bar": 1, "stem": "base" },
-    { "role": "perc", "voice": "BRSH", "db": -12, "pattern": "drums.brush_swing", "part": "szczotka: akcent na 2 i 4, ghost na offbeatach (swing 60)", "from_bar": 1, "stem": "rhythm" },
-    { "role": "hat", "voice": "HAT", "db": -12, "pattern": "drums.hat_swing", "part": "hi-hat: ósemki, mocniej na uderzeniach, ciszej na offbeatach (swing 60)", "from_bar": 1, "stem": "rhythm" },
-    { "role": "orn", "voice": "P12", "db": -10, "pattern": "orn.every_n_bars(2, 3.5)", "part": "pikselowe iskry co 2 takty na offbeacie 3-4 (zamiast arpeggio akordów: wzór niezaimplementowany)", "from_bar": 3, "register": "C5-C6", "stem": "lead" }
-  ],
-  "drums": {
-    "kit": "lofi_soft",
-    "levels": { "BRSH": -12, "SHK": -18, "KICK": -14 }
+ "id": "theme_cuy",
+ "kind": "theme",
+ "title": "Motyw Cuy (także home_main)",
+ "role": "wizytówka gry; jedna warstwa: pełne akordy PAD, ciepły ambient lo-fi jazz (J1 I-vi-ii-V + A2 Imaj7#11)",
+ "bpm": 72,
+ "meter": 4,
+ "key": "C",
+ "mode": "major",
+ "bars": 32,
+ "swing": 50,
+ "seed": 10724,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "Cmaj9"
   },
-  "fx": [
-    { "fx": "PAN(-0.25)", "on": "EP" },
-    { "fx": "TAPE(0.2)", "on": "EP" },
-    { "fx": "REV-S", "on": "EP" },
-    { "fx": "REV-M", "on": "PAD" },
-    { "fx": "REV-M", "on": "HARP" }
-  ],
-  "master": { "lufs": -18, "ceiling_dbtp": -1 },
-  "loop": { "enabled": true },
-  "stem_of": null
+  {
+   "bar": 2,
+   "sym": "Am9"
+  },
+  {
+   "bar": 3,
+   "sym": "Dm9"
+  },
+  {
+   "bar": 4,
+   "sym": "G13"
+  },
+  {
+   "bar": 5,
+   "sym": "Fmaj7#11"
+  },
+  {
+   "bar": 6,
+   "sym": "Em9"
+  },
+  {
+   "bar": 7,
+   "sym": "Dm9"
+  },
+  {
+   "bar": 8,
+   "sym": "G13"
+  },
+  {
+   "bar": 9,
+   "sym": "Cmaj9"
+  },
+  {
+   "bar": 10,
+   "sym": "Am9"
+  },
+  {
+   "bar": 11,
+   "sym": "Dm9"
+  },
+  {
+   "bar": 12,
+   "sym": "G13"
+  },
+  {
+   "bar": 13,
+   "sym": "Fmaj7#11"
+  },
+  {
+   "bar": 14,
+   "sym": "Em9"
+  },
+  {
+   "bar": 15,
+   "sym": "Dm9"
+  },
+  {
+   "bar": 16,
+   "sym": "G13"
+  },
+  {
+   "bar": 17,
+   "sym": "Cmaj9"
+  },
+  {
+   "bar": 18,
+   "sym": "Am9"
+  },
+  {
+   "bar": 19,
+   "sym": "Dm9"
+  },
+  {
+   "bar": 20,
+   "sym": "G13"
+  },
+  {
+   "bar": 21,
+   "sym": "Fmaj7#11"
+  },
+  {
+   "bar": 22,
+   "sym": "Em9"
+  },
+  {
+   "bar": 23,
+   "sym": "Dm9"
+  },
+  {
+   "bar": 24,
+   "sym": "G13"
+  },
+  {
+   "bar": 25,
+   "sym": "Cmaj9"
+  },
+  {
+   "bar": 26,
+   "sym": "Am9"
+  },
+  {
+   "bar": 27,
+   "sym": "Dm9"
+  },
+  {
+   "bar": 28,
+   "sym": "G13"
+  },
+  {
+   "bar": 29,
+   "sym": "Fmaj7#11"
+  },
+  {
+   "bar": 30,
+   "sym": "Em9"
+  },
+  {
+   "bar": 31,
+   "sym": "Dm9"
+  },
+  {
+   "bar": 32,
+   "sym": "G13"
+  }
+ ],
+ "layers": [
+  {
+   "role": "pad",
+   "voice": "PAD",
+   "db": -3,
+   "pattern": "chords.rolled",
+   "part": "jedna warstwa: pełne akordy 9./maj7#11/13 (5 głosów), płynne prowadzenie głosów, lekko rozłożone, trzymane cały takt",
+   "register": "F2-G5",
+   "stem": "base"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "TAPE(0.15)",
+   "on": "PAD"
+  },
+  {
+   "fx": "CHORUS(3.5)",
+   "on": "PAD"
+  },
+  {
+   "fx": "LP(3200)",
+   "on": "PAD"
+  },
+  {
+   "fx": "WIDTH(1.4)",
+   "on": "PAD"
+  },
+  {
+   "fx": "REV-L",
+   "wet": 0.38,
+   "on": "PAD"
+  }
+ ],
+ "master": {
+  "lufs": -18,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": true
+ },
+ "stem_of": null
 }

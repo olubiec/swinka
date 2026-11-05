@@ -2,7 +2,8 @@
 
 chain: lista {"fx": "REV-M", "wet": 0.16} (wet opcjonalne; domyślne z tabeli poniżej).
 Nazwy: REV-S, REV-M, REV-L (pogłos), LP(f), HP(f) Hz, TAPE(w) falowanie ±w %, VINYL(db) trzask i szum
-(poziom db względem szczytu 1,0), CRUSH (8 bit, 12 kHz), PAN(p) p w -1..1, WIDTH(w) szerokość stereo 0..2.
+(poziom db względem szczytu 1,0), CRUSH (8 bit, 12 kHz), PAN(p) p w -1..1, WIDTH(w) szerokość stereo 0..2,
+CHORUS lub CHORUS(ms) chorus stereo (głębokość ms, domyślnie 3).
 
 Długość: pogłos dokleja ogon (wyjście = n + długość IR - 1). Zawinięcie ogona do początku pętli
 robi finish.py (PM-06), nie ten moduł.
@@ -21,7 +22,7 @@ LN1000 = math.log(1000.0)
 CRUSH_BITS = 8
 CRUSH_RATE = 12000.0
 PATTERN = re.compile(r"^([A-Z][A-Z0-9-]*)(?:\(([-0-9.]+)\))?$")
-KNOWN = set(REVERB) | {"LP", "HP", "TAPE", "VINYL", "CRUSH", "PAN", "WIDTH"}
+KNOWN = set(REVERB) | {"LP", "HP", "TAPE", "VINYL", "CRUSH", "PAN", "WIDTH", "CHORUS"}
 
 
 def _as_stereo(audio):
@@ -144,6 +145,23 @@ def _width(audio, w):
     return np.stack([mid + side, mid - side])
 
 
+def _chorus(audio, depth_ms, sr):
+    """Chorus: dwie modulowane linie opóźniające (LFO 0,4 i 0,55 Hz), przeciwne fazy w L i R,
+    mieszanie 50 % (głębokość ±depth_ms; domyślnie 3 ms). Długość bez zmian."""
+    n = audio.shape[1]
+    t = np.arange(n) / sr
+    idx = np.arange(n)
+    out = np.empty_like(audio)
+    for c in range(2):
+        sgn = 1.0 if c == 0 else -1.0
+        wet = np.zeros(n)
+        for base_ms, rate, ph in ((14.0, 0.4, 0.0), (21.0, 0.55, 1.7)):
+            d = (base_ms + sgn * depth_ms * np.sin(2 * np.pi * rate * t + ph)) * sr / 1000.0
+            wet += np.interp(idx - d, idx, audio[c], left=0.0)
+        out[c] = 0.6 * audio[c] + 0.5 * wet * 0.8
+    return out
+
+
 def _parse(item):
     name = item["fx"]
     m = PATTERN.match(name)
@@ -178,4 +196,6 @@ def apply(chain, audio, sr):
             out = _pan(out, arg)
         elif base == "WIDTH":
             out = _width(out, arg)
+        elif base == "CHORUS":
+            out = _chorus(out, 3.0 if arg is None else arg, sr)
     return out.astype(np.float32)
