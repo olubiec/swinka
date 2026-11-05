@@ -457,6 +457,111 @@
     16,
     16
    ]
+  },
+  "wallpaper_mint": {
+   "file": "tiles/wallpaper_mint.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wallpaper_peach": {
+   "file": "tiles/wallpaper_peach.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wallpaper_sky": {
+   "file": "tiles/wallpaper_sky.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wallpaper_lilac": {
+   "file": "tiles/wallpaper_lilac.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wallpaper_night": {
+   "file": "tiles/wallpaper_night.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "wallpaper_cream": {
+   "file": "tiles/wallpaper_cream.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_wood_light": {
+   "file": "tiles/floor_wood_light.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_wood": {
+   "file": "tiles/floor_wood.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_tiles_checker": {
+   "file": "tiles/floor_tiles_checker.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_carpet_red": {
+   "file": "tiles/floor_carpet_red.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_grass": {
+   "file": "tiles/floor_grass.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_soil": {
+   "file": "tiles/floor_soil.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_stone": {
+   "file": "tiles/floor_stone.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_straw": {
+   "file": "tiles/floor_straw.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "floor_fleece": {
+   "file": "tiles/floor_fleece.png",
+   "size": [
+    16,
+    16
+   ]
   }
  },
  "market": {
