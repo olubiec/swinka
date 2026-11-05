@@ -149,7 +149,53 @@ def x_dot_full(im):
     P(im, 6, 6, "linen.3"); P(im, 7, 6, "linen.3"); P(im, 6, 7, "linen.3")
 
 
-FN = {"x_close": x_close, "x_plus": x_plus, "x_minus": x_minus, "x_info": x_info, "x_help": x_help, "x_search": x_search, "x_timer": x_timer,
+
+def chev(im, kind):
+    m = set()
+    for t in range(12):
+        d = int(abs(t - 5.5) - 0.5) if abs(t - 5.5) >= .5 else 0
+        a = 2 + t
+        for k in range(3):
+            if kind == "up": m.add((a, 4 + d + k))
+            elif kind == "down": m.add((a, 11 - d - k))
+            else: m.add((11 - d - k, a))
+    shaded(im, m, "hay.3", "hay.2", "hay.1")
+    for (x, y) in m:
+        if (x + 1, y + 1) not in m and (x + 1, y) not in m and (x, y + 1) not in m: P(im, x, y, "plum.1")
+
+
+def m_feed(im):
+    shaded(im, circle(8, 12, 6) - {(x, y) for y in range(16) for x in range(16) if y < 9}, "wood.3", "wood.2", "wood.1")   # miska
+    H.hline(im, 2, 13, 9, "wood.3"); H.hline(im, 2, 13, 10, "wood.2"); H.hline(im, 4, 11, 14, "plum.1")
+    for x in range(3, 13):                                                      # kopiec siana (zdzbla w roznych kierunkach)
+        top = 5 + abs(x - 8) // 2 + (x * 5) % 2
+        for y in range(top, 9): P(im, x, y, "hay.2" if (x + y) % 3 else "hay.3")
+        P(im, x, top, "hay.3")
+    for x, y in ((5, 6), (9, 5), (7, 7), (11, 7)): P(im, x, y, "hay.1")
+    shaded(im, {(10, 3), (11, 3), (10, 4), (11, 4), (11, 5)}, "brick.3", "flame.0", "brick.1")  # marchewka
+    P(im, 10, 2, "moss.3"); P(im, 11, 2, "moss.2"); P(im, 12, 1, "moss.3")
+
+
+def m_tricks(im):
+    ringm = circle(8, 6, 6) - circle(8, 6, 4)
+    shaded(im, ringm, "hay.3", "hay.2", "hay.1")                                # obrecz zwinnosci z mosiadzu
+    shaded(im, rectm(6, 11, 10, 13), "wood.3", "wood.2", "wood.1")              # podstawa
+    shaded(im, rectm(7, 9, 8, 11), "wood.3", "wood.2", "wood.1")
+    for x, y in ((8, 5), (7, 6), (8, 6), (9, 6), (8, 7), (5, 6), (11, 6)): P(im, x, y, "rose.1" if (x, y) != (8, 6) else "rose.2")  # serduszko-gwiazdka
+    P(im, 8, 1, "linen.3"); P(im, 13, 4, "flame.2"); P(im, 3, 3, "flame.2")
+
+
+def m_diary(im):
+    shaded(im, rectm(3, 1, 12, 14), "brick.3", "brick.2", "brick.1")           # okladka
+    H.vline(im, 4, 2, 13, "brick.1"); H.vline(im, 5, 2, 13, "brick.3")           # grzbiet
+    shaded(im, rectm(6, 3, 11, 12), "linen.3", "linen.2", "linen.1")            # kartki
+    for y in (5, 7, 9): H.hline(im, 7, 10, y, "wood.2")                         # reczne linie
+    P(im, 7, 5, "wood.1"); P(im, 9, 7, "wood.1")
+    shaded(im, {(10, 12), (11, 12), (10, 13), (11, 13), (11, 14), (10, 14)}, "rose.2", "rose.1", "rose.0")  # zakladka-wstazka
+    shaded(im, {(8, 11), (9, 11)}, "hay.3", "hay.2", "hay.1")                   # lapka-zapinka
+
+
+FN = {"m_feed": m_feed, "m_tricks": m_tricks, "m_diary": m_diary, "x_chevron_right": lambda im: chev(im, "right"), "x_chevron_up": lambda im: chev(im, "up"), "x_chevron_down": lambda im: chev(im, "down"), "x_close": x_close, "x_plus": x_plus, "x_minus": x_minus, "x_info": x_info, "x_help": x_help, "x_search": x_search, "x_timer": x_timer,
       "x_bell": x_bell, "x_menu": x_menu, "x_filter": x_filter, "x_star_empty": x_star_empty, "x_music_off": x_music_off, "x_dot_full": x_dot_full}
 
 

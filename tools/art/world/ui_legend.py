@@ -309,9 +309,37 @@ def header_banner():
     return im
 
 
+def shop_panel():
+    """Panel sklepu 96x64 [8,18,8,8]: rama z desek, markiza z patchworku (nie w pasy!) ze scalonymi lataniami i festonem, papier w srodku."""
+    W_, H_ = 96, 64
+    im = H.canvas(W_, H_)
+    H.rect(im, 0, 0, W_ - 1, H_ - 1, O); H.rect(im, 1, 1, W_ - 2, H_ - 2, "wood.2")
+    H.hline(im, 1, W_ - 2, 1, "wood.3"); H.vline(im, 1, 1, H_ - 2, "wood.3"); H.hline(im, 1, W_ - 2, H_ - 2, "wood.1"); H.vline(im, W_ - 2, 1, H_ - 2, "wood.1")
+    H.rect(im, 6, 19, W_ - 7, H_ - 7, O); H.rect(im, 7, 20, W_ - 8, H_ - 8, "linen.3")
+    H.hline(im, 7, W_ - 8, 20, "linen.1"); H.vline(im, 7, 20, H_ - 8, "linen.1")
+    tones = (("brick.2", "brick.3", "brick.1"), ("hay.2", "hay.3", "hay.1"), ("linen.2", "linen.3", "linen.1"), ("moss.3", "moss.4", "moss.2"))
+    for k, x in enumerate(range(2, W_ - 2, 9)):                                    # laty patchworku (rozne szerokosci)
+        t = tones[(k * 3 + k // 3) % 4]; x1 = min(x + 8, W_ - 3)
+        H.rect(im, x, 2, x1, 12, t[0]); H.hline(im, x, x1, 2, t[1]); H.hline(im, x, x1, 12, t[2])
+        for xx in range(x + 1, x1, 2): H.put(im, xx, 4, t[1])                       # szew
+        H.vline(im, x, 3, 12, O) if k else None
+        for d in range(0, x1 - x + 1):                                              # feston: lukowy dol kazdej laty
+            depth = 3 - abs(d - 4) // 2 if 0 <= d <= 8 else 0
+            for yy in range(13, 13 + max(depth, 0)): H.put(im, x + d, yy, t[0] if yy < 12 + depth else t[2])
+    for x in range(2, W_ - 2):                                                       # kontur festonu
+        for yy in range(12, 17):
+            c = im.getpixel((x, yy)); below = im.getpixel((x, yy + 1)) if yy + 1 < H_ else (0, 0, 0, 0)
+            if c[3] and (not below[3] or below[:3] == im.getpixel((x, 18))[:3] and yy >= 12 and False): pass
+    for x in (3, W_ - 5): H.hline(im, x, x + 1, 17, "hay.1")                         # sznurek
+    photo_tape(im, 0, 0, 1, 1) if False else None
+    nail(im, 2, 40); nail(im, W_ - 4, 22)
+    round_corners(im, 2)
+    return im
+
+
 ITEMS = {
     "panel_wood": (panel_wood, [8] * 4), "panel_paper": (panel_paper, [8] * 4), "header_banner": (header_banner, [12, 0, 12, 0]),
-    "sep_h": (sep_h, [0] * 4), "sep_v": (sep_v, [0] * 4),
+    "shop_panel": (shop_panel, [8, 18, 8, 8]), "sep_h": (sep_h, [0] * 4), "sep_v": (sep_v, [0] * 4),
     "btn_normal": (lambda: btn(("hay.3", "hay.2", "hay.1", "hay.0")), [6] * 4),
     "btn_hover": (lambda: btn(("linen.3", "hay.3", "hay.2", "hay.0"), hover=True), [6] * 4),
     "btn_pressed": (lambda: btn(("hay.1", "hay.1", "hay.0", "hay.0"), True), [6] * 4),
