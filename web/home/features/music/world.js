@@ -178,6 +178,37 @@
       tries++;
       if (registerLayer() || tries > 100) clearInterval(timer);
     }, 100);
+    startQueueSync();
+  }
+
+  // Feeds the mini player queue from the save (state.music, exposed by the C# side) on every state update.
+  // Waits for the bridge and for the mini player engine, which are created on their own schedule.
+  function syncFromState() {
+    const player = window.CuyMusicPlayer;
+    const engine = player && typeof player.autoEngine === 'function' ? player.autoEngine() : null;
+    const bridge = window.bridge;
+    if (!engine || !bridge || typeof bridge.getState !== 'function') return false;
+    try {
+      const state = bridge.getState() || {};
+      syncEngine(engine, state.music || {});
+    } catch (err) {
+      console.warn('CuyMusicWorld: queue not synced: ' + (err && err.message));
+    }
+    return true;
+  }
+
+  function startQueueSync() {
+    let tries = 0;
+    let subscribed = false;
+    const timer = setInterval(() => {
+      tries++;
+      if (!subscribed && window.bridge && typeof window.bridge.onState === 'function') {
+        window.bridge.onState(() => syncFromState());
+        subscribed = true;
+      }
+      if (syncFromState() && subscribed) clearInterval(timer);
+      if (tries > 100) clearInterval(timer);
+    }, 100);
   }
   if (typeof document !== 'undefined') {
     if (document.readyState !== 'loading') browserStart();

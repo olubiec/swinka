@@ -49,6 +49,7 @@ namespace Cuy.Core
             var state = load.State ?? GameState.CreateNew(newPetName, clock.UtcNow);
             state.EnsureRosterInitialized(Cuy.Core.Pigs.NamedPigCatalog.Current, nowUtc: clock.UtcNow);
             state.EnsureWorld(Cuy.Core.World.WorldItemCatalog.Current, ItemCatalog.Default);
+            state.EnsureMusic();
             state.EnsurePigRooms(Cuy.Core.World.PigRoomConfig.Current, Cuy.Core.World.WorldItemCatalog.Current);
             var session = new GameSession(new Pet(state, clock, balance), saveSystem, load);
             session.Pet.AttachPigRooms();

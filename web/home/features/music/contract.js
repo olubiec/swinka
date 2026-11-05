@@ -1,6 +1,7 @@
 // Music (record player) save contract: pure functions, no DOM.
 // Mirrors src/Cuy.Core/Music/MusicSaveConverters.cs (the C# side owns the save file).
-// Save fields: records {recordId: count}, playerOwned [recordId], playerPlaced {roomId: recordId}.
+// Save fields: records {recordId: count}, playerOwned [playerId], playerPlaced {roomId: playerId}
+// (the value of playerPlaced is the id of the music player standing in the room, not a record id).
 // Missing or wrong-typed fields become empty values; bad entries are dropped; nothing throws.
 (function (root, factory) {
   const api = factory();

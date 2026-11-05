@@ -57,7 +57,11 @@
       `;
     }
 
-    const items = shopState.items.filter(it => it.category === currentTab);
+    // Music items (A6, features/music/economy.js) join the list; they are bought through CuyMusicEconomy.buy.
+    const musicItems = window.CuyMusicEconomy && window.CuyMusicWorld
+      ? window.CuyMusicEconomy.shopItems(currentState, window.CuyMusicWorld.getPlayers())
+      : [];
+    const items = shopState.items.concat(musicItems).filter(it => it.category === currentTab);
 
     if (items.length === 0) {
       html += `<div class="feature-shop-empty">Nothing here right now.</div>`;
@@ -102,7 +106,11 @@
     container.querySelectorAll('button[data-buy]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const itemId = e.target.dataset.buy;
-        if (apiRef) {
+        const musicItem = items.find(it => it.id === itemId && it.music);
+        if (apiRef && musicItem) {
+          window.CuyMusicEconomy.buy(musicItem);
+          if (apiRef.sound) apiRef.sound.fanfare();
+        } else if (apiRef) {
           apiRef.send({ type: 'buy', itemId: itemId });
           if (apiRef.sound) apiRef.sound.fanfare();
         }

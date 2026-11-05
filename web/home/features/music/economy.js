@@ -1,0 +1,143 @@
+// Music economy (A6): buying records and players with clovers, the one-time starter player, and the
+// shop items for the existing shop (features/shop). Pure rules first (Node tests, no DOM); the browser part
+// (shopItems, buy) is at the end. Browser: window.CuyMusicEconomy. Prices: prices.js (TODO-D3).
+// Save fields: records, playerOwned, playerPlaced (contract.js) and musicVersion (1 = starter granted).
+// The C# side (GameState.Music.cs) applies the same starter rule on load; the price check on purchase is in C#.
+(function (root, factory) {
+  const api = factory(
+    typeof module === 'object' && module.exports && typeof require === 'function'
+      ? { Contract: require('./contract.js'), Prices: require('./prices.js') }
+      : { Contract: root && root.CuyMusicContract, Prices: root && root.CuyMusicPrices }
+  );
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  if (root) root.CuyMusicEconomy = api;
+})(typeof window !== 'undefined' ? window : null, function (deps) {
+  'use strict';
+
+  const Contract = deps.Contract;
+  const Prices = deps.Prices;
+  const MUSIC_VERSION = 1;
+
+  function isPlainObject(v) {
+    return v !== null && typeof v === 'object' && !Array.isArray(v);
+  }
+
+  // Old saves have no musicVersion (0): the starter player is added once and the version is set to 1.
+  // Saves at version 1 or later are returned unchanged (no duplicate).
+  function starterSave(save) {
+    const src = isPlainObject(save) ? save : {};
+    const s = Contract.migrateMusicSave(src);
+    const version = Number.isInteger(src.musicVersion) ? src.musicVersion : 0;
+    if (version >= MUSIC_VERSION) return Object.assign({}, s, { musicVersion: version });
+    const starter = Prices.STARTER_PLAYER;
+    const known = s.playerOwned.includes(starter) || Object.values(s.playerPlaced).includes(starter);
+    return Object.assign({}, s, {
+      playerOwned: known ? s.playerOwned : s.playerOwned.concat([starter]),
+      musicVersion: MUSIC_VERSION
+    });
+  }
+
+  function failed(reason, clovers) {
+    return { ok: false, reason, clovers, save: null, price: null };
+  }
+
+  // Buys one copy of a record. rarity comes from the manifest entry (common / rare / unique).
+  function buyRecord(save, clovers, recordId, rarity) {
+    const bal = Number.isFinite(clovers) ? clovers : 0;
+    if (typeof recordId !== 'string' || recordId === '') return failed('unknown_item', bal);
+    const price = Prices.recordPrice(rarity);
+    if (price === null) return failed('not_for_sale', bal);
+    if (bal < price) return failed('no_funds', bal);
+    const s = Contract.migrateMusicSave(save);
+    const records = Object.assign({}, s.records, { [recordId]: (s.records[recordId] || 0) + 1 });
+    return { ok: true, reason: '', clovers: bal - price, save: Object.assign({}, s, { records }), price };
+  }
+
+  // Buys a player. An owned or placed player cannot be bought again (one of each).
+  function buyPlayer(save, clovers, playerId) {
+    const bal = Number.isFinite(clovers) ? clovers : 0;
+    const price = Prices.playerPrice(playerId);
+    if (price === null) return failed('unknown_item', bal);
+    const s = Contract.migrateMusicSave(save);
+    if (s.playerOwned.includes(playerId) || Object.values(s.playerPlaced).includes(playerId)) {
+      return failed('owned', bal);
+    }
+    if (bal < price) return failed('no_funds', bal);
+    return {
+      ok: true,
+      reason: '',
+      clovers: bal - price,
+      save: Object.assign({}, s, { playerOwned: s.playerOwned.concat([playerId]) }),
+      price
+    };
+  }
+
+  // ---- Browser: shop items and the purchase message (not run in Node) ----
+  let manifestRecords = [];
+
+  // Shop entries for features/shop: records (toy tab) and players, each with the purchase message in `music`.
+  // state = bridge state (save fields come from the C# state; empty until the C# side exposes them).
+  function shopItems(state, playerList) {
+    const s = Contract.migrateMusicSave(state && state.music ? state.music : state);
+    const items = [];
+    for (const r of manifestRecords) {
+      const price = Prices.recordPrice(r.rarity);
+      if (price === null) continue;
+      items.push({
+        id: 'record:' + r.id,
+        name: r.name,
+        category: 'toy',
+        price,
+        icon: r.icon ? 'icon-' + String(r.icon).replace(/_/g, '-') : '',
+        description: 'Record, ' + r.rarity,
+        music: { kind: 'record', itemId: r.id, rarity: r.rarity },
+        owned: s.records[r.id] || 0
+      });
+    }
+    for (const p of playerList || []) {
+      if (Prices.playerPrice(p.id) === null) continue;
+      const owned = s.playerOwned.includes(p.id) || Object.values(s.playerPlaced).includes(p.id);
+      items.push({
+        id: 'player:' + p.id,
+        name: p.name,
+        category: 'toy',
+        price: Prices.playerPrice(p.id),
+        icon: '',
+        description: 'Record player',
+        oneTime: true,
+        music: { kind: 'player', itemId: p.id },
+        owned: owned ? 1 : 0
+      });
+    }
+    return items;
+  }
+
+  // Sends the purchase to the C# side through the bridge (the C# side checks the price and the balance).
+  function buy(item) {
+    if (!item || !item.music || !window.bridge || typeof window.bridge.send !== 'function') return false;
+    window.bridge.send({ type: 'musicBuy', kind: item.music.kind, itemId: item.music.itemId });
+    return true;
+  }
+
+  function loadManifest() {
+    if (typeof window === 'undefined' || typeof fetch !== 'function') return;
+    const base = window.chrome && window.chrome.webview ? 'https://cuy.assets/' : '../../assets/';
+    fetch(base + 'records/manifest.json')
+      .then((r) => r.json())
+      .then((m) => { manifestRecords = Array.isArray(m && m.records) ? m.records.filter((r) => r && r.id) : []; })
+      .catch((err) => console.warn('CuyMusicEconomy: manifest not loaded: ' + (err && err.message)));
+  }
+  if (typeof document !== 'undefined') {
+    if (document.readyState !== 'loading') loadManifest();
+    else document.addEventListener('DOMContentLoaded', loadManifest);
+  }
+
+  return {
+    MUSIC_VERSION,
+    starterSave,
+    buyRecord,
+    buyPlayer,
+    shopItems,
+    buy
+  };
+});

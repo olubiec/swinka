@@ -175,16 +175,22 @@
   }
 
   // Browser start: the panel goes to the identity card (the free strip between name and badges).
+  let autoMounted = null;
   function autoMount() {
     if (typeof document === 'undefined' || !window.CuyMusicEngine) return null;
     const host = document.querySelector('.pet-identity-card');
     if (!host || host.querySelector('.mp_panel')) return null;
-    return mount(host, {});
+    autoMounted = mount(host, {});
+    return autoMounted;
+  }
+  // The engine of the auto-mounted panel (null until it is mounted); world.js feeds its queue from the save.
+  function autoEngine() {
+    return autoMounted ? autoMounted.engine : null;
   }
   if (typeof document !== 'undefined') {
     if (document.readyState !== 'loading') autoMount();
     else document.addEventListener('DOMContentLoaded', autoMount);
   }
 
-  return { STATUS_TEXT, playerModel, togglePlay, next, setVolume, mount };
+  return { STATUS_TEXT, playerModel, togglePlay, next, setVolume, mount, autoEngine };
 });
