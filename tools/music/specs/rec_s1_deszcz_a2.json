@@ -2,7 +2,7 @@
   "id": "rec_s1_deszcz_a2",
   "kind": "record",
   "title": "Deszcz na dachu · A2 spokojny",
-  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: SOUL Eb, jeden instrument (EP)",
+  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (LULL + MINSOUL+6), jeden instrument (ACC)",
   "bpm": 59,
   "meter": 4,
   "key": "Eb",
@@ -13,128 +13,128 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Ebmaj13"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 2,
-      "sym": "Cm11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Fm11"
+      "sym": "Ebmaj7/G"
     },
     {
       "bar": 4,
-      "sym": "Bb7b13"
+      "sym": "Abm6/9"
     },
     {
       "bar": 5,
-      "sym": "Gm11"
+      "sym": "Gb7alt"
     },
     {
       "bar": 6,
-      "sym": "C7alt"
+      "sym": "Fm11"
     },
     {
       "bar": 7,
-      "sym": "Fm9"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "E9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 9,
-      "sym": "Abmaj13"
+      "sym": "Am11"
     },
     {
       "bar": 10,
-      "sym": "Fm11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 11,
-      "sym": "Bbm11"
+      "sym": "Dm9"
     },
     {
       "bar": 12,
-      "sym": "Eb7b13"
+      "sym": "E7alt"
     },
     {
       "bar": 13,
-      "sym": "Cm11"
+      "sym": "Am9"
     },
     {
       "bar": 14,
-      "sym": "F7alt"
+      "sym": "E13"
     },
     {
       "bar": 15,
-      "sym": "Bbm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "A9#11"
+      "sym": "E7b13"
     },
     {
       "bar": 17,
-      "sym": "Ebmaj13"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 18,
-      "sym": "Cm11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Fm11"
+      "sym": "Ebmaj7/G"
     },
     {
       "bar": 20,
-      "sym": "Bb7b13"
+      "sym": "Abm6/9"
     },
     {
       "bar": 21,
-      "sym": "Gm11"
+      "sym": "Gb7alt"
     },
     {
       "bar": 22,
-      "sym": "C7alt"
+      "sym": "Fm11"
     },
     {
       "bar": 23,
-      "sym": "Fm9"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "E9#11"
+      "sym": "Ebmaj9"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
-      "db": -3,
-      "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "voice": "ACC",
+      "db": -12,
+      "pattern": "chords.rolled(0.2)",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; progresja unikalna: LULL + MINSOUL+6",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.2)",
+      "fx": "TAPE(0.18)",
       "on": "all"
     },
     {
-      "fx": "LP(9000)",
+      "fx": "LP(7000)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.16,
+      "wet": 0.167,
       "on": "all"
     },
     {
-      "fx": "VINYL(-46)",
+      "fx": "VINYL(-44)",
       "on": "all"
     }
   ],

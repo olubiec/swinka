@@ -2,7 +2,7 @@
   "id": "rec_s2_wiatr_b2",
   "kind": "record",
   "title": "Wiatr w trawie · B2 nastrojowy",
-  "role": "płyta serii 2; szeroki pad i wiatr; legenda v7: PEDAL D, jeden instrument (PAD)",
+  "role": "płyta serii 2; szeroki pad i wiatr; legenda v7: progresja unikalna (THIRDS + PHRYG+10), jeden instrument (EP)",
   "bpm": 46,
   "meter": 4,
   "key": "D",
@@ -13,112 +13,112 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dmaj9"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "E/D"
+      "sym": "Gm11"
     },
     {
       "bar": 3,
-      "sym": "F#m11/D"
+      "sym": "F#maj13"
     },
     {
       "bar": 4,
-      "sym": "Gmaj7#11/D"
+      "sym": "Em11"
     },
     {
       "bar": 5,
-      "sym": "Dmaj9"
+      "sym": "Eb13"
     },
     {
       "bar": 6,
-      "sym": "C/D"
+      "sym": "Dmaj13"
     },
     {
       "bar": 7,
-      "sym": "Em11/D"
+      "sym": "Bm11"
     },
     {
       "bar": 8,
-      "sym": "A/D"
+      "sym": "A13sus4"
     },
     {
       "bar": 9,
-      "sym": "Gmaj9"
+      "sym": "Cm11"
     },
     {
       "bar": 10,
-      "sym": "A/G"
+      "sym": "Dbmaj7#11"
     },
     {
       "bar": 11,
-      "sym": "Bm11/G"
+      "sym": "Cm9"
     },
     {
       "bar": 12,
-      "sym": "Cmaj7#11/G"
+      "sym": "G7b9b13"
     },
     {
       "bar": 13,
-      "sym": "Gmaj9"
+      "sym": "Ab7b13"
     },
     {
       "bar": 14,
-      "sym": "F/G"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 15,
-      "sym": "Am11/G"
+      "sym": "G13sus4"
     },
     {
       "bar": 16,
-      "sym": "D/G"
+      "sym": "Cm(maj7)9"
     },
     {
       "bar": 17,
-      "sym": "Dmaj9"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "E/D"
+      "sym": "Gm11"
     },
     {
       "bar": 19,
-      "sym": "F#m11/D"
+      "sym": "F#maj13"
     },
     {
       "bar": 20,
-      "sym": "Gmaj7#11/D"
+      "sym": "A13sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "PAD",
+      "voice": "EP",
       "db": -3,
-      "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.3)",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; progresja unikalna: THIRDS + PHRYG+10",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(3)",
       "on": "all"
     },
     {
-      "fx": "LP(6000)",
+      "fx": "LP(4500)",
       "on": "all"
     },
     {
       "fx": "REV-M",
-      "wet": 0.2,
+      "wet": 0.209,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.5)",
+      "fx": "WIDTH(1.69)",
       "on": "all"
     }
   ],

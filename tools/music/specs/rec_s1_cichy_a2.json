@@ -2,7 +2,7 @@
   "id": "rec_s1_cichy_a2",
   "kind": "record",
   "title": "Cichy kąt · A2 spokojny",
-  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: PEDAL C, jeden instrument (BOX)",
+  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (WHOLE + DORQ+3), jeden instrument (XYL)",
   "bpm": 54,
   "meter": 4,
   "key": "C",
@@ -13,124 +13,124 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj9"
+      "sym": "Cmaj7#5"
     },
     {
       "bar": 2,
-      "sym": "D/C"
+      "sym": "D9#5"
     },
     {
       "bar": 3,
-      "sym": "Em11/C"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 4,
-      "sym": "Fmaj7#11/C"
+      "sym": "E9#5"
     },
     {
       "bar": 5,
-      "sym": "Cmaj9"
+      "sym": "Dbmaj7#11"
     },
     {
       "bar": 6,
-      "sym": "Bb/C"
+      "sym": "C9#5"
     },
     {
       "bar": 7,
-      "sym": "Dm11/C"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 8,
-      "sym": "G/C"
+      "sym": "G9sus4"
     },
     {
       "bar": 9,
-      "sym": "Fmaj9"
+      "sym": "Ebsowhat"
     },
     {
       "bar": 10,
-      "sym": "G/F"
+      "sym": "Esowhat"
     },
     {
       "bar": 11,
-      "sym": "Am11/F"
+      "sym": "Ebsowhat"
     },
     {
       "bar": 12,
-      "sym": "Bbmaj7#11/F"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 13,
-      "sym": "Fmaj9"
+      "sym": "Fm11"
     },
     {
       "bar": 14,
-      "sym": "Eb/F"
+      "sym": "F#maj13#11"
     },
     {
       "bar": 15,
-      "sym": "Gm11/F"
+      "sym": "Ebm11"
     },
     {
       "bar": 16,
-      "sym": "C/F"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 17,
-      "sym": "Cmaj9"
+      "sym": "Cmaj7#5"
     },
     {
       "bar": 18,
-      "sym": "D/C"
+      "sym": "D9#5"
     },
     {
       "bar": 19,
-      "sym": "Em11/C"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 20,
-      "sym": "Fmaj7#11/C"
+      "sym": "E9#5"
     },
     {
       "bar": 21,
-      "sym": "Cmaj9"
+      "sym": "Dbmaj7#11"
     },
     {
       "bar": 22,
-      "sym": "Bb/C"
+      "sym": "C9#5"
     },
     {
       "bar": 23,
-      "sym": "Dm11/C"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 24,
-      "sym": "G/C"
+      "sym": "G9sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "BOX",
+      "voice": "XYL",
       "db": -3,
-      "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.2)",
+      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; progresja unikalna: WHOLE + DORQ+3",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.2)",
+      "fx": "TAPE(0.24)",
       "on": "all"
     },
     {
-      "fx": "LP(9000)",
+      "fx": "LP(10000)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.16,
+      "wet": 0.171,
       "on": "all"
     },
     {

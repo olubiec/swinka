@@ -2,7 +2,7 @@
   "id": "rec_s1_poranek_b1",
   "kind": "record",
   "title": "Poranek w sianie · B1 energiczny",
-  "role": "płyta serii 1; poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny; legenda v7: LYD C, jeden instrument (HARP)",
+  "role": "płyta serii 1; poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny; legenda v7: progresja unikalna (SOUL + THIRDS+2), jeden instrument (PIZ)",
   "bpm": 84,
   "meter": 4,
   "key": "C",
@@ -13,160 +13,160 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj13"
     },
     {
       "bar": 2,
-      "sym": "Dmaj13"
+      "sym": "Am11"
     },
     {
       "bar": 3,
-      "sym": "Em11"
+      "sym": "Dm11"
     },
     {
       "bar": 4,
-      "sym": "Fmaj13#11"
+      "sym": "G7b13"
     },
     {
       "bar": 5,
-      "sym": "Cmaj7/E"
-    },
-    {
-      "bar": 6,
-      "sym": "Dm11/G"
-    },
-    {
-      "bar": 7,
-      "sym": "Cmaj13"
-    },
-    {
-      "bar": 8,
-      "sym": "G6/9"
-    },
-    {
-      "bar": 9,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 10,
-      "sym": "Gmaj13"
-    },
-    {
-      "bar": 11,
-      "sym": "Am11"
-    },
-    {
-      "bar": 12,
-      "sym": "Bbmaj13#11"
-    },
-    {
-      "bar": 13,
-      "sym": "Fmaj7/A"
-    },
-    {
-      "bar": 14,
-      "sym": "Gm11/C"
-    },
-    {
-      "bar": 15,
-      "sym": "Fmaj13"
-    },
-    {
-      "bar": 16,
-      "sym": "C6/9"
-    },
-    {
-      "bar": 17,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 18,
-      "sym": "Dmaj13"
-    },
-    {
-      "bar": 19,
       "sym": "Em11"
     },
     {
-      "bar": 20,
-      "sym": "Fmaj13#11"
+      "bar": 6,
+      "sym": "A7alt"
     },
     {
-      "bar": 21,
-      "sym": "Cmaj7/E"
+      "bar": 7,
+      "sym": "Dm9"
     },
     {
-      "bar": 22,
-      "sym": "Dm11/G"
+      "bar": 8,
+      "sym": "G9#11"
     },
     {
-      "bar": 23,
+      "bar": 9,
+      "sym": "Dmaj9#11"
+    },
+    {
+      "bar": 10,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 11,
+      "sym": "F#maj9#11"
+    },
+    {
+      "bar": 12,
+      "sym": "Em11"
+    },
+    {
+      "bar": 13,
+      "sym": "Eb13"
+    },
+    {
+      "bar": 14,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 15,
+      "sym": "E7b13"
+    },
+    {
+      "bar": 16,
+      "sym": "A13sus4"
+    },
+    {
+      "bar": 17,
       "sym": "Cmaj13"
     },
     {
-      "bar": 24,
-      "sym": "G6/9"
-    },
-    {
-      "bar": 25,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 26,
-      "sym": "Gmaj13"
-    },
-    {
-      "bar": 27,
+      "bar": 18,
       "sym": "Am11"
     },
     {
+      "bar": 19,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 20,
+      "sym": "G7b13"
+    },
+    {
+      "bar": 21,
+      "sym": "Em11"
+    },
+    {
+      "bar": 22,
+      "sym": "A7alt"
+    },
+    {
+      "bar": 23,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 24,
+      "sym": "G9#11"
+    },
+    {
+      "bar": 25,
+      "sym": "Dmaj9#11"
+    },
+    {
+      "bar": 26,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 27,
+      "sym": "F#maj9#11"
+    },
+    {
       "bar": 28,
-      "sym": "Bbmaj13#11"
+      "sym": "Em11"
     },
     {
       "bar": 29,
-      "sym": "Fmaj7/A"
+      "sym": "Eb13"
     },
     {
       "bar": 30,
-      "sym": "Gm11/C"
+      "sym": "Bm9"
     },
     {
       "bar": 31,
-      "sym": "Fmaj13"
+      "sym": "E7b13"
     },
     {
       "bar": 32,
-      "sym": "C6/9"
+      "sym": "A13sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "HARP",
+      "voice": "PIZ",
       "db": -3,
-      "pattern": "chords.rolled(0.20)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (PIZ), akordy rozłożone; progresja unikalna: SOUL + THIRDS+2",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.2)",
+      "fx": "TAPE(0.3)",
       "on": "all"
     },
     {
-      "fx": "LP(10500)",
+      "fx": "LP(11000)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.12,
+      "wet": 0.1,
       "on": "all"
     },
     {
-      "fx": "VINYL(-46)",
+      "fx": "VINYL(-50)",
       "on": "all"
     }
   ],

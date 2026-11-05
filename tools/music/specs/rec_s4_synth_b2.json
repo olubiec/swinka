@@ -2,7 +2,7 @@
   "id": "rec_s4_synth_b2",
   "kind": "record",
   "title": "Synth fala · B2 nastrojowy",
-  "role": "płyta serii 4; synthwave z gated snare; legenda v7: MINSOUL E, jeden instrument (P25)",
+  "role": "płyta serii 4; synthwave z gated snare; legenda v7: progresja unikalna (LYD + DORSOUL+4 + SOUL+2), jeden instrument (EP)",
   "bpm": 84,
   "meter": 4,
   "key": "E",
@@ -13,192 +13,192 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Em11"
+      "sym": "Emaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Cmaj13#11"
+      "sym": "G7alt"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "G#m11"
     },
     {
       "bar": 4,
-      "sym": "B7alt"
+      "sym": "Amaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Em9"
+      "sym": "C#13sus4"
     },
     {
       "bar": 6,
-      "sym": "Dmaj9#11"
+      "sym": "F#m11/B"
     },
     {
       "bar": 7,
-      "sym": "Cmaj9#11"
+      "sym": "C#m9"
     },
     {
       "bar": 8,
-      "sym": "B7b13"
+      "sym": "B6/9"
     },
     {
       "bar": 9,
-      "sym": "Am11"
+      "sym": "G#m11"
     },
     {
       "bar": 10,
-      "sym": "Fmaj13#11"
+      "sym": "C#7b13"
     },
     {
       "bar": 11,
-      "sym": "Dm11"
+      "sym": "Bmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "E7alt"
+      "sym": "Emaj13#11"
     },
     {
       "bar": 13,
-      "sym": "Am9"
+      "sym": "G#m13"
     },
     {
       "bar": 14,
-      "sym": "Gmaj9#11"
+      "sym": "Bbm11"
     },
     {
       "bar": 15,
-      "sym": "Fmaj9#11"
+      "sym": "Eb7b13"
     },
     {
       "bar": 16,
-      "sym": "E7b13"
+      "sym": "D9#11"
     },
     {
       "bar": 17,
-      "sym": "Em11"
+      "sym": "F#maj13"
     },
     {
       "bar": 18,
-      "sym": "Cmaj13#11"
+      "sym": "Ebm11"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "G#m11"
     },
     {
       "bar": 20,
-      "sym": "B7alt"
+      "sym": "C#7b13"
     },
     {
       "bar": 21,
-      "sym": "Em9"
+      "sym": "Bbm11"
     },
     {
       "bar": 22,
-      "sym": "Dmaj9#11"
+      "sym": "Eb7alt"
     },
     {
       "bar": 23,
-      "sym": "Cmaj9#11"
+      "sym": "G#13"
     },
     {
       "bar": 24,
-      "sym": "B7b13"
+      "sym": "G13"
     },
     {
       "bar": 25,
-      "sym": "Am11"
+      "sym": "Emaj9#11"
     },
     {
       "bar": 26,
-      "sym": "Fmaj13#11"
+      "sym": "G7alt"
     },
     {
       "bar": 27,
-      "sym": "Dm11"
+      "sym": "G#m11"
     },
     {
       "bar": 28,
-      "sym": "E7alt"
+      "sym": "Amaj13#11"
     },
     {
       "bar": 29,
-      "sym": "Am9"
+      "sym": "C#13sus4"
     },
     {
       "bar": 30,
-      "sym": "Gmaj9#11"
+      "sym": "F#m11/B"
     },
     {
       "bar": 31,
-      "sym": "Fmaj9#11"
+      "sym": "C#m9"
     },
     {
       "bar": 32,
-      "sym": "E7b13"
+      "sym": "B6/9"
     },
     {
       "bar": 33,
-      "sym": "Em11"
+      "sym": "G#m11"
     },
     {
       "bar": 34,
-      "sym": "Cmaj13#11"
+      "sym": "C#7b13"
     },
     {
       "bar": 35,
-      "sym": "Am11"
+      "sym": "Bmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "B7alt"
+      "sym": "Emaj13#11"
     },
     {
       "bar": 37,
-      "sym": "Em9"
+      "sym": "G#m13"
     },
     {
       "bar": 38,
-      "sym": "Dmaj9#11"
+      "sym": "Bbm11"
     },
     {
       "bar": 39,
-      "sym": "Cmaj9#11"
+      "sym": "Eb7b13"
     },
     {
       "bar": 40,
-      "sym": "B7b13"
+      "sym": "B6/9"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "P25",
+      "voice": "EP",
       "db": -3,
-      "pattern": "chords.rolled(0.15)",
-      "part": "jedna warstwa, jeden instrument (P25), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.2)",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; progresja unikalna: LYD + DORSOUL+4 + SOUL+2",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "SAT(2.0)",
+      "fx": "SAT(1.4)",
       "on": "all"
     },
     {
-      "fx": "SHELF(-2)",
+      "fx": "SHELF(-2.6)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.14,
+      "wet": 0.112,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.38)",
       "on": "all"
     }
   ],

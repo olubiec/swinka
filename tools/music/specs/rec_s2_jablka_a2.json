@@ -2,7 +2,7 @@
   "id": "rec_s2_jablka_a2",
   "kind": "record",
   "title": "Zimowe jabłka · A2 spokojny",
-  "role": "płyta serii 2; folkowy walc zimowy z kryształkami; legenda v7: PHRYG A, jeden instrument (HARP)",
+  "role": "płyta serii 2; folkowy walc zimowy z kryształkami; legenda v7: progresja unikalna (THIRDS + DORSOUL+7 + MODAL+5), jeden instrument (BOX)",
   "bpm": 81,
   "meter": 3,
   "key": "A",
@@ -13,224 +13,224 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Am11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Bbmaj7#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Am9"
+      "sym": "C#maj9#11"
     },
     {
       "bar": 4,
-      "sym": "E7b9b13"
+      "sym": "Bm11"
     },
     {
       "bar": 5,
-      "sym": "Dm11"
+      "sym": "Bb7b13"
     },
     {
       "bar": 6,
-      "sym": "Bbmaj13#11"
+      "sym": "Amaj13"
     },
     {
       "bar": 7,
-      "sym": "E7alt"
+      "sym": "F#m11"
     },
     {
       "bar": 8,
-      "sym": "Am(maj7)9"
+      "sym": "E13sus4"
     },
     {
       "bar": 9,
-      "sym": "Dm11"
+      "sym": "Em11"
     },
     {
       "bar": 10,
-      "sym": "Ebmaj7#11"
+      "sym": "A13"
     },
     {
       "bar": 11,
-      "sym": "Dm9"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "A7b9b13"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 13,
-      "sym": "Gm11"
+      "sym": "Em9"
     },
     {
       "bar": 14,
-      "sym": "Ebmaj13#11"
+      "sym": "F#m11"
     },
     {
       "bar": 15,
-      "sym": "A7alt"
+      "sym": "B7b13"
     },
     {
       "bar": 16,
-      "sym": "Dm(maj7)9"
+      "sym": "Bb9#11"
     },
     {
       "bar": 17,
-      "sym": "Am11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 18,
-      "sym": "Bbmaj7#11"
+      "sym": "Cmaj7#11"
     },
     {
       "bar": 19,
-      "sym": "Am9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "E7b9b13"
+      "sym": "A7alt"
     },
     {
       "bar": 21,
-      "sym": "Dm11"
+      "sym": "Dmaj7/F#"
     },
     {
       "bar": 22,
-      "sym": "Bbmaj13#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 23,
-      "sym": "E7alt"
+      "sym": "Em11"
     },
     {
       "bar": 24,
-      "sym": "Am(maj7)9"
+      "sym": "A13sus4"
     },
     {
       "bar": 25,
-      "sym": "Dm11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 26,
-      "sym": "Ebmaj7#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "Dm9"
+      "sym": "C#maj9#11"
     },
     {
       "bar": 28,
-      "sym": "A7b9b13"
+      "sym": "Bm11"
     },
     {
       "bar": 29,
-      "sym": "Gm11"
+      "sym": "Bb7b13"
     },
     {
       "bar": 30,
-      "sym": "Ebmaj13#11"
+      "sym": "Amaj13"
     },
     {
       "bar": 31,
-      "sym": "A7alt"
+      "sym": "F#m11"
     },
     {
       "bar": 32,
-      "sym": "Dm(maj7)9"
+      "sym": "E13sus4"
     },
     {
       "bar": 33,
-      "sym": "Am11"
+      "sym": "Em11"
     },
     {
       "bar": 34,
-      "sym": "Bbmaj7#11"
+      "sym": "A13"
     },
     {
       "bar": 35,
-      "sym": "Am9"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "E7b9b13"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 37,
-      "sym": "Dm11"
+      "sym": "Em9"
     },
     {
       "bar": 38,
-      "sym": "Bbmaj13#11"
+      "sym": "F#m11"
     },
     {
       "bar": 39,
-      "sym": "E7alt"
+      "sym": "B7b13"
     },
     {
       "bar": 40,
-      "sym": "Am(maj7)9"
+      "sym": "Bb9#11"
     },
     {
       "bar": 41,
-      "sym": "Dm11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 42,
-      "sym": "Ebmaj7#11"
+      "sym": "Cmaj7#11"
     },
     {
       "bar": 43,
-      "sym": "Dm9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 44,
-      "sym": "A7b9b13"
-    },
-    {
-      "bar": 45,
-      "sym": "Gm11"
-    },
-    {
-      "bar": 46,
-      "sym": "Ebmaj13#11"
-    },
-    {
-      "bar": 47,
       "sym": "A7alt"
     },
     {
+      "bar": 45,
+      "sym": "Dmaj7/F#"
+    },
+    {
+      "bar": 46,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 47,
+      "sym": "Em11"
+    },
+    {
       "bar": 48,
-      "sym": "Dm(maj7)9"
+      "sym": "A13sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "HARP",
+      "voice": "BOX",
       "db": -3,
-      "pattern": "chords.rolled(0.30)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.3)",
+      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; progresja unikalna: THIRDS + DORSOUL+7 + MODAL+5",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(3)",
       "on": "all"
     },
     {
-      "fx": "LP(6000)",
+      "fx": "LP(4000)",
       "on": "all"
     },
     {
       "fx": "REV-M",
-      "wet": 0.18,
+      "wet": 0.17,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.5)",
+      "fx": "WIDTH(1.73)",
       "on": "all"
     }
   ],

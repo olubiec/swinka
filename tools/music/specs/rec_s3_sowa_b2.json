@@ -2,7 +2,7 @@
   "id": "rec_s3_sowa_b2",
   "kind": "record",
   "title": "Sowa · B2 nastrojowy",
-  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: MINSOUL D, jeden instrument (PAD)",
+  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (DORSOUL + LULL+8), jeden instrument (BELL)",
   "bpm": 48,
   "meter": 4,
   "key": "D",
@@ -17,55 +17,55 @@
     },
     {
       "bar": 2,
-      "sym": "Bbmaj13#11"
+      "sym": "G13"
     },
     {
       "bar": 3,
-      "sym": "Gm11"
+      "sym": "B7alt"
     },
     {
       "bar": 4,
-      "sym": "A7alt"
+      "sym": "Bbmaj7#11"
     },
     {
       "bar": 5,
-      "sym": "Dm9"
+      "sym": "Dm13"
     },
     {
       "bar": 6,
-      "sym": "Cmaj9#11"
+      "sym": "Em11"
     },
     {
       "bar": 7,
-      "sym": "Bbmaj9#11"
-    },
-    {
-      "bar": 8,
       "sym": "A7b13"
     },
     {
+      "bar": 8,
+      "sym": "Ab9#11"
+    },
+    {
       "bar": 9,
-      "sym": "Gm11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 10,
-      "sym": "Ebmaj13#11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Cm11"
+      "sym": "Bbmaj7/D"
     },
     {
       "bar": 12,
-      "sym": "D7alt"
+      "sym": "Ebm6/9"
     },
     {
       "bar": 13,
-      "sym": "Gm9"
+      "sym": "Bbmaj13"
     },
     {
       "bar": 14,
-      "sym": "Fmaj9#11"
+      "sym": "Cm11"
     },
     {
       "bar": 15,
@@ -73,7 +73,7 @@
     },
     {
       "bar": 16,
-      "sym": "D7b13"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 17,
@@ -81,51 +81,51 @@
     },
     {
       "bar": 18,
-      "sym": "Bbmaj13#11"
+      "sym": "G13"
     },
     {
       "bar": 19,
-      "sym": "Gm11"
+      "sym": "B7alt"
     },
     {
       "bar": 20,
-      "sym": "A7alt"
+      "sym": "Bbmaj7#11"
     },
     {
       "bar": 21,
-      "sym": "Dm9"
+      "sym": "Dm13"
     },
     {
       "bar": 22,
-      "sym": "Cmaj9#11"
+      "sym": "Em11"
     },
     {
       "bar": 23,
-      "sym": "Bbmaj9#11"
+      "sym": "A7b13"
     },
     {
       "bar": 24,
-      "sym": "A7b13"
+      "sym": "Ab9#11"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "PAD",
+      "voice": "BELL",
       "db": -3,
-      "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.4)",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; progresja unikalna: DORSOUL + LULL+8",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.3)",
+      "fx": "TAPE(0.28)",
       "on": "all"
     },
     {
-      "fx": "LP(8000)",
+      "fx": "LP(10000)",
       "on": "all"
     },
     {
@@ -134,11 +134,11 @@
     },
     {
       "fx": "REV-L",
-      "wet": 0.31,
+      "wet": 0.36,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.36)",
       "on": "all"
     }
   ],

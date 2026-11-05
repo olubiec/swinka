@@ -2,7 +2,7 @@
   "id": "rec_s2_pietruszka_a2",
   "kind": "record",
   "title": "Pietruszka funk · A2 spokojny",
-  "role": "płyta serii 2; staccato bas i wah; legenda v7: MINSOUL E, jeden instrument (EP)",
+  "role": "płyta serii 2; staccato bas i wah; legenda v7: progresja unikalna (MODAL + PEDAL+8 + SOUL+10), jeden instrument (GLK)",
   "bpm": 90,
   "meter": 4,
   "key": "E",
@@ -13,119 +13,119 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Em11"
+      "sym": "Emaj9"
     },
     {
       "bar": 2,
-      "sym": "Cmaj13#11"
+      "sym": "Dmaj7#11"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "B7alt"
+      "sym": "Amaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Em9"
+      "sym": "Emaj7/G#"
     },
     {
       "bar": 6,
-      "sym": "Dmaj9#11"
-    },
-    {
-      "bar": 7,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 8,
-      "sym": "B7b13"
-    },
-    {
-      "bar": 9,
-      "sym": "Am11"
-    },
-    {
-      "bar": 10,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 11,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 12,
-      "sym": "E7alt"
-    },
-    {
-      "bar": 13,
-      "sym": "Am9"
-    },
-    {
-      "bar": 14,
       "sym": "Gmaj9#11"
     },
     {
+      "bar": 7,
+      "sym": "C7alt"
+    },
+    {
+      "bar": 8,
+      "sym": "B13sus4"
+    },
+    {
+      "bar": 9,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 10,
+      "sym": "D/C"
+    },
+    {
+      "bar": 11,
+      "sym": "Em11/C"
+    },
+    {
+      "bar": 12,
+      "sym": "Fmaj7#11/C"
+    },
+    {
+      "bar": 13,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 14,
+      "sym": "Bb/C"
+    },
+    {
       "bar": 15,
-      "sym": "Fmaj9#11"
+      "sym": "Dm11/C"
     },
     {
       "bar": 16,
-      "sym": "E7b13"
+      "sym": "G/C"
     },
     {
       "bar": 17,
-      "sym": "Em11"
+      "sym": "Dmaj13"
     },
     {
       "bar": 18,
-      "sym": "Cmaj13#11"
+      "sym": "Bm11"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "Em11"
     },
     {
       "bar": 20,
-      "sym": "B7alt"
+      "sym": "A7b13"
     },
     {
       "bar": 21,
-      "sym": "Em9"
+      "sym": "F#13sus4"
     },
     {
       "bar": 22,
-      "sym": "Dmaj9#11"
+      "sym": "B7alt"
     },
     {
       "bar": 23,
-      "sym": "Cmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 24,
-      "sym": "B7b13"
+      "sym": "Eb9#11"
     },
     {
       "bar": 25,
-      "sym": "Am11"
+      "sym": "Emaj9"
     },
     {
       "bar": 26,
-      "sym": "Fmaj13#11"
+      "sym": "Dmaj7#11"
     },
     {
       "bar": 27,
-      "sym": "Dm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 28,
-      "sym": "E7alt"
+      "sym": "Amaj13#11"
     },
     {
       "bar": 29,
-      "sym": "Am9"
+      "sym": "Emaj7/G#"
     },
     {
       "bar": 30,
@@ -133,59 +133,59 @@
     },
     {
       "bar": 31,
-      "sym": "Fmaj9#11"
+      "sym": "C7alt"
     },
     {
       "bar": 32,
-      "sym": "E7b13"
+      "sym": "B13sus4"
     },
     {
       "bar": 33,
-      "sym": "Em11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 34,
-      "sym": "Cmaj13#11"
+      "sym": "D/C"
     },
     {
       "bar": 35,
-      "sym": "Am11"
+      "sym": "Em11/C"
     },
     {
       "bar": 36,
-      "sym": "B7alt"
+      "sym": "Fmaj7#11/C"
     },
     {
       "bar": 37,
-      "sym": "Em9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 38,
-      "sym": "Dmaj9#11"
+      "sym": "Bb/C"
     },
     {
       "bar": 39,
-      "sym": "Cmaj9#11"
+      "sym": "Dm11/C"
     },
     {
       "bar": 40,
-      "sym": "B7b13"
+      "sym": "B13sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "GLK",
       "db": -3,
-      "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (GLK), akordy rozłożone; progresja unikalna: MODAL + PEDAL+8 + SOUL+10",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(3)",
       "on": "all"
     },
     {
@@ -194,11 +194,11 @@
     },
     {
       "fx": "REV-M",
-      "wet": 0.18,
+      "wet": 0.152,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.5)",
+      "fx": "WIDTH(1.73)",
       "on": "all"
     }
   ],

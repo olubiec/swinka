@@ -167,6 +167,14 @@ Stan MW-8: wykonane. Manifest 149 pozycji (144 wygenerowane, 5 legacy, 24 płyty
 - `noise_needle_skip` (−70 LUFS): akceptowane. To jednorazowy klik, a gated loudness dla takiego dźwięku wychodzi bardzo nisko. Cel w specyfikacji to zmierzona wartość.
 - Bramki G2, G3, G4: uznane za zatwierdzone przez właściciela na podstawie delegacji. Odsłuch nie był wykonany przez agenta; automatyczne kontrole są zielone. Jeśli odsłuch wypadnie inaczej, poprawka idzie w `voices.py`/`fx.py` i regeneracja odpowiedniej fali.
 
+### MW-9: unikalne progresje i brzmienia (dopisane po odsłuchu właściciela)
+
+Powód: 24 płyty były 12 rodzinami legendy w transpozycji, a 4 warianty płyty miały tę samą harmonię. Właściciel chciał osobnej progresji i brzmienia dla każdego utworu.
+
+Zrobione: `tools/music/unique_progs.py` przepisuje `chords`, instrument, wzór i efekty 120 utworów (96 płyt, 10 pokoi, 9 belek i miejsc, 4 gry plus menu). Każda progresja składa się z 2-3 sekcji z różnych rodzin legendy v7 w różnych tonacjach i z mutacjami (tritone sub, kolor, względny dur/moll, dominanta przejściowa, półtonowe podejście). Unikalność jest wymuszona względem tonaliki (limit powtórzonych taktów), więc transpozycja tej samej progresji się nie liczy. Odcisk brzmienia (instrument, wzór, efekty) jest unikalny dla wszystkich płyt. Tabela wszystkich progresji: `docs/music_progressions_unique.md`. Stemy i `_full` jednej gry dzielą harmonię z założenia. Bez nowej harmonii zostają: motyw i jingle (już unikalne), 9 szumów (bez akordów) i 5 plików zewnętrznych.
+
+Powtórka: `python3 tools/music/unique_progs.py --apply`, potem render zmienionych specyfikacji, `build_manifest.py` i `music-audit.js --full`. Testy: `python3 tools/music/test_theory.py`.
+
 ### Wykres zależności
 
 ```

@@ -2,7 +2,7 @@
   "id": "rec_s4_radio_a2",
   "kind": "record",
   "title": "Radio FM · A2 spokojny",
-  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: BACKDOOR C, jeden instrument (ACC)",
+  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (WHOLE + SOUL+3 + MODAL+6), jeden instrument (P12)",
   "bpm": 86,
   "meter": 4,
   "key": "C",
@@ -13,192 +13,192 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj9"
+      "sym": "Cmaj7#5"
     },
     {
       "bar": 2,
-      "sym": "Am11"
+      "sym": "C13sus4"
     },
     {
       "bar": 3,
-      "sym": "Fm9"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 4,
-      "sym": "Bb13"
+      "sym": "Bb9#5"
     },
     {
       "bar": 5,
-      "sym": "Cmaj13"
+      "sym": "Bbm9"
     },
     {
       "bar": 6,
-      "sym": "Em11"
+      "sym": "C9#5"
     },
     {
       "bar": 7,
-      "sym": "Fmaj9#11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 8,
-      "sym": "G13sus4"
+      "sym": "G9sus4"
     },
     {
       "bar": 9,
-      "sym": "Fmaj9"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 10,
-      "sym": "Dm11"
+      "sym": "Cm11"
     },
     {
       "bar": 11,
-      "sym": "Bbm9"
+      "sym": "Fm11"
     },
     {
       "bar": 12,
-      "sym": "Eb13"
+      "sym": "E7b13"
     },
     {
       "bar": 13,
-      "sym": "Fmaj13"
+      "sym": "G13sus4"
     },
     {
       "bar": 14,
-      "sym": "Am11"
+      "sym": "F#9#11"
     },
     {
       "bar": 15,
-      "sym": "Bbmaj9#11"
+      "sym": "Fm9"
     },
     {
       "bar": 16,
-      "sym": "C13sus4"
+      "sym": "E9#11"
     },
     {
       "bar": 17,
-      "sym": "Cmaj9"
+      "sym": "F#maj9"
     },
     {
       "bar": 18,
-      "sym": "Am11"
+      "sym": "A7alt"
     },
     {
       "bar": 19,
-      "sym": "Fm9"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "Bb13"
+      "sym": "Bmaj13#11"
     },
     {
       "bar": 21,
-      "sym": "Cmaj13"
+      "sym": "F#maj7/Bb"
     },
     {
       "bar": 22,
-      "sym": "Em11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 23,
-      "sym": "Fmaj9#11"
+      "sym": "Abm11"
     },
     {
       "bar": 24,
-      "sym": "G13sus4"
+      "sym": "Db13sus4"
     },
     {
       "bar": 25,
-      "sym": "Fmaj9"
+      "sym": "Cmaj7#5"
     },
     {
       "bar": 26,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 27,
-      "sym": "Bbm9"
-    },
-    {
-      "bar": 28,
-      "sym": "Eb13"
-    },
-    {
-      "bar": 29,
-      "sym": "Fmaj13"
-    },
-    {
-      "bar": 30,
-      "sym": "Am11"
-    },
-    {
-      "bar": 31,
-      "sym": "Bbmaj9#11"
-    },
-    {
-      "bar": 32,
       "sym": "C13sus4"
     },
     {
+      "bar": 27,
+      "sym": "Fmaj13#11"
+    },
+    {
+      "bar": 28,
+      "sym": "Bb9#5"
+    },
+    {
+      "bar": 29,
+      "sym": "Bbm9"
+    },
+    {
+      "bar": 30,
+      "sym": "C9#5"
+    },
+    {
+      "bar": 31,
+      "sym": "Fmaj13#11"
+    },
+    {
+      "bar": 32,
+      "sym": "G9sus4"
+    },
+    {
       "bar": 33,
-      "sym": "Cmaj9"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 34,
-      "sym": "Am11"
+      "sym": "Cm11"
     },
     {
       "bar": 35,
-      "sym": "Fm9"
+      "sym": "Fm11"
     },
     {
       "bar": 36,
-      "sym": "Bb13"
+      "sym": "E7b13"
     },
     {
       "bar": 37,
-      "sym": "Cmaj13"
+      "sym": "G13sus4"
     },
     {
       "bar": 38,
-      "sym": "Em11"
+      "sym": "F#9#11"
     },
     {
       "bar": 39,
-      "sym": "Fmaj9#11"
+      "sym": "Fm9"
     },
     {
       "bar": 40,
-      "sym": "G13sus4"
+      "sym": "G9sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "ACC",
-      "db": -12,
-      "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; forma A B legendy v7",
+      "voice": "P12",
+      "db": -3,
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (P12), akordy rozłożone; progresja unikalna: WHOLE + SOUL+3 + MODAL+6",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "SAT(2.0)",
+      "fx": "SAT(2.5)",
       "on": "all"
     },
     {
-      "fx": "SHELF(-2)",
+      "fx": "SHELF(-1.6)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.12,
+      "wet": 0.104,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.55)",
       "on": "all"
     }
   ],

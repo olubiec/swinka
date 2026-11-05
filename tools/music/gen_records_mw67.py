@@ -144,6 +144,8 @@ def main():
                 f.write("\n")
             n += 1
     print("zapisano %d specyfikacji (%d płyt x 4)" % (n, len(SERIES_IDS)))
+    import unique_progs  # MW-9: unikalna progresja i brzmienie każdego utworu (nadpisuje chords/layers/fx)
+    unique_progs.apply()
 
 
 if __name__ == "__main__":

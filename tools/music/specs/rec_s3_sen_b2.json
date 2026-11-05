@@ -2,7 +2,7 @@
   "id": "rec_s3_sen_b2",
   "kind": "record",
   "title": "Sen o sianiu · B2 nastrojowy",
-  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: PEDAL F, jeden instrument (PAD)",
+  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: progresja unikalna (SOUL + PEDAL+7), jeden instrument (TRI)",
   "bpm": 44,
   "meter": 4,
   "key": "F",
@@ -13,112 +13,112 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj9"
+      "sym": "Fmaj13"
     },
     {
       "bar": 2,
-      "sym": "G/F"
+      "sym": "Dm9"
     },
     {
       "bar": 3,
-      "sym": "Am11/F"
+      "sym": "Gm11"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj7#11/F"
+      "sym": "C13"
     },
     {
       "bar": 5,
-      "sym": "Fmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 6,
-      "sym": "Eb/F"
+      "sym": "D7b13"
     },
     {
       "bar": 7,
-      "sym": "Gm11/F"
+      "sym": "Gm9"
     },
     {
       "bar": 8,
-      "sym": "C/F"
+      "sym": "Gb9#11"
     },
     {
       "bar": 9,
-      "sym": "Bbmaj9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 10,
-      "sym": "C/Bb"
+      "sym": "D/C"
     },
     {
       "bar": 11,
-      "sym": "Dm11/Bb"
+      "sym": "E9#11"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj7#11/Bb"
+      "sym": "Fmaj7#11/C"
     },
     {
       "bar": 13,
-      "sym": "Bbmaj9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 14,
-      "sym": "Ab/Bb"
+      "sym": "Bb/C"
     },
     {
       "bar": 15,
-      "sym": "Cm11/Bb"
+      "sym": "Dm11/C"
     },
     {
       "bar": 16,
-      "sym": "F/Bb"
+      "sym": "G/C"
     },
     {
       "bar": 17,
-      "sym": "Fmaj9"
+      "sym": "Fmaj13"
     },
     {
       "bar": 18,
-      "sym": "G/F"
+      "sym": "Dm9"
     },
     {
       "bar": 19,
-      "sym": "Am11/F"
+      "sym": "Gm11"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj7#11/F"
+      "sym": "Gb9#11"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "PAD",
+      "voice": "TRI",
       "db": -3,
-      "pattern": "chords.rolled(0.40)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.25)",
+      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; progresja unikalna: SOUL + PEDAL+7",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.5)",
+      "fx": "TAPE(0.47)",
       "on": "all"
     },
     {
-      "fx": "LP(8000)",
+      "fx": "LP(9000)",
       "on": "all"
     },
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(1)",
       "on": "all"
     },
     {
       "fx": "REV-L",
-      "wet": 0.31,
+      "wet": 0.328,
       "on": "all"
     },
     {

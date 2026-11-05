@@ -80,11 +80,11 @@ def test_legend_progressions():
         spec = json.load(open(os.path.join(here, "specs", sid + ".json"), encoding="utf-8"))
         assert [c["sym"] for c in spec["chords"]] == chords, sid
         assert len(spec["layers"]) == 1, sid
-    for sid, (voice, pattern, fx, a, b) in L.BUILD.items():
+    for sid in L.BUILD:  # belki i miejsca: jedna warstwa; progresje są unikalne (unique_progs.py --check)
         spec = json.load(open(os.path.join(here, "specs", sid + ".json"), encoding="utf-8"))
-        want = L.form_chords(a, b, spec["bars"])
-        assert [c["sym"] for c in spec["chords"]] == want, sid
-        assert len(spec["layers"]) == 1 and spec["layers"][0]["voice"] == voice, sid
+        assert len(spec["layers"]) == 1 and spec["layers"][0]["voice"] == L.BUILD[sid][0], sid
+    import unique_progs as U
+    U.check()
     assert L.family("LYD", "A")[1] == "Bmaj13" and L.family("SOUL", "Eb")[7] == "E9#11"
     print("  legenda: %d symboli parsuje się (<= 6 głosów), specyfikacje zgodne z legend_progs" % len(syms))
 

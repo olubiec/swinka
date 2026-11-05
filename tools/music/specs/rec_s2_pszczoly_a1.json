@@ -2,7 +2,7 @@
   "id": "rec_s2_pszczoly_a1",
   "kind": "record",
   "title": "Pszczoły · A1 podpisowy",
-  "role": "płyta serii 2; bzyczący bordun, wchodzi od taktu 9; legenda v7: LYD A, jeden instrument (BNJ)",
+  "role": "płyta serii 2; bzyczący bordun, wchodzi od taktu 9; legenda v7: progresja unikalna (PHRYG + DORSOUL+3 + SOUL+7), jeden instrument (PAD)",
   "bpm": 112,
   "meter": 4,
   "key": "A",
@@ -13,171 +13,171 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Amaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 2,
-      "sym": "Bmaj13"
+      "sym": "Bbmaj7#11"
     },
     {
       "bar": 3,
-      "sym": "C#m11"
+      "sym": "Am9"
     },
     {
       "bar": 4,
-      "sym": "Dmaj13#11"
+      "sym": "E7b9b13"
     },
     {
       "bar": 5,
-      "sym": "Amaj7/C#"
+      "sym": "Dm11"
     },
     {
       "bar": 6,
-      "sym": "Bm11/E"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 7,
-      "sym": "Amaj13"
+      "sym": "Bb7alt"
     },
     {
       "bar": 8,
-      "sym": "E6/9"
+      "sym": "Am(maj7)9"
     },
     {
       "bar": 9,
-      "sym": "Dmaj9#11"
+      "sym": "Cm11"
     },
     {
       "bar": 10,
-      "sym": "Emaj13"
+      "sym": "F13"
     },
     {
       "bar": 11,
-      "sym": "F#m11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Gmaj13#11"
+      "sym": "G13sus4"
     },
     {
       "bar": 13,
-      "sym": "Dmaj7/F#"
+      "sym": "Cm13"
     },
     {
       "bar": 14,
-      "sym": "Em11/A"
+      "sym": "Dm11"
     },
     {
       "bar": 15,
-      "sym": "Dmaj13"
+      "sym": "G7b13"
     },
     {
       "bar": 16,
-      "sym": "A6/9"
+      "sym": "F#9#11"
     },
     {
       "bar": 17,
-      "sym": "Amaj9#11"
+      "sym": "Emaj13"
     },
     {
       "bar": 18,
-      "sym": "Bmaj13"
+      "sym": "C#m13"
     },
     {
       "bar": 19,
-      "sym": "C#m11"
-    },
-    {
-      "bar": 20,
-      "sym": "Dmaj13#11"
-    },
-    {
-      "bar": 21,
-      "sym": "Amaj7/C#"
-    },
-    {
-      "bar": 22,
-      "sym": "Bm11/E"
-    },
-    {
-      "bar": 23,
-      "sym": "Amaj13"
-    },
-    {
-      "bar": 24,
-      "sym": "E6/9"
-    },
-    {
-      "bar": 25,
-      "sym": "Dmaj9#11"
-    },
-    {
-      "bar": 26,
-      "sym": "Emaj13"
-    },
-    {
-      "bar": 27,
       "sym": "F#m11"
     },
     {
+      "bar": 20,
+      "sym": "B7b13"
+    },
+    {
+      "bar": 21,
+      "sym": "G#m11"
+    },
+    {
+      "bar": 22,
+      "sym": "C#7alt"
+    },
+    {
+      "bar": 23,
+      "sym": "F#m9"
+    },
+    {
+      "bar": 24,
+      "sym": "F9#11"
+    },
+    {
+      "bar": 25,
+      "sym": "Am11"
+    },
+    {
+      "bar": 26,
+      "sym": "Bbmaj7#11"
+    },
+    {
+      "bar": 27,
+      "sym": "Am9"
+    },
+    {
       "bar": 28,
-      "sym": "Gmaj13#11"
+      "sym": "E7b9b13"
     },
     {
       "bar": 29,
-      "sym": "Dmaj7/F#"
+      "sym": "Dm11"
     },
     {
       "bar": 30,
-      "sym": "Em11/A"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 31,
-      "sym": "Dmaj13"
+      "sym": "Bb7alt"
     },
     {
       "bar": 32,
-      "sym": "A6/9"
+      "sym": "Am(maj7)9"
     },
     {
       "bar": 33,
-      "sym": "Amaj9#11"
+      "sym": "Cm11"
     },
     {
       "bar": 34,
-      "sym": "Bmaj13"
+      "sym": "F13"
     },
     {
       "bar": 35,
-      "sym": "C#m11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "Dmaj13#11"
+      "sym": "G13sus4"
     },
     {
       "bar": 37,
-      "sym": "Amaj7/C#"
+      "sym": "Cm13"
     },
     {
       "bar": 38,
-      "sym": "Bm11/E"
+      "sym": "Dm11"
     },
     {
       "bar": 39,
-      "sym": "Amaj13"
+      "sym": "G7b13"
     },
     {
       "bar": 40,
-      "sym": "E6/9"
+      "sym": "F#9#11"
     },
     {
       "bar": 41,
-      "sym": "Dmaj9#11"
+      "sym": "Emaj13"
     },
     {
       "bar": 42,
-      "sym": "Emaj13"
+      "sym": "C#m13"
     },
     {
       "bar": 43,
@@ -185,52 +185,52 @@
     },
     {
       "bar": 44,
-      "sym": "Gmaj13#11"
+      "sym": "B7b13"
     },
     {
       "bar": 45,
-      "sym": "Dmaj7/F#"
+      "sym": "G#m11"
     },
     {
       "bar": 46,
-      "sym": "Em11/A"
+      "sym": "C#7alt"
     },
     {
       "bar": 47,
-      "sym": "Dmaj13"
+      "sym": "F#m9"
     },
     {
       "bar": 48,
-      "sym": "A6/9"
+      "sym": "F9#11"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "BNJ",
+      "voice": "PAD",
       "db": -3,
-      "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.4)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; progresja unikalna: PHRYG + DORSOUL+3 + SOUL+7",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(1)",
       "on": "all"
     },
     {
-      "fx": "LP(6000)",
+      "fx": "LP(7000)",
       "on": "all"
     },
     {
       "fx": "REV-M",
-      "wet": 0.14,
+      "wet": 0.148,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.5)",
+      "fx": "WIDTH(1.3)",
       "on": "all"
     }
   ],

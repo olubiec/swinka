@@ -1,114 +1,114 @@
 {
- "id": "mg_veggie_memory_rhythm",
- "kind": "minigame",
- "title": "Minigra: Veggie Memory, stem rhythm",
- "role": "stem rhythm; rytm; jedna warstwa, jeden instrument (BOX); pętla zgodna z mg_veggie_memory",
- "bpm": 72,
- "meter": 4,
- "key": "F",
- "mode": "major",
- "bars": 16,
- "swing": 50,
- "seed": 86084,
- "chords": [
-  {
-   "bar": 1,
-   "sym": "Fmaj7#5"
+  "id": "mg_veggie_memory_rhythm",
+  "kind": "minigame",
+  "title": "Minigra: Veggie Memory, stem rhythm",
+  "role": "stem rhythm; rytm; jedna warstwa, jeden instrument (BOX); pętla zgodna z mg_veggie_memory",
+  "bpm": 72,
+  "meter": 4,
+  "key": "F",
+  "mode": "major",
+  "bars": 16,
+  "swing": 50,
+  "seed": 86084,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 2,
+      "sym": "Bbm9"
+    },
+    {
+      "bar": 3,
+      "sym": "Bbm11"
+    },
+    {
+      "bar": 4,
+      "sym": "C7alt"
+    },
+    {
+      "bar": 5,
+      "sym": "Fm9"
+    },
+    {
+      "bar": 6,
+      "sym": "F13sus4"
+    },
+    {
+      "bar": 7,
+      "sym": "Bbm9"
+    },
+    {
+      "bar": 8,
+      "sym": "C7b13"
+    },
+    {
+      "bar": 9,
+      "sym": "Cm11"
+    },
+    {
+      "bar": 10,
+      "sym": "B13"
+    },
+    {
+      "bar": 11,
+      "sym": "A9#11"
+    },
+    {
+      "bar": 12,
+      "sym": "Abmaj13#11"
+    },
+    {
+      "bar": 13,
+      "sym": "Cm13"
+    },
+    {
+      "bar": 14,
+      "sym": "Dm13"
+    },
+    {
+      "bar": 15,
+      "sym": "G7b13"
+    },
+    {
+      "bar": 16,
+      "sym": "Gb9#11"
+    }
+  ],
+  "layers": [
+    {
+      "role": "chd",
+      "voice": "BOX",
+      "db": -3,
+      "pattern": "chords.rolled(0.3)",
+      "part": "stem rhythm: rytm, jeden instrument BOX (legenda v7, progresja z minigry)",
+      "from_bar": 1,
+      "stem": "rhythm"
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "SAT(1.5)"
+    },
+    {
+      "fx": "REV-M",
+      "wet": 0.2
+    },
+    {
+      "fx": "LP(6000)"
+    },
+    {
+      "fx": "WIDTH(1.3)"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
   },
-  {
-   "bar": 2,
-   "sym": "Gm11"
+  "loop": {
+    "enabled": true
   },
-  {
-   "bar": 3,
-   "sym": "Am11"
-  },
-  {
-   "bar": 4,
-   "sym": "Bbmaj9#11"
-  },
-  {
-   "bar": 5,
-   "sym": "F9#5"
-  },
-  {
-   "bar": 6,
-   "sym": "G9#5"
-  },
-  {
-   "bar": 7,
-   "sym": "Fmaj13"
-  },
-  {
-   "bar": 8,
-   "sym": "C13sus4"
-  },
-  {
-   "bar": 9,
-   "sym": "Fmaj7#5"
-  },
-  {
-   "bar": 10,
-   "sym": "Gm11"
-  },
-  {
-   "bar": 11,
-   "sym": "Am11"
-  },
-  {
-   "bar": 12,
-   "sym": "Bbmaj9#11"
-  },
-  {
-   "bar": 13,
-   "sym": "F9#5"
-  },
-  {
-   "bar": 14,
-   "sym": "G9#5"
-  },
-  {
-   "bar": 15,
-   "sym": "Fmaj13"
-  },
-  {
-   "bar": 16,
-   "sym": "C13sus4"
-  }
- ],
- "layers": [
-  {
-   "role": "chd",
-   "voice": "BOX",
-   "db": -3,
-   "pattern": "chords.rolled(0.3)",
-   "part": "stem rhythm: rytm, jeden instrument BOX (legenda v7, progresja z minigry)",
-   "from_bar": 1,
-   "stem": "rhythm"
-  }
- ],
- "drums": null,
- "fx": [
-  {
-   "fx": "SAT(1.5)"
-  },
-  {
-   "fx": "REV-M",
-   "wet": 0.2
-  },
-  {
-   "fx": "LP(6000)"
-  },
-  {
-   "fx": "WIDTH(1.3)"
-  }
- ],
- "master": {
-  "lufs": -18,
-  "ceiling_dbtp": -1
- },
- "loop": {
-  "enabled": true
- },
- "stem_of": null
+  "stem_of": null
 }

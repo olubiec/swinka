@@ -2,7 +2,7 @@
   "id": "rec_s1_nocna_b2",
   "kind": "record",
   "title": "Nocna ścieżka · B2 nastrojowy",
-  "role": "płyta serii 1; blues dorycki, walking bass i blue-note dzwonka; legenda v7: DORSOUL D, jeden instrument (EP)",
+  "role": "płyta serii 1; blues dorycki, walking bass i blue-note dzwonka; legenda v7: progresja unikalna (DORSOUL + THIRDS+7 + LYD+10), jeden instrument (XYL)",
   "bpm": 98,
   "meter": 4,
   "key": "D",
@@ -21,7 +21,7 @@
     },
     {
       "bar": 3,
-      "sym": "Fmaj9#11"
+      "sym": "F7b13"
     },
     {
       "bar": 4,
@@ -41,151 +41,151 @@
     },
     {
       "bar": 8,
-      "sym": "G#9#11"
+      "sym": "D7b9b13"
     },
     {
       "bar": 9,
-      "sym": "Gm11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 10,
-      "sym": "C13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Bbmaj9#11"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj13#11"
+      "sym": "Bm11"
     },
     {
       "bar": 13,
-      "sym": "Gm13"
+      "sym": "E7alt"
     },
     {
       "bar": 14,
-      "sym": "Am11"
+      "sym": "Amaj13"
     },
     {
       "bar": 15,
-      "sym": "D7b13"
+      "sym": "F#m11"
     },
     {
       "bar": 16,
-      "sym": "C#9#11"
+      "sym": "E13sus4"
     },
     {
       "bar": 17,
-      "sym": "Dm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "G13"
+      "sym": "Dmaj13"
     },
     {
       "bar": 19,
-      "sym": "Fmaj9#11"
+      "sym": "Em11"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj13#11"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 21,
-      "sym": "Dm13"
+      "sym": "Cmaj7/E"
     },
     {
       "bar": 22,
-      "sym": "Em11"
+      "sym": "Dm11/G"
     },
     {
       "bar": 23,
-      "sym": "A7b13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "G#9#11"
+      "sym": "G6/9"
     },
     {
       "bar": 25,
-      "sym": "Gm11"
-    },
-    {
-      "bar": 26,
-      "sym": "C13"
-    },
-    {
-      "bar": 27,
-      "sym": "Bbmaj9#11"
-    },
-    {
-      "bar": 28,
-      "sym": "Ebmaj13#11"
-    },
-    {
-      "bar": 29,
-      "sym": "Gm13"
-    },
-    {
-      "bar": 30,
-      "sym": "Am11"
-    },
-    {
-      "bar": 31,
-      "sym": "D7b13"
-    },
-    {
-      "bar": 32,
-      "sym": "C#9#11"
-    },
-    {
-      "bar": 33,
       "sym": "Dm11"
     },
     {
-      "bar": 34,
+      "bar": 26,
       "sym": "G13"
     },
     {
-      "bar": 35,
-      "sym": "Fmaj9#11"
+      "bar": 27,
+      "sym": "F7b13"
     },
     {
-      "bar": 36,
+      "bar": 28,
       "sym": "Bbmaj13#11"
     },
     {
-      "bar": 37,
+      "bar": 29,
       "sym": "Dm13"
     },
     {
-      "bar": 38,
+      "bar": 30,
       "sym": "Em11"
     },
     {
-      "bar": 39,
+      "bar": 31,
       "sym": "A7b13"
     },
     {
+      "bar": 32,
+      "sym": "D7b9b13"
+    },
+    {
+      "bar": 33,
+      "sym": "Amaj9#11"
+    },
+    {
+      "bar": 34,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 35,
+      "sym": "Dbmaj9#11"
+    },
+    {
+      "bar": 36,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 37,
+      "sym": "E7alt"
+    },
+    {
+      "bar": 38,
+      "sym": "Amaj13"
+    },
+    {
+      "bar": 39,
+      "sym": "F#m11"
+    },
+    {
       "bar": 40,
-      "sym": "G#9#11"
+      "sym": "D7b9b13"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "XYL",
       "db": -3,
-      "pattern": "chords.rolled(0.20)",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; progresja unikalna: DORSOUL + THIRDS+7 + LYD+10",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.2)",
+      "fx": "TAPE(0.29)",
       "on": "all"
     },
     {
@@ -194,11 +194,11 @@
     },
     {
       "fx": "REV-S",
-      "wet": 0.18,
+      "wet": 0.192,
       "on": "all"
     },
     {
-      "fx": "VINYL(-46)",
+      "fx": "VINYL(-50)",
       "on": "all"
     }
   ],

@@ -2,7 +2,7 @@
   "id": "rec_s2_pietruszka_b1",
   "kind": "record",
   "title": "Pietruszka funk · B1 energiczny",
-  "role": "płyta serii 2; staccato bas i wah; legenda v7: MINSOUL E, jeden instrument (EP)",
+  "role": "płyta serii 2; staccato bas i wah; legenda v7: progresja unikalna (MODAL + LULL+7 + BACKDOOR+2), jeden instrument (BOX)",
   "bpm": 108,
   "meter": 4,
   "key": "E",
@@ -13,119 +13,119 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Em11"
+      "sym": "Emaj9"
     },
     {
       "bar": 2,
-      "sym": "Cmaj13#11"
+      "sym": "G7b13"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "B7alt"
+      "sym": "Amaj13"
     },
     {
       "bar": 5,
-      "sym": "Em9"
+      "sym": "Emaj7/G#"
     },
     {
       "bar": 6,
-      "sym": "Dmaj9#11"
-    },
-    {
-      "bar": 7,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 8,
-      "sym": "B7b13"
-    },
-    {
-      "bar": 9,
-      "sym": "Am11"
-    },
-    {
-      "bar": 10,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 11,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 12,
-      "sym": "E7alt"
-    },
-    {
-      "bar": 13,
-      "sym": "Am9"
-    },
-    {
-      "bar": 14,
       "sym": "Gmaj9#11"
     },
     {
+      "bar": 7,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 8,
+      "sym": "B9sus4"
+    },
+    {
+      "bar": 9,
+      "sym": "Bmaj9"
+    },
+    {
+      "bar": 10,
+      "sym": "C13"
+    },
+    {
+      "bar": 11,
+      "sym": "Bmaj7/Eb"
+    },
+    {
+      "bar": 12,
+      "sym": "Em6/9"
+    },
+    {
+      "bar": 13,
+      "sym": "Bmaj9"
+    },
+    {
+      "bar": 14,
+      "sym": "C#m11"
+    },
+    {
       "bar": 15,
-      "sym": "Fmaj9#11"
+      "sym": "Emaj9#11"
     },
     {
       "bar": 16,
-      "sym": "E7b13"
+      "sym": "Bmaj9"
     },
     {
       "bar": 17,
-      "sym": "Em11"
+      "sym": "F#maj9"
     },
     {
       "bar": 18,
-      "sym": "Cmaj13#11"
+      "sym": "Ebm11"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "Bm13"
     },
     {
       "bar": 20,
-      "sym": "B7alt"
+      "sym": "E7b13"
     },
     {
       "bar": 21,
-      "sym": "Em9"
+      "sym": "F#maj13"
     },
     {
       "bar": 22,
-      "sym": "Dmaj9#11"
+      "sym": "Bbm11"
     },
     {
       "bar": 23,
-      "sym": "Cmaj9#11"
+      "sym": "Bmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "B7b13"
+      "sym": "C#13sus4"
     },
     {
       "bar": 25,
-      "sym": "Am11"
+      "sym": "Emaj9"
     },
     {
       "bar": 26,
-      "sym": "Fmaj13#11"
+      "sym": "G7b13"
     },
     {
       "bar": 27,
-      "sym": "Dm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 28,
-      "sym": "E7alt"
+      "sym": "Amaj13"
     },
     {
       "bar": 29,
-      "sym": "Am9"
+      "sym": "Emaj7/G#"
     },
     {
       "bar": 30,
@@ -133,104 +133,104 @@
     },
     {
       "bar": 31,
-      "sym": "Fmaj9#11"
+      "sym": "F#m11"
     },
     {
       "bar": 32,
-      "sym": "E7b13"
+      "sym": "B9sus4"
     },
     {
       "bar": 33,
-      "sym": "Em11"
+      "sym": "Bmaj9"
     },
     {
       "bar": 34,
-      "sym": "Cmaj13#11"
+      "sym": "C13"
     },
     {
       "bar": 35,
-      "sym": "Am11"
+      "sym": "Bmaj7/Eb"
     },
     {
       "bar": 36,
-      "sym": "B7alt"
+      "sym": "Em6/9"
     },
     {
       "bar": 37,
-      "sym": "Em9"
+      "sym": "Bmaj9"
     },
     {
       "bar": 38,
-      "sym": "Dmaj9#11"
+      "sym": "C#m11"
     },
     {
       "bar": 39,
-      "sym": "Cmaj9#11"
+      "sym": "Emaj9#11"
     },
     {
       "bar": 40,
-      "sym": "B7b13"
+      "sym": "Bmaj9"
     },
     {
       "bar": 41,
-      "sym": "Am11"
+      "sym": "F#maj9"
     },
     {
       "bar": 42,
-      "sym": "Fmaj13#11"
+      "sym": "Ebm11"
     },
     {
       "bar": 43,
-      "sym": "Dm11"
+      "sym": "Bm13"
     },
     {
       "bar": 44,
-      "sym": "E7alt"
+      "sym": "E7b13"
     },
     {
       "bar": 45,
-      "sym": "Am9"
+      "sym": "F#maj13"
     },
     {
       "bar": 46,
-      "sym": "Gmaj9#11"
+      "sym": "Bbm11"
     },
     {
       "bar": 47,
-      "sym": "Fmaj9#11"
+      "sym": "Bmaj9#11"
     },
     {
       "bar": 48,
-      "sym": "E7b13"
+      "sym": "C#13sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "BOX",
       "db": -3,
-      "pattern": "chords.rolled(0.15)",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; progresja unikalna: MODAL + LULL+7 + BACKDOOR+2",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(3)",
       "on": "all"
     },
     {
-      "fx": "LP(7500)",
+      "fx": "LP(6500)",
       "on": "all"
     },
     {
       "fx": "REV-M",
-      "wet": 0.14,
+      "wet": 0.209,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.5)",
+      "fx": "WIDTH(1.68)",
       "on": "all"
     }
   ],

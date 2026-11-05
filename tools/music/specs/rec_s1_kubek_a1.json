@@ -2,7 +2,7 @@
   "id": "rec_s1_kubek_a1",
   "kind": "record",
   "title": "Kubek z parą · A1 podpisowy",
-  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: MODAL F, jeden instrument (ACC)",
+  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: progresja unikalna (LULL + MODAL+4 + PEDAL+2), jeden instrument (EP)",
   "bpm": 92,
   "meter": 4,
   "key": "F",
@@ -17,184 +17,184 @@
     },
     {
       "bar": 2,
-      "sym": "Ebmaj7#11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Dbmaj9#11"
+      "sym": "Fmaj7/A"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj13#11"
+      "sym": "Bbm6/9"
     },
     {
       "bar": 5,
-      "sym": "Fmaj7/A"
+      "sym": "Fmaj13"
     },
     {
       "bar": 6,
-      "sym": "Abmaj9#11"
+      "sym": "Gm11"
     },
     {
       "bar": 7,
-      "sym": "Gm11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "C13sus4"
+      "sym": "Fmaj9"
     },
     {
       "bar": 9,
-      "sym": "Bbmaj9"
+      "sym": "Amaj9"
     },
     {
       "bar": 10,
-      "sym": "Abmaj7#11"
+      "sym": "Em9"
     },
     {
       "bar": 11,
-      "sym": "Gbmaj9#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj13#11"
+      "sym": "Dmaj13#11"
     },
     {
       "bar": 13,
-      "sym": "Bbmaj7/D"
+      "sym": "Amaj7/Db"
     },
     {
       "bar": 14,
-      "sym": "Dbmaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Cm11"
+      "sym": "Bm11"
     },
     {
       "bar": 16,
-      "sym": "F13sus4"
+      "sym": "E13sus4"
     },
     {
       "bar": 17,
-      "sym": "Fmaj9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 18,
-      "sym": "Ebmaj7#11"
+      "sym": "C7alt"
     },
     {
       "bar": 19,
-      "sym": "Dbmaj9#11"
+      "sym": "Bm11/G"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj13#11"
+      "sym": "D7alt"
     },
     {
       "bar": 21,
-      "sym": "Fmaj7/A"
+      "sym": "Gmaj9"
     },
     {
       "bar": 22,
-      "sym": "Abmaj9#11"
+      "sym": "F/G"
     },
     {
       "bar": 23,
-      "sym": "Gm11"
+      "sym": "Am11/G"
     },
     {
       "bar": 24,
-      "sym": "C13sus4"
+      "sym": "D/G"
     },
     {
       "bar": 25,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 26,
-      "sym": "Abmaj7#11"
-    },
-    {
-      "bar": 27,
-      "sym": "Gbmaj9#11"
-    },
-    {
-      "bar": 28,
-      "sym": "Ebmaj13#11"
-    },
-    {
-      "bar": 29,
-      "sym": "Bbmaj7/D"
-    },
-    {
-      "bar": 30,
-      "sym": "Dbmaj9#11"
-    },
-    {
-      "bar": 31,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 32,
-      "sym": "F13sus4"
-    },
-    {
-      "bar": 33,
       "sym": "Fmaj9"
     },
     {
-      "bar": 34,
-      "sym": "Ebmaj7#11"
+      "bar": 26,
+      "sym": "Bbmaj9#11"
     },
     {
-      "bar": 35,
-      "sym": "Dbmaj9#11"
-    },
-    {
-      "bar": 36,
-      "sym": "Bbmaj13#11"
-    },
-    {
-      "bar": 37,
+      "bar": 27,
       "sym": "Fmaj7/A"
     },
     {
-      "bar": 38,
-      "sym": "Abmaj9#11"
+      "bar": 28,
+      "sym": "Bbm6/9"
     },
     {
-      "bar": 39,
+      "bar": 29,
+      "sym": "Fmaj13"
+    },
+    {
+      "bar": 30,
       "sym": "Gm11"
     },
     {
+      "bar": 31,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 32,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 33,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 34,
+      "sym": "Em9"
+    },
+    {
+      "bar": 35,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 36,
+      "sym": "Dmaj13#11"
+    },
+    {
+      "bar": 37,
+      "sym": "Amaj7/Db"
+    },
+    {
+      "bar": 38,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 39,
+      "sym": "Bm11"
+    },
+    {
       "bar": 40,
-      "sym": "C13sus4"
+      "sym": "Fmaj9"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "ACC",
-      "db": -12,
-      "pattern": "chords.rolled(0.20)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; forma A B legendy v7",
+      "voice": "EP",
+      "db": -3,
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; progresja unikalna: LULL + MODAL+4 + PEDAL+2",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.2)",
+      "fx": "TAPE(0.24)",
       "on": "all"
     },
     {
-      "fx": "LP(9000)",
+      "fx": "LP(8000)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.12,
+      "wet": 0.128,
       "on": "all"
     },
     {

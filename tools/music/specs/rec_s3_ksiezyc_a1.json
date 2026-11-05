@@ -2,7 +2,7 @@
   "id": "rec_s3_ksiezyc_a1",
   "kind": "record",
   "title": "Księżyc · A1 podpisowy",
-  "role": "płyta serii 3; długi pogłos, lidyjska #11; legenda v7: LYD F, jeden instrument (PAD)",
+  "role": "płyta serii 3; długi pogłos, lidyjska #11; legenda v7: progresja unikalna (THIRDS + MINSOUL+8), jeden instrument (ACC)",
   "bpm": 52,
   "meter": 4,
   "key": "F",
@@ -17,63 +17,63 @@
     },
     {
       "bar": 2,
-      "sym": "Gmaj13"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "Ab13"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj13#11"
+      "sym": "Gm11"
     },
     {
       "bar": 5,
-      "sym": "Fmaj7/A"
+      "sym": "Gb7b13"
     },
     {
       "bar": 6,
-      "sym": "Gm11/C"
-    },
-    {
-      "bar": 7,
       "sym": "Fmaj13"
     },
     {
-      "bar": 8,
-      "sym": "C6/9"
-    },
-    {
-      "bar": 9,
-      "sym": "Bbmaj9#11"
-    },
-    {
-      "bar": 10,
-      "sym": "Cmaj13"
-    },
-    {
-      "bar": 11,
+      "bar": 7,
       "sym": "Dm11"
     },
     {
+      "bar": 8,
+      "sym": "C13sus4"
+    },
+    {
+      "bar": 9,
+      "sym": "Dbm11"
+    },
+    {
+      "bar": 10,
+      "sym": "Db13sus4"
+    },
+    {
+      "bar": 11,
+      "sym": "Gbm11"
+    },
+    {
       "bar": 12,
-      "sym": "Ebmaj13#11"
+      "sym": "Ab7alt"
     },
     {
       "bar": 13,
-      "sym": "Bbmaj7/D"
+      "sym": "Dbm9"
     },
     {
       "bar": 14,
-      "sym": "Cm11/F"
+      "sym": "Bmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Bbmaj13"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 16,
-      "sym": "F6/9"
+      "sym": "Ab7b13"
     },
     {
       "bar": 17,
@@ -81,51 +81,51 @@
     },
     {
       "bar": 18,
-      "sym": "Gmaj13"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "Ab13"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj13#11"
+      "sym": "Gm11"
     },
     {
       "bar": 21,
-      "sym": "Fmaj7/A"
+      "sym": "Gb7b13"
     },
     {
       "bar": 22,
-      "sym": "Gm11/C"
-    },
-    {
-      "bar": 23,
       "sym": "Fmaj13"
     },
     {
+      "bar": 23,
+      "sym": "Dm11"
+    },
+    {
       "bar": 24,
-      "sym": "C6/9"
+      "sym": "C13sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "PAD",
-      "db": -3,
-      "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "voice": "ACC",
+      "db": -12,
+      "pattern": "chords.rolled(0.2)",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; progresja unikalna: THIRDS + MINSOUL+8",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.3)",
+      "fx": "TAPE(0.42)",
       "on": "all"
     },
     {
-      "fx": "LP(8000)",
+      "fx": "LP(10000)",
       "on": "all"
     },
     {
@@ -134,11 +134,11 @@
     },
     {
       "fx": "REV-L",
-      "wet": 0.25,
+      "wet": 0.222,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.11)",
       "on": "all"
     }
   ],

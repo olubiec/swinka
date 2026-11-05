@@ -2,7 +2,7 @@
   "id": "rec_s1_deszcz_b1",
   "kind": "record",
   "title": "Deszcz na dachu · B1 energiczny",
-  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: SOUL Eb, jeden instrument (EP)",
+  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (PEDAL + THIRDS+5), jeden instrument (PIZ)",
   "bpm": 71,
   "meter": 4,
   "key": "Eb",
@@ -13,156 +13,156 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Ebmaj13"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 2,
-      "sym": "Cm11"
+      "sym": "F/Eb"
     },
     {
       "bar": 3,
-      "sym": "Fm11"
+      "sym": "Gm11/Eb"
     },
     {
       "bar": 4,
-      "sym": "Bb7b13"
+      "sym": "Abmaj7#11/Eb"
     },
     {
       "bar": 5,
-      "sym": "Gm11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 6,
-      "sym": "C7alt"
+      "sym": "Db/Eb"
     },
     {
       "bar": 7,
-      "sym": "Fm9"
+      "sym": "F7b13"
     },
     {
       "bar": 8,
-      "sym": "E9#11"
+      "sym": "Bb/Eb"
     },
     {
       "bar": 9,
-      "sym": "Abmaj13"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Fm11"
+      "sym": "Emaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Bbm11"
+      "sym": "F7b13"
     },
     {
       "bar": 12,
-      "sym": "Eb7b13"
-    },
-    {
-      "bar": 13,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 14,
-      "sym": "F7alt"
-    },
-    {
-      "bar": 15,
-      "sym": "Bbm9"
-    },
-    {
-      "bar": 16,
-      "sym": "A9#11"
-    },
-    {
-      "bar": 17,
-      "sym": "Ebmaj13"
-    },
-    {
-      "bar": 18,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 19,
-      "sym": "Fm11"
-    },
-    {
-      "bar": 20,
-      "sym": "Bb7b13"
-    },
-    {
-      "bar": 21,
-      "sym": "Gm11"
-    },
-    {
-      "bar": 22,
-      "sym": "C7alt"
-    },
-    {
-      "bar": 23,
-      "sym": "Fm9"
-    },
-    {
-      "bar": 24,
-      "sym": "E9#11"
-    },
-    {
-      "bar": 25,
-      "sym": "Abmaj13"
-    },
-    {
-      "bar": 26,
-      "sym": "Fm11"
-    },
-    {
-      "bar": 27,
       "sym": "Bbm11"
     },
     {
+      "bar": 13,
+      "sym": "A13"
+    },
+    {
+      "bar": 14,
+      "sym": "Abmaj13"
+    },
+    {
+      "bar": 15,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 16,
+      "sym": "Eb13sus4"
+    },
+    {
+      "bar": 17,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "F/Eb"
+    },
+    {
+      "bar": 19,
+      "sym": "Gm11/Eb"
+    },
+    {
+      "bar": 20,
+      "sym": "Abmaj7#11/Eb"
+    },
+    {
+      "bar": 21,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Db/Eb"
+    },
+    {
+      "bar": 23,
+      "sym": "F7b13"
+    },
+    {
+      "bar": 24,
+      "sym": "Bb/Eb"
+    },
+    {
+      "bar": 25,
+      "sym": "Abmaj9#11"
+    },
+    {
+      "bar": 26,
+      "sym": "Emaj9#11"
+    },
+    {
+      "bar": 27,
+      "sym": "F7b13"
+    },
+    {
       "bar": 28,
-      "sym": "Eb7b13"
+      "sym": "Bbm11"
     },
     {
       "bar": 29,
-      "sym": "Cm11"
+      "sym": "A13"
     },
     {
       "bar": 30,
-      "sym": "F7alt"
+      "sym": "Abmaj13"
     },
     {
       "bar": 31,
-      "sym": "Bbm9"
+      "sym": "Fm11"
     },
     {
       "bar": 32,
-      "sym": "A9#11"
+      "sym": "Eb13sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "PIZ",
       "db": -3,
-      "pattern": "chords.rolled(0.15)",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (PIZ), akordy rozłożone; progresja unikalna: PEDAL + THIRDS+5",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.2)",
+      "fx": "TAPE(0.16)",
       "on": "all"
     },
     {
-      "fx": "LP(10500)",
+      "fx": "LP(11000)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.12,
+      "wet": 0.124,
       "on": "all"
     },
     {

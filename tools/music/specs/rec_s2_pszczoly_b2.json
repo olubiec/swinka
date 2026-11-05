@@ -2,7 +2,7 @@
   "id": "rec_s2_pszczoly_b2",
   "kind": "record",
   "title": "Pszczoły · B2 nastrojowy",
-  "role": "płyta serii 2; bzyczący bordun, wchodzi od taktu 9; legenda v7: LYD A, jeden instrument (BNJ)",
+  "role": "płyta serii 2; bzyczący bordun, wchodzi od taktu 9; legenda v7: progresja unikalna (MINSOUL + THIRDS+10 + DORSOUL+6), jeden instrument (BELL)",
   "bpm": 90,
   "meter": 4,
   "key": "A",
@@ -13,192 +13,192 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Amaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 2,
-      "sym": "Bmaj13"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 3,
-      "sym": "C#m11"
+      "sym": "B7b13"
     },
     {
       "bar": 4,
-      "sym": "Dmaj13#11"
+      "sym": "E7alt"
     },
     {
       "bar": 5,
-      "sym": "Amaj7/C#"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "Bm11/E"
+      "sym": "Gmaj7#11"
     },
     {
       "bar": 7,
-      "sym": "Amaj13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "E6/9"
+      "sym": "E7b13"
     },
     {
       "bar": 9,
-      "sym": "Dmaj9#11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Emaj13"
+      "sym": "F#13sus4"
     },
     {
       "bar": 11,
-      "sym": "F#m11"
+      "sym": "Bmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Gmaj13#11"
+      "sym": "Am11"
     },
     {
       "bar": 13,
-      "sym": "Dmaj7/F#"
+      "sym": "G#13"
     },
     {
       "bar": 14,
-      "sym": "Em11/A"
+      "sym": "Eb13"
     },
     {
       "bar": 15,
-      "sym": "Dmaj13"
+      "sym": "Em11"
     },
     {
       "bar": 16,
-      "sym": "A6/9"
+      "sym": "D9sus4"
     },
     {
       "bar": 17,
-      "sym": "Amaj9#11"
+      "sym": "Ebm11"
     },
     {
       "bar": 18,
-      "sym": "Bmaj13"
+      "sym": "G#13"
     },
     {
       "bar": 19,
-      "sym": "C#m11"
+      "sym": "Ebm9"
     },
     {
       "bar": 20,
-      "sym": "Dmaj13#11"
+      "sym": "Bmaj13#11"
     },
     {
       "bar": 21,
-      "sym": "Amaj7/C#"
+      "sym": "Ebm13"
     },
     {
       "bar": 22,
-      "sym": "Bm11/E"
+      "sym": "A7alt"
     },
     {
       "bar": 23,
-      "sym": "Amaj13"
+      "sym": "Bb7b9b13"
     },
     {
       "bar": 24,
-      "sym": "E6/9"
+      "sym": "A9#11"
     },
     {
       "bar": 25,
-      "sym": "Dmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 26,
-      "sym": "Emaj13"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 27,
-      "sym": "F#m11"
+      "sym": "B7b13"
     },
     {
       "bar": 28,
-      "sym": "Gmaj13#11"
+      "sym": "E7alt"
     },
     {
       "bar": 29,
-      "sym": "Dmaj7/F#"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 30,
-      "sym": "Em11/A"
+      "sym": "Gmaj7#11"
     },
     {
       "bar": 31,
-      "sym": "Dmaj13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "A6/9"
+      "sym": "E7b13"
     },
     {
       "bar": 33,
-      "sym": "Amaj9#11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 34,
-      "sym": "Bmaj13"
+      "sym": "F#13sus4"
     },
     {
       "bar": 35,
-      "sym": "C#m11"
+      "sym": "Bmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "Dmaj13#11"
+      "sym": "Am11"
     },
     {
       "bar": 37,
-      "sym": "Amaj7/C#"
+      "sym": "G#13"
     },
     {
       "bar": 38,
-      "sym": "Bm11/E"
+      "sym": "Eb13"
     },
     {
       "bar": 39,
-      "sym": "Amaj13"
+      "sym": "Em11"
     },
     {
       "bar": 40,
-      "sym": "E6/9"
+      "sym": "E7b13"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "BNJ",
+      "voice": "BELL",
       "db": -3,
-      "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.4)",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; progresja unikalna: MINSOUL + THIRDS+10 + DORSOUL+6",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(3)",
       "on": "all"
     },
     {
-      "fx": "LP(6000)",
+      "fx": "LP(6500)",
       "on": "all"
     },
     {
       "fx": "REV-M",
-      "wet": 0.2,
+      "wet": 0.197,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.5)",
+      "fx": "WIDTH(1.6)",
       "on": "all"
     }
   ],

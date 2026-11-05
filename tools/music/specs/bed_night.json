@@ -1,196 +1,196 @@
 {
- "id": "bed_night",
- "kind": "bed",
- "title": "Belka noc (22-6, tylko z włączonym „Muzyka w nocy”)",
- "role": "pozytywka, prawie cisza; legenda v7: jeden instrument (CEL), pełne progresje, bez warstw rytmicznych",
- "bpm": 54,
- "meter": 4,
- "key": "D",
- "mode": "dorian",
- "bars": 36,
- "swing": 50,
- "seed": 98637,
- "chords": [
-  {
-   "bar": 1,
-   "sym": "Dsowhat"
+  "id": "bed_night",
+  "kind": "bed",
+  "title": "Belka noc (22-6, tylko z włączonym „Muzyka w nocy”)",
+  "role": "pozytywka, prawie cisza; legenda v7: progresja unikalna (MINSOUL + LYD+8), jeden instrument (CEL)",
+  "bpm": 54,
+  "meter": 4,
+  "key": "D",
+  "mode": "dorian",
+  "bars": 36,
+  "swing": 50,
+  "seed": 98637,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 2,
+      "sym": "Bbmaj13#11"
+    },
+    {
+      "bar": 3,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 4,
+      "sym": "A13sus4"
+    },
+    {
+      "bar": 5,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 6,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 7,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 8,
+      "sym": "A7b13"
+    },
+    {
+      "bar": 9,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 10,
+      "sym": "Cmaj13"
+    },
+    {
+      "bar": 11,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 12,
+      "sym": "Ebmaj13#11"
+    },
+    {
+      "bar": 13,
+      "sym": "G7b13"
+    },
+    {
+      "bar": 14,
+      "sym": "Cm11/F"
+    },
+    {
+      "bar": 15,
+      "sym": "E9#11"
+    },
+    {
+      "bar": 16,
+      "sym": "F6/9"
+    },
+    {
+      "bar": 17,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 18,
+      "sym": "Bbmaj13#11"
+    },
+    {
+      "bar": 19,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 20,
+      "sym": "A13sus4"
+    },
+    {
+      "bar": 21,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 22,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 23,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 24,
+      "sym": "A7b13"
+    },
+    {
+      "bar": 25,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 26,
+      "sym": "Cmaj13"
+    },
+    {
+      "bar": 27,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 28,
+      "sym": "Ebmaj13#11"
+    },
+    {
+      "bar": 29,
+      "sym": "G7b13"
+    },
+    {
+      "bar": 30,
+      "sym": "Cm11/F"
+    },
+    {
+      "bar": 31,
+      "sym": "E9#11"
+    },
+    {
+      "bar": 32,
+      "sym": "F6/9"
+    },
+    {
+      "bar": 33,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 34,
+      "sym": "Bbmaj13#11"
+    },
+    {
+      "bar": 35,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 36,
+      "sym": "A7b13"
+    }
+  ],
+  "layers": [
+    {
+      "role": "chd",
+      "voice": "CEL",
+      "db": -3,
+      "pattern": "chords.rolled(0.3)",
+      "part": "jedna warstwa, jeden instrument (CEL); legenda v7, progresja A|B w docs/music_legend.md"
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "CHORUS(3)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-L",
+      "wet": 0.476,
+      "on": "all"
+    },
+    {
+      "fx": "LP(5400)",
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.59)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
   },
-  {
-   "bar": 2,
-   "sym": "Ebsowhat"
+  "loop": {
+    "enabled": true
   },
-  {
-   "bar": 3,
-   "sym": "Dsowhat"
-  },
-  {
-   "bar": 4,
-   "sym": "Gmaj13#11"
-  },
-  {
-   "bar": 5,
-   "sym": "Em11"
-  },
-  {
-   "bar": 6,
-   "sym": "Fmaj13#11"
-  },
-  {
-   "bar": 7,
-   "sym": "Dm11"
-  },
-  {
-   "bar": 8,
-   "sym": "A9sus4"
-  },
-  {
-   "bar": 9,
-   "sym": "Em11"
-  },
-  {
-   "bar": 10,
-   "sym": "A9sus4"
-  },
-  {
-   "bar": 11,
-   "sym": "Dm11"
-  },
-  {
-   "bar": 12,
-   "sym": "Bbmaj9#11"
-  },
-  {
-   "bar": 13,
-   "sym": "Gm13"
-  },
-  {
-   "bar": 14,
-   "sym": "C13sus4"
-  },
-  {
-   "bar": 15,
-   "sym": "Fmaj13#11"
-  },
-  {
-   "bar": 16,
-   "sym": "A7b13"
-  },
-  {
-   "bar": 17,
-   "sym": "Dsowhat"
-  },
-  {
-   "bar": 18,
-   "sym": "Ebsowhat"
-  },
-  {
-   "bar": 19,
-   "sym": "Dsowhat"
-  },
-  {
-   "bar": 20,
-   "sym": "Gmaj13#11"
-  },
-  {
-   "bar": 21,
-   "sym": "Em11"
-  },
-  {
-   "bar": 22,
-   "sym": "Fmaj13#11"
-  },
-  {
-   "bar": 23,
-   "sym": "Dm11"
-  },
-  {
-   "bar": 24,
-   "sym": "A9sus4"
-  },
-  {
-   "bar": 25,
-   "sym": "Em11"
-  },
-  {
-   "bar": 26,
-   "sym": "A9sus4"
-  },
-  {
-   "bar": 27,
-   "sym": "Dm11"
-  },
-  {
-   "bar": 28,
-   "sym": "Bbmaj9#11"
-  },
-  {
-   "bar": 29,
-   "sym": "Gm13"
-  },
-  {
-   "bar": 30,
-   "sym": "C13sus4"
-  },
-  {
-   "bar": 31,
-   "sym": "Fmaj13#11"
-  },
-  {
-   "bar": 32,
-   "sym": "A7b13"
-  },
-  {
-   "bar": 33,
-   "sym": "Dsowhat"
-  },
-  {
-   "bar": 34,
-   "sym": "Ebsowhat"
-  },
-  {
-   "bar": 35,
-   "sym": "Dsowhat"
-  },
-  {
-   "bar": 36,
-   "sym": "Gmaj13#11"
-  }
- ],
- "layers": [
-  {
-   "role": "chd",
-   "voice": "CEL",
-   "db": -3,
-   "pattern": "chords.rolled(0.3)",
-   "part": "jedna warstwa, jeden instrument (CEL); legenda v7, progresja A|B w docs/music_legend.md"
-  }
- ],
- "drums": null,
- "fx": [
-  {
-   "fx": "CHORUS(2)",
-   "on": "all"
-  },
-  {
-   "fx": "REV-L",
-   "wet": 0.45,
-   "on": "all"
-  },
-  {
-   "fx": "LP(6000)",
-   "on": "all"
-  },
-  {
-   "fx": "WIDTH(1.5)",
-   "on": "all"
-  }
- ],
- "master": {
-  "lufs": -18,
-  "ceiling_dbtp": -1
- },
- "loop": {
-  "enabled": true
- },
- "stem_of": null
+  "stem_of": null
 }

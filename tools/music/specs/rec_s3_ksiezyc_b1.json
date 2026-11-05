@@ -2,7 +2,7 @@
   "id": "rec_s3_ksiezyc_b1",
   "kind": "record",
   "title": "Księżyc · B1 energiczny",
-  "role": "płyta serii 3; długi pogłos, lidyjska #11; legenda v7: LYD F, jeden instrument (PAD)",
+  "role": "płyta serii 3; długi pogłos, lidyjska #11; legenda v7: progresja unikalna (DORSOUL + PHRYG+7), jeden instrument (BELL)",
   "bpm": 56,
   "meter": 4,
   "key": "F",
@@ -13,108 +13,108 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj9#11"
+      "sym": "Fm11"
     },
     {
       "bar": 2,
-      "sym": "Gmaj13"
+      "sym": "Bb13"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj13#11"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Fmaj7/A"
+      "sym": "Fm13"
     },
     {
       "bar": 6,
-      "sym": "Gm11/C"
+      "sym": "Db7alt"
     },
     {
       "bar": 7,
-      "sym": "Fmaj13"
+      "sym": "C7b13"
     },
     {
       "bar": 8,
-      "sym": "C6/9"
+      "sym": "B9#11"
     },
     {
       "bar": 9,
-      "sym": "Bbmaj9#11"
+      "sym": "Cm11"
     },
     {
       "bar": 10,
-      "sym": "Cmaj13"
+      "sym": "Bbm9"
     },
     {
       "bar": 11,
-      "sym": "Dm11"
+      "sym": "Cm9"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj13#11"
+      "sym": "G7b9b13"
     },
     {
       "bar": 13,
-      "sym": "Bbmaj7/D"
+      "sym": "Fm11"
     },
     {
       "bar": 14,
-      "sym": "Cm11/F"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 15,
-      "sym": "Bbmaj13"
+      "sym": "G7alt"
     },
     {
       "bar": 16,
-      "sym": "F6/9"
+      "sym": "Cm(maj7)9"
     },
     {
       "bar": 17,
-      "sym": "Fmaj9#11"
+      "sym": "Fm11"
     },
     {
       "bar": 18,
-      "sym": "Gmaj13"
+      "sym": "Bb13"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj13#11"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 21,
-      "sym": "Fmaj7/A"
+      "sym": "Fm13"
     },
     {
       "bar": 22,
-      "sym": "Gm11/C"
+      "sym": "Db7alt"
     },
     {
       "bar": 23,
-      "sym": "Fmaj13"
+      "sym": "C7b13"
     },
     {
       "bar": 24,
-      "sym": "C6/9"
+      "sym": "B9#11"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "PAD",
+      "voice": "BELL",
       "db": -3,
-      "pattern": "chords.rolled(0.30)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.3)",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; progresja unikalna: DORSOUL + PHRYG+7",
       "stem": "base"
     }
   ],
@@ -125,7 +125,7 @@
       "on": "all"
     },
     {
-      "fx": "LP(9500)",
+      "fx": "LP(11000)",
       "on": "all"
     },
     {
@@ -134,11 +134,11 @@
     },
     {
       "fx": "REV-L",
-      "wet": 0.25,
+      "wet": 0.277,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.04)",
       "on": "all"
     }
   ],

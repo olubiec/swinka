@@ -2,7 +2,7 @@
   "id": "rec_s3_sen_b1",
   "kind": "record",
   "title": "Sen o sianiu · B1 energiczny",
-  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: PEDAL F, jeden instrument (PAD)",
+  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: progresja unikalna (PEDAL + WHOLE+3), jeden instrument (EP)",
   "bpm": 59,
   "meter": 4,
   "key": "F",
@@ -25,15 +25,15 @@
     },
     {
       "bar": 4,
-      "sym": "Bbmaj7#11/F"
+      "sym": "C13sus4"
     },
     {
       "bar": 5,
-      "sym": "Fmaj9"
+      "sym": "Db7alt"
     },
     {
       "bar": 6,
-      "sym": "Eb/F"
+      "sym": "Gb9#11"
     },
     {
       "bar": 7,
@@ -45,35 +45,35 @@
     },
     {
       "bar": 9,
-      "sym": "Bbmaj9"
+      "sym": "Abmaj7#5"
     },
     {
       "bar": 10,
-      "sym": "C/Bb"
+      "sym": "Bb9#5"
     },
     {
       "bar": 11,
-      "sym": "Dm11/Bb"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj7#11/Bb"
+      "sym": "C9#5"
     },
     {
       "bar": 13,
-      "sym": "Bbmaj9"
+      "sym": "Amaj7#11"
     },
     {
       "bar": 14,
-      "sym": "Ab/Bb"
+      "sym": "Ab9#5"
     },
     {
       "bar": 15,
-      "sym": "Cm11/Bb"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 16,
-      "sym": "F/Bb"
+      "sym": "Eb9sus4"
     },
     {
       "bar": 17,
@@ -89,15 +89,15 @@
     },
     {
       "bar": 20,
-      "sym": "Bbmaj7#11/F"
+      "sym": "C13sus4"
     },
     {
       "bar": 21,
-      "sym": "Fmaj9"
+      "sym": "Db7alt"
     },
     {
       "bar": 22,
-      "sym": "Eb/F"
+      "sym": "Gb9#11"
     },
     {
       "bar": 23,
@@ -111,10 +111,10 @@
   "layers": [
     {
       "role": "chd",
-      "voice": "PAD",
+      "voice": "EP",
       "db": -3,
-      "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.2)",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; progresja unikalna: PEDAL + WHOLE+3",
       "stem": "base"
     }
   ],
@@ -125,7 +125,7 @@
       "on": "all"
     },
     {
-      "fx": "LP(9500)",
+      "fx": "LP(8000)",
       "on": "all"
     },
     {
@@ -134,11 +134,11 @@
     },
     {
       "fx": "REV-L",
-      "wet": 0.25,
+      "wet": 0.265,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.31)",
       "on": "all"
     }
   ],

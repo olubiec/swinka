@@ -2,7 +2,7 @@
   "id": "rec_s4_radio_a1",
   "kind": "record",
   "title": "Radio FM · A1 podpisowy",
-  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: BACKDOOR C, jeden instrument (ACC)",
+  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (DORQ + THIRDS+5 + MINSOUL+2), jeden instrument (PAD)",
   "bpm": 96,
   "meter": 4,
   "key": "C",
@@ -13,63 +13,63 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj9"
+      "sym": "Csowhat"
     },
     {
       "bar": 2,
-      "sym": "Am11"
+      "sym": "Dbsowhat"
     },
     {
       "bar": 3,
-      "sym": "Fm9"
+      "sym": "Csowhat"
     },
     {
       "bar": 4,
-      "sym": "Bb13"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Cmaj13"
-    },
-    {
-      "bar": 6,
-      "sym": "Em11"
-    },
-    {
-      "bar": 7,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 8,
-      "sym": "G13sus4"
-    },
-    {
-      "bar": 9,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 10,
       "sym": "Dm11"
     },
     {
+      "bar": 6,
+      "sym": "Ebmaj13#11"
+    },
+    {
+      "bar": 7,
+      "sym": "Cm11"
+    },
+    {
+      "bar": 8,
+      "sym": "G9sus4"
+    },
+    {
+      "bar": 9,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 10,
+      "sym": "Bbm11"
+    },
+    {
       "bar": 11,
-      "sym": "Bbm9"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Eb13"
+      "sym": "Gm11"
     },
     {
       "bar": 13,
-      "sym": "Fmaj13"
+      "sym": "F#7b13"
     },
     {
       "bar": 14,
-      "sym": "Am11"
+      "sym": "Fmaj13"
     },
     {
       "bar": 15,
-      "sym": "Bbmaj9#11"
+      "sym": "Dm11"
     },
     {
       "bar": 16,
@@ -77,123 +77,123 @@
     },
     {
       "bar": 17,
-      "sym": "Cmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 18,
-      "sym": "Am11"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 19,
-      "sym": "Fm9"
+      "sym": "E13sus4"
     },
     {
       "bar": 20,
-      "sym": "Bb13"
+      "sym": "A7alt"
     },
     {
       "bar": 21,
-      "sym": "Cmaj13"
+      "sym": "Dm9"
     },
     {
       "bar": 22,
-      "sym": "Em11"
+      "sym": "A7alt"
     },
     {
       "bar": 23,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 24,
-      "sym": "G13sus4"
-    },
-    {
-      "bar": 25,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 26,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 27,
-      "sym": "Bbm9"
-    },
-    {
-      "bar": 28,
-      "sym": "Eb13"
-    },
-    {
-      "bar": 29,
-      "sym": "Fmaj13"
-    },
-    {
-      "bar": 30,
-      "sym": "Am11"
-    },
-    {
-      "bar": 31,
       "sym": "Bbmaj9#11"
     },
     {
-      "bar": 32,
-      "sym": "C13sus4"
+      "bar": 24,
+      "sym": "A7b13"
     },
     {
-      "bar": 33,
-      "sym": "Cmaj9"
+      "bar": 25,
+      "sym": "Csowhat"
     },
     {
-      "bar": 34,
-      "sym": "Am11"
+      "bar": 26,
+      "sym": "Dbsowhat"
     },
     {
-      "bar": 35,
-      "sym": "Fm9"
+      "bar": 27,
+      "sym": "Csowhat"
     },
     {
-      "bar": 36,
-      "sym": "Bb13"
+      "bar": 28,
+      "sym": "Fmaj13#11"
     },
     {
-      "bar": 37,
-      "sym": "Cmaj13"
-    },
-    {
-      "bar": 38,
-      "sym": "Em11"
-    },
-    {
-      "bar": 39,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 40,
-      "sym": "G13sus4"
-    },
-    {
-      "bar": 41,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 42,
+      "bar": 29,
       "sym": "Dm11"
     },
     {
-      "bar": 43,
-      "sym": "Bbm9"
+      "bar": 30,
+      "sym": "Ebmaj13#11"
     },
     {
-      "bar": 44,
-      "sym": "Eb13"
+      "bar": 31,
+      "sym": "Cm11"
     },
     {
-      "bar": 45,
+      "bar": 32,
+      "sym": "G9sus4"
+    },
+    {
+      "bar": 33,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 34,
+      "sym": "Bbm11"
+    },
+    {
+      "bar": 35,
+      "sym": "Amaj9#11"
+    },
+    {
+      "bar": 36,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 37,
+      "sym": "F#7b13"
+    },
+    {
+      "bar": 38,
       "sym": "Fmaj13"
     },
     {
+      "bar": 39,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 40,
+      "sym": "C13sus4"
+    },
+    {
+      "bar": 41,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 42,
+      "sym": "Bbmaj13#11"
+    },
+    {
+      "bar": 43,
+      "sym": "E13sus4"
+    },
+    {
+      "bar": 44,
+      "sym": "A7alt"
+    },
+    {
+      "bar": 45,
+      "sym": "Dm9"
+    },
+    {
       "bar": 46,
-      "sym": "Am11"
+      "sym": "A7alt"
     },
     {
       "bar": 47,
@@ -201,36 +201,36 @@
     },
     {
       "bar": 48,
-      "sym": "C13sus4"
+      "sym": "A7b13"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "ACC",
-      "db": -12,
-      "pattern": "chords.rolled(0.20)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; forma A B legendy v7",
+      "voice": "PAD",
+      "db": -3,
+      "pattern": "chords.rolled(0.4)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; progresja unikalna: DORQ + THIRDS+5 + MINSOUL+2",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "SAT(2.0)",
+      "fx": "SAT(2.5)",
       "on": "all"
     },
     {
-      "fx": "SHELF(-2)",
+      "fx": "SHELF(-1.8)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.08,
+      "wet": 0.059,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.0)",
       "on": "all"
     }
   ],

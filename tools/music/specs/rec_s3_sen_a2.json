@@ -2,7 +2,7 @@
   "id": "rec_s3_sen_a2",
   "kind": "record",
   "title": "Sen o sianiu · A2 spokojny",
-  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: PEDAL F, jeden instrument (PAD)",
+  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: progresja unikalna (DORSOUL + SOUL+10), jeden instrument (PAD)",
   "bpm": 50,
   "meter": 4,
   "key": "F",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj9"
+      "sym": "Fm11"
     },
     {
       "bar": 2,
-      "sym": "G/F"
+      "sym": "E13"
     },
     {
       "bar": 3,
-      "sym": "Am11/F"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj7#11/F"
+      "sym": "Gb9#11"
     },
     {
       "bar": 5,
-      "sym": "Fmaj9"
+      "sym": "Fm13"
     },
     {
       "bar": 6,
-      "sym": "Eb/F"
+      "sym": "Gm11"
     },
     {
       "bar": 7,
-      "sym": "Gm11/F"
+      "sym": "C7b13"
     },
     {
       "bar": 8,
-      "sym": "C/F"
+      "sym": "B9#11"
     },
     {
       "bar": 9,
-      "sym": "Bbmaj9"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 10,
-      "sym": "C/Bb"
+      "sym": "C13sus4"
     },
     {
       "bar": 11,
-      "sym": "Dm11/Bb"
+      "sym": "Fm11"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj7#11/Bb"
+      "sym": "Bb7b13"
     },
     {
       "bar": 13,
-      "sym": "Bbmaj9"
+      "sym": "G13sus4"
     },
     {
       "bar": 14,
-      "sym": "Ab/Bb"
+      "sym": "C7alt"
     },
     {
       "bar": 15,
-      "sym": "Cm11/Bb"
+      "sym": "Fm11"
     },
     {
       "bar": 16,
-      "sym": "F/Bb"
+      "sym": "E9#11"
     },
     {
       "bar": 17,
-      "sym": "Fmaj9"
+      "sym": "Fm11"
     },
     {
       "bar": 18,
-      "sym": "G/F"
+      "sym": "E13"
     },
     {
       "bar": 19,
-      "sym": "Am11/F"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj7#11/F"
+      "sym": "Gb9#11"
     },
     {
       "bar": 21,
-      "sym": "Fmaj9"
+      "sym": "Fm13"
     },
     {
       "bar": 22,
-      "sym": "Eb/F"
+      "sym": "Gm11"
     },
     {
       "bar": 23,
-      "sym": "Gm11/F"
+      "sym": "C7b13"
     },
     {
       "bar": 24,
-      "sym": "C/F"
+      "sym": "B9#11"
     }
   ],
   "layers": [
@@ -113,32 +113,32 @@
       "role": "chd",
       "voice": "PAD",
       "db": -3,
-      "pattern": "chords.rolled(0.45)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.35)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; progresja unikalna: DORSOUL + SOUL+10",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.5)",
+      "fx": "TAPE(0.45)",
       "on": "all"
     },
     {
-      "fx": "LP(8000)",
+      "fx": "LP(7000)",
       "on": "all"
     },
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(3)",
       "on": "all"
     },
     {
       "fx": "REV-L",
-      "wet": 0.29,
+      "wet": 0.333,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.43)",
       "on": "all"
     }
   ],

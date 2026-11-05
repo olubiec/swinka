@@ -2,7 +2,7 @@
   "id": "rec_s3_swietliki_a1",
   "kind": "record",
   "title": "Świetliki · A1 podpisowy",
-  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: WHOLE A, jeden instrument (CEL)",
+  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (THIRDS + PHRYG+8 + LULL+3), jeden instrument (BELL)",
   "bpm": 90,
   "meter": 4,
   "key": "A",
@@ -13,196 +13,196 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Amaj7#5"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 2,
-      "sym": "B9#5"
+      "sym": "Fmaj13"
     },
     {
       "bar": 3,
-      "sym": "Dmaj13#11"
+      "sym": "C#maj9#11"
     },
     {
       "bar": 4,
-      "sym": "C#9#5"
+      "sym": "F13sus4"
     },
     {
       "bar": 5,
-      "sym": "Bbmaj7#11"
+      "sym": "Bb13"
     },
     {
       "bar": 6,
-      "sym": "A9#5"
+      "sym": "Amaj13"
     },
     {
       "bar": 7,
-      "sym": "Dmaj13#11"
+      "sym": "F#m11"
     },
     {
       "bar": 8,
-      "sym": "E9sus4"
+      "sym": "E13sus4"
     },
     {
       "bar": 9,
-      "sym": "Dmaj7#5"
+      "sym": "Fm11"
     },
     {
       "bar": 10,
-      "sym": "E9#5"
+      "sym": "F#maj7#11"
     },
     {
       "bar": 11,
-      "sym": "Gmaj13#11"
+      "sym": "Fm9"
     },
     {
       "bar": 12,
-      "sym": "F#9#5"
+      "sym": "C7b9b13"
     },
     {
       "bar": 13,
-      "sym": "Ebmaj7#11"
+      "sym": "Bbm11"
     },
     {
       "bar": 14,
-      "sym": "D9#5"
+      "sym": "F#maj13#11"
     },
     {
       "bar": 15,
-      "sym": "Gmaj13#11"
+      "sym": "C7alt"
     },
     {
       "bar": 16,
-      "sym": "A9sus4"
+      "sym": "Fm(maj7)9"
     },
     {
       "bar": 17,
-      "sym": "Amaj7#5"
+      "sym": "Cmaj9"
     },
     {
       "bar": 18,
-      "sym": "B9#5"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Dmaj13#11"
+      "sym": "Cmaj7/E"
     },
     {
       "bar": 20,
-      "sym": "C#9#5"
+      "sym": "Fm6/9"
     },
     {
       "bar": 21,
-      "sym": "Bbmaj7#11"
+      "sym": "Cmaj13"
     },
     {
       "bar": 22,
-      "sym": "A9#5"
+      "sym": "Dm11"
     },
     {
       "bar": 23,
-      "sym": "Dmaj13#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "E9sus4"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 25,
-      "sym": "Dmaj7#5"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 26,
-      "sym": "E9#5"
+      "sym": "Fmaj13"
     },
     {
       "bar": 27,
-      "sym": "Gmaj13#11"
+      "sym": "C#maj9#11"
     },
     {
       "bar": 28,
-      "sym": "F#9#5"
+      "sym": "F13sus4"
     },
     {
       "bar": 29,
-      "sym": "Ebmaj7#11"
+      "sym": "Bb13"
     },
     {
       "bar": 30,
-      "sym": "D9#5"
+      "sym": "Amaj13"
     },
     {
       "bar": 31,
-      "sym": "Gmaj13#11"
+      "sym": "F#m11"
     },
     {
       "bar": 32,
-      "sym": "A9sus4"
+      "sym": "E13sus4"
     },
     {
       "bar": 33,
-      "sym": "Amaj7#5"
+      "sym": "Fm11"
     },
     {
       "bar": 34,
-      "sym": "B9#5"
+      "sym": "F#maj7#11"
     },
     {
       "bar": 35,
-      "sym": "Dmaj13#11"
+      "sym": "Fm9"
     },
     {
       "bar": 36,
-      "sym": "C#9#5"
+      "sym": "C7b9b13"
     },
     {
       "bar": 37,
-      "sym": "Bbmaj7#11"
+      "sym": "Bbm11"
     },
     {
       "bar": 38,
-      "sym": "A9#5"
+      "sym": "F#maj13#11"
     },
     {
       "bar": 39,
-      "sym": "Dmaj13#11"
+      "sym": "C7alt"
     },
     {
       "bar": 40,
-      "sym": "E9sus4"
+      "sym": "E13sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "CEL",
+      "voice": "BELL",
       "db": -3,
-      "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (CEL), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.3)",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; progresja unikalna: THIRDS + PHRYG+8 + LULL+3",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.3)",
+      "fx": "TAPE(0.37)",
       "on": "all"
     },
     {
-      "fx": "LP(8000)",
+      "fx": "LP(7500)",
       "on": "all"
     },
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(3)",
       "on": "all"
     },
     {
       "fx": "REV-L",
-      "wet": 0.25,
+      "wet": 0.24,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.25)",
       "on": "all"
     }
   ],

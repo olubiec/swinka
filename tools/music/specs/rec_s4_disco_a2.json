@@ -2,7 +2,7 @@
   "id": "rec_s4_disco_a2",
   "kind": "record",
   "title": "Disco gryzoń · A2 spokojny",
-  "role": "płyta serii 4; four-on-the-floor i arpeggio cyklu kwintowego; legenda v7: MINSOUL A, jeden instrument (EP)",
+  "role": "płyta serii 4; four-on-the-floor i arpeggio cyklu kwintowego; legenda v7: progresja unikalna (MODAL + PHRYG+4 + PEDAL+7), jeden instrument (BNJ)",
   "bpm": 108,
   "meter": 4,
   "key": "A",
@@ -13,224 +13,224 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Am11"
+      "sym": "Amaj9"
     },
     {
       "bar": 2,
-      "sym": "Fmaj13#11"
+      "sym": "Gmaj7#11"
     },
     {
       "bar": 3,
-      "sym": "Dm11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "E7alt"
+      "sym": "G#13"
     },
     {
       "bar": 5,
-      "sym": "Am9"
+      "sym": "Amaj7/C#"
     },
     {
       "bar": 6,
-      "sym": "Gmaj9#11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 7,
-      "sym": "Fmaj9#11"
+      "sym": "Bm11"
     },
     {
       "bar": 8,
-      "sym": "E7b13"
+      "sym": "E7sus4"
     },
     {
       "bar": 9,
-      "sym": "Dm11"
+      "sym": "C#m11"
     },
     {
       "bar": 10,
-      "sym": "Bbmaj13#11"
+      "sym": "G#7b13"
     },
     {
       "bar": 11,
-      "sym": "Gm11"
+      "sym": "C#m9"
     },
     {
       "bar": 12,
-      "sym": "A7alt"
+      "sym": "G#7b9b13"
     },
     {
       "bar": 13,
-      "sym": "Dm9"
+      "sym": "F#m11"
     },
     {
       "bar": 14,
-      "sym": "Cmaj9#11"
+      "sym": "Dmaj13#11"
     },
     {
       "bar": 15,
-      "sym": "Bbmaj9#11"
+      "sym": "G#7alt"
     },
     {
       "bar": 16,
-      "sym": "A7b13"
+      "sym": "C#m(maj7)9"
     },
     {
       "bar": 17,
-      "sym": "Am11"
+      "sym": "Emaj9"
     },
     {
       "bar": 18,
-      "sym": "Fmaj13#11"
+      "sym": "F#/E"
     },
     {
       "bar": 19,
-      "sym": "Dm11"
+      "sym": "G#m11/E"
     },
     {
       "bar": 20,
-      "sym": "E7alt"
+      "sym": "Amaj7#11/E"
     },
     {
       "bar": 21,
-      "sym": "Am9"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 22,
-      "sym": "Gmaj9#11"
+      "sym": "D/E"
     },
     {
       "bar": 23,
-      "sym": "Fmaj9#11"
+      "sym": "F#m11/E"
     },
     {
       "bar": 24,
-      "sym": "E7b13"
+      "sym": "B/E"
     },
     {
       "bar": 25,
-      "sym": "Dm11"
+      "sym": "Amaj9"
     },
     {
       "bar": 26,
-      "sym": "Bbmaj13#11"
+      "sym": "Gmaj7#11"
     },
     {
       "bar": 27,
-      "sym": "Gm11"
-    },
-    {
-      "bar": 28,
-      "sym": "A7alt"
-    },
-    {
-      "bar": 29,
-      "sym": "Dm9"
-    },
-    {
-      "bar": 30,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 31,
-      "sym": "Bbmaj9#11"
-    },
-    {
-      "bar": 32,
-      "sym": "A7b13"
-    },
-    {
-      "bar": 33,
-      "sym": "Am11"
-    },
-    {
-      "bar": 34,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 35,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 36,
-      "sym": "E7alt"
-    },
-    {
-      "bar": 37,
-      "sym": "Am9"
-    },
-    {
-      "bar": 38,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 39,
       "sym": "Fmaj9#11"
     },
     {
+      "bar": 28,
+      "sym": "G#13"
+    },
+    {
+      "bar": 29,
+      "sym": "Amaj7/C#"
+    },
+    {
+      "bar": 30,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 31,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 32,
+      "sym": "E7sus4"
+    },
+    {
+      "bar": 33,
+      "sym": "C#m11"
+    },
+    {
+      "bar": 34,
+      "sym": "G#7b13"
+    },
+    {
+      "bar": 35,
+      "sym": "C#m9"
+    },
+    {
+      "bar": 36,
+      "sym": "G#7b9b13"
+    },
+    {
+      "bar": 37,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 38,
+      "sym": "Dmaj13#11"
+    },
+    {
+      "bar": 39,
+      "sym": "G#7alt"
+    },
+    {
       "bar": 40,
-      "sym": "E7b13"
+      "sym": "C#m(maj7)9"
     },
     {
       "bar": 41,
-      "sym": "Dm11"
+      "sym": "Emaj9"
     },
     {
       "bar": 42,
-      "sym": "Bbmaj13#11"
+      "sym": "F#/E"
     },
     {
       "bar": 43,
-      "sym": "Gm11"
+      "sym": "G#m11/E"
     },
     {
       "bar": 44,
-      "sym": "A7alt"
+      "sym": "Amaj7#11/E"
     },
     {
       "bar": 45,
-      "sym": "Dm9"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 46,
-      "sym": "Cmaj9#11"
+      "sym": "D/E"
     },
     {
       "bar": 47,
-      "sym": "Bbmaj9#11"
+      "sym": "F#m11/E"
     },
     {
       "bar": 48,
-      "sym": "A7b13"
+      "sym": "B/E"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "BNJ",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; progresja unikalna: MODAL + PHRYG+4 + PEDAL+7",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "SAT(2.0)",
+      "fx": "SAT(2.4)",
       "on": "all"
     },
     {
-      "fx": "SHELF(-2)",
+      "fx": "SHELF(-3.3)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.12,
+      "wet": 0.097,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.42)",
       "on": "all"
     }
   ],

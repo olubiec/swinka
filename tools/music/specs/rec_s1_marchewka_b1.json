@@ -2,7 +2,7 @@
   "id": "rec_s1_marchewka_b1",
   "kind": "record",
   "title": "Marchewkowy beat · B1 energiczny",
-  "role": "płyta serii 1; chrupanie w hi-hat (otwarty hat na „i” 4); legenda v7: BACKDOOR G, jeden instrument (BNJ)",
+  "role": "płyta serii 1; chrupanie w hi-hat (otwarty hat na „i” 4); legenda v7: progresja unikalna (PEDAL + PHRYG+6 + SOUL+8), jeden instrument (XYL)",
   "bpm": 91,
   "meter": 4,
   "key": "G",
@@ -17,188 +17,188 @@
     },
     {
       "bar": 2,
-      "sym": "Em11"
+      "sym": "A/G"
     },
     {
       "bar": 3,
-      "sym": "Cm9"
+      "sym": "Bm11/G"
     },
     {
       "bar": 4,
-      "sym": "F13"
+      "sym": "Cmaj7#11/G"
     },
     {
       "bar": 5,
-      "sym": "Gmaj13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 6,
-      "sym": "Bm11"
+      "sym": "F/G"
     },
     {
       "bar": 7,
-      "sym": "Cmaj9#11"
+      "sym": "Am11/G"
     },
     {
       "bar": 8,
-      "sym": "D13sus4"
+      "sym": "D/G"
     },
     {
       "bar": 9,
-      "sym": "Cmaj9"
+      "sym": "Dbm11"
     },
     {
       "bar": 10,
-      "sym": "Am11"
+      "sym": "Dmaj7#11"
     },
     {
       "bar": 11,
-      "sym": "Fm9"
+      "sym": "G7alt"
     },
     {
       "bar": 12,
-      "sym": "Bb13"
+      "sym": "Ab7b9b13"
     },
     {
       "bar": 13,
-      "sym": "Cmaj13"
+      "sym": "Eb7alt"
     },
     {
       "bar": 14,
-      "sym": "Em11"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Fmaj9#11"
+      "sym": "Ab7alt"
     },
     {
       "bar": 16,
-      "sym": "G13sus4"
+      "sym": "Dbm(maj7)9"
     },
     {
       "bar": 17,
-      "sym": "Gmaj9"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 18,
-      "sym": "Em11"
+      "sym": "Cm11"
     },
     {
       "bar": 19,
-      "sym": "Cm9"
+      "sym": "Fm13"
     },
     {
       "bar": 20,
-      "sym": "F13"
+      "sym": "Bb7b13"
     },
     {
       "bar": 21,
-      "sym": "Gmaj13"
+      "sym": "Gm11"
     },
     {
       "bar": 22,
-      "sym": "Bm11"
+      "sym": "F#7alt"
     },
     {
       "bar": 23,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 24,
-      "sym": "D13sus4"
-    },
-    {
-      "bar": 25,
-      "sym": "Cmaj9"
-    },
-    {
-      "bar": 26,
-      "sym": "Am11"
-    },
-    {
-      "bar": 27,
       "sym": "Fm9"
     },
     {
-      "bar": 28,
-      "sym": "Bb13"
+      "bar": 24,
+      "sym": "E9#11"
     },
     {
-      "bar": 29,
-      "sym": "Cmaj13"
-    },
-    {
-      "bar": 30,
-      "sym": "Em11"
-    },
-    {
-      "bar": 31,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 32,
-      "sym": "G13sus4"
-    },
-    {
-      "bar": 33,
+      "bar": 25,
       "sym": "Gmaj9"
     },
     {
+      "bar": 26,
+      "sym": "A/G"
+    },
+    {
+      "bar": 27,
+      "sym": "Bm11/G"
+    },
+    {
+      "bar": 28,
+      "sym": "Cmaj7#11/G"
+    },
+    {
+      "bar": 29,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 30,
+      "sym": "F/G"
+    },
+    {
+      "bar": 31,
+      "sym": "Am11/G"
+    },
+    {
+      "bar": 32,
+      "sym": "D/G"
+    },
+    {
+      "bar": 33,
+      "sym": "Dbm11"
+    },
+    {
       "bar": 34,
-      "sym": "Em11"
+      "sym": "Dmaj7#11"
     },
     {
       "bar": 35,
-      "sym": "Cm9"
+      "sym": "G7alt"
     },
     {
       "bar": 36,
-      "sym": "F13"
+      "sym": "Ab7b9b13"
     },
     {
       "bar": 37,
-      "sym": "Gmaj13"
+      "sym": "Eb7alt"
     },
     {
       "bar": 38,
-      "sym": "Bm11"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 39,
-      "sym": "Cmaj9#11"
+      "sym": "Ab7alt"
     },
     {
       "bar": 40,
-      "sym": "D13sus4"
+      "sym": "D/G"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "BNJ",
+      "voice": "XYL",
       "db": -3,
-      "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.2)",
+      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; progresja unikalna: PEDAL + PHRYG+6 + SOUL+8",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.2)",
+      "fx": "TAPE(0.18)",
       "on": "all"
     },
     {
-      "fx": "LP(10500)",
+      "fx": "LP(11000)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.12,
+      "wet": 0.09,
       "on": "all"
     },
     {
-      "fx": "VINYL(-46)",
+      "fx": "VINYL(-50)",
       "on": "all"
     }
   ],

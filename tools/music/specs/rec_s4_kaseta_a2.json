@@ -2,7 +2,7 @@
   "id": "rec_s4_kaseta_a2",
   "kind": "record",
   "title": "Kaseta mixtape · A2 spokojny",
-  "role": "płyta serii 4; falowanie taśmy wypieczone w dźwięk; legenda v7: PHRYG D, jeden instrument (EP)",
+  "role": "płyta serii 4; falowanie taśmy wypieczone w dźwięk; legenda v7: progresja unikalna (DORQ + THIRDS+10 + SOUL+5), jeden instrument (P25)",
   "bpm": 90,
   "meter": 4,
   "key": "D",
@@ -13,179 +13,179 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dm11"
+      "sym": "Dsowhat"
     },
     {
       "bar": 2,
-      "sym": "Ebmaj7#11"
+      "sym": "Ebsowhat"
     },
     {
       "bar": 3,
-      "sym": "Dm9"
+      "sym": "Dsowhat"
     },
     {
       "bar": 4,
-      "sym": "A7b9b13"
+      "sym": "Gmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Gm11"
+      "sym": "Em11"
     },
     {
       "bar": 6,
-      "sym": "Ebmaj13#11"
+      "sym": "Eb13"
     },
     {
       "bar": 7,
-      "sym": "A7alt"
+      "sym": "Ab13"
     },
     {
       "bar": 8,
-      "sym": "Dm(maj7)9"
+      "sym": "A9sus4"
     },
     {
       "bar": 9,
-      "sym": "Gm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "G#maj7#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Gm9"
+      "sym": "Emaj9#11"
     },
     {
       "bar": 12,
-      "sym": "D7b9b13"
+      "sym": "Dm11"
     },
     {
       "bar": 13,
-      "sym": "Cm11"
+      "sym": "Db13"
     },
     {
       "bar": 14,
-      "sym": "G#maj13#11"
+      "sym": "Cmaj7#11"
     },
     {
       "bar": 15,
-      "sym": "D7alt"
+      "sym": "Am11"
     },
     {
       "bar": 16,
-      "sym": "Gm(maj7)9"
+      "sym": "G13sus4"
     },
     {
       "bar": 17,
-      "sym": "Dm11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 18,
-      "sym": "Ebmaj7#11"
+      "sym": "Em11"
     },
     {
       "bar": 19,
-      "sym": "Dm9"
+      "sym": "Am11"
     },
     {
       "bar": 20,
-      "sym": "A7b9b13"
+      "sym": "D9#11"
     },
     {
       "bar": 21,
-      "sym": "Gm11"
+      "sym": "Bm11"
     },
     {
       "bar": 22,
-      "sym": "Ebmaj13#11"
+      "sym": "E7alt"
     },
     {
       "bar": 23,
-      "sym": "A7alt"
+      "sym": "Am9"
     },
     {
       "bar": 24,
-      "sym": "Dm(maj7)9"
+      "sym": "Ab9#11"
     },
     {
       "bar": 25,
-      "sym": "Gm11"
+      "sym": "Dsowhat"
     },
     {
       "bar": 26,
-      "sym": "G#maj7#11"
+      "sym": "Ebsowhat"
     },
     {
       "bar": 27,
-      "sym": "Gm9"
+      "sym": "Dsowhat"
     },
     {
       "bar": 28,
-      "sym": "D7b9b13"
+      "sym": "Gmaj13#11"
     },
     {
       "bar": 29,
-      "sym": "Cm11"
+      "sym": "Em11"
     },
     {
       "bar": 30,
-      "sym": "G#maj13#11"
+      "sym": "Eb13"
     },
     {
       "bar": 31,
-      "sym": "D7alt"
+      "sym": "Ab13"
     },
     {
       "bar": 32,
-      "sym": "Gm(maj7)9"
+      "sym": "A9sus4"
     },
     {
       "bar": 33,
-      "sym": "Dm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 34,
-      "sym": "Ebmaj7#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 35,
-      "sym": "Dm9"
+      "sym": "Emaj9#11"
     },
     {
       "bar": 36,
-      "sym": "A7b9b13"
+      "sym": "Dm11"
     },
     {
       "bar": 37,
-      "sym": "Gm11"
+      "sym": "Db13"
     },
     {
       "bar": 38,
-      "sym": "Ebmaj13#11"
+      "sym": "Cmaj7#11"
     },
     {
       "bar": 39,
-      "sym": "A7alt"
+      "sym": "Am11"
     },
     {
       "bar": 40,
-      "sym": "Dm(maj7)9"
+      "sym": "A9sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "P25",
       "db": -3,
-      "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.15)",
+      "part": "jedna warstwa, jeden instrument (P25), akordy rozłożone; progresja unikalna: DORQ + THIRDS+10 + SOUL+5",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.3)",
+      "fx": "TAPE(0.23)",
       "on": "all"
     },
     {
@@ -193,16 +193,16 @@
       "on": "all"
     },
     {
-      "fx": "SHELF(-2)",
+      "fx": "SHELF(-1.5)",
       "on": "all"
     },
     {
       "fx": "REV-S",
-      "wet": 0.12,
+      "wet": 0.095,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.14)",
       "on": "all"
     }
   ],

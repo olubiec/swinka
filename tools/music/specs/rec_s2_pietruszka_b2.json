@@ -2,7 +2,7 @@
   "id": "rec_s2_pietruszka_b2",
   "kind": "record",
   "title": "Pietruszka funk · B2 nastrojowy",
-  "role": "płyta serii 2; staccato bas i wah; legenda v7: MINSOUL E, jeden instrument (EP)",
+  "role": "płyta serii 2; staccato bas i wah; legenda v7: progresja unikalna (MINSOUL + DORSOUL+10), jeden instrument (PAD)",
   "bpm": 80,
   "meter": 4,
   "key": "E",
@@ -17,7 +17,7 @@
     },
     {
       "bar": 2,
-      "sym": "Cmaj13#11"
+      "sym": "G#9#11"
     },
     {
       "bar": 3,
@@ -33,11 +33,11 @@
     },
     {
       "bar": 6,
-      "sym": "Dmaj9#11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 7,
-      "sym": "Cmaj9#11"
+      "sym": "Bb13"
     },
     {
       "bar": 8,
@@ -45,35 +45,35 @@
     },
     {
       "bar": 9,
-      "sym": "Am11"
-    },
-    {
-      "bar": 10,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 11,
       "sym": "Dm11"
     },
     {
-      "bar": 12,
-      "sym": "E7alt"
+      "bar": 10,
+      "sym": "G13"
     },
     {
-      "bar": 13,
-      "sym": "Am9"
-    },
-    {
-      "bar": 14,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 15,
+      "bar": 11,
       "sym": "Fmaj9#11"
     },
     {
+      "bar": 12,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 13,
+      "sym": "Dm13"
+    },
+    {
+      "bar": 14,
+      "sym": "Em11"
+    },
+    {
+      "bar": 15,
+      "sym": "A7b13"
+    },
+    {
       "bar": 16,
-      "sym": "E7b13"
+      "sym": "G#9#11"
     },
     {
       "bar": 17,
@@ -81,7 +81,7 @@
     },
     {
       "bar": 18,
-      "sym": "Cmaj13#11"
+      "sym": "G#9#11"
     },
     {
       "bar": 19,
@@ -97,11 +97,11 @@
     },
     {
       "bar": 22,
-      "sym": "Dmaj9#11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 23,
-      "sym": "Cmaj9#11"
+      "sym": "Bb13"
     },
     {
       "bar": 24,
@@ -109,44 +109,44 @@
     },
     {
       "bar": 25,
-      "sym": "Am11"
-    },
-    {
-      "bar": 26,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 27,
       "sym": "Dm11"
     },
     {
-      "bar": 28,
-      "sym": "E7alt"
+      "bar": 26,
+      "sym": "G13"
     },
     {
-      "bar": 29,
-      "sym": "Am9"
-    },
-    {
-      "bar": 30,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 31,
+      "bar": 27,
       "sym": "Fmaj9#11"
     },
     {
+      "bar": 28,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 29,
+      "sym": "Dm13"
+    },
+    {
+      "bar": 30,
+      "sym": "Em11"
+    },
+    {
+      "bar": 31,
+      "sym": "A7b13"
+    },
+    {
       "bar": 32,
-      "sym": "E7b13"
+      "sym": "G#9#11"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "EP",
+      "voice": "PAD",
       "db": -3,
-      "pattern": "chords.rolled(0.20)",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.4)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; progresja unikalna: MINSOUL + DORSOUL+10",
       "stem": "base"
     }
   ],
@@ -162,11 +162,11 @@
     },
     {
       "fx": "REV-M",
-      "wet": 0.2,
+      "wet": 0.191,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.5)",
+      "fx": "WIDTH(1.35)",
       "on": "all"
     }
   ],

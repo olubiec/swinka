@@ -2,7 +2,7 @@
   "id": "rec_s2_dynia_a1",
   "kind": "record",
   "title": "Dynia · A1 podpisowy",
-  "role": "płyta serii 2; polka „oom-pa”, akordeon; legenda v7: THIRDS F, jeden instrument (ACC)",
+  "role": "płyta serii 2; polka „oom-pa”, akordeon; legenda v7: progresja unikalna (PHRYG + WHOLE+10 + DORQ+3), jeden instrument (EP)",
   "bpm": 118,
   "meter": 4,
   "key": "F",
@@ -13,224 +13,224 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj9#11"
+      "sym": "Fm11"
     },
     {
       "bar": 2,
-      "sym": "Dbmaj9#11"
+      "sym": "Gbmaj7#11"
     },
     {
       "bar": 3,
-      "sym": "Amaj9#11"
+      "sym": "B13"
     },
     {
       "bar": 4,
-      "sym": "Gm11"
+      "sym": "C7b9b13"
     },
     {
       "bar": 5,
-      "sym": "Gb13"
+      "sym": "Bbm11"
     },
     {
       "bar": 6,
-      "sym": "Fmaj13"
+      "sym": "Gbmaj13#11"
     },
     {
       "bar": 7,
-      "sym": "Dm11"
+      "sym": "C7alt"
     },
     {
       "bar": 8,
-      "sym": "C13sus4"
+      "sym": "Fm(maj7)9"
     },
     {
       "bar": 9,
-      "sym": "Bbmaj9#11"
+      "sym": "Ebmaj7#5"
     },
     {
       "bar": 10,
-      "sym": "Gbmaj9#11"
+      "sym": "F9#5"
     },
     {
       "bar": 11,
-      "sym": "Dmaj9#11"
+      "sym": "Ab13"
     },
     {
       "bar": 12,
-      "sym": "Cm11"
+      "sym": "G9#5"
     },
     {
       "bar": 13,
-      "sym": "B13"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 14,
-      "sym": "Bbmaj13"
+      "sym": "Eb9#5"
     },
     {
       "bar": 15,
-      "sym": "Gm11"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 16,
-      "sym": "F13sus4"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 17,
-      "sym": "Fmaj9#11"
+      "sym": "Absowhat"
     },
     {
       "bar": 18,
-      "sym": "Dbmaj9#11"
+      "sym": "Asowhat"
     },
     {
       "bar": 19,
-      "sym": "Amaj9#11"
+      "sym": "Absowhat"
     },
     {
       "bar": 20,
-      "sym": "Gm11"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 21,
-      "sym": "Gb13"
+      "sym": "Bbm9"
     },
     {
       "bar": 22,
-      "sym": "Fmaj13"
+      "sym": "Bmaj13#11"
     },
     {
       "bar": 23,
-      "sym": "Dm11"
+      "sym": "Abm11"
     },
     {
       "bar": 24,
-      "sym": "C13sus4"
+      "sym": "Eb7sus4"
     },
     {
       "bar": 25,
-      "sym": "Bbmaj9#11"
+      "sym": "Fm11"
     },
     {
       "bar": 26,
-      "sym": "Gbmaj9#11"
+      "sym": "Gbmaj7#11"
     },
     {
       "bar": 27,
-      "sym": "Dmaj9#11"
+      "sym": "B13"
     },
     {
       "bar": 28,
-      "sym": "Cm11"
+      "sym": "C7b9b13"
     },
     {
       "bar": 29,
-      "sym": "B13"
+      "sym": "Bbm11"
     },
     {
       "bar": 30,
-      "sym": "Bbmaj13"
+      "sym": "Gbmaj13#11"
     },
     {
       "bar": 31,
-      "sym": "Gm11"
+      "sym": "C7alt"
     },
     {
       "bar": 32,
-      "sym": "F13sus4"
+      "sym": "Fm(maj7)9"
     },
     {
       "bar": 33,
-      "sym": "Fmaj9#11"
+      "sym": "Ebmaj7#5"
     },
     {
       "bar": 34,
-      "sym": "Dbmaj9#11"
+      "sym": "F9#5"
     },
     {
       "bar": 35,
-      "sym": "Amaj9#11"
+      "sym": "Ab13"
     },
     {
       "bar": 36,
-      "sym": "Gm11"
+      "sym": "G9#5"
     },
     {
       "bar": 37,
-      "sym": "Gb13"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 38,
-      "sym": "Fmaj13"
+      "sym": "Eb9#5"
     },
     {
       "bar": 39,
-      "sym": "Dm11"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 40,
-      "sym": "C13sus4"
+      "sym": "Bb9sus4"
     },
     {
       "bar": 41,
-      "sym": "Bbmaj9#11"
+      "sym": "Absowhat"
     },
     {
       "bar": 42,
-      "sym": "Gbmaj9#11"
+      "sym": "Asowhat"
     },
     {
       "bar": 43,
-      "sym": "Dmaj9#11"
+      "sym": "Absowhat"
     },
     {
       "bar": 44,
-      "sym": "Cm11"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 45,
-      "sym": "B13"
+      "sym": "Bbm9"
     },
     {
       "bar": 46,
-      "sym": "Bbmaj13"
+      "sym": "Bmaj13#11"
     },
     {
       "bar": 47,
-      "sym": "Gm11"
+      "sym": "Abm11"
     },
     {
       "bar": 48,
-      "sym": "F13sus4"
+      "sym": "Eb7sus4"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "ACC",
-      "db": -12,
-      "pattern": "chords.rolled(0.20)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; forma A B legendy v7",
+      "voice": "EP",
+      "db": -3,
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; progresja unikalna: PHRYG + WHOLE+10 + DORQ+3",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(3)",
       "on": "all"
     },
     {
-      "fx": "LP(6000)",
+      "fx": "LP(4500)",
       "on": "all"
     },
     {
       "fx": "REV-M",
-      "wet": 0.14,
+      "wet": 0.18,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.5)",
+      "fx": "WIDTH(1.21)",
       "on": "all"
     }
   ],

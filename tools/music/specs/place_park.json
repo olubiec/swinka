@@ -1,212 +1,212 @@
 {
- "id": "place_park",
- "kind": "place",
- "title": "Park",
- "role": "park (3/4, folkowy walc); legenda v7: jeden instrument (BOX), pełne progresje, bez warstw rytmicznych",
- "bpm": 96,
- "meter": 3,
- "key": "D",
- "mode": "major",
- "bars": 40,
- "swing": 58,
- "seed": 49983,
- "chords": [
-  {
-   "bar": 1,
-   "sym": "Dmaj9"
+  "id": "place_park",
+  "kind": "place",
+  "title": "Park",
+  "role": "park (3/4, folkowy walc); legenda v7: progresja unikalna (BACKDOOR + LULL+4 + LYD+10), jeden instrument (BOX)",
+  "bpm": 96,
+  "meter": 3,
+  "key": "D",
+  "mode": "major",
+  "bars": 40,
+  "swing": 58,
+  "seed": 49983,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 2,
+      "sym": "Dmaj13#11"
+    },
+    {
+      "bar": 3,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 4,
+      "sym": "C9#11"
+    },
+    {
+      "bar": 5,
+      "sym": "Dmaj13"
+    },
+    {
+      "bar": 6,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 7,
+      "sym": "Gmaj9#11"
+    },
+    {
+      "bar": 8,
+      "sym": "A13sus4"
+    },
+    {
+      "bar": 9,
+      "sym": "F#maj9"
+    },
+    {
+      "bar": 10,
+      "sym": "Db7b13"
+    },
+    {
+      "bar": 11,
+      "sym": "F#maj7/Bb"
+    },
+    {
+      "bar": 12,
+      "sym": "Db7b13"
+    },
+    {
+      "bar": 13,
+      "sym": "F#maj13"
+    },
+    {
+      "bar": 14,
+      "sym": "Abm11"
+    },
+    {
+      "bar": 15,
+      "sym": "Bmaj9#11"
+    },
+    {
+      "bar": 16,
+      "sym": "F#maj9"
+    },
+    {
+      "bar": 17,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 18,
+      "sym": "Eb9#11"
+    },
+    {
+      "bar": 19,
+      "sym": "Em11"
+    },
+    {
+      "bar": 20,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 21,
+      "sym": "Cmaj7/E"
+    },
+    {
+      "bar": 22,
+      "sym": "Dm11/G"
+    },
+    {
+      "bar": 23,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 24,
+      "sym": "G6/9"
+    },
+    {
+      "bar": 25,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 26,
+      "sym": "Dmaj13#11"
+    },
+    {
+      "bar": 27,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 28,
+      "sym": "C9#11"
+    },
+    {
+      "bar": 29,
+      "sym": "Dmaj13"
+    },
+    {
+      "bar": 30,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 31,
+      "sym": "Gmaj9#11"
+    },
+    {
+      "bar": 32,
+      "sym": "A13sus4"
+    },
+    {
+      "bar": 33,
+      "sym": "F#maj9"
+    },
+    {
+      "bar": 34,
+      "sym": "Db7b13"
+    },
+    {
+      "bar": 35,
+      "sym": "F#maj7/Bb"
+    },
+    {
+      "bar": 36,
+      "sym": "Db7b13"
+    },
+    {
+      "bar": 37,
+      "sym": "F#maj13"
+    },
+    {
+      "bar": 38,
+      "sym": "Abm11"
+    },
+    {
+      "bar": 39,
+      "sym": "Bmaj9#11"
+    },
+    {
+      "bar": 40,
+      "sym": "A13sus4"
+    }
+  ],
+  "layers": [
+    {
+      "role": "chd",
+      "voice": "BOX",
+      "db": -3,
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (BOX); legenda v7, progresja A|B w docs/music_legend.md"
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "TAPE(0.17)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-M",
+      "wet": 0.275,
+      "on": "all"
+    },
+    {
+      "fx": "LP(4100)",
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.32)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -18,
+    "ceiling_dbtp": -1
   },
-  {
-   "bar": 2,
-   "sym": "Bm11"
+  "loop": {
+    "enabled": true
   },
-  {
-   "bar": 3,
-   "sym": "Emaj13#11"
-  },
-  {
-   "bar": 4,
-   "sym": "A13sus4"
-  },
-  {
-   "bar": 5,
-   "sym": "F#m11"
-  },
-  {
-   "bar": 6,
-   "sym": "Gmaj13#11"
-  },
-  {
-   "bar": 7,
-   "sym": "Em11"
-  },
-  {
-   "bar": 8,
-   "sym": "A9sus4"
-  },
-  {
-   "bar": 9,
-   "sym": "Gmaj9#11"
-  },
-  {
-   "bar": 10,
-   "sym": "Gm9"
-  },
-  {
-   "bar": 11,
-   "sym": "F#m11"
-  },
-  {
-   "bar": 12,
-   "sym": "B7b13"
-  },
-  {
-   "bar": 13,
-   "sym": "Em11"
-  },
-  {
-   "bar": 14,
-   "sym": "Eb13"
-  },
-  {
-   "bar": 15,
-   "sym": "Dmaj13"
-  },
-  {
-   "bar": 16,
-   "sym": "A13sus4"
-  },
-  {
-   "bar": 17,
-   "sym": "Dmaj9"
-  },
-  {
-   "bar": 18,
-   "sym": "Bm11"
-  },
-  {
-   "bar": 19,
-   "sym": "Emaj13#11"
-  },
-  {
-   "bar": 20,
-   "sym": "A13sus4"
-  },
-  {
-   "bar": 21,
-   "sym": "F#m11"
-  },
-  {
-   "bar": 22,
-   "sym": "Gmaj13#11"
-  },
-  {
-   "bar": 23,
-   "sym": "Em11"
-  },
-  {
-   "bar": 24,
-   "sym": "A9sus4"
-  },
-  {
-   "bar": 25,
-   "sym": "Gmaj9#11"
-  },
-  {
-   "bar": 26,
-   "sym": "Gm9"
-  },
-  {
-   "bar": 27,
-   "sym": "F#m11"
-  },
-  {
-   "bar": 28,
-   "sym": "B7b13"
-  },
-  {
-   "bar": 29,
-   "sym": "Em11"
-  },
-  {
-   "bar": 30,
-   "sym": "Eb13"
-  },
-  {
-   "bar": 31,
-   "sym": "Dmaj13"
-  },
-  {
-   "bar": 32,
-   "sym": "A13sus4"
-  },
-  {
-   "bar": 33,
-   "sym": "Dmaj9"
-  },
-  {
-   "bar": 34,
-   "sym": "Bm11"
-  },
-  {
-   "bar": 35,
-   "sym": "Emaj13#11"
-  },
-  {
-   "bar": 36,
-   "sym": "A13sus4"
-  },
-  {
-   "bar": 37,
-   "sym": "F#m11"
-  },
-  {
-   "bar": 38,
-   "sym": "Gmaj13#11"
-  },
-  {
-   "bar": 39,
-   "sym": "Em11"
-  },
-  {
-   "bar": 40,
-   "sym": "A9sus4"
-  }
- ],
- "layers": [
-  {
-   "role": "chd",
-   "voice": "BOX",
-   "db": -3,
-   "pattern": "chords.arp8",
-   "part": "jedna warstwa, jeden instrument (BOX); legenda v7, progresja A|B w docs/music_legend.md"
-  }
- ],
- "drums": null,
- "fx": [
-  {
-   "fx": "TAPE(0.2)",
-   "on": "all"
-  },
-  {
-   "fx": "REV-M",
-   "wet": 0.25,
-   "on": "all"
-  },
-  {
-   "fx": "LP(5000)",
-   "on": "all"
-  },
-  {
-   "fx": "WIDTH(1.2)",
-   "on": "all"
-  }
- ],
- "master": {
-  "lufs": -18,
-  "ceiling_dbtp": -1
- },
- "loop": {
-  "enabled": true
- },
- "stem_of": null
+  "stem_of": null
 }

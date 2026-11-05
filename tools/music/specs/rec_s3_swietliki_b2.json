@@ -2,7 +2,7 @@
   "id": "rec_s3_swietliki_b2",
   "kind": "record",
   "title": "Świetliki · B2 nastrojowy",
-  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: WHOLE A, jeden instrument (CEL)",
+  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (LYD + PHRYG+5), jeden instrument (TRI)",
   "bpm": 72,
   "meter": 4,
   "key": "A",
@@ -13,164 +13,164 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Amaj7#5"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 2,
-      "sym": "B9#5"
+      "sym": "Bmaj9"
     },
     {
       "bar": 3,
-      "sym": "Dmaj13#11"
+      "sym": "C#m11"
     },
     {
       "bar": 4,
-      "sym": "C#9#5"
+      "sym": "E13sus4"
     },
     {
       "bar": 5,
-      "sym": "Bbmaj7#11"
+      "sym": "Amaj7/C#"
     },
     {
       "bar": 6,
-      "sym": "A9#5"
+      "sym": "Bm11/E"
     },
     {
       "bar": 7,
-      "sym": "Dmaj13#11"
+      "sym": "Amaj13#11"
     },
     {
       "bar": 8,
-      "sym": "E9sus4"
+      "sym": "E6/9"
     },
     {
       "bar": 9,
-      "sym": "Dmaj7#5"
+      "sym": "Dm11"
     },
     {
       "bar": 10,
-      "sym": "E9#5"
+      "sym": "Ebmaj7#11"
     },
     {
       "bar": 11,
-      "sym": "Gmaj13#11"
+      "sym": "Dm9"
     },
     {
       "bar": 12,
-      "sym": "F#9#5"
+      "sym": "A7b9b13"
     },
     {
       "bar": 13,
-      "sym": "Ebmaj7#11"
+      "sym": "Gm11"
     },
     {
       "bar": 14,
-      "sym": "D9#5"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 15,
-      "sym": "Gmaj13#11"
+      "sym": "A7alt"
     },
     {
       "bar": 16,
-      "sym": "A9sus4"
+      "sym": "Dm(maj7)9"
     },
     {
       "bar": 17,
-      "sym": "Amaj7#5"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 18,
-      "sym": "B9#5"
+      "sym": "Bmaj9"
     },
     {
       "bar": 19,
-      "sym": "Dmaj13#11"
+      "sym": "C#m11"
     },
     {
       "bar": 20,
-      "sym": "C#9#5"
+      "sym": "E13sus4"
     },
     {
       "bar": 21,
-      "sym": "Bbmaj7#11"
+      "sym": "Amaj7/C#"
     },
     {
       "bar": 22,
-      "sym": "A9#5"
+      "sym": "Bm11/E"
     },
     {
       "bar": 23,
-      "sym": "Dmaj13#11"
+      "sym": "Amaj13#11"
     },
     {
       "bar": 24,
-      "sym": "E9sus4"
+      "sym": "E6/9"
     },
     {
       "bar": 25,
-      "sym": "Dmaj7#5"
+      "sym": "Dm11"
     },
     {
       "bar": 26,
-      "sym": "E9#5"
-    },
-    {
-      "bar": 27,
-      "sym": "Gmaj13#11"
-    },
-    {
-      "bar": 28,
-      "sym": "F#9#5"
-    },
-    {
-      "bar": 29,
       "sym": "Ebmaj7#11"
     },
     {
+      "bar": 27,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 28,
+      "sym": "A7b9b13"
+    },
+    {
+      "bar": 29,
+      "sym": "Gm11"
+    },
+    {
       "bar": 30,
-      "sym": "D9#5"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 31,
-      "sym": "Gmaj13#11"
+      "sym": "A7alt"
     },
     {
       "bar": 32,
-      "sym": "A9sus4"
+      "sym": "Dm(maj7)9"
     }
   ],
   "layers": [
     {
       "role": "chd",
-      "voice": "CEL",
+      "voice": "TRI",
       "db": -3,
-      "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (CEL), akordy rozłożone; forma A B legendy v7",
+      "pattern": "chords.rolled(0.25)",
+      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; progresja unikalna: LYD + PHRYG+5",
       "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.3)",
+      "fx": "TAPE(0.23)",
       "on": "all"
     },
     {
-      "fx": "LP(8000)",
+      "fx": "LP(9000)",
       "on": "all"
     },
     {
-      "fx": "CHORUS(2)",
+      "fx": "CHORUS(3)",
       "on": "all"
     },
     {
       "fx": "REV-L",
-      "wet": 0.31,
+      "wet": 0.366,
       "on": "all"
     },
     {
-      "fx": "WIDTH(1.3)",
+      "fx": "WIDTH(1.43)",
       "on": "all"
     }
   ],
