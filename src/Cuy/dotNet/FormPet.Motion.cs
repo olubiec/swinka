@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -16,6 +17,10 @@ namespace Cuy
         private Timer motionTimer;
         private Point dragAnchor;
         private double tossUpdatedAt;
+        private static readonly bool perfEnabled = Environment.GetEnvironmentVariable("CUY_PERF") == "1";
+        private readonly double[] perfTickMs = new double[300];
+        private int perfCount, perfIndex, perfSlowGaps;
+        private double perfLastTickAt = -1;
         private bool spritesFlipped;
         private readonly Dictionary<int, Image> flippedSprites = new Dictionary<int, Image>();
         private Timer followFallback;
@@ -91,6 +96,7 @@ namespace Cuy
                     spritesFlipped = !spritesFlipped;
                 }
                 IsTossing = false;
+                ReportTossPerf();
                 SetNewAnimation(step.Soft ? Animations.AnimationFallSoft : Animations.AnimationFallHard);
                 pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[0]);
                 SyncFollowHook();
@@ -216,6 +222,38 @@ namespace Cuy
         }
 
         private void MotionTimer_Tick(object sender, EventArgs e)
+        {
+            if (!perfEnabled) { MotionTimerStep(); return; }
+            double start = motionClock.Elapsed.TotalMilliseconds;
+            if (perfLastTickAt >= 0 && start - perfLastTickAt > 20) perfSlowGaps++;
+            perfLastTickAt = start;
+            MotionTimerStep();
+            perfTickMs[perfIndex] = motionClock.Elapsed.TotalMilliseconds - start;
+            perfIndex = (perfIndex + 1) % perfTickMs.Length;
+            if (perfCount < perfTickMs.Length) perfCount++;
+        }
+
+        // D0.2: frame-time diagnostics. Only active with CUY_PERF=1; the tick path stays allocation-free.
+        private void ResetTossPerf()
+        {
+            perfCount = 0; perfIndex = 0; perfSlowGaps = 0; perfLastTickAt = -1;
+        }
+
+        private void ReportTossPerf()
+        {
+            if (!perfEnabled || perfCount == 0) return;
+            double[] sorted = new double[perfCount];
+            Array.Copy(perfTickMs, sorted, perfCount);
+            Array.Sort(sorted);
+            double sum = 0;
+            foreach (double ms in sorted) sum += ms;
+            double p95 = sorted[(int)Math.Ceiling(sorted.Length * 0.95) - 1];
+            BrainController.Log(string.Format(CultureInfo.InvariantCulture,
+                "[PERF] toss-perf ticks={0} min={1:F2} avg={2:F2} p95={3:F2} max={4:F2} gaps>20ms={5} (ms)",
+                sorted.Length, sorted[0], sum / sorted.Length, p95, sorted[sorted.Length - 1], perfSlowGaps));
+        }
+
+        private void MotionTimerStep()
         {
             if (IsDisposed || Disposing) { SetMotionTimer(false); return; }
             double now = motionClock.Elapsed.TotalMilliseconds;

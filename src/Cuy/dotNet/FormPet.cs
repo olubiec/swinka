@@ -1954,6 +1954,7 @@ namespace Cuy
                         SetNewAnimation(Animations.AnimationToss);
 
                     IsTossing = true;
+                    ResetTossPerf();
 
                     // Init vertical toss velocity
                     tossVertVel = TossForce.Y;
