@@ -671,7 +671,10 @@
   root.MinigryPig = MinigryPig;
 
   // Load games.json and append minigame scripts
-  const gamesJsonUrl = 'minigames/games.json';
+  // Resolve against this script's own URL: it is loaded both from web/home/index.html and from minigames/index.html.
+  const apiUrl = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src)
+    || 'minigames/minigames-api.js';
+  const gamesJsonUrl = new URL('games.json', apiUrl).href;
 
   fetch(gamesJsonUrl)
     .then(res => {
@@ -682,7 +685,7 @@
       for (const file of files) {
         await new Promise((resolve) => {
           const script = document.createElement('script');
-          script.src = `minigames/${file}`;
+          script.src = new URL(file, apiUrl).href;
           script.onload = resolve;
           script.onerror = () => {
             console.warn(`[Minigames] Failed to load ${file}`);
