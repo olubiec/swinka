@@ -1,4 +1,4 @@
-/* C2/C3/UI-2: --icon-count = 278 */
+/* C2/C3/UI-2/M4: --icon-count = 316 */
 .icon-sofa-cosy { --i: 174; }
 .icon-armchair { --i: 175; }
 .icon-bookshelf { --i: 176; }
@@ -103,3 +103,41 @@
 .icon-x-music-off { --i: 275; }
 .icon-x-dot-full { --i: 276; }
 .icon-m-games { --i: 277; }
+.icon-m-player-turntable { --i: 278; }
+.icon-m-player-portable { --i: 279; }
+.icon-m-player-gramophone { --i: 280; }
+.icon-m-player-cassette { --i: 281; }
+.icon-m-player-jukebox { --i: 282; }
+.icon-m-player-boombox { --i: 283; }
+.icon-x-next { --i: 284; }
+.icon-x-prev { --i: 285; }
+.icon-x-shuffle { --i: 286; }
+.icon-x-volume { --i: 287; }
+.icon-x-repeat { --i: 288; }
+.icon-x-scratch { --i: 289; }
+.icon-x-dance { --i: 290; }
+.icon-x-radio { --i: 291; }
+.icon-rec-s1-poranek { --i: 292; }
+.icon-rec-s1-marchewka { --i: 293; }
+.icon-rec-s1-deszcz { --i: 294; }
+.icon-rec-s1-kubek { --i: 295; }
+.icon-rec-s1-nocna { --i: 296; }
+.icon-rec-s1-cichy { --i: 297; }
+.icon-rec-s2-rosa { --i: 298; }
+.icon-rec-s2-pietruszka { --i: 299; }
+.icon-rec-s2-pszczoly { --i: 300; }
+.icon-rec-s2-wiatr { --i: 301; }
+.icon-rec-s2-dynia { --i: 302; }
+.icon-rec-s2-jablka { --i: 303; }
+.icon-rec-s3-ksiezyc { --i: 304; }
+.icon-rec-s3-swietliki { --i: 305; }
+.icon-rec-s3-sowa { --i: 306; }
+.icon-rec-s3-kolysanka { --i: 307; }
+.icon-rec-s3-tupot { --i: 308; }
+.icon-rec-s3-sen { --i: 309; }
+.icon-rec-s4-disco { --i: 310; }
+.icon-rec-s4-synth { --i: 311; }
+.icon-rec-s4-kaseta { --i: 312; }
+.icon-rec-s4-radio { --i: 313; }
+.icon-rec-s4-arcade { --i: 314; }
+.icon-rec-s4-taniec { --i: 315; }

@@ -69,5 +69,32 @@ Generatory: `tools/art/world/player_*.py`, `records.py`; lint R1-R7, `check-asse
 
 ## 8. Status
 - M1 GOTOWE: 6 odtwarzaczy (`tools/art/world/players_m1.py`, `assets/world/house/player_*.png` + `_on`, źródła światła w `lights.json`, album `docs/album/przebudowa/m1_odtwarzacze.png`).
-- M2 GOTOWE (v2, przerobione 5.11 po uwadze o zbyt prostym stylu): 12 płyt serii 1-2 x 5 stanów, dysk 16x16 (`assets/records/<id>_<stan>.png`): obręcz ze światłem, rowki, błysk, 8 rodzajów winylu (bursztyn, bordo, plamki, miód...), etykiety ze wzorami; rękawy z kartonu 24x24 (`assets/records/sleeve/`) z taśmą, ręcznym napisem i łapką, `assets/records/manifest.json`, generator `tools/art/world/records_m2.py`, album `docs/album/przebudowa/m2_plyty.png`.
-- M3-M4: do zrobienia (serie 3-4, album, UI).
+- M2 GOTOWE (v2): 12 płyt serii 1-2 x 5 stanów, dysk 16x16, rękawy z kartonu 24x24 (`records_m2.py`, `docs/album/przebudowa/m2_plyty.png`).
+- M3 GOTOWE (5.11.2026): serie 3-4 (12 płyt x 5 stanów + rękawy), ramki rzadkości `frame_common/rare/unique.png` 28x28 (drewno / mosiądz / berry), pusty slot `sleeve_empty.png`, `manifest.json` v3 dla wszystkich 24 płyt (`tools/art/world/records_m3.py`, `docs/album/przebudowa/m3_plyty.png`). Unikaty: `s4_disco`, `s4_taniec`; rzadkie: `s1_nocna`, `s2_pszczoly`, `s3_swietliki`, `s4_synth`, `s4_kaseta`.
+- M4 GOTOWE (5.11.2026): 38 nowych ikon (indeksy 278-315, `icons_music.py`): 6 `m_player_*`, 8 sterowania (`x_prev`, `x_next`, `x_shuffle`, `x_volume`, `x_repeat`, `x_scratch`, `x_dance`, `x_radio`; play/pause to istniejące `play`/`pause`), 24 `rec_<id>`; elementy UI w `assets/ui/` (`mp_panel`, `mp_display`, `mp_btn(+_pressed)`, `mp_knob`, `mp_thumb`, `shelf_plank`, `badge_wear_*`; wpisy w `ui.json`), efekty w `assets/fx/` (`fx_notes.png` 8 nutek 8x8, `fx_vu.png` 4 klatki, `fx_record_reveal.png` 6 klatek 32x32), podgląd ekranów `docs/ui/music_preview.png` (`music_ui_m4.py`). `--icon-count` ma być **316**.
+- Notatki projektowe dla programisty: `assets/records/players_design.json`, `docs/PRZEKAZANIE_ODTWARZACZE.md`.
+
+## 9. Cel i działanie odtwarzaczy (jak mają działać)
+1. **Cel.** Muzyka jest dodatkową pętlą: zbieranie płyt (kolekcja 24 szt.), urządzanie domu i ogrodu odtwarzaczami, nastrój i taniec świnek. Nie jest wymagana do przetrwania, to nagroda i klimat.
+2. **Odtwarzacz = radio w miejscu.** Stoi w pokoju lub na zewnątrz (przenośny, boombox, fonograf), gra jedną płytę naraz, własny zasięg w kratkach. Dwa odtwarzacze obok siebie: gra głośniejszy, drugi cichnie (bez miksowania).
+3. **Wspólna kolekcja.** Każda płyta gra w każdym odtwarzaczu, odtwarzacz zmienia tylko brzmienie (filtr: ciepły, radiowy, mono, kaseta, bas), zasięg, bonus i animację.
+4. **Sterowanie.** Mini-odtwarzacz (panel `mp_panel`): okładka, tytuł w `mp_display`, pasek postępu z `mp_thumb`, przyciski prev / play-pause / next / shuffle / repeat, gałka głośności. Zasięg i włączenie z menu przedmiotu. Scratch: przeciągnięcie płyty na talerzu (`x_scratch`), tylko efekt.
+5. **Półka i album.** Półka (`shelf_plank`, `slot`) pokazuje posiadane płyty ze znaczkiem stanu (`badge_wear_*`). Album ma 4 strony po 6 płyt, ramka wg rzadkości, puste miejsca jako cień z "?", licznik "n/24".
+6. **Stan płyty** (mint/worn/scratched/cracked/warped) to stała cecha egzemplarza: wpływa tylko na dźwięk (trzaski, falowanie tonu) i cenę.
+7. **Zdobycie płyty** (`fx_record_reveal`): rękaw wsuwa się, płyta wysuwa, błysk.
+8. **Bonusy.** Muzyka w zasięgu podnosi nastrój świnek wolno i z dziennym limitem (żeby nie zastąpiła zabawy i pielęgnacji).
+
+## 10. Ekonomia (DO DOPRACOWANIA)
+Wartości w `assets/records/players_design.json` są tylko punktem wyjścia, wymagają przeliczenia z tempem zarobków koniczyn w grze.
+- Start: gramofon drewniany + 1 płyta (`s1_poranek`, mint).
+- Ceny orientacyjne odtwarzaczy: przenośny 120, fonograf 300, magnetofon 450, boombox 700, szafa grająca 1200.
+- Płyty: zwykła 40, rzadka 150, unikat 500 (tylko wydarzenia/rzadkie nagrody). Mnożnik ceny wg stanu: mint 1.0, worn 0.7, scratched 0.6, cracked 0.5, warped 0.6.
+- Źródła: sklep z rotacyjną ofertą (kilka płyt dziennie), prezenty i odznaki, wydarzenia. Dublet można sprzedać (40%).
+- Pytania otwarte: tempo zarobków vs kolekcja (tygodnie, nie godziny); limit odtwarzaczy lub koszt utrzymania; dzienny limit bonusu nastroju; plus dla uszkodzonych płyt jako kolekcjonerski smaczek; liczenie dubletów w albumie. Przed wdrożeniem trzeba przejść ekonomię z projektantem gry (ceny, rotacja, nagrody), nie wdrażać tych liczb bez przeglądu.
+
+## 11. Świnki tańczą do muzyki
+- **Warunek:** odtwarzacz włączony, świnka w zasięgu, nie śpi i nie je. Szansa zależy od cechy: `trait_popcorning` tańczy często, `trait_sleepyhead` tylko kołysze się, `trait_skittish` ignoruje głośną muzykę.
+- **Bez nowych arkuszy:** taniec składa kod z istniejących animacji: **popcorn** i **obrót** (jak triki `trick_popcorn`, `trick_spin`) oraz kołysanie (przesunięcie ±1 px w rytm BPM). Tempo z serii płyty: Siano & lofi i Nocne zabawy wolne (kołysanie), Ogród średnie (obrót), Retro 70-90 szybkie (popcorn).
+- **Efekty (gotowe):** nutki `assets/fx/fx_notes.png` (8 klatek: 4 kolory x 2 wychylenia) unoszą się nad świnką co kilka uderzeń, `fx_vu.png` na urządzeniach z miernikiem, światło odtwarzacza już jest (`lights.json`).
+- **Szczególne:** płyta `s4_taniec` (unikat) wprawia w taniec wszystkie świnki w pokoju, `s4_disco` dodaje błyski kuli.
+- **Opcjonalnie (nie zrobione):** własne klatki tańca dla ras (kolejna fala V, ponowny eksport ok. 25 arkuszy, jak wąsy kędzierzawe), jeśli popcorn i obrót okażą się za mało.

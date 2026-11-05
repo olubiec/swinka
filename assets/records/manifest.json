@@ -1,12 +1,15 @@
 {
- "version": 2,
- "note": "plyty serii 1-2 (dysk 16x16, rekaw 24x24); stany: mint/worn/scratched/cracked/warped; utwory i cena dostarcza kod/dane",
+ "version": 3,
+ "note": "24 plyty w 4 seriach po 6. Dysk 16x16, rekaw 24x24, ramka albumu 28x28 (frame_<rzadkosc>.png: wood=common, mosiadz=rare, berry=unique), sleeve_empty.png = pusty slot (cien). Stan uszkodzenia (mint/worn/scratched/cracked/warped) jest STALA cecha egzemplarza, nie rosnie od grania. Pola 'tracks', cena i dzwieki dostarcza kod/agent audio (patrz docs/PRZEKAZANIE_ODTWARZACZE.md). Ekonomia do dopracowania.",
  "records": [
   {
    "id": "s1_poranek",
    "series": 1,
+   "series_name": "Siano & lofi",
    "name": "Poranek w sianie",
+   "rarity": "common",
    "sleeve": "sleeve/s1_poranek.png",
+   "icon": "rec_s1_poranek",
    "states": {
     "mint": "s1_poranek_mint.png",
     "worn": "s1_poranek_worn.png",
@@ -14,14 +17,16 @@
     "cracked": "s1_poranek_cracked.png",
     "warped": "s1_poranek_warped.png"
    },
-   "rarity": "common",
    "tracks": 0
   },
   {
    "id": "s1_marchewka",
    "series": 1,
+   "series_name": "Siano & lofi",
    "name": "Marchewkowy beat",
+   "rarity": "common",
    "sleeve": "sleeve/s1_marchewka.png",
+   "icon": "rec_s1_marchewka",
    "states": {
     "mint": "s1_marchewka_mint.png",
     "worn": "s1_marchewka_worn.png",
@@ -29,14 +34,16 @@
     "cracked": "s1_marchewka_cracked.png",
     "warped": "s1_marchewka_warped.png"
    },
-   "rarity": "common",
    "tracks": 0
   },
   {
    "id": "s1_deszcz",
    "series": 1,
+   "series_name": "Siano & lofi",
    "name": "Deszcz na dachu",
+   "rarity": "common",
    "sleeve": "sleeve/s1_deszcz.png",
+   "icon": "rec_s1_deszcz",
    "states": {
     "mint": "s1_deszcz_mint.png",
     "worn": "s1_deszcz_worn.png",
@@ -44,14 +51,16 @@
     "cracked": "s1_deszcz_cracked.png",
     "warped": "s1_deszcz_warped.png"
    },
-   "rarity": "common",
    "tracks": 0
   },
   {
    "id": "s1_kubek",
    "series": 1,
+   "series_name": "Siano & lofi",
    "name": "Kubek z para",
+   "rarity": "common",
    "sleeve": "sleeve/s1_kubek.png",
+   "icon": "rec_s1_kubek",
    "states": {
     "mint": "s1_kubek_mint.png",
     "worn": "s1_kubek_worn.png",
@@ -59,14 +68,16 @@
     "cracked": "s1_kubek_cracked.png",
     "warped": "s1_kubek_warped.png"
    },
-   "rarity": "common",
    "tracks": 0
   },
   {
    "id": "s1_nocna",
    "series": 1,
+   "series_name": "Siano & lofi",
    "name": "Nocna sciezka",
+   "rarity": "rare",
    "sleeve": "sleeve/s1_nocna.png",
+   "icon": "rec_s1_nocna",
    "states": {
     "mint": "s1_nocna_mint.png",
     "worn": "s1_nocna_worn.png",
@@ -74,14 +85,16 @@
     "cracked": "s1_nocna_cracked.png",
     "warped": "s1_nocna_warped.png"
    },
-   "rarity": "rare",
    "tracks": 0
   },
   {
    "id": "s1_cichy",
    "series": 1,
+   "series_name": "Siano & lofi",
    "name": "Cichy kat",
+   "rarity": "common",
    "sleeve": "sleeve/s1_cichy.png",
+   "icon": "rec_s1_cichy",
    "states": {
     "mint": "s1_cichy_mint.png",
     "worn": "s1_cichy_worn.png",
@@ -89,14 +102,16 @@
     "cracked": "s1_cichy_cracked.png",
     "warped": "s1_cichy_warped.png"
    },
-   "rarity": "common",
    "tracks": 0
   },
   {
    "id": "s2_rosa",
    "series": 2,
+   "series_name": "Ogrod",
    "name": "Rosa",
+   "rarity": "common",
    "sleeve": "sleeve/s2_rosa.png",
+   "icon": "rec_s2_rosa",
    "states": {
     "mint": "s2_rosa_mint.png",
     "worn": "s2_rosa_worn.png",
@@ -104,14 +119,16 @@
     "cracked": "s2_rosa_cracked.png",
     "warped": "s2_rosa_warped.png"
    },
-   "rarity": "common",
    "tracks": 0
   },
   {
    "id": "s2_pietruszka",
    "series": 2,
+   "series_name": "Ogrod",
    "name": "Pietruszka funk",
+   "rarity": "common",
    "sleeve": "sleeve/s2_pietruszka.png",
+   "icon": "rec_s2_pietruszka",
    "states": {
     "mint": "s2_pietruszka_mint.png",
     "worn": "s2_pietruszka_worn.png",
@@ -119,14 +136,16 @@
     "cracked": "s2_pietruszka_cracked.png",
     "warped": "s2_pietruszka_warped.png"
    },
-   "rarity": "common",
    "tracks": 0
   },
   {
    "id": "s2_pszczoly",
    "series": 2,
+   "series_name": "Ogrod",
    "name": "Pszczoly",
+   "rarity": "rare",
    "sleeve": "sleeve/s2_pszczoly.png",
+   "icon": "rec_s2_pszczoly",
    "states": {
     "mint": "s2_pszczoly_mint.png",
     "worn": "s2_pszczoly_worn.png",
@@ -134,14 +153,16 @@
     "cracked": "s2_pszczoly_cracked.png",
     "warped": "s2_pszczoly_warped.png"
    },
-   "rarity": "rare",
    "tracks": 0
   },
   {
    "id": "s2_wiatr",
    "series": 2,
+   "series_name": "Ogrod",
    "name": "Wiatr w trawie",
+   "rarity": "common",
    "sleeve": "sleeve/s2_wiatr.png",
+   "icon": "rec_s2_wiatr",
    "states": {
     "mint": "s2_wiatr_mint.png",
     "worn": "s2_wiatr_worn.png",
@@ -149,14 +170,16 @@
     "cracked": "s2_wiatr_cracked.png",
     "warped": "s2_wiatr_warped.png"
    },
-   "rarity": "common",
    "tracks": 0
   },
   {
    "id": "s2_dynia",
    "series": 2,
+   "series_name": "Ogrod",
    "name": "Dynia",
+   "rarity": "common",
    "sleeve": "sleeve/s2_dynia.png",
+   "icon": "rec_s2_dynia",
    "states": {
     "mint": "s2_dynia_mint.png",
     "worn": "s2_dynia_worn.png",
@@ -164,14 +187,16 @@
     "cracked": "s2_dynia_cracked.png",
     "warped": "s2_dynia_warped.png"
    },
-   "rarity": "common",
    "tracks": 0
   },
   {
    "id": "s2_jablka",
    "series": 2,
+   "series_name": "Ogrod",
    "name": "Zimowe jablka",
+   "rarity": "common",
    "sleeve": "sleeve/s2_jablka.png",
+   "icon": "rec_s2_jablka",
    "states": {
     "mint": "s2_jablka_mint.png",
     "worn": "s2_jablka_worn.png",
@@ -179,7 +204,210 @@
     "cracked": "s2_jablka_cracked.png",
     "warped": "s2_jablka_warped.png"
    },
+   "tracks": 0
+  },
+  {
+   "id": "s3_ksiezyc",
+   "series": 3,
+   "series_name": "Nocne zabawy",
+   "name": "Ksiezyc",
    "rarity": "common",
+   "sleeve": "sleeve/s3_ksiezyc.png",
+   "icon": "rec_s3_ksiezyc",
+   "states": {
+    "mint": "s3_ksiezyc_mint.png",
+    "worn": "s3_ksiezyc_worn.png",
+    "scratched": "s3_ksiezyc_scratched.png",
+    "cracked": "s3_ksiezyc_cracked.png",
+    "warped": "s3_ksiezyc_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s3_swietliki",
+   "series": 3,
+   "series_name": "Nocne zabawy",
+   "name": "Swietliki",
+   "rarity": "rare",
+   "sleeve": "sleeve/s3_swietliki.png",
+   "icon": "rec_s3_swietliki",
+   "states": {
+    "mint": "s3_swietliki_mint.png",
+    "worn": "s3_swietliki_worn.png",
+    "scratched": "s3_swietliki_scratched.png",
+    "cracked": "s3_swietliki_cracked.png",
+    "warped": "s3_swietliki_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s3_sowa",
+   "series": 3,
+   "series_name": "Nocne zabawy",
+   "name": "Sowa",
+   "rarity": "common",
+   "sleeve": "sleeve/s3_sowa.png",
+   "icon": "rec_s3_sowa",
+   "states": {
+    "mint": "s3_sowa_mint.png",
+    "worn": "s3_sowa_worn.png",
+    "scratched": "s3_sowa_scratched.png",
+    "cracked": "s3_sowa_cracked.png",
+    "warped": "s3_sowa_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s3_kolysanka",
+   "series": 3,
+   "series_name": "Nocne zabawy",
+   "name": "Kolysanka",
+   "rarity": "common",
+   "sleeve": "sleeve/s3_kolysanka.png",
+   "icon": "rec_s3_kolysanka",
+   "states": {
+    "mint": "s3_kolysanka_mint.png",
+    "worn": "s3_kolysanka_worn.png",
+    "scratched": "s3_kolysanka_scratched.png",
+    "cracked": "s3_kolysanka_cracked.png",
+    "warped": "s3_kolysanka_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s3_tupot",
+   "series": 3,
+   "series_name": "Nocne zabawy",
+   "name": "Cichy tupot",
+   "rarity": "common",
+   "sleeve": "sleeve/s3_tupot.png",
+   "icon": "rec_s3_tupot",
+   "states": {
+    "mint": "s3_tupot_mint.png",
+    "worn": "s3_tupot_worn.png",
+    "scratched": "s3_tupot_scratched.png",
+    "cracked": "s3_tupot_cracked.png",
+    "warped": "s3_tupot_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s3_sen",
+   "series": 3,
+   "series_name": "Nocne zabawy",
+   "name": "Sen o sianie",
+   "rarity": "common",
+   "sleeve": "sleeve/s3_sen.png",
+   "icon": "rec_s3_sen",
+   "states": {
+    "mint": "s3_sen_mint.png",
+    "worn": "s3_sen_worn.png",
+    "scratched": "s3_sen_scratched.png",
+    "cracked": "s3_sen_cracked.png",
+    "warped": "s3_sen_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s4_disco",
+   "series": 4,
+   "series_name": "Retro 70-90",
+   "name": "Disco gryzon",
+   "rarity": "unique",
+   "sleeve": "sleeve/s4_disco.png",
+   "icon": "rec_s4_disco",
+   "states": {
+    "mint": "s4_disco_mint.png",
+    "worn": "s4_disco_worn.png",
+    "scratched": "s4_disco_scratched.png",
+    "cracked": "s4_disco_cracked.png",
+    "warped": "s4_disco_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s4_synth",
+   "series": 4,
+   "series_name": "Retro 70-90",
+   "name": "Synth fala",
+   "rarity": "rare",
+   "sleeve": "sleeve/s4_synth.png",
+   "icon": "rec_s4_synth",
+   "states": {
+    "mint": "s4_synth_mint.png",
+    "worn": "s4_synth_worn.png",
+    "scratched": "s4_synth_scratched.png",
+    "cracked": "s4_synth_cracked.png",
+    "warped": "s4_synth_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s4_kaseta",
+   "series": 4,
+   "series_name": "Retro 70-90",
+   "name": "Kaseta mixtape",
+   "rarity": "rare",
+   "sleeve": "sleeve/s4_kaseta.png",
+   "icon": "rec_s4_kaseta",
+   "states": {
+    "mint": "s4_kaseta_mint.png",
+    "worn": "s4_kaseta_worn.png",
+    "scratched": "s4_kaseta_scratched.png",
+    "cracked": "s4_kaseta_cracked.png",
+    "warped": "s4_kaseta_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s4_radio",
+   "series": 4,
+   "series_name": "Retro 70-90",
+   "name": "Radio FM",
+   "rarity": "common",
+   "sleeve": "sleeve/s4_radio.png",
+   "icon": "rec_s4_radio",
+   "states": {
+    "mint": "s4_radio_mint.png",
+    "worn": "s4_radio_worn.png",
+    "scratched": "s4_radio_scratched.png",
+    "cracked": "s4_radio_cracked.png",
+    "warped": "s4_radio_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s4_arcade",
+   "series": 4,
+   "series_name": "Retro 70-90",
+   "name": "Arcade",
+   "rarity": "common",
+   "sleeve": "sleeve/s4_arcade.png",
+   "icon": "rec_s4_arcade",
+   "states": {
+    "mint": "s4_arcade_mint.png",
+    "worn": "s4_arcade_worn.png",
+    "scratched": "s4_arcade_scratched.png",
+    "cracked": "s4_arcade_cracked.png",
+    "warped": "s4_arcade_warped.png"
+   },
+   "tracks": 0
+  },
+  {
+   "id": "s4_taniec",
+   "series": 4,
+   "series_name": "Retro 70-90",
+   "name": "Taniec w klatce",
+   "rarity": "unique",
+   "sleeve": "sleeve/s4_taniec.png",
+   "icon": "rec_s4_taniec",
+   "states": {
+    "mint": "s4_taniec_mint.png",
+    "worn": "s4_taniec_worn.png",
+    "scratched": "s4_taniec_scratched.png",
+    "cracked": "s4_taniec_cracked.png",
+    "warped": "s4_taniec_warped.png"
+   },
    "tracks": 0
   }
  ]

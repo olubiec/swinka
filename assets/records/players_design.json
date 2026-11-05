@@ -1,0 +1,34 @@
+{
+  "note": "NOTATKI PROJEKTOWE (nie dane gry): cel, dzialanie i wstepna ekonomia odtwarzaczy. Ceny i liczby sa ORIENTACYJNE i wymagaja dopracowania ekonomii przez programiste/projektanta (patrz docs/PRZEKAZANIE_ODTWARZACZE.md i docs/PLAN_ODTWARZACZ.md sekcje 9-11). Waluta: koniczyny.",
+  "purpose": "Odtwarzacz to przedmiot-radio w pokoju lub na zewnatrz. Gra plyty z kolekcji gracza, poprawia nastroj swinek w poblizu, wywoluje taniec, dodaje klimat (swiatlo, nutki). Plyty sa kolekcjonerskie (24 sztuki, 4 serie) i kazda ma wlasne utwory oraz dzwieki (robi je osobny agent audio).",
+  "rules": [
+    "Kazda plyta gra w kazdym odtwarzaczu (jedna kolekcja); odtwarzacz zmienia tylko brzmienie (filtr), zasieg, animacje i bonus.",
+    "Uszkodzenie plyty (mint/worn/scratched/cracked/warped) to stala cecha egzemplarza, nie rosnie od grania. Wplywa tylko na dzwiek (trzaski, wow) i cene.",
+    "Scratch = efekt: przeciagniecie talerza daje dzwiek i animacje, bez minigry i bez nagrody.",
+    "Odtwarzacze dzialaja jak radio: stoja w roznych pokojach/miejscach swiata, kazdy gra niezaleznie (wlasna plyta), moga byc wylaczone.",
+    "Swinki w zasiegu tancza (patrz sekcja Taniec w docs/PLAN_ODTWARZACZ.md), jesli nie spia i nie jedza."
+  ],
+  "players": {
+    "player_turntable": {"name": "Wooden turntable", "role": "start, gramofon 70s", "start_owned": true, "price_hint": 0, "range_cells": 5, "sound": "cieply, trzaski winylu, scratch", "mood_bonus": 1.0, "dance_style": "kolysanie"},
+    "player_portable": {"name": "Suitcase record player", "role": "przenosny, mozna postawic w ogrodzie/parku", "price_hint": 120, "range_cells": 4, "sound": "cichszy, filtr radiowy", "mood_bonus": 0.8, "dance_style": "kolysanie"},
+    "player_gramophone": {"name": "Horn gramophone", "role": "dekoracyjny, retro 1920", "price_hint": 300, "range_cells": 5, "sound": "mono, szum, wolny start", "mood_bonus": 1.0, "dance_style": "obrot"},
+    "player_cassette": {"name": "Cassette deck", "role": "80s, wow/flutter, przewijanie", "price_hint": 450, "range_cells": 5, "sound": "kaseta, lekkie falowanie", "mood_bonus": 1.1, "dance_style": "popcorn"},
+    "player_boombox": {"name": "Boombox", "role": "glosny, bas, EQ w rytm", "price_hint": 700, "range_cells": 7, "sound": "bas, glosny", "mood_bonus": 1.3, "dance_style": "popcorn", "light": true},
+    "player_jukebox": {"name": "Jukebox", "role": "szafa, kolejka plyt, swiatlo, najwiekszy zasieg", "price_hint": 1200, "range_cells": 8, "sound": "pelny, glosny", "mood_bonus": 1.5, "dance_style": "wszystkie", "light": true}
+  },
+  "economy_draft": {
+    "status": "DO DOPRACOWANIA",
+    "start": "gracz dostaje turntable + plyte s1_poranek (mint)",
+    "record_price_hint": {"common": 40, "rare": 150, "unique": 500},
+    "state_price_multiplier": {"mint": 1.0, "worn": 0.7, "scratched": 0.6, "cracked": 0.5, "warped": 0.6},
+    "sources": ["sklep (rotacyjna oferta kilku plyt dziennie)", "prezenty i odznaki (rzadkie)", "wydarzenia sezonowe (unikaty s4_disco, s4_taniec)"],
+    "sell_back": "40% ceny, dublet mozna sprzedac",
+    "open_questions": [
+      "tempo zarobkow w koniczynach vs ceny (czy kolekcja 24 plyt zajmuje tygodnie, a nie godziny)",
+      "limit liczby odtwarzaczy naraz / czy dzialaja bez pradu (koszt utrzymania?)",
+      "dzienny limit bonusu nastroju z muzyki, zeby nie bylo trywialnym lekarstwem na potrzeby",
+      "czy uszkodzone plyty maja jakis plus (np. szansa na unikalny trzask jako kolekcjonerski smaczek)",
+      "czy dublet tej samej plyty w innym stanie liczy sie do albumu (zaproponowane: tak, album pokazuje najlepszy stan)"
+    ]
+  }
+}

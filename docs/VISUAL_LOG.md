@@ -220,3 +220,6 @@ Audyt ekranów (zrzuty Playwright), 27 nowych elementów 9-slice (`ui_kit.py`), 
 
 ## UI-3 / M2 v2 (5.11.2026): przeglad jakosci
 Uwaga wlasciciela: plyty i czesc ikon menu zbyt proste. Audyt wg legendy (test sztampy, material, odblask, detal reczny): plyty M2 v1 = ta sama tarcza w innym kolorze, wiec przerobione (`records_m2.py`): obrecz, rowki, blysk, rodzaje winylu, etykiety, uszkodzenia widoczne, rekaw z kartonu z tasma hay[2] i napisem. Ikony `icons_ui2.py` (podmiana slotow, indeksy bez zmian): m_more (wiszacy szyld), m_call, m_clean, m_games (klebek welny), x_close (patyki z wiazaniem), x_plus, x_minus, x_menu, x_chevron_*.
+
+## M3 + M4 muzyka (5.11.2026)
+Serie 3-4 (12 płyt x 5 stanów, rękawy), ramki rzadkości, pusty slot, manifest v3 (24 płyty); 38 ikon (278-315: 6 odtwarzaczy, 8 sterowania, 24 płyt); elementy UI odtwarzacza (`mp_*`, `badge_wear_*`, `shelf_plank`), efekty `assets/fx/` (nutki, VU, odkrycie płyty), podgląd `docs/ui/music_preview.png`. Notatki o działaniu, ekonomii i tańcu: `docs/PLAN_ODTWARZACZ.md` §9-11, `docs/PRZEKAZANIE_ODTWARZACZE.md`, `assets/records/players_design.json`. Lint 0, ASSETS/ICONS/LIGHTS OK. Generatory: `records_m3.py`, `icons_music.py`, `music_ui_m4.py`.

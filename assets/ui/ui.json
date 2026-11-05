@@ -468,6 +468,162 @@
     5,
     5
    ]
+  },
+  "mp_panel": {
+   "file": "ui/mp_panel.png",
+   "size": [
+    24,
+    24
+   ],
+   "slice": [
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "mp_display": {
+   "file": "ui/mp_display.png",
+   "size": [
+    16,
+    16
+   ],
+   "slice": [
+    5,
+    5,
+    5,
+    5
+   ]
+  },
+  "mp_btn": {
+   "file": "ui/mp_btn.png",
+   "size": [
+    20,
+    20
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "mp_btn_pressed": {
+   "file": "ui/mp_btn_pressed.png",
+   "size": [
+    20,
+    20
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "mp_knob": {
+   "file": "ui/mp_knob.png",
+   "size": [
+    16,
+    16
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "mp_thumb": {
+   "file": "ui/mp_thumb.png",
+   "size": [
+    8,
+    10
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "shelf_plank": {
+   "file": "ui/shelf_plank.png",
+   "size": [
+    16,
+    8
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "badge_wear_mint": {
+   "file": "ui/badge_wear_mint.png",
+   "size": [
+    8,
+    8
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "badge_wear_worn": {
+   "file": "ui/badge_wear_worn.png",
+   "size": [
+    8,
+    8
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "badge_wear_scratched": {
+   "file": "ui/badge_wear_scratched.png",
+   "size": [
+    8,
+    8
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "badge_wear_cracked": {
+   "file": "ui/badge_wear_cracked.png",
+   "size": [
+    8,
+    8
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "badge_wear_warped": {
+   "file": "ui/badge_wear_warped.png",
+   "size": [
+    8,
+    8
+   ],
+   "slice": [
+    0,
+    0,
+    0,
+    0
+   ]
   }
  }
 }
