@@ -374,6 +374,138 @@
     8,
     5
    ]
+  },
+  "player_turntable": {
+   "place": "indoor",
+   "color": [
+    1.0,
+    0.72,
+    0.4
+   ],
+   "radius_cells": 2.0,
+   "strength": 0.35,
+   "flicker": 0.04,
+   "toggle": true,
+   "note": "odtwarzacz-radio, miekka poswiata gdy gra",
+   "item": "player_turntable",
+   "file": "house/player_turntable.png",
+   "on_file": "house/player_turntable_on.png",
+   "frames": 4,
+   "fps": 4,
+   "glow": [
+    16,
+    8
+   ]
+  },
+  "player_portable": {
+   "place": "indoor",
+   "color": [
+    1.0,
+    0.72,
+    0.4
+   ],
+   "radius_cells": 2.0,
+   "strength": 0.3,
+   "flicker": 0.04,
+   "toggle": true,
+   "note": "odtwarzacz-radio, miekka poswiata gdy gra",
+   "item": "player_portable",
+   "file": "house/player_portable.png",
+   "on_file": "house/player_portable_on.png",
+   "frames": 4,
+   "fps": 4,
+   "glow": [
+    16,
+    8
+   ]
+  },
+  "player_gramophone": {
+   "place": "indoor",
+   "color": [
+    1.0,
+    0.75,
+    0.4
+   ],
+   "radius_cells": 2.0,
+   "strength": 0.3,
+   "flicker": 0.04,
+   "toggle": true,
+   "note": "odtwarzacz-radio, miekka poswiata gdy gra",
+   "item": "player_gramophone",
+   "file": "house/player_gramophone.png",
+   "on_file": "house/player_gramophone_on.png",
+   "frames": 4,
+   "fps": 4,
+   "glow": [
+    16,
+    16
+   ]
+  },
+  "player_cassette": {
+   "place": "indoor",
+   "color": [
+    1.0,
+    0.8,
+    0.5
+   ],
+   "radius_cells": 2.0,
+   "strength": 0.3,
+   "flicker": 0.04,
+   "toggle": true,
+   "note": "odtwarzacz-radio, miekka poswiata gdy gra",
+   "item": "player_cassette",
+   "file": "house/player_cassette.png",
+   "on_file": "house/player_cassette_on.png",
+   "frames": 4,
+   "fps": 4,
+   "glow": [
+    16,
+    8
+   ]
+  },
+  "player_jukebox": {
+   "place": "indoor",
+   "color": [
+    1.0,
+    0.5,
+    0.3
+   ],
+   "radius_cells": 4.0,
+   "strength": 0.9,
+   "flicker": 0.04,
+   "toggle": true,
+   "note": "odtwarzacz-radio, miekka poswiata gdy gra",
+   "item": "player_jukebox",
+   "file": "house/player_jukebox.png",
+   "on_file": "house/player_jukebox_on.png",
+   "frames": 4,
+   "fps": 4,
+   "glow": [
+    16,
+    16
+   ]
+  },
+  "player_boombox": {
+   "place": "indoor",
+   "color": [
+    0.9,
+    0.9,
+    0.5
+   ],
+   "radius_cells": 3.0,
+   "strength": 0.5,
+   "flicker": 0.04,
+   "toggle": true,
+   "note": "odtwarzacz-radio, miekka poswiata gdy gra",
+   "item": "player_boombox",
+   "file": "house/player_boombox.png",
+   "on_file": "house/player_boombox_on.png",
+   "frames": 4,
+   "fps": 4,
+   "glow": [
+    16,
+    8
+   ]
   }
  },
  "asset_per_source": {

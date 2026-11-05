@@ -1729,6 +1729,138 @@
     "frames": 1,
     "fps": 1
    }
+  },
+  "player_turntable": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/player_turntable.png",
+   "anchor": [
+    16,
+    16
+   ],
+   "light": {
+    "kind": "player_turntable",
+    "on_file": "house/player_turntable_on.png",
+    "frames": 4,
+    "fps": 4
+   }
+  },
+  "player_portable": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/player_portable.png",
+   "anchor": [
+    16,
+    16
+   ],
+   "light": {
+    "kind": "player_portable",
+    "on_file": "house/player_portable_on.png",
+    "frames": 4,
+    "fps": 4
+   }
+  },
+  "player_gramophone": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/player_gramophone.png",
+   "anchor": [
+    16,
+    32
+   ],
+   "light": {
+    "kind": "player_gramophone",
+    "on_file": "house/player_gramophone_on.png",
+    "frames": 4,
+    "fps": 4
+   }
+  },
+  "player_cassette": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/player_cassette.png",
+   "anchor": [
+    16,
+    16
+   ],
+   "light": {
+    "kind": "player_cassette",
+    "on_file": "house/player_cassette_on.png",
+    "frames": 4,
+    "fps": 4
+   }
+  },
+  "player_jukebox": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/player_jukebox.png",
+   "anchor": [
+    16,
+    32
+   ],
+   "light": {
+    "kind": "player_jukebox",
+    "on_file": "house/player_jukebox_on.png",
+    "frames": 4,
+    "fps": 4
+   }
+  },
+  "player_boombox": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/player_boombox.png",
+   "anchor": [
+    16,
+    16
+   ],
+   "light": {
+    "kind": "player_boombox",
+    "on_file": "house/player_boombox_on.png",
+    "frames": 4,
+    "fps": 4
+   }
   }
  }
 }

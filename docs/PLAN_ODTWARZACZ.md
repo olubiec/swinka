@@ -61,8 +61,12 @@ Generatory: `tools/art/world/player_*.py`, `records.py`; lint R1-R7, `check-asse
 - Audio: 36 zestawów (utwory + efekty), filtr per odtwarzacz, scratch (przeciąganie talerza), trzaski zależne od stanu płyty. Licencje w `assets/LICENSES`.
 - Sklep: nowe kategorie, `world_items.json` dla 6 odtwarzaczy.
 
-## 7. Decyzje do podjęcia
-1. Czy 36 płyt to dobry rozmiar, czy mniej na start (np. 18)?
-2. Czy uszkodzenie rośnie od używania (płyta się zużywa), czy jest stałą cechą kupionej płyty?
-3. Czy scratch ma być minigrą (rytm), czy tylko efektem dźwiękowym?
-4. Dźwięki: kto je dostarcza (własne, licencjonowane, generowane)?
+## 7. Decyzje (podjęte, 5.11.2026)
+1. **Rozmiar kolekcji: 24 płyty** (4 serie po 6: Siano & lofi, Ogród, Nocne zabawy, Retro 70-90; serie Kuchnia i Rarytasy odpadają, unikaty trafiają do serii 4). Reszta może dojść później.
+2. **Bez zużycia.** Uszkodzenie jest stałą cechą płyty (mint / worn / scratched / cracked / warped), nie rośnie od odtwarzania. Naprawa odpada.
+3. **Scratch = efekt**, nie minigra. Przeciągnięcie talerza daje dźwięk i animację.
+4. **Odtwarzacze działają jak radio**: stoją w różnych pokojach i miejscach świata, każdy gra własną płytę/stację. Dźwięki robi osobny agent, nie ja.
+
+## 8. Status
+- M1 GOTOWE: 6 odtwarzaczy (`tools/art/world/players_m1.py`, `assets/world/house/player_*.png` + `_on`, źródła światła w `lights.json`, album `docs/album/przebudowa/m1_odtwarzacze.png`).
+- M2-M4: do zrobienia (płyty, album, UI).
