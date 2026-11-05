@@ -190,6 +190,12 @@
         return img;
       };
       this.iconsImg = loadImage(assetsBase + 'icons/icons_16.png');
+      // Toy sprites from assets/props (2x files, drawn 1:1 in scene pixels). Icons stay as fallback until they load.
+      this.propImgs = {
+        ball: loadImage(assetsBase + 'props/ball_x2.png'),
+        tunnel: loadImage(assetsBase + 'props/tunnel_x2.png'),
+        house: loadImage(assetsBase + 'props/house_x2.png'),
+      };
     }
 
     // Mouse position -> scene coordinates. The canvas is drawn with object-fit: cover,
@@ -650,20 +656,24 @@
     drawToys(ctx) {
       if (!this.iconsImg || !this.iconsImg.naturalWidth) return;
       const f = 119; // floor y
+      const ready = (img) => img && img.naturalWidth > 0;
 
-      // house: icon 8, 3x (48px) - hide during house enter/exit animation because sprite contains the house
+      // house: 64x64 prop, bottom centre at x 66 - hidden during house enter/exit animation because sprite contains the house
       if (this.inventory.house && (!this.toyPlaying || !this.toyPlaying.startsWith('house'))) {
-        ctx.drawImage(this.iconsImg, 8 * 16, 0, 16, 16, 42, f - 48, 48, 48);
+        if (ready(this.propImgs.house)) ctx.drawImage(this.propImgs.house, 34, f - 64, 64, 64);
+        else ctx.drawImage(this.iconsImg, 8 * 16, 0, 16, 16, 42, f - 48, 48, 48);
       }
 
-      // tunnel: icon 7, 3x (48px) - hide during tunnel animation because sprite contains the tunnel
+      // tunnel: 64x32 prop on the right - hidden during tunnel animation because sprite contains the tunnel
       if (this.inventory.tunnel && (!this.toyPlaying || !this.toyPlaying.startsWith('tunnel'))) {
-        ctx.drawImage(this.iconsImg, 7 * 16, 0, 16, 16, this.sceneWidth - 8 - 48, f - 48, 48, 48);
+        if (ready(this.propImgs.tunnel)) ctx.drawImage(this.propImgs.tunnel, this.sceneWidth - 8 - 56, f - 32, 64, 32);
+        else ctx.drawImage(this.iconsImg, 7 * 16, 0, 16, 16, this.sceneWidth - 8 - 48, f - 48, 48, 48);
       }
 
-      // ball: icon 6, 2x (32px) - hide during ball push animation because sprite contains the pushed ball
+      // ball: 32x32 prop - hidden during ball push animation because sprite contains the pushed ball
       if (this.inventory.ball && this.toyPlaying !== 'ball') {
-        ctx.drawImage(this.iconsImg, 6 * 16, 0, 16, 16, this.ballX, f - 32, 32, 32);
+        if (ready(this.propImgs.ball)) ctx.drawImage(this.propImgs.ball, this.ballX, f - 32, 32, 32);
+        else ctx.drawImage(this.iconsImg, 6 * 16, 0, 16, 16, this.ballX, f - 32, 32, 32);
       }
     }
 
