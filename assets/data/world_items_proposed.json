@@ -1,0 +1,343 @@
+{
+ "note": "Propozycja C3: rozmiar z atlasu, place i layer zgadniete z folderu sprite'a. price i comfort (null) ustala czlowiek; potem dopisac do world_items.json.",
+ "items": [
+  {
+   "id": "fireplace",
+   "name": "Fireplace",
+   "place": [
+    "house"
+   ],
+   "w": 3,
+   "h": 3,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "fireplace"
+  },
+  {
+   "id": "lamp_mushroom",
+   "name": "Lamp mushroom",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 2,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "lamp_mushroom"
+  },
+  {
+   "id": "lamp_floor",
+   "name": "Lamp floor",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 2,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "lamp_floor"
+  },
+  {
+   "id": "lamp_arc",
+   "name": "Lamp arc",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 3,
+   "price": null,
+   "comfort": null,
+   "layer": "wall",
+   "icon": "lamp_arc"
+  },
+  {
+   "id": "lantern_paper",
+   "name": "Lantern paper",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "lantern_paper"
+  },
+  {
+   "id": "lamp_salt",
+   "name": "Lamp salt",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "lamp_salt"
+  },
+  {
+   "id": "lamp_lava",
+   "name": "Lamp lava",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 2,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "lamp_lava"
+  },
+  {
+   "id": "pouf_boucle",
+   "name": "Pouf boucle",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "pouf_boucle"
+  },
+  {
+   "id": "lace_curtain",
+   "name": "Lace curtain",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 2,
+   "price": null,
+   "comfort": null,
+   "layer": "wall",
+   "icon": "lace_curtain"
+  },
+  {
+   "id": "gramophone",
+   "name": "Gramophone",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "gramophone"
+  },
+  {
+   "id": "mug_steam",
+   "name": "Mug steam",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "mug_steam"
+  },
+  {
+   "id": "rug_fringed",
+   "name": "Rug fringed",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "rug_fringed"
+  },
+  {
+   "id": "blanket_folded",
+   "name": "Blanket folded",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "blanket_folded"
+  },
+  {
+   "id": "mirror_wavy",
+   "name": "Mirror wavy",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 2,
+   "price": null,
+   "comfort": null,
+   "layer": "wall",
+   "icon": "mirror_wavy"
+  },
+  {
+   "id": "frames_gallery",
+   "name": "Frames gallery",
+   "place": [
+    "house"
+   ],
+   "w": 2,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "wall",
+   "icon": "frames_gallery"
+  },
+  {
+   "id": "plant_pot",
+   "name": "Plant pot",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "plant_pot"
+  },
+  {
+   "id": "plant_shelf",
+   "name": "Plant shelf",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "wall",
+   "icon": "plant_shelf"
+  },
+  {
+   "id": "plant_trailing",
+   "name": "Plant trailing",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "plant_trailing"
+  },
+  {
+   "id": "memory_frame",
+   "name": "Memory frame",
+   "place": [
+    "house"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "wall",
+   "icon": "memory_frame"
+  },
+  {
+   "id": "willow_tunnel",
+   "name": "Willow tunnel",
+   "place": [
+    "garden"
+   ],
+   "w": 3,
+   "h": 2,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "willow_tunnel"
+  },
+  {
+   "id": "torch",
+   "name": "Torch",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 2,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "torch"
+  },
+  {
+   "id": "lamp_oil",
+   "name": "Lamp oil",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "lamp_oil"
+  },
+  {
+   "id": "brazier",
+   "name": "Brazier",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "brazier"
+  },
+  {
+   "id": "watering_can",
+   "name": "Watering can",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "watering_can"
+  },
+  {
+   "id": "hay_basket",
+   "name": "Hay basket",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "hay_basket"
+  },
+  {
+   "id": "stump_seat",
+   "name": "Stump seat",
+   "place": [
+    "garden"
+   ],
+   "w": 1,
+   "h": 1,
+   "price": null,
+   "comfort": null,
+   "layer": "floor",
+   "icon": "stump_seat"
+  }
+ ]
+}
