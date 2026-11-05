@@ -16,7 +16,11 @@ const server = http.createServer((q, r) => {
   const page = await b.newPage({ viewport: { width: 420, height: 640 } });
   const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
-  page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+  // features/<id>/mock.js is optional in mock mode (app.js loads it with onerror = () => {}), so its 404s are expected.
+  const optionalMock = u => /\/features\/[^/]+\/mock\.js$/.test(u);
+  page.on('console', m => { if (m.type() === 'error' && !(m.location().url && optionalMock(m.location().url)) && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
+  const badUrls = [];
+  page.on('response', r => { if (r.status() >= 400 && !optionalMock(r.url())) badUrls.push(r.status() + ' ' + r.url().replace(/^https?:\/\/[^/]+/, '')); });
   const t0 = Date.now();
   await page.goto(base + '/web/home/index.html?world=1');
   const samples = []; let clicks = 0, seed = 12345;
@@ -30,6 +34,6 @@ const server = http.createServer((q, r) => {
   }
   const first = samples[0] || {}, last = samples[samples.length - 1] || {};
   const timing = await page.evaluate(() => { const n = performance.getEntriesByType('navigation')[0]; return n ? Math.round(n.loadEventEnd) : -1; });
-  console.log(JSON.stringify({ seconds: secs, clicks, loadMs: timing, heapStartMB: +(first.heap / 1048576).toFixed(1), heapEndMB: +(last.heap / 1048576).toFixed(1), nodesStart: first.nodes, nodesEnd: last.nodes, errors: [...new Set(errors)].slice(0, 20), errorCount: errors.length }, null, 1));
+  console.log(JSON.stringify({ seconds: secs, clicks, loadMs: timing, heapStartMB: +(first.heap / 1048576).toFixed(1), heapEndMB: +(last.heap / 1048576).toFixed(1), nodesStart: first.nodes, nodesEnd: last.nodes, errors: [...new Set(errors)].slice(0, 20), errorCount: errors.length, badResponses: [...new Set(badUrls)].slice(0, 20) }, null, 1));
   await b.close(); server.close();
 })();
