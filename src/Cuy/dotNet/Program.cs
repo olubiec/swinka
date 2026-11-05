@@ -99,7 +99,7 @@ namespace Cuy
                     return (DateTime.UtcNow - last.ToUniversalTime()).TotalSeconds;
                 }
             }
-            catch (Exception) { }
+            catch (Exception e2) { BrainController.Log("[WARN] Could not read crash marker: " + e2.Message); }
             return double.MaxValue;
         }
 
@@ -117,7 +117,7 @@ namespace Cuy
                     Directory.CreateDirectory(Path.GetDirectoryName(CrashFile));
                     File.WriteAllText(CrashFile, DateTime.UtcNow.ToString("o"));
                 }
-                catch (Exception) { }
+                catch (Exception e2) { BrainController.Log("[WARN] Could not write crash marker: " + e2.Message); }
 
                 if (tooSoon)
                 {
@@ -126,7 +126,7 @@ namespace Cuy
                     return;
                 }
 
-                try { BrainController.Instance?.Close(); } catch (Exception) { }
+                try { BrainController.Instance?.Close(); } catch (Exception e2) { BrainController.Log("[WARN] Close during crash failed: " + e2.Message); }
                 MessageBox.Show("Cuy hit a snag and will restart.", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Application.Restart();
             }

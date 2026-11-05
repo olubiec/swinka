@@ -59,3 +59,14 @@ Data: 2026-11-05. Środowisko: Linux, Chromium 1243 przez `/opt/pw-browsers/chro
 ## Następne kroki
 
 Naprawy nie zostały wykonane (zakres był tylko testowy). Proponowany podział na pakiety: (a) walidacja zapisu, (b) focus i modale, (c) kontrast i reduced-motion, (d) komunikat offline i mock `setName`. Każdy pakiet to osobny commit po akceptacji.
+
+## Stan napraw (5.11.2026)
+
+Naprawione w web/home: walidacja zapisu mocka, `setName`, komunikat offline, focus w modalach, focus ring, kontrast, `prefers-reduced-motion`, rozmiar `mp_btn`, Escape w Rooms, etykiety godzin ciszy, globalny log błędów, `coloring` (kopia uszkodzonego zapisu zamiast cichego nadpisania).
+Naprawione w C# (bez kompilacji, wymaga `tools/build.ps1` na Windowsie): atomowy zapis `save.json` przy uszkodzonym pliku (`SaveSystem.cs`), logowanie w `catch` w `Program.cs`.
+
+Decyzje:
+- **Tryb dzień/noc w web/home: nie wdrażamy.** Okno Home to zamknięta konsola z grafiką na sprite'ach (420x640); pory dnia obsługuje oświetlenie świnki z `lights.json` i ogród. Ciemny motyw wymagałby osobnego projektu grafik.
+- **`icons_16.png`:** w WebView2 ścieżka jest mapowana na `https://cuy.assets/`; 404 występuje tylko w przeglądarce bez mapowania.
+- **Pozostałe puste `catch`:** świadome (cleanup, czyszczenie zasobów, crash handler), bez zmian.
+- **Pamięć w soak:** nie potwierdzona jako wyciek; do ponownego pomiaru z wymuszonym GC.
