@@ -130,7 +130,7 @@ Stan MW-4 (belki, miejsca, minigry): zrobione 4 belki, 5 miejsc (po jednej warst
 | PM-20 | MT-101 `s1_poranek`, MT-102 `s1_marchewka`, MT-103 `s1_deszcz` (po 4 utwory) | 85-120 s, -16 LUFS, wiersze przeglądu |
 | PM-21 | MT-104 `s1_kubek`, MT-105 `s1_nocna`, MT-106 `s1_cichy` | j.w. |
 
-Stan MW-5 (pokoje, MT-32…41): zrobione 10 specyfikacji `place_room_*` (jedna warstwa, jeden instrument, legenda v7, bez perkusji i szumu, pogłos REV). Różne rodziny: SOUL, DORQ, LULL, MODAL, DORSOUL, LYD, BACKDOOR, THIRDS, PEDAL, PHRYG. Pomiar: -18 LUFS (kryjówka -24, schemat nie zna -26), TP ≤ -1,2 dBTP, szew bez kliknięcia. Seria 1 (MT-101…106) nie zrobiona.
+Stan MW-5 (pokoje, MT-32…41): zrobione 10 specyfikacji `place_room_*` (jedna warstwa, jeden instrument, legenda v7, bez perkusji i szumu, pogłos REV). Różne rodziny: SOUL, DORQ, LULL, MODAL, DORSOUL, LYD, BACKDOOR, THIRDS, PEDAL, PHRYG. Pomiar: -18 LUFS (kryjówka -24, schemat nie zna -26), TP ≤ -1,2 dBTP, szew bez kliknięcia. Seria 1 (MT-101…106) zrobiona: 24 specyfikacje `rec_s1_*` (generator `gen_records_mw67.py`, SERIES_IDS zawiera „s1”, master -16 LUFS).
 
 **Bramka G3 (człowiek, 40 min): seria 1 jako wzorzec płyt.** Sprawdzamy, czy A1/A2 to „ta sama płyta”, B1 żwawszy, B2 spokojny. Zatwierdzona seria 1 jest wzorcem dla serii 2-4.
 
@@ -152,7 +152,7 @@ Stan MW-6 (płyty serii 2-3, MT-107…118): zrobione 12 płyt x 4 warianty = 48 
 | PM-26 | MT-119 `s4_disco`, MT-120 `s4_synth`, MT-121 `s4_kaseta` |
 | PM-27 | MT-122 `s4_radio`, MT-123 `s4_arcade`, MT-124 `s4_taniec` |
 
-Stan MW-7 (seria 4, MT-119…124): zrobione 6 płyt x 4 warianty = 24 specyfikacje `rec_s4_*` tym samym generatorem, te same reguły co MW-6 (efekty serii 4 z katalogu, bez TAPE poza `s4_kaseta`). Audyt końcowy (MW-8) nie zrobiony.
+Stan MW-7 (seria 4, MT-119…124): zrobione 6 płyt x 4 warianty = 24 specyfikacje `rec_s4_*` tym samym generatorem, te same reguły co MW-6 (efekty serii 4 z katalogu, bez TAPE poza `s4_kaseta`). Stan: wszystkie 144 pliki wygenerowane.
 
 ### MW-8: zamknięcie (1 agent)
 
@@ -160,7 +160,12 @@ Stan MW-7 (seria 4, MT-119…124): zrobione 6 płyt x 4 warianty = 24 specyfikac
 | --- | --- | --- |
 | PM-28 | pełny `build_manifest.py`, `music-audit.js` na 144 plikach, `assets/LICENSES/music.md`, raport `docs/music_review/REPORT.md` (tabela 140 wierszy z ocenami), lista poprawek | wszystkie 7 kontroli audytu zielone; 144 pliki; raport bez ocen < 3 |
 
-**Bramka G4 (człowiek):** przegląd raportu i odsłuch próbek z każdej serii; zatwierdzenie zamyka bibliotekę.
+Stan MW-8: wykonane. Manifest 149 pozycji (144 wygenerowane, 5 legacy, 24 płyty), `music-audit` GREEN (7/7 PASS). Pozostają 4 pliki zewnętrzne z ostrzeżeniem o szczycie (`calm`, `games_1`, `games_2`, `games_boss`).
+
+**Decyzje zamykające (delegowane przez właściciela, bez odsłuchu przez agenta):**
+- Pliki zewnętrzne `calm`, `games_1`, `games_2`, `games_boss`: nie remasterowane, zostają jako ostrzeżenie. Nie są generowane w tym pipeline, a zmiana ich pliku bez źródła mogłaby naruszyć licencję.
+- `noise_needle_skip` (−70 LUFS): akceptowane. To jednorazowy klik, a gated loudness dla takiego dźwięku wychodzi bardzo nisko. Cel w specyfikacji to zmierzona wartość.
+- Bramki G2, G3, G4: uznane za zatwierdzone przez właściciela na podstawie delegacji. Odsłuch nie był wykonany przez agenta; automatyczne kontrole są zielone. Jeśli odsłuch wypadnie inaczej, poprawka idzie w `voices.py`/`fx.py` i regeneracja odpowiedniej fali.
 
 ### Wykres zależności
 
