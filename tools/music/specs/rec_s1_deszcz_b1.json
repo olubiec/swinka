@@ -2,7 +2,7 @@
   "id": "rec_s1_deszcz_b1",
   "kind": "record",
   "title": "Deszcz na dachu · B1 energiczny",
-  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (PEDAL + THIRDS+5), jeden instrument (PIZ)",
+  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (vi-IV-I-IIM + iv-III-VII-i(wzgl.)), jeden instrument (PIZ)",
   "bpm": 71,
   "meter": 4,
   "key": "Eb",
@@ -13,27 +13,27 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Ebmaj9"
+      "sym": "Cm9"
     },
     {
       "bar": 2,
-      "sym": "F/Eb"
+      "sym": "Cm9"
     },
     {
       "bar": 3,
-      "sym": "Gm11/Eb"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Abmaj7#11/Eb"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Ebmaj9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "Db/Eb"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 7,
@@ -41,63 +41,63 @@
     },
     {
       "bar": 8,
-      "sym": "Bb/Eb"
-    },
-    {
-      "bar": 9,
-      "sym": "Abmaj9#11"
-    },
-    {
-      "bar": 10,
-      "sym": "Emaj9#11"
-    },
-    {
-      "bar": 11,
       "sym": "F7b13"
     },
     {
-      "bar": 12,
-      "sym": "Bbm11"
-    },
-    {
-      "bar": 13,
-      "sym": "A13"
-    },
-    {
-      "bar": 14,
-      "sym": "Abmaj13"
-    },
-    {
-      "bar": 15,
+      "bar": 9,
       "sym": "Fm11"
     },
     {
+      "bar": 10,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 11,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 12,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 13,
+      "sym": "Bb13"
+    },
+    {
+      "bar": 14,
+      "sym": "Bb13"
+    },
+    {
+      "bar": 15,
+      "sym": "Cm11"
+    },
+    {
       "bar": 16,
-      "sym": "Eb13sus4"
+      "sym": "Cm11"
     },
     {
       "bar": 17,
-      "sym": "Ebmaj9"
+      "sym": "Cm9"
     },
     {
       "bar": 18,
-      "sym": "F/Eb"
+      "sym": "Cm9"
     },
     {
       "bar": 19,
-      "sym": "Gm11/Eb"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "Abmaj7#11/Eb"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 21,
-      "sym": "Ebmaj9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 22,
-      "sym": "Db/Eb"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 23,
@@ -105,39 +105,39 @@
     },
     {
       "bar": 24,
-      "sym": "Bb/Eb"
-    },
-    {
-      "bar": 25,
-      "sym": "Abmaj9#11"
-    },
-    {
-      "bar": 26,
-      "sym": "Emaj9#11"
-    },
-    {
-      "bar": 27,
       "sym": "F7b13"
     },
     {
-      "bar": 28,
-      "sym": "Bbm11"
-    },
-    {
-      "bar": 29,
-      "sym": "A13"
-    },
-    {
-      "bar": 30,
-      "sym": "Abmaj13"
-    },
-    {
-      "bar": 31,
+      "bar": 25,
       "sym": "Fm11"
     },
     {
+      "bar": 26,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 27,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 28,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 29,
+      "sym": "Bb13"
+    },
+    {
+      "bar": 30,
+      "sym": "Bb13"
+    },
+    {
+      "bar": 31,
+      "sym": "Cm11"
+    },
+    {
       "bar": 32,
-      "sym": "Eb13sus4"
+      "sym": "Cm11"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "PIZ",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (PIZ), akordy rozłożone; progresja unikalna: PEDAL + THIRDS+5",
+      "part": "jedna warstwa, jeden instrument (PIZ), akordy rozłożone; gotowe progresje SHLD: vi-IV-I-IIM + iv-III-VII-i(wzgl.)",
       "stem": "base"
     }
   ],

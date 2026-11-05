@@ -2,7 +2,7 @@
   "id": "bed_morning",
   "kind": "bed",
   "title": "Belka rano (6-9)",
-  "role": "belka pulpitu rano; legenda v7: progresja unikalna (DORQ + DORSOUL+6 + BACKDOOR+3), jeden instrument (HARP)",
+  "role": "belka pulpitu rano; legenda v7: progresja unikalna (IV-vi-I-V + iv-v-VI-VII(wzgl.) + im-viim/i-im-bii/i(wzgl.)), jeden instrument (HARP)",
   "bpm": 70,
   "meter": 4,
   "key": "C",
@@ -13,195 +13,195 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Csowhat"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Dbsowhat"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Csowhat"
+      "sym": "Am9"
     },
     {
       "bar": 4,
-      "sym": "A7alt"
+      "sym": "Am9"
     },
     {
       "bar": 5,
-      "sym": "Dm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "Ebmaj13#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "Cm11"
+      "sym": "G13"
     },
     {
       "bar": 8,
-      "sym": "G7sus4"
+      "sym": "G13"
     },
     {
       "bar": 9,
-      "sym": "F#m11"
+      "sym": "Dm9"
     },
     {
       "bar": 10,
-      "sym": "B13"
+      "sym": "Dm9"
     },
     {
       "bar": 11,
-      "sym": "Db13"
+      "sym": "Em11"
     },
     {
       "bar": 12,
-      "sym": "Dmaj13#11"
+      "sym": "Em11"
     },
     {
       "bar": 13,
-      "sym": "F#m13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 14,
-      "sym": "Abm11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Db7b13"
+      "sym": "G13"
     },
     {
       "bar": 16,
-      "sym": "C9#11"
+      "sym": "G13"
     },
     {
       "bar": 17,
-      "sym": "Ebmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 18,
-      "sym": "Cm11"
+      "sym": "Gm9/A"
     },
     {
       "bar": 19,
-      "sym": "Abm9"
+      "sym": "Am9"
     },
     {
       "bar": 20,
-      "sym": "Db13"
+      "sym": "Bbm11/A"
     },
     {
       "bar": 21,
-      "sym": "Ebmaj13"
+      "sym": "Am9"
     },
     {
       "bar": 22,
-      "sym": "Gm11"
+      "sym": "Gm9/A"
     },
     {
       "bar": 23,
-      "sym": "Abmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 24,
-      "sym": "Bb13sus4"
+      "sym": "Bbm9/A"
     },
     {
       "bar": 25,
-      "sym": "Csowhat"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 26,
-      "sym": "Dbsowhat"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "Csowhat"
+      "sym": "Am9"
     },
     {
       "bar": 28,
-      "sym": "A7alt"
+      "sym": "Am9"
     },
     {
       "bar": 29,
-      "sym": "Dm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 30,
-      "sym": "Ebmaj13#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 31,
-      "sym": "Cm11"
+      "sym": "G13"
     },
     {
       "bar": 32,
-      "sym": "G7sus4"
+      "sym": "G13"
     },
     {
       "bar": 33,
-      "sym": "F#m11"
+      "sym": "Dm9"
     },
     {
       "bar": 34,
-      "sym": "B13"
+      "sym": "Dm9"
     },
     {
       "bar": 35,
-      "sym": "Db13"
+      "sym": "Em11"
     },
     {
       "bar": 36,
-      "sym": "Dmaj13#11"
+      "sym": "Em11"
     },
     {
       "bar": 37,
-      "sym": "F#m13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 38,
-      "sym": "Abm11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 39,
-      "sym": "Db7b13"
+      "sym": "G13"
     },
     {
       "bar": 40,
-      "sym": "C9#11"
+      "sym": "G13"
     },
     {
       "bar": 41,
-      "sym": "Ebmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 42,
-      "sym": "Cm11"
+      "sym": "Gm9/A"
     },
     {
       "bar": 43,
-      "sym": "Abm9"
+      "sym": "Am9"
     },
     {
       "bar": 44,
-      "sym": "Db13"
+      "sym": "Bbm11/A"
     },
     {
       "bar": 45,
-      "sym": "Ebmaj13"
+      "sym": "Am9"
     },
     {
       "bar": 46,
-      "sym": "Gm11"
+      "sym": "Gm9/A"
     },
     {
       "bar": 47,
-      "sym": "Abmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 48,
-      "sym": "Bb13sus4"
+      "sym": "Bbm9/A"
     }
   ],
   "layers": [

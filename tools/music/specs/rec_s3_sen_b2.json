@@ -2,7 +2,7 @@
   "id": "rec_s3_sen_b2",
   "kind": "record",
   "title": "Sen o sianiu · B2 nastrojowy",
-  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: progresja unikalna (SOUL + PEDAL+7), jeden instrument (TRI)",
+  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: progresja unikalna (I-IV-Isus2-IV + bIIM-ivm-biii-im), jeden instrument (TRI)",
   "bpm": 44,
   "meter": 4,
   "key": "F",
@@ -13,83 +13,83 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Dm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Gm11"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 4,
-      "sym": "C13"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Am11"
+      "sym": "Fsus2"
     },
     {
       "bar": 6,
-      "sym": "D7b13"
+      "sym": "Fsus2"
     },
     {
       "bar": 7,
-      "sym": "Gm9"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 8,
-      "sym": "Gb9#11"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 9,
-      "sym": "Cmaj9"
+      "sym": "Gbmaj9"
     },
     {
       "bar": 10,
-      "sym": "D/C"
+      "sym": "Gbmaj9"
     },
     {
       "bar": 11,
-      "sym": "E9#11"
+      "sym": "Bbm9"
     },
     {
       "bar": 12,
-      "sym": "Fmaj7#11/C"
+      "sym": "Bbm9"
     },
     {
       "bar": 13,
-      "sym": "Cmaj9"
+      "sym": "Abm11"
     },
     {
       "bar": 14,
-      "sym": "Bb/C"
+      "sym": "Abm11"
     },
     {
       "bar": 15,
-      "sym": "Dm11/C"
+      "sym": "Fm9"
     },
     {
       "bar": 16,
-      "sym": "G/C"
+      "sym": "Fm9"
     },
     {
       "bar": 17,
-      "sym": "Fmaj13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Dm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Gm11"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 20,
-      "sym": "Gb9#11"
+      "sym": "Bbmaj13#11"
     }
   ],
   "layers": [
@@ -98,7 +98,7 @@
       "voice": "TRI",
       "db": -3,
       "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; progresja unikalna: SOUL + PEDAL+7",
+      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; gotowe progresje SHLD: I-IV-Isus2-IV + bIIM-ivm-biii-im",
       "stem": "base"
     }
   ],

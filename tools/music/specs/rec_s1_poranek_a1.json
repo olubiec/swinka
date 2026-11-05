@@ -2,7 +2,7 @@
   "id": "rec_s1_poranek_a1",
   "kind": "record",
   "title": "Poranek w sianie · A1 podpisowy",
-  "role": "płyta serii 1; poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny; legenda v7: progresja unikalna (PEDAL + MINSOUL+8), jeden instrument (BNJ)",
+  "role": "płyta serii 1; poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny; legenda v7: progresja unikalna (bVIM-vi-im-bVIIM + im-ii-vm-IV(wzgl.)), jeden instrument (BNJ)",
   "bpm": 78,
   "meter": 4,
   "key": "C",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj9"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Eb9#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Em11/C"
+      "sym": "Am9"
     },
     {
       "bar": 4,
-      "sym": "G7b13"
+      "sym": "Am9"
     },
     {
       "bar": 5,
-      "sym": "Cmaj9"
+      "sym": "Cm11"
     },
     {
       "bar": 6,
-      "sym": "Bb/C"
+      "sym": "Cm11"
     },
     {
       "bar": 7,
-      "sym": "Dm11/C"
+      "sym": "Bb13"
     },
     {
       "bar": 8,
-      "sym": "G/C"
+      "sym": "Bb13"
     },
     {
       "bar": 9,
-      "sym": "Abm11"
+      "sym": "Am11"
     },
     {
       "bar": 10,
-      "sym": "Emaj13#11"
+      "sym": "Am11"
     },
     {
       "bar": 11,
-      "sym": "Dbm11"
+      "sym": "Bm11"
     },
     {
       "bar": 12,
-      "sym": "Eb7alt"
+      "sym": "Bm11"
     },
     {
       "bar": 13,
-      "sym": "Db7b13"
+      "sym": "Em11"
     },
     {
       "bar": 14,
-      "sym": "F#maj9#11"
+      "sym": "Em11"
     },
     {
       "bar": 15,
-      "sym": "Emaj9#11"
+      "sym": "D9"
     },
     {
       "bar": 16,
-      "sym": "Eb7b13"
+      "sym": "D9"
     },
     {
       "bar": 17,
-      "sym": "Cmaj9"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Eb9#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Em11/C"
+      "sym": "Am9"
     },
     {
       "bar": 20,
-      "sym": "G7b13"
+      "sym": "Am9"
     },
     {
       "bar": 21,
-      "sym": "Cmaj9"
+      "sym": "Cm11"
     },
     {
       "bar": 22,
-      "sym": "Bb/C"
+      "sym": "Cm11"
     },
     {
       "bar": 23,
-      "sym": "Dm11/C"
+      "sym": "Bb13"
     },
     {
       "bar": 24,
-      "sym": "G/C"
+      "sym": "Bb13"
     },
     {
       "bar": 25,
-      "sym": "Abm11"
+      "sym": "Am11"
     },
     {
       "bar": 26,
-      "sym": "Emaj13#11"
+      "sym": "Am11"
     },
     {
       "bar": 27,
-      "sym": "Dbm11"
+      "sym": "Bm11"
     },
     {
       "bar": 28,
-      "sym": "Eb7alt"
+      "sym": "Bm11"
     },
     {
       "bar": 29,
-      "sym": "Db7b13"
+      "sym": "Em11"
     },
     {
       "bar": 30,
-      "sym": "F#maj9#11"
+      "sym": "Em11"
     },
     {
       "bar": 31,
-      "sym": "Emaj9#11"
+      "sym": "D9"
     },
     {
       "bar": 32,
-      "sym": "Eb7b13"
+      "sym": "D9"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "BNJ",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; progresja unikalna: PEDAL + MINSOUL+8",
+      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; gotowe progresje SHLD: bVIM-vi-im-bVIIM + im-ii-vm-IV(wzgl.)",
       "stem": "base"
     }
   ],

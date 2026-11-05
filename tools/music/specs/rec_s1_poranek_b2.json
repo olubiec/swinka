@@ -2,7 +2,7 @@
   "id": "rec_s1_poranek_b2",
   "kind": "record",
   "title": "Poranek w sianie · B2 nastrojowy",
-  "role": "płyta serii 1; poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny; legenda v7: progresja unikalna (DORQ + SOUL+10), jeden instrument (BOX)",
+  "role": "płyta serii 1; poranny lo-fi hip-hop z ptakami; winyl ledwo słyszalny; legenda v7: progresja unikalna (I-bIIIM-bVIM-bVIIM + ii-VI-i-iv(wzgl.)), jeden instrument (BOX)",
   "bpm": 62,
   "meter": 4,
   "key": "C",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Csowhat"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Dbsowhat"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 3,
-      "sym": "Csowhat"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Fmaj13#11"
+      "sym": "Bb13"
     },
     {
       "bar": 5,
-      "sym": "Dm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "Ebmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 7,
-      "sym": "Cm13"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "G9sus4"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 9,
-      "sym": "Bbmaj13"
+      "sym": "Bm9"
     },
     {
       "bar": 10,
-      "sym": "Gm11"
+      "sym": "Bm9"
     },
     {
       "bar": 11,
-      "sym": "Cm11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Db9#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 13,
-      "sym": "Dm11"
+      "sym": "Am11"
     },
     {
       "bar": 14,
-      "sym": "G7alt"
+      "sym": "Am11"
     },
     {
       "bar": 15,
-      "sym": "Cm9"
-    },
-    {
-      "bar": 16,
-      "sym": "B9#11"
-    },
-    {
-      "bar": 17,
-      "sym": "Csowhat"
-    },
-    {
-      "bar": 18,
-      "sym": "Dbsowhat"
-    },
-    {
-      "bar": 19,
-      "sym": "Csowhat"
-    },
-    {
-      "bar": 20,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 21,
       "sym": "Dm11"
     },
     {
+      "bar": 16,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 17,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 18,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 19,
+      "sym": "Abmaj9#11"
+    },
+    {
+      "bar": 20,
+      "sym": "Bb13"
+    },
+    {
+      "bar": 21,
+      "sym": "Cmaj9#11"
+    },
+    {
       "bar": 22,
-      "sym": "Ebmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 23,
-      "sym": "Cm13"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "G9sus4"
+      "sym": "Bbmaj9"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "BOX",
       "db": -3,
       "pattern": "chords.rolled(0.3)",
-      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; progresja unikalna: DORQ + SOUL+10",
+      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; gotowe progresje SHLD: I-bIIIM-bVIM-bVIIM + ii-VI-i-iv(wzgl.)",
       "stem": "base"
     }
   ],

@@ -2,7 +2,7 @@
   "id": "rec_s3_tupot_a2",
   "kind": "record",
   "title": "Cichy tupot · A2 spokojny",
-  "role": "płyta serii 3; krótkie przerwy glitch (stutter); legenda v7: progresja unikalna (DORQ + LULL+3 + LYD+10), jeden instrument (BELL)",
+  "role": "płyta serii 3; krótkie przerwy glitch (stutter); legenda v7: progresja unikalna (im-bIIIM-IV-V + I-bVIM-IV-bIIIM-bVIIM(wzgl.) + i-VII-v-VI), jeden instrument (BELL)",
   "bpm": 99,
   "meter": 4,
   "key": "G",
@@ -13,35 +13,35 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gsowhat"
-    },
-    {
-      "bar": 2,
-      "sym": "Absowhat"
-    },
-    {
-      "bar": 3,
-      "sym": "Gsowhat"
-    },
-    {
-      "bar": 4,
-      "sym": "Cmaj13#11"
-    },
-    {
-      "bar": 5,
-      "sym": "Am13"
-    },
-    {
-      "bar": 6,
-      "sym": "Bbmaj13#11"
-    },
-    {
-      "bar": 7,
       "sym": "Gm11"
     },
     {
+      "bar": 2,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 3,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 4,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 5,
+      "sym": "C9"
+    },
+    {
+      "bar": 6,
+      "sym": "C9"
+    },
+    {
+      "bar": 7,
+      "sym": "D7alt"
+    },
+    {
       "bar": 8,
-      "sym": "D9sus4"
+      "sym": "D7alt"
     },
     {
       "bar": 9,
@@ -49,95 +49,95 @@
     },
     {
       "bar": 10,
-      "sym": "Ebmaj9#11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 11,
-      "sym": "Bbmaj7/D"
+      "sym": "F#maj9"
     },
     {
       "bar": 12,
-      "sym": "Ebm6/9"
+      "sym": "F#maj9"
     },
     {
       "bar": 13,
-      "sym": "Bbmaj13"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 14,
-      "sym": "Cm11"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 15,
-      "sym": "Ebmaj9#11"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "Bbmaj13"
+      "sym": "Abmaj9"
     },
     {
       "bar": 17,
-      "sym": "Fmaj9#11"
+      "sym": "Gm11"
     },
     {
       "bar": 18,
-      "sym": "Gmaj13"
+      "sym": "Gm11"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 20,
-      "sym": "Gm11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 21,
-      "sym": "D13sus4"
+      "sym": "Dm11"
     },
     {
       "bar": 22,
-      "sym": "Gm11/C"
+      "sym": "Dm11"
     },
     {
       "bar": 23,
-      "sym": "Fmaj13"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "C6/9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 25,
-      "sym": "Gsowhat"
-    },
-    {
-      "bar": 26,
-      "sym": "Absowhat"
-    },
-    {
-      "bar": 27,
-      "sym": "Gsowhat"
-    },
-    {
-      "bar": 28,
-      "sym": "Cmaj13#11"
-    },
-    {
-      "bar": 29,
-      "sym": "Am13"
-    },
-    {
-      "bar": 30,
-      "sym": "Bbmaj13#11"
-    },
-    {
-      "bar": 31,
       "sym": "Gm11"
     },
     {
+      "bar": 26,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 27,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 28,
+      "sym": "Amaj9"
+    },
+    {
+      "bar": 29,
+      "sym": "C9"
+    },
+    {
+      "bar": 30,
+      "sym": "C9"
+    },
+    {
+      "bar": 31,
+      "sym": "D7alt"
+    },
+    {
       "bar": 32,
-      "sym": "D9sus4"
+      "sym": "D7alt"
     },
     {
       "bar": 33,
@@ -145,63 +145,63 @@
     },
     {
       "bar": 34,
-      "sym": "Ebmaj9#11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 35,
-      "sym": "Bbmaj7/D"
+      "sym": "F#maj9"
     },
     {
       "bar": 36,
-      "sym": "Ebm6/9"
+      "sym": "F#maj9"
     },
     {
       "bar": 37,
-      "sym": "Bbmaj13"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 38,
-      "sym": "Cm11"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 39,
-      "sym": "Ebmaj9#11"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 40,
-      "sym": "Bbmaj13"
+      "sym": "Abmaj9"
     },
     {
       "bar": 41,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 42,
-      "sym": "Gmaj13"
-    },
-    {
-      "bar": 43,
-      "sym": "Am11"
-    },
-    {
-      "bar": 44,
       "sym": "Gm11"
     },
     {
+      "bar": 42,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 43,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 44,
+      "sym": "Fmaj9"
+    },
+    {
       "bar": 45,
-      "sym": "D13sus4"
+      "sym": "Dm11"
     },
     {
       "bar": 46,
-      "sym": "Gm11/C"
+      "sym": "Dm11"
     },
     {
       "bar": 47,
-      "sym": "Fmaj13"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 48,
-      "sym": "C6/9"
+      "sym": "Ebmaj9#11"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "BELL",
       "db": -3,
       "pattern": "chords.rolled(0.4)",
-      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; progresja unikalna: DORQ + LULL+3 + LYD+10",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; gotowe progresje SHLD: im-bIIIM-IV-V + I-bVIM-IV-bIIIM-bVIIM(wzgl.) + i-VII-v-VI",
       "stem": "base"
     }
   ],

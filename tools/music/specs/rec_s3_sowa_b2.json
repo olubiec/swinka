@@ -2,7 +2,7 @@
   "id": "rec_s3_sowa_b2",
   "kind": "record",
   "title": "Sowa · B2 nastrojowy",
-  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (DORSOUL + LULL+8), jeden instrument (BELL)",
+  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (VII-iv-v-i + ivm-bIIIM-iim7-V(wzgl.)), jeden instrument (BELL)",
   "bpm": 48,
   "meter": 4,
   "key": "D",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dm11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 2,
-      "sym": "G13"
+      "sym": "Cmaj9"
     },
     {
       "bar": 3,
-      "sym": "B7alt"
+      "sym": "Gm11"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj7#11"
+      "sym": "Gm11"
     },
     {
       "bar": 5,
-      "sym": "Dm13"
+      "sym": "Am11"
     },
     {
       "bar": 6,
-      "sym": "Em11"
+      "sym": "Am11"
     },
     {
       "bar": 7,
-      "sym": "A7b13"
-    },
-    {
-      "bar": 8,
-      "sym": "Ab9#11"
-    },
-    {
-      "bar": 9,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 10,
-      "sym": "Ebmaj9#11"
-    },
-    {
-      "bar": 11,
-      "sym": "Bbmaj7/D"
-    },
-    {
-      "bar": 12,
-      "sym": "Ebm6/9"
-    },
-    {
-      "bar": 13,
-      "sym": "Bbmaj13"
-    },
-    {
-      "bar": 14,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 15,
-      "sym": "Ebmaj9#11"
-    },
-    {
-      "bar": 16,
-      "sym": "Bbmaj9"
-    },
-    {
-      "bar": 17,
       "sym": "Dm11"
     },
     {
+      "bar": 8,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 9,
+      "sym": "Bbm9"
+    },
+    {
+      "bar": 10,
+      "sym": "Bbm9"
+    },
+    {
+      "bar": 11,
+      "sym": "Abmaj9"
+    },
+    {
+      "bar": 12,
+      "sym": "Abmaj9"
+    },
+    {
+      "bar": 13,
+      "sym": "Gm7"
+    },
+    {
+      "bar": 14,
+      "sym": "Gm7"
+    },
+    {
+      "bar": 15,
+      "sym": "C9sus4"
+    },
+    {
+      "bar": 16,
+      "sym": "C9sus4"
+    },
+    {
+      "bar": 17,
+      "sym": "Cmaj9"
+    },
+    {
       "bar": 18,
-      "sym": "G13"
+      "sym": "Cmaj9"
     },
     {
       "bar": 19,
-      "sym": "B7alt"
+      "sym": "Gm11"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj7#11"
+      "sym": "Gm11"
     },
     {
       "bar": 21,
-      "sym": "Dm13"
+      "sym": "Am11"
     },
     {
       "bar": 22,
-      "sym": "Em11"
+      "sym": "Am11"
     },
     {
       "bar": 23,
-      "sym": "A7b13"
+      "sym": "Dm11"
     },
     {
       "bar": 24,
-      "sym": "Ab9#11"
+      "sym": "Dm11"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "BELL",
       "db": -3,
       "pattern": "chords.rolled(0.4)",
-      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; progresja unikalna: DORSOUL + LULL+8",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; gotowe progresje SHLD: VII-iv-v-i + ivm-bIIIM-iim7-V(wzgl.)",
       "stem": "base"
     }
   ],

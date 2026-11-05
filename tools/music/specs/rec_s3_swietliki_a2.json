@@ -2,7 +2,7 @@
   "id": "rec_s3_swietliki_a2",
   "kind": "record",
   "title": "Świetliki · A2 spokojny",
-  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (MINSOUL + LYD+9), jeden instrument (PAD)",
+  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (bVIM-bIIIM-bVIIM-IV-I + bIIIM-ii-bIIM-I), jeden instrument (PAD)",
   "bpm": 81,
   "meter": 4,
   "key": "A",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Am11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Fmaj13#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Dm11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 4,
-      "sym": "E7alt"
+      "sym": "Cmaj9"
     },
     {
       "bar": 5,
-      "sym": "Am9"
+      "sym": "G13"
     },
     {
       "bar": 6,
-      "sym": "Gmaj9#11"
+      "sym": "G13"
     },
     {
       "bar": 7,
-      "sym": "Dm11"
+      "sym": "Dmaj13#11"
     },
     {
       "bar": 8,
-      "sym": "Bb7b13"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 9,
-      "sym": "F#maj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 10,
-      "sym": "G#maj13"
+      "sym": "Cmaj9"
     },
     {
       "bar": 11,
-      "sym": "Bbm11"
+      "sym": "Bm11"
     },
     {
       "bar": 12,
-      "sym": "C#7b13"
+      "sym": "Bm11"
     },
     {
       "bar": 13,
-      "sym": "F#maj7/Bb"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 14,
-      "sym": "G#m11/C#"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 15,
-      "sym": "F#maj13"
+      "sym": "Amaj9"
     },
     {
       "bar": 16,
-      "sym": "C#6/9"
+      "sym": "Amaj9"
     },
     {
       "bar": 17,
-      "sym": "Am11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Fmaj13#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Dm11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 20,
-      "sym": "E7alt"
+      "sym": "Cmaj9"
     },
     {
       "bar": 21,
-      "sym": "Am9"
+      "sym": "G13"
     },
     {
       "bar": 22,
-      "sym": "Gmaj9#11"
+      "sym": "G13"
     },
     {
       "bar": 23,
-      "sym": "Dm11"
+      "sym": "Dmaj13#11"
     },
     {
       "bar": 24,
-      "sym": "Bb7b13"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 25,
-      "sym": "F#maj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 26,
-      "sym": "G#maj13"
+      "sym": "Cmaj9"
     },
     {
       "bar": 27,
-      "sym": "Bbm11"
+      "sym": "Bm11"
     },
     {
       "bar": 28,
-      "sym": "C#7b13"
+      "sym": "Bm11"
     },
     {
       "bar": 29,
-      "sym": "F#maj7/Bb"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 30,
-      "sym": "G#m11/C#"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 31,
-      "sym": "F#maj13"
+      "sym": "Amaj9"
     },
     {
       "bar": 32,
-      "sym": "C#6/9"
+      "sym": "Amaj9"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "PAD",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; progresja unikalna: MINSOUL + LYD+9",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; gotowe progresje SHLD: bVIM-bIIIM-bVIIM-IV-I + bIIIM-ii-bIIM-I",
       "stem": "base"
     }
   ],

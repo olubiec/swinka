@@ -2,7 +2,7 @@
   "id": "rec_s3_sowa_a2",
   "kind": "record",
   "title": "Sowa · A2 spokojny",
-  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (DORQ + BACKDOOR+4), jeden instrument (ACC)",
+  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (im-viim/i-im-bii/i + ii-bIIM-I-bVIIM(wzgl.)), jeden instrument (ACC)",
   "bpm": 54,
   "meter": 4,
   "key": "D",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dsowhat"
+      "sym": "Dm9"
     },
     {
       "bar": 2,
-      "sym": "Ebsowhat"
+      "sym": "Dm9"
     },
     {
       "bar": 3,
-      "sym": "Dsowhat"
+      "sym": "Cm11/D"
     },
     {
       "bar": 4,
-      "sym": "F9#11"
+      "sym": "Cm11/D"
     },
     {
       "bar": 5,
-      "sym": "Em11"
+      "sym": "Dm11"
     },
     {
       "bar": 6,
-      "sym": "Fmaj9#11"
+      "sym": "Dm11"
     },
     {
       "bar": 7,
-      "sym": "E7b13"
+      "sym": "Ebm9/D"
     },
     {
       "bar": 8,
-      "sym": "A9sus4"
+      "sym": "Ebm9/D"
     },
     {
       "bar": 9,
-      "sym": "F#maj9"
+      "sym": "Gm11"
     },
     {
       "bar": 10,
-      "sym": "Ebm11"
+      "sym": "Gm11"
     },
     {
       "bar": 11,
-      "sym": "Bm9"
+      "sym": "F#maj7#11"
     },
     {
       "bar": 12,
-      "sym": "E13"
+      "sym": "F#maj7#11"
     },
     {
       "bar": 13,
-      "sym": "Ebm11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 14,
-      "sym": "Bbm13"
+      "sym": "Fmaj9"
     },
     {
       "bar": 15,
-      "sym": "Bmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 16,
-      "sym": "Db13sus4"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 17,
-      "sym": "Dsowhat"
+      "sym": "Dm9"
     },
     {
       "bar": 18,
-      "sym": "Ebsowhat"
+      "sym": "Dm9"
     },
     {
       "bar": 19,
-      "sym": "Dsowhat"
+      "sym": "Cm11/D"
     },
     {
       "bar": 20,
-      "sym": "F9#11"
+      "sym": "Cm11/D"
     },
     {
       "bar": 21,
-      "sym": "Em11"
+      "sym": "Dm11"
     },
     {
       "bar": 22,
-      "sym": "Fmaj9#11"
+      "sym": "Dm11"
     },
     {
       "bar": 23,
-      "sym": "E7b13"
+      "sym": "Ebm9/D"
     },
     {
       "bar": 24,
-      "sym": "A9sus4"
+      "sym": "Ebm9/D"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "ACC",
       "db": -12,
       "pattern": "chords.rolled(0.2)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; progresja unikalna: DORQ + BACKDOOR+4",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; gotowe progresje SHLD: im-viim/i-im-bii/i + ii-bIIM-I-bVIIM(wzgl.)",
       "stem": "base"
     }
   ],

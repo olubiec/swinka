@@ -1,0 +1,2603 @@
+{
+ "source": "SHLD Free MIDI Chord Packs (Ludovic Drolez), chords.py",
+ "url": "https://github.com/ldrolez/free-midi-chords",
+ "license": "MIT",
+ "commit": "95533fae2c1a2aae032211b9abed0441ac8ba298",
+ "note": "Tylko lista progresji (numeracja rzymska i tagi nastroju); akordy grane są naszymi instrumentami, kolor rozszerzeń wg legendy v7.",
+ "progs": [
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "I",
+    "IM-5",
+    "IM-5",
+    "IV",
+    "IV",
+    "V",
+    "Vsus2"
+   ],
+   "tags": [
+    "Joyful",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "I",
+    "IV",
+    "iii"
+   ],
+   "tags": [
+    "Hopeful",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "I7",
+    "Idom7",
+    "I7"
+   ],
+   "tags": [
+    "Relaxed",
+    "Playful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "I7",
+    "Idom7",
+    "IV"
+   ],
+   "tags": [
+    "Relaxed",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "iii",
+    "IV",
+    "vi"
+   ],
+   "tags": [
+    "Romantic",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "iii",
+    "vi",
+    "Isus4"
+   ],
+   "tags": [
+    "Tender",
+    "Spiritual"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "iii",
+    "vi",
+    "IV"
+   ],
+   "tags": [
+    "Romantic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "IV",
+    "ii",
+    "V"
+   ],
+   "tags": [
+    "Joyful",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "IV",
+    "Isus2",
+    "IV"
+   ],
+   "tags": [
+    "Peaceful",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "IV",
+    "V",
+    "IV"
+   ],
+   "tags": [
+    "Joyful",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "IV",
+    "V"
+   ],
+   "tags": [
+    "Joyful",
+    "Excited"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "IV",
+    "vi",
+    "V"
+   ],
+   "tags": [
+    "Joyful",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "IV",
+    "vii",
+    "iii",
+    "vi",
+    "ii",
+    "V",
+    "I"
+   ],
+   "tags": [
+    "Romantic",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "V",
+    "I",
+    "IV"
+   ],
+   "tags": [
+    "Joyful",
+    "Playful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "V",
+    "IV",
+    "vi"
+   ],
+   "tags": [
+    "Romantic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "V",
+    "vi",
+    "ii"
+   ],
+   "tags": [
+    "Hopeful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "V",
+    "vi",
+    "iii",
+    "IV",
+    "I",
+    "IV",
+    "V"
+   ],
+   "tags": [
+    "Hopeful",
+    "Joyful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "V",
+    "vi",
+    "iii",
+    "IV"
+   ],
+   "tags": [
+    "Hopeful",
+    "Joyful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "V",
+    "vi",
+    "IV"
+   ],
+   "tags": [
+    "Hopeful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "V",
+    "vi",
+    "V"
+   ],
+   "tags": [
+    "Hopeful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "vi",
+    "I",
+    "IV"
+   ],
+   "tags": [
+    "Tender",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "vi",
+    "ii",
+    "IV"
+   ],
+   "tags": [
+    "Tender",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "vi",
+    "ii",
+    "V"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "vi",
+    "IV",
+    "iii"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I",
+    "vi",
+    "IV",
+    "V"
+   ],
+   "tags": [
+    "Romantic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "I7",
+    "V7",
+    "viadd9",
+    "IV7"
+   ],
+   "tags": [
+    "Playful",
+    "Joyful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "ii",
+    "IV",
+    "V"
+   ],
+   "tags": [
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "ii",
+    "IV",
+    "vi",
+    "V"
+   ],
+   "tags": [
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "ii",
+    "V",
+    "I"
+   ],
+   "tags": [
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "ii",
+    "V",
+    "I",
+    "IV"
+   ],
+   "tags": [
+    "Hopeful",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "ii7",
+    "Vadd9",
+    "I7"
+   ],
+   "tags": [
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "iii",
+    "vi",
+    "IV",
+    "I"
+   ],
+   "tags": [
+    "Romantic",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "iim7",
+    "V7",
+    "iiim7",
+    "vi7",
+    "iim7",
+    "V7"
+   ],
+   "tags": [
+    "Romantic",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "Isus2",
+    "I",
+    "vi7",
+    "visus4"
+   ],
+   "tags": [
+    "Playful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "IV",
+    "I",
+    "ii",
+    "vi"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Peaceful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "IV",
+    "I",
+    "iii",
+    "IV"
+   ],
+   "tags": [
+    "Playful",
+    "Joyful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "IV",
+    "I",
+    "IV6",
+    "Iadd9"
+   ],
+   "tags": [
+    "Relaxed",
+    "Joyful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "IV",
+    "I",
+    "V",
+    "vi"
+   ],
+   "tags": [
+    "Joyful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "IV",
+    "IV",
+    "I",
+    "V"
+   ],
+   "tags": [
+    "Joyful",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "IV",
+    "vi",
+    "I",
+    "V"
+   ],
+   "tags": [
+    "Hopeful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "IV",
+    "vi",
+    "iii",
+    "I"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Playful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "IV",
+    "vi",
+    "IV",
+    "vi"
+   ],
+   "tags": [
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "V",
+    "I",
+    "vi",
+    "V"
+   ],
+   "tags": [
+    "Hopeful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "V",
+    "IV",
+    "vi",
+    "I"
+   ],
+   "tags": [
+    "Hopeful",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "V",
+    "vi",
+    "IV",
+    "I"
+   ],
+   "tags": [
+    "Hopeful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "vi",
+    "ii",
+    "V",
+    "I"
+   ],
+   "tags": [
+    "Hopeful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "vi",
+    "IV",
+    "I",
+    "V"
+   ],
+   "tags": [
+    "Hopeful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "vi",
+    "IV",
+    "iii",
+    "V"
+   ],
+   "tags": [
+    "Hopeful",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "vi",
+    "V",
+    "IV",
+    "V",
+    "ii",
+    "V",
+    "I",
+    "I"
+   ],
+   "tags": [
+    "Triumphant",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "maj",
+   "nums": [
+    "vi",
+    "V",
+    "IV",
+    "V"
+   ],
+   "tags": [
+    "Romantic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "i",
+    "iv",
+    "iv",
+    "v7",
+    "ii5",
+    "v",
+    "v7"
+   ],
+   "tags": [
+    "Dark",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "ii",
+    "v",
+    "i"
+   ],
+   "tags": [
+    "Mysterious",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "III",
+    "iv",
+    "VI"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "III",
+    "VII",
+    "iv"
+   ],
+   "tags": [
+    "Empowered",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "III",
+    "VII",
+    "VI"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "III7",
+    "VI7",
+    "iv"
+   ],
+   "tags": [
+    "Dark",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "ii",
+    "v",
+    "III",
+    "i",
+    "ii",
+    "v",
+    "VII"
+   ],
+   "tags": [
+    "Mysterious",
+    "Dramatic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "iv",
+    "III",
+    "VI"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "iv",
+    "v",
+    "iv"
+   ],
+   "tags": [
+    "Mysterious",
+    "Sad"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "iv",
+    "v"
+   ],
+   "tags": [
+    "Sad",
+    "Lonely"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "iv",
+    "VI",
+    "v"
+   ],
+   "tags": [
+    "Sad",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "iv",
+    "VII",
+    "i"
+   ],
+   "tags": [
+    "Sad",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "iv",
+    "VII",
+    "v",
+    "i",
+    "i",
+    "ii",
+    "V"
+   ],
+   "tags": [
+    "Mysterious",
+    "Surprised"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "v",
+    "iv",
+    "VII"
+   ],
+   "tags": [
+    "Sad",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "vdim",
+    "iv",
+    "VI"
+   ],
+   "tags": [
+    "Dark",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VI",
+    "III",
+    "VII",
+    "i",
+    "VI69",
+    "III7",
+    "VII"
+   ],
+   "tags": [
+    "Mysterious",
+    "Spiritual"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VI",
+    "III",
+    "VII"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VI",
+    "iv",
+    "ii"
+   ],
+   "tags": [
+    "Sad",
+    "Tender"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VI",
+    "iv",
+    "III"
+   ],
+   "tags": [
+    "Sad",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VI",
+    "iv",
+    "v"
+   ],
+   "tags": [
+    "Sad",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VI",
+    "VII",
+    "iv"
+   ],
+   "tags": [
+    "Mysterious",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VI",
+    "VII",
+    "v"
+   ],
+   "tags": [
+    "Mysterious",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VI",
+    "VII"
+   ],
+   "tags": [
+    "Triumphant",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VII",
+    "i",
+    "v",
+    "III",
+    "VII",
+    "i",
+    "v",
+    "i"
+   ],
+   "tags": [
+    "Mysterious",
+    "Surprised"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VII",
+    "i",
+    "v"
+   ],
+   "tags": [
+    "Mysterious",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VII",
+    "III",
+    "VI"
+   ],
+   "tags": [
+    "Rebellious",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VII",
+    "v",
+    "VI"
+   ],
+   "tags": [
+    "Mysterious",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VII",
+    "VI",
+    "III",
+    "iv",
+    "VI",
+    "VII",
+    "i"
+   ],
+   "tags": [
+    "Mysterious",
+    "Surprised"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VII",
+    "VI",
+    "III"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VII",
+    "VI",
+    "iv"
+   ],
+   "tags": [
+    "Sad",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VII",
+    "VI",
+    "VII"
+   ],
+   "tags": [
+    "Rebellious",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i",
+    "VII",
+    "VIadd9",
+    "VII",
+    "i",
+    "v",
+    "VI",
+    "VIIsus4"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Sad"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i7",
+    "VI",
+    "III7",
+    "VII6",
+    "i",
+    "i7",
+    "III7",
+    "iv7"
+   ],
+   "tags": [
+    "Dark",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "i7",
+    "VII",
+    "VI7",
+    "iv7"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "ii",
+    "v",
+    "i"
+   ],
+   "tags": [
+    "Peaceful",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "ii",
+    "v",
+    "i",
+    "iv"
+   ],
+   "tags": [
+    "Peaceful",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "ii",
+    "VI",
+    "i",
+    "iv"
+   ],
+   "tags": [
+    "Sad",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "im7",
+    "ivsus4",
+    "v7",
+    "isus4"
+   ],
+   "tags": [
+    "Mysterious",
+    "Tender"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "iv",
+    "i",
+    "v",
+    "VI"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "iv",
+    "III",
+    "VII",
+    "i"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "iv",
+    "III",
+    "vsus4",
+    "VI",
+    "iv",
+    "i",
+    "III",
+    "VI"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "iv",
+    "v",
+    "VI",
+    "VII"
+   ],
+   "tags": [
+    "Mysterious",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "iv",
+    "VI",
+    "v",
+    "VII"
+   ],
+   "tags": [
+    "Mysterious",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "iv",
+    "VI",
+    "VII",
+    "i"
+   ],
+   "tags": [
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "v",
+    "i",
+    "iv",
+    "VII"
+   ],
+   "tags": [
+    "Dark",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "v",
+    "iv",
+    "i"
+   ],
+   "tags": [
+    "Lonely"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "v",
+    "VI",
+    "III",
+    "i"
+   ],
+   "tags": [
+    "Hopeful",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "v",
+    "VI",
+    "v",
+    "i"
+   ],
+   "tags": [
+    "Sad"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI",
+    "i",
+    "v",
+    "III"
+   ],
+   "tags": [
+    "Hopeful",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI",
+    "i",
+    "v"
+   ],
+   "tags": [
+    "Sad"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI",
+    "III",
+    "i",
+    "v"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Dark"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI",
+    "iv",
+    "i",
+    "v"
+   ],
+   "tags": [
+    "Hopeful",
+    "Tender"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI",
+    "VI",
+    "i",
+    "VII"
+   ],
+   "tags": [
+    "Empowered"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI",
+    "VII",
+    "i",
+    "III"
+   ],
+   "tags": [
+    "Triumphant",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI",
+    "VII",
+    "i",
+    "III",
+    "VII",
+    "VI",
+    "iv",
+    "i"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI",
+    "VII",
+    "v",
+    "III"
+   ],
+   "tags": [
+    "Rebellious",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI7",
+    "VII",
+    "i",
+    "v",
+    "VI7",
+    "VII",
+    "i",
+    "iv7"
+   ],
+   "tags": [
+    "Empowered",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VI7",
+    "VII6",
+    "i",
+    "VII6"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VII",
+    "iv",
+    "v",
+    "i"
+   ],
+   "tags": [
+    "Mysterious",
+    "Dark"
+   ]
+  },
+  {
+   "mode": "min",
+   "nums": [
+    "VII",
+    "iv",
+    "VII",
+    "i"
+   ],
+   "tags": [
+    "Spiritual"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bIIIM",
+    "ii",
+    "bIIM",
+    "I"
+   ],
+   "tags": [
+    "Mysterious",
+    "Surprised"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bIIM",
+    "bVIM",
+    "biii",
+    "bviim"
+   ],
+   "tags": [
+    "Mysterious",
+    "Surprised"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bIIM",
+    "ivm",
+    "biii",
+    "im"
+   ],
+   "tags": [
+    "Mysterious",
+    "Dark"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bviim",
+    "I/bVII",
+    "bviim",
+    "I/bVII"
+   ],
+   "tags": [
+    "Dark",
+    "Lonely"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bVIIM",
+    "bIIM",
+    "bIIIM",
+    "im"
+   ],
+   "tags": [
+    "Mysterious",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bVIM",
+    "bIIIM",
+    "bVIIM",
+    "IV",
+    "I"
+   ],
+   "tags": [
+    "Triumphant",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bVIM",
+    "bVIIm",
+    "im",
+    "bIIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Dark"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bVIM",
+    "vi",
+    "im",
+    "bVIIM"
+   ],
+   "tags": [
+    "Hopeful",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bVIM7",
+    "ivmadd9",
+    "I"
+   ],
+   "tags": [
+    "Spiritual",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I7",
+    "bIdom7",
+    "III7",
+    "ii7",
+    "V7"
+   ],
+   "tags": [
+    "Playful",
+    "Surprised"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bIIIM",
+    "bVIIM",
+    "I"
+   ],
+   "tags": [
+    "Triumphant",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bIIIM",
+    "bVIIM",
+    "IV"
+   ],
+   "tags": [
+    "Triumphant",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bIIIM",
+    "bVIM",
+    "bVIIM"
+   ],
+   "tags": [
+    "Triumphant",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bIIIM",
+    "IV",
+    "I"
+   ],
+   "tags": [
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bIIM",
+    "I",
+    "iii"
+   ],
+   "tags": [
+    "Surprised",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bIIM7",
+    "bIIIM6",
+    "bIIM7",
+    "I",
+    "im",
+    "bVIIM",
+    "bIIM"
+   ],
+   "tags": [
+    "Surprised",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bVIIM",
+    "bVIM",
+    "bIIM"
+   ],
+   "tags": [
+    "Triumphant",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bVIIM",
+    "bVIM",
+    "IV",
+    "IVsus4",
+    "IV"
+   ],
+   "tags": [
+    "Hopeful",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bVIIM",
+    "I",
+    "I",
+    "bVIM",
+    "V"
+   ],
+   "tags": [
+    "Triumphant",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bVIIM",
+    "IV",
+    "V"
+   ],
+   "tags": [
+    "Joyful",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bVIM",
+    "bVIIM",
+    "ivm"
+   ],
+   "tags": [
+    "Empowered",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bVIM",
+    "I",
+    "bIIM"
+   ],
+   "tags": [
+    "Surprised",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "bVIM",
+    "IV",
+    "bIIIM",
+    "bVIIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "I7",
+    "I9",
+    "IV",
+    "ivm"
+   ],
+   "tags": [
+    "Romantic",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "I7",
+    "Idom7",
+    "IV",
+    "ivm",
+    "I"
+   ],
+   "tags": [
+    "Relaxed",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "I7",
+    "Idom7",
+    "IV",
+    "ivm",
+    "I",
+    "ivm6",
+    "Vdom7"
+   ],
+   "tags": [
+    "Relaxed",
+    "Romantic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "im",
+    "bVII6",
+    "bVIM"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "IIIM",
+    "vi",
+    "V"
+   ],
+   "tags": [
+    "Joyful",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "IIM",
+    "iii",
+    "V6"
+   ],
+   "tags": [
+    "Surprised",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "IIM",
+    "IV",
+    "I"
+   ],
+   "tags": [
+    "Joyful",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "IV",
+    "bIIIM",
+    "bVIM"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "IV",
+    "bVIIM",
+    "IV"
+   ],
+   "tags": [
+    "Joyful",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "IV",
+    "V",
+    "bVIIM"
+   ],
+   "tags": [
+    "Triumphant",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "ivm6",
+    "I",
+    "I7"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Tender"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "ivm",
+    "bIIIM",
+    "bVIIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "V",
+    "bVIIM",
+    "IV"
+   ],
+   "tags": [
+    "Triumphant",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "V",
+    "ivm",
+    "bVIM"
+   ],
+   "tags": [
+    "Surprised",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I",
+    "vi",
+    "bVIM",
+    "V"
+   ],
+   "tags": [
+    "Surprised",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "I5",
+    "iii",
+    "II5",
+    "#IVm",
+    "IV5",
+    "vi",
+    "V5",
+    "viim"
+   ],
+   "tags": [
+    "Excited",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "ii",
+    "bIIM",
+    "I",
+    "bVIIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "ii",
+    "bVIIM7",
+    "I"
+   ],
+   "tags": [
+    "Hopeful",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "ii",
+    "IVM",
+    "vm",
+    "bVIIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "IIIM",
+    "V",
+    "VIsus4",
+    "VIM",
+    "I",
+    "IIM"
+   ],
+   "tags": [
+    "Triumphant",
+    "Surprised"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIIM",
+    "bVIIM",
+    "IV"
+   ],
+   "tags": [
+    "Romantic",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIIM",
+    "bVIM",
+    "V"
+   ],
+   "tags": [
+    "Mysterious",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIIM",
+    "IV",
+    "bVIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIIM",
+    "IV",
+    "V"
+   ],
+   "tags": [
+    "Mysterious",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIIsus2",
+    "IV"
+   ],
+   "tags": [
+    "Mysterious",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIM",
+    "bIIIM",
+    "bIIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Dark"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIM",
+    "biim6",
+    "ivm"
+   ],
+   "tags": [
+    "Mysterious",
+    "Tender"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIM",
+    "im7",
+    "bviim"
+   ],
+   "tags": [
+    "Mysterious",
+    "Spiritual"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIM",
+    "ivm",
+    "IIIM",
+    "bIIM",
+    "ivm",
+    "IIIM",
+    "IIIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bIIM",
+    "vm",
+    "im7"
+   ],
+   "tags": [
+    "Mysterious",
+    "Dark"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bVIIM",
+    "bIIM",
+    "vm"
+   ],
+   "tags": [
+    "Mysterious",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bVIIM",
+    "IV",
+    "im"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Mysterious",
+    "Cadence"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bviim",
+    "bVIM",
+    "bIIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bVIM",
+    "im",
+    "IV"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "bVIM",
+    "ivm",
+    "V"
+   ],
+   "tags": [
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "ii",
+    "vm",
+    "IV"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "ivm9",
+    "bIIM",
+    "im",
+    "vm",
+    "ivm7",
+    "bIIM",
+    "im7"
+   ],
+   "tags": [
+    "Mysterious",
+    "Tender"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "ivm9",
+    "bIIM",
+    "im"
+   ],
+   "tags": [
+    "Mysterious",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "V",
+    "bVIIM",
+    "IV",
+    "bVIM",
+    "bIIIM",
+    "ivm",
+    "V"
+   ],
+   "tags": [
+    "Mysterious",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "VIM",
+    "bi",
+    "V"
+   ],
+   "tags": [
+    "Mysterious",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "VIM",
+    "IIIM",
+    "bIIM"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Surprised"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "vm",
+    "isus4",
+    "I"
+   ],
+   "tags": [
+    "Hopeful",
+    "Spiritual"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "vm",
+    "bVIM",
+    "bIIM"
+   ],
+   "tags": [
+    "Mysterious",
+    "Hopeful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "vm",
+    "bVIIM",
+    "IV"
+   ],
+   "tags": [
+    "Hopeful",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "vm",
+    "ivm",
+    "bIIM7"
+   ],
+   "tags": [
+    "Mysterious",
+    "Dark"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "im",
+    "viim/i",
+    "im",
+    "bii/i"
+   ],
+   "tags": [
+    "Mysterious",
+    "Fearful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "iii",
+    "im",
+    "iii",
+    "im7"
+   ],
+   "tags": [
+    "Anguished",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "IV",
+    "V",
+    "ii",
+    "im",
+    "bIIIM",
+    "IV"
+   ],
+   "tags": [
+    "Hopeful",
+    "Nostalgic"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "ivm",
+    "bIIIM",
+    "iim7",
+    "V"
+   ],
+   "tags": [
+    "Mysterious",
+    "Tender"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "ivm",
+    "im",
+    "bviim",
+    "bVIM"
+   ],
+   "tags": [
+    "Dark"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "vdim",
+    "vdim",
+    "ivm",
+    "bIIIM"
+   ],
+   "tags": [
+    "Fearful",
+    "Mysterious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "vi",
+    "bVIIM",
+    "im",
+    "bVIM"
+   ],
+   "tags": [
+    "Hopeful",
+    "Peaceful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "vi",
+    "bVIM",
+    "bVIIM",
+    "I"
+   ],
+   "tags": [
+    "Hopeful",
+    "Triumphant"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "vi",
+    "IV",
+    "I",
+    "IIM"
+   ],
+   "tags": [
+    "Hopeful",
+    "Peaceful"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "vi",
+    "viim",
+    "V",
+    "vi",
+    "#IVdim",
+    "V"
+   ],
+   "tags": [
+    "Nostalgic",
+    "Dark"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "VIM",
+    "bVIM",
+    "im",
+    "bVIIM"
+   ],
+   "tags": [
+    "Surprised",
+    "Rebellious"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bIIIM",
+    "V7",
+    "I"
+   ],
+   "tags": [
+    "Cadence"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "bVIIM",
+    "V7",
+    "I"
+   ],
+   "tags": [
+    "Cadence"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "ivm",
+    "bIIIM",
+    "bIIM",
+    "I"
+   ],
+   "tags": [
+    "Cadence"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "ivm",
+    "IIIM",
+    "bIIM",
+    "I"
+   ],
+   "tags": [
+    "Cadence"
+   ]
+  },
+  {
+   "mode": "modal",
+   "nums": [
+    "ivm",
+    "bIIIM",
+    "bVIM",
+    "I"
+   ],
+   "tags": [
+    "Cadence"
+   ]
+  }
+ ]
+}

@@ -2,7 +2,7 @@
   "id": "place_room_kuki",
   "kind": "room",
   "title": "Pokój: łąka (calm meadow)",
-  "role": "pastoralny, przewiewny; legenda v7: progresja unikalna (MINSOUL + LULL+10), jeden instrument (HARP)",
+  "role": "pastoralny, przewiewny; legenda v7: progresja unikalna (I-bIIIM-bVIM-bVIIM + im7-ivsus4-v7-isus4(wzgl.)), jeden instrument (HARP)",
   "bpm": 72,
   "meter": 4,
   "key": "G",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gm11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Cm11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 4,
-      "sym": "D7alt"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 5,
-      "sym": "Gm9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "Dm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "Ebmaj9#11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 8,
-      "sym": "D7b9b13"
+      "sym": "Fmaj9"
     },
     {
       "bar": 9,
-      "sym": "Fmaj9"
+      "sym": "Em11"
     },
     {
       "bar": 10,
-      "sym": "Bbmaj9#11"
+      "sym": "Em11"
     },
     {
       "bar": 11,
-      "sym": "Fmaj7/A"
+      "sym": "Asus4"
     },
     {
       "bar": 12,
-      "sym": "Bbm6/9"
+      "sym": "Asus4"
     },
     {
       "bar": 13,
-      "sym": "D7alt"
+      "sym": "Bm9"
     },
     {
       "bar": 14,
-      "sym": "Gm11"
+      "sym": "Bm9"
     },
     {
       "bar": 15,
-      "sym": "Bbmaj9#11"
+      "sym": "Esus4"
     },
     {
       "bar": 16,
-      "sym": "Fmaj9"
+      "sym": "Esus4"
     },
     {
       "bar": 17,
-      "sym": "Gm11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Cm11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 20,
-      "sym": "D7alt"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 21,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 22,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 23,
       "sym": "Ebmaj9#11"
     },
     {
+      "bar": 22,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 23,
+      "sym": "Fmaj9"
+    },
+    {
       "bar": 24,
-      "sym": "D7b9b13"
+      "sym": "Fmaj9"
     },
     {
       "bar": 25,
-      "sym": "Fmaj9"
+      "sym": "Em11"
     },
     {
       "bar": 26,
-      "sym": "Bbmaj9#11"
+      "sym": "Em11"
     },
     {
       "bar": 27,
-      "sym": "Fmaj7/A"
+      "sym": "Asus4"
     },
     {
       "bar": 28,
-      "sym": "Bbm6/9"
+      "sym": "Asus4"
     },
     {
       "bar": 29,
-      "sym": "D7alt"
+      "sym": "Bm9"
     },
     {
       "bar": 30,
-      "sym": "Gm11"
+      "sym": "Bm9"
     },
     {
       "bar": 31,
-      "sym": "Bbmaj9#11"
+      "sym": "Esus4"
     },
     {
       "bar": 32,
-      "sym": "Fmaj9"
+      "sym": "Esus4"
     }
   ],
   "layers": [

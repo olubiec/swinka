@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""Unikalne progresje i brzmienia dla każdego utworu (MW-9).
+"""Unikalne progresje i brzmienia dla każdego utworu (MW-9), progresje z gotowców z internetu.
 
-Każdy utwór dostaje własną progresję zbudowaną ze słownika akordów legendy v7 (legend_progs.FAMILIES):
-sekcje A, B (C dla długich) z różnych rodzin i w różnych tonacjach, potem mutacje (tritone sub, kolor,
-względny dur/moll, dominanta przejściowa, półtonowe podejście). Unikalność jest wymuszona w odniesieniu do
-tonaliki: dwa utwory nie mogą mieć tej samej progresji nawet po transpozycji (limit powtórzonych taktów).
-Brzmienie: instrument z puli serii + wzór + łańcuch efektów z parametrami wylosowanymi z ziarna utworu;
-odcisk (instrument, wzór, efekty) jest unikalny w całej bibliotece.
+Źródło harmonii: SHLD Free MIDI Chord Packs (Ludovic Drolez, licencja MIT,
+https://github.com/ldrolez/free-midi-chords), 194 progresje w zapisie stopniowym wyciągnięte do
+`tools/music/ready_progs.json` (nasz kod nie wykonuje niczyjego kodu; plik to dane). Każdy utwór składa
+sekcje A, B (C dla długich) po 8 taktów z różnych gotowych progresji, transponowanych do tonacji utworu
+(sekcje B/C mogą grać w tonacji równoległej względnej). Gotowe stopnie są ubarwiane słownikiem akordów
+legendy v7 (maj9#11, m11, 13sus4, 7alt ...), a ich tempo zmian (dwa takty na akord itd.) dopasowane do formy.
+Unikalność: ta sama gotowa progresja jest użyta najwyżej kilka razy w bibliotece, a żadna para utworów nie
+ma tej samej sekwencji (limit powtórzonych taktów, po tonalice).
+Brzmienie: instrument z puli serii + wzór + łańcuch efektów z parametrami z ziarna utworu; odcisk
+(instrument, wzór, efekty) jest unikalny w całej bibliotece.
 
 Zakres: płyty (96), pokoje (10), belki i miejsca (9), minigry (4 gry + menu; stemy i `_full` jednej gry mają
 wspólną harmonię z założenia). Pozostają: motyw, jingle (już unikalne), szumy (bez harmonii), pliki zewnętrzne.
@@ -34,12 +38,6 @@ SPECS = os.path.join(HERE, "specs")
 ROOT = os.path.dirname(os.path.dirname(HERE))
 RE_SYM = re.compile(r"^([A-G][#b]?)(.*?)(?:/([A-G][#b]?))?$")
 
-DOM = {"7", "9", "13", "7alt", "7b13", "7b9b13", "9#11", "13#11", "7#9", "7b9", "13b9", "9#5", "7#11", "7#5"}
-GROUPS = [["maj9#11", "maj13#11", "maj13", "maj9", "maj7#11"], ["m9", "m11", "m13"], ["9sus4", "13sus4", "7sus4"],
-          ["7alt", "7b13", "7b9b13", "13", "9#11"]]
-MAJ_Q = {"maj9#11", "maj13#11", "maj13", "maj9", "maj7#11", "maj7"}
-MIN_Q = {"m9", "m11", "m13", "m7"}
-FAMS = sorted(LP.FAMILIES)
 
 # pule instrumentów serii płyt (nastrój serii) i wzory grane przez instrument
 POOLS = {
@@ -81,53 +79,6 @@ def fmt(bar, tonic):
     return names[root % 12] + q + (("/" + names[bass % 12]) if bass is not None else "")
 
 
-def section(fam, tonic):
-    return [parse(s) for s in LP.family(fam, tonic)]
-
-
-def mutate(sec, tonic_pc, rng):
-    """Jedna mutacja na losowym takcie sekcji (0-7); takt 0 zostaje (kotwica), takt 7 tylko kolor/tritone."""
-    i = rng.randrange(1, 8)
-    root, q, bass = sec[i]
-    op = rng.choice(["tri", "color", "rel", "appr", "sec", "color"])
-    if op == "tri" and q in DOM and bass is None:
-        sec[i] = ((root + 6) % 12, q, None)
-    elif op == "color":
-        for g in GROUPS:
-            if q in g and bass is None:
-                sec[i] = (root, rng.choice([x for x in g if x != q]), None)
-                break
-    elif op == "rel" and bass is None and i < 7:
-        if q in MAJ_Q:
-            sec[i] = ((root - 3) % 12, rng.choice(["m11", "m9"]), None)
-        elif q in MIN_Q:
-            sec[i] = ((root + 3) % 12, rng.choice(["maj9#11", "maj13#11"]), None)
-    elif op == "appr" and i < 7:
-        nxt = sec[i + 1][0]
-        sec[i] = ((nxt + rng.choice([1, -1])) % 12, rng.choice(["13", "7alt", "9#11"]), None)
-    elif op == "sec" and i < 7:
-        nxt = sec[i + 1][0]
-        sec[i] = ((nxt + 7) % 12, rng.choice(["7alt", "7b13", "13sus4"]), None)
-    return sec
-
-
-def build_unit(tonic, n_sec, rng):
-    """Jednostka formy: n_sec sekcji po 8 taktów, każda z innej rodziny / przesunięcia."""
-    tpc = T.root_pc(tonic)
-    flat = _flat(tonic)
-    fams = rng.sample(FAMS, n_sec)
-    offs = [0] + rng.sample([5, 7, 3, 9, 2, 10, 4, 8, 6], n_sec - 1)
-    unit = []
-    for fam, off in zip(fams, offs):
-        names = LP.FLAT if flat else LP.SHARP
-        sec = section(fam, names[(tpc + off) % 12])
-        for _ in range(rng.randint(1, 3)):
-            sec = mutate(sec, tpc, rng)
-        unit += sec
-    tag = " + ".join("%s%+d" % (f, o) if o else f for f, o in zip(fams, offs))
-    return unit, tag
-
-
 def full_progression(unit, bars):
     out = [unit[i % len(unit)] for i in range(bars)]
     if bars % len(unit):
@@ -157,20 +108,167 @@ def distinct(sig, others, limit):
             return False
     return True
 
+# ---- gotowe progresje (ready_progs.json) ----
+READY = json.load(open(os.path.join(HERE, "ready_progs.json"), encoding="utf-8"))["progs"]
+MAJ_SCALE = [0, 2, 4, 5, 7, 9, 11]
+MIN_SCALE = [0, 2, 3, 5, 7, 8, 10]
+DEGREE = {"I": 0, "II": 1, "III": 2, "IV": 3, "V": 4, "VI": 5, "VII": 6}
+RE_TOK = re.compile(r"^([b#]?)(VII|VI|IV|V|III|II|I|vii|vi|iv|v|iii|ii|i)(.*?)(?:/([b#]?(?:VII|VI|IV|V|III|II|I|vii|vi|iv|v|iii|ii|i)))?$")
 
-def make_progression(key, tonic, bars, accepted, limit=0.3125):
+CHILL = {"Nostalgic", "Hopeful", "Romantic", "Tender", "Peaceful", "Relaxed", "Spiritual", "Mysterious", "Lonely", "Sad"}
+SERIES_TAGS = {1: {"Nostalgic", "Hopeful", "Relaxed", "Tender", "Peaceful"},
+               2: {"Romantic", "Hopeful", "Tender", "Mysterious", "Nostalgic"},
+               3: {"Mysterious", "Spiritual", "Peaceful", "Lonely", "Tender"},
+               4: {"Nostalgic", "Sad", "Lonely", "Romantic", "Relaxed"}}
+GAME_TAGS = CHILL | {"Joyful", "Playful", "Triumphant", "Excited", "Surprised"}
+
+
+def scale_of(p):
+    """'min' dla progresji w skali molowej (numeracja od toniki molowej), inaczej 'maj'."""
+    if p["mode"] == "min":
+        return "min"
+    if p["mode"] == "modal":
+        m = RE_TOK.match(p["nums"][0])
+        if m and not m.group(1) and m.group(2) == "i":
+            return "min"
+    return "maj"
+
+
+for _p_ in READY:
+    _p_["scale"] = scale_of(_p_)
+MAJ_IDX = [i for i, p in enumerate(READY) if p["scale"] == "maj"]
+MIN_IDX = [i for i, p in enumerate(READY) if p["scale"] == "min"]
+
+
+def pick(rng, xs):
+    return xs[rng.randrange(len(xs))]
+
+
+def token_chord(tok, scale, rng, prev):
+    """Token stopniowy -> (przesunięcie w półtonach od toniki skali, jakość legendy v7, bas lub None).
+    prev = poprzedni akord (nie powtarzamy tej samej jakości na tym samym stopniu)."""
+    m = RE_TOK.match(tok)
+    if not m:
+        raise SystemExit("nieznany token: " + tok)
+    acc, num, suf, bass = m.groups()
+    sc = MAJ_SCALE if scale == "maj" else MIN_SCALE
+    off = (sc[DEGREE[num.upper()]] + {"b": -1, "#": 1, "": 0}[acc]) % 12
+    upper = num.isupper()
+    s = suf
+    if s.startswith("dim"):
+        opts = ["dim7"]
+    elif s in ("sus4",):
+        opts = ["13sus4", "9sus4"] if off == 7 else ["sus4"]
+    elif s == "sus2":
+        opts = ["sus2"]
+    elif s == "madd9":
+        opts = ["madd9"]
+    elif s == "add9":
+        opts = ["add9", "maj9"]
+    elif s in ("69", "6") and upper:
+        opts = ["6/9"]
+    elif s in ("m6", "6"):
+        opts = ["m6"] if not upper else ["6/9"]
+    elif s in ("7", "dom7", "9") and upper:
+        opts = ["13", "7b13", "9", "7alt"] if off == 7 else ["9", "13"]
+    elif s in ("M7", "maj7"):
+        opts = ["maj9", "maj7#11", "maj13"]
+    elif s in ("m7", "m9", "7") and not upper or (s in ("m7", "m9") and upper):
+        opts = ["m9", "m11", "m7"]
+    elif upper or s.startswith("M"):
+        # trójdźwięk durowy: kolor zależy od funkcji stopnia
+        if off == 0 and scale == "maj":
+            opts = ["maj9", "maj13", "maj9#11"]
+        elif off == 5 and scale == "maj":
+            opts = ["maj9#11", "maj13#11"]
+        elif off == 7:
+            opts = ["13", "9sus4", "13sus4"] if scale == "maj" else ["7b13", "7alt", "13"]
+        elif scale == "maj" and off in (2, 4, 9):
+            opts = ["13", "7b13", "7alt"]
+        elif off in (3, 8):
+            opts = ["maj9#11", "maj9"]
+        elif off == 10:
+            opts = ["maj9", "13"]
+        elif scale == "min" and off == 0:
+            opts = ["maj9"]
+        elif scale == "min" and off == 5:
+            opts = ["13", "9"]
+        else:
+            opts = ["maj7#11", "maj9"]
+    else:
+        opts = ["m11", "m9"] if off in (0, 5) else ["m9", "m11"]
+    if prev is not None and prev[0] == off and len(opts) > 1:
+        opts = [q for q in opts if q != prev[1]] or opts
+    q = pick(rng, opts)
+    b = None
+    if bass:
+        mb = RE_TOK.match(bass)
+        b = (sc[DEGREE[mb.group(2).upper()]] + {"b": -1, "#": 1, "": 0}[mb.group(1)]) % 12
+    return off, q, b
+
+
+def section_from(idx, base_pc, rng, scale):
+    """8 taktów z gotowej progresji: akordy rozłożone na 8 taktów (po 1-3 takty), 4-akordowe czasem grane dwa razy po 1 takcie."""
+    toks = READY[idx]["nums"][:8]
+    n = len(toks)
+    if n <= 4 and 8 % n == 0 and rng.random() < 0.35:
+        seq = [(t, 1) for t in toks] * (8 // n)
+    else:
+        seq = [(t, 8 // n + (1 if i < 8 % n else 0)) for i, t in enumerate(toks)]
+    bars, prev = [], None
+    for tok, dur in seq:
+        off, q, b = token_chord(tok, scale, rng, prev)
+        prev = (off, q)
+        for _ in range(dur):
+            bars.append(((base_pc + off) % 12, q, None if b is None else (base_pc + b) % 12))
+    return bars[:8]
+
+
+def label(idx, rel):
+    return "-".join(READY[idx]["nums"][:8]) + ("(wzgl.)" if rel else "")
+
+
+def build_unit(tonic_pc, mode, n_sec, rng, usage, cap, prefs):
+    minor = mode in ("minor", "dorian", "phrygian", "aeolian")
+    home = MIN_IDX if minor else MAJ_IDX
+    other = MAJ_IDX if minor else MIN_IDX
+    unit, parts, used = [], [], []
+    for s in range(n_sec):
+        rel = s > 0 and rng.random() < 0.45
+        pool = [i for i in (other if rel else home) if i not in used and usage.get(i, 0) < cap]
+        good = [i for i in pool if prefs & set(READY[i]["tags"])]
+        pool = good or pool
+        if not pool:
+            return None, None, None
+        idx = pick(rng, pool)
+        used.append(idx)
+        scale = READY[idx]["scale"]
+        base = tonic_pc
+        if rel:
+            base = (tonic_pc - 3) % 12 if minor is False else (tonic_pc + 3) % 12
+        unit += section_from(idx, base, rng, scale)
+        parts.append(label(idx, rel))
+    return unit, " + ".join(parts), used
+
+
+def make_progression(key, tonic, mode, bars, accepted, usage, prefs, limit=0.3125):
     n_sec = 1 if bars <= 8 else (3 if bars >= 40 else 2)
     tpc = T.root_pc(tonic)
-    for attempt in range(6000):
-        rng = random.Random("prog|%s|%d" % (key, attempt))
-        unit, tag = build_unit(tonic, max(n_sec, 1) if n_sec > 1 else 2, rng)
-        prog = full_progression(unit if n_sec > 1 else unit[:8], bars)
+    for attempt in range(8000):
+        rng = random.Random("ready|%s|%d" % (key, attempt))
+        cap = 2 + attempt // 2000
+        unit, tag, used = build_unit(tpc, mode, n_sec, rng, usage, cap, prefs if attempt < 4000 else GAME_TAGS)
+        if unit is None:
+            continue
+        prog = full_progression(unit, bars)
         if not smooth_ok(prog):
             continue
         sig = rel_sig(prog, tpc)
-        lim = limit if attempt < 3000 else limit + 0.12
+        lim = limit if attempt < 4000 else limit + 0.12
         if distinct(sig, accepted, lim):
             accepted.append(sig)
+            for i in used:
+                usage[i] = usage.get(i, 0) + 1
             return [fmt(b, tonic) for b in prog], tag
     raise SystemExit("brak unikalnej progresji dla " + key)
 
@@ -251,7 +349,7 @@ def sid_of(rec_id):
 
 
 def apply(table_rows=None):
-    accepted = []
+    accepted, usage = [], {}
     for fixed in ["theme_cuy", "jingle_stage", "jingle_birthday"]:
         s = _load(os.path.join(SPECS, fixed + ".json"))
         accepted.append(rel_sig([parse(c["sym"]) for c in s["chords"]], T.root_pc(s.get("key", "C"))))
@@ -260,7 +358,8 @@ def apply(table_rows=None):
     for key, files, kind in targets():
         first = _load(files[0])
         tonic, bars = first["key"], first["bars"]
-        syms, tag = make_progression(key, tonic, bars, accepted)
+        prefs = (GAME_TAGS if kind == "game" else SERIES_TAGS[int(key.split("_")[1][1])] if kind == "record" else CHILL)
+        syms, tag = make_progression(key, tonic, first["mode"], bars, accepted, usage, prefs)
         for path in files:
             if kind == "record":
                 sid, vid = sid_of(key)
@@ -280,7 +379,7 @@ def apply(table_rows=None):
                     lay["voice"] = voice
                     lay["pattern"] = rng.choice(PATTERNS[voice])
                     lay["db"] = -12 if voice == "ACC" else -3
-                    lay["part"] = "jedna warstwa, jeden instrument (%s), akordy rozłożone; progresja unikalna: %s" % (voice, tag)
+                    lay["part"] = "jedna warstwa, jeden instrument (%s), akordy rozłożone; gotowe progresje SHLD: %s" % (voice, tag)
                     spec["fx"] = jitter_chain(spec["fx"], random.Random("fx|%s|0" % key), 1.0)
                 else:
                     # pokoje i belki: efekty zostają, jitter tylko przy kolizji odcisku (idempotentne)
@@ -303,9 +402,9 @@ def apply(table_rows=None):
 def table(rows):
     lines = ["# Unikalne progresje (MW-9)", "",
              "Jedno źródło prawdy: `tools/music/unique_progs.py` (deterministyczne ziarno z id). Tabela jest generowana: "
-             "`python3 tools/music/unique_progs.py --table`. Sekcje A/B/C pochodzą z rodzin legendy v7 w różnych tonacjach "
-             "(`RODZINA+n` = przesunięcie o n półtonów od tonaliki), potem mutacje (tritone sub, kolor, względny dur/moll, "
-             "dominanta przejściowa, półtonowe podejście).", "",
+             "`python3 tools/music/unique_progs.py --table`. Sekcje A/B/C to gotowe progresje z SHLD Free MIDI Chord Packs "
+             "(Ludovic Drolez, MIT, https://github.com/ldrolez/free-midi-chords; dane w `tools/music/ready_progs.json`), zapisane stopniami, "
+             "transponowane do tonacji utworu i ubarwione akordami legendy v7. `(wzgl.)` = sekcja w tonacji względnej.", "",
              "| id | rodzaj | tonika | takty | źródło | instrument | akordy (pierwsze 16 taktów) |", "| --- | --- | --- | --- | --- | --- | --- |"]
     for key, kind, tonic, bars, tag, voice, syms in rows:
         lines.append("| `%s` | %s | %s | %d | %s | %s | %s |" % (key, kind, tonic, bars, tag, voice, " \\| ".join(syms[:16])))

@@ -2,7 +2,7 @@
   "id": "rec_s3_swietliki_b1",
   "kind": "record",
   "title": "Świetliki · B1 energiczny",
-  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (MINSOUL + MODAL+4 + PEDAL+5), jeden instrument (EP)",
+  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (bVIM-vi-im-bVIIM + VI-iv-i-v(wzgl.) + i-VII-VI-III-iv-VI-VII-i(wzgl.)), jeden instrument (EP)",
   "bpm": 97,
   "meter": 4,
   "key": "A",
@@ -13,19 +13,19 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Am11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Fmaj13#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "B7b13"
+      "sym": "F#m11"
     },
     {
       "bar": 4,
-      "sym": "E7alt"
+      "sym": "F#m11"
     },
     {
       "bar": 5,
@@ -33,95 +33,95 @@
     },
     {
       "bar": 6,
-      "sym": "Gmaj9#11"
+      "sym": "Am9"
     },
     {
       "bar": 7,
-      "sym": "Fmaj9#11"
+      "sym": "G13"
     },
     {
       "bar": 8,
-      "sym": "E7b13"
+      "sym": "G13"
     },
     {
       "bar": 9,
-      "sym": "C#maj9"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Bmaj7#11"
+      "sym": "Bm11"
     },
     {
       "bar": 11,
-      "sym": "Amaj7#11"
+      "sym": "F#m11"
     },
     {
       "bar": 12,
-      "sym": "F#maj13#11"
+      "sym": "C#m11"
     },
     {
       "bar": 13,
-      "sym": "C#maj7/F"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 14,
-      "sym": "Emaj9#11"
+      "sym": "Bm11"
     },
     {
       "bar": 15,
-      "sym": "Ebm11"
+      "sym": "F#m11"
     },
     {
       "bar": 16,
-      "sym": "G#13sus4"
+      "sym": "C#m9"
     },
     {
       "bar": 17,
-      "sym": "Dmaj9"
+      "sym": "F#m11"
     },
     {
       "bar": 18,
-      "sym": "E/D"
+      "sym": "E13"
     },
     {
       "bar": 19,
-      "sym": "F#m11/D"
-    },
-    {
-      "bar": 20,
-      "sym": "Gmaj7#11/D"
-    },
-    {
-      "bar": 21,
       "sym": "Dmaj9"
     },
     {
+      "bar": 20,
+      "sym": "Amaj9#11"
+    },
+    {
+      "bar": 21,
+      "sym": "Bm11"
+    },
+    {
       "bar": 22,
-      "sym": "C/D"
+      "sym": "Dmaj9"
     },
     {
       "bar": 23,
-      "sym": "Em11/D"
+      "sym": "Emaj9"
     },
     {
       "bar": 24,
-      "sym": "A/D"
+      "sym": "F#m9"
     },
     {
       "bar": 25,
-      "sym": "Am11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 26,
-      "sym": "Fmaj13#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "B7b13"
+      "sym": "F#m11"
     },
     {
       "bar": 28,
-      "sym": "E7alt"
+      "sym": "F#m11"
     },
     {
       "bar": 29,
@@ -129,79 +129,79 @@
     },
     {
       "bar": 30,
-      "sym": "Gmaj9#11"
+      "sym": "Am9"
     },
     {
       "bar": 31,
-      "sym": "Fmaj9#11"
+      "sym": "G13"
     },
     {
       "bar": 32,
-      "sym": "E7b13"
+      "sym": "G13"
     },
     {
       "bar": 33,
-      "sym": "C#maj9"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 34,
-      "sym": "Bmaj7#11"
+      "sym": "Bm11"
     },
     {
       "bar": 35,
-      "sym": "Amaj7#11"
+      "sym": "F#m11"
     },
     {
       "bar": 36,
-      "sym": "F#maj13#11"
+      "sym": "C#m11"
     },
     {
       "bar": 37,
-      "sym": "C#maj7/F"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 38,
-      "sym": "Emaj9#11"
+      "sym": "Bm11"
     },
     {
       "bar": 39,
-      "sym": "Ebm11"
+      "sym": "F#m11"
     },
     {
       "bar": 40,
-      "sym": "G#13sus4"
+      "sym": "C#m9"
     },
     {
       "bar": 41,
-      "sym": "Dmaj9"
+      "sym": "F#m11"
     },
     {
       "bar": 42,
-      "sym": "E/D"
+      "sym": "E13"
     },
     {
       "bar": 43,
-      "sym": "F#m11/D"
-    },
-    {
-      "bar": 44,
-      "sym": "Gmaj7#11/D"
-    },
-    {
-      "bar": 45,
       "sym": "Dmaj9"
     },
     {
+      "bar": 44,
+      "sym": "Amaj9#11"
+    },
+    {
+      "bar": 45,
+      "sym": "Bm11"
+    },
+    {
       "bar": 46,
-      "sym": "C/D"
+      "sym": "Dmaj9"
     },
     {
       "bar": 47,
-      "sym": "Em11/D"
+      "sym": "Emaj9"
     },
     {
       "bar": 48,
-      "sym": "A/D"
+      "sym": "F#m9"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "EP",
       "db": -3,
       "pattern": "chords.rolled(0.3)",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; progresja unikalna: MINSOUL + MODAL+4 + PEDAL+5",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; gotowe progresje SHLD: bVIM-vi-im-bVIIM + VI-iv-i-v(wzgl.) + i-VII-VI-III-iv-VI-VII-i(wzgl.)",
       "stem": "base"
     }
   ],

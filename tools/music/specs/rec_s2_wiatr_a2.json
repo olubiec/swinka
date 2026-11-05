@@ -2,7 +2,7 @@
   "id": "rec_s2_wiatr_a2",
   "kind": "record",
   "title": "Wiatr w trawie · A2 spokojny",
-  "role": "płyta serii 2; szeroki pad i wiatr; legenda v7: progresja unikalna (DORSOUL + MODAL+6), jeden instrument (HARP)",
+  "role": "płyta serii 2; szeroki pad i wiatr; legenda v7: progresja unikalna (ii-V-I-IV + vdim-vdim-ivm-bIIIM), jeden instrument (HARP)",
   "bpm": 52,
   "meter": 4,
   "key": "D",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dm11"
+      "sym": "Em9"
     },
     {
       "bar": 2,
-      "sym": "G13"
+      "sym": "Em9"
     },
     {
       "bar": 3,
-      "sym": "Fmaj9#11"
+      "sym": "A13"
     },
     {
       "bar": 4,
-      "sym": "F#7alt"
+      "sym": "A13"
     },
     {
       "bar": 5,
-      "sym": "B7b13"
+      "sym": "Dmaj13"
     },
     {
       "bar": 6,
-      "sym": "Em11"
+      "sym": "Dmaj13"
     },
     {
       "bar": 7,
-      "sym": "Eb7b13"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "Ab9#11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 9,
-      "sym": "Abmaj9"
+      "sym": "Adim7"
     },
     {
       "bar": 10,
-      "sym": "F#maj7#11"
+      "sym": "Adim7"
     },
     {
       "bar": 11,
-      "sym": "Emaj9#11"
+      "sym": "Gm9"
     },
     {
       "bar": 12,
-      "sym": "Dbmaj13"
-    },
-    {
-      "bar": 13,
-      "sym": "Abmaj7/C"
-    },
-    {
-      "bar": 14,
-      "sym": "Bmaj9#11"
-    },
-    {
-      "bar": 15,
-      "sym": "Bbm11"
-    },
-    {
-      "bar": 16,
-      "sym": "Eb13sus4"
-    },
-    {
-      "bar": 17,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 18,
-      "sym": "G13"
-    },
-    {
-      "bar": 19,
       "sym": "Fmaj9#11"
     },
     {
+      "bar": 13,
+      "sym": "Adim7"
+    },
+    {
+      "bar": 14,
+      "sym": "Adim7"
+    },
+    {
+      "bar": 15,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 16,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 17,
+      "sym": "Em9"
+    },
+    {
+      "bar": 18,
+      "sym": "Em9"
+    },
+    {
+      "bar": 19,
+      "sym": "A13"
+    },
+    {
       "bar": 20,
-      "sym": "F#7alt"
+      "sym": "A13"
     },
     {
       "bar": 21,
-      "sym": "B7b13"
+      "sym": "Dmaj13"
     },
     {
       "bar": 22,
-      "sym": "Em11"
+      "sym": "Dmaj13"
     },
     {
       "bar": 23,
-      "sym": "Eb7b13"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "Ab9#11"
+      "sym": "Gmaj9#11"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; progresja unikalna: DORSOUL + MODAL+6",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: ii-V-I-IV + vdim-vdim-ivm-bIIIM",
       "stem": "base"
     }
   ],

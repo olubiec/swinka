@@ -2,7 +2,7 @@
   "id": "place_farm",
   "kind": "place",
   "title": "Farma",
-  "role": "farma (shuffle, slide); legenda v7: progresja unikalna (PHRYG + LULL+4), jeden instrument (ACC)",
+  "role": "farma (shuffle, slide); legenda v7: progresja unikalna (I-IIIM-vi-V + v-VI-III-i(wzgl.)), jeden instrument (ACC)",
   "bpm": 100,
   "meter": 4,
   "key": "A",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Am11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Bbmaj13"
+      "sym": "C#7alt"
     },
     {
       "bar": 3,
-      "sym": "Am9"
+      "sym": "F#m9"
     },
     {
       "bar": 4,
-      "sym": "E7b9b13"
+      "sym": "E9sus4"
     },
     {
       "bar": 5,
-      "sym": "Fmaj13#11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 6,
-      "sym": "F7alt"
+      "sym": "C#7alt"
     },
     {
       "bar": 7,
-      "sym": "E7alt"
+      "sym": "F#m11"
     },
     {
       "bar": 8,
-      "sym": "Am(maj7)9"
+      "sym": "E13sus4"
     },
     {
       "bar": 9,
-      "sym": "C#maj9"
+      "sym": "C#m9"
     },
     {
       "bar": 10,
-      "sym": "F#maj9#11"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "C#maj7/F"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 12,
-      "sym": "F#m6/9"
+      "sym": "F#m11"
     },
     {
       "bar": 13,
-      "sym": "C#maj13"
+      "sym": "C#m11"
     },
     {
       "bar": 14,
-      "sym": "Ebm11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 15,
-      "sym": "F#maj9#11"
+      "sym": "Amaj9"
     },
     {
       "bar": 16,
-      "sym": "C#maj13#11"
+      "sym": "F#m9"
     },
     {
       "bar": 17,
-      "sym": "Am11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Bbmaj13"
+      "sym": "C#7alt"
     },
     {
       "bar": 19,
-      "sym": "Am9"
+      "sym": "F#m9"
     },
     {
       "bar": 20,
-      "sym": "E7b9b13"
+      "sym": "E9sus4"
     },
     {
       "bar": 21,
-      "sym": "Fmaj13#11"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 22,
-      "sym": "F7alt"
+      "sym": "C#7alt"
     },
     {
       "bar": 23,
-      "sym": "E7alt"
+      "sym": "F#m11"
     },
     {
       "bar": 24,
-      "sym": "Am(maj7)9"
+      "sym": "E13sus4"
     },
     {
       "bar": 25,
-      "sym": "C#maj9"
+      "sym": "C#m9"
     },
     {
       "bar": 26,
-      "sym": "F#maj9#11"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "C#maj7/F"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 28,
-      "sym": "F#m6/9"
+      "sym": "F#m11"
     },
     {
       "bar": 29,
-      "sym": "C#maj13"
+      "sym": "C#m11"
     },
     {
       "bar": 30,
-      "sym": "Ebm11"
+      "sym": "Dmaj9"
     },
     {
       "bar": 31,
-      "sym": "F#maj9#11"
+      "sym": "Amaj9"
     },
     {
       "bar": 32,
-      "sym": "C#maj13#11"
+      "sym": "F#m9"
     }
   ],
   "layers": [

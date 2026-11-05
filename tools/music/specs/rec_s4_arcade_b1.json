@@ -2,7 +2,7 @@
   "id": "rec_s4_arcade_b1",
   "kind": "record",
   "title": "Arcade · B1 energiczny",
-  "role": "płyta serii 4; chiptune dance; legenda v7: progresja unikalna (THIRDS + DORQ+5 + SOUL+7), jeden instrument (PAD)",
+  "role": "płyta serii 4; chiptune dance; legenda v7: progresja unikalna (vi-V-IV-V + I-I7-Idom7-IV-ivm-I-ivm6-Vdom7 + V-vi-IV-I), jeden instrument (PAD)",
   "bpm": 146,
   "meter": 4,
   "key": "G",
@@ -13,259 +13,259 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 2,
-      "sym": "Ebmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 3,
-      "sym": "Abm9"
+      "sym": "D13sus4"
     },
     {
       "bar": 4,
-      "sym": "Am11"
+      "sym": "D13sus4"
     },
     {
       "bar": 5,
-      "sym": "Ab13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "Gmaj13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "Em11"
+      "sym": "D13"
     },
     {
       "bar": 8,
-      "sym": "D13sus4"
+      "sym": "D13"
     },
     {
       "bar": 9,
-      "sym": "Csowhat"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Db7alt"
+      "sym": "G9"
     },
     {
       "bar": 11,
-      "sym": "Csowhat"
+      "sym": "G13"
     },
     {
       "bar": 12,
-      "sym": "Eb13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 13,
-      "sym": "Dm11"
+      "sym": "Cm9"
     },
     {
       "bar": 14,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Cm11"
+      "sym": "Cm6"
     },
     {
       "bar": 16,
-      "sym": "G9sus4"
+      "sym": "D7b13"
     },
     {
       "bar": 17,
-      "sym": "Dmaj13"
+      "sym": "D9sus4"
     },
     {
       "bar": 18,
-      "sym": "Eb13"
+      "sym": "D9sus4"
     },
     {
       "bar": 19,
-      "sym": "Em11"
+      "sym": "Em9"
     },
     {
       "bar": 20,
-      "sym": "A7b13"
+      "sym": "Em9"
     },
     {
       "bar": 21,
-      "sym": "F#m11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 22,
-      "sym": "B9#11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 23,
-      "sym": "Em9"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "Eb9#11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 25,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 26,
-      "sym": "Ebmaj9#11"
-    },
-    {
-      "bar": 27,
-      "sym": "Abm9"
-    },
-    {
-      "bar": 28,
-      "sym": "Am11"
-    },
-    {
-      "bar": 29,
-      "sym": "Ab13"
-    },
-    {
-      "bar": 30,
-      "sym": "Gmaj13"
-    },
-    {
-      "bar": 31,
-      "sym": "Em11"
-    },
-    {
-      "bar": 32,
-      "sym": "D13sus4"
-    },
-    {
-      "bar": 33,
-      "sym": "Csowhat"
-    },
-    {
-      "bar": 34,
-      "sym": "Db7alt"
-    },
-    {
-      "bar": 35,
-      "sym": "Csowhat"
-    },
-    {
-      "bar": 36,
-      "sym": "Eb13"
-    },
-    {
-      "bar": 37,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 38,
-      "sym": "Ebmaj13#11"
-    },
-    {
-      "bar": 39,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 40,
-      "sym": "G9sus4"
-    },
-    {
-      "bar": 41,
-      "sym": "Dmaj13"
-    },
-    {
-      "bar": 42,
-      "sym": "Eb13"
-    },
-    {
-      "bar": 43,
-      "sym": "Em11"
-    },
-    {
-      "bar": 44,
-      "sym": "A7b13"
-    },
-    {
-      "bar": 45,
-      "sym": "F#m11"
-    },
-    {
-      "bar": 46,
-      "sym": "B9#11"
-    },
-    {
-      "bar": 47,
       "sym": "Em9"
     },
     {
-      "bar": 48,
-      "sym": "Eb9#11"
+      "bar": 26,
+      "sym": "Em9"
     },
     {
-      "bar": 49,
+      "bar": 27,
+      "sym": "D13sus4"
+    },
+    {
+      "bar": 28,
+      "sym": "D13sus4"
+    },
+    {
+      "bar": 29,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 30,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 31,
+      "sym": "D13"
+    },
+    {
+      "bar": 32,
+      "sym": "D13"
+    },
+    {
+      "bar": 33,
       "sym": "Gmaj9#11"
     },
     {
+      "bar": 34,
+      "sym": "G9"
+    },
+    {
+      "bar": 35,
+      "sym": "G13"
+    },
+    {
+      "bar": 36,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 37,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 38,
+      "sym": "Gmaj9#11"
+    },
+    {
+      "bar": 39,
+      "sym": "Cm6"
+    },
+    {
+      "bar": 40,
+      "sym": "D7b13"
+    },
+    {
+      "bar": 41,
+      "sym": "D9sus4"
+    },
+    {
+      "bar": 42,
+      "sym": "D9sus4"
+    },
+    {
+      "bar": 43,
+      "sym": "Em9"
+    },
+    {
+      "bar": 44,
+      "sym": "Em9"
+    },
+    {
+      "bar": 45,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 46,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 47,
+      "sym": "Gmaj9#11"
+    },
+    {
+      "bar": 48,
+      "sym": "Gmaj9#11"
+    },
+    {
+      "bar": 49,
+      "sym": "Em9"
+    },
+    {
       "bar": 50,
-      "sym": "Ebmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 51,
-      "sym": "Abm9"
+      "sym": "D13sus4"
     },
     {
       "bar": 52,
-      "sym": "Am11"
+      "sym": "D13sus4"
     },
     {
       "bar": 53,
-      "sym": "Ab13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 54,
-      "sym": "Gmaj13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 55,
-      "sym": "Em11"
+      "sym": "D13"
     },
     {
       "bar": 56,
-      "sym": "D13sus4"
+      "sym": "D13"
     },
     {
       "bar": 57,
-      "sym": "Csowhat"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 58,
-      "sym": "Db7alt"
+      "sym": "G9"
     },
     {
       "bar": 59,
-      "sym": "Csowhat"
+      "sym": "G13"
     },
     {
       "bar": 60,
-      "sym": "Eb13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 61,
-      "sym": "Dm11"
+      "sym": "Cm9"
     },
     {
       "bar": 62,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 63,
-      "sym": "Cm11"
+      "sym": "Cm6"
     },
     {
       "bar": 64,
-      "sym": "D13sus4"
+      "sym": "D13"
     }
   ],
   "layers": [
@@ -274,7 +274,7 @@
       "voice": "PAD",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; progresja unikalna: THIRDS + DORQ+5 + SOUL+7",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; gotowe progresje SHLD: vi-V-IV-V + I-I7-Idom7-IV-ivm-I-ivm6-Vdom7 + V-vi-IV-I",
       "stem": "base"
     }
   ],

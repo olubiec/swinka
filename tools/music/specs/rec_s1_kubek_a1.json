@@ -2,7 +2,7 @@
   "id": "rec_s1_kubek_a1",
   "kind": "record",
   "title": "Kubek z parą · A1 podpisowy",
-  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: progresja unikalna (LULL + MODAL+4 + PEDAL+2), jeden instrument (EP)",
+  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: progresja unikalna (ii-V-I-IV + I-ivm6-I-I7 + I-I7-I9-IV-ivm), jeden instrument (EP)",
   "bpm": 92,
   "meter": 4,
   "key": "F",
@@ -13,27 +13,27 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj9"
+      "sym": "Gm9"
     },
     {
       "bar": 2,
-      "sym": "Bbmaj9#11"
+      "sym": "Gm9"
     },
     {
       "bar": 3,
-      "sym": "Fmaj7/A"
+      "sym": "C13"
     },
     {
       "bar": 4,
-      "sym": "Bbm6/9"
+      "sym": "C13"
     },
     {
       "bar": 5,
-      "sym": "Fmaj13"
+      "sym": "Fmaj9"
     },
     {
       "bar": 6,
-      "sym": "Gm11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 7,
@@ -41,95 +41,95 @@
     },
     {
       "bar": 8,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 9,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 10,
-      "sym": "Em9"
-    },
-    {
-      "bar": 11,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 12,
-      "sym": "Dmaj13#11"
-    },
-    {
-      "bar": 13,
-      "sym": "Amaj7/Db"
-    },
-    {
-      "bar": 14,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 15,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 16,
-      "sym": "E13sus4"
-    },
-    {
-      "bar": 17,
-      "sym": "Gmaj9"
-    },
-    {
-      "bar": 18,
-      "sym": "C7alt"
-    },
-    {
-      "bar": 19,
-      "sym": "Bm11/G"
-    },
-    {
-      "bar": 20,
-      "sym": "D7alt"
-    },
-    {
-      "bar": 21,
-      "sym": "Gmaj9"
-    },
-    {
-      "bar": 22,
-      "sym": "F/G"
-    },
-    {
-      "bar": 23,
-      "sym": "Am11/G"
-    },
-    {
-      "bar": 24,
-      "sym": "D/G"
-    },
-    {
-      "bar": 25,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 26,
       "sym": "Bbmaj9#11"
     },
     {
-      "bar": 27,
-      "sym": "Fmaj7/A"
+      "bar": 9,
+      "sym": "Fmaj9#11"
     },
     {
-      "bar": 28,
-      "sym": "Bbm6/9"
+      "bar": 10,
+      "sym": "Fmaj9#11"
     },
     {
-      "bar": 29,
+      "bar": 11,
+      "sym": "Bbm6"
+    },
+    {
+      "bar": 12,
+      "sym": "Bbm6"
+    },
+    {
+      "bar": 13,
       "sym": "Fmaj13"
     },
     {
+      "bar": 14,
+      "sym": "Fmaj13"
+    },
+    {
+      "bar": 15,
+      "sym": "F13"
+    },
+    {
+      "bar": 16,
+      "sym": "F13"
+    },
+    {
+      "bar": 17,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 19,
+      "sym": "F13"
+    },
+    {
+      "bar": 20,
+      "sym": "F13"
+    },
+    {
+      "bar": 21,
+      "sym": "F9"
+    },
+    {
+      "bar": 22,
+      "sym": "F9"
+    },
+    {
+      "bar": 23,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 24,
+      "sym": "Bbm11"
+    },
+    {
+      "bar": 25,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 26,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 27,
+      "sym": "C13"
+    },
+    {
+      "bar": 28,
+      "sym": "C13"
+    },
+    {
+      "bar": 29,
+      "sym": "Fmaj9"
+    },
+    {
       "bar": 30,
-      "sym": "Gm11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 31,
@@ -137,39 +137,39 @@
     },
     {
       "bar": 32,
-      "sym": "Fmaj9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 33,
-      "sym": "Amaj9"
-    },
-    {
-      "bar": 34,
-      "sym": "Em9"
-    },
-    {
-      "bar": 35,
       "sym": "Fmaj9#11"
     },
     {
+      "bar": 34,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 35,
+      "sym": "Bbm6"
+    },
+    {
       "bar": 36,
-      "sym": "Dmaj13#11"
+      "sym": "Bbm6"
     },
     {
       "bar": 37,
-      "sym": "Amaj7/Db"
+      "sym": "Fmaj13"
     },
     {
       "bar": 38,
-      "sym": "Cmaj9#11"
+      "sym": "Fmaj13"
     },
     {
       "bar": 39,
-      "sym": "Bm11"
+      "sym": "F13"
     },
     {
       "bar": 40,
-      "sym": "Fmaj9"
+      "sym": "Bbmaj9#11"
     }
   ],
   "layers": [
@@ -178,7 +178,7 @@
       "voice": "EP",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; progresja unikalna: LULL + MODAL+4 + PEDAL+2",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; gotowe progresje SHLD: ii-V-I-IV + I-ivm6-I-I7 + I-I7-I9-IV-ivm",
       "stem": "base"
     }
   ],

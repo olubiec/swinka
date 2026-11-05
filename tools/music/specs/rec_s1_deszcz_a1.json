@@ -2,7 +2,7 @@
   "id": "rec_s1_deszcz_a1",
   "kind": "record",
   "title": "Deszcz na dachu · A1 podpisowy",
-  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (MINSOUL + PEDAL+5), jeden instrument (BNJ)",
+  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (I-bVIM-bVIIM-ivm + I-vi-IV-iii), jeden instrument (BNJ)",
   "bpm": 66,
   "meter": 4,
   "key": "Eb",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Ebm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Bmaj13#11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Abm11"
+      "sym": "Bmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Bb13"
+      "sym": "Bmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Ebm9"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 6,
-      "sym": "Dbmaj13#11"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 7,
-      "sym": "Bmaj9#11"
-    },
-    {
-      "bar": 8,
-      "sym": "Bb7b13"
-    },
-    {
-      "bar": 9,
-      "sym": "Abmaj9"
-    },
-    {
-      "bar": 10,
-      "sym": "Bb/Ab"
-    },
-    {
-      "bar": 11,
-      "sym": "Cm11/Ab"
-    },
-    {
-      "bar": 12,
-      "sym": "Dbmaj7#11/Ab"
-    },
-    {
-      "bar": 13,
-      "sym": "Abmaj9"
-    },
-    {
-      "bar": 14,
-      "sym": "A9#11"
-    },
-    {
-      "bar": 15,
-      "sym": "Bbm11/Ab"
-    },
-    {
-      "bar": 16,
-      "sym": "Eb/Ab"
-    },
-    {
-      "bar": 17,
-      "sym": "Ebm11"
-    },
-    {
-      "bar": 18,
-      "sym": "Bmaj13#11"
-    },
-    {
-      "bar": 19,
       "sym": "Abm11"
     },
     {
-      "bar": 20,
-      "sym": "Bb13"
+      "bar": 8,
+      "sym": "Abm11"
     },
     {
-      "bar": 21,
-      "sym": "Ebm9"
+      "bar": 9,
+      "sym": "Ebmaj9"
     },
     {
-      "bar": 22,
-      "sym": "Dbmaj13#11"
+      "bar": 10,
+      "sym": "Ebmaj9"
     },
     {
-      "bar": 23,
+      "bar": 11,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 12,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 13,
+      "sym": "Abmaj13#11"
+    },
+    {
+      "bar": 14,
+      "sym": "Abmaj13#11"
+    },
+    {
+      "bar": 15,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 16,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 17,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 18,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 19,
       "sym": "Bmaj9#11"
     },
     {
+      "bar": 20,
+      "sym": "Bmaj9#11"
+    },
+    {
+      "bar": 21,
+      "sym": "Dbmaj9"
+    },
+    {
+      "bar": 22,
+      "sym": "Dbmaj9"
+    },
+    {
+      "bar": 23,
+      "sym": "Abm11"
+    },
+    {
       "bar": 24,
-      "sym": "Bb7b13"
+      "sym": "Abm11"
     },
     {
       "bar": 25,
-      "sym": "Abmaj9"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 26,
-      "sym": "Bb/Ab"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 27,
-      "sym": "Cm11/Ab"
+      "sym": "Cm9"
     },
     {
       "bar": 28,
-      "sym": "Dbmaj7#11/Ab"
+      "sym": "Cm9"
     },
     {
       "bar": 29,
-      "sym": "Abmaj9"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 30,
-      "sym": "A9#11"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 31,
-      "sym": "Bbm11/Ab"
+      "sym": "Gm9"
     },
     {
       "bar": 32,
-      "sym": "Eb/Ab"
+      "sym": "Gm9"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "BNJ",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; progresja unikalna: MINSOUL + PEDAL+5",
+      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; gotowe progresje SHLD: I-bVIM-bVIIM-ivm + I-vi-IV-iii",
       "stem": "base"
     }
   ],

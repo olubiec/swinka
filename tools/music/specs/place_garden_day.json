@@ -2,7 +2,7 @@
   "id": "place_garden_day",
   "kind": "place",
   "title": "Ogród dzień",
-  "role": "ogród w dzień (w nocy filtr LP 1,8 kHz -6 dB w kodzie); legenda v7: progresja unikalna (MINSOUL + THIRDS+5), jeden instrument (HARP)",
+  "role": "ogród w dzień (w nocy filtr LP 1,8 kHz -6 dB w kodzie); legenda v7: progresja unikalna (I-IV-vi-V + IV-vi-I-V), jeden instrument (HARP)",
   "bpm": 88,
   "meter": 4,
   "key": "G",
@@ -13,35 +13,35 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gm11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 2,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 3,
-      "sym": "Ebmaj9#11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 4,
-      "sym": "D7alt"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Gm9"
+      "sym": "Em9"
     },
     {
       "bar": 6,
-      "sym": "E7b13"
+      "sym": "Em9"
     },
     {
       "bar": 7,
-      "sym": "A7alt"
+      "sym": "D13sus4"
     },
     {
       "bar": 8,
-      "sym": "D7b13"
+      "sym": "D13sus4"
     },
     {
       "bar": 9,
@@ -49,63 +49,63 @@
     },
     {
       "bar": 10,
-      "sym": "Abmaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Emaj9"
+      "sym": "Em11"
     },
     {
       "bar": 12,
-      "sym": "Dm13"
+      "sym": "Em11"
     },
     {
       "bar": 13,
-      "sym": "Db13"
+      "sym": "Gmaj13"
     },
     {
       "bar": 14,
-      "sym": "Cmaj9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 15,
-      "sym": "Am11"
+      "sym": "D13"
     },
     {
       "bar": 16,
-      "sym": "G13sus4"
+      "sym": "D13"
     },
     {
       "bar": 17,
-      "sym": "Gm11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 18,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 19,
-      "sym": "Ebmaj9#11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 20,
-      "sym": "D7alt"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 21,
-      "sym": "Gm9"
+      "sym": "Em9"
     },
     {
       "bar": 22,
-      "sym": "E7b13"
+      "sym": "Em9"
     },
     {
       "bar": 23,
-      "sym": "A7alt"
+      "sym": "D13sus4"
     },
     {
       "bar": 24,
-      "sym": "D7b13"
+      "sym": "D13sus4"
     },
     {
       "bar": 25,
@@ -113,31 +113,31 @@
     },
     {
       "bar": 26,
-      "sym": "Abmaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "Emaj9"
+      "sym": "Em11"
     },
     {
       "bar": 28,
-      "sym": "Dm13"
+      "sym": "Em11"
     },
     {
       "bar": 29,
-      "sym": "Db13"
+      "sym": "Gmaj13"
     },
     {
       "bar": 30,
-      "sym": "Cmaj9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 31,
-      "sym": "Am11"
+      "sym": "D13"
     },
     {
       "bar": 32,
-      "sym": "G13sus4"
+      "sym": "D13"
     }
   ],
   "layers": [

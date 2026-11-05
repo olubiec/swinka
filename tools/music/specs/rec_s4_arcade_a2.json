@@ -2,7 +2,7 @@
   "id": "rec_s4_arcade_a2",
   "kind": "record",
   "title": "Arcade · A2 spokojny",
-  "role": "płyta serii 4; chiptune dance; legenda v7: progresja unikalna (MINSOUL + LULL+9 + LYD+3), jeden instrument (ACC)",
+  "role": "płyta serii 4; chiptune dance; legenda v7: progresja unikalna (I-iii-IV-vi + VI-VII-i-III(wzgl.) + V-vi-IV-I), jeden instrument (ACC)",
   "bpm": 122,
   "meter": 4,
   "key": "G",
@@ -13,227 +13,227 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 2,
-      "sym": "Cm11"
+      "sym": "Bm11"
     },
     {
       "bar": 3,
-      "sym": "Cm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "D13sus4"
+      "sym": "Em9"
     },
     {
       "bar": 5,
-      "sym": "Gm9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 6,
-      "sym": "Fmaj9#11"
+      "sym": "Bm11"
     },
     {
       "bar": 7,
-      "sym": "Ebmaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "D7b13"
+      "sym": "Em9"
     },
     {
       "bar": 9,
-      "sym": "Emaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Amaj9#11"
+      "sym": "D13"
     },
     {
       "bar": 11,
-      "sym": "Emaj7/Ab"
+      "sym": "Em9"
     },
     {
       "bar": 12,
-      "sym": "F9#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 13,
-      "sym": "Emaj13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 14,
-      "sym": "F#m11"
+      "sym": "D13"
     },
     {
       "bar": 15,
-      "sym": "Amaj9"
+      "sym": "Em11"
     },
     {
       "bar": 16,
-      "sym": "Emaj9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 17,
-      "sym": "Bbmaj9#11"
+      "sym": "D9sus4"
     },
     {
       "bar": 18,
-      "sym": "Cmaj13"
+      "sym": "Em11"
     },
     {
       "bar": 19,
-      "sym": "Dm11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 20,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 21,
-      "sym": "Bbmaj7/D"
+      "sym": "D13"
     },
     {
       "bar": 22,
-      "sym": "Cm11/F"
+      "sym": "Em11"
     },
     {
       "bar": 23,
-      "sym": "Bbmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "F6/9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 25,
-      "sym": "Gm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 26,
-      "sym": "Cm11"
+      "sym": "Bm11"
     },
     {
       "bar": 27,
-      "sym": "Cm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 28,
-      "sym": "D13sus4"
+      "sym": "Em9"
     },
     {
       "bar": 29,
-      "sym": "Gm9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 30,
-      "sym": "Fmaj9#11"
+      "sym": "Bm11"
     },
     {
       "bar": 31,
-      "sym": "Ebmaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "D7b13"
+      "sym": "Em9"
     },
     {
       "bar": 33,
-      "sym": "Emaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 34,
-      "sym": "Amaj9#11"
+      "sym": "D13"
     },
     {
       "bar": 35,
-      "sym": "Emaj7/Ab"
+      "sym": "Em9"
     },
     {
       "bar": 36,
-      "sym": "F9#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 37,
-      "sym": "Emaj13"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 38,
-      "sym": "F#m11"
+      "sym": "D13"
     },
     {
       "bar": 39,
-      "sym": "Amaj9"
+      "sym": "Em11"
     },
     {
       "bar": 40,
-      "sym": "Emaj9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 41,
-      "sym": "Bbmaj9#11"
+      "sym": "D9sus4"
     },
     {
       "bar": 42,
-      "sym": "Cmaj13"
+      "sym": "Em11"
     },
     {
       "bar": 43,
-      "sym": "Dm11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 44,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 45,
-      "sym": "Bbmaj7/D"
+      "sym": "D13"
     },
     {
       "bar": 46,
-      "sym": "Cm11/F"
+      "sym": "Em11"
     },
     {
       "bar": 47,
-      "sym": "Bbmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 48,
-      "sym": "F6/9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 49,
-      "sym": "Gm11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 50,
-      "sym": "Cm11"
+      "sym": "Bm11"
     },
     {
       "bar": 51,
-      "sym": "Cm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 52,
-      "sym": "D13sus4"
+      "sym": "Em9"
     },
     {
       "bar": 53,
-      "sym": "Gm9"
+      "sym": "Gmaj13"
     },
     {
       "bar": 54,
-      "sym": "Fmaj9#11"
+      "sym": "Bm11"
     },
     {
       "bar": 55,
-      "sym": "Ebmaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 56,
-      "sym": "D7b13"
+      "sym": "Em9"
     }
   ],
   "layers": [
@@ -242,7 +242,7 @@
       "voice": "ACC",
       "db": -12,
       "pattern": "chords.rolled(0.3)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; progresja unikalna: MINSOUL + LULL+9 + LYD+3",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; gotowe progresje SHLD: I-iii-IV-vi + VI-VII-i-III(wzgl.) + V-vi-IV-I",
       "stem": "base"
     }
   ],

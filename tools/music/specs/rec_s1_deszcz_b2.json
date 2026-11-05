@@ -2,7 +2,7 @@
   "id": "rec_s1_deszcz_b2",
   "kind": "record",
   "title": "Deszcz na dachu · B2 nastrojowy",
-  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (MODAL + PHRYG+3), jeden instrument (BOX)",
+  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (I-I7-I9-IV-ivm + im-bIIM-biim6-ivm(wzgl.)), jeden instrument (BOX)",
   "bpm": 53,
   "meter": 4,
   "key": "Eb",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Ebmaj9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Dbmaj7#11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Bmaj9#11"
+      "sym": "Eb9"
     },
     {
       "bar": 4,
-      "sym": "Abmaj13#11"
+      "sym": "Eb9"
     },
     {
       "bar": 5,
-      "sym": "Ebmaj7/G"
+      "sym": "Eb13"
     },
     {
       "bar": 6,
-      "sym": "Gbmaj9#11"
+      "sym": "Eb13"
     },
     {
       "bar": 7,
-      "sym": "Fm11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "Bb13sus4"
+      "sym": "Abm11"
     },
     {
       "bar": 9,
-      "sym": "Gbm11"
+      "sym": "Cm11"
     },
     {
       "bar": 10,
-      "sym": "Gmaj7#11"
+      "sym": "Cm11"
     },
     {
       "bar": 11,
-      "sym": "Gbm13"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 12,
-      "sym": "Db7b9b13"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 13,
-      "sym": "Bm13"
+      "sym": "Dbm6"
     },
     {
       "bar": 14,
-      "sym": "Gmaj13#11"
+      "sym": "Dbm6"
     },
     {
       "bar": 15,
-      "sym": "G13"
-    },
-    {
-      "bar": 16,
-      "sym": "Gbm(maj7)9"
-    },
-    {
-      "bar": 17,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 18,
-      "sym": "Dbmaj7#11"
-    },
-    {
-      "bar": 19,
-      "sym": "Bmaj9#11"
-    },
-    {
-      "bar": 20,
-      "sym": "Abmaj13#11"
-    },
-    {
-      "bar": 21,
-      "sym": "Ebmaj7/G"
-    },
-    {
-      "bar": 22,
-      "sym": "Gbmaj9#11"
-    },
-    {
-      "bar": 23,
       "sym": "Fm11"
     },
     {
+      "bar": 16,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 17,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 18,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 19,
+      "sym": "Eb9"
+    },
+    {
+      "bar": 20,
+      "sym": "Eb9"
+    },
+    {
+      "bar": 21,
+      "sym": "Eb13"
+    },
+    {
+      "bar": 22,
+      "sym": "Eb13"
+    },
+    {
+      "bar": 23,
+      "sym": "Abmaj9#11"
+    },
+    {
       "bar": 24,
-      "sym": "Bb13sus4"
+      "sym": "Abm11"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "BOX",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; progresja unikalna: MODAL + PHRYG+3",
+      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; gotowe progresje SHLD: I-I7-I9-IV-ivm + im-bIIM-biim6-ivm(wzgl.)",
       "stem": "base"
     }
   ],

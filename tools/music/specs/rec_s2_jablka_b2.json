@@ -2,7 +2,7 @@
   "id": "rec_s2_jablka_b2",
   "kind": "record",
   "title": "Zimowe jabłka · B2 nastrojowy",
-  "role": "płyta serii 2; folkowy walc zimowy z kryształkami; legenda v7: progresja unikalna (MINSOUL + LULL+2 + PHRYG+10), jeden instrument (XYL)",
+  "role": "płyta serii 2; folkowy walc zimowy z kryształkami; legenda v7: progresja unikalna (im-ivm9-bIIM-im-vm-ivm7-bIIM-im7 + I-bIIIM-IV-I(wzgl.) + i-VI-iv-ii), jeden instrument (XYL)",
   "bpm": 72,
   "meter": 3,
   "key": "A",
@@ -13,195 +13,195 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Am11"
+      "sym": "Am9"
     },
     {
       "bar": 2,
-      "sym": "Fmaj13#11"
+      "sym": "Dm7"
     },
     {
       "bar": 3,
-      "sym": "Dm11"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 4,
-      "sym": "E7alt"
+      "sym": "Am9"
     },
     {
       "bar": 5,
-      "sym": "D7b13"
+      "sym": "Em9"
     },
     {
       "bar": 6,
-      "sym": "Gmaj9#11"
-    },
-    {
-      "bar": 7,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 8,
-      "sym": "E7b13"
-    },
-    {
-      "bar": 9,
-      "sym": "Bmaj9"
-    },
-    {
-      "bar": 10,
-      "sym": "Emaj9#11"
-    },
-    {
-      "bar": 11,
-      "sym": "Bmaj7/Eb"
-    },
-    {
-      "bar": 12,
-      "sym": "Em6/9"
-    },
-    {
-      "bar": 13,
-      "sym": "Bmaj13"
-    },
-    {
-      "bar": 14,
-      "sym": "C#m11"
-    },
-    {
-      "bar": 15,
-      "sym": "Emaj9#11"
-    },
-    {
-      "bar": 16,
-      "sym": "Bmaj9"
-    },
-    {
-      "bar": 17,
-      "sym": "Gm11"
-    },
-    {
-      "bar": 18,
-      "sym": "G#maj7#11"
-    },
-    {
-      "bar": 19,
-      "sym": "Gm9"
-    },
-    {
-      "bar": 20,
-      "sym": "D13"
-    },
-    {
-      "bar": 21,
-      "sym": "Cm13"
-    },
-    {
-      "bar": 22,
-      "sym": "G#maj13#11"
-    },
-    {
-      "bar": 23,
-      "sym": "D7alt"
-    },
-    {
-      "bar": 24,
-      "sym": "Gm(maj7)9"
-    },
-    {
-      "bar": 25,
-      "sym": "Am11"
-    },
-    {
-      "bar": 26,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 27,
       "sym": "Dm11"
     },
     {
-      "bar": 28,
-      "sym": "E7alt"
+      "bar": 7,
+      "sym": "Bbmaj7#11"
     },
     {
-      "bar": 29,
-      "sym": "D7b13"
+      "bar": 8,
+      "sym": "Am9"
     },
     {
-      "bar": 30,
-      "sym": "Gmaj9#11"
+      "bar": 9,
+      "sym": "Cmaj9"
     },
     {
-      "bar": 31,
+      "bar": 10,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 11,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 12,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 13,
       "sym": "Fmaj9#11"
     },
     {
+      "bar": 14,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 15,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 16,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 17,
+      "sym": "Am11"
+    },
+    {
+      "bar": 18,
+      "sym": "Am11"
+    },
+    {
+      "bar": 19,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 20,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 21,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 22,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 23,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 24,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 25,
+      "sym": "Am9"
+    },
+    {
+      "bar": 26,
+      "sym": "Dm7"
+    },
+    {
+      "bar": 27,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 28,
+      "sym": "Am9"
+    },
+    {
+      "bar": 29,
+      "sym": "Em9"
+    },
+    {
+      "bar": 30,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 31,
+      "sym": "Bbmaj7#11"
+    },
+    {
       "bar": 32,
-      "sym": "E7b13"
+      "sym": "Am9"
     },
     {
       "bar": 33,
-      "sym": "Bmaj9"
+      "sym": "Cmaj9"
     },
     {
       "bar": 34,
-      "sym": "Emaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 35,
-      "sym": "Bmaj7/Eb"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "Em6/9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 37,
-      "sym": "Bmaj13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 38,
-      "sym": "C#m11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 39,
-      "sym": "Emaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 40,
-      "sym": "Bmaj9"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 41,
-      "sym": "Gm11"
+      "sym": "Am11"
     },
     {
       "bar": 42,
-      "sym": "G#maj7#11"
+      "sym": "Am11"
     },
     {
       "bar": 43,
-      "sym": "Gm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 44,
-      "sym": "D13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 45,
-      "sym": "Cm13"
+      "sym": "Dm11"
     },
     {
       "bar": 46,
-      "sym": "G#maj13#11"
+      "sym": "Dm11"
     },
     {
       "bar": 47,
-      "sym": "D7alt"
+      "sym": "Bm11"
     },
     {
       "bar": 48,
-      "sym": "Gm(maj7)9"
+      "sym": "Bm11"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "XYL",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; progresja unikalna: MINSOUL + LULL+2 + PHRYG+10",
+      "part": "jedna warstwa, jeden instrument (XYL), akordy rozłożone; gotowe progresje SHLD: im-ivm9-bIIM-im-vm-ivm7-bIIM-im7 + I-bIIIM-IV-I(wzgl.) + i-VI-iv-ii",
       "stem": "base"
     }
   ],

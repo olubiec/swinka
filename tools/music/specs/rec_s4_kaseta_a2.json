@@ -2,7 +2,7 @@
   "id": "rec_s4_kaseta_a2",
   "kind": "record",
   "title": "Kaseta mixtape · A2 spokojny",
-  "role": "płyta serii 4; falowanie taśmy wypieczone w dźwięk; legenda v7: progresja unikalna (DORQ + THIRDS+10 + SOUL+5), jeden instrument (P25)",
+  "role": "płyta serii 4; falowanie taśmy wypieczone w dźwięk; legenda v7: progresja unikalna (i-III-VII-VI + ii-IV-vi-V(wzgl.) + i-III-VII-iv), jeden instrument (P25)",
   "bpm": 90,
   "meter": 4,
   "key": "D",
@@ -13,163 +13,163 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dsowhat"
+      "sym": "Dm11"
     },
     {
       "bar": 2,
-      "sym": "Ebsowhat"
+      "sym": "Fmaj9"
     },
     {
       "bar": 3,
-      "sym": "Dsowhat"
+      "sym": "Cmaj9"
     },
     {
       "bar": 4,
-      "sym": "Gmaj13#11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Em11"
+      "sym": "Dm9"
     },
     {
       "bar": 6,
-      "sym": "Eb13"
+      "sym": "Fmaj9"
     },
     {
       "bar": 7,
-      "sym": "Ab13"
+      "sym": "Cmaj9"
     },
     {
       "bar": 8,
-      "sym": "A9sus4"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 9,
-      "sym": "Cmaj9#11"
+      "sym": "Gm9"
     },
     {
       "bar": 10,
-      "sym": "Abmaj9#11"
+      "sym": "Gm9"
     },
     {
       "bar": 11,
-      "sym": "Emaj9#11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Dm11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 13,
-      "sym": "Db13"
+      "sym": "Dm9"
     },
     {
       "bar": 14,
-      "sym": "Cmaj7#11"
+      "sym": "Dm9"
     },
     {
       "bar": 15,
-      "sym": "Am11"
+      "sym": "C13"
     },
     {
       "bar": 16,
-      "sym": "G13sus4"
+      "sym": "C13"
     },
     {
       "bar": 17,
-      "sym": "Gmaj13"
-    },
-    {
-      "bar": 18,
-      "sym": "Em11"
-    },
-    {
-      "bar": 19,
-      "sym": "Am11"
-    },
-    {
-      "bar": 20,
-      "sym": "D9#11"
-    },
-    {
-      "bar": 21,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 22,
-      "sym": "E7alt"
-    },
-    {
-      "bar": 23,
-      "sym": "Am9"
-    },
-    {
-      "bar": 24,
-      "sym": "Ab9#11"
-    },
-    {
-      "bar": 25,
-      "sym": "Dsowhat"
-    },
-    {
-      "bar": 26,
-      "sym": "Ebsowhat"
-    },
-    {
-      "bar": 27,
-      "sym": "Dsowhat"
-    },
-    {
-      "bar": 28,
-      "sym": "Gmaj13#11"
-    },
-    {
-      "bar": 29,
-      "sym": "Em11"
-    },
-    {
-      "bar": 30,
-      "sym": "Eb13"
-    },
-    {
-      "bar": 31,
-      "sym": "Ab13"
-    },
-    {
-      "bar": 32,
-      "sym": "A9sus4"
-    },
-    {
-      "bar": 33,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 34,
-      "sym": "Abmaj9#11"
-    },
-    {
-      "bar": 35,
-      "sym": "Emaj9#11"
-    },
-    {
-      "bar": 36,
       "sym": "Dm11"
     },
     {
+      "bar": 18,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 19,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 20,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 21,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 22,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 23,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 24,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 25,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 26,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 27,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 28,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 29,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 30,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 31,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 32,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 33,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 34,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 35,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 36,
+      "sym": "Bbmaj9#11"
+    },
+    {
       "bar": 37,
-      "sym": "Db13"
+      "sym": "Dm9"
     },
     {
       "bar": 38,
-      "sym": "Cmaj7#11"
+      "sym": "Dm9"
     },
     {
       "bar": 39,
-      "sym": "Am11"
+      "sym": "C13"
     },
     {
       "bar": 40,
-      "sym": "A9sus4"
+      "sym": "Bbmaj9#11"
     }
   ],
   "layers": [
@@ -178,7 +178,7 @@
       "voice": "P25",
       "db": -3,
       "pattern": "chords.rolled(0.15)",
-      "part": "jedna warstwa, jeden instrument (P25), akordy rozłożone; progresja unikalna: DORQ + THIRDS+10 + SOUL+5",
+      "part": "jedna warstwa, jeden instrument (P25), akordy rozłożone; gotowe progresje SHLD: i-III-VII-VI + ii-IV-vi-V(wzgl.) + i-III-VII-iv",
       "stem": "base"
     }
   ],

@@ -2,7 +2,7 @@
   "id": "rec_s3_swietliki_a1",
   "kind": "record",
   "title": "Świetliki · A1 podpisowy",
-  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (THIRDS + PHRYG+8 + LULL+3), jeden instrument (BELL)",
+  "role": "płyta serii 3; migot dzwonków (świetliki); legenda v7: progresja unikalna (ii-bIIM-I-bVIIM + im-V-bVIIM-IV-bVIM-bIIIM-ivm-V(wzgl.) + IV-I-ii-vi), jeden instrument (BELL)",
   "bpm": 90,
   "meter": 4,
   "key": "A",
@@ -13,163 +13,163 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Amaj9#11"
+      "sym": "Bm11"
     },
     {
       "bar": 2,
-      "sym": "Fmaj13"
+      "sym": "Bbmaj7#11"
     },
     {
       "bar": 3,
-      "sym": "C#maj9#11"
+      "sym": "Amaj13"
     },
     {
       "bar": 4,
-      "sym": "F13sus4"
+      "sym": "Gmaj9"
     },
     {
       "bar": 5,
-      "sym": "Bb13"
+      "sym": "Bm9"
     },
     {
       "bar": 6,
-      "sym": "Amaj13"
+      "sym": "Bbmaj7#11"
     },
     {
       "bar": 7,
-      "sym": "F#m11"
-    },
-    {
-      "bar": 8,
-      "sym": "E13sus4"
-    },
-    {
-      "bar": 9,
-      "sym": "Fm11"
-    },
-    {
-      "bar": 10,
-      "sym": "F#maj7#11"
-    },
-    {
-      "bar": 11,
-      "sym": "Fm9"
-    },
-    {
-      "bar": 12,
-      "sym": "C7b9b13"
-    },
-    {
-      "bar": 13,
-      "sym": "Bbm11"
-    },
-    {
-      "bar": 14,
-      "sym": "F#maj13#11"
-    },
-    {
-      "bar": 15,
-      "sym": "C7alt"
-    },
-    {
-      "bar": 16,
-      "sym": "Fm(maj7)9"
-    },
-    {
-      "bar": 17,
-      "sym": "Cmaj9"
-    },
-    {
-      "bar": 18,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 19,
-      "sym": "Cmaj7/E"
-    },
-    {
-      "bar": 20,
-      "sym": "Fm6/9"
-    },
-    {
-      "bar": 21,
-      "sym": "Cmaj13"
-    },
-    {
-      "bar": 22,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 23,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 24,
-      "sym": "Cmaj9#11"
-    },
-    {
-      "bar": 25,
       "sym": "Amaj9#11"
     },
     {
-      "bar": 26,
-      "sym": "Fmaj13"
+      "bar": 8,
+      "sym": "Gmaj9"
     },
     {
-      "bar": 27,
-      "sym": "C#maj9#11"
-    },
-    {
-      "bar": 28,
-      "sym": "F13sus4"
-    },
-    {
-      "bar": 29,
-      "sym": "Bb13"
-    },
-    {
-      "bar": 30,
-      "sym": "Amaj13"
-    },
-    {
-      "bar": 31,
+      "bar": 9,
       "sym": "F#m11"
     },
     {
+      "bar": 10,
+      "sym": "C#7b13"
+    },
+    {
+      "bar": 11,
+      "sym": "Ebmaj7#11"
+    },
+    {
+      "bar": 12,
+      "sym": "B9"
+    },
+    {
+      "bar": 13,
+      "sym": "C#7alt"
+    },
+    {
+      "bar": 14,
+      "sym": "G#maj7#11"
+    },
+    {
+      "bar": 15,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 16,
+      "sym": "C#13"
+    },
+    {
+      "bar": 17,
+      "sym": "Dmaj9#11"
+    },
+    {
+      "bar": 18,
+      "sym": "Dmaj9#11"
+    },
+    {
+      "bar": 19,
+      "sym": "Amaj9#11"
+    },
+    {
+      "bar": 20,
+      "sym": "Amaj9#11"
+    },
+    {
+      "bar": 21,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 22,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 23,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 24,
+      "sym": "F#m11"
+    },
+    {
+      "bar": 25,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 26,
+      "sym": "Bbmaj7#11"
+    },
+    {
+      "bar": 27,
+      "sym": "Amaj13"
+    },
+    {
+      "bar": 28,
+      "sym": "Gmaj9"
+    },
+    {
+      "bar": 29,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 30,
+      "sym": "Bbmaj7#11"
+    },
+    {
+      "bar": 31,
+      "sym": "Amaj9#11"
+    },
+    {
       "bar": 32,
-      "sym": "E13sus4"
+      "sym": "Gmaj9"
     },
     {
       "bar": 33,
-      "sym": "Fm11"
+      "sym": "F#m11"
     },
     {
       "bar": 34,
-      "sym": "F#maj7#11"
+      "sym": "C#7b13"
     },
     {
       "bar": 35,
-      "sym": "Fm9"
+      "sym": "Ebmaj7#11"
     },
     {
       "bar": 36,
-      "sym": "C7b9b13"
+      "sym": "B9"
     },
     {
       "bar": 37,
-      "sym": "Bbm11"
+      "sym": "C#7alt"
     },
     {
       "bar": 38,
-      "sym": "F#maj13#11"
+      "sym": "G#maj7#11"
     },
     {
       "bar": 39,
-      "sym": "C7alt"
+      "sym": "Bm9"
     },
     {
       "bar": 40,
-      "sym": "E13sus4"
+      "sym": "Gmaj9"
     }
   ],
   "layers": [
@@ -178,7 +178,7 @@
       "voice": "BELL",
       "db": -3,
       "pattern": "chords.rolled(0.3)",
-      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; progresja unikalna: THIRDS + PHRYG+8 + LULL+3",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; gotowe progresje SHLD: ii-bIIM-I-bVIIM + im-V-bVIIM-IV-bVIM-bIIIM-ivm-V(wzgl.) + IV-I-ii-vi",
       "stem": "base"
     }
   ],

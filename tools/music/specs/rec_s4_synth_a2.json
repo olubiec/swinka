@@ -2,7 +2,7 @@
   "id": "rec_s4_synth_a2",
   "kind": "record",
   "title": "Synth fala · A2 spokojny",
-  "role": "płyta serii 4; synthwave z gated snare; legenda v7: progresja unikalna (DORSOUL + PHRYG+6 + BACKDOOR+9), jeden instrument (TRI)",
+  "role": "płyta serii 4; synthwave z gated snare; legenda v7: progresja unikalna (i-III-iv-VI + IV-V-ii-im-bIIIM-IV(wzgl.) + iv-i-v-VI), jeden instrument (TRI)",
   "bpm": 95,
   "meter": 4,
   "key": "E",
@@ -13,163 +13,163 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Em11"
+      "sym": "Em9"
     },
     {
       "bar": 2,
-      "sym": "A7b13"
+      "sym": "Em9"
     },
     {
       "bar": 3,
-      "sym": "C#13"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Cmaj13#11"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Em13"
+      "sym": "Am9"
     },
     {
       "bar": 6,
-      "sym": "F#m11"
+      "sym": "Am9"
     },
     {
       "bar": 7,
-      "sym": "B7b13"
+      "sym": "Cmaj9"
     },
     {
       "bar": 8,
-      "sym": "Bb9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 9,
-      "sym": "Bbm11"
-    },
-    {
-      "bar": 10,
-      "sym": "Bmaj7#11"
-    },
-    {
-      "bar": 11,
-      "sym": "Bbm9"
-    },
-    {
-      "bar": 12,
-      "sym": "F7b13"
-    },
-    {
-      "bar": 13,
-      "sym": "Ebm11"
-    },
-    {
-      "bar": 14,
-      "sym": "Bmaj9"
-    },
-    {
-      "bar": 15,
-      "sym": "F7alt"
-    },
-    {
-      "bar": 16,
-      "sym": "Bbm(maj7)9"
-    },
-    {
-      "bar": 17,
-      "sym": "C#maj9"
-    },
-    {
-      "bar": 18,
-      "sym": "Bbm11"
-    },
-    {
-      "bar": 19,
-      "sym": "F#13sus4"
-    },
-    {
-      "bar": 20,
-      "sym": "B13"
-    },
-    {
-      "bar": 21,
-      "sym": "C#maj13"
-    },
-    {
-      "bar": 22,
-      "sym": "Fm11"
-    },
-    {
-      "bar": 23,
-      "sym": "F#maj9#11"
-    },
-    {
-      "bar": 24,
-      "sym": "G#13sus4"
-    },
-    {
-      "bar": 25,
-      "sym": "Em11"
-    },
-    {
-      "bar": 26,
-      "sym": "A7b13"
-    },
-    {
-      "bar": 27,
-      "sym": "C#13"
-    },
-    {
-      "bar": 28,
       "sym": "Cmaj13#11"
     },
     {
+      "bar": 10,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 11,
+      "sym": "D9sus4"
+    },
+    {
+      "bar": 12,
+      "sym": "D9sus4"
+    },
+    {
+      "bar": 13,
+      "sym": "Am9"
+    },
+    {
+      "bar": 14,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 15,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 16,
+      "sym": "Cmaj13#11"
+    },
+    {
+      "bar": 17,
+      "sym": "Am11"
+    },
+    {
+      "bar": 18,
+      "sym": "Em11"
+    },
+    {
+      "bar": 19,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 20,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 21,
+      "sym": "Am9"
+    },
+    {
+      "bar": 22,
+      "sym": "Em9"
+    },
+    {
+      "bar": 23,
+      "sym": "Bm11"
+    },
+    {
+      "bar": 24,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 25,
+      "sym": "Em9"
+    },
+    {
+      "bar": 26,
+      "sym": "Em9"
+    },
+    {
+      "bar": 27,
+      "sym": "Gmaj9#11"
+    },
+    {
+      "bar": 28,
+      "sym": "Gmaj9#11"
+    },
+    {
       "bar": 29,
-      "sym": "Em13"
+      "sym": "Am9"
     },
     {
       "bar": 30,
-      "sym": "F#m11"
+      "sym": "Am9"
     },
     {
       "bar": 31,
-      "sym": "B7b13"
+      "sym": "Cmaj9"
     },
     {
       "bar": 32,
-      "sym": "Bb9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 33,
-      "sym": "Bbm11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 34,
-      "sym": "Bmaj7#11"
+      "sym": "Cmaj13#11"
     },
     {
       "bar": 35,
-      "sym": "Bbm9"
+      "sym": "D9sus4"
     },
     {
       "bar": 36,
-      "sym": "F7b13"
+      "sym": "D9sus4"
     },
     {
       "bar": 37,
-      "sym": "Ebm11"
+      "sym": "Am9"
     },
     {
       "bar": 38,
-      "sym": "Bmaj9"
+      "sym": "Gm11"
     },
     {
       "bar": 39,
-      "sym": "F7alt"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 40,
-      "sym": "Bb9#11"
+      "sym": "Cmaj9"
     }
   ],
   "layers": [
@@ -178,7 +178,7 @@
       "voice": "TRI",
       "db": -3,
       "pattern": "chords.rolled(0.25)",
-      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; progresja unikalna: DORSOUL + PHRYG+6 + BACKDOOR+9",
+      "part": "jedna warstwa, jeden instrument (TRI), akordy rozłożone; gotowe progresje SHLD: i-III-iv-VI + IV-V-ii-im-bIIIM-IV(wzgl.) + iv-i-v-VI",
       "stem": "base"
     }
   ],

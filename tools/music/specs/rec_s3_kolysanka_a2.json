@@ -2,7 +2,7 @@
   "id": "rec_s3_kolysanka_a2",
   "kind": "record",
   "title": "Kołysanka · A2 spokojny",
-  "role": "płyta serii 3; zabawkowa orkiestra; legenda v7: progresja unikalna (MODAL + DORSOUL+10 + SOUL+2), jeden instrument (BELL)",
+  "role": "płyta serii 3; zabawkowa orkiestra; legenda v7: progresja unikalna (bVIM-bVIIm-im-bIIM + I-bIIM7-bIIIM6-bIIM7-I-im-bVIIM-bIIM + i-ii-v-i(wzgl.)), jeden instrument (BELL)",
   "bpm": 90,
   "meter": 4,
   "key": "C",
@@ -13,163 +13,163 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj9"
+      "sym": "Abmaj9"
     },
     {
       "bar": 2,
-      "sym": "Bbmaj7#11"
+      "sym": "Bb13"
     },
     {
       "bar": 3,
-      "sym": "Abmaj7#11"
+      "sym": "Cm11"
     },
     {
       "bar": 4,
-      "sym": "Fmaj13#11"
+      "sym": "Dbmaj7#11"
     },
     {
       "bar": 5,
-      "sym": "Cmaj7/E"
+      "sym": "Abmaj9"
     },
     {
       "bar": 6,
-      "sym": "Ebmaj13"
+      "sym": "Bb13"
     },
     {
       "bar": 7,
-      "sym": "Dm11"
+      "sym": "Cm9"
     },
     {
       "bar": 8,
-      "sym": "G13sus4"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 9,
-      "sym": "Bbm11"
-    },
-    {
-      "bar": 10,
-      "sym": "Eb13"
-    },
-    {
-      "bar": 11,
-      "sym": "Dbmaj9#11"
-    },
-    {
-      "bar": 12,
-      "sym": "F#maj13#11"
-    },
-    {
-      "bar": 13,
-      "sym": "Bbm13"
-    },
-    {
-      "bar": 14,
-      "sym": "Cm11"
-    },
-    {
-      "bar": 15,
-      "sym": "F7b13"
-    },
-    {
-      "bar": 16,
-      "sym": "E9#11"
-    },
-    {
-      "bar": 17,
-      "sym": "Dmaj13"
-    },
-    {
-      "bar": 18,
-      "sym": "Bm11"
-    },
-    {
-      "bar": 19,
-      "sym": "Em11"
-    },
-    {
-      "bar": 20,
-      "sym": "A7b13"
-    },
-    {
-      "bar": 21,
-      "sym": "F#m11"
-    },
-    {
-      "bar": 22,
-      "sym": "B7alt"
-    },
-    {
-      "bar": 23,
-      "sym": "Gmaj13#11"
-    },
-    {
-      "bar": 24,
-      "sym": "Eb13"
-    },
-    {
-      "bar": 25,
       "sym": "Cmaj9"
     },
     {
+      "bar": 10,
+      "sym": "Dbmaj13"
+    },
+    {
+      "bar": 11,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 12,
+      "sym": "Dbmaj9"
+    },
+    {
+      "bar": 13,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 14,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 15,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 16,
+      "sym": "Dbmaj7#11"
+    },
+    {
+      "bar": 17,
+      "sym": "Am11"
+    },
+    {
+      "bar": 18,
+      "sym": "Am11"
+    },
+    {
+      "bar": 19,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 20,
+      "sym": "Bm9"
+    },
+    {
+      "bar": 21,
+      "sym": "Em11"
+    },
+    {
+      "bar": 22,
+      "sym": "Em11"
+    },
+    {
+      "bar": 23,
+      "sym": "Am11"
+    },
+    {
+      "bar": 24,
+      "sym": "Am11"
+    },
+    {
+      "bar": 25,
+      "sym": "Abmaj9"
+    },
+    {
       "bar": 26,
-      "sym": "Bbmaj7#11"
+      "sym": "Bb13"
     },
     {
       "bar": 27,
-      "sym": "Abmaj7#11"
-    },
-    {
-      "bar": 28,
-      "sym": "Fmaj13#11"
-    },
-    {
-      "bar": 29,
-      "sym": "Cmaj7/E"
-    },
-    {
-      "bar": 30,
-      "sym": "Ebmaj13"
-    },
-    {
-      "bar": 31,
-      "sym": "Dm11"
-    },
-    {
-      "bar": 32,
-      "sym": "G13sus4"
-    },
-    {
-      "bar": 33,
-      "sym": "Bbm11"
-    },
-    {
-      "bar": 34,
-      "sym": "Eb13"
-    },
-    {
-      "bar": 35,
-      "sym": "Dbmaj9#11"
-    },
-    {
-      "bar": 36,
-      "sym": "F#maj13#11"
-    },
-    {
-      "bar": 37,
-      "sym": "Bbm13"
-    },
-    {
-      "bar": 38,
       "sym": "Cm11"
     },
     {
+      "bar": 28,
+      "sym": "Dbmaj7#11"
+    },
+    {
+      "bar": 29,
+      "sym": "Abmaj9"
+    },
+    {
+      "bar": 30,
+      "sym": "Bb13"
+    },
+    {
+      "bar": 31,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 32,
+      "sym": "Dbmaj9"
+    },
+    {
+      "bar": 33,
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 34,
+      "sym": "Dbmaj13"
+    },
+    {
+      "bar": 35,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 36,
+      "sym": "Dbmaj9"
+    },
+    {
+      "bar": 37,
+      "sym": "Cmaj9#11"
+    },
+    {
+      "bar": 38,
+      "sym": "Cm9"
+    },
+    {
       "bar": 39,
-      "sym": "F7b13"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 40,
-      "sym": "G13sus4"
+      "sym": "Dbmaj9"
     }
   ],
   "layers": [
@@ -178,7 +178,7 @@
       "voice": "BELL",
       "db": -3,
       "pattern": "chords.rolled(0.3)",
-      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; progresja unikalna: MODAL + DORSOUL+10 + SOUL+2",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; gotowe progresje SHLD: bVIM-bVIIm-im-bIIM + I-bIIM7-bIIIM6-bIIM7-I-im-bVIIM-bIIM + i-ii-v-i(wzgl.)",
       "stem": "base"
     }
   ],

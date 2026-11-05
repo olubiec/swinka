@@ -2,7 +2,7 @@
   "id": "rec_s3_sowa_b1",
   "kind": "record",
   "title": "Sowa · B1 energiczny",
-  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (PHRYG + WHOLE+10), jeden instrument (BOX)",
+  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: progresja unikalna (i-ii-v-III-i-ii-v-VII + im-bIIM-bIIIM-bIIM), jeden instrument (BOX)",
   "bpm": 65,
   "meter": 4,
   "key": "D",
@@ -17,63 +17,63 @@
     },
     {
       "bar": 2,
-      "sym": "Ebmaj7#11"
+      "sym": "Em9"
     },
     {
       "bar": 3,
-      "sym": "Dm9"
+      "sym": "Am11"
     },
     {
       "bar": 4,
-      "sym": "A7alt"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Gm11"
+      "sym": "Dm11"
     },
     {
       "bar": 6,
-      "sym": "E9#11"
+      "sym": "Em11"
     },
     {
       "bar": 7,
-      "sym": "A7alt"
+      "sym": "Am11"
     },
     {
       "bar": 8,
-      "sym": "Dm(maj7)9"
+      "sym": "C13"
     },
     {
       "bar": 9,
-      "sym": "Cmaj7#5"
+      "sym": "Dm11"
     },
     {
       "bar": 10,
-      "sym": "D9#5"
+      "sym": "Dm11"
     },
     {
       "bar": 11,
-      "sym": "Fmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 12,
-      "sym": "E9#5"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 13,
-      "sym": "Dbmaj13"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 14,
-      "sym": "C13sus4"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 15,
-      "sym": "Fmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 16,
-      "sym": "G9sus4"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 17,
@@ -81,63 +81,63 @@
     },
     {
       "bar": 18,
-      "sym": "Ebmaj7#11"
+      "sym": "Em9"
     },
     {
       "bar": 19,
-      "sym": "Dm9"
+      "sym": "Am11"
     },
     {
       "bar": 20,
-      "sym": "A7alt"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 21,
-      "sym": "Gm11"
+      "sym": "Dm11"
     },
     {
       "bar": 22,
-      "sym": "E9#11"
+      "sym": "Em11"
     },
     {
       "bar": 23,
-      "sym": "A7alt"
+      "sym": "Am11"
     },
     {
       "bar": 24,
-      "sym": "Dm(maj7)9"
+      "sym": "C13"
     },
     {
       "bar": 25,
-      "sym": "Cmaj7#5"
+      "sym": "Dm11"
     },
     {
       "bar": 26,
-      "sym": "D9#5"
+      "sym": "Dm11"
     },
     {
       "bar": 27,
-      "sym": "Fmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 28,
-      "sym": "E9#5"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 29,
-      "sym": "Dbmaj13"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 30,
-      "sym": "C13sus4"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 31,
-      "sym": "Fmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 32,
-      "sym": "G9sus4"
+      "sym": "Ebmaj9"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "BOX",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; progresja unikalna: PHRYG + WHOLE+10",
+      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; gotowe progresje SHLD: i-ii-v-III-i-ii-v-VII + im-bIIM-bIIIM-bIIM",
       "stem": "base"
     }
   ],

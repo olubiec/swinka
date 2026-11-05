@@ -2,7 +2,7 @@
   "id": "rec_s3_sen_a1",
   "kind": "record",
   "title": "Sen o sianiu · A1 podpisowy",
-  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: progresja unikalna (DORQ + LYD+8), jeden instrument (BELL)",
+  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: progresja unikalna (I-vi-bVIM-V + ii-IVM-vm-bVIIM), jeden instrument (BELL)",
   "bpm": 55,
   "meter": 4,
   "key": "F",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fsowhat"
+      "sym": "Fmaj9"
     },
     {
       "bar": 2,
-      "sym": "C7alt"
+      "sym": "Fmaj9"
     },
     {
       "bar": 3,
-      "sym": "Fsowhat"
+      "sym": "Dm9"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj13#11"
+      "sym": "Dm9"
     },
     {
       "bar": 5,
-      "sym": "Gm11"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 6,
-      "sym": "C7alt"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 7,
-      "sym": "Fm11"
+      "sym": "C13sus4"
     },
     {
       "bar": 8,
-      "sym": "C9sus4"
+      "sym": "C13sus4"
     },
     {
       "bar": 9,
-      "sym": "Dbmaj9#11"
+      "sym": "Gm9"
     },
     {
       "bar": 10,
-      "sym": "Ebmaj13"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Fm9"
+      "sym": "Cm9"
     },
     {
       "bar": 12,
-      "sym": "Gbmaj13#11"
+      "sym": "Eb13"
     },
     {
       "bar": 13,
-      "sym": "E9#11"
-    },
-    {
-      "bar": 14,
-      "sym": "Ebm11/Ab"
-    },
-    {
-      "bar": 15,
-      "sym": "Dbmaj13"
-    },
-    {
-      "bar": 16,
-      "sym": "Ab6/9"
-    },
-    {
-      "bar": 17,
-      "sym": "Fsowhat"
-    },
-    {
-      "bar": 18,
-      "sym": "C7alt"
-    },
-    {
-      "bar": 19,
-      "sym": "Fsowhat"
-    },
-    {
-      "bar": 20,
-      "sym": "Bbmaj13#11"
-    },
-    {
-      "bar": 21,
       "sym": "Gm11"
     },
     {
+      "bar": 14,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 15,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 16,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 17,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 18,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 19,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 20,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 21,
+      "sym": "Dbmaj9"
+    },
+    {
       "bar": 22,
-      "sym": "C7alt"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 23,
-      "sym": "Fm11"
+      "sym": "C13sus4"
     },
     {
       "bar": 24,
-      "sym": "C9sus4"
+      "sym": "C13sus4"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "BELL",
       "db": -3,
       "pattern": "chords.rolled(0.3)",
-      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; progresja unikalna: DORQ + LYD+8",
+      "part": "jedna warstwa, jeden instrument (BELL), akordy rozłożone; gotowe progresje SHLD: I-vi-bVIM-V + ii-IVM-vm-bVIIM",
       "stem": "base"
     }
   ],

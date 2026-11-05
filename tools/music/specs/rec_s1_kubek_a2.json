@@ -2,7 +2,7 @@
   "id": "rec_s1_kubek_a2",
   "kind": "record",
   "title": "Kubek z parą · A2 spokojny",
-  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: progresja unikalna (DORQ + PEDAL+9 + THIRDS+3), jeden instrument (HARP)",
+  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: progresja unikalna (I-vi-I-IV + VI7-VII-i-v-VI7-VII-i-iv7(wzgl.) + im-bVIIM-IV-im(wzgl.)), jeden instrument (HARP)",
   "bpm": 83,
   "meter": 4,
   "key": "F",
@@ -13,163 +13,163 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fsowhat"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "C7b13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Fsowhat"
+      "sym": "Dm9"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj13"
+      "sym": "Dm9"
     },
     {
       "bar": 5,
-      "sym": "Gm11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 6,
-      "sym": "Abmaj13#11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 7,
-      "sym": "Fm11"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 8,
-      "sym": "C9sus4"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 9,
-      "sym": "Dmaj9"
+      "sym": "Bb13"
     },
     {
       "bar": 10,
-      "sym": "E/D"
+      "sym": "Cmaj9"
     },
     {
       "bar": 11,
-      "sym": "Gbm11/D"
+      "sym": "Dm9"
     },
     {
       "bar": 12,
-      "sym": "Gmaj7#11/D"
+      "sym": "Am9"
     },
     {
       "bar": 13,
-      "sym": "Dmaj13"
+      "sym": "Bb9"
     },
     {
       "bar": 14,
-      "sym": "C/D"
+      "sym": "Cmaj9"
     },
     {
       "bar": 15,
-      "sym": "Em11/D"
+      "sym": "Dm11"
     },
     {
       "bar": 16,
-      "sym": "A/D"
+      "sym": "Gm7"
     },
     {
       "bar": 17,
-      "sym": "Abmaj9#11"
+      "sym": "Dm11"
     },
     {
       "bar": 18,
-      "sym": "Emaj9#11"
+      "sym": "Bmaj7#11"
     },
     {
       "bar": 19,
-      "sym": "Cmaj7#11"
+      "sym": "G13"
     },
     {
       "bar": 20,
-      "sym": "Bbm11"
+      "sym": "Dm9"
     },
     {
       "bar": 21,
-      "sym": "A7b13"
+      "sym": "Dm11"
     },
     {
       "bar": 22,
-      "sym": "Abmaj13"
+      "sym": "Bmaj9"
     },
     {
       "bar": 23,
-      "sym": "Fm11"
+      "sym": "G9"
     },
     {
       "bar": 24,
-      "sym": "Eb13sus4"
+      "sym": "Dm9"
     },
     {
       "bar": 25,
-      "sym": "Fsowhat"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 26,
-      "sym": "C7b13"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "Fsowhat"
+      "sym": "Dm9"
     },
     {
       "bar": 28,
-      "sym": "Bbmaj13"
+      "sym": "Dm9"
     },
     {
       "bar": 29,
-      "sym": "Gm11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 30,
-      "sym": "Abmaj13#11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 31,
-      "sym": "Fm11"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 32,
-      "sym": "C9sus4"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 33,
-      "sym": "Dmaj9"
+      "sym": "Bb13"
     },
     {
       "bar": 34,
-      "sym": "E/D"
+      "sym": "Cmaj9"
     },
     {
       "bar": 35,
-      "sym": "Gbm11/D"
+      "sym": "Dm9"
     },
     {
       "bar": 36,
-      "sym": "Gmaj7#11/D"
+      "sym": "Am9"
     },
     {
       "bar": 37,
-      "sym": "Dmaj13"
+      "sym": "Bb9"
     },
     {
       "bar": 38,
-      "sym": "C/D"
+      "sym": "Cmaj9"
     },
     {
       "bar": 39,
-      "sym": "Em11/D"
+      "sym": "Dm11"
     },
     {
       "bar": 40,
-      "sym": "C9sus4"
+      "sym": "Bbmaj13#11"
     }
   ],
   "layers": [
@@ -178,7 +178,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; progresja unikalna: DORQ + PEDAL+9 + THIRDS+3",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: I-vi-I-IV + VI7-VII-i-v-VI7-VII-i-iv7(wzgl.) + im-bVIIM-IV-im(wzgl.)",
       "stem": "base"
     }
   ],

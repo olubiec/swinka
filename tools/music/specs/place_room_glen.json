@@ -2,7 +2,7 @@
   "id": "place_room_glen",
   "kind": "room",
   "title": "Pokój: kącik czytelniczy",
-  "role": "ballada jazzowa; legenda v7: progresja unikalna (MINSOUL + PHRYG+8), jeden instrument (EP)",
+  "role": "ballada jazzowa; legenda v7: progresja unikalna (IV-vi-IV-vi + I-I7-Idom7-I7), jeden instrument (EP)",
   "bpm": 68,
   "meter": 4,
   "key": "Eb",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Ebm11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Bmaj13#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Abm11"
+      "sym": "Cm9"
     },
     {
       "bar": 4,
-      "sym": "Bb7alt"
+      "sym": "Cm9"
     },
     {
       "bar": 5,
-      "sym": "Ab7alt"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 6,
-      "sym": "Dbmaj9#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "F7alt"
+      "sym": "Cm11"
     },
     {
       "bar": 8,
-      "sym": "Bb7b13"
+      "sym": "Cm11"
     },
     {
       "bar": 9,
-      "sym": "Bm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Cmaj7#11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Bm9"
+      "sym": "Eb13"
     },
     {
       "bar": 12,
-      "sym": "Gb7b9b13"
+      "sym": "Eb13"
     },
     {
       "bar": 13,
-      "sym": "Em11"
+      "sym": "Eb9"
     },
     {
       "bar": 14,
-      "sym": "Cmaj13#11"
+      "sym": "Eb9"
     },
     {
       "bar": 15,
-      "sym": "Gb13"
+      "sym": "Eb13"
     },
     {
       "bar": 16,
-      "sym": "Bm(maj7)9"
+      "sym": "Eb13"
     },
     {
       "bar": 17,
-      "sym": "Ebm11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Bmaj13#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Abm11"
+      "sym": "Cm9"
     },
     {
       "bar": 20,
-      "sym": "Bb7alt"
+      "sym": "Cm9"
     },
     {
       "bar": 21,
-      "sym": "Ab7alt"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 22,
-      "sym": "Dbmaj9#11"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 23,
-      "sym": "F7alt"
+      "sym": "Cm11"
     },
     {
       "bar": 24,
-      "sym": "Bb7b13"
+      "sym": "Cm11"
     },
     {
       "bar": 25,
-      "sym": "Bm11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 26,
-      "sym": "Cmaj7#11"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "Bm9"
+      "sym": "Eb13"
     },
     {
       "bar": 28,
-      "sym": "Gb7b9b13"
+      "sym": "Eb13"
     },
     {
       "bar": 29,
-      "sym": "Em11"
+      "sym": "Eb9"
     },
     {
       "bar": 30,
-      "sym": "Cmaj13#11"
+      "sym": "Eb9"
     },
     {
       "bar": 31,
-      "sym": "Gb13"
+      "sym": "Eb13"
     },
     {
       "bar": 32,
-      "sym": "Bm(maj7)9"
+      "sym": "Eb13"
     }
   ],
   "layers": [

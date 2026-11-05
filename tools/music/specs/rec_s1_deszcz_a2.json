@@ -2,7 +2,7 @@
   "id": "rec_s1_deszcz_a2",
   "kind": "record",
   "title": "Deszcz na dachu · A2 spokojny",
-  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (LULL + MINSOUL+6), jeden instrument (ACC)",
+  "role": "płyta serii 1; deszcz w tle, ballada jazzowa; legenda v7: progresja unikalna (IV-vi-iii-I + ii-v-i-iv(wzgl.)), jeden instrument (ACC)",
   "bpm": 59,
   "meter": 4,
   "key": "Eb",
@@ -13,99 +13,99 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Ebmaj9"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Abmaj9#11"
+      "sym": "Cm9"
     },
     {
       "bar": 3,
-      "sym": "Ebmaj7/G"
+      "sym": "Gm11"
     },
     {
       "bar": 4,
-      "sym": "Abm6/9"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 5,
-      "sym": "Gb7alt"
+      "sym": "Abmaj13#11"
     },
     {
       "bar": 6,
-      "sym": "Fm11"
+      "sym": "Cm9"
     },
     {
       "bar": 7,
-      "sym": "Abmaj9#11"
+      "sym": "Gm11"
     },
     {
       "bar": 8,
-      "sym": "Ebmaj9"
+      "sym": "Ebmaj13"
     },
     {
       "bar": 9,
-      "sym": "Am11"
+      "sym": "Dm11"
     },
     {
       "bar": 10,
-      "sym": "Fmaj13#11"
+      "sym": "Dm11"
     },
     {
       "bar": 11,
-      "sym": "Dm9"
+      "sym": "Gm11"
     },
     {
       "bar": 12,
-      "sym": "E7alt"
+      "sym": "Gm11"
     },
     {
       "bar": 13,
-      "sym": "Am9"
+      "sym": "Cm11"
     },
     {
       "bar": 14,
-      "sym": "E13"
+      "sym": "Cm11"
     },
     {
       "bar": 15,
-      "sym": "Fmaj9#11"
-    },
-    {
-      "bar": 16,
-      "sym": "E7b13"
-    },
-    {
-      "bar": 17,
-      "sym": "Ebmaj9"
-    },
-    {
-      "bar": 18,
-      "sym": "Abmaj9#11"
-    },
-    {
-      "bar": 19,
-      "sym": "Ebmaj7/G"
-    },
-    {
-      "bar": 20,
-      "sym": "Abm6/9"
-    },
-    {
-      "bar": 21,
-      "sym": "Gb7alt"
-    },
-    {
-      "bar": 22,
       "sym": "Fm11"
     },
     {
-      "bar": 23,
+      "bar": 16,
+      "sym": "Fm11"
+    },
+    {
+      "bar": 17,
       "sym": "Abmaj9#11"
     },
     {
+      "bar": 18,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 19,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 20,
+      "sym": "Ebmaj9#11"
+    },
+    {
+      "bar": 21,
+      "sym": "Abmaj13#11"
+    },
+    {
+      "bar": 22,
+      "sym": "Cm9"
+    },
+    {
+      "bar": 23,
+      "sym": "Gm11"
+    },
+    {
       "bar": 24,
-      "sym": "Ebmaj9"
+      "sym": "Ebmaj13"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "ACC",
       "db": -12,
       "pattern": "chords.rolled(0.2)",
-      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; progresja unikalna: LULL + MINSOUL+6",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; gotowe progresje SHLD: IV-vi-iii-I + ii-v-i-iv(wzgl.)",
       "stem": "base"
     }
   ],

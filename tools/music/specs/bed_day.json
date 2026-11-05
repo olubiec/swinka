@@ -2,7 +2,7 @@
   "id": "bed_day",
   "kind": "bed",
   "title": "Belka dzień (9-17)",
-  "role": "najcichsza belka; legenda v7: progresja unikalna (BACKDOOR + LULL+10 + WHOLE+5), jeden instrument (PAD)",
+  "role": "najcichsza belka; legenda v7: progresja unikalna (I-bVIIM-I-I-bVIM-V + V-IV-vi-I + im-bIIM-biim6-ivm(wzgl.)), jeden instrument (PAD)",
   "bpm": 60,
   "meter": 4,
   "key": "F",
@@ -13,15 +13,15 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj9"
+      "sym": "Fmaj13"
     },
     {
       "bar": 2,
-      "sym": "Dm11"
+      "sym": "Fmaj13"
     },
     {
       "bar": 3,
-      "sym": "Bbm9"
+      "sym": "Eb13"
     },
     {
       "bar": 4,
@@ -29,95 +29,95 @@
     },
     {
       "bar": 5,
-      "sym": "E7b13"
+      "sym": "Fmaj13"
     },
     {
       "bar": 6,
-      "sym": "Am11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "Db7alt"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 8,
-      "sym": "C13sus4"
+      "sym": "C13"
     },
     {
       "bar": 9,
-      "sym": "Ebmaj9"
+      "sym": "C9sus4"
     },
     {
       "bar": 10,
-      "sym": "Abmaj9#11"
+      "sym": "C9sus4"
     },
     {
       "bar": 11,
-      "sym": "Ebmaj7/G"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Abm6/9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 13,
-      "sym": "Ebmaj13"
-    },
-    {
-      "bar": 14,
-      "sym": "Fm11"
-    },
-    {
-      "bar": 15,
-      "sym": "Abmaj9#11"
-    },
-    {
-      "bar": 16,
-      "sym": "Ebmaj13#11"
-    },
-    {
-      "bar": 17,
-      "sym": "Bbmaj7#5"
-    },
-    {
-      "bar": 18,
-      "sym": "C9#5"
-    },
-    {
-      "bar": 19,
-      "sym": "Ebmaj13#11"
-    },
-    {
-      "bar": 20,
-      "sym": "Gb13"
-    },
-    {
-      "bar": 21,
-      "sym": "F13sus4"
-    },
-    {
-      "bar": 22,
-      "sym": "Bb9#5"
-    },
-    {
-      "bar": 23,
-      "sym": "Ebmaj13#11"
-    },
-    {
-      "bar": 24,
-      "sym": "F9sus4"
-    },
-    {
-      "bar": 25,
-      "sym": "Fmaj9"
-    },
-    {
-      "bar": 26,
       "sym": "Dm11"
     },
     {
+      "bar": 14,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 15,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 16,
+      "sym": "Fmaj9#11"
+    },
+    {
+      "bar": 17,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 18,
+      "sym": "Ebmaj7#11"
+    },
+    {
+      "bar": 19,
+      "sym": "Ebm6"
+    },
+    {
+      "bar": 20,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 21,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 22,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 23,
+      "sym": "Ebm6"
+    },
+    {
+      "bar": 24,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 25,
+      "sym": "Fmaj13"
+    },
+    {
+      "bar": 26,
+      "sym": "Fmaj13"
+    },
+    {
       "bar": 27,
-      "sym": "Bbm9"
+      "sym": "Eb13"
     },
     {
       "bar": 28,
@@ -125,83 +125,83 @@
     },
     {
       "bar": 29,
-      "sym": "E7b13"
+      "sym": "Fmaj13"
     },
     {
       "bar": 30,
-      "sym": "Am11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 31,
-      "sym": "Db7alt"
+      "sym": "Dbmaj9"
     },
     {
       "bar": 32,
-      "sym": "C13sus4"
+      "sym": "C13"
     },
     {
       "bar": 33,
-      "sym": "Ebmaj9"
+      "sym": "C9sus4"
     },
     {
       "bar": 34,
-      "sym": "Abmaj9#11"
+      "sym": "C9sus4"
     },
     {
       "bar": 35,
-      "sym": "Ebmaj7/G"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "Abm6/9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 37,
-      "sym": "Ebmaj13"
+      "sym": "Dm11"
     },
     {
       "bar": 38,
-      "sym": "Fm11"
+      "sym": "Dm11"
     },
     {
       "bar": 39,
-      "sym": "Abmaj9#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 40,
-      "sym": "Ebmaj13#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 41,
-      "sym": "Bbmaj7#5"
+      "sym": "Dm11"
     },
     {
       "bar": 42,
-      "sym": "C9#5"
+      "sym": "Ebmaj7#11"
     },
     {
       "bar": 43,
-      "sym": "Ebmaj13#11"
+      "sym": "Ebm6"
     },
     {
       "bar": 44,
-      "sym": "Gb13"
+      "sym": "Gm11"
     },
     {
       "bar": 45,
-      "sym": "F13sus4"
+      "sym": "Dm11"
     },
     {
       "bar": 46,
-      "sym": "Bb9#5"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 47,
-      "sym": "Ebmaj13#11"
+      "sym": "Ebm6"
     },
     {
       "bar": 48,
-      "sym": "F9sus4"
+      "sym": "Gm11"
     }
   ],
   "layers": [

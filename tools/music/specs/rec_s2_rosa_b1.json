@@ -2,7 +2,7 @@
   "id": "rec_s2_rosa_b1",
   "kind": "record",
   "title": "Rosa · B1 energiczny",
-  "role": "płyta serii 2; krople rosy (dzwonki); legenda v7: progresja unikalna (SOUL + WHOLE+2), jeden instrument (HARP)",
+  "role": "płyta serii 2; krople rosy (dzwonki); legenda v7: progresja unikalna (vi-V-IV-V-ii-V-I-I + vi-V-IV-V), jeden instrument (HARP)",
   "bpm": 78,
   "meter": 4,
   "key": "G",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gmaj13"
+      "sym": "Em11"
     },
     {
       "bar": 2,
-      "sym": "Ab13"
+      "sym": "D13"
     },
     {
       "bar": 3,
-      "sym": "Am11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "D7b13"
+      "sym": "D13sus4"
     },
     {
       "bar": 5,
-      "sym": "Bm13"
+      "sym": "Am9"
     },
     {
       "bar": 6,
-      "sym": "E7alt"
+      "sym": "D13"
     },
     {
       "bar": 7,
-      "sym": "Am9"
+      "sym": "Gmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "Ab9#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 9,
-      "sym": "Amaj7#5"
+      "sym": "Em9"
     },
     {
       "bar": 10,
-      "sym": "B9#5"
+      "sym": "Em9"
     },
     {
       "bar": 11,
-      "sym": "Dmaj13#11"
+      "sym": "D9sus4"
     },
     {
       "bar": 12,
-      "sym": "Db9#5"
+      "sym": "D9sus4"
     },
     {
       "bar": 13,
-      "sym": "Ab7alt"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 14,
-      "sym": "A9#5"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Eb9#11"
+      "sym": "D9sus4"
     },
     {
       "bar": 16,
-      "sym": "E9sus4"
+      "sym": "D9sus4"
     },
     {
       "bar": 17,
-      "sym": "Gmaj13"
+      "sym": "Em11"
     },
     {
       "bar": 18,
-      "sym": "Ab13"
+      "sym": "D13"
     },
     {
       "bar": 19,
-      "sym": "Am11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "D7b13"
+      "sym": "D13sus4"
     },
     {
       "bar": 21,
-      "sym": "Bm13"
-    },
-    {
-      "bar": 22,
-      "sym": "E7alt"
-    },
-    {
-      "bar": 23,
       "sym": "Am9"
     },
     {
+      "bar": 22,
+      "sym": "D13"
+    },
+    {
+      "bar": 23,
+      "sym": "Gmaj9#11"
+    },
+    {
       "bar": 24,
-      "sym": "Ab9#11"
+      "sym": "Gmaj9"
     },
     {
       "bar": 25,
-      "sym": "Amaj7#5"
+      "sym": "Em9"
     },
     {
       "bar": 26,
-      "sym": "B9#5"
+      "sym": "Em9"
     },
     {
       "bar": 27,
-      "sym": "Dmaj13#11"
+      "sym": "D9sus4"
     },
     {
       "bar": 28,
-      "sym": "Db9#5"
+      "sym": "D9sus4"
     },
     {
       "bar": 29,
-      "sym": "Ab7alt"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 30,
-      "sym": "A9#5"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 31,
-      "sym": "Eb9#11"
+      "sym": "D9sus4"
     },
     {
       "bar": 32,
-      "sym": "E9sus4"
+      "sym": "D9sus4"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; progresja unikalna: SOUL + WHOLE+2",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: vi-V-IV-V-ii-V-I-I + vi-V-IV-V",
       "stem": "base"
     }
   ],

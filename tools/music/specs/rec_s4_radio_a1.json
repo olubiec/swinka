@@ -2,7 +2,7 @@
   "id": "rec_s4_radio_a1",
   "kind": "record",
   "title": "Radio FM · A1 podpisowy",
-  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (DORQ + THIRDS+5 + MINSOUL+2), jeden instrument (PAD)",
+  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: progresja unikalna (vi-IV-I-V + i-III-VII-VI(wzgl.) + im-ii-vm-IV(wzgl.)), jeden instrument (PAD)",
   "bpm": 96,
   "meter": 4,
   "key": "C",
@@ -13,15 +13,15 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Csowhat"
+      "sym": "Am9"
     },
     {
       "bar": 2,
-      "sym": "Dbsowhat"
+      "sym": "Am9"
     },
     {
       "bar": 3,
-      "sym": "Csowhat"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 4,
@@ -29,95 +29,95 @@
     },
     {
       "bar": 5,
-      "sym": "Dm11"
+      "sym": "Cmaj13"
     },
     {
       "bar": 6,
-      "sym": "Ebmaj13#11"
+      "sym": "Cmaj13"
     },
     {
       "bar": 7,
-      "sym": "Cm11"
+      "sym": "G13"
     },
     {
       "bar": 8,
-      "sym": "G9sus4"
+      "sym": "G13"
     },
     {
       "bar": 9,
-      "sym": "Fmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 10,
-      "sym": "Bbm11"
+      "sym": "Am11"
     },
     {
       "bar": 11,
-      "sym": "Amaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Gm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 13,
-      "sym": "F#7b13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 14,
-      "sym": "Fmaj13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 15,
-      "sym": "Dm11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 16,
-      "sym": "C13sus4"
+      "sym": "Fmaj9"
     },
     {
       "bar": 17,
-      "sym": "Dm11"
+      "sym": "Am11"
     },
     {
       "bar": 18,
-      "sym": "Bbmaj13#11"
+      "sym": "Am11"
     },
     {
       "bar": 19,
-      "sym": "E13sus4"
+      "sym": "Bm11"
     },
     {
       "bar": 20,
-      "sym": "A7alt"
+      "sym": "Bm11"
     },
     {
       "bar": 21,
-      "sym": "Dm9"
+      "sym": "Em11"
     },
     {
       "bar": 22,
-      "sym": "A7alt"
+      "sym": "Em11"
     },
     {
       "bar": 23,
-      "sym": "Bbmaj9#11"
+      "sym": "D13"
     },
     {
       "bar": 24,
-      "sym": "A7b13"
+      "sym": "D13"
     },
     {
       "bar": 25,
-      "sym": "Csowhat"
+      "sym": "Am9"
     },
     {
       "bar": 26,
-      "sym": "Dbsowhat"
+      "sym": "Am9"
     },
     {
       "bar": 27,
-      "sym": "Csowhat"
+      "sym": "Fmaj13#11"
     },
     {
       "bar": 28,
@@ -125,83 +125,83 @@
     },
     {
       "bar": 29,
-      "sym": "Dm11"
+      "sym": "Cmaj13"
     },
     {
       "bar": 30,
-      "sym": "Ebmaj13#11"
+      "sym": "Cmaj13"
     },
     {
       "bar": 31,
-      "sym": "Cm11"
+      "sym": "G13"
     },
     {
       "bar": 32,
-      "sym": "G9sus4"
+      "sym": "G13"
     },
     {
       "bar": 33,
-      "sym": "Fmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 34,
-      "sym": "Bbm11"
+      "sym": "Am11"
     },
     {
       "bar": 35,
-      "sym": "Amaj9#11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "Gm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 37,
-      "sym": "F#7b13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 38,
-      "sym": "Fmaj13"
+      "sym": "Gmaj9"
     },
     {
       "bar": 39,
-      "sym": "Dm11"
+      "sym": "Fmaj9"
     },
     {
       "bar": 40,
-      "sym": "C13sus4"
+      "sym": "Fmaj9"
     },
     {
       "bar": 41,
-      "sym": "Dm11"
+      "sym": "Am11"
     },
     {
       "bar": 42,
-      "sym": "Bbmaj13#11"
+      "sym": "Am11"
     },
     {
       "bar": 43,
-      "sym": "E13sus4"
+      "sym": "Bm11"
     },
     {
       "bar": 44,
-      "sym": "A7alt"
+      "sym": "Bm11"
     },
     {
       "bar": 45,
-      "sym": "Dm9"
+      "sym": "Em11"
     },
     {
       "bar": 46,
-      "sym": "A7alt"
+      "sym": "Em11"
     },
     {
       "bar": 47,
-      "sym": "Bbmaj9#11"
+      "sym": "D13"
     },
     {
       "bar": 48,
-      "sym": "A7b13"
+      "sym": "D13"
     }
   ],
   "layers": [
@@ -210,7 +210,7 @@
       "voice": "PAD",
       "db": -3,
       "pattern": "chords.rolled(0.4)",
-      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; progresja unikalna: DORQ + THIRDS+5 + MINSOUL+2",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; gotowe progresje SHLD: vi-IV-I-V + i-III-VII-VI(wzgl.) + im-ii-vm-IV(wzgl.)",
       "stem": "base"
     }
   ],

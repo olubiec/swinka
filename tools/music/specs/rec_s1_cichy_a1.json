@@ -2,7 +2,7 @@
   "id": "rec_s1_cichy_a1",
   "kind": "record",
   "title": "Cichy kąt · A1 podpisowy",
-  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (BACKDOOR + PEDAL+3), jeden instrument (HARP)",
+  "role": "płyta serii 1; najprostsza płyta: sama pozytywka; legenda v7: progresja unikalna (vi-bVIM-bVIIM-I + im-vm-isus4-I(wzgl.)), jeden instrument (HARP)",
   "bpm": 60,
   "meter": 4,
   "key": "C",
@@ -13,7 +13,7 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Cmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 2,
@@ -21,63 +21,63 @@
     },
     {
       "bar": 3,
-      "sym": "Fm9"
+      "sym": "Abmaj9"
     },
     {
       "bar": 4,
-      "sym": "Bb13"
+      "sym": "Abmaj9"
     },
     {
       "bar": 5,
-      "sym": "Cmaj13"
+      "sym": "Bb13"
     },
     {
       "bar": 6,
-      "sym": "Em11"
+      "sym": "Bb13"
     },
     {
       "bar": 7,
-      "sym": "Fmaj9#11"
+      "sym": "Cmaj13"
     },
     {
       "bar": 8,
-      "sym": "G7sus4"
+      "sym": "Cmaj13"
     },
     {
       "bar": 9,
-      "sym": "Ebmaj9"
+      "sym": "Am9"
     },
     {
       "bar": 10,
-      "sym": "F/Eb"
+      "sym": "Am9"
     },
     {
       "bar": 11,
-      "sym": "Gm11/Eb"
+      "sym": "Em11"
     },
     {
       "bar": 12,
-      "sym": "Abmaj7#11/Eb"
+      "sym": "Em11"
     },
     {
       "bar": 13,
-      "sym": "Ebmaj9"
+      "sym": "Asus4"
     },
     {
       "bar": 14,
-      "sym": "Db/Eb"
+      "sym": "Asus4"
     },
     {
       "bar": 15,
-      "sym": "Fm11/Eb"
+      "sym": "Amaj9"
     },
     {
       "bar": 16,
-      "sym": "Bb/Eb"
+      "sym": "Amaj9"
     },
     {
       "bar": 17,
-      "sym": "Cmaj9"
+      "sym": "Am11"
     },
     {
       "bar": 18,
@@ -85,27 +85,27 @@
     },
     {
       "bar": 19,
-      "sym": "Fm9"
+      "sym": "Abmaj9"
     },
     {
       "bar": 20,
-      "sym": "Bb13"
+      "sym": "Abmaj9"
     },
     {
       "bar": 21,
-      "sym": "Cmaj13"
+      "sym": "Bb13"
     },
     {
       "bar": 22,
-      "sym": "Em11"
+      "sym": "Bb13"
     },
     {
       "bar": 23,
-      "sym": "Fmaj9#11"
+      "sym": "Cmaj13"
     },
     {
       "bar": 24,
-      "sym": "G7sus4"
+      "sym": "Cmaj13"
     }
   ],
   "layers": [
@@ -114,7 +114,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; progresja unikalna: BACKDOOR + PEDAL+3",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: vi-bVIM-bVIIM-I + im-vm-isus4-I(wzgl.)",
       "stem": "base"
     }
   ],

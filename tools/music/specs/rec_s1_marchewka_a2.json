@@ -2,7 +2,7 @@
   "id": "rec_s1_marchewka_a2",
   "kind": "record",
   "title": "Marchewkowy beat · A2 spokojny",
-  "role": "płyta serii 1; chrupanie w hi-hat (otwarty hat na „i” 4); legenda v7: progresja unikalna (MINSOUL + DORQ+3), jeden instrument (HARP)",
+  "role": "płyta serii 1; chrupanie w hi-hat (otwarty hat na „i” 4); legenda v7: progresja unikalna (I-V-vi-ii + I-V-vi-IV), jeden instrument (HARP)",
   "bpm": 76,
   "meter": 4,
   "key": "G",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gm11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 2,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 3,
-      "sym": "Ebmaj13#11"
+      "sym": "D13"
     },
     {
       "bar": 4,
-      "sym": "D7alt"
+      "sym": "D13"
     },
     {
       "bar": 5,
-      "sym": "Gm9"
+      "sym": "Em9"
     },
     {
       "bar": 6,
-      "sym": "Fmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 7,
-      "sym": "Ebmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 8,
-      "sym": "D7b13"
+      "sym": "Am11"
     },
     {
       "bar": 9,
-      "sym": "Bbsowhat"
+      "sym": "Gmaj13"
     },
     {
       "bar": 10,
-      "sym": "Bsowhat"
+      "sym": "Gmaj13"
     },
     {
       "bar": 11,
-      "sym": "Bbsowhat"
+      "sym": "D13"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj13#11"
+      "sym": "D13"
     },
     {
       "bar": 13,
-      "sym": "Cm11"
+      "sym": "Em11"
     },
     {
       "bar": 14,
-      "sym": "Dbmaj13#11"
+      "sym": "Em11"
     },
     {
       "bar": 15,
-      "sym": "Bbm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "F7sus4"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 17,
-      "sym": "Gm11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 18,
-      "sym": "Ebmaj13#11"
+      "sym": "Gmaj13"
     },
     {
       "bar": 19,
-      "sym": "Ebmaj13#11"
+      "sym": "D13"
     },
     {
       "bar": 20,
-      "sym": "D7alt"
+      "sym": "D13"
     },
     {
       "bar": 21,
-      "sym": "Gm9"
+      "sym": "Em9"
     },
     {
       "bar": 22,
-      "sym": "Fmaj9#11"
+      "sym": "Em9"
     },
     {
       "bar": 23,
-      "sym": "Ebmaj9#11"
+      "sym": "Am11"
     },
     {
       "bar": 24,
-      "sym": "D7b13"
+      "sym": "Am11"
     },
     {
       "bar": 25,
-      "sym": "Bbsowhat"
+      "sym": "Gmaj13"
     },
     {
       "bar": 26,
-      "sym": "Bsowhat"
+      "sym": "Gmaj13"
     },
     {
       "bar": 27,
-      "sym": "Bbsowhat"
+      "sym": "D13"
     },
     {
       "bar": 28,
-      "sym": "Ebmaj13#11"
+      "sym": "D13"
     },
     {
       "bar": 29,
-      "sym": "Cm11"
+      "sym": "Em11"
     },
     {
       "bar": 30,
-      "sym": "Dbmaj13#11"
+      "sym": "Em11"
     },
     {
       "bar": 31,
-      "sym": "Bbm11"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "F7sus4"
+      "sym": "Cmaj9#11"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; progresja unikalna: MINSOUL + DORQ+3",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: I-V-vi-ii + I-V-vi-IV",
       "stem": "base"
     }
   ],

@@ -2,7 +2,7 @@
   "id": "bed_night",
   "kind": "bed",
   "title": "Belka noc (22-6, tylko z włączonym „Muzyka w nocy”)",
-  "role": "pozytywka, prawie cisza; legenda v7: progresja unikalna (MINSOUL + LYD+8), jeden instrument (CEL)",
+  "role": "pozytywka, prawie cisza; legenda v7: progresja unikalna (i-VII-VI-iv + im-bIIM-bIIIM-bIIM), jeden instrument (CEL)",
   "bpm": 54,
   "meter": 4,
   "key": "D",
@@ -13,19 +13,19 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dm11"
+      "sym": "Dm9"
     },
     {
       "bar": 2,
-      "sym": "Bbmaj13#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 3,
-      "sym": "Gm11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "A13sus4"
+      "sym": "Gm11"
     },
     {
       "bar": 5,
@@ -33,63 +33,63 @@
     },
     {
       "bar": 6,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 7,
-      "sym": "Gm9"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 8,
-      "sym": "A7b13"
+      "sym": "Gm9"
     },
     {
       "bar": 9,
-      "sym": "Bbmaj9#11"
+      "sym": "Dm9"
     },
     {
       "bar": 10,
-      "sym": "Cmaj13"
+      "sym": "Dm9"
     },
     {
       "bar": 11,
-      "sym": "Dm11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 12,
-      "sym": "Ebmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 13,
-      "sym": "G7b13"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 14,
-      "sym": "Cm11/F"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 15,
-      "sym": "E9#11"
+      "sym": "Ebmaj7#11"
     },
     {
       "bar": 16,
-      "sym": "F6/9"
+      "sym": "Ebmaj7#11"
     },
     {
       "bar": 17,
-      "sym": "Dm11"
+      "sym": "Dm9"
     },
     {
       "bar": 18,
-      "sym": "Bbmaj13#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 19,
-      "sym": "Gm11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "A13sus4"
+      "sym": "Gm11"
     },
     {
       "bar": 21,
@@ -97,63 +97,63 @@
     },
     {
       "bar": 22,
-      "sym": "Cmaj9#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 23,
-      "sym": "Gm9"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 24,
-      "sym": "A7b13"
+      "sym": "Gm9"
     },
     {
       "bar": 25,
-      "sym": "Bbmaj9#11"
+      "sym": "Dm9"
     },
     {
       "bar": 26,
-      "sym": "Cmaj13"
+      "sym": "Dm9"
     },
     {
       "bar": 27,
-      "sym": "Dm11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 28,
-      "sym": "Ebmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 29,
-      "sym": "G7b13"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 30,
-      "sym": "Cm11/F"
+      "sym": "Emaj7#11"
     },
     {
       "bar": 31,
-      "sym": "E9#11"
+      "sym": "Ebmaj7#11"
     },
     {
       "bar": 32,
-      "sym": "F6/9"
+      "sym": "Ebmaj7#11"
     },
     {
       "bar": 33,
-      "sym": "Dm11"
+      "sym": "Dm9"
     },
     {
       "bar": 34,
-      "sym": "Bbmaj13#11"
+      "sym": "Cmaj9"
     },
     {
       "bar": 35,
-      "sym": "Gm11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "A7b13"
+      "sym": "Gm9"
     }
   ],
   "layers": [

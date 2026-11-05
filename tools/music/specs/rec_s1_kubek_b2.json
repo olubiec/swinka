@@ -2,7 +2,7 @@
   "id": "rec_s1_kubek_b2",
   "kind": "record",
   "title": "Kubek z parą · B2 nastrojowy",
-  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: progresja unikalna (PHRYG + MINSOUL+10), jeden instrument (BNJ)",
+  "role": "płyta serii 1; bossa nova z parą nad kubkiem; legenda v7: progresja unikalna (I-iii-vi-IV + im-ivm9-bIIM-im(wzgl.)), jeden instrument (BNJ)",
   "bpm": 74,
   "meter": 4,
   "key": "F",
@@ -13,131 +13,131 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fm11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Ebm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Fm9"
+      "sym": "Am11"
     },
     {
       "bar": 4,
-      "sym": "C7b9b13"
+      "sym": "Am11"
     },
     {
       "bar": 5,
-      "sym": "Bbm11"
+      "sym": "Dm9"
     },
     {
       "bar": 6,
-      "sym": "Gbmaj13#11"
+      "sym": "Dm9"
     },
     {
       "bar": 7,
-      "sym": "C7alt"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "Fm(maj7)9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 9,
-      "sym": "Ebm11"
+      "sym": "Dm9"
     },
     {
       "bar": 10,
-      "sym": "Bmaj13#11"
+      "sym": "Dm9"
     },
     {
       "bar": 11,
-      "sym": "Abm11"
+      "sym": "Gm9"
     },
     {
       "bar": 12,
-      "sym": "Bb7alt"
+      "sym": "Gm9"
     },
     {
       "bar": 13,
-      "sym": "Ebm9"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 14,
-      "sym": "Dbmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 15,
-      "sym": "Bmaj9#11"
+      "sym": "Dm9"
     },
     {
       "bar": 16,
-      "sym": "Bb7b13"
+      "sym": "Dm9"
     },
     {
       "bar": 17,
-      "sym": "Fm11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Ebm9"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Fm9"
+      "sym": "Am11"
     },
     {
       "bar": 20,
-      "sym": "C7b9b13"
+      "sym": "Am11"
     },
     {
       "bar": 21,
-      "sym": "Bbm11"
+      "sym": "Dm9"
     },
     {
       "bar": 22,
-      "sym": "Gbmaj13#11"
+      "sym": "Dm9"
     },
     {
       "bar": 23,
-      "sym": "C7alt"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "Fm(maj7)9"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 25,
-      "sym": "Ebm11"
+      "sym": "Dm9"
     },
     {
       "bar": 26,
-      "sym": "Bmaj13#11"
+      "sym": "Dm9"
     },
     {
       "bar": 27,
-      "sym": "Abm11"
+      "sym": "Gm9"
     },
     {
       "bar": 28,
-      "sym": "Bb7alt"
+      "sym": "Gm9"
     },
     {
       "bar": 29,
-      "sym": "Ebm9"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 30,
-      "sym": "Dbmaj9#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 31,
-      "sym": "Bmaj9#11"
+      "sym": "Dm9"
     },
     {
       "bar": 32,
-      "sym": "Bb7b13"
+      "sym": "Dm9"
     }
   ],
   "layers": [
@@ -146,7 +146,7 @@
       "voice": "BNJ",
       "db": -3,
       "pattern": "chords.arp8",
-      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; progresja unikalna: PHRYG + MINSOUL+10",
+      "part": "jedna warstwa, jeden instrument (BNJ), akordy rozłożone; gotowe progresje SHLD: I-iii-vi-IV + im-ivm9-bIIM-im(wzgl.)",
       "stem": "base"
     }
   ],

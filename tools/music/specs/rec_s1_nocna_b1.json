@@ -2,7 +2,7 @@
   "id": "rec_s1_nocna_b1",
   "kind": "record",
   "title": "Nocna ścieżka · B1 energiczny",
-  "role": "płyta serii 1; blues dorycki, walking bass i blue-note dzwonka; legenda v7: progresja unikalna (WHOLE + DORSOUL+6 + PEDAL+9), jeden instrument (HARP)",
+  "role": "płyta serii 1; blues dorycki, walking bass i blue-note dzwonka; legenda v7: progresja unikalna (im-ivm9-bIIM-im-vm-ivm7-bIIM-im7 + im-bVIIM-IV-im + im-vm-isus4-I), jeden instrument (HARP)",
   "bpm": 132,
   "meter": 4,
   "key": "D",
@@ -13,259 +13,259 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dmaj7#5"
+      "sym": "Dm11"
     },
     {
       "bar": 2,
-      "sym": "E9#5"
+      "sym": "Gm9"
     },
     {
       "bar": 3,
-      "sym": "Gmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 4,
-      "sym": "F#9#5"
+      "sym": "Dm11"
     },
     {
       "bar": 5,
-      "sym": "Ebmaj9"
+      "sym": "Am9"
     },
     {
       "bar": 6,
-      "sym": "D9#5"
+      "sym": "Gm9"
     },
     {
       "bar": 7,
-      "sym": "Gmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 8,
-      "sym": "A9sus4"
+      "sym": "Dm11"
     },
     {
       "bar": 9,
-      "sym": "Abm11"
+      "sym": "Dm9"
     },
     {
       "bar": 10,
-      "sym": "Db13"
+      "sym": "Dm9"
     },
     {
       "bar": 11,
-      "sym": "B13sus4"
+      "sym": "Bmaj9"
     },
     {
       "bar": 12,
-      "sym": "Emaj13#11"
+      "sym": "Bmaj9"
     },
     {
       "bar": 13,
-      "sym": "Abm13"
+      "sym": "G13"
     },
     {
       "bar": 14,
-      "sym": "Bbm11"
+      "sym": "G13"
     },
     {
       "bar": 15,
-      "sym": "Eb7b13"
+      "sym": "Dm9"
     },
     {
       "bar": 16,
-      "sym": "Ab9#11"
+      "sym": "Dm9"
     },
     {
       "bar": 17,
-      "sym": "Bmaj9"
+      "sym": "Dm11"
     },
     {
       "bar": 18,
-      "sym": "Db/B"
+      "sym": "Dm11"
     },
     {
       "bar": 19,
-      "sym": "Eb7alt"
+      "sym": "Am11"
     },
     {
       "bar": 20,
-      "sym": "Emaj7#11/B"
+      "sym": "Am11"
     },
     {
       "bar": 21,
-      "sym": "Bmaj9"
+      "sym": "Dsus4"
     },
     {
       "bar": 22,
-      "sym": "A/B"
+      "sym": "Dsus4"
     },
     {
       "bar": 23,
-      "sym": "Dbm11/B"
+      "sym": "Dmaj9"
     },
     {
       "bar": 24,
-      "sym": "F#/B"
+      "sym": "Dmaj9"
     },
     {
       "bar": 25,
-      "sym": "Dmaj7#5"
+      "sym": "Dm11"
     },
     {
       "bar": 26,
-      "sym": "E9#5"
+      "sym": "Gm9"
     },
     {
       "bar": 27,
-      "sym": "Gmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 28,
-      "sym": "F#9#5"
+      "sym": "Dm11"
     },
     {
       "bar": 29,
-      "sym": "Ebmaj9"
+      "sym": "Am9"
     },
     {
       "bar": 30,
-      "sym": "D9#5"
+      "sym": "Gm9"
     },
     {
       "bar": 31,
-      "sym": "Gmaj13#11"
-    },
-    {
-      "bar": 32,
-      "sym": "A9sus4"
-    },
-    {
-      "bar": 33,
-      "sym": "Abm11"
-    },
-    {
-      "bar": 34,
-      "sym": "Db13"
-    },
-    {
-      "bar": 35,
-      "sym": "B13sus4"
-    },
-    {
-      "bar": 36,
-      "sym": "Emaj13#11"
-    },
-    {
-      "bar": 37,
-      "sym": "Abm13"
-    },
-    {
-      "bar": 38,
-      "sym": "Bbm11"
-    },
-    {
-      "bar": 39,
-      "sym": "Eb7b13"
-    },
-    {
-      "bar": 40,
-      "sym": "Ab9#11"
-    },
-    {
-      "bar": 41,
-      "sym": "Bmaj9"
-    },
-    {
-      "bar": 42,
-      "sym": "Db/B"
-    },
-    {
-      "bar": 43,
-      "sym": "Eb7alt"
-    },
-    {
-      "bar": 44,
-      "sym": "Emaj7#11/B"
-    },
-    {
-      "bar": 45,
-      "sym": "Bmaj9"
-    },
-    {
-      "bar": 46,
-      "sym": "A/B"
-    },
-    {
-      "bar": 47,
-      "sym": "Dbm11/B"
-    },
-    {
-      "bar": 48,
-      "sym": "F#/B"
-    },
-    {
-      "bar": 49,
-      "sym": "Dmaj7#5"
-    },
-    {
-      "bar": 50,
-      "sym": "E9#5"
-    },
-    {
-      "bar": 51,
-      "sym": "Gmaj13#11"
-    },
-    {
-      "bar": 52,
-      "sym": "F#9#5"
-    },
-    {
-      "bar": 53,
       "sym": "Ebmaj9"
     },
     {
+      "bar": 32,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 33,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 34,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 35,
+      "sym": "Bmaj9"
+    },
+    {
+      "bar": 36,
+      "sym": "Bmaj9"
+    },
+    {
+      "bar": 37,
+      "sym": "G13"
+    },
+    {
+      "bar": 38,
+      "sym": "G13"
+    },
+    {
+      "bar": 39,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 40,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 41,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 42,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 43,
+      "sym": "Am11"
+    },
+    {
+      "bar": 44,
+      "sym": "Am11"
+    },
+    {
+      "bar": 45,
+      "sym": "Dsus4"
+    },
+    {
+      "bar": 46,
+      "sym": "Dsus4"
+    },
+    {
+      "bar": 47,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 48,
+      "sym": "Dmaj9"
+    },
+    {
+      "bar": 49,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 50,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 51,
+      "sym": "Ebmaj9"
+    },
+    {
+      "bar": 52,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 53,
+      "sym": "Am9"
+    },
+    {
       "bar": 54,
-      "sym": "D9#5"
+      "sym": "Gm9"
     },
     {
       "bar": 55,
-      "sym": "Gmaj13#11"
+      "sym": "Ebmaj9"
     },
     {
       "bar": 56,
-      "sym": "A9sus4"
+      "sym": "Dm11"
     },
     {
       "bar": 57,
-      "sym": "Abm11"
+      "sym": "Dm9"
     },
     {
       "bar": 58,
-      "sym": "Db13"
+      "sym": "Dm9"
     },
     {
       "bar": 59,
-      "sym": "B13sus4"
+      "sym": "Bmaj9"
     },
     {
       "bar": 60,
-      "sym": "Emaj13#11"
+      "sym": "Bmaj9"
     },
     {
       "bar": 61,
-      "sym": "Abm13"
+      "sym": "G13"
     },
     {
       "bar": 62,
-      "sym": "Bbm11"
+      "sym": "G13"
     },
     {
       "bar": 63,
-      "sym": "Eb7b13"
+      "sym": "Dm9"
     },
     {
       "bar": 64,
-      "sym": "A9sus4"
+      "sym": "Dm11"
     }
   ],
   "layers": [
@@ -274,7 +274,7 @@
       "voice": "HARP",
       "db": -3,
       "pattern": "chords.rolled(0.35)",
-      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; progresja unikalna: WHOLE + DORSOUL+6 + PEDAL+9",
+      "part": "jedna warstwa, jeden instrument (HARP), akordy rozłożone; gotowe progresje SHLD: im-ivm9-bIIM-im-vm-ivm7-bIIM-im7 + im-bVIIM-IV-im + im-vm-isus4-I",
       "stem": "base"
     }
   ],
