@@ -1,0 +1,11 @@
+# PK-34a: MusicPolicy (log)
+- Wykonano: MusicSettings.cs, MusicPolicy.cs, MusicPolicyTests.cs (Core netstandard2.0, LangVersion 7.3: bez `record`, bez switch expressions).
+- ŚRODOWISKO: brak SDK .NET w kontenerze (dot.net i apt zablokowane). `dotnet test` NIE uruchomiony. Zweryfikowane czytaniem; wymagany przebieg na Windows/CI.
+- Typ kontekstu nazwany `MusicContext` (record Context z planu nie istnieje w C# 7.3).
+- PickBed: cisza 22-08 bez zgody = null; z zgodą tabela bez zmian (06-08 = bed_morning, 22-06 = bed_night). MusicOn=false = null.
+- WearChain: brak Hz w 4.8 dla scratched/cracked; przyjęto 0,5 Hz. Mint = brak lowpass (NoLowpassHz 20000). Nieznany stan = mint.
+- Przeskok co 40-90 s (scratched) nie jest w tej funkcji; zostaje dla silnika (PK-34b / PK-36).
+- DanceFor: czyta dance_style z PlayersDesignPath (ustawiany przez host); brak pliku/gracza = null. Jukebox ("wszystkie") wg serii: s2 obrot, s3 kolysanie, s4 popcorn, reszta kolysanie (mapowanie to decyzja tej paczki).
+- RecordTrack: side char a/b, pass int 1/2; błędy = ArgumentException.
+- Różnice względem planu: brak zmian w SoundPolicy.cs, brak zapisu (PK-35).
+- Nie zrobione: uruchomienie testów (patrz wyżej).
