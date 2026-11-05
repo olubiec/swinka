@@ -103,21 +103,14 @@
   min-width: 0;
   max-width: 100%;
   padding: 3px 8px 3px 3px;
-  border: 2px solid var(--c-wood-dark);
-  border-radius: 999px;
-  background: var(--c-white);
-  color: var(--c-wood-deep);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 .feature-rooms .room-tab.is-memorial {
-  background: var(--c-cream);
-  border-style: dashed;
+  filter: grayscale(0.6);
 }
 .feature-rooms .room-tab.is-selected {
-  background: var(--c-hay);
-  border-color: var(--c-hay-shadow);
   font-weight: 700;
 }
 .feature-rooms .room-tab:focus-visible {

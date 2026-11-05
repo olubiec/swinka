@@ -178,16 +178,18 @@ body.webview-mode .game-device {
 }
 
 .currency-badge {
-  background: var(--c-contour-dark);
-  border: 1px solid var(--c-gold);
-  border-radius: 4px;
-  padding: 2px 6px;
+  background: none;
+  border: 4px solid transparent;
+  border-image: var(--ui-badge) 4 fill / 4px;
+  image-rendering: pixelated;
+  border-radius: 0;
+  padding: 0 4px;
   display: flex;
   align-items: center;
   gap: 5px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--c-gold);
+  color: var(--ui-text);
 }
 
 .header-btn {
@@ -371,6 +373,7 @@ body.webview-mode .game-device {
   background: rgba(43, 23, 18, 0.75);
   color: var(--c-white);
   font-size: 10px;
+  line-height: 1.2;  /* the stage sets line-height 0, which clipped the text */
   padding: 2px 6px;
   border-radius: 3px;
   pointer-events: none;
@@ -420,11 +423,13 @@ body.webview-mode .game-device {
 }
 
 .need-card {
-  background: var(--c-white);
-  border: 2px solid var(--c-contour-dark);
-  border-radius: 6px;
-  padding: 5px 6px;
-  box-shadow: 0 2px 0 rgba(43, 23, 18, 0.2);
+  background: none;
+  border: 4px solid transparent;
+  border-image: var(--ui-card) 5 fill / 4px;
+  image-rendering: pixelated;
+  border-radius: 0;
+  padding: 3px 4px;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -459,11 +464,14 @@ body.webview-mode .game-device {
 .progress-groove {
   width: 100%;
   height: 10px;
-  background: #2b1712;
-  border: 1px solid #1a0d0a;
-  border-radius: 2px;
-  padding: 1px;
-  box-shadow: inset 1px 1px 0 rgba(0,0,0,0.5);
+  box-sizing: border-box;
+  background: none;
+  border: 3px solid transparent;
+  border-image: var(--ui-bar_groove) 3 fill / 3px;
+  image-rendering: pixelated;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
   overflow: hidden;
   position: relative;
 }
@@ -471,10 +479,12 @@ body.webview-mode .game-device {
 .progress-fill {
   height: 100%;
   width: 50%;
-  border-radius: 1px;
-  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   position: relative;
-  background-image: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 100%);
+  image-rendering: pixelated;
+  background-repeat: repeat-x;
+  background-size: 4px 6px;
+  background-position: left top;
 }
 
 /* Colour depends on the need level:
@@ -484,17 +494,17 @@ body.webview-mode .game-device {
 */
 .progress-fill.level-high {
   background-color: var(--c-leaf);
-  box-shadow: inset 0 -1px 0 var(--c-leaf-dark);
+  background-image: var(--ui-bar_fill_high);
 }
 
 .progress-fill.level-mid {
   background-color: var(--c-gold);
-  box-shadow: inset 0 -1px 0 var(--c-gold-dark);
+  background-image: var(--ui-bar_fill_mid);
 }
 
 .progress-fill.level-low {
   background-color: var(--c-red);
-  box-shadow: inset 0 -1px 0 var(--c-red-dark);
+  background-image: var(--ui-bar_fill_low);
   animation: pulse-alert 1.2s infinite ease-in-out;
 }
 
@@ -509,7 +519,9 @@ body.webview-mode .game-device {
 
 .actions-section {
   padding: 10px 12px 12px;
-  background: var(--c-cream-dark);
+  /* bg:menu (assets/world/bg/menu.png, 256x144) at 3x, centred behind the menu buttons */
+  background: var(--c-cream-dark) url('../../assets/world/bg/menu.png') center / 768px 432px no-repeat;
+  image-rendering: pixelated;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1243,16 +1255,19 @@ body.webview-mode .game-device {
   font-family: var(--font-pixel);
   font-size: 18px;
   text-align: center;
-  padding: 8px;
+  padding: 6px 8px;
   color: var(--c-contour-dark);
-  background: var(--c-white);
-  border: 3px solid var(--c-contour-dark);
-  border-radius: 6px;
+  background: none;
+  border: 4px solid transparent;
+  border-image: var(--ui-field) 4 fill / 4px;
+  image-rendering: pixelated;
+  border-radius: 0;
   outline: none;
 }
 
 .onboard-input:focus {
-  border-color: var(--c-orange-dark);
+  outline: 2px solid var(--c-orange-dark);
+  outline-offset: 1px;
 }
 
 .onboard-error {
@@ -1342,19 +1357,23 @@ body.webview-mode .game-device {
   min-width: 0;
   height: 24px;
   padding: 0 3px;
-  border: 2px solid var(--c-wood-dark);
-  border-radius: 6px;
-  background: var(--c-cream);
-  color: var(--c-wood-deep);
+  border-width: 3px 2px;
+  border-style: solid;
+  border-color: transparent;
+  border-image: var(--ui-tab_off) 5 fill / 3px 2px;
+  image-rendering: pixelated;
+  border-radius: 0;
+  background: none;
+  color: var(--ui-text-on-wood);
   font: inherit;
   font-size: 10px;
   line-height: 1;
   cursor: pointer;
 }
-.places-bar .place-btn:hover { background: var(--c-white); }
+.places-bar .place-btn:hover { border-image-source: var(--ui-tab_on); }
 .places-bar .place-btn:focus-visible { outline: 3px solid var(--c-leaf-dark); outline-offset: 1px; }
-.places-bar .place-btn.is-locked { background: var(--c-cream-dark); color: var(--c-wood-dark); }
-.places-bar .place-btn.is-pending { background: var(--c-hay); border-color: var(--c-hay-shadow); }
+.places-bar .place-btn.is-locked { opacity: 0.6; }
+.places-bar .place-btn.is-pending { border-image-source: var(--ui-tab_on); }
 .places-bar .place-btn .pixel-icon { flex: none; }
 .places-bar .place-sub {
   display: inline-flex;
@@ -1385,6 +1404,19 @@ body.webview-mode .game-device {
   --ui-sep_v: initial;
   --ui-header_banner: initial;
   --ui-shop_panel: initial;
+  --ui-tab_on: initial;
+  --ui-tab_off: initial;
+  --ui-badge: initial;
+  --ui-card: initial;
+  --ui-field: initial;
+  --ui-bar_groove: initial;
+  --ui-bar_fill_high: initial;
+  --ui-bar_fill_mid: initial;
+  --ui-bar_fill_low: initial;
+  --ui-toggle_on: initial;
+  --ui-toggle_off: initial;
+  --ui-dot_full: initial;
+  --ui-dot_empty: initial;
 }
 
 .ui-panel-paper {
@@ -1438,6 +1470,56 @@ body.webview-mode .game-device {
   background-repeat: repeat-y;
   background-size: 4px 32px;
   image-rendering: pixelated;
+}
+
+/* Tabs (assets/ui tab_off / tab_on): place bar and room tabs. Shape is the tab piece, its bottom edge is open (slice 0). */
+.feature-rooms .room-tab {
+  border: 3px solid transparent;
+  border-image: var(--ui-tab_off) 5 fill / 3px;
+  image-rendering: pixelated;
+  border-radius: 0;
+  background: none;
+  color: var(--ui-text-on-wood);
+}
+.feature-rooms .room-tab:hover,
+.feature-rooms .room-tab.is-selected {
+  border-image-source: var(--ui-tab_on);
+}
+.feature-rooms .room-tab.is-selected {
+  color: var(--ui-text);
+}
+
+/* Settings toggle and daily dots live here (not in feature.css): var(--ui-*) urls resolve against the stylesheet that uses them. */
+/* Retro toggle: 24x12 pixel art at 2x (toggle_on / toggle_off from assets/ui) */
+.feature-settings .retro-toggle {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 48px;
+  height: 24px;
+  margin: 0;
+  background-color: var(--c-contour-dark);
+  background-image: var(--ui-toggle_off);
+  background-size: 48px 24px;
+  background-repeat: no-repeat;
+  border: 0;
+  border-radius: 0;
+  image-rendering: pixelated;
+  cursor: pointer;
+  outline: none;
+}
+
+.feature-settings .retro-toggle:checked {
+  background-image: var(--ui-toggle_on);
+}
+
+.feature-daily .daily-streak-box {
+  width: 16px;
+  height: 16px;
+  background: var(--ui-dot_empty) center / 16px 16px no-repeat;
+  image-rendering: pixelated;
+}
+.feature-daily .daily-streak-box.filled {
+  background-image: var(--ui-dot_full);
 }
 
 .ui-banner {

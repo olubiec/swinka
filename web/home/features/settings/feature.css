@@ -65,40 +65,6 @@
   cursor: pointer;
 }
 
-/* Retro toggle */
-.feature-settings .retro-toggle {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 40px;
-  height: 20px;
-  background: var(--c-contour-dark);
-  border: 2px solid var(--c-contour-dark);
-  border-radius: 10px;
-  position: relative;
-  cursor: pointer;
-  outline: none;
-}
-
-.feature-settings .retro-toggle:checked {
-  background: var(--c-leaf);
-}
-
-.feature-settings .retro-toggle::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 16px;
-  height: 16px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform 0.1s ease;
-}
-
-.feature-settings .retro-toggle:checked::after {
-  transform: translateX(20px);
-}
-
 /* Retro radio buttons */
 .feature-settings .retro-radio-group {
   display: flex;
