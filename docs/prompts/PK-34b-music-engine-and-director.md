@@ -1,0 +1,16 @@
+# PK-34b: Silnik WebAudio i dyrygent muzyki Domku (package, 1 item)
+Zmieniaj: web/home/music-engine.js, web/home/music-director.js, web/home/mocks/music-engine.mock.js, tools/qa/music-engine-test.js, docs/opt/log/PK-34b.md
+Weryfikacja: node --check web/home/music-engine.js && node --check web/home/music-director.js && node tools/qa/music-engine-test.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Nie ruszaj: web/home/music.js (zostaje dla prostych pętli), web/home/app.js, web/home/features/*, web/home/minigames/*, src/*, assets/*, waves.yaml, AGENTS.md
+Goal: Silnik odtwarzania muzyki w przeglądarce i dyrygent wyboru utworu według kontekstu. Nie są jeszcze podpięte do widoków (to PK-37). Działają w teście Node z atrapą `AudioContext`.
+Depends on: nothing. Źródła: `docs/MUSIC_PLAN.md` sekcje 5.3 (`routes`, `mix`), 5.4 (stos kontekstów i priorytety), 5.5 (graf WebAudio, stemy, pętle, ducking, autoplay).
+Steps: work the item below. Do not run git (no commit, branch, PR): the orkiestra commits and merges after the Weryfikacja line passes.
+### Item 1: Silnik, dyrygent, atrapa i test.
+- `web/home/music-engine.js` (`window.MusicEngine`): graf: `BufferSource` -> [nightFilter] -> [wear: flutter -> lowpass -> crush -> crackle] -> [playerEQ] -> sourceGain -> duckGain -> musicBus -> masterGain -> destination. Pętla z `loopStart/loopEnd` z `music.json` (brak = cały plik). Stemy: wszystkie trzy startują na tym samym `ctx.currentTime + 0.1`, wejście stemu = rampa `gain` w czasie `enter` (ms). Cache dekodowanych buforów LRU max 3. `duck()`: -5 dB w 40 ms, powrót po 400 ms. `ctx.resume()` przy pierwszym `pointerdown`. Pliki: ścieżki z `music.json` (`assets/music/...`), fetch + `decodeAudioData`.
+- `web/home/music-director.js` (`window.MusicDirector`): stos kontekstów z priorytetami 5.4 (minigame 50, record 40, home 30, place 20, desktop 10). API: `setContext('home.view:<id>' | 'place:<id>' | 'desktop')`, `minigame(id)`, `minigameEnd(id)`, `record(id, side)`, `stop(reason)`. Routing wg `routes` z `music.json` (`home.view:rooms.room:<id>`, `home.view:shop`, `home.view:album` z wariantem `musicbox`). Zmiana tego samego priorytetu = crossfade 1,5 s; wyższy startuje i niższy wycisza się w 1,5 s; po zdjęciu wyższego niższy wraca.
+- `web/home/mocks/music-engine.mock.js`: atrapa `AudioContext` (`currentTime`, `createGain`, `createBufferSource`, `decodeAudioData` zwracający bufor z długością, `resume`) zapisująca wywołania do tablicy, bez prawdziwego dźwięku.
+- `tools/qa/music-engine-test.js` (Node, bez zewnętrznych pakietów): asercje: stemy startują na jednym czasie; loop points przekazane; ducking: rampa -5 dB i powrót po 400 ms; cache nie przekracza 3; priorytet 50 wygrywa z 30; remis wygrywa ostatni `setContext`; po zdjęciu minigry wraca `home`; `stop` wycisza wszystko.
+- Gdy `music.json` nie istnieje (przed MW-1), dyrygent nie rzuca wyjątku: loguje ostrzeżenie w konsoli i gra nic. Test sprawdza to.
+Prohibited: no new dependencies; no edits to music.js; no HTML script tags (podpięcie to PK-37).
+Log: write `docs/opt/log/PK-34b.md` (max 10 lines: decisions and why, differences from the plan, anything left undone). No pull request text.

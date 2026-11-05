@@ -782,6 +782,141 @@
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 36,
    "prompt_file": "docs/prompts/PK-33-stop-using-x2-files-and-final-verification-r.md"
+  },
+  "PK-34a": {
+   "wave": "W34",
+   "title": "Music policy: choice of bed, priorities, arrangements, wear, record ids, comfort (Core, tests)",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Audio/MusicPolicy.cs",
+    "src/Cuy.Core/Audio/MusicSettings.cs",
+    "tests/Cuy.Core.Tests/MusicPolicyTests.cs",
+    "docs/opt/log/PK-34a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MusicPolicyTests",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-34a-music-policy.md"
+  },
+  "PK-34b": {
+   "wave": "W34",
+   "title": "Music engine (WebAudio) and home music director, mock and node test",
+   "items": [],
+   "files": [
+    "web/home/music-engine.js",
+    "web/home/music-director.js",
+    "web/home/mocks/music-engine.mock.js",
+    "tools/qa/music-engine-test.js",
+    "docs/opt/log/PK-34b.md"
+   ],
+   "verify": "node --check web/home/music-engine.js && node --check web/home/music-director.js && node tools/qa/music-engine-test.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-34b-music-engine-and-director.md"
+  },
+  "PK-35": {
+   "wave": "W35",
+   "title": "Music fields in save, settings switches, SelfTest for music files",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Save/MusicSaveFields.cs",
+    "tests/Cuy.Core.Tests/MusicSaveFieldsTests.cs",
+    "web/home/features/settings/feature.js",
+    "src/Cuy/dotNet/SelfTest.cs",
+    "docs/opt/log/PK-35.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MusicSaveFieldsTests && node --check web/home/features/settings/feature.js && node tools/qa/web-smoke.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-35-music-save-and-settings.md"
+  },
+  "PK-36": {
+   "wave": "W36",
+   "title": "Desktop music player (NVorbis), belt timer, ducking, bridge messages",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/MusicPlayer.cs",
+    "src/Cuy/dotNet/BrainController.cs",
+    "src/Cuy/dotNet/SoundManager.cs",
+    "src/Cuy/dotNet/HomeWindow.cs",
+    "src/Cuy/Cuy.csproj",
+    "THIRD_PARTY_NOTICES.md",
+    "docs/opt/log/PK-36.md"
+   ],
+   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-36-desktop-music-player.md"
+  },
+  "PK-37": {
+   "wave": "W37",
+   "title": "Home views and minigames wired to the music director, remove nyan-audio",
+   "items": [],
+   "files": [
+    "web/home/app.js",
+    "web/home/features/rooms/feature.js",
+    "web/home/features/garden/feature.js",
+    "web/home/features/park/feature.js",
+    "web/home/features/farm/feature.js",
+    "web/home/features/market/feature.js",
+    "web/home/minigames/minigames-api.js",
+    "web/home/minigames/hay-maze.js",
+    "web/home/minigames/nyan-cuy.js",
+    "web/home/minigames/nyan-audio.js",
+    "web/home/index.html",
+    "web/home/music.js",
+    "tools/qa/web-smoke.js",
+    "docs/opt/log/PK-37.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check web/home/minigames/minigames-api.js && node tools/qa/music-engine-test.js && node tools/qa/web-smoke.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-37-home-music-wiring.md"
+  },
+  "PK-38a": {
+   "wave": "W38",
+   "title": "Record player Fala A1-A3: contract, engine, shelf",
+   "items": [],
+   "files": [
+    "web/home/features/music/contract.js",
+    "web/home/features/music/engine.js",
+    "web/home/features/music/shelf.js",
+    "web/home/features/music/shelf.css",
+    "web/home/features/music/prices.js",
+    "tests/Cuy.Core.Tests/MusicRecordMigrationTests.cs",
+    "src/Cuy.Core/Records/RecordOwnership.cs",
+    "docs/opt/log/PK-38a.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MusicRecordMigrationTests && node --check web/home/features/music/engine.js && node tools/qa/web-smoke.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-38a-record-player-contract-engine-shelf.md"
+  },
+  "PK-38b": {
+   "wave": "W39",
+   "title": "Record player Fala A4-A7: mini player, world players, economy, smoke",
+   "items": [],
+   "files": [
+    "web/home/features/music/player.js",
+    "web/home/features/music/player.css",
+    "web/home/features/music/world.js",
+    "web/home/features/music/economy.js",
+    "web/home/app.js",
+    "web/home/features/rooms/feature.js",
+    "tools/qa/music-smoke.js",
+    "docs/opt/log/PK-38b.md"
+   ],
+   "verify": "node --check web/home/features/music/player.js && node --check web/home/features/music/world.js && node --check web/home/features/music/economy.js && node tools/qa/music-smoke.js && node tools/qa/web-smoke.js",
+   "gate": true,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-38b-record-player-mini-world-economy-smoke.md"
   }
  }
 }

@@ -876,3 +876,115 @@ waves:
     test_command: node --check tools/qa/check-assets.js && node tools/qa/check-assets.js --x2 && node tools/qa/check-assets.js
     model: gemini-3.8-flash-medium
     timeout_minutes: 36
+- id: W34
+  tasks:
+  - id: PK-34a
+    title: 'PK-34a: Music policy: choice of bed, priorities, arrangements, wear, record ids, comfort (Core, tests)'
+    prompt_file: docs/prompts/PK-34a-music-policy.md
+    files:
+    - src/Cuy.Core/Audio/MusicPolicy.cs
+    - src/Cuy.Core/Audio/MusicSettings.cs
+    - tests/Cuy.Core.Tests/MusicPolicyTests.cs
+    - docs/opt/log/PK-34a.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MusicPolicyTests
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-34b
+    title: 'PK-34b: Music engine (WebAudio) and home music director, mock and node test'
+    prompt_file: docs/prompts/PK-34b-music-engine-and-director.md
+    files:
+    - web/home/music-engine.js
+    - web/home/music-director.js
+    - web/home/mocks/music-engine.mock.js
+    - tools/qa/music-engine-test.js
+    - docs/opt/log/PK-34b.md
+    test_command: node --check web/home/music-engine.js && node --check web/home/music-director.js && node tools/qa/music-engine-test.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W35
+  tasks:
+  - id: PK-35
+    title: 'PK-35: Music fields in save, settings switches, SelfTest for music files'
+    prompt_file: docs/prompts/PK-35-music-save-and-settings.md
+    files:
+    - src/Cuy.Core/Save/MusicSaveFields.cs
+    - tests/Cuy.Core.Tests/MusicSaveFieldsTests.cs
+    - web/home/features/settings/feature.js
+    - src/Cuy/dotNet/SelfTest.cs
+    - docs/opt/log/PK-35.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MusicSaveFieldsTests && node --check web/home/features/settings/feature.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: W36
+  tasks:
+  - id: PK-36
+    title: 'PK-36: Desktop music player (NVorbis), belt timer, ducking, bridge messages'
+    prompt_file: docs/prompts/PK-36-desktop-music-player.md
+    files:
+    - src/Cuy/dotNet/MusicPlayer.cs
+    - src/Cuy/dotNet/BrainController.cs
+    - src/Cuy/dotNet/SoundManager.cs
+    - src/Cuy/dotNet/HomeWindow.cs
+    - src/Cuy/Cuy.csproj
+    - THIRD_PARTY_NOTICES.md
+    - docs/opt/log/PK-36.md
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W37
+  tasks:
+  - id: PK-37
+    title: 'PK-37: Home views and minigames wired to the music director, remove nyan-audio'
+    prompt_file: docs/prompts/PK-37-home-music-wiring.md
+    files:
+    - web/home/app.js
+    - web/home/features/rooms/feature.js
+    - web/home/features/garden/feature.js
+    - web/home/features/park/feature.js
+    - web/home/features/farm/feature.js
+    - web/home/features/market/feature.js
+    - web/home/minigames/minigames-api.js
+    - web/home/minigames/hay-maze.js
+    - web/home/minigames/nyan-cuy.js
+    - web/home/minigames/nyan-audio.js
+    - web/home/index.html
+    - web/home/music.js
+    - tools/qa/web-smoke.js
+    - docs/opt/log/PK-37.md
+    test_command: node --check web/home/app.js && node --check web/home/minigames/minigames-api.js && node tools/qa/music-engine-test.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W38
+  tasks:
+  - id: PK-38a
+    title: 'PK-38a: Record player Fala A1-A3: contract, engine, shelf'
+    prompt_file: docs/prompts/PK-38a-record-player-contract-engine-shelf.md
+    files:
+    - web/home/features/music/contract.js
+    - web/home/features/music/engine.js
+    - web/home/features/music/shelf.js
+    - web/home/features/music/shelf.css
+    - web/home/features/music/prices.js
+    - tests/Cuy.Core.Tests/MusicRecordMigrationTests.cs
+    - src/Cuy.Core/Records/RecordOwnership.cs
+    - docs/opt/log/PK-38a.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MusicRecordMigrationTests && node --check web/home/features/music/engine.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: W39
+  tasks:
+  - id: PK-38b
+    title: 'PK-38b: Record player Fala A4-A7: mini player, world players, economy, smoke'
+    prompt_file: docs/prompts/PK-38b-record-player-mini-world-economy-smoke.md
+    files:
+    - web/home/features/music/player.js
+    - web/home/features/music/player.css
+    - web/home/features/music/world.js
+    - web/home/features/music/economy.js
+    - web/home/app.js
+    - web/home/features/rooms/feature.js
+    - tools/qa/music-smoke.js
+    - docs/opt/log/PK-38b.md
+    test_command: node --check web/home/features/music/player.js && node --check web/home/features/music/world.js && node --check web/home/features/music/economy.js && node tools/qa/music-smoke.js && node tools/qa/web-smoke.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44

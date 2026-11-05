@@ -180,6 +180,9 @@ Razem: 31 pakietów audio; 140 plików twórczych + 4 `_full` = 144.
 Wykonywany przez narzędzie projektu (pakiety w `docs/opt/packages.spec.json`, generator `tools/opt/gen_packages.py`, kontrola `node tools/qa/plan-audit.js`). Zasady `CLAUDE.md`: pakiety małe (1-6 elementów), pliki rozłączne w obrębie fali, pliki współdzielone (`HomeWindow.cs`, `app.js`, `minigames-api.js`) edytuje jeden pakiet naraz.
 
 | Pakiet | Zakres (wg `MUSIC_PLAN.md`) | Pliki własne | Start po | Odbiór |
+
+> **Wdrożone jako pakiety w `docs/opt/packages.spec.json`** (fale W34–W39, prompty `docs/prompts/PK-34a…PK-38b`). Mapowanie: IW-1 = PK-34a, IW-2 = PK-34b, IW-5 = PK-35, IW-3 = PK-36, IW-4 = PK-37, IW-6 = PK-38a i PK-38b (Fala A z `PLAN_FALE_WDROZENIE.md`). Kolejka startuje po W33.
+
 | --- | --- | --- | --- | --- |
 | IW-1 | `MusicPolicy.cs` (5.9): wybór belki wg godziny, priorytety, aranżacje etapów, 5 stanów zużycia, id płyt + testy | `src/Cuy.Core/Audio/MusicPolicy.cs`, `tests/Cuy.Core.Tests/MusicPolicyTests.cs` | MW-0 (zna schemat `music.json`) | testy Core zielone (granice 06:00/09:00/17:00/22:00, noc bez zgody, pełny ekran) |
 | IW-2 | `music-engine.js` (5.5) i `music-director.js` (5.4): graf WebAudio, stemy, pętle `loopStart/loopEnd`, ducking, filtr nocny | `web/home/music-engine.js`, `web/home/music-director.js`, `web/home/mocks/music-*.js` | MW-0 | test w przeglądarce z mockiem `AudioContext`: stemy startują na jednym zegarze |
@@ -212,7 +215,7 @@ Zasady: edytujesz wyłącznie pliki własne pakietu; nie dotykasz assets/data/mu
 | Głosy chiptune brzmią „tanio” po złożeniu | Bramka G1 przed sekwencerem i G2 przed masową produkcją; poprawka w `voices.py`/`fx.py` wymusza powtórkę tylko MW-3 |
 | Rozjazd stylu między serią 1 a 4 | Wzorzec serii 1 (G3); wspólny słownik głosów i szkielety melodii; regeneracja promptów |
 | Czas odsłuchu 140 plików | Odsłuchy tylko na bramkach; arkusz `MUSIC_REVIEW` z oceną 1-5; poprawka tylko niskich ocen |
-| NVorbis (zgoda na zależność) | IW-3 czeka na decyzję; alternatywa z planu 5.2 (WAV mono 22 kHz) zostaje |
+| NVorbis (zależność) | rozstrzygnięte: zatwierdzone w `MUSIC_PLAN.md`, tabela decyzji, wiersz 5 („tak, własny tor C#”); licencja MIT w `THIRD_PARTY_NOTICES.md` (PK-36) |
 | Szew pętli | PM-06 i `music-audit` (test 5×); szumy mają okres dobrany do długości |
 | Brak funkcji płyt w grze | MW-5…MW-7 produkują pliki niezależnie od gry; IW-6 startuje osobno |
 

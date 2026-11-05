@@ -188,6 +188,43 @@
    "packages": [
     "PK-33"
    ]
+  },
+  {
+   "id": "W34",
+   "packages": [
+    "PK-34a",
+    "PK-34b"
+   ]
+  },
+  {
+   "id": "W35",
+   "packages": [
+    "PK-35"
+   ]
+  },
+  {
+   "id": "W36",
+   "packages": [
+    "PK-36"
+   ]
+  },
+  {
+   "id": "W37",
+   "packages": [
+    "PK-37"
+   ]
+  },
+  {
+   "id": "W38",
+   "packages": [
+    "PK-38a"
+   ]
+  },
+  {
+   "id": "W39",
+   "packages": [
+    "PK-38b"
+   ]
   }
  ],
  "packages": [
@@ -654,6 +691,62 @@
     "W33-01",
     "W33-02"
    ]
+  },
+  {
+   "id": "PK-34a",
+   "tier": "mid",
+   "title": "Music policy: choice of bed, priorities, arrangements, wear, record ids, comfort (Core, tests)",
+   "manual": "docs/prompts/PK-34a-music-policy.md",
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MusicPolicyTests",
+   "items": []
+  },
+  {
+   "id": "PK-34b",
+   "tier": "mid",
+   "title": "Music engine (WebAudio) and home music director, mock and node test",
+   "manual": "docs/prompts/PK-34b-music-engine-and-director.md",
+   "verify": "node --check web/home/music-engine.js && node --check web/home/music-director.js && node tools/qa/music-engine-test.js",
+   "items": []
+  },
+  {
+   "id": "PK-35",
+   "tier": "low",
+   "title": "Music fields in save, settings switches, SelfTest for music files",
+   "manual": "docs/prompts/PK-35-music-save-and-settings.md",
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MusicSaveFieldsTests && node --check web/home/features/settings/feature.js && node tools/qa/web-smoke.js",
+   "items": []
+  },
+  {
+   "id": "PK-36",
+   "tier": "mid",
+   "title": "Desktop music player (NVorbis), belt timer, ducking, bridge messages",
+   "manual": "docs/prompts/PK-36-desktop-music-player.md",
+   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "items": []
+  },
+  {
+   "id": "PK-37",
+   "tier": "mid",
+   "title": "Home views and minigames wired to the music director, remove nyan-audio",
+   "manual": "docs/prompts/PK-37-home-music-wiring.md",
+   "verify": "node --check web/home/app.js && node --check web/home/minigames/minigames-api.js && node tools/qa/music-engine-test.js && node tools/qa/web-smoke.js",
+   "items": []
+  },
+  {
+   "id": "PK-38a",
+   "tier": "mid",
+   "title": "Record player Fala A1-A3: contract, engine, shelf",
+   "manual": "docs/prompts/PK-38a-record-player-contract-engine-shelf.md",
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MusicRecordMigrationTests && node --check web/home/features/music/engine.js && node tools/qa/web-smoke.js",
+   "items": []
+  },
+  {
+   "id": "PK-38b",
+   "tier": "mid",
+   "title": "Record player Fala A4-A7: mini player, world players, economy, smoke",
+   "manual": "docs/prompts/PK-38b-record-player-mini-world-economy-smoke.md",
+   "verify": "node --check web/home/features/music/player.js && node --check web/home/features/music/world.js && node --check web/home/features/music/economy.js && node tools/qa/music-smoke.js && node tools/qa/web-smoke.js",
+   "items": []
   }
  ]
 }
