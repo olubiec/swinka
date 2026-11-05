@@ -69,4 +69,5 @@ Generatory: `tools/art/world/player_*.py`, `records.py`; lint R1-R7, `check-asse
 
 ## 8. Status
 - M1 GOTOWE: 6 odtwarzaczy (`tools/art/world/players_m1.py`, `assets/world/house/player_*.png` + `_on`, źródła światła w `lights.json`, album `docs/album/przebudowa/m1_odtwarzacze.png`).
-- M2-M4: do zrobienia (płyty, album, UI).
+- M2 GOTOWE: 12 płyt serii 1-2 x 5 stanów (`assets/records/<id>_<stan>.png`), 12 rękawów (`assets/records/sleeve/`), `assets/records/manifest.json`, generator `tools/art/world/records_m2.py`, album `docs/album/przebudowa/m2_plyty.png`.
+- M3-M4: do zrobienia (serie 3-4, album, UI).

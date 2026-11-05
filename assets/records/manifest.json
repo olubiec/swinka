@@ -1,0 +1,186 @@
+{
+ "version": 1,
+ "note": "plyty serii 1-2; stany: mint/worn/scratched/cracked/warped; utwory i cena dostarcza kod/dane",
+ "records": [
+  {
+   "id": "s1_poranek",
+   "series": 1,
+   "name": "Poranek w sianie",
+   "sleeve": "sleeve/s1_poranek.png",
+   "states": {
+    "mint": "s1_poranek_mint.png",
+    "worn": "s1_poranek_worn.png",
+    "scratched": "s1_poranek_scratched.png",
+    "cracked": "s1_poranek_cracked.png",
+    "warped": "s1_poranek_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s1_marchewka",
+   "series": 1,
+   "name": "Marchewkowy beat",
+   "sleeve": "sleeve/s1_marchewka.png",
+   "states": {
+    "mint": "s1_marchewka_mint.png",
+    "worn": "s1_marchewka_worn.png",
+    "scratched": "s1_marchewka_scratched.png",
+    "cracked": "s1_marchewka_cracked.png",
+    "warped": "s1_marchewka_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s1_deszcz",
+   "series": 1,
+   "name": "Deszcz na dachu",
+   "sleeve": "sleeve/s1_deszcz.png",
+   "states": {
+    "mint": "s1_deszcz_mint.png",
+    "worn": "s1_deszcz_worn.png",
+    "scratched": "s1_deszcz_scratched.png",
+    "cracked": "s1_deszcz_cracked.png",
+    "warped": "s1_deszcz_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s1_kubek",
+   "series": 1,
+   "name": "Kubek z para",
+   "sleeve": "sleeve/s1_kubek.png",
+   "states": {
+    "mint": "s1_kubek_mint.png",
+    "worn": "s1_kubek_worn.png",
+    "scratched": "s1_kubek_scratched.png",
+    "cracked": "s1_kubek_cracked.png",
+    "warped": "s1_kubek_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s1_nocna",
+   "series": 1,
+   "name": "Nocna sciezka",
+   "sleeve": "sleeve/s1_nocna.png",
+   "states": {
+    "mint": "s1_nocna_mint.png",
+    "worn": "s1_nocna_worn.png",
+    "scratched": "s1_nocna_scratched.png",
+    "cracked": "s1_nocna_cracked.png",
+    "warped": "s1_nocna_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s1_cichy",
+   "series": 1,
+   "name": "Cichy kat",
+   "sleeve": "sleeve/s1_cichy.png",
+   "states": {
+    "mint": "s1_cichy_mint.png",
+    "worn": "s1_cichy_worn.png",
+    "scratched": "s1_cichy_scratched.png",
+    "cracked": "s1_cichy_cracked.png",
+    "warped": "s1_cichy_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s2_rosa",
+   "series": 2,
+   "name": "Rosa",
+   "sleeve": "sleeve/s2_rosa.png",
+   "states": {
+    "mint": "s2_rosa_mint.png",
+    "worn": "s2_rosa_worn.png",
+    "scratched": "s2_rosa_scratched.png",
+    "cracked": "s2_rosa_cracked.png",
+    "warped": "s2_rosa_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s2_pietruszka",
+   "series": 2,
+   "name": "Pietruszka funk",
+   "sleeve": "sleeve/s2_pietruszka.png",
+   "states": {
+    "mint": "s2_pietruszka_mint.png",
+    "worn": "s2_pietruszka_worn.png",
+    "scratched": "s2_pietruszka_scratched.png",
+    "cracked": "s2_pietruszka_cracked.png",
+    "warped": "s2_pietruszka_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s2_pszczoly",
+   "series": 2,
+   "name": "Pszczoly",
+   "sleeve": "sleeve/s2_pszczoly.png",
+   "states": {
+    "mint": "s2_pszczoly_mint.png",
+    "worn": "s2_pszczoly_worn.png",
+    "scratched": "s2_pszczoly_scratched.png",
+    "cracked": "s2_pszczoly_cracked.png",
+    "warped": "s2_pszczoly_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s2_wiatr",
+   "series": 2,
+   "name": "Wiatr w trawie",
+   "sleeve": "sleeve/s2_wiatr.png",
+   "states": {
+    "mint": "s2_wiatr_mint.png",
+    "worn": "s2_wiatr_worn.png",
+    "scratched": "s2_wiatr_scratched.png",
+    "cracked": "s2_wiatr_cracked.png",
+    "warped": "s2_wiatr_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s2_dynia",
+   "series": 2,
+   "name": "Dynia",
+   "sleeve": "sleeve/s2_dynia.png",
+   "states": {
+    "mint": "s2_dynia_mint.png",
+    "worn": "s2_dynia_worn.png",
+    "scratched": "s2_dynia_scratched.png",
+    "cracked": "s2_dynia_cracked.png",
+    "warped": "s2_dynia_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  },
+  {
+   "id": "s2_jablka",
+   "series": 2,
+   "name": "Zimowe jablka",
+   "sleeve": "sleeve/s2_jablka.png",
+   "states": {
+    "mint": "s2_jablka_mint.png",
+    "worn": "s2_jablka_worn.png",
+    "scratched": "s2_jablka_scratched.png",
+    "cracked": "s2_jablka_cracked.png",
+    "warped": "s2_jablka_warped.png"
+   },
+   "rarity": "common",
+   "tracks": 0
+  }
+ ]
+}
