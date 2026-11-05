@@ -217,3 +217,6 @@ Audyt ekranów (zrzuty Playwright), 27 nowych elementów 9-slice (`ui_kit.py`), 
 
 ## UI-2 Ikony menu (5.11.2026)
 23 ikony menu i systemowe (`icons_ui.py`, indeksy 255-277), tabela miejsce→ikona w `docs/UI_DESIGN.md` §5. Naprawiony R7 dla 6 sprite'ów świateł po dopisaniu do `world_items.json`. Lint 0, check-assets i lights-test OK.
+
+## UI-3 / M2 v2 (5.11.2026): przeglad jakosci
+Uwaga wlasciciela: plyty i czesc ikon menu zbyt proste. Audyt wg legendy (test sztampy, material, odblask, detal reczny): plyty M2 v1 = ta sama tarcza w innym kolorze, wiec przerobione (`records_m2.py`): obrecz, rowki, blysk, rodzaje winylu, etykiety, uszkodzenia widoczne, rekaw z kartonu z tasma hay[2] i napisem. Ikony `icons_ui2.py` (podmiana slotow, indeksy bez zmian): m_more (wiszacy szyld), m_call, m_clean, m_games (klebek welny), x_close (patyki z wiazaniem), x_plus, x_minus, x_menu, x_chevron_*.

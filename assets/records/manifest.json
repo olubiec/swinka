@@ -1,6 +1,6 @@
 {
- "version": 1,
- "note": "plyty serii 1-2; stany: mint/worn/scratched/cracked/warped; utwory i cena dostarcza kod/dane",
+ "version": 2,
+ "note": "plyty serii 1-2 (dysk 16x16, rekaw 24x24); stany: mint/worn/scratched/cracked/warped; utwory i cena dostarcza kod/dane",
  "records": [
   {
    "id": "s1_poranek",
@@ -74,7 +74,7 @@
     "cracked": "s1_nocna_cracked.png",
     "warped": "s1_nocna_warped.png"
    },
-   "rarity": "common",
+   "rarity": "rare",
    "tracks": 0
   },
   {
@@ -134,7 +134,7 @@
     "cracked": "s2_pszczoly_cracked.png",
     "warped": "s2_pszczoly_warped.png"
    },
-   "rarity": "common",
+   "rarity": "rare",
    "tracks": 0
   },
   {
