@@ -15,7 +15,7 @@
 | Tempo | 76 BPM |
 | Metrum | 4/4 |
 | Swing | 64% |
-| Takty | 56 (177 s, 2:56) |
+| Takty | 56 (177 s, 2:57) |
 | Tonacja | B♭ dur |
 | Gama | Bb C D Eb F G A |
 | Pentatonika | Bb C D F G |

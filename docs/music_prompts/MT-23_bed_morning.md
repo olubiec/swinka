@@ -15,7 +15,7 @@
 | Tempo | 70 BPM |
 | Metrum | 4/4 |
 | Swing | 50% |
-| Takty | 48 (165 s, 2:44) |
+| Takty | 48 (165 s, 2:45) |
 | Tonacja | C dur |
 | Gama | C D E F G A B |
 | Pentatonika | C D E G A |

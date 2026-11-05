@@ -15,7 +15,7 @@
 | Tempo | 100 BPM |
 | Metrum | 4/4 |
 | Swing | 66% |
-| Takty | 32 (77 s, 1:16) |
+| Takty | 32 (77 s, 1:17) |
 | Tonacja | A dur |
 | Gama | A B C# D E F# G# |
 | Pentatonika | A B C# E F# |

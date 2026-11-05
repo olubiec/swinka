@@ -77,7 +77,7 @@ Reguły wariacji: **Aʹ** jak A, ale takty 3-4 o oktawę wyżej, ostatni takt se
 
 ## 2. Utwór A1 (podpisowy): `rec_s1_marchewka_a1`
 
-- Tempo **84 BPM**, 4/4, **36 taktów**, czas **103 s** (1:42).
+- Tempo **84 BPM**, 4/4, **36 taktów**, czas **103 s** (1:43).
 - Pierwsze 2 takty cytują motyw Cuy; ostatnie 2 takty: podpis i tonika.
 
 **Forma i aranżacja**

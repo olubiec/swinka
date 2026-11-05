@@ -15,7 +15,7 @@
 | Tempo | 108 BPM |
 | Metrum | 4/4 |
 | Swing | 50% |
-| Takty | 16 (36 s, 0:35) |
+| Takty | 16 (36 s, 0:36) |
 | Tonacja | A moll (naturalny) |
 | Gama | A B C D E F G |
 | Pentatonika | A C D E G |

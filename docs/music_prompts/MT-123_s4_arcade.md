@@ -77,7 +77,7 @@ Reguły wariacji: **Aʹ** jak A, ale takty 3-4 o oktawę wyżej, ostatni takt se
 
 ## 2. Utwór A1 (podpisowy): `rec_s4_arcade_a1`
 
-- Tempo **135 BPM**, 4/4, **56 taktów**, czas **100 s** (1:39).
+- Tempo **135 BPM**, 4/4, **56 taktów**, czas **100 s** (1:40).
 - Pierwsze 2 takty cytują motyw Cuy; ostatnie 2 takty: podpis i tonika.
 
 **Forma i aranżacja**

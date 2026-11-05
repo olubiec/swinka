@@ -78,7 +78,7 @@ Reguły wariacji: **Aʹ** jak A, ale takty 3-4 o oktawę wyżej, ostatni takt se
 
 ## 2. Utwór A1 (podpisowy): `rec_s1_deszcz_a1`
 
-- Tempo **66 BPM**, 4/4, **28 taktów**, czas **102 s** (1:41).
+- Tempo **66 BPM**, 4/4, **28 taktów**, czas **102 s** (1:42).
 - Pierwsze 2 takty cytują motyw Cuy; ostatnie 2 takty: podpis i tonika.
 
 **Forma i aranżacja**

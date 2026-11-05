@@ -79,7 +79,7 @@ Reguły wariacji: **Aʹ** jak A, ale takty 3-4 o oktawę wyżej, ostatni takt se
 
 ## 2. Utwór A1 (podpisowy): `rec_s4_taniec_a1`
 
-- Tempo **130 BPM**, 4/4, **60 taktów**, czas **111 s** (1:50).
+- Tempo **130 BPM**, 4/4, **60 taktów**, czas **111 s** (1:51).
 - Pierwsze 2 takty cytują motyw Cuy (odwrócony); ostatnie 2 takty: podpis i tonika.
 
 **Forma i aranżacja**

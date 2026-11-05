@@ -354,7 +354,7 @@ def record_md(i, r):
     w("")
     w("## 2. Utwór A1 (podpisowy): `rec_%s_a1`" % i)
     w("")
-    w("- Tempo **%d BPM**, %s, **%d taktów**, czas **%.0f s** (%d:%02d)." % (a1, "3/4" if meter == 3 else "4/4", N, dA1, dA1 // 60, dA1 % 60))
+    w("- Tempo **%d BPM**, %s, **%d taktów**, czas **%.0f s** (%d:%02d)." % (a1, "3/4" if meter == 3 else "4/4", N, dA1, round(dA1) // 60, round(dA1) % 60))
     w("- Pierwsze 2 takty cytują motyw Cuy%s; ostatnie 2 takty: podpis i tonika." % (" (odwrócony)" if inv else ""))
     if not 90 <= dA1 <= 120:
         WARN.append("%s A1 %.0f s" % (i, dA1))
@@ -569,7 +569,7 @@ def loop_md(i, r):
     w("")
     rows = ["| Parametr | Wartość |", "| --- | --- |", "| Rola | %s |" % r["role"],
             "| Tempo | %d BPM%s |" % (bpm, " (3/4)" if meter == 3 else ""), "| Metrum | %s |" % ("3/4" if meter == 3 else "4/4"),
-            "| Swing | %d%% |" % r.get("swing", 50), "| Takty | %d (%.0f s, %d:%02d) |" % (N, sd, sd // 60, sd % 60),
+            "| Swing | %d%% |" % r.get("swing", 50), "| Takty | %d (%.0f s, %d:%02d) |" % (N, sd, round(sd) // 60, round(sd) % 60),
             "| Tonacja | %s |" % key_text(root, mode), "| Gama | %s |" % " ".join(T.scale_notes(root, mode)),
             "| Pentatonika | %s |" % " ".join(T.pent_names(root, mode)),
             "| Motyw Cuy | %s, ♪ ♪ ♪ ♩. |" % " ".join(motif_text(root, mode)),

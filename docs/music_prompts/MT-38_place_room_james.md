@@ -15,7 +15,7 @@
 | Tempo | 56 BPM |
 | Metrum | 4/4 |
 | Swing | 50% |
-| Takty | 24 (103 s, 1:42) |
+| Takty | 24 (103 s, 1:43) |
 | Tonacja | D dorycki |
 | Gama | D E F G A B C |
 | Pentatonika | D F G A C |
