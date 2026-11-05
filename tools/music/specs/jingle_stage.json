@@ -1,59 +1,71 @@
 {
-  "id": "jingle_stage",
-  "kind": "jingle",
-  "title": "Jingle zmiany etapu życia (MT-13)",
-  "role": "zdarzenie StageChanged (Pet.cs:163); wersja bazowa, bez pętli",
-  "bpm": 96,
-  "meter": 4,
-  "key": "G",
-  "mode": "major",
-  "bars": 2,
-  "swing": 50,
-  "seed": 13013,
-  "chords": [
-    {
-      "bar": 1,
-      "sym": "G"
-    },
-    {
-      "bar": 2,
-      "sym": "Gmaj9"
-    }
-  ],
-  "layers": [
-    {
-      "role": "mel",
-      "voice": "GLK",
-      "part": "arpeggio w górę i podpis Cuy (szkielet A, takt 1)",
-      "db": -2,
-      "pattern": "melody.skeleton",
-      "register": "G4-A5"
-    },
-    {
-      "role": "pad",
-      "voice": "BELL",
-      "part": "akord Gmaj9 przytrzymany w drugim takcie",
-      "db": -9,
-      "pattern": "chords.sustain",
-      "from_bar": 2
-    }
-  ],
-  "drums": null,
-  "fx": [
-    {
-      "fx": "REV-S",
-      "wet": 0.16,
-      "on": "all"
-    }
-  ],
-  "master": {
-    "lufs": -14,
-    "ceiling_dbtp": -1
+ "id": "jingle_stage",
+ "kind": "jingle",
+ "title": "Jingle zmiany etapu życia (MT-13)",
+ "role": "zdarzenie StageChanged (Pet.cs:163); wersja bazowa, bez pętli; legenda v7: jeden instrument (EP), D9sus4 -> Gmaj13#11 (zawieszenie rozwiązane w lidyjski blask), akord rozłożony w górę jak 'level up'",
+ "bpm": 109,
+ "meter": 4,
+ "key": "G",
+ "mode": "major",
+ "bars": 2,
+ "swing": 50,
+ "seed": 13013,
+ "chords": [
+  {
+   "bar": 1,
+   "sym": "D9sus4"
   },
-  "loop": {
-    "enabled": false,
-    "start_s": 0.0,
-    "end_s": 4.9
+  {
+   "bar": 2,
+   "sym": "Gmaj13#11"
+  }
+ ],
+ "layers": [
+  {
+   "role": "chd",
+   "voice": "EP",
+   "db": -3,
+   "pattern": "chords.rolled(0.3)",
+   "part": "dwa pełne akordy rozłożone w górę (roll 0,3 uderzenia): napięcie sus4, potem lidyjski blask",
+   "register": "G3-E5"
+  }
+ ],
+ "drums": null,
+ "fx": [
+  {
+   "fx": "SAT(2.5)",
+   "on": "all"
   },
-  "stem_of": null
+  {
+   "fx": "CHORUS(3)",
+   "on": "all"
+  },
+  {
+   "fx": "REV-S",
+   "wet": 0.2,
+   "on": "all"
+  },
+  {
+   "fx": "LP(3800)",
+   "on": "all"
+  },
+  {
+   "fx": "SHELF(-3)",
+   "on": "all"
+  },
+  {
+   "fx": "WIDTH(1.3)",
+   "on": "all"
+  }
+ ],
+ "master": {
+  "lufs": -14,
+  "ceiling_dbtp": -1
+ },
+ "loop": {
+  "enabled": false,
+  "start_s": 0.0,
+  "end_s": 5.0
+ },
+ "stem_of": null
 }
