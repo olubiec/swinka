@@ -776,10 +776,13 @@ async function roamingStoreSmoke(browser, base, errors) {
   await step('26_my_pigs', async () => {
     const errorsBefore = errors.length;
     await page.evaluate(() => window.CuyHome.openFeature('pigs'));
-    await page.waitForSelector('.pigs-grid .pig-card', { timeout: 5000 });
-    await page.waitForTimeout(300);
-
-    const roster = await page.$$eval('.pigs-grid .pig-card', cards => cards.map(c => c.querySelector('.pig-card-name').textContent.trim()));
+    // Wait for the render itself: the feature re-renders on every state push, so wait until both named pigs are in the DOM
+    // and read the roster in the same evaluation (no fixed timer).
+    const rosterHandle = await page.waitForFunction(() => {
+      const names = Array.from(document.querySelectorAll('.pigs-grid .pig-card .pig-card-name'), n => n.textContent.trim());
+      return names.includes('Kuki') && names.includes('Ned') ? names : false;
+    }, null, { timeout: 5000 }).catch(() => null);
+    const roster = rosterHandle ? await rosterHandle.jsonValue() : await page.$$eval('.pigs-grid .pig-card .pig-card-name', ns => ns.map(n => n.textContent.trim()));
     if (!roster.includes('Kuki') || !roster.includes('Ned')) throw new Error('My Pigs roster lacks Kuki or Ned, got: ' + roster.join(', '));
 
     const lockedWithPadlock = await page.$$eval('.pig-offer-card.offer-locked', cards => cards.filter(c => c.querySelector('.pixel-icon.icon-padlock')).length);
