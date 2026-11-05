@@ -7,12 +7,7 @@ const HOME_DIR = path.join(ROOT, 'web', 'home');
 const STYLE_CSS = path.join(HOME_DIR, 'style.css');
 
 // Known legacy / feature variables not yet migrated into style.css
-const KNOWN_EXCEPTIONS = new Set([
-  '--c-leaf-light',
-  '--c-hay-bright',
-  '--c-shadow',
-  '--c-leaf-bright',
-]);
+const KNOWN_EXCEPTIONS = new Set([]);
 
 function stripComments(content, isJs = false) {
   let clean = content.replace(/\/\*[\s\S]*?\*\//g, '');

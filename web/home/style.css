@@ -22,36 +22,8 @@
 }
 
 :root {
-  /* Stare --c-* (paleta z pig.py): style.css juz ich nie uzywa; features/ i minigames/ jeszcze tak - usuwane w C11. Nowe kolory: --ui-* z assets/ui/ui_tokens.css. */
-  --c-orange-light: #f7b46e;
-  --c-orange:       #e98c42;
-  --c-orange-dark:  #c8692f;
-  --c-rust:         #dc7445;
-  --c-rust-deep:    #984721;
-  --c-white:        #fffdf8;
-  --c-cream:        #f8eddd;
-  --c-cream-dark:   #e4cfb5;
-  --c-wood-light:   #e6b073;
-  --c-wood:         #c98d50;
-  --c-wood-dark:    #9c6636;
-  --c-wood-deep:    #6e4424;
-  --c-contour:      #3a1d17;
-  --c-contour-dark: #2b1712;
-  --c-hay:          #eedb7c;
-
   /* 16x16 icon sheet from assets */
   --icons-sheet: url('../../assets/icons/icons_16.png');
-  --c-hay-dark:     #cdb556;
-  --c-hay-shadow:   #99903d;
-  --c-leaf:         #7fbf4a;
-  --c-leaf-dark:    #4f8f35;
-  --c-red:          #e8564c;
-  --c-red-dark:     #b43a36;
-  --c-gold:         #f2c94c;
-  --c-gold-dark:    #c99a2e;
-  --c-pink:         #f5a3a2;
-  --c-blue:         #7fbaf0;
-  --c-blue-dark:    #4a84c4;
 
   /* Typography */
   --font-pixel: 'Pixelify Sans', monospace, sans-serif;
@@ -286,6 +258,7 @@ body.webview-mode .game-device {
   padding: 2px 8px;
   border-radius: 4px;
   border: 2px solid var(--ui-wood-0);
+  border-image: var(--ui-badge) 4 fill / 4px;  /* badge.png (16x12); flat border when the image is missing */
   color: var(--ui-linen-3);
   text-shadow: 1px 1px 0 var(--ui-wood-0);
   box-shadow: 0 2px 0 var(--ui-wood-0);
@@ -294,8 +267,8 @@ body.webview-mode .game-device {
 .stage-baby  { background: var(--ui-moss-3); }
 .stage-junior { background: var(--ui-hay-1); }
 .stage-adult { background: var(--ui-brick-2); }
-.stage-senior  { background: #8c8479; }
-.stage-legend { background: var(--ui-flame-2); color: #493305; text-shadow: none; border-color: #5a3e05; }
+.stage-senior  { background: var(--ui-plum-3); }
+.stage-legend { background: var(--ui-flame-2); color: var(--ui-wood-0); text-shadow: none; border-color: var(--ui-wood-0); }
 
 .bond-indicator {
   font-size: 11px;
@@ -1180,6 +1153,7 @@ body.webview-mode .game-device {
 .shop-item, .game-item {
   background: var(--ui-linen-3);
   border: 2px solid var(--ui-wood-0);
+  border-image: var(--ui-card) 5 fill / 4px;  /* card.png; flat border when the image is missing */
   border-radius: 6px;
   padding: 8px;
   display: flex;
@@ -1203,13 +1177,14 @@ body.webview-mode .game-device {
   margin-top: 4px;
 }
 
-.shop-item-btn:hover { background: #91d15c; }
+.shop-item-btn:hover { background: var(--ui-moss-2); }
 .shop-item-btn:active { transform: translateY(2px); box-shadow: 0 0 0; }
 
 /* Album stickers */
 .album-card {
   background: var(--ui-linen-3);
   border: 2px solid var(--ui-wood-0);
+  border-image: var(--ui-card) 5 fill / 4px;
   border-radius: 6px;
   padding: 6px;
   display: flex;
@@ -1220,7 +1195,7 @@ body.webview-mode .game-device {
 }
 
 .album-locked {
-  background: #ded7cb;
+  background: var(--ui-linen-1);
   filter: grayscale(1);
   opacity: 0.6;
 }
