@@ -9,7 +9,7 @@ Gałąź: `claude/friendly-hawking-5z7tef`. Kod gry testowany: `ebfdf84` (ta sam
 | Fala | Zakres | Wynik |
 |---|---|---|
 | 1 | dane, ścieżki, layout, a11y, plan | PASS (z długiem: 26 znanych błędów HTTP w `paths-test`) |
-| 2 | ekonomia, grafika, CI, Windows, soak 60 s | Ekonomia i grafika PASS; CI i Windows PASS na `main`; **perf-soak FAIL** (patrz niżej) |
+| 2 | ekonomia, grafika, CI, Windows, soak 60 s i 180 s | Ekonomia i grafika PASS; CI i Windows PASS na `main`; **perf-soak FAIL przy 60 s i 180 s** (patrz niżej) |
 | 3 | soak, resource-loss, web-smoke, screen-matrix, visual-matrix | PASS (exit 0), z uwagami w muzyce |
 
 ## Fala 1
@@ -26,7 +26,9 @@ Gałąź: `claude/friendly-hawking-5z7tef`. Kod gry testowany: `ebfdf84` (ta sam
   - Listenery, piętro: 111 → 130 (+19), poniżej progu +25.
   - Rozmiar stanu gry (`getState()`): 14542 → 14540 B. **Stan płaski.**
   - Heap: 6,5 MB po rozgrzewce, 8,4 MB na końcu.
-  - Ustalenia: hipoteza „wzrost stanu gry” **nie potwierdziła się**. Izolowane sondy (otwieranie i zamykanie każdej funkcji, zakładki rynku) nie wykazały liniowego wzrostu. Przyczyna nieznana; nie potwierdzony wyciek.
+  - **perf-soak 180 s (ta sama seria, 203 kliknięcia):** FAIL. Podłoga DOM (po GC) 690 (pierwsza połowa) → 818 (druga), +128; listenery 111 → 163, +52. Odczyt końcowy: węzły 1238, podłoga po GC 1710, żywe elementy 560 (szczyt). Heap 6,7 → 9,9 MB. Stan gry: 14539 → 14558 B, **płaski**, więc wzrost nie jest tłumaczony stanem.
+  - Korekta: wcześniejszy wniosek „stan płaski, nie ma wycieku” był zbyt pochopny. Podłoga rośnie monotonicznie w czasie. Różnica między podłogą po GC (1710) a żywymi elementami (560) oznacza, że część odłączonych węzłów jest nadal trzymana w pamięci. To wygląda na realny wyciek powiązany z akcjami gry.
+  - Sonda pojedynczych funkcji (`tools/qa/feature-leak-probe.js`, 20 cykli otwierania i zamykania): brak wzrostu na cykl. `pigs` dał +296 węzłów i +19 listenerów zarówno przy 8, jak i przy 20 cyklach, czyli jednorazowe zamontowanie. Wzrost z soaka nie pochodzi więc z samego otwierania ekranów, tylko z interakcji akcji gry (sadzenie, rynek, farma, zakupy). Źródło nie zostało wskazane.
   - Zmiany w narzędziu: `a58156d` (stan gry w próbkach, reguła wyjaśniania przez stan z progiem 5%).
 
 ## Fala 3 (muzyka pominięta)
@@ -37,7 +39,7 @@ Gałąź: `claude/friendly-hawking-5z7tef`. Kod gry testowany: `ebfdf84` (ta sam
 - `visual-matrix.js`: exit 0; `BUTTON.mp_btn` 20×20 px (cel dotyku poniżej minimum). Element muzyki (poza zakresem).
 
 ## Otwarte pozycje
-1. perf-soak: FAIL +64 węzły DOM przy płaskim stanie gry. Potrzebne: dłuższy przebieg (180 s) i sonda pojedynczych akcji. Nie blokuje wydania bez decyzji właściciela.
+1. **perf-soak: FAIL przy 60 s i 180 s.** Podłoga DOM i listenerów rośnie w czasie, a stan gry jest płaski. Odłączone węzły są trzymane w pamięci (podłoga po GC 1710 vs 560 żywych). Źródło nieznane: sondy pojedynczych ekranów są czyste, więc trzeba zbadać akcje gry (sadzenie, rynek, farma, zakupy) osobną sondą. **Blokuje wydanie**, dopóki nie zostanie wyjaśnione.
 2. Odtwarzacz muzyki: `.mp_title` (przycięcie) i `mp_btn` (rozmiar) — do poprawy przy wydaniu muzyki.
 3. `paths-test`: 26 znanych błędów HTTP.
 4. Balans ekonomii: profile `exploit`/`smart` powyżej 365 dni; `casual` pierwszy L2 około dnia 90.
