@@ -67,17 +67,41 @@ def brush(rng, n, db0, db1, lo=2000.0, hi=8000.0):
     return y * db2lin(np.linspace(db0, db1, n))
 
 
+def ogg_sample_count(path):
+    """Liczba próbek strumienia OGG z granule position ostatniej strony (bez dekodowania).
+
+    Granule ostatniej strony to liczba prawdziwych próbek (Vorbis-in-Ogg przycina koniec);
+    ffmpeg w potoku (-f f32le) tego nie przycina i zwraca pełne bloki, stąd nie dekodujemy.
+    """
+    with open(path, "rb") as f:
+        data = f.read()
+    pos, last = 0, None
+    while pos + 27 <= len(data):
+        if data[pos:pos + 4] != b"OggS":
+            raise ValueError("niepoprawna strona OGG w %s" % path)
+        nseg = data[pos + 26]
+        body = sum(data[pos + 27:pos + 27 + nseg])
+        last = int.from_bytes(data[pos + 6:pos + 14], "little", signed=True)
+        pos += 27 + nseg + body
+    if last is None or pos != len(data):
+        raise ValueError("uszkodzony OGG: %s" % path)
+    return last
+
+
 def write_oneshot(audio, out_path):
     """Dźwięk bez pętli: mikrofade 2 ms na obu końcach, OGG przez finish (bez normalizacji LUFS).
 
-    Zwraca (LUFS, true peak dBTP) zmierzone po zakodowaniu; LUFS przy krótkim pliku jest orientacyjny.
+    Plik ma dokładnie len(audio) próbek (granule ostatniej strony); bez dopisywania ciszy, więc
+    fade-out kończy się w obrębie tej długości. Zwraca (LUFS, true peak dBTP) po zakodowaniu;
+    LUFS przy krótkim pliku jest orientacyjny.
     """
     audio = F.microfade(np.asarray(audio, dtype=np.float64).copy(), SR)
-    # kodek przesuwa dźwięk o `delay` próbek w prawo i ucina ok. 130 próbek z końca; zera na końcu
-    # sprawiają, że cała treść (w tym fade-out) wraca, a koniec jest w ciszy
-    audio = np.concatenate([audio, np.zeros((2, 2 * F.codec_delay(SR)))], axis=1)
+    n = audio.shape[1]
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    F._encode(audio, SR, out_path)
+    F._write_ogg(audio, SR, out_path)
+    got = ogg_sample_count(out_path)
+    if got != n:
+        raise RuntimeError("OGG ma %d próbek, oczekiwano %d: %s" % (got, n, out_path))
     return F.measure_file(out_path)
 
 
