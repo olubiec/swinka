@@ -523,9 +523,11 @@ body.webview-mode .game-device {
 }
 
 .game-btn {
-  background: var(--c-wood-light);
-  border: 3px solid var(--c-contour-dark);
-  border-radius: 8px;
+  background: none;
+  border-style: solid;
+  border-width: 6px;
+  border-image: url('../../assets/ui/btn_normal.png') 6 fill / 6px stretch;
+  border-radius: 0;
   padding: 8px 4px 6px;
   display: flex;
   flex-direction: column;
@@ -537,30 +539,25 @@ body.webview-mode .game-device {
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 
-    0 4px 0 var(--c-contour-dark),
-    inset 2px 2px 0 var(--c-white),
-    inset -2px -2px 0 var(--c-wood-dark);
-  transition: transform 0.05s, box-shadow 0.05s, background-color 0.1s;
+  box-shadow: none;
+  transition: transform 0.05s, filter 0.1s;
   text-decoration: none;
   position: relative;
 }
 
 .game-btn:hover {
-  background: var(--c-orange-light);
+  filter: brightness(1.08);
 }
 
 .game-btn:active {
-  transform: translateY(3px);
-  box-shadow: 
-    0 1px 0 var(--c-contour-dark),
-    inset 2px 2px 0 var(--c-wood-dark),
-    inset -2px -2px 0 var(--c-white);
+  transform: translateY(2px);
+  border-image-source: url('../../assets/ui/btn_pressed.png');
 }
 
 /* Colour accents for the buttons */
 .btn-feed {
-  background: #f8c278;
+  border-image-source: url('../../assets/ui/btn_green.png');
+  color: var(--ui-linen-3);
 }
 
 .hay-rack-mini {
@@ -584,19 +581,22 @@ body.webview-mode .game-device {
   background: var(--c-red);
 }
 .btn-clean {
-  background: #b2dbf5;
+  border-image-source: url('../../assets/ui/btn_blue.png');
+  color: var(--ui-linen-3);
 }
 .btn-call {
-  background: #fad26b;
+  border-image-source: url('../../assets/ui/btn_normal.png');
 }
 .btn-shop {
-  background: #c3e696;
+  border-image-source: url('../../assets/ui/btn_green.png');
+  color: var(--ui-linen-3);
 }
 .btn-minigames {
-  background: #f7b2c5;
+  border-image-source: url('../../assets/ui/btn_rose.png');
 }
 .btn-album {
-  background: #d4c2ee;
+  border-image-source: url('../../assets/ui/btn_blue.png');
+  color: var(--ui-linen-3);
 }
 
 /* ==========================================================================
@@ -700,7 +700,7 @@ body.webview-mode .game-device {
 .pixel-icon {
   --s: 16px;   /* size of one icon */
   --i: 0;      /* index in assets/icons/icons.json */
-  --icon-count: 255; /* total icons */
+  --icon-count: 278; /* total icons */
   display: inline-block;
   width: var(--s);
   height: var(--s);
@@ -743,7 +743,7 @@ body.webview-mode .game-device {
 .icon-need-cleanliness { --i: 22; }
 .icon-need-teeth { --i: 23; }
 .icon-pig-head { --i: 24; }
-/* C2/C3: --icon-count = 255 */
+/* C2/C3/UI-2: --icon-count = 278 */
 .icon-sofa-cosy { --i: 174; }
 .icon-armchair { --i: 175; }
 .icon-bookshelf { --i: 176; }
@@ -825,6 +825,29 @@ body.webview-mode .game-device {
 .icon-watering-can { --i: 252; }
 .icon-hay-basket { --i: 253; }
 .icon-stump-seat { --i: 254; }
+.icon-m-feed { --i: 255; }
+.icon-m-clean { --i: 256; }
+.icon-m-call { --i: 257; }
+.icon-m-more { --i: 258; }
+.icon-m-tricks { --i: 259; }
+.icon-m-diary { --i: 260; }
+.icon-x-close { --i: 261; }
+.icon-x-plus { --i: 262; }
+.icon-x-minus { --i: 263; }
+.icon-x-info { --i: 264; }
+.icon-x-help { --i: 265; }
+.icon-x-search { --i: 266; }
+.icon-x-timer { --i: 267; }
+.icon-x-bell { --i: 268; }
+.icon-x-menu { --i: 269; }
+.icon-x-chevron-right { --i: 270; }
+.icon-x-chevron-up { --i: 271; }
+.icon-x-chevron-down { --i: 272; }
+.icon-x-filter { --i: 273; }
+.icon-x-star-empty { --i: 274; }
+.icon-x-music-off { --i: 275; }
+.icon-x-dot-full { --i: 276; }
+.icon-m-games { --i: 277; }
 .icon-bedroom { --i: 162; }
 .icon-run { --i: 163; }
 .icon-gate { --i: 164; }
@@ -1004,8 +1027,10 @@ body.webview-mode .game-device {
 
 .modal-card {
   background: var(--c-cream);
-  border: 4px solid var(--c-contour-dark);
-  border-radius: 10px;
+  border-style: solid;
+  border-width: 8px;
+  border-image: url('../../assets/ui/panel_wood.png') 8 / 8px stretch;
+  border-radius: 0;
   width: 100%;
   max-width: 380px;
   max-height: 85vh;
@@ -1031,8 +1056,8 @@ body.webview-mode .game-device {
 }
 
 .modal-close-btn {
-  background: var(--c-red);
-  border: 2px solid var(--c-contour-dark);
+  background: url('../../assets/ui/close_btn.png') center / 16px 16px no-repeat;
+  border: 0;
   color: var(--c-white);
   font-family: var(--font-pixel);
   font-size: 13px;
@@ -1045,8 +1070,8 @@ body.webview-mode .game-device {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 3px;
-  box-shadow: 0 2px 0 var(--c-contour-dark);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .modal-body {

@@ -325,7 +325,7 @@
   root.CuyHome.registerFeature({
     id: 'settings',
     title: 'Settings',
-    icon: 'icon-music-note',
+    icon: 'icon-gear',
     order: 90,
     open(container, api) {
       render(container);

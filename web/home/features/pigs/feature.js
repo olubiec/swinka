@@ -613,7 +613,7 @@
   root.CuyHome.registerFeature({
     id: 'pigs',
     title: 'My Pigs',
-    icon: 'icon-heart',
+    icon: 'icon-pair-pigs',
     order: 4,
     open(container, api) {
       activeContainer = container;

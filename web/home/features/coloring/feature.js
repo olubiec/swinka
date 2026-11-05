@@ -902,7 +902,7 @@
   window.CuyHome.registerFeature({
     id: 'coloring',
     title: 'Colouring',
-    icon: 'icon-strawberry',
+    icon: 'icon-palette',
     order: 20,
     open(container, api) {
       containerNode = container;

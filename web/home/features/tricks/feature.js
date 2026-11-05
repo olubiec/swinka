@@ -194,7 +194,7 @@
   window.CuyHome.registerFeature({
     id: 'tricks',
     title: 'Tricks',
-    icon: 'icon-trophy',
+    icon: 'icon-m-tricks',
     order: 8,
 
     open(container, api) {

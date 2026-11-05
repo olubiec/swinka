@@ -320,7 +320,7 @@
   window.CuyHome.registerFeature({
     id: 'farm',
     title: 'Farm',
-    icon: 'icon-hay',
+    icon: 'icon-place-farm',
     order: 60,
     open(container, api) {
       S.container = container;

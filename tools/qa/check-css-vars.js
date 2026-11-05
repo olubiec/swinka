@@ -87,7 +87,10 @@ function main() {
   }
 
   const styleContent = fs.readFileSync(STYLE_CSS, 'utf8');
-  const styleDefs = findDefinedVarsInCss(styleContent);
+  // Tokens of the UI kit (assets/ui/ui_tokens.css) are loaded before style.css and count as definitions.
+  const tokensPath = path.join(HOME_DIR, '..', '..', 'assets', 'ui', 'ui_tokens.css');
+  const tokensContent = fs.existsSync(tokensPath) ? fs.readFileSync(tokensPath, 'utf8') : '';
+  const styleDefs = findDefinedVarsInCss(styleContent + '\n' + tokensContent);
 
   const files = scanFiles(HOME_DIR);
   const unknownUsages = [];

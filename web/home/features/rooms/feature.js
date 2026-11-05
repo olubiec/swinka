@@ -963,7 +963,7 @@
   window.CuyHome.registerFeature({
     id: 'rooms',
     title: 'Rooms',
-    icon: 'icon-house',
+    icon: 'icon-house-plan',
     order: 40,
     open(container, api, arg) {
       S.container = container;

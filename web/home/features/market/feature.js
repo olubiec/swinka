@@ -260,7 +260,7 @@
   window.CuyHome.registerFeature({
     id: 'market',
     title: 'Market',
-    icon: 'icon-carrot',
+    icon: 'icon-place-market',
     order: 70,
     open(container, api) {
       S.container = container;

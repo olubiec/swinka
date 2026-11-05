@@ -325,7 +325,7 @@
   window.CuyHome.registerFeature({
     id: 'store',
     title: 'Store',
-    icon: 'icon-shop',
+    icon: 'icon-storage',
     order: 45,
     open: open,
     close: close,

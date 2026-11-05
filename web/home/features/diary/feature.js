@@ -1,7 +1,7 @@
 window.CuyHome.registerFeature({
   id: 'diary',
   title: 'Diary',
-  icon: 'icon-pig-head',
+  icon: 'icon-m-diary',
   order: 6,
 
   open(container, api) {

@@ -113,7 +113,7 @@
   window.CuyHome.registerFeature({
     id: 'shop',
     title: 'Shop',
-    icon: 'icon-clover',
+    icon: 'icon-shop',
     order: 5,
     open(container, api) {
       apiRef = api;
