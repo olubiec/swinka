@@ -143,6 +143,14 @@
       initPigLight();
     }
 
+    // bridge.js failed to load: say so instead of leaving every action silently dead.
+    if (window.__cuyBridgeFailed || !window.bridge) {
+      const notice = document.createElement('div');
+      notice.setAttribute('role', 'alert');
+      notice.textContent = 'Nie udało się załadować gry. Akcje są wyłączone. Odśwież stronę.';
+      notice.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;padding:10px 12px;background:#47281c;color:#fbf0d9;border-radius:6px;z-index:9999;text-align:center;';
+      document.body.appendChild(notice);
+    }
     // Hook up the bridge listener (works both in WebView2 and in the mock)
     if (window.bridge) {
       window.bridge.onState(updateStateUI);
@@ -842,11 +850,45 @@
 
   // --- MODALE ---
 
+  let modalOpener = null;
+
+  function modalFocusables() {
+    if (!elements.modalBackdrop) return [];
+    return Array.from(elements.modalBackdrop.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter(el => el.offsetParent !== null || el === document.activeElement);
+  }
+
+  function focusModal() {
+    const first = modalFocusables()[0] || elements.modalCloseBtn;
+    if (first && typeof first.focus === 'function') first.focus();
+  }
+
+  // Keeps Tab inside the open dialog (focus trap).
+  function trapModalFocus(e) {
+    if (e.key !== 'Tab' || !elements.modalBackdrop?.classList.contains('active')) return;
+    const items = modalFocusables();
+    if (items.length === 0) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    const inside = elements.modalBackdrop.contains(document.activeElement);
+    if (e.shiftKey && (!inside || document.activeElement === first)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && (!inside || document.activeElement === last)) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
   function openModal(title, contentHtml) {
     if (!elements.modalBackdrop) return;
+    const wasOpen = elements.modalBackdrop.classList.contains('active');
+    if (!wasOpen) modalOpener = document.activeElement;
     elements.modalTitle.textContent = title;
     elements.modalBody.innerHTML = contentHtml;
     elements.modalBackdrop.classList.add('active');
+    focusModal();
   }
 
   function closeModal() {
@@ -856,7 +898,14 @@
     }
     if (window.CuyHome) window.CuyHome.closeFeature();
     elements.modalBackdrop.classList.remove('active');
+    // Return focus to whatever opened the dialog, if it is still on the page.
+    if (modalOpener && document.body.contains(modalOpener) && typeof modalOpener.focus === 'function') {
+      modalOpener.focus();
+    }
+    modalOpener = null;
   }
+
+  window.addEventListener('keydown', trapModalFocus);
 
   // Shop dialog
 

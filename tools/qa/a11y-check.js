@@ -98,6 +98,11 @@ async function run() {
     // 2. Tab order and focus test
     // Focus should move through interactive visible elements without being lost to body / null.
     // Each focused element should have visible focus indicator (outline or shadow).
+    // The start-up daily-reward dialog is modal (aria-modal) and traps Tab, so close it first.
+    await page.evaluate(() => {
+      const bd = document.getElementById('modalBackdrop');
+      if (bd && bd.classList.contains('active')) document.getElementById('modalCloseBtn')?.click();
+    });
     const tabHistory = [];
     const minSteps = 12;
     for (let step = 0; step < minSteps; step++) {

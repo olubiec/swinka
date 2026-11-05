@@ -516,8 +516,18 @@
     }
 
     normalizeState(state) {
-      if (!state.needs) state.needs = { ...defaultMockState.needs };
-      if (typeof state.pigDays !== 'number') state.pigDays = 588;
+      // Sanitise saved values: a broken or old-format save must not produce NaN or nulls.
+      if (!state.needs || typeof state.needs !== 'object' || Array.isArray(state.needs)) {
+        state.needs = { ...defaultMockState.needs };
+      }
+      for (const key of Object.keys(defaultMockState.needs)) {
+        const v = Number(state.needs[key]);
+        state.needs[key] = Number.isFinite(v)
+          ? Math.max(0, Math.min(100, v))
+          : defaultMockState.needs[key];
+      }
+      if (!Number.isFinite(state.pigDays) || state.pigDays < 0) state.pigDays = defaultMockState.pigDays;
+      if (typeof state.name !== 'string' || !state.name.trim()) state.name = defaultMockState.name;
       
       const ageInfo = formatPigAge(state.pigDays);
       const stageInfo = getStageFromPigDays(state.pigDays);
@@ -838,6 +848,16 @@
       const n = s.needs;
 
       switch (action.type) {
+        case 'setName': {
+          // Same rules as HomeWindow.HandleSetName: letters, digits and spaces, max 16 characters.
+          const name = String(action.name || '').trim().replace(/\s+/g, ' ');
+          if (!name || name.length > 16 || !/^[\p{L}\p{N} ]+$/u.test(name)) break;
+          s.name = name;
+          this.saveMockState();
+          this.broadcastState();
+          break;
+        }
+
         case 'feed': {
           const item = action.item || 'hay';
           if (item === 'hay') {
