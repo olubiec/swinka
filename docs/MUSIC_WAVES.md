@@ -84,6 +84,12 @@ Bramka: lead czyta `CONTRACT.md` (10 min) i zamraża.
 | PM-N2 | MT-18, 19, 22: deszcz, wiatr, ton pokoju | j.w. dla `noise_rain`, `noise_wind`, `noise_room_tone` | PM-03, PM-06 | wg promptów |
 | PM-N3 | MT-20, 21: ptaki, świerszcze | j.w. dla `noise_birds`, `noise_crickets` | PM-03, PM-06 | wg promptów |
 
+### MW-1b: research harmonii (1 agent)
+
+| Pakiet | Zadanie | Pliki własne | Zależy od | Odbiór |
+| --- | --- | --- | --- | --- |
+| PM-R0 | research progresji: rodziny (jazz, ambient, pixel) i mapowanie każdego id ze specyfikacji | `docs/music_progressions.md` | – | każdy id z `tools/music/specs` ma wpis w tabeli mapowania |
+
 ### MW-3: pilot stylu (3 agentów)
 
 | Pakiet | Zadanie | Pliki własne | Zależy od | Odbiór |
@@ -163,6 +169,7 @@ MW-4 i MW-5 mogą ruszyć razem po G2 (11 agentów), jeśli budżet pozwala; ser
 | Fala | Pakiety | Zadania MT | Pliki OGG po fali |
 | --- | --- | --- | --- |
 | MW-0…MW-1 | 6 | MT-01…06, 08…10 | 0 |
+| MW-1b | 1 | – | 0 |
 | MW-2 | 4 | MT-03, 14…22 | 9 |
 | MW-3 | 3 | MT-07, 11, 12, 13 | 12 |
 | MW-4 | 6 | MT-23…31, 42…46 | 12 + 4 + 5 + 13 + 4 (`_full`) = 38 |
@@ -171,7 +178,7 @@ MW-4 i MW-5 mogą ruszyć razem po G2 (11 agentów), jeśli budżet pozwala; ser
 | MW-7 | 2 | MT-119…124 | 144 |
 | MW-8 | 1 | audyt | 144 |
 
-Razem: 31 pakietów audio; 140 plików twórczych + 4 `_full` = 144.
+Razem: 32 pakiety audio (w tym PM-R0 w MW-1b); 140 plików twórczych + 4 `_full` = 144.
 
 ---
 
