@@ -1,0 +1,100 @@
+{
+  "id": "bed_day",
+  "kind": "bed",
+  "title": "Belka dzień (9-17)",
+  "role": "najcichsza belka; prawie cisza, przyjazna drzemce",
+  "bpm": 60,
+  "meter": 4,
+  "key": "F",
+  "mode": "major",
+  "bars": 48,
+  "swing": 50,
+  "seed": 1664,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 9,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 13,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 17,
+      "sym": "Bbmaj9"
+    },
+    {
+      "bar": 21,
+      "sym": "C13sus"
+    },
+    {
+      "bar": 25,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 33,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 37,
+      "sym": "Gm9"
+    },
+    {
+      "bar": 41,
+      "sym": "C13sus"
+    },
+    {
+      "bar": 45,
+      "sym": "Fmaj9"
+    }
+  ],
+  "layers": [
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -3,
+      "pattern": "",
+      "part": "pad długi, wolne poruszenie filtra 0,03 Hz. Wzór (opis): ciągły, zmiana akordu zgodnie z mapą"
+    },
+    {
+      "role": "noise",
+      "voice": "noise_room_tone",
+      "db": -28,
+      "pattern": "",
+      "part": "ton pokoju. Wzór (opis): ciągły",
+      "from_bar": 1
+    },
+    {
+      "role": "orn",
+      "voice": "P12",
+      "db": -14,
+      "pattern": "",
+      "part": "pojedyncze szarpnięcie (nuta z akordu: F5, A5 lub C6). Wzór (opis): co 6-10 s losowo (seed), nie na mocnej części",
+      "from_bar": 5
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "LP(5000)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-M",
+      "wet": 0.2,
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -20,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}

@@ -1,0 +1,88 @@
+{
+  "id": "bed_night",
+  "kind": "bed",
+  "title": "Belka noc (22-6, tylko z włączonym „Muzyka w nocy”)",
+  "role": "pozytywka, prawie cisza",
+  "bpm": 54,
+  "meter": 4,
+  "key": "D",
+  "mode": "dorian",
+  "bars": 36,
+  "swing": 50,
+  "seed": 98637,
+  "chords": [
+    {
+      "bar": 1,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 9,
+      "sym": "Em7"
+    },
+    {
+      "bar": 13,
+      "sym": "G6/D"
+    },
+    {
+      "bar": 17,
+      "sym": "Dm9"
+    },
+    {
+      "bar": 25,
+      "sym": "Bbmaj7"
+    },
+    {
+      "bar": 29,
+      "sym": "C6/9"
+    },
+    {
+      "bar": 33,
+      "sym": "Dm9"
+    }
+  ],
+  "layers": [
+    {
+      "role": "mel",
+      "voice": "BOX",
+      "db": -3,
+      "pattern": "",
+      "part": "melodia pentatoniczna D-F-G-A-C, symetryczne frazy. Wzór (opis): 1 nuta na takt, półnuta"
+    },
+    {
+      "role": "pad",
+      "voice": "PAD",
+      "db": -16,
+      "pattern": "",
+      "part": "bardzo cichy pad na D3-A3. Wzór (opis): długie akordy",
+      "register": "D3-A3"
+    },
+    {
+      "role": "orn",
+      "voice": "CEL",
+      "db": -20,
+      "pattern": "",
+      "part": "gwiazdki: pojedyncze nuty 4 oktawy wyżej. Wzór (opis): losowo co 8-14 s",
+      "from_bar": 5
+    }
+  ],
+  "drums": null,
+  "fx": [
+    {
+      "fx": "REV-L",
+      "wet": 0.3,
+      "on": "all"
+    },
+    {
+      "fx": "LP(4000)",
+      "on": "all"
+    }
+  ],
+  "master": {
+    "lufs": -20,
+    "ceiling_dbtp": -1
+  },
+  "loop": {
+    "enabled": true
+  },
+  "stem_of": null
+}
