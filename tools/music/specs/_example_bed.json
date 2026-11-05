@@ -1,0 +1,33 @@
+{
+  "id": "example_bed",
+  "kind": "bed",
+  "title": "Przykład: belka rano (skrót do 8 taktów)",
+  "role": "belka pulpitu rano; bez perkusji",
+  "bpm": 70,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 8,
+  "swing": 50,
+  "seed": 14987,
+  "chords": [
+    { "bar": 1, "sym": "Cmaj9" },
+    { "bar": 3, "sym": "Am9" },
+    { "bar": 5, "sym": "Fmaj9" },
+    { "bar": 7, "sym": "G13sus" }
+  ],
+  "layers": [
+    { "role": "pad", "voice": "PAD", "part": "długie akordy", "db": -6, "pattern": "chords.sustain" },
+    { "role": "mel", "voice": "BELL", "part": "rzadkie nuty pentatoniczne", "db": -4, "pattern": "melody.skeleton", "from_bar": 3, "register": "C4-G5" },
+    { "role": "orn", "voice": "P12", "part": "szarpnięcia", "db": -10, "pattern": "orn.every_n_bars(4, 3)", "from_bar": 3 },
+    { "role": "noise", "voice": "noise_birds", "part": "ćwierkanie", "db": -20, "pattern": "noise.loop(noise_birds, -20)", "from_bar": 5 }
+  ],
+  "drums": null,
+  "fx": [
+    { "fx": "REV-L", "wet": 0.24, "on": "BELL" },
+    { "fx": "HP(80)", "on": "all" }
+  ],
+  "master": { "lufs": -20, "ceiling_dbtp": -1 },
+  "loop": { "enabled": true },
+  "stem_of": null
+}

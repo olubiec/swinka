@@ -1,0 +1,32 @@
+{
+  "id": "example_minigame",
+  "kind": "minigame",
+  "title": "Przykład: minigra w trzech stemach (skrót do 8 taktów)",
+  "role": "pętla minigry; stemy base, rhythm i lead",
+  "bpm": 128,
+  "meter": 4,
+  "key": "C",
+  "mode": "major",
+  "bars": 8,
+  "swing": 50,
+  "seed": 31337,
+  "chords": [
+    { "bar": 1, "sym": "C" },
+    { "bar": 5, "sym": "F" }
+  ],
+  "layers": [
+    { "role": "bass", "voice": "TRI", "part": "bas, korzeń i kwinta", "db": -3, "pattern": "bass.root_fifth", "stem": "base" },
+    { "role": "chd", "voice": "P25", "part": "akordy na offbeat", "db": -8, "pattern": "chords.offbeat_2_4", "stem": "rhythm", "from_bar": 3 },
+    { "role": "mel", "voice": "XYL", "part": "melodia, wejście w takcie 5", "db": -4, "pattern": "random.pentatonic_walk", "stem": "lead", "from_bar": 5, "register": "C4-G5" }
+  ],
+  "drums": {
+    "kit": "chip_drive",
+    "levels": { "KICK": -6, "SNR": -10, "HAT": -14 }
+  },
+  "fx": [
+    { "fx": "LP(8000)", "on": "all" }
+  ],
+  "master": { "lufs": -16, "ceiling_dbtp": -1 },
+  "loop": { "enabled": true, "start_s": 0.0, "end_s": 15.0 },
+  "stem_of": null
+}

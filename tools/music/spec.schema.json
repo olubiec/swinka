@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cuy.local/music/spec.schema.json",
+  "title": "Cuy music spec",
+  "description": "Jedna specyfikacja = jeden utwór (MUSIC_WAVES MW-0, MT-01). Semantyka, której schemat nie wyrazi (kolejność akordów, takty, stemy), sprawdza validate_spec.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "title", "bpm", "meter", "key", "mode", "bars", "swing", "seed", "chords", "layers", "drums", "fx", "master", "loop", "stem_of"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 64 },
+    "kind": { "enum": ["theme", "bed", "place", "room", "minigame", "record", "jingle", "noise"] },
+    "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "role": { "type": "string", "maxLength": 300 },
+    "bpm": { "type": "number", "minimum": 40, "maximum": 200 },
+    "meter": { "enum": [3, 4] },
+    "key": { "type": "string", "pattern": "^[A-G][#b]?$" },
+    "mode": { "enum": ["major", "minor", "dorian", "mixolydian", "lydian"] },
+    "bars": { "type": "integer", "minimum": 1, "maximum": 256 },
+    "swing": { "type": "number", "minimum": 50, "maximum": 75 },
+    "seed": { "type": "integer", "minimum": 0, "maximum": 2147483647 },
+    "chords": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["bar", "sym"],
+        "properties": {
+          "bar": { "type": "integer", "minimum": 1, "maximum": 256 },
+          "sym": { "type": "string", "minLength": 1, "maxLength": 24 }
+        }
+      }
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "voice", "db", "pattern"],
+        "properties": {
+          "role": { "enum": ["mel", "chd", "bass", "pad", "orn", "noise", "perc"] },
+          "voice": {
+            "anyOf": [
+              { "enum": ["P12", "P25", "P50", "TRI", "PAD", "BELL", "BOX", "CEL", "GLK", "XYL", "EP", "BNJ", "PIZ", "HARP", "ACC", "BUZZ"] },
+              { "type": "string", "pattern": "^noise_[a-z0-9_]+$" }
+            ]
+          },
+          "part": { "type": "string", "maxLength": 200 },
+          "db": { "type": "number", "minimum": -60, "maximum": 0 },
+          "pattern": {
+            "type": "string",
+            "pattern": "^(bass\\.(root_fifth|walking|bossa|octave8|oom|pedal2bars)|chords\\.(offbeat_2_4|arp8|bossa|stab_i2_i4|oompa|sustain)|orn\\.every_n_bars\\([1-9][0-9]*, *[0-9.]+\\)|random\\.pentatonic_walk|melody\\.skeleton|noise\\.loop\\([a-z0-9_]+, *-?[0-9.]+\\))$"
+          },
+          "from_bar": { "type": "integer", "minimum": 1, "maximum": 256 },
+          "register": { "type": "string", "pattern": "^[A-G][#b]?[0-9]-[A-G][#b]?[0-9]$" },
+          "stem": { "enum": ["base", "rhythm", "lead"] }
+        }
+      }
+    },
+    "drums": {
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kit", "levels"],
+          "properties": {
+            "kit": { "type": "string", "minLength": 1, "maxLength": 40 },
+            "levels": {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": { "enum": ["KICK", "SNR", "BRSH", "HAT", "SHK"] },
+              "additionalProperties": { "type": "number", "minimum": -60, "maximum": 0 }
+            }
+          }
+        }
+      ]
+    },
+    "fx": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fx"],
+        "properties": {
+          "fx": { "type": "string", "pattern": "^(REV-[SML]|LP\\([0-9]+\\)|HP\\([0-9]+\\)|TAPE\\([0-9.]+\\)|VINYL\\(-?[0-9.]+\\)|CRUSH)$" },
+          "wet": { "type": "number", "minimum": 0, "maximum": 1 },
+          "on": { "type": "string", "default": "all", "pattern": "^(all|[A-Za-z0-9_]+)$" }
+        }
+      }
+    },
+    "master": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lufs", "ceiling_dbtp"],
+      "properties": {
+        "lufs": { "type": "number", "minimum": -24, "maximum": -12 },
+        "ceiling_dbtp": { "type": "number", "const": -1 }
+      }
+    },
+    "loop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "start_s": { "type": "number", "minimum": 0 },
+        "end_s": { "type": "number", "minimum": 0 }
+      }
+    },
+    "stem_of": { "anyOf": [ { "type": "null" }, { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" } ] }
+  }
+}
