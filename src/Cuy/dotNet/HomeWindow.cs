@@ -314,11 +314,11 @@ namespace Cuy
                 }
                 catch (Exception ex)
                 {
-                    WebView2Missing = true;
-                    BrainController.Log("[WebView2] runtime missing");
+                    
                     BrainController.Log("[ERROR] Home: failed to initialise WebView2: " + ex.Message);
                     this.Hide();
-                    MessageBox.Show(WebView2MissingMessage, "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Home could not start WebView2: " + ex.Message + "\nLog: %LocalAppData%\\Cuy\\logs\\cuy.log", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    try { BeginInvoke(new Action(Close)); } catch { }
                     return;
                 }
 

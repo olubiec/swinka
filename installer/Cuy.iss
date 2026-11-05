@@ -58,3 +58,37 @@ Name: "{userstartup}\Cuy"; Filename: "{app}\Cuy.exe"; Tasks: autostart
 
 [Run]
 Filename: "{app}\Cuy.exe"; Description: "{cm:LaunchProgram,Cuy}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+// Cuy's Home needs the Microsoft Edge WebView2 runtime. Windows 10 may not have it:
+// download the small Evergreen bootstrapper and run it when the runtime is missing.
+const
+  WebView2Guid = '{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}';
+
+function WebView2Installed: Boolean;
+var
+  V: String;
+begin
+  Result := False;
+  if RegQueryStringValue(HKLM, 'SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\' + WebView2Guid, 'pv', V) and (V <> '') and (V <> '0.0.0.0') then Result := True
+  else if RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\EdgeUpdate\Clients\' + WebView2Guid, 'pv', V) and (V <> '') and (V <> '0.0.0.0') then Result := True
+  else if RegQueryStringValue(HKCU, 'Software\Microsoft\EdgeUpdate\Clients\' + WebView2Guid, 'pv', V) and (V <> '') and (V <> '0.0.0.0') then Result := True;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  Code: Integer;
+begin
+  if (CurStep = ssPostInstall) and (not WebView2Installed) then
+  begin
+    try
+      WizardForm.StatusLabel.Caption := 'Pobieranie Microsoft Edge WebView2 (potrzebne do okna Home)...';
+      DownloadTemporaryFile('https://go.microsoft.com/fwlink/p/?LinkId=2124703', 'MicrosoftEdgeWebview2Setup.exe', '', nil);
+      WizardForm.StatusLabel.Caption := 'Instalowanie Microsoft Edge WebView2...';
+      Exec(ExpandConstant('{tmp}\MicrosoftEdgeWebview2Setup.exe'), '/silent /install', '', SW_SHOW, ewWaitUntilTerminated, Code);
+    except
+      Log('WebView2 install failed: ' + GetExceptionMessage);
+      MsgBox('Nie udało się zainstalować Microsoft Edge WebView2. Okno Home nie otworzy się, dopóki go nie zainstalujesz: https://go.microsoft.com/fwlink/p/?LinkId=2124703', mbInformation, MB_OK);
+    end;
+  end;
+end;
