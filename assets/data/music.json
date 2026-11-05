@@ -1320,8 +1320,8 @@
       "length_s": 76.8,
       "lufs": -18.1,
       "peak_dbtp": -1.3,
-      "edge_first": 0.01267,
-      "edge_last": 0.00139,
+      "edge_first": 0.00238,
+      "edge_last": 0.00078,
       "measured_by": "ebur128"
     },
     {
