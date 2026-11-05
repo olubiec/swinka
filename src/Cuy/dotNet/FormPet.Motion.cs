@@ -24,6 +24,7 @@ namespace Cuy
         private static readonly bool perfEnabled = Environment.GetEnvironmentVariable("CUY_PERF") == "1";
         private readonly double[] perfTickMs = new double[300];
         private int perfCount, perfIndex, perfSlowGaps;
+        private int perfGc0Start, perfGc1Start;   // GC.CollectionCount baseline at toss start (D2.4)
         private double perfLastTickAt = -1;
         private bool spritesFlipped;
         private readonly Dictionary<int, Image> flippedSprites = new Dictionary<int, Image>();
@@ -38,6 +39,12 @@ namespace Cuy
         private static extern bool UnhookWinEvent(IntPtr hook);
         [DllImport("user32.dll")]
         private static extern uint GetWindowThreadProcessId(IntPtr window, out uint process);
+
+        // D2.4: assigning the same frame again would make PictureBox repaint for nothing.
+        private void ShowSprite(Image frame)
+        {
+            if (!ReferenceEquals(pictureBox1.Image, frame)) pictureBox1.Image = frame;
+        }
 
         private Image GetSprite(int index)
         {
@@ -255,6 +262,7 @@ namespace Cuy
         private void ResetTossPerf()
         {
             perfCount = 0; perfIndex = 0; perfSlowGaps = 0; perfLastTickAt = -1;
+            perfGc0Start = GC.CollectionCount(0); perfGc1Start = GC.CollectionCount(1);
         }
 
         private void ReportTossPerf()
@@ -267,8 +275,9 @@ namespace Cuy
             foreach (double ms in sorted) sum += ms;
             double p95 = sorted[(int)Math.Ceiling(sorted.Length * 0.95) - 1];
             BrainController.Log(string.Format(CultureInfo.InvariantCulture,
-                "[PERF] toss-perf ticks={0} min={1:F2} avg={2:F2} p95={3:F2} max={4:F2} gaps>20ms={5} (ms)",
-                sorted.Length, sorted[0], sum / sorted.Length, p95, sorted[sorted.Length - 1], perfSlowGaps));
+                "[PERF] toss-perf ticks={0} min={1:F2} avg={2:F2} p95={3:F2} max={4:F2} gaps>20ms={5} gc0={6} gc1={7} (ms)",
+                sorted.Length, sorted[0], sum / sorted.Length, p95, sorted[sorted.Length - 1], perfSlowGaps,
+                GC.CollectionCount(0) - perfGc0Start, GC.CollectionCount(1) - perfGc1Start));
         }
 
         private void MotionTimerStep()

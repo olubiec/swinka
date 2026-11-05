@@ -1178,7 +1178,7 @@ namespace Cuy
                 // If there is no repeat, we don't need to calculate the frame index.
                 if (currentStep < CurrentAnimation.Sequence.Frames.Count)
                 {
-                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[currentStep]);
+                    ShowSprite(GetSprite(CurrentAnimation.Sequence.Frames[currentStep]));
                 }
                 else
                 {
@@ -1187,7 +1187,7 @@ namespace Cuy
                     index = Math.Max(0, Math.Min(index, CurrentAnimation.Sequence.Frames.Count - 1));
                     if (CurrentAnimation.Sequence.Frames.Count > 0)
                     {
-                        pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[index]);
+                        ShowSprite(GetSprite(CurrentAnimation.Sequence.Frames[index]));
                     }
                 }
             }
