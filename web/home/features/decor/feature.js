@@ -516,9 +516,9 @@
         s.inventory["floor_wood_light"] = 1;
         if (!s.shop) s.shop = { items: [] };
         s.shop.items.push(
-          {id: 'wallpaper_mint', name: 'Mint wallpaper', category: 'decor', slot: 'wallpaper'},
-          {id: 'plant_fern', name: 'Fern', category: 'decor', slot: 'plant'},
-          {id: 'floor_wood_light', name: 'Light wood floor', category: 'decor', slot: 'floor'}
+          {id: 'wallpaper_mint', name: 'Mint wallpaper', category: 'decor', slot: 'wallpaper', price: 40, description: 'Mock item'},
+          {id: 'plant_fern', name: 'Fern', category: 'decor', slot: 'plant', price: 30, description: 'Mock item'},
+          {id: 'floor_wood_light', name: 'Light wood floor', category: 'decor', slot: 'floor', price: 60, description: 'Mock item'}
         );
         setTimeout(() => bridge.broadcastState(), 100);
       }
