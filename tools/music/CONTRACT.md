@@ -72,3 +72,5 @@ Walidator wymaga `pip install jsonschema`. Kod wyjścia: 0 poprawne, 1 błędy, 
 | Wersja | Zmiana | Powód |
 | --- | --- | --- |
 | MW-0 | dodano `chords.sustain`, `melody.skeleton` do słownika wzorów | warstwy PAD i melodii z katalogu |
+| MW-1 (PM-03) | efekty `PAN(p)` i `WIDTH(w)` w łańcuchu `fx` | panorama warstw i szerokość stereo (MT-04) |
+| MW-1 (PM-02) | zanik głosów = T60 (czas spadku o 60 dB), `dur_s` nie skraca zaniku | jednoznaczne znaczenie pola w `voices.py` |
