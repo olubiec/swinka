@@ -59,7 +59,7 @@ namespace Cuy
             Sample first = samples[0], last = samples[samples.Count - 1];
             double elapsed = last.Time - first.Time;
             if (elapsed < 8 || now - last.Time > 80) return Vector2.Zero;
-            return new Vector2((float)((last.X - first.X) / elapsed * 10), (float)((last.Y - first.Y) / elapsed * 10));
+            return new Vector2((float)((last.X - first.X) / elapsed * 30), (float)((last.Y - first.Y) / elapsed * 30));
         }
     }
 }

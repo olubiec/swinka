@@ -80,14 +80,14 @@
         <y>0</y>
         <offsety>4</offsety>
         <opacity>1.0</opacity>
-        <interval>100</interval>
+        <interval>150</interval>
       </start>
       <end>
         <x>0</x>
         <y>0</y>
         <offsety>4</offsety>
         <opacity>1.0</opacity>
-        <interval>100</interval>
+        <interval>150</interval>
       </end>
       <sequence repeat="0" repeatfrom="0">
         <frame>368</frame>

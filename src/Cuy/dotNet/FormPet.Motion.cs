@@ -94,8 +94,9 @@ namespace Cuy
                 land = true;
             }
             PositionY = land ? ground : PositionY + dy;
-            OffsetY = 0;
-            motion.Reset(PositionX, PositionY, now);
+            // Same sink as the walking animations, so the feet touch the taskbar and landing does not jump.
+            OffsetY = CurrentAnimation.Start.OffsetY;
+            motion.Reset(PositionX, PositionY + OffsetY, now);
             RenderMotion(now);
             if (land)
             {
