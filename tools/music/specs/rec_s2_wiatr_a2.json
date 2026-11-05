@@ -121,15 +121,18 @@
   "drums": null,
   "fx": [
     {
+      "fx": "TAPE(0.2)"
+    },
+    {
       "fx": "CHORUS(1)",
       "on": "all"
     },
     {
-      "fx": "LP(6000)",
+      "fx": "LP(3800)",
       "on": "all"
     },
     {
-      "fx": "REV-M",
+      "fx": "REV-L",
       "wet": 0.185,
       "on": "all"
     },

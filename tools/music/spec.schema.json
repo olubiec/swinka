@@ -43,7 +43,7 @@
           "role": { "enum": ["mel", "chd", "bass", "pad", "orn", "noise", "perc", "hat"] },
           "voice": {
             "anyOf": [
-              { "enum": ["P12", "P25", "P50", "TRI", "PAD", "BELL", "BOX", "CEL", "GLK", "XYL", "EP", "BNJ", "PIZ", "HARP", "ACC", "BUZZ", "BRSH", "HAT"] },
+              { "enum": ["P12", "P25", "P50", "TRI", "PAD", "BELL", "BOX", "CEL", "GLK", "XYL", "EP", "BNJ", "PIZ", "HARP", "ACC", "BUZZ", "BRSH", "HAT", "RHO", "PADW", "BASW"] },
               { "type": "string", "pattern": "^noise_[a-z0-9_]+$" }
             ]
           },

@@ -90,14 +90,17 @@
   "drums": null,
   "fx": [
     {
-      "fx": "SAT(1.5)"
+      "fx": "SAT(1.2)"
     },
     {
-      "fx": "REV-M",
+      "fx": "TAPE(0.2)"
+    },
+    {
+      "fx": "REV-L",
       "wet": 0.2
     },
     {
-      "fx": "LP(6000)"
+      "fx": "LP(3800)"
     },
     {
       "fx": "WIDTH(1.3)"

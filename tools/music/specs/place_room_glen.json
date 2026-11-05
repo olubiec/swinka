@@ -152,7 +152,7 @@
   "drums": null,
   "fx": [
     {
-      "fx": "SAT(2.5)",
+      "fx": "SAT(1.2)",
       "on": "all"
     },
     {

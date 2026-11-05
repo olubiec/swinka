@@ -27,7 +27,8 @@ LN1000 = math.log(1000.0)  # T60 -> współczynnik zaniku: amplituda = exp(-t * 
 # Głos: {"parts": [...], "attack": s, "t60": s | None, "sustain": bool, "release": s,
 #        "lp": Hz, "hp": Hz, "bp": (lo, hi), "vib": (Hz, centy), "trem": (Hz, głębokość),
 #        "fm": (Hz, dewiacja Hz), "sweep": (start_Hz, end_Hz, czas_s), "comb": (opóźnienie_s, wzmocnienie),
-#        "drift": centy, "drum": bool}
+#        "drift": centy, "drum": bool, "sat": drive (tanh przed filtrami i obwiednią)}
+# Składnik może mieć własne "t60" (s): osobna obwiednia tylko tego składnika (atak dzwonka + długi korpus).
 VOICES = {
     "P12": {"parts": [{"osc": "pulse", "duty": 0.125}], "attack": 0.002, "t60": 0.265, "lp": 4000},
     "P25": {"parts": [{"osc": "pulse", "duty": 0.25}], "attack": 0.003, "t60": 0.425},
@@ -60,6 +61,22 @@ VOICES = {
     "HAT": {"parts": [{"osc": "noise"}], "attack": 0.001, "t60": 0.03, "hp": 8000.0, "drum": True,
             "t60_open": 0.16},
     "SHK": {"parts": [{"osc": "noise"}], "attack": 0.015, "t60": 0.07, "bp": (5000.0, 10000.0), "drum": True},
+    # Ciepłe głosy (lo-fi / jazz / ambient): sinusy i trójkąty, bez pulsu.
+    # RHO: pianino elektryczne w stylu Rhodes - ping blaszki szybko gaśnie, korpus wolno, lekkie tremolo.
+    "RHO": {"parts": [{"osc": "sine"},
+                      {"osc": "sine", "ratio": 2.0, "db": -12, "t60": 0.9},
+                      {"osc": "sine", "ratio": 4.0, "db": -20, "t60": 0.3},
+                      {"osc": "tri", "ratio": 6.27, "db": -24, "t60": 0.06}],
+            "attack": 0.002, "t60": 2.2, "lp": 4500, "trem": (4.5, 0.18)},
+    # PADW: miękka podkładka - trzy trójkąty rozstrojone, wolny atak, sinusowy korpus, łagodny dryf wysokości.
+    "PADW": {"parts": [{"osc": "tri", "detune": -10}, {"osc": "tri", "detune": 6},
+                       {"osc": "sine", "db": -6}],
+             "attack": 2.5, "sustain": True, "release": 2.5, "lp": 2400, "vib": (0.22, 4.0)},
+    # BASW: ciepły bas - sinus z krótkim nasyceniem ataku (druga harmoniczna gaśnie szybko).
+    "BASW": {"parts": [{"osc": "sine"},
+                       {"osc": "sine", "ratio": 2.0, "db": -8, "t60": 0.07},
+                       {"osc": "tri", "db": -18, "t60": 0.05}],
+             "attack": 0.003, "t60": 0.9, "lp": 900, "sat": 1.6},
 }
 
 NOISE_VOICES_PREFIX = "noise_"
@@ -167,6 +184,8 @@ def _synth(name, midi, dur_s, sr, rng):
                 f = f_inst * part.get("ratio", 1.0) * (2.0 ** (part.get("detune", 0.0) / 1200.0))
             phase = np.cumsum(f) / sr
             sig = _osc(part["osc"], phase, part, n, rng)
+        if "t60" in part:
+            sig = sig * np.exp(-t * LN1000 / part["t60"])
         src += gain * sig
 
     lp = v.get("lp")
@@ -176,6 +195,9 @@ def _synth(name, midi, dur_s, sr, rng):
         src = _fft_filter(src, sr, bp=bp, order=4)
     elif lp or hp:
         src = _fft_filter(src, sr, lp=lp, hp=hp)
+    if "sat" in v:
+        drive = v["sat"]
+        src = np.tanh(drive * src) / np.tanh(drive)
 
     if "comb" in v:
         delay_s, g = v["comb"]

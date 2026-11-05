@@ -14,7 +14,8 @@ import voices as V  # noqa: E402
 
 SR = 44100
 PALETTE = ["P12", "P25", "P50", "TRI", "PAD", "BELL", "BOX", "CEL", "GLK", "XYL", "EP", "BNJ",
-           "PIZ", "HARP", "ACC", "BUZZ", "KICK", "SNR", "BRSH", "HAT", "SHK"]
+           "PIZ", "HARP", "ACC", "BUZZ", "KICK", "SNR", "BRSH", "HAT", "SHK",
+           "RHO", "PADW", "BASW"]
 
 # Głosy, których dominanta widma to częstotliwość nuty (sinusy i trójkąt).
 PITCHED_DOMINANT = {"BELL": 60, "BOX": 60, "CEL": 60, "GLK": 60, "HARP": 60, "TRI": 60, "BUZZ": 57}

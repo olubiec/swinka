@@ -281,7 +281,11 @@
   "drums": null,
   "fx": [
     {
-      "fx": "SAT(2.8)",
+      "fx": "SAT(1.2)",
+      "on": "all"
+    },
+    {
+      "fx": "TAPE(0.2)",
       "on": "all"
     },
     {
