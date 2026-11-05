@@ -1,0 +1,29 @@
+# Windows build of the desktop app (WinForms, .NET Framework 4.8) plus Core tests (.NET 9).
+# Runs `tools/build.ps1 -Config Release`, which restores and builds Cuy.sln with the MSBuild from the runner's Visual Studio,
+# then runs the Core tests. Not run by the Linux CI job; the manual Windows pass is in docs/qa/WINDOWS_MANUAL.md.
+name: Windows
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md', 'docs/**', 'tasks/**']
+  workflow_dispatch:
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      # windows-latest ships Visual Studio 2022 with MSBuild and the .NET Framework 4.8 developer pack.
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Build Cuy.sln (Release) and run Core tests
+        run: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release
+      - name: Upload Cuy.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cuy-windows-release
+          path: src/Cuy/bin/Release/Cuy.exe
+          if-no-files-found: error
