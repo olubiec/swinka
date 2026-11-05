@@ -1,8 +1,11 @@
-// E7 performance soak: random clicks on web/home for SOAK_SECONDS (default 60), then checks that the DOM node count,
-// the JS event listener count and the number of pending requestAnimationFrame callbacks stay flat after warm-up.
+// E7 performance soak. Three phases on web/home:
+//   1. warm-up: random clicks for SOAK_SECONDS (default 60), coverage only, not judged;
+//   2. steady state: one pass that opens and closes every feature screen (first visits, not judged);
+//   3. repeated cycles: CYCLES more passes over the same screens; the DOM node count, the JS listener count and
+//      the pending requestAnimationFrame callbacks are judged on these cycles only.
 // Counters: CDP Memory.getDOMCounters (nodes, listeners) and a wrapper on requestAnimationFrame (pending callbacks).
 // Also fails on page errors. Output: JSON summary on stdout; exit 1 on a failed check.
-// Usage (repo root): CHROMIUM_PATH=/opt/pw-browsers/chromium SOAK_SECONDS=60 node tools/qa/perf-soak.js
+// Usage (repo root): SOAK_SECONDS=60 node tools/qa/perf-soak.js   (CHROMIUM_PATH optional; set it to a browser binary)
 'use strict';
 const http = require('http');
 const fs = require('fs');
@@ -11,10 +14,14 @@ const { chromium } = require('playwright');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const SECS = parseInt(process.env.SOAK_SECONDS || '60', 10);
-const WARMUP_SECS = Math.min(15, Math.round(SECS * 0.25));
 const SAMPLE_MS = 2000;
-// Allowed growth of the floor in the second half after warm-up: 5% or 25 items (nodes/listeners), rAF +3.
-const LIMIT = { nodesPct: 5, nodesAbs: 25, listenersPct: 5, listenersAbs: 25, rafAbs: 3 };
+const CYCLES = 6;
+// Chromium: CHROMIUM_PATH first; the Linux sandbox path only as a fallback (undefined = Playwright's bundled browser).
+const CHROMIUM = process.env.CHROMIUM_PATH || (fs.existsSync('/opt/pw-browsers/chromium') ? '/opt/pw-browsers/chromium' : undefined);
+// Limits apply to growth during the repeated cycles only. Steady state is reached after one full pass, so the
+// first-visit cost of a screen (+3..+9 nodes/listeners, KNOWN_LIMITATIONS E7) is not counted. A leak repeats per cycle,
+// so after the first pass growth should be ~0: 5 items absolute for nodes and listeners, no percentage; rAF +3.
+const LIMIT = { nodesPct: 0, nodesAbs: 5, listenersPct: 0, listenersAbs: 5, rafAbs: 3 };
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.svg': 'image/svg+xml', '.ogg': 'audio/ogg' };
 
 // Wraps requestAnimationFrame before any page script runs, so pending callbacks can be counted.
@@ -43,7 +50,7 @@ function serve() {
 (async () => {
   const server = await serve();
   const base = 'http://127.0.0.1:' + server.address().port;
-  const b = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH, args: ['--no-sandbox', '--enable-precise-memory-info'] });
+  const b = await chromium.launch({ executablePath: CHROMIUM, args: ['--no-sandbox', '--enable-precise-memory-info'] });
   const ctx = await b.newContext({ viewport: { width: 420, height: 640 } });
   await ctx.addInitScript(RAF_INIT);
   const page = await ctx.newPage();
@@ -70,7 +77,9 @@ function serve() {
     const live = await page.evaluate(() => document.getElementsByTagName('*').length);
     const raf = await page.evaluate(() => (window.__rafPending ? window.__rafPending() : -1));
     const heap = await page.evaluate(() => (performance.memory ? performance.memory.usedJSHeapSize : 0));
-    samples.push({ t, nodes: dom.nodes, live, listeners: dom.jsEventListeners, raf, heapMB: +(heap / 1048576).toFixed(1) });
+    const s = { t, nodes: dom.nodes, live, listeners: dom.jsEventListeners, raf, heapMB: +(heap / 1048576).toFixed(1) };
+    samples.push(s);
+    return s;
   };
 
   // Dev test tools (btnDevTest, test-btn, rc-btn) are left out: they add pigs and rooms on purpose.
@@ -95,6 +104,25 @@ function serve() {
     await page.waitForTimeout(30);
   }
   await sample(Math.round((Date.now() - t0) / 1000));
+
+  // Phase 2 and 3: every feature screen is opened and closed through the same API the buttons use.
+  const features = JSON.parse(fs.readFileSync(path.join(ROOT, 'web/home/features/index.json'), 'utf8'));
+  const visitAll = async () => {
+    for (const id of features) {
+      await page.evaluate((f) => window.CuyHome.openFeature(f), id);
+      await page.waitForTimeout(150);
+      await page.evaluate(() => window.CuyHome.closeFeature());
+      await page.waitForTimeout(50);
+    }
+  };
+  await page.evaluate(() => window.CuyHome.closeFeature());
+  await visitAll();                       // steady state: first visits of every screen, not judged
+  const cycles = [];
+  for (let i = 0; i < CYCLES; i++) {
+    await visitAll();
+    cycles.push(await sample(Math.round((Date.now() - t0) / 1000)));
+  }
+
   // Diagnosis for a failure: listener types on window, document and body (CDP), duplicate ids, common tag.class pairs.
   const listenerTypes = {};
   for (const expr of ['window', 'document', 'document.body']) {
@@ -117,17 +145,16 @@ function serve() {
     };
   });
 
-  // Growth is judged on the floor (minimum after forced GC) of the second half after warm-up against the first half.
-  // Screens mount on their first visit, so growth during warm-up is reported but not judged.
-  const warm = samples.filter((s) => s.t >= WARMUP_SECS);
-  const half = Math.floor(warm.length / 2);
+  // Growth is judged on the floor (minimum after forced GC) of the later half of the repeated cycles against the
+  // earlier half. Samples from warm-up and steady state are reported but not judged.
+  const half = Math.floor(cycles.length / 2);
   const floor = (arr, key) => Math.min(...arr.map((x) => x[key]));
-  const A = warm.slice(0, half), B = warm.slice(half);
-  const first = samples[0], last = samples[samples.length - 1];
+  const A = cycles.slice(0, half), B = cycles.slice(half);
+  const first = cycles[0], last = cycles[cycles.length - 1];
   const failures = [];
   const grow = (name, key, pct, abs) => {
     const a = floor(A, key), bb = floor(B, key), d = bb - a;
-    if (d > abs && d > a * pct / 100) failures.push(`${name} floor grew ${a} -> ${bb} (+${d}) in the second half`);
+    if (d > abs && d > a * pct / 100) failures.push(`${name} floor grew ${a} -> ${bb} (+${d}) across repeated cycles`);
     return { floorFirstHalf: a, floorSecondHalf: bb };
   };
   const nodes = grow('DOM nodes', 'nodes', LIMIT.nodesPct, LIMIT.nodesAbs);
@@ -137,11 +164,11 @@ function serve() {
   if (badResponses.length) failures.push('unexpected 4xx/5xx: ' + [...new Set(badResponses)].slice(0, 5).join(', '));
 
   const summary = {
-    seconds: SECS, warmupSeconds: WARMUP_SECS, clicks,
-    nodes: { start: first.nodes, end: last.nodes, ...nodes },
-    listeners: { start: first.listeners, end: last.listeners, ...listeners },
-    rafPending: { start: first.raf, end: last.raf, ...raf },
-    heapMB: { warm: first.heapMB, end: last.heapMB },
+    seconds: SECS, cycles: CYCLES, features: features.length, clicks,
+    nodes: { cycleStart: first.nodes, cycleEnd: last.nodes, ...nodes },
+    listeners: { cycleStart: first.listeners, cycleEnd: last.listeners, ...listeners },
+    rafPending: { cycleStart: first.raf, cycleEnd: last.raf, ...raf },
+    heapMB: { cycleStart: first.heapMB, cycleEnd: last.heapMB },
     errors: [...new Set(errors)].slice(0, 10),
     failures,
     series: samples.map((x) => x.t + 's cdp' + x.nodes + ' live' + x.live + ' l' + x.listeners),

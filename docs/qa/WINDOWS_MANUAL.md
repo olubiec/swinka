@@ -26,7 +26,7 @@ Wersja, data, tester i wynik każdego punktu wpisać w kolumnie „Wynik” (PAS
 
 ## Soak (punkt 15)
 
-Uruchomić `tools/qa/soak.js` z `SOAK_SECONDS=1800` w WebView (zgodnie z D7). Podczas przebiegu zapisać:
+Uruchomić `tools/qa/soak.js` z `SOAK_SECONDS=1800` w WebView (zgodnie z D7); kod wyjścia 1 oznacza FAIL (błąd strony lub wzrost węzłów DOM powyżej `SOAK_NODE_LIMIT`, domyślnie 200). Przeglądarkę można wskazać zmienną `CHROMIUM_PATH`. Podczas przebiegu zapisać:
 - godzinę startu i końca,
 - pamięć procesu `Cuy.exe` na starcie, po 15 min i na końcu (menedżer zadań),
 - liczbę wpisów `ERROR` / `Exception` w `%LocalAppData%\Cuy\logs\cuy.log` przed i po przebiegu.
