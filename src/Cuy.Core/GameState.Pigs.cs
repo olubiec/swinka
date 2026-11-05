@@ -14,6 +14,7 @@ namespace Cuy.Core
         public void EnsureRosterInitialized(NamedPigCatalog catalog = null, Random rng = null, DateTime? nowUtc = null)
         {
             if (Roster == null) Roster = new List<PigProfile>();
+            Roster.RemoveAll(pig => pig == null);
             if (ActivePigIds == null) ActivePigIds = new List<string>();
             if (OffersSeen == null) OffersSeen = new HashSet<string>();
 

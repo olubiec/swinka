@@ -34,7 +34,7 @@ namespace Cuy.Core.Tests
             if (r.State != null) Assert.NotNull(r.State.Needs);
         }
 
-        [Fact(Skip = "F3-01 open defect: SaveSystem.Load throws NullReferenceException in EnsureRosterInitialized for a roster containing null entries")]
+        [Fact]
         public void NullRosterEntries_LoadNeverThrows()
         {
             File.WriteAllText(Path.Combine(_dir, "save.json"), "{\"Roster\":[null,null]}", Encoding.UTF8);
