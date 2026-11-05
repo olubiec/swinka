@@ -19,9 +19,9 @@
             <input type="checkbox" id="settingsQuietHours" class="retro-toggle">
           </div>
           <div class="settings-row time-row" id="quietHoursTimeRow">
-            <input type="time" id="settingsQuietHoursFrom" class="retro-time">
+            <input type="time" id="settingsQuietHoursFrom" aria-label="Quiet hours from" class="retro-time">
             <span> - </span>
-            <input type="time" id="settingsQuietHoursTo" class="retro-time">
+            <input type="time" id="settingsQuietHoursTo" aria-label="Quiet hours to" class="retro-time">
           </div>
 
           <div class="settings-row">

@@ -6,6 +6,11 @@
   <title>Cuy Home</title>
   <meta name="description" content="Home of a pixel guinea pig: needs, animations, shop and care in a retro game style.">
   <script>
+    // Global error log: uncaught errors and rejected promises go to the console (WebView2 forwards it to the host log).
+    window.addEventListener('error', function (e) { console.error('[window.onerror]', e.message, e.filename + ':' + e.lineno); });
+    window.addEventListener('unhandledrejection', function (e) { console.error('[unhandledrejection]', e.reason); });
+  </script>
+  <script>
     // Static links to assets/: ../../assets/ in the browser, https://cuy.assets/ in WebView2 (see lib/ui-assets.js).
     var __cuyWv = !!(window.chrome && window.chrome.webview);
     var __cuyAssets = __cuyWv ? 'https://cuy.assets/' : '../../assets/';
@@ -263,7 +268,7 @@
   </main>
 
   <!-- Home logic and engine scripts -->
-  <script src="bridge.js"></script>
+  <script src="bridge.js" onerror="window.__cuyBridgeFailed = true"></script>
   <script src="sound.js"></script>
   <script src="lib/palette.js"></script>
   <script src="lib/sprites.js"></script>

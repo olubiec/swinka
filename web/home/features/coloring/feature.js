@@ -17,15 +17,30 @@
       }
       try {
         const str = localStorage.getItem('cuy_coloring_v1');
-        if (str) return JSON.parse(str);
-      } catch (e) {}
+        if (str) {
+          try {
+            const parsed = JSON.parse(str);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+              if (!parsed.progress || typeof parsed.progress !== 'object') parsed.progress = {};
+              if (!Array.isArray(parsed.completed)) parsed.completed = [];
+              if (!Array.isArray(parsed.unlockedPacks)) parsed.unlockedPacks = [];
+              return parsed;
+            }
+            throw new Error('unexpected shape');
+          } catch (e) {
+            // Damaged data: keep a copy so the next save does not destroy it silently.
+            console.warn('[coloring] damaged save, kept as cuy_coloring_v1_corrupt', e);
+            try { localStorage.setItem('cuy_coloring_v1_corrupt', str); } catch (e2) { console.warn('[coloring] could not keep copy', e2); }
+          }
+        }
+      } catch (e) { console.warn('[coloring] localStorage unavailable', e); }
       return { progress: {}, completed: [], unlockedPacks: [] };
     }
 
     _saveMock(state) {
       try {
         localStorage.setItem('cuy_coloring_v1', JSON.stringify(state));
-      } catch (e) {}
+      } catch (e) { console.warn('[coloring] save failed', e); }
     }
 
     loadPictureProgress(pictureId) {

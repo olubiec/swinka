@@ -219,9 +219,18 @@ namespace Cuy.Core.Save
                     if (File.Exists(SavePath))
                     {
                         TryCopy(SavePath, CorruptPath);
-                        File.Delete(SavePath);
+                        // Atomic swap: there is no moment without a save.json (no backup file is kept here).
+                        try { File.Replace(TempPath, SavePath, null, true); }
+                        catch (Exception ex) when (ex is IOException || ex is PlatformNotSupportedException)
+                        {
+                            File.Copy(TempPath, SavePath, true);
+                            File.Delete(TempPath);
+                        }
                     }
-                    File.Move(TempPath, SavePath);
+                    else
+                    {
+                        File.Move(TempPath, SavePath);
+                    }
                 }
 
                 // First save: create the backup right away, so a damaged save.json can never wipe the game.
