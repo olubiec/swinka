@@ -3,7 +3,9 @@
 chain: lista {"fx": "REV-M", "wet": 0.16} (wet opcjonalne; domyślne z tabeli poniżej).
 Nazwy: REV-S, REV-M, REV-L (pogłos), LP(f), HP(f) Hz, TAPE(w) falowanie ±w %, VINYL(db) trzask i szum
 (poziom db względem szczytu 1,0), CRUSH (8 bit, 12 kHz), PAN(p) p w -1..1, WIDTH(w) szerokość stereo 0..2,
-CHORUS lub CHORUS(ms) chorus stereo (głębokość ms, domyślnie 3).
+CHORUS lub CHORUS(ms) chorus stereo (głębokość ms, domyślnie 3), SAT(d) nasycenie taśmy tanh (d 0..10,
+miękkie, bez zmiany poziomu małych sygnałów), SHELF(db) półka wysoka (db ujemne tną powyżej 4 kHz),
+LOFI lub LOFI(bity) łagodna degradacja (12 bit, 22,05 kHz; domyślnie 12 bitów).
 
 Długość: pogłos dokleja ogon (wyjście = n + długość IR - 1). Zawinięcie ogona do początku pętli
 robi finish.py (PM-06), nie ten moduł.
@@ -22,7 +24,7 @@ LN1000 = math.log(1000.0)
 CRUSH_BITS = 8
 CRUSH_RATE = 12000.0
 PATTERN = re.compile(r"^([A-Z][A-Z0-9-]*)(?:\(([-0-9.]+)\))?$")
-KNOWN = set(REVERB) | {"LP", "HP", "TAPE", "VINYL", "CRUSH", "PAN", "WIDTH", "CHORUS"}
+KNOWN = set(REVERB) | {"LP", "HP", "TAPE", "VINYL", "CRUSH", "PAN", "WIDTH", "CHORUS", "SAT", "SHELF", "LOFI"}
 
 
 def _as_stereo(audio):
@@ -131,6 +133,40 @@ def _crush(audio, sr):
     return out
 
 
+def _sat(audio, drive):
+    """Miękkie nasycenie tanh; wzmocnienie sygnałów małych = 1 (znormalizowane przez drive)."""
+    d = max(float(drive), 1e-3)
+    return np.tanh(audio * d) / d
+
+
+def _shelf(audio, db, sr, corner=4000.0):
+    """Półka wysoka (korner 4 kHz, nachylenie łagodne): gain db powyżej korneru."""
+    n = audio.shape[1]
+    nfft = 1 << int(math.ceil(math.log2(max(n, 2))))
+    f = np.fft.rfftfreq(nfft, 1.0 / sr)
+    g = 10.0 ** (db / 20.0)
+    blend = 1.0 / (1.0 + (corner / np.maximum(f, 1e-9)) ** 2)
+    h = 1.0 + (g - 1.0) * blend
+    out = np.empty_like(audio)
+    for c in range(2):
+        out[c] = np.fft.irfft(np.fft.rfft(audio[c], nfft) * h, nfft)[:n]
+    return out
+
+
+def _lofi(audio, bits, sr, rate=22050.0):
+    """Łagodna degradacja: próbkowanie do 22,05 kHz (interpolacja liniowa, bez ostrych obrazów)
+    i kwantyzacja do `bits` bitów."""
+    n = audio.shape[1]
+    idx = np.arange(n)
+    grid = np.arange(0, n, sr / rate)
+    steps = 2 ** (int(bits) - 1) - 1
+    out = np.empty_like(audio)
+    for c in range(2):
+        q = np.round(np.clip(np.interp(grid, idx, audio[c]), -1, 1) * steps) / steps
+        out[c] = np.interp(idx, grid, q)
+    return out
+
+
 def _pan(audio, pos):
     pos = min(max(pos, -1.0), 1.0)
     mono = 0.5 * (audio[0] + audio[1])
@@ -169,7 +205,7 @@ def _parse(item):
         raise ValueError("unknown fx: %s" % name)
     arg = float(m.group(2)) if m.group(2) is not None else None
     base = m.group(1)
-    if base in ("LP", "HP", "TAPE", "VINYL", "PAN", "WIDTH") and arg is None:
+    if base in ("LP", "HP", "TAPE", "VINYL", "PAN", "WIDTH", "SAT", "SHELF") and arg is None:
         raise ValueError("%s needs an argument" % name)
     return base, arg
 
@@ -196,6 +232,12 @@ def apply(chain, audio, sr):
             out = _pan(out, arg)
         elif base == "WIDTH":
             out = _width(out, arg)
+        elif base == "SAT":
+            out = _sat(out, arg)
+        elif base == "SHELF":
+            out = _shelf(out, arg, sr)
+        elif base == "LOFI":
+            out = _lofi(out, 12 if arg is None else arg, sr)
         elif base == "CHORUS":
             out = _chorus(out, 3.0 if arg is None else arg, sr)
     return out.astype(np.float32)

@@ -2,13 +2,13 @@
  "id": "theme_cuy",
  "kind": "theme",
  "title": "Motyw Cuy (także home_main)",
- "role": "wizytówka gry; jedna warstwa: EP (paleta, docs/music_progressions.md), J1 I-vi-ii-V + IV-iii-vi-V7, arpeggio ósemkowe ze swingiem, ciepły pikselowy lo-fi jazz",
- "bpm": 84,
+ "role": "wizytówka gry; jedna warstwa: EP (paleta), J1 I-vi-ii-V + IV-iii-vi-V, wolno rozłożone akordy jazzowe (maj9, m11, 13, maj9#11), lo-fi ambient: taśma, nasycenie, ciemny pogłos, trzask winylu jako efekt",
+ "bpm": 66,
  "meter": 4,
  "key": "C",
  "mode": "major",
  "bars": 32,
- "swing": 58,
+ "swing": 50,
  "seed": 10724,
  "chords": [
   {
@@ -17,11 +17,11 @@
   },
   {
    "bar": 2,
-   "sym": "Am9"
+   "sym": "Am11"
   },
   {
    "bar": 3,
-   "sym": "Dm9"
+   "sym": "Dm11"
   },
   {
    "bar": 4,
@@ -29,11 +29,11 @@
   },
   {
    "bar": 5,
-   "sym": "Fmaj9"
+   "sym": "Fmaj9#11"
   },
   {
    "bar": 6,
-   "sym": "Em9"
+   "sym": "Em11"
   },
   {
    "bar": 7,
@@ -41,7 +41,7 @@
   },
   {
    "bar": 8,
-   "sym": "G7"
+   "sym": "G13sus"
   },
   {
    "bar": 9,
@@ -49,11 +49,11 @@
   },
   {
    "bar": 10,
-   "sym": "Am9"
+   "sym": "Am11"
   },
   {
    "bar": 11,
-   "sym": "Dm9"
+   "sym": "Dm11"
   },
   {
    "bar": 12,
@@ -61,11 +61,11 @@
   },
   {
    "bar": 13,
-   "sym": "Fmaj9"
+   "sym": "Fmaj9#11"
   },
   {
    "bar": 14,
-   "sym": "Em9"
+   "sym": "Em11"
   },
   {
    "bar": 15,
@@ -73,7 +73,7 @@
   },
   {
    "bar": 16,
-   "sym": "G7"
+   "sym": "G13sus"
   },
   {
    "bar": 17,
@@ -81,11 +81,11 @@
   },
   {
    "bar": 18,
-   "sym": "Am9"
+   "sym": "Am11"
   },
   {
    "bar": 19,
-   "sym": "Dm9"
+   "sym": "Dm11"
   },
   {
    "bar": 20,
@@ -93,11 +93,11 @@
   },
   {
    "bar": 21,
-   "sym": "Fmaj9"
+   "sym": "Fmaj9#11"
   },
   {
    "bar": 22,
-   "sym": "Em9"
+   "sym": "Em11"
   },
   {
    "bar": 23,
@@ -105,7 +105,7 @@
   },
   {
    "bar": 24,
-   "sym": "G7"
+   "sym": "G13sus"
   },
   {
    "bar": 25,
@@ -113,11 +113,11 @@
   },
   {
    "bar": 26,
-   "sym": "Am9"
+   "sym": "Am11"
   },
   {
    "bar": 27,
-   "sym": "Dm9"
+   "sym": "Dm11"
   },
   {
    "bar": 28,
@@ -125,11 +125,11 @@
   },
   {
    "bar": 29,
-   "sym": "Fmaj9"
+   "sym": "Fmaj9#11"
   },
   {
    "bar": 30,
-   "sym": "Em9"
+   "sym": "Em11"
   },
   {
    "bar": 31,
@@ -137,7 +137,7 @@
   },
   {
    "bar": 32,
-   "sym": "G7"
+   "sym": "G13sus"
   }
  ],
  "layers": [
@@ -145,16 +145,20 @@
    "role": "chd",
    "voice": "EP",
    "db": -3,
-   "pattern": "chords.arp8",
-   "part": "jedna warstwa: arpeggio pełnych akordów 9./maj9/13 w ósemkach ze swingiem 58%, płynne i przytulne",
-   "register": "C4-B4",
+   "pattern": "chords.rolled",
+   "part": "jedna warstwa: wolno rozłożone (roll) pełne akordy, 1 akord na takt, miękko, długi pogłos zlewa zmiany",
+   "register": "C3-B4",
    "stem": "base"
   }
  ],
  "drums": null,
  "fx": [
   {
-   "fx": "TAPE(0.15)",
+   "fx": "SAT(2.5)",
+   "on": "EP"
+  },
+  {
+   "fx": "TAPE(0.3)",
    "on": "EP"
   },
   {
@@ -162,16 +166,28 @@
    "on": "EP"
   },
   {
-   "fx": "LP(4500)",
+   "fx": "REV-L",
+   "on": "EP",
+   "wet": 0.42
+  },
+  {
+   "fx": "LOFI(12)",
    "on": "EP"
   },
   {
-   "fx": "WIDTH(1.3)",
+   "fx": "VINYL(-50)",
    "on": "EP"
   },
   {
-   "fx": "REV-M",
-   "wet": 0.2,
+   "fx": "LP(2800)",
+   "on": "EP"
+  },
+  {
+   "fx": "SHELF(-4)",
+   "on": "EP"
+  },
+  {
+   "fx": "WIDTH(1.4)",
    "on": "EP"
   }
  ],

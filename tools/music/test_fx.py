@@ -70,6 +70,20 @@ def test_vinyl_adds_noise_at_level():
     assert np.max(np.abs(out)) < 0.5, "crackle too loud"
 
 
+def test_sat_shelf_lofi():
+    x = sine(300, 0.5, amp=0.05)
+    assert abs(rms_db(fx.apply([{"fx": "SAT(2)"}], x, SR)) - rms_db(x)) < 0.2, "SAT must keep small signals"
+    loud = fx.apply([{"fx": "SAT(3)"}], sine(300, 0.5, amp=0.9), SR)
+    assert np.max(np.abs(loud)) < 0.9 / 1.0 and np.max(np.abs(loud)) <= 1.0 / 3.0 + 1e-6, "SAT must soft-clip"
+    hi = sine(8000, 0.5)
+    cut = fx.apply([{"fx": "SHELF(-9)"}], hi, SR)
+    assert rms_db(cut) < rms_db(hi) - 6, "SHELF(-9) must cut highs"
+    lo = fx.apply([{"fx": "SHELF(-9)"}], sine(200, 0.5), SR)
+    assert abs(rms_db(lo) - rms_db(sine(200, 0.5))) < 0.5, "SHELF must keep lows"
+    y = fx.apply([{"fx": "LOFI"}], sine(300, 0.5, amp=0.5), SR)
+    assert y.shape == sine(300, 0.5, amp=0.5).shape and abs(peak_freq(y) - 300) < 3.0
+
+
 def test_crush_limits_levels():
     x = sine(300, 0.5, amp=0.9)
     out = fx.apply([{"fx": "CRUSH"}], x, SR)
