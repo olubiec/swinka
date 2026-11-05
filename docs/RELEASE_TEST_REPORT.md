@@ -52,3 +52,10 @@ Gałąź: `claude/friendly-hawking-5z7tef`. Kod gry testowany: `ebfdf84` (ta sam
 3. `paths-test`: 26 znanych błędów HTTP.
 4. Balans ekonomii: profile `exploit`/`smart` powyżej 365 dni; `casual` pierwszy L2 około dnia 90.
 5. Testy Windows lokalnie: do powtórzenia na maszynie, gdzie działa `swinka-1`.
+
+## Decyzja o wydaniu
+- Decyzja właściciela: wydanie **z udokumentowanym znanym problemem** (pozycja 1 powyżej), bez poluzowania progów `tools/qa/perf-soak.js`.
+- Znany problem: `perf-soak` 180 s kończy się FAIL. Podłoga DOM i listenerów rośnie w długiej sesji przy płaskim stanie gry. Badanie wskazuje ograniczoną retencję (70–300 odłączonych węzłów), a nie nieograniczony wyciek, ale tego nie udowodniono. Próba czyszczenia `modalBody` po zamknięciu ekranu nie pomogła i została cofnięta.
+- Skutek dla gracza: możliwe większe zużycie pamięci i spadek płynności przy bardzo długich sesjach (godziny). Brak błędów JS ani crashy w testach.
+- Do zrobienia po wydaniu: migawki sterty w połowie i na końcu przebiegu 180 s, porównanie odłączonych węzłów z ich trzymającymi.
+- Kroki wydania wymagające Windows (poza sesją cloud): build Release (`tools/build.ps1 -Config Release`), spakowanie `Cuy_v1.zip`, publikacja GitHub Release, pomiar pamięci w długiej sesji na Windows.
