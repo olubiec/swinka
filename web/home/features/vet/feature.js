@@ -10,6 +10,7 @@
   let currentFactIndex = 0;
   let factInterval = null;
   let unsubToast = null;
+  const toastTimers = new Set();
 
   function render(container, api, state) {
     if (!state) return;
@@ -224,11 +225,13 @@
           toast.className = 'feature-vet-toast';
           toast.textContent = msg.text;
           toastContainer.appendChild(toast);
-          setTimeout(() => {
+          const timer = setTimeout(() => {
+            toastTimers.delete(timer);
             if (toastContainer.contains(toast)) {
               toastContainer.removeChild(toast);
             }
           }, 2500);
+          toastTimers.add(timer);
         }
       });
     },
@@ -241,6 +244,8 @@
         unsubToast();
         unsubToast = null;
       }
+      toastTimers.forEach(t => clearTimeout(t));
+      toastTimers.clear();
     },
     onState(state, container, api) {
       if (container && container.offsetParent !== null) { // visible

@@ -211,6 +211,8 @@
         clearInterval(timerInterval);
         timerInterval = null;
       }
+      currentContainer = null;
+      currentApi = null;
       setAllowClip();
     },
 

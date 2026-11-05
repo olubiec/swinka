@@ -24,6 +24,13 @@
   - `decor`: każdy broadcast stanu przerysowywał okno, nawet zamknięte, i tworzył nowy `PigCanvas` z nieskończoną pętlą rAF (+43 węzły, +16 listenerów na broadcast). Teraz poprzedni podgląd jest zatrzymywany, a `close()` nie pozwala na render przy zamkniętym oknie.
   - `PigCanvas`: każda instancja dopinała listener `load` do współdzielonego arkusza sprite'ów, co trzymało ją przy życiu. Listener jest `once` i dodawany tylko, gdy obraz jeszcze się nie załadował.
   - `app.js` `closeModal()` nie wywoływał `CuyHome.closeFeature()`, więc `close()` funkcji nigdy nie działało przy zamknięciu okna.
+- Naprawione w kolejnej rundzie (wyciek przy przełączaniu A -> B):
+  - `app.js` `openFeature()` najpierw zamyka poprzednią funkcję przez `close()`. Wcześniej jej timery i listenery zostawały przy każdym przełączeniu.
+  - `vet`: listener toastów jest odsubskrybowany w `close()` (naprawa w 96b16aa). Timeouty usuwania toastów są śledzone i czyszczone w `close()`.
+  - `tricks`: `close()` zeruje kontener i API, więc `onState` nie renderuje do odłączonego DOM.
+  - `coloring`: `destroy()` ustawia flagę, a asynchroniczne `init()` i timeout modala ukończenia ją sprawdzają. Listener `coloring_progress` jest zdejmowany przy dopasowaniu i w `destroy()`, nie tylko przy zgodnym `pictureId`.
+  - `rooms`: nakładka planu domu jest usuwana przez `close()`.
+  - `farm`, `store`: timery są czyszczone w `close()` (wcześniej `close()` nie był wywoływany przy przełączaniu).
 - Znane, niezałatwione:
-  - `features/vet/feature.js`: `api.onMessage('toast', ...)` w `open()` bez odsubskrybowania w `close()`. Każde otwarcie dokłada handler, więc toast pojawia się wielokrotnie.
+  - Soak (`tools/qa/perf-soak.js`) nie został uruchomiony po tych zmianach, więc nie wiadomo, czy E7 przechodzi.
   - `canvas-pig.js`: konstruktor `PigCanvas` nadpisuje `window.CuyRoom`. Podgląd dekoracji przejmuje więc API pokoju (`addLayer` trafia do podglądu, nie do głównego pokoju).

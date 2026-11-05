@@ -8,6 +8,7 @@
     constructor(api) {
       this.api = api;
       this.saveTimeout = null;
+      this.progressOff = null;
       this.isMock = !api.getState().coloring;
     }
 
@@ -28,16 +29,26 @@
       } catch (e) {}
     }
 
+    cancelProgressLoad() {
+      if (this.progressOff) {
+        this.progressOff();
+        this.progressOff = null;
+      }
+    }
+
     loadPictureProgress(pictureId) {
       return new Promise((resolve) => {
         if (!this.isMock) {
-          // Listen for progress from C#
+          // Listen for progress from C#; the listener is dropped on match or by cancelProgressLoad()
+          this.cancelProgressLoad();
           const off = this.api.onMessage('coloring_progress', (msg) => {
             if (msg.pictureId === pictureId) {
               off();
+              if (this.progressOff === off) this.progressOff = null;
               resolve(msg.painted || '');
             }
           });
+          this.progressOff = off;
           this.api.send({ type: 'coloring_load', pictureId });
         } else {
           const state = this.getState();
@@ -379,6 +390,7 @@
       this.isFlat = localStorage.getItem('cuy_coloring_style') === 'flat';
 
       this.rafId = null;
+      this.destroyed = false;
       this.needsRedraw = true;
       this.flashCells = new Map();
 
@@ -389,6 +401,7 @@
        let state = this.store.getState();
        this.isCompleted = state.completed.includes(this.pic.id);
        this.painted = await this.store.loadPictureProgress(this.pic.id);
+       if (this.destroyed) return;
 
        if (this.painted.length !== this.pic.cells.length) {
           this.painted = '0'.repeat(this.pic.cells.length);
@@ -642,6 +655,7 @@
 
        // Show modal
        setTimeout(() => {
+          if (this.destroyed) return;
           const modal = this.container.querySelector('.editor-completion-modal');
           if (modal) {
              modal.style.display = 'flex';
@@ -885,6 +899,8 @@
     }
 
     destroy() {
+       this.destroyed = true;
+       this.store.cancelProgressLoad();
        window.removeEventListener('resize', this.onResize);
        if (this.cleanupInput) this.cleanupInput();
        if (this.rafId) cancelAnimationFrame(this.rafId);
@@ -919,7 +935,10 @@
       galleryInstance.renderPacks();
     },
     close() {
-      if (editorInstance) editorInstance.destroy();
+      if (editorInstance) {
+        editorInstance.destroy();
+        editorInstance = null;
+      }
     },
     onState(state) {
        // Re-render if new pack unlocked

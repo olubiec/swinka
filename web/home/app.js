@@ -716,6 +716,8 @@
     openFeature(id, arg) {
       const feat = this.features.find(f => f.id === id);
       if (!feat) return;
+      // Close the previously open feature so its timers and listeners are released
+      if (this.currentFeatureId) this.closeFeature();
       openModal(feat.title, '');
       if (elements.modalBody) {
         elements.modalBody.className = 'modal-body feature-' + id;
