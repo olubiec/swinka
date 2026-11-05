@@ -17,6 +17,9 @@
   // Note frequencies (Hz)
   const F = {
     // Octave 2
+    E2: 82.41,
+    FS2: 92.50,
+    GS2: 103.83,
     B2: 123.47,
     // Octave 3
     CS3: 138.59,
