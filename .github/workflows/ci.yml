@@ -51,6 +51,9 @@ jobs:
           npx --prefix tools/qa playwright install --with-deps chromium
           node tools/qa/lib/layout.selftest.js
           node tools/qa/web-smoke.js
+          node tools/qa/paths-test.js
+          node tools/qa/audio-edge-test.js
+          node tools/qa/econ-gate.js
       - uses: actions/upload-artifact@v4
         if: always()
         with:
