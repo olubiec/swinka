@@ -111,9 +111,8 @@ namespace Cuy.Core.Tests
             Near(Small.Bottom, result.State.Y + result.OffsetY + bounds.Height, 1e-9);
         }
 
-        // D1.2 (a) with a foot offset: E4 is still open. TossPhysics puts the ground at Bottom - Height and
-        // ignores FootOffsetY, while grounded code (FormPet.cs) uses Bottom - Height - OffsetY. Unskip after the fix.
-        [Fact(Skip = "E4 open: TossPhysics ground ignores FootOffsetY. Unskip after the fix.")]
+        // D1.2 (a) with a foot offset (E4): the ground is Bottom - Height - FootOffsetY, as in grounded code.
+        [Fact]
         public void Landing_WithFootOffset_KeepsFeetOnBottomEdge()
         {
             var state = new TossState { X = 0, Y = 489.5, VelX = 0, VelY = 38.4 };

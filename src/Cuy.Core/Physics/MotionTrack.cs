@@ -1,10 +1,12 @@
 using System;
 using System.Drawing;
 
-namespace Cuy
+namespace Cuy.Core.Physics
 {
-    // Interpolate presentation only; collision/animation coordinates stay authoritative.
-    internal sealed class MotionTrack
+    /// <summary>
+    /// Interpolates the on-screen position of the pet. Presentation only; collision/animation coordinates stay authoritative.
+    /// </summary>
+    public sealed class MotionTrack
     {
         private double fromX, fromY, toX, toY, started, duration;
         public bool Initialized { get; private set; }
