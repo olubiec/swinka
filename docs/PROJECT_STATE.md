@@ -18,3 +18,8 @@
 - `WorldItemCatalogTests.RealCatalog_LoadsAllItems_CountAtLeast50`: 55 → 81 (katalog po handoverze grafik, +26 pozycji).
 - `PigRoomsMigrationTests.ThreeRosterPigsGetThreeRooms_AndSecondCallCreatesNone`: klucze pokoi `NamedId ?? Id` (Kuki → `kuki`), zgodnie z docs/qa/DECISIONS.md D1.
 - 2026-11-05 · `tests/Cuy.Core.Tests/GameSessionWorldTests.cs`, `Open_OldSaveWithEquippedDecor_PlacesLegacyItems_AndReopenKeepsThem`: przed: `Assert.True(itemCount > 0)` (tapeta i podłoga zakładały przedmioty w salonie); po: `Assert.Equal("floor_wood_light", floor)` plus sprawdzenie `salon.Wallpaper` i `salon.Floor` po ponownym otwarciu. Powód: tapeta i podłoga są polami salonu (`salon.Wallpaper`, `salon.Floor`), a nie umieszczonymi przedmiotami; `LegacyDecorMigrationTests` definiuje 4 umieszczenia dla sześciu slotów. Decyzja właściciela (przekazana Claude): zachowanie migracji bez zmian.
+
+## Decyzja D4: ekonomia, pierwszy zakup (S3, 5.11.2026)
+- Cel 14–21 dni do pierwszego zakupu **nie jest spełniony**. Pierwsze ulepszenie pokoju (L2 = 400) wypada w dniu 72 (gracz regularny) i 99 (casual); źródło: `docs/qa/reports/S4.md`.
+- Ceny **bez zmian**: próba stawki K3 dla 26 nowych przedmiotów złamała zatwierdzone zakresy `PigRoomInvariantsTests` (wnętrze domu 28740 zamiast 10000–14000; nowy zlew 40463 zamiast 15000–30000), więc zmianę cofnięto.
+- Otwarte: strukturalne koszty zakupów albo dochód; do decyzji właściciela przy późniejszym przeglądzie ekonomii.
