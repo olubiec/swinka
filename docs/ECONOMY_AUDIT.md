@@ -1,6 +1,6 @@
 # Inwentarz koniczyn: źródła i ujścia (D1e)
 
-Stan na commit wdrożenia D1e. Tylko odczyt kodu i danych, bez zmian w kodzie. Liczby z `assets/data/*.json`, `assets/records/*.json`, `web/home/features/music/prices.js`. Ceny muzyki są tymczasowe (TODO-D3).
+Stan na commit wdrożenia D1e. Tylko odczyt kodu i danych, bez zmian w kodzie. Liczby z `assets/data/*.json`, `assets/records/*.json`, `web/home/features/music/prices.js`. Ceny muzyki po decyzji D5e (sekcja 5); wcześniej były tymczasowe (TODO-D3).
 
 ## 1. Źródła (koniczyny wpadają do salda)
 
@@ -32,10 +32,10 @@ Brak źródeł płyt: w kodzie płyty nie są nigdzie przyznawane za darmo. Jedy
 | Stragan (ulepszenie) | 500 | jednorazowe | `Pet.Market.cs` (l. 303), `market.json` |
 | Adopcja świnki | `OfferCost` z oferty (0 dla pamiątki) | jednorazowe | `Pet.Adoption.cs` |
 | Pokoje świnek, kolor, skórki | skórka 180; wariant za ceil(cena x 15%), min 5 | jednorazowe | `Pet.PigRoomItems.cs`, `Pet.Dorm.cs`, `home_economy.json` |
-| Muzyka: płyty | common 60, rare 200 (unique bez ceny); kopie można kupować wielokrotnie | płyty: nielimitowane | `MusicPrices.cs`, `prices.js` |
-| Muzyka: odtwarzacze | 250, 400, 600, 900, 1400 (starter turntable za darmo) | jednorazowe | `MusicPrices.cs`, `prices.js` |
+| Muzyka: płyty | common 50, rare 150, unique 150 (D5e); kopie można kupować wielokrotnie | płyty: nielimitowane | `MusicPrices.cs`, `prices.js` |
+| Muzyka: odtwarzacze | 200, 400, 600, 900, 1400 (starter turntable za darmo; portable 250 -> 200 w D5e) | jednorazowe | `MusicPrices.cs`, `prices.js` |
 
-Sumy jednorazowych ujść (bez pokoi i przedmiotów dekoracyjnych): przedmioty świata 9295, pakiety działek 3920, sady 1000, miejsca 2200, odtwarzacze 3550, płyty do pełnego albumu 17 x 60 + 5 x 200 = 2020 (2 płyty unique nie mają ceny). Łącznie około 22 000 koniczyn jednorazowych, plus pokoje (około 5 000) i dekoracje (`items_decor.json`, nie zsumowane).
+Sumy jednorazowych ujść (bez pokoi i przedmiotów dekoracyjnych): przedmioty świata 9295, pakiety działek 3920, sady 1000, miejsca 2200, odtwarzacze 3550, płyty do pełnego albumu 17 x 50 + 5 x 150 + 2 x 150 (unique) = 1900, odtwarzacze 3500 (po D5e). Łącznie około 21 800 koniczyn jednorazowych, plus pokoje (około 5 000) i dekoracje (`items_decor.json`, nie zsumowane).
 
 ## 3. Ujścia stałe i ich brak
 
@@ -48,6 +48,27 @@ Sumy jednorazowych ujść (bez pokoi i przedmiotów dekoracyjnych): przedmioty �
 
 1. Dzienny prezent to 50 koniczyn od 9. dnia serii, czyli około 19 % dochodu gracza regularnego (`ECONOMY_SIM.md`).
 2. Limit minigier (150 dziennie) jest wiążący dla gracza regularnego i gracza-grindera. Wyniki powyżej około 5 gier po 30 nie dają nic.
-3. Płyty: w `players_design.json` (`record_price_hint`) podano common 40, rare 150, unique 500. Kod ma 60 i 200 (TODO-D3). Różnica do decyzji człowieka.
-4. Dwie płyty unique nie mają ceny i żadnego źródła. Nie da się ich zdobyć.
+3. Płyty: w `players_design.json` (`record_price_hint`) podano common 40, rare 150, unique 500. Decyzja D5e (sekcja 5) ustawia kod na 50, 150, 150. Różnica wobec hintu jest świadoma.
+4. Dwie płyty unique (`s4_disco`, `s4_taniec`) nie miały ceny ani źródła. Od D5e mają cenę 150 i są w sklepie, więc da się je kupić. Stałe źródło poza sklepem nadal nie istnieje.
 5. Stary model `tools/qa/economy-sim.js` (świat, farma, rynek, 60-dniowy raport w `docs/economy-report.md`) nie obejmuje muzyki ani przepływu koniczyn z minigier. Nowy `tools/qa/econ-sim.js` (D2e) jest jego uzupełnieniem, nie zastępstwem.
+
+## 5. Decyzja D5e: ceny muzyki
+
+Decyzja zastosowana w kodzie i w `prices.js` (oba miejsca muszą być zgodne; test parzystości w `tools/qa/music-economy-test.js`).
+
+| Pozycja | Przed | Po D5e |
+|---|---|---|
+| Płyta common | 60 | 50 |
+| Płyta rare | 200 | 150 |
+| Płyta unique (`s4_disco`, `s4_taniec`) | brak ceny, nie do kupienia | 150 (cena rare, bo nie miały źródła) |
+| Odtwarzacz portable | 250 | 200 |
+| Pozostałe odtwarzacze | 400, 600, 900, 1400 | bez zmian |
+
+Uwagi:
+- Hint z `assets/records/players_design.json` (`record_price_hint`: common 40, rare 150, unique 500) różni się od kodu. Kod idzie za decyzją D5e, nie za hintem. Plik `players_design.json` jest tylko do odczytu i nie został zmieniony.
+- Cena unique 150 jest nowa: poprzedni test wymagał, aby unique nie był na sprzedaż. Test w `tests/Cuy.Core.Tests/MusicBuyTests.cs` zmieniono na cenę rare.
+- Zapisy nie przechowują cen, więc posiadane płyty i odtwarzacze nie zmieniają się (`ECONOMY_SIM.md`, sekcja 7).
+
+### Odroczone: ujście nadwyżki (surplus sink)
+
+Nie dodano w tej rundzie. Powód: katalog jednorazowy jest znany jako wyczerpany (`ECONOMY_SIM.md`, sekcja 4, wniosek 1), a dobór ujścia to osobna decyzja i osobna fala. Do zrobienia w późniejszej fali, po ustaleniu, co ma być ujściem (rotacja sklepu, rosnąca cena kopii albo inne).

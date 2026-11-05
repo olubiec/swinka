@@ -61,11 +61,13 @@ namespace Cuy.Core.Tests
         }
 
         [Fact]
-        public void UniqueRecordIsNotForSale()
+        public void UniqueRecordCostsTheRarePrice()
         {
+            // Decision D5e: unique records have no source, so they are priced at the rare price.
             MusicBuyCheck check = MusicShop.Check(new GameState(), MusicShop.KindRecord, Unique, 99999, Rarity);
 
-            Assert.Equal(MusicBuyError.NotForSale, check.Error);
+            Assert.Equal(MusicBuyError.None, check.Error);
+            Assert.Equal(MusicPrices.RecordPriceByRarity["rare"], check.Price);
         }
 
         [Fact]

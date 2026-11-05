@@ -1,6 +1,6 @@
 // Music prices in clovers (A6, decision D3). ONE place for every music price.
-// TODO-D3: temporary values. The simulator (D3e) sets the final numbers; do not tune them by hand.
-// Records: by rarity from assets/records/manifest.json. 'unique' has no price yet (not for sale).
+// Decision D5e (docs/ECONOMY_AUDIT.md): common 50, rare 150, unique 150, portable 200. Keep in sync with MusicPrices.cs.
+// Records: by rarity from assets/records/manifest.json. 'unique' has no source, so it gets the rare price (D5e).
 // Players: cheapest first; player_turntable is the starter player (granted once, see economy.js).
 // Browser: window.CuyMusicPrices. Node: require().
 (function (root, factory) {
@@ -11,13 +11,14 @@
   'use strict';
 
   const RECORD_PRICE = Object.freeze({
-    common: 60, // TODO-D3 range 40-80
-    rare: 200 // TODO-D3 range 150-300
+    common: 50,
+    rare: 150,
+    unique: 150
   });
 
   const PLAYER_PRICE = Object.freeze({
-    player_turntable: 120, // TODO-D3 (starter, granted for free once)
-    player_portable: 250, // TODO-D3
+    player_turntable: 120, // starter, granted for free once
+    player_portable: 200,
     player_gramophone: 400, // TODO-D3
     player_cassette: 600, // TODO-D3
     player_boombox: 900, // TODO-D3

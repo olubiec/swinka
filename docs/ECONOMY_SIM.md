@@ -11,7 +11,7 @@ node tools/qa/econ-sim.js --ach-days 100000          # test wrażliwości: nagro
 node tools/qa/econ-sim.js --repeat-records           # po celach jednorazowych nadwyżka kupuje kopie płyt (ujście bez końca)
 ```
 
-Deterministyczność: dwa uruchomienia z seedem 1 dają identyczny JSON (sprawdzone, `cmp`). Skrót sha1 CSV dla domyślnego biegu: `08e64cfa...`.
+Deterministyczność: dwa uruchomienia z seedem 1 dają identyczny JSON (sprawdzone, `cmp`). Skrót sha1 CSV dla domyślnego biegu: `08e64cfa...` (przed D5e); po D5e: `435c575b...` (sekcja 9).
 
 ## 1. Założenia (ZAŁOŻENIE = nie ma w danych, do potwierdzenia)
 
@@ -94,7 +94,7 @@ Warianty: obecne ceny (common 60, rare 200, portable 250); ceny z `players_desig
 
 Wniosek: cena płyty nie zmienia progów, a dzień pierwszego odtwarzacza dla casual zależy głównie od tego, kiedy wpadają nagrody za osiągnięcia.
 
-## 6. D5e: pytanie do człowieka (NIE zastosowano)
+## 6. D5e: pytanie do człowieka (ZASTOSOWANO, sekcja 9)
 
 Próg ≤ 5 dni dla pierwszego odtwarzacza przechodzi przy obecnej cenie (250) tylko przy założeniu, że osiągnięcia wpadają szybko. Bez tego założenia casual dostaje odtwarzacz w dniu 6.
 
@@ -103,6 +103,8 @@ Propozycja widełek (do wyboru, bez wpisywania do kodu):
 - rare: 150-200 (obecnie 200; hint 150).
 - pierwszy odtwarzacz (portable): 170-220 (obecnie 250). Ten zakres daje dzień ≤ 5 także bez szybkich osiągnięć.
 - Pozostałe odtwarzacze: bez zmian, do decyzji po ustaleniu D4 (inflacja i sinki).
+
+Decyzja D5e (sekcja 9) przyjęła: common 50, rare 150, portable 200, a unique 150.
 
 Pytanie: czy osiągnięcia mają być rozkładane (obecne założenie) czy celowo wolniejsze? Od tego zależy, czy cena portable 250 zostaje.
 
@@ -122,3 +124,29 @@ Pytanie: czy osiągnięcia mają być rozkładane (obecne założenie) czy celow
 - Brak źródła płyt poza sklepem: propozycje z `players_design.json` (rotacja, prezenty, odznaki, sezon) nie są w kodzie.
 - Model świata (`tools/qa/economy-sim.js`, `docs/economy-report.md`) nie uwzględnia muzyki. Oba symulatory do ujednolicenia, gdy zapadnie decyzja o cenach.
 - Zachowania profili i założenia z sekcji 1 nie są potwierdzone danymi z gry. Wynik to kierunek, nie prognoza.
+
+## 9. D5e: nowe ceny i wynik symulatora
+
+Ceny po D5e (`web/home/features/music/prices.js` i `src/Cuy.Core/Music/MusicPrices.cs`): common 50, rare 150, unique 150 (dwie płyty bez źródła, cena rare), portable 200. Pozostałe odtwarzacze bez zmian. Szczegóły i uzasadnienie: `ECONOMY_AUDIT.md`, sekcja 5.
+
+Saldo na końcu dnia (`node tools/qa/econ-sim.js --days 365 --csv ...`, seed 1):
+
+| Dzień | casual | regularny | grinder |
+|---|---|---|---|
+| 30 | 821 | 897 | 125 |
+| 90 | 510 | 3051 | 13420 |
+| 365 | 2384 | 64335 | 106389 |
+
+Progi (`econ-gate.js`), bez zmian w logice bramki i bez zmian w jej progach:
+
+| Profil | Pierwsza płyta (<= 2 dni) | Pierwszy odtwarzacz (<= 5 dni) |
+|---|---|---|
+| casual | 1 | 4 |
+| regularny | 1 | 2 |
+| grinder | 1 | 1 |
+
+Wynik: `econ-gate: OK (3 profiles, seed 1, 365 days)`. Skrót sha1 CSV po D5e: `435c575bda562c6dd557beacdbd9b4e3c4bc0ee4`.
+
+Kolejne liczby: w roku dochód casual 26169, regularny 97245, grinder 146599 (bez zmian, bo źródła nie zmieniły się). Wydatki na cele jednorazowe: 20165 w każdym profilu (katalog zakupów w symulatorze obejmuje wszystkie 91 celów i wszystkie trzy profile kończą go w ciągu roku). Stare dane z sekcji 4 (dzień wyczerpania katalogu 323/78/52) nie zostały przeliczone po D5e.
+
+Odroczone: ujście nadwyżki (surplus sink) nie zostało dodane. Powód i opis w `ECONOMY_AUDIT.md`, sekcja 5.
