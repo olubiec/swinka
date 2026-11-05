@@ -40,6 +40,8 @@
   padding: 6px 10px;
   font-size: 11px;
   white-space: nowrap;
+  flex-direction: row;
+  gap: 0;
 }
 
 .btn-adopt-pig:hover:not(:disabled) {
