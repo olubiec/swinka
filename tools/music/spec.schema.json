@@ -51,7 +51,7 @@
           "db": { "type": "number", "minimum": -60, "maximum": 0 },
           "pattern": {
             "type": "string",
-            "pattern": "^(bass\\.(root_fifth|walking|bossa|octave8|oom|pedal2bars)|chords\\.(rolled|offbeat_2_4|arp8|bossa|stab_i2_i4|oompa|sustain)|orn\\.every_n_bars\\([1-9][0-9]*, *[0-9.]+\\)|random\\.pentatonic_walk|drums\\.(brush_swing|hat_swing)|melody\\.skeleton|noise\\.loop\\([a-z0-9_]+, *-?[0-9.]+\\))$"
+            "pattern": "^(bass\\.(root_fifth|walking|bossa|octave8|oom|pedal2bars)|chords\\.(rolled(\\([0-9.]+\\))?|offbeat_2_4|arp8|bossa|stab_i2_i4|oompa|sustain)|orn\\.every_n_bars\\([1-9][0-9]*, *[0-9.]+\\)|random\\.pentatonic_walk|drums\\.(brush_swing|hat_swing)|melody\\.skeleton|noise\\.loop\\([a-z0-9_]+, *-?[0-9.]+\\))$"
           },
           "from_bar": { "type": "integer", "minimum": 1, "maximum": 256 },
           "register": { "type": "string", "pattern": "^[A-G][#b]?[0-9]-[A-G][#b]?[0-9]$" },

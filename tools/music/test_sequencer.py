@@ -219,6 +219,35 @@ def test_chords_rolled():
     print("  chords.rolled: 5 głosów, roll, prowadzenie głosów OK")
 
 
+def test_chords_rolled_legend():
+    """Legenda v7: slash chordy (bas z '/'), 6 głosów, zmienna liczba głosów, argument odstępu roll."""
+    prog = ["Cmaj13#11", "Dsowhat", "Am11/G", "Db13", "Cmaj7/E", "Eq3", "G7alt", "Cmaj9#11"]
+    spec = sample_spec(chords=[{"bar": i + 1, "sym": s} for i, s in enumerate(prog)],
+                       layers=[{"role": "pad", "voice": "PAD", "db": -6, "pattern": "chords.rolled(0.4)"}])
+    ev = S.layer_events(spec, spec["layers"][0])
+    by_bar = {}
+    for e in ev:
+        by_bar.setdefault(int(e["t_beats"] // 4), []).append(e)
+    prev = None
+    for bar in range(8):
+        es = sorted(by_bar[bar], key=lambda e: e["t_beats"])
+        mids = [e["midi"] for e in es]
+        assert mids == sorted(mids) and len(set(mids)) == len(mids), (prog[bar], mids)
+        assert 3 <= len(mids) <= 7, (prog[bar], mids)
+        assert abs(es[1]["t_beats"] - es[0]["t_beats"] - 0.4) < 1e-9, "argument roll nie działa"
+        assert 41 <= mids[0] <= 52 and all(55 <= m <= 79 for m in mids[1:]), mids
+        assert sum(1 for m in mids if m < 48) <= 1, "podwojenie poniżej C3"
+        assert mids[-1] - mids[1] <= 19, "zbyt szeroka góra %s" % mids
+        if prev is not None:
+            assert max(min(abs(c - p) for p in prev[1:]) for c in mids[1:]) <= 9, (prog[bar], mids, prev)
+        prev = mids
+    assert [e["midi"] % 12 for e in sorted(by_bar[2], key=lambda e: e["t_beats"])][0] == 7, "bas Am11/G = G"
+    assert [e["midi"] % 12 for e in sorted(by_bar[4], key=lambda e: e["t_beats"])][0] == 4, "bas Cmaj7/E = E"
+    assert len(by_bar[0]) == 6 and len(by_bar[5]) == 3, "Cmaj13#11 = 6 głosów (bas + 5); Eq3 = 3"
+    assert S.build(spec)["pad"].shape[0] == 2
+    print("  chords.rolled(0.4): slash, 6 głosów, zmienna liczba głosów, rejestry OK")
+
+
 def test_unsupported_pattern_raises():
     spec = sample_spec()
     spec["layers"][0]["pattern"] = "bass.bossa"
@@ -243,7 +272,7 @@ def test_noise_and_drums_skipped():
 
 def main():
     tests = [test_three_layers_clean, test_event_timing_and_swing, test_loop_seam_and_levels,
-             test_walking_bass, test_arp8, test_brush_and_hat_swing, test_chords_rolled,
+             test_walking_bass, test_arp8, test_brush_and_hat_swing, test_chords_rolled, test_chords_rolled_legend,
              test_unsupported_pattern_raises, test_noise_and_drums_skipped]
     for t in tests:
         print(t.__name__)

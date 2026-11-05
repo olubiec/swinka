@@ -265,29 +265,50 @@ def _p_drums_hat_swing(ctx, args):
     return out
 
 
+def _near_tops(upper, prev):
+    """Górne głosy, gdy liczba głosów zmienia się między akordami: dla każdej klasy wysokości wybieramy
+    oktawę (G3-G5) tak, by suma odległości do najbliższych głosów poprzedniego akordu (w obie strony) była
+    najmniejsza; głosy różne, rozpiętość <= 19 półtonów."""
+    opts = [[m for m in range(55, 80) if m % 12 == pc] for pc in upper]
+    best = None
+    for cand in itertools.product(*opts):
+        if len(set(cand)) < len(cand) or max(cand) - min(cand) > 19:
+            continue
+        cost = sum(min(abs(c - p) for p in prev) for c in cand)
+        cost += sum(min(abs(c - p) for c in cand) for p in prev)
+        cost += 0.1 * abs(sum(cand) / len(cand) - 67)
+        if best is None or cost < best[0]:
+            best = (cost, sorted(cand))
+    return best[1] if best else None
+
+
 def _p_chords_rolled(ctx, args):
-    """Pełne akordy (4-5 głosów, korzeń nisko) z płynnym prowadzeniem głosów: góra akordu wybiera
-    najbliższe wysokości względem poprzedniego akordu. Nuty lekko rozłożone w górę (roll),
-    trzymane do końca taktu (PAD: release zlewa akordy)."""
+    """Pełne akordy (4-6 głosów, korzeń lub bas z "/" nisko) z płynnym prowadzeniem głosów: góra akordu
+    wybiera najbliższe wysokości względem poprzedniego akordu. Nuty rozłożone w górę (roll; opcjonalny
+    argument = odstęp w uderzeniach, domyślnie 0,16), trzymane do końca taktu (release zlewa akordy)."""
     m = ctx["meter"]
-    roll = 0.16
+    roll = float(args[0]) if args else 0.16
     out, prev = [], None
     for bar in _bars(ctx):
-        notes, _ = T.chord_notes(_chord_sym(ctx["chords"], bar))
-        root = _voice_chord(notes[:1], 41)[0]
-        upper = [_pc(n) for n in notes[1:]][:4]
+        notes, bass = T.chord_notes(_chord_sym(ctx["chords"], bar))
+        root = _voice_chord([bass or notes[0]], 41)[0]
+        names = {_pc(n): n for n in (notes if bass else notes[1:])}
+        upper = list(names)[:5]
+        first = sorted(_voice_chord([names[pc] for pc in upper], 60))
         if prev is None:
-            tops = sorted(_voice_chord([notes[i] for i in range(1, len(notes))][:4], 60))
-        else:
+            tops = first
+        elif len(upper) == len(prev):
             best = None
             for perm in itertools.permutations(upper):
-                cand = [_fold(_near(pc, p), 55, 79) for pc, p in zip(perm, prev)] if len(perm) == len(prev) else None
-                if cand is None or len(set(cand)) < len(cand):
+                cand = [_fold(_near(pc, p), 55, 79) for pc, p in zip(perm, prev)]
+                if len(set(cand)) < len(cand):
                     continue
                 cost = sum(abs(c - p) for c, p in zip(cand, prev))
                 if best is None or cost < best[0]:
                     best = (cost, cand)
-            tops = sorted(best[1]) if best else sorted(_voice_chord([notes[i] for i in range(1, len(notes))][:4], 60))
+            tops = sorted(best[1]) if best else first
+        else:
+            tops = _near_tops(upper, prev) or first
         prev = tops
         for i, midi in enumerate([root] + tops):
             t = (bar - 1) * m + i * roll
