@@ -45,11 +45,13 @@
     { "bar": 32, "sym": "G13" }
   ],
   "layers": [
-    { "role": "pad", "voice": "PAD", "db": -12, "pattern": "chords.sustain", "part": "ciepła podkładka: akord na cały takt (I-vi-ii-V z 9., wariant jazzowy)", "register": "C4-G5" },
-    { "role": "mel", "voice": "HARP", "db": -2, "pattern": "melody.skeleton", "part": "rzadka melodia wg szkieletu std (MT-06), takty 1-2 motyw", "register": "C4-G5" },
-    { "role": "chd", "voice": "EP", "db": -7, "pattern": "chords.offbeat_2_4", "part": "Rhodes-like: akordy na offbeatach 2 i 4 (groove, swing 60)", "from_bar": 1 },
-    { "role": "bass", "voice": "TRI", "db": -6, "pattern": "bass.root_fifth", "part": "bas: korzeń i kwinta (bossa/walking niezaimplementowane)", "from_bar": 1 },
-    { "role": "orn", "voice": "P12", "db": -10, "pattern": "orn.every_n_bars(2, 3.5)", "part": "pikselowe iskry co 2 takty na offbeacie 3-4 (zamiast arpeggio akordów: wzór niezaimplementowany)", "from_bar": 3, "register": "C5-C6" }
+    { "role": "pad", "voice": "PAD", "db": -12, "pattern": "chords.sustain", "part": "ciepła podkładka: akord na cały takt (I-vi-ii-V z 9., wariant jazzowy)", "register": "C4-G5", "stem": "base" },
+    { "role": "mel", "voice": "HARP", "db": -2, "pattern": "melody.skeleton", "part": "rzadka melodia wg szkieletu std (MT-06), takty 1-2 motyw", "register": "C4-G5", "stem": "lead" },
+    { "role": "chd", "voice": "EP", "db": -7, "pattern": "chords.offbeat_2_4", "part": "Rhodes-like: akordy na offbeatach 2 i 4 (groove, swing 60)", "from_bar": 1, "stem": "rhythm" },
+    { "role": "bass", "voice": "TRI", "db": -6, "pattern": "bass.walking", "part": "bas chodzący: ćwierćnuty korzeń-tercja-kwinta, podejście półtonem do następnego akordu", "from_bar": 1, "stem": "base" },
+    { "role": "perc", "voice": "BRSH", "db": -12, "pattern": "drums.brush_swing", "part": "szczotka: akcent na 2 i 4, ghost na offbeatach (swing 60)", "from_bar": 1, "stem": "rhythm" },
+    { "role": "hat", "voice": "HAT", "db": -12, "pattern": "drums.hat_swing", "part": "hi-hat: ósemki, mocniej na uderzeniach, ciszej na offbeatach (swing 60)", "from_bar": 1, "stem": "rhythm" },
+    { "role": "orn", "voice": "P12", "db": -10, "pattern": "orn.every_n_bars(2, 3.5)", "part": "pikselowe iskry co 2 takty na offbeacie 3-4 (zamiast arpeggio akordów: wzór niezaimplementowany)", "from_bar": 3, "register": "C5-C6", "stem": "lead" }
   ],
   "drums": {
     "kit": "lofi_soft",

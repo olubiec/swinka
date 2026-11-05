@@ -4,6 +4,7 @@ Sprawdza: 8-taktową próbkę z 3 warstwami (kształt, brak przesterowania, cisz
 czasy zdarzeń wzorów i swing, szew pętli po finish (5 kopii, LUFS, true peak), nieobsługiwany wzór.
 Pliki tymczasowe w katalogu tymczasowym systemu, nie w assets/.
 """
+import math
 import os
 import subprocess
 import sys
@@ -108,15 +109,102 @@ def test_loop_seam_and_levels():
         rep["lufs"], rep["true_peak_dbtp"], max(seams), typical))
 
 
+def groove_spec(pattern, meter=4, swing=50, bars=4):
+    """Specyfikacja jednej warstwy wzoru groove; akordy jak w sample_spec, bez fx."""
+    spec = sample_spec(meter=meter, swing=swing, bars=bars, drums=None, fx=[])
+    spec["chords"] = [{"bar": 1, "sym": "Cmaj9"}, {"bar": 2, "sym": "Am9"},
+                      {"bar": 3, "sym": "Fmaj9"}, {"bar": 4, "sym": "G13"}]
+    spec["layers"] = [{"role": "x", "voice": "TRI", "db": -6, "pattern": pattern}]
+    return spec
+
+
+def test_walking_bass():
+    spec = groove_spec("bass.walking")
+    ev = S.layer_events(spec, spec["layers"][0])
+    assert len(ev) == 4 * 4, len(ev)  # 4 ćwierćnuty na takt
+    assert all(abs(e["dur_beats"] - 1.0) < 1e-9 for e in ev), "ćwierćnuty mają trwać 1 uderzenie"
+    times = sorted(e["t_beats"] for e in ev)
+    assert times == [float(i) for i in range(16)], times  # równo co uderzenie, bez offbeatów
+    assert all(39 <= e["midi"] <= 52 for e in ev), "bas poza rejestrem 39-52 (podejście może być o pół tonu niżej)"
+    by_bar = {}
+    for e in ev:
+        by_bar.setdefault(int(e["t_beats"] // 4), []).append(e["midi"])
+    # takt 1 (Cmaj9): korzeń C (48), tercja E (52), kwinta G (43), podejście do Am (A=45 -> 44)
+    assert by_bar[0] == [48, 52, 43, 44], by_bar[0]
+    assert by_bar[0][3] == by_bar[1][0] - 1, "ostatnie uderzenie taktu podchodzi półtonem do korzenia następnego"
+    assert by_bar[3][3] == by_bar[0][0] - 1, "ostatni takt zapętlony: podejście do korzenia taktu 1"
+    sw = S.layer_events(groove_spec("bass.walking", swing=66), groove_spec("bass.walking", swing=66)["layers"][0])
+    assert sorted(e["t_beats"] for e in sw) == times, "swing nie powinien przesuwać ćwierćnut"
+    three = S.layer_events(groove_spec("bass.walking", meter=3), groove_spec("bass.walking", meter=3)["layers"][0])
+    assert len(three) == 4 * 3, len(three)
+    print("  bass.walking: 4 ćwierćnuty/takt, rejestr 40-52, podejście półtonem, swing bez wpływu OK")
+
+
+def test_arp8():
+    spec = groove_spec("chords.arp8")
+    ev = S.layer_events(spec, spec["layers"][0])
+    assert len(ev) == 8 * 4, len(ev)  # osiem ósemek na takt
+    assert all(abs(e["dur_beats"] - 0.5) < 1e-9 for e in ev)
+    times = sorted({e["t_beats"] for e in ev})
+    want = sorted(b * 4 + k * 0.5 for b in range(4) for k in range(8))
+    assert times == want, times[:10]
+    assert all(60 <= e["midi"] <= 71 for e in ev), "arpeggio poza rejestrem C4-B4"
+    chords = ["Cmaj9", "Am9", "Fmaj9", "G13"]
+    for bar, sym in enumerate(chords):
+        notes, _ = S.T.chord_notes(sym)
+        tones = S._voice_chord(notes, 60)
+        got = [e["midi"] for e in sorted(ev, key=lambda e: e["t_beats"])
+               if int(e["t_beats"] // 4) == bar]
+        assert got == [tones[i % len(tones)] for i in range(8)], (sym, got, tones)
+    sw = S.layer_events(groove_spec("chords.arp8", swing=66), groove_spec("chords.arp8", swing=66)["layers"][0])
+    off = [e["t_beats"] for e in sw if abs(e["t_beats"] - math.floor(e["t_beats"]) - 0.5) < 1e-9
+           or abs(e["t_beats"] - math.floor(e["t_beats"]) - 0.66) < 1e-6]
+    assert off and all(abs(t - (math.floor(t) + 0.66)) < 1e-9 for t in off), "swing 66 nie przesunął offbeatów"
+    print("  chords.arp8: 8 ósemek/takt, rejestr 60-71, cykl tonów, swing 66 na offbeatach OK")
+
+
+def off_of(ev):
+    return [e for e in ev if abs(e["t_beats"] - math.floor(e["t_beats"]) - 0.5) < 1e-9]
+
+
+def test_brush_and_hat_swing():
+    for pattern, per_beat, vel_on in (("drums.brush_swing", None, None), ("drums.hat_swing", 2, 0.5)):
+        spec = groove_spec(pattern)
+        ev = S.layer_events(spec, spec["layers"][0])
+        if pattern == "drums.brush_swing":
+            # 4/4: 2 akcenty (uderzenia 2 i 4) + 4 ghosty (offbeaty) na takt
+            assert len(ev) == 6 * 4, len(ev)
+            on = [e for e in ev if abs(e["t_beats"] - math.floor(e["t_beats"])) < 1e-9]
+            assert sorted(e["t_beats"] % 4 for e in on) == [1.0] * 4 + [3.0] * 4, "akcenty nie na 2 i 4"
+            assert all(e["vel"] > 0.5 for e in on) and all(e["vel"] < 0.5 for e in off_of(ev)), "akcent/ghost"
+        else:
+            assert len(ev) == per_beat * 4 * 4, len(ev)  # ósemki: 8 na takt
+            on = [e for e in ev if abs(e["t_beats"] - math.floor(e["t_beats"])) < 1e-9]
+            assert len(on) == 16 and all(e["vel"] > 0 for e in ev)
+        off = [e for e in ev if abs(e["t_beats"] - math.floor(e["t_beats"]) - 0.5) < 1e-9]
+        assert len(off) == len(ev) - len(on), "zły podział na uderzenia i offbeaty"
+        assert all(0 <= e["t_beats"] % 4 < 4 for e in ev), "zdarzenie poza taktem"
+        assert all(e["voice"] == "TRI" for e in ev)
+        sw = S.layer_events(groove_spec(pattern, swing=66), groove_spec(pattern, swing=66)["layers"][0])
+        sw_off = [e["t_beats"] for e in sw if abs(e["t_beats"] - math.floor(e["t_beats"]) - 0.66) < 1e-6]
+        assert len(sw_off) == len(off), "swing 66 nie przesunął offbeatów o 0,16"
+        sw_on = sorted(e["t_beats"] for e in sw if abs(e["t_beats"] - math.floor(e["t_beats"])) < 1e-9)
+        assert sw_on == sorted(e["t_beats"] for e in on), "uderzenia nie powinny się przesuwać"
+        three = S.layer_events(groove_spec(pattern, meter=3), groove_spec(pattern, meter=3)["layers"][0])
+        want3 = 4 * 4 if pattern == "drums.brush_swing" else 6 * 4  # 3/4: akcent na 2 + 3 ghosty; 6 ósemek
+        assert len(three) == want3, (pattern, len(three))
+    print("  drums.brush_swing i drums.hat_swing: liczba zdarzeń, takt, offbeaty przesunięte swingiem OK")
+
+
 def test_unsupported_pattern_raises():
     spec = sample_spec()
-    spec["layers"][0]["pattern"] = "bass.walking"
+    spec["layers"][0]["pattern"] = "bass.bossa"
     try:
         S.build(spec)
     except NotImplementedError:
         print("  nieobsługiwany wzór zgłasza NotImplementedError")
         return
-    raise AssertionError("bass.walking powinien zgłaszać NotImplementedError")
+    raise AssertionError("bass.bossa powinien zgłaszać NotImplementedError")
 
 
 def test_noise_and_drums_skipped():
@@ -132,6 +220,7 @@ def test_noise_and_drums_skipped():
 
 def main():
     tests = [test_three_layers_clean, test_event_timing_and_swing, test_loop_seam_and_levels,
+             test_walking_bass, test_arp8, test_brush_and_hat_swing,
              test_unsupported_pattern_raises, test_noise_and_drums_skipped]
     for t in tests:
         print(t.__name__)

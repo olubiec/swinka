@@ -10,7 +10,8 @@ Kontrakt: build(spec) -> {layer: ndarray (2, n) float32}   (tools/music/CONTRACT
 - Humanizacja: z seed (osobny generator na warstwę), czas ±8 ms, poziom ±3 dB.
 - fx: łańcuch `spec["fx"]` z `on` = all albo kod głosu tej warstwy; nakładany na warstwę przed `db`.
 - Poza zakresem sekwencera (wpisane do SKIPPED, ostrzeżenie w render.py): `noise.loop(...)`
-  (szumy renderuje tools/music/noise/) i `drums` (brak siatki perkusji w kontrakcie).
+  (szumy renderuje tools/music/noise/) i pole `drums` (kick/snare/shaker nie są renderowane;
+  BRSH i HAT grają warstwy wzorów `drums.brush_swing` / `drums.hat_swing`).
 """
 import math
 import re
@@ -194,13 +195,86 @@ def _p_random_pentatonic_walk(ctx, args):
     return out
 
 
+def _walk_root(sym):
+    """Korzeń akordu do chodzenia basem, w rejestrze 40-52, oraz tony akordu (lista nut)."""
+    notes, bass = T.chord_notes(sym)
+    return _fold(_near(_pc(bass or notes[0]), 46), 40, 52), notes
+
+
+def _p_bass_walking(ctx, args):
+    """Chodzący bas, jedna ćwierćnuta na uderzenie. 4/4: korzeń, tercja, kwinta, podejście półtonem
+    od dołu do korzenia następnego taktu; 3/4: korzeń, kwinta, podejście. Ostatni takt
+    podchodzi do korzenia pierwszego takt (pętla)."""
+    m = ctx["meter"]
+    out = []
+    for bar in _bars(ctx):
+        root, notes = _walk_root(_chord_sym(ctx["chords"], bar))
+        nxt = bar + 1 if bar < ctx["bars"] else 1
+        nxt_root, _ = _walk_root(_chord_sym(ctx["chords"], nxt))
+        third = _fold(root + (_pc(notes[1]) - root) % 12, 40, 52) if len(notes) > 1 else root + 4
+        fifth = _fold(root + 7, 40, 52)
+        approach = nxt_root - 1  # 39-51: półton pod korzeniem następnego akordu
+        if m == 4:
+            tones = [root, third, fifth, approach]
+        else:
+            tones = [root, fifth, approach]
+        t0 = (bar - 1) * m
+        for i, midi in enumerate(tones):
+            out.append((t0 + i, 1.0, midi, 0.8 if i == 0 else 0.7))
+    return out
+
+
+def _p_chords_arp8(ctx, args):
+    """Arpeggio akordu w rejestrze C4-B4: ósemki (2 na uderzenie), tony akordu w górę, zapętlone.
+    W 4/4 osiem ósemek na takt, w 3/4 sześć. Offbeaty ósemkowe podlegają swingowi."""
+    m = ctx["meter"]
+    out = []
+    for bar in _bars(ctx):
+        notes, _ = T.chord_notes(_chord_sym(ctx["chords"], bar))
+        tones = _voice_chord(notes, 60)
+        for i in range(2 * m):
+            out.append(((bar - 1) * m + i * 0.5, 0.5, tones[i % len(tones)], 0.6))
+    return out
+
+
+def _p_drums_brush_swing(ctx, args):
+    """BRSH (szczotka): akcent na parzystych uderzeniach (2, 4; w 3/4 tylko 2) i ghost na każdym
+    offbeacie ósemkowym (swing). Wysokość ignorowana przez głos perkusyjny."""
+    m = ctx["meter"]
+    out = []
+    for bar in _bars(ctx):
+        for b in range(m):
+            t0 = (bar - 1) * m + b
+            if b % 2 == 1:
+                out.append((t0, 0.5, 60, 0.7))
+            out.append((t0 + 0.5, 0.5, 60, 0.35))
+    return out
+
+
+def _p_drums_hat_swing(ctx, args):
+    """HAT: ósemki na całym takcie; na uderzeniach mocniej, na offbeatach ciszej (swing).
+    Czas trwania 1/8 uderzenia: zamknięty hi-hat przy tempie powyżej ok. 63 BPM (dur_s < 0,12 s)."""
+    m = ctx["meter"]
+    out = []
+    for bar in _bars(ctx):
+        for b in range(m):
+            t0 = (bar - 1) * m + b
+            out.append((t0, 0.125, 60, 0.5))
+            out.append((t0 + 0.5, 0.125, 60, 0.3))
+    return out
+
+
 PATTERNS = {
     "chords.sustain": _p_chords_sustain,
     "chords.offbeat_2_4": _p_chords_offbeat_2_4,
+    "chords.arp8": _p_chords_arp8,
     "bass.root_fifth": _p_bass_root_fifth,
+    "bass.walking": _p_bass_walking,
     "melody.skeleton": _p_melody_skeleton,
     "orn.every_n_bars": _p_orn_every_n_bars,
     "random.pentatonic_walk": _p_random_pentatonic_walk,
+    "drums.brush_swing": _p_drums_brush_swing,
+    "drums.hat_swing": _p_drums_hat_swing,
 }
 
 
