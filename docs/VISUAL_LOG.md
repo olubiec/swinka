@@ -203,3 +203,11 @@ Ręczna weryfikacja (człowiek, na Windows; pola do zaznaczenia):
 - [ ] Targ: stragany, plakaty `poster_1..3`, tabliczki
 - [ ] Menu: tło `bg/menu.png`, panele i przyciski UI, ikona aplikacji
 - [ ] Dom: oświetlenie lamp i kominka w każdej porze dnia (`lights.json`)
+
+## C1-C5 Brakująca grafika (5.11.2026)
+- C1: 15 kafli ścian i podłóg (`tiles_c1.py`), `tiles.json` ma 68 kafli.
+- C2/C3: 81 ikon wyprowadzonych z atlasu (`icons_auto.py`), indeksy 174-254; blok CSS `docs/icons_css_block.css`; dane C3 `assets/data/world_items_proposed.json`.
+- C4: 10 sprite'ów dekoru (`decor_c4.py`), wpisy w `atlas.json`; zastępują rysunek z kodu.
+- C5: wąsy kędzierzawe (R1) i ucho Glena NIE zrobione: wymagają zmiany `pig.py`/`coatgen.py` i ponownego eksportu 25 arkuszy; zostają opcjonalne.
+- Lint `style_check.py`: 0 naruszeń. `check-assets.js` i `check-icons.js`: zostaje tylko `icon-pig` (kod, G17).
+

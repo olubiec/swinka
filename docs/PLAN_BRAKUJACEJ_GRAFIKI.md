@@ -1,6 +1,6 @@
 # Plan: brakująca grafika (audyt 5.11.2026)
 
-Status: **C1 (15 kafli), C2 (55 ikon) i C3 (26 ikon) wykonane 5.11.2026**; zostają C4 (opcjonalnie) i C5. Ikony wyprowadza `tools/art/world/icons_auto.py` ze sprite'ów atlasu (indeksy 174–254, arkusz 255 pól), kafle `tiles_c1.py`, blok CSS dla kodu: `docs/icons_css_block.css`, dane C3: `assets/data/world_items_proposed.json` (ceny i komfort ustala człowiek). Audyt: porównanie id z kodu i danych (`web/home`, `src/Cuy.Core`, `assets/data/*.json`) z plikami w `assets/`; testy `check-assets.js`, `check-icons.js`, `style_check.py` (lint 0).
+Status: **C1 (15 kafli), C2 (55 ikon) i C3 (26 ikon) wykonane 5.11.2026**; C4 (10 sprite'ów dekoru) i C5 (dokumenty) też wykonane; nie zrobione: wąsy kędzierzawe i ucho Glena (opcjonalne, wymagają reeksportu 25 arkuszy świnek). Ikony wyprowadza `tools/art/world/icons_auto.py` ze sprite'ów atlasu (indeksy 174–254, arkusz 255 pól), kafle `tiles_c1.py`, blok CSS dla kodu: `docs/icons_css_block.css`, dane C3: `assets/data/world_items_proposed.json` (ceny i komfort ustala człowiek). Audyt: porównanie id z kodu i danych (`web/home`, `src/Cuy.Core`, `assets/data/*.json`) z plikami w `assets/`; testy `check-assets.js`, `check-icons.js`, `style_check.py` (lint 0).
 
 ## 1. Wyniki audytu
 | # | Znalezisko | Liczba | Rodzaj |

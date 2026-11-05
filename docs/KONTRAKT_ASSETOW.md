@@ -8,11 +8,11 @@ Format jest ostateczny. Kod tylko wczytuje i rysuje; jeśli pliku brak, rysuje g
 | Obrót | `rotation.json` w folderze etapu | `turn_smooth` (8 klatek), `idle_34` (4 klatki) |
 | Świnka generyczna | `assets/sprites/<etap>/` (smooth_normal) i `assets/sprites/breeds/<rasa>_<budowa>/<etap>/`; indeks `breeds.json` | arkusz główny kodowany strefami + `palettes.json` (dokładne przemapowanie) |
 | Portrety | `assets/sprites/portraits/<id>.png` | 128x128, okrągła plakietka, `ned kuki glen james racuch` |
-| Ikony | `assets/icons/icons_16.png` + `icons.json` | pasek 161 ikon 16x16, indeksy 0-160, klasy `.icon-*` w `style.css` |
+| Ikony | `assets/icons/icons_16.png` + `icons.json` | pasek 255 pól 16x16 (173 wpisów w `icons.json`, indeks 125 pusty), indeksy 174-254 to ikony C2/C3 (`tools/art/world/icons_auto.py`), gotowe reguły CSS w `docs/icons_css_block.css`, `--icon-count` = 255 |
 | Przedmioty świata | `assets/world/atlas.json` -> `items[id]` | `file`, `file_x2`, `cells [w,h]`, `size`, `anchor` (dół, środek); `id` = `world_items.json` |
 | Uprawy i grządki | `assets/world/farm/farm.png` + `farm.json` | `frames[id] = [[x,y,w,h],...]`; `crop_<id>` 4 klatki (nasiono, kiełek, rośnie, dojrzała), `tree_<id>` 3 klatki 16x32, `bed_empty`, `bed_wet`, `soil`, `water_anim` (4), `great_harvest` (4) |
 | Tła | `assets/world/bg/<garden|park>_<morning|day|evening|night>.png`, `farm.png`, `market.png` | ogród i farma 256x144, park 384x192, targ 256x144 |
-| Kafelki | `assets/world/tiles/<id>.png` + `assets/world/tiles.json` | 16x16: `grass_1/2`, `grass_park`, `water_0..3` (animacja), `fence_00..15` (maska 1 N, 2 E, 4 S, 8 W), `wall_/floor_<bedroom|playroom>_1..4`; `memory_stone` 32x32 |
+| Kafelki | `assets/world/tiles/<id>.png` + `assets/world/tiles.json` | 16x16: `grass_1/2`, `grass_park`, `water_0..3` (animacja), `fence_00..15` (maska 1 N, 2 E, 4 S, 8 W), `wall_/floor_<bedroom|playroom>_1..4`; `memory_stone` 32x32; C1: ściany `wallpaper_mint/peach/sky/lilac/night/cream`, podłogi `floor_wood_light/wood/tiles_checker/carpet_red/grass/soil/stone/straw/fleece` (`tools/art/world/tiles_c1.py`) |
 | Targ | `assets/world/market/<id>.png` | `stall_basic` 48x40, `stall_big` 64x40, `order_board` 32x32, `promo_1..3` 32x16 |
 | Dekoracje starego sklepu | `assets/decor/decor.png` + `decor.json` | atlas 40 przedmiotów |
 | Podgląd wszystkiego | `docs/album/podglad/*.png` | do oglądania, nie do gry |

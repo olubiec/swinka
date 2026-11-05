@@ -31,6 +31,9 @@ Spis tego, co jest w `assets/`, i tego, czego brakuje. Liczby sprawdzone skrypte
 ## Domknięte w drugim przebiegu
 Głowy wg rasy (R2): profil głowy (szerokość, długość i szerokość pyska) per rasa we wszystkich widokach (`HEADS` w `pig.py`). Wiry generyczne (R5): mocniejsze i większe. Altana w parku i kontrast ogórka i cukinii poprawione.
 
+## Dodane 5.11.2026 (C1-C4)
+15 kafli (C1), 81 ikon (C2/C3, indeksy 174-254), 10 sprite'ów dekoru sklepu w `assets/world/house/` (C4: 3 dywany, 3 rośliny, 3 obrazki, `lamp_star` ze stanem włączonym), propozycja danych `assets/data/world_items_proposed.json`. Opis i zadania dla kodu: `docs/PLAN_BRAKUJACEJ_GRAFIKI.md`.
+
 ## Nadal brak
 | Co | Uwagi |
 |---|---|

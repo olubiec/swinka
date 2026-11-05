@@ -1563,6 +1563,172 @@
     96,
     160
    ]
+  },
+  "rug_round_pink": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/rug_round_pink.png",
+   "anchor": [
+    16,
+    16
+   ]
+  },
+  "rug_stripes": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/rug_stripes.png",
+   "anchor": [
+    16,
+    16
+   ]
+  },
+  "rug_heart": {
+   "place": "house",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "house/rug_heart.png",
+   "anchor": [
+    16,
+    16
+   ]
+  },
+  "plant_fern": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/plant_fern.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "plant_cactus": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/plant_cactus.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "plant_flowers": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/plant_flowers.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "picture_pig": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/picture_pig.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "picture_sunset": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/picture_sunset.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "picture_carrot": {
+   "place": "house",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    16
+   ],
+   "file": "house/picture_carrot.png",
+   "anchor": [
+    8,
+    16
+   ]
+  },
+  "lamp_star": {
+   "place": "house",
+   "cells": [
+    1,
+    2
+   ],
+   "size": [
+    16,
+    32
+   ],
+   "file": "house/lamp_star.png",
+   "anchor": [
+    8,
+    32
+   ],
+   "light": {
+    "kind": "lamp_mushroom",
+    "on_file": "house/lamp_star_on.png",
+    "frames": 1,
+    "fps": 1
+   }
   }
  }
 }

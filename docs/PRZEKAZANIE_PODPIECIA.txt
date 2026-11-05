@@ -1,0 +1,37 @@
+PRZEKAZANIE GRAFIKI DO PODPIĘCIA (stan 5.11.2026)
+Dla programisty / orkiestry. Zakres autora grafiki: tylko tools/art/, assets/, docs/. Kod (src/, web/, tools/qa/*.js) nie był ruszany.
+Szczegóły zadań: docs/PLAN.md (G11-G17), docs/PLAN_BRAKUJACEJ_GRAFIKI.md. Kontrakt plików: docs/KONTRAKT_ASSETOW.md. Dziennik: docs/VISUAL_LOG.md.
+
+1. CO ZOSTAŁO ZROBIONE (grafika, wszystko w assets/)
+- Przebudowa B0-B14 w paletach "cuy-hay-house" (42 kolory, lint tools/art/style_check.py = 0 naruszeń R1-R7):
+  B0 narzędzia (handart.py, lint, light.py), B1 próbki, B2 53 kafle, B3 światło (14 źródeł, lights.json v2),
+  B4 dom, B5 ogród, B6 park, B7 farma, B8 targ, B9 40 dekoracji sklepu, B10 ikony, B11 interfejs 9-slice + tło menu + ikona aplikacji,
+  B12 cień świnki i rekwizyty pulpitu, B13 wspólna polana ogrodu i parku + szlify (ikona, żywopłot, strumień), B14 sad i układ scen.
+- Weryfikacja końcowa 4.11 (docs/VISUAL_LOG.md).
+- Audyt braków 5.11 i fale C1-C4:
+  C1: 15 kafli: ściany wallpaper_mint/peach/sky/lilac/night/cream; podłogi floor_wood_light, floor_wood, floor_tiles_checker, floor_carpet_red, floor_grass, floor_soil, floor_stone, floor_straw, floor_fleece (assets/world/tiles/, wpisy w tiles.json, razem 68 kafli).
+  C2/C3: 81 ikon 16x16, indeksy 174-254 w assets/icons/icons_16.png (arkusz 255 pól), wpisy w icons.json.
+  C4: 10 sprite'ów dekoru w assets/world/house/: rug_round_pink, rug_stripes, rug_heart (32x16), plant_fern, plant_cactus, plant_flowers, picture_pig, picture_sunset, picture_carrot (16x16), lamp_star (16x32 + lamp_star_on.png, światło kind lamp_mushroom); wpisy w atlas.json.
+- Testy: node tools/qa/check-assets.js = ASSETS OK, node tools/qa/lights-test.js = LIGHTS OK.
+
+2. CZEGO NIE ZROBIONO
+- Wąsy kędzierzawe (R1) i ucho Glena z rdzawą smugą: opcjonalne, wymagają zmian w tools/art/pig.py, coatgen.py i reeksportu 25 arkuszy.
+- Brak sprite'ów dla 5 elementów konstrukcyjnych (house_frame, dorm_nest, barn_hay, plot_lawn, plot_orchard) w ikonach: nie są kupowalne.
+- Pliki *_x2.png (102 szt.) zostają do G14 i zgody właściciela; assets/decor/decor.png (40 starych przedmiotów) nie pasuje do żadnego id: decyzja usunąć albo podpiąć.
+
+3. CO PODPIĄĆ W KODZIE (kolejność)
+A. Światła (G17-1): w web/home/features/{rooms,garden,farm,market}/feature.js ładować ścieżki z assets/data/lights.json (file, on_file, mask, window_tods[*], dust.file) jako 'world/' + ścieżka, bo są względem assets/world/. Nie zmieniać lights.json (check-assets.js liczy względem assets/world/). Test: node tools/qa/lights-test.js, podgląd lamp wieczorem.
+B. Ikony:
+   - style.css: --icon-count ustawić na 255; wkleić reguły z docs/icons_css_block.css (81 klas .icon-<id-z-myślnikami> { --i: N }); dodać 11 brakujących reguł dla ikon 162-173 (bedroom, run, gate, tray, storage, swatch, wander, bond, rename, color-lock, house-plan); candle ma w CSS indeks 125, w icons.json 161: ustawić 161.
+   - icon-pig: w CSS/JS pigs używać icon-pig-head (indeks 24). (check-assets.js jest już zielony; sprawdzić, że nie wróciło.)
+   - Weryfikacja: node tools/qa/check-icons.js, check-assets.js.
+C. Kafle: rysować podłogi i ściany z assets/world/tiles.json (kafle 16x16, zawijane) zamiast kolorów FLOOR_COLORS i WALL_COLORS/FALLBACK_LOOK (rooms feature.js i zbliżone). Id kafli = id przedmiotów (wallpaper_*, floor_*).
+D. Dekor sklepu: przedmioty z items_decor.json (rug_*, plant_*, picture_*, lamp_star, lamp_mushroom) mają teraz sprite'y w atlas.json; w web/home/features/decor/feature.js rysować sprite z atlasu zamiast procedury canvas (fallback zostawić). picture_* wisi na ścianie (layer wall).
+E. Dane: dopisać do assets/data/world_items.json 26 przedmiotów z assets/data/world_items_proposed.json (id, w, h, place, layer, icon są gotowe; price i comfort = null do ustalenia przez człowieka). Dzięki temu da się je kupić i postawić.
+F. G11-G16 z docs/PLAN.md (czytanie atlasu świata, sceny, ikona aplikacji G15, weryfikacja końcowa G16), potem P10 (przegląd w grze). Po G14 i zgodzie właściciela: usunąć *_x2.png.
+G. Ikona aplikacji: assets/app-icon/ (generator tools/art/world/app_icon.py), podpiąć wg G15.
+
+4. SKRYPTY (powtarzalne, tools/art/world/)
+tiles_c1.py (kafle C1), icons_auto.py (ikony C2/C3, --apply tylko dopisuje brakujące), decor_c4.py (dekor C4), icons_a.py (ikony B10), app_icon.py, garden_a.py, meadow.py, park_bg.py, build_tiles.py, build_lights_contract.py.
+Kontrola: python3 tools/art/style_check.py; node tools/qa/check-assets.js; node tools/qa/check-icons.js; node tools/qa/lights-test.js.
+Arkusze podglądu: docs/album/przebudowa/ (c1_kafle.png, c4_dekor.png i wcześniejsze).
