@@ -35,7 +35,8 @@
   function apply(rootElement) {
     var target = rootElement || (root.document && root.document.documentElement);
     if (!target || !target.style) return Promise.resolve(0);
-    var base = assetsBase();
+    // Absolute against the document: a relative url() in a custom property resolves against the stylesheet that uses it (features/*/feature.css), not against index.html.
+    var base = new URL(assetsBase(), root.location.href).href;
     return loadItems().then(function (items) {
       if (!items) return 0;
       var count = 0;
