@@ -8,7 +8,7 @@
   max-width: 380px;
   margin: 0 auto;
   font-family: var(--font-pixel, 'Pixelify Sans', monospace);
-  color: var(--c-contour-dark, #2b1712);
+  color: var(--ui-wood-0);
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   display: flex;
@@ -25,9 +25,9 @@
 }
 
 .minigames-status-bar {
-  background: var(--c-contour-dark, #2b1712);
-  color: var(--c-hay, #eedb7c);
-  border: 2px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-wood-0);
+  color: var(--ui-hay-2);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   padding: 6px 10px;
   display: flex;
@@ -42,12 +42,12 @@
   align-items: center;
   gap: 4px;
   font-weight: 700;
-  color: var(--c-gold, #f2c94c);
+  color: var(--ui-flame-2);
 }
 
 .minigames-daily-limit {
   font-size: 11px;
-  color: #d8c29d;
+  color: var(--ui-linen-1);
   background: rgba(0,0,0,0.3);
   padding: 2px 6px;
   border-radius: 4px;
@@ -61,14 +61,15 @@
 }
 
 .minigames-card {
-  background: var(--c-white, #fffdf8);
-  border: 3px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-linen-3);
+  border: 3px solid var(--ui-wood-0);
+  border-image: var(--ui-card) 5 fill / 4px;  /* card.png; flat border when the image is missing */
   border-radius: 8px;
   padding: 8px 10px;
   display: flex;
   gap: 10px;
   align-items: center;
-  box-shadow: 0 3px 0 var(--c-contour-dark, #2b1712);
+  box-shadow: 0 3px 0 var(--ui-wood-0);
   transition: transform 0.1s;
 }
 
@@ -79,21 +80,21 @@
 .minigames-card-disabled {
   opacity: 0.65;
   filter: grayscale(0.6);
-  background: #f1ebd9;
+  background: var(--ui-linen-3);
 }
 
 .minigames-card-icon {
   width: 48px;
   height: 48px;
-  background: var(--c-cream-dark, #e4cfb5);
-  border: 2px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-linen-1);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
   flex-shrink: 0;
-  box-shadow: inset 2px 2px 0 var(--c-white, #fffdf8);
+  box-shadow: inset 2px 2px 0 var(--ui-linen-3);
 }
 
 .minigames-card-content {
@@ -106,12 +107,12 @@
 .minigames-card-title {
   font-size: 14px;
   font-weight: 700;
-  color: var(--c-contour-dark, #2b1712);
+  color: var(--ui-wood-0);
 }
 
 .minigames-card-desc {
   font-size: 11px;
-  color: #6e6a5c;
+  color: var(--ui-plum-3);
   line-height: 1.25;
 }
 
@@ -125,9 +126,9 @@
 .minigames-record-badge {
   font-size: 11px;
   font-weight: 700;
-  color: var(--c-orange-dark, #c8692f);
-  background: #faeedb;
-  border: 1px solid var(--c-orange-light, #f7b46e);
+  color: var(--ui-hay-0);
+  background: var(--ui-linen-3);
+  border: 1px solid var(--ui-hay-2);
   padding: 1px 5px;
   border-radius: 3px;
   display: inline-flex;
@@ -136,21 +137,21 @@
 }
 
 .minigames-btn-play {
-  background: var(--c-leaf, #7fbf4a);
-  color: #fff;
-  border: 2px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-moss-3);
+  color: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 4px;
   padding: 6px 12px;
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 0 var(--c-contour-dark, #2b1712);
+  box-shadow: 0 2px 0 var(--ui-wood-0);
   white-space: nowrap;
 }
 
 .minigames-btn-play:hover {
-  background: #91d15c;
+  background: var(--ui-moss-3);
 }
 
 .minigames-btn-play:active {
@@ -159,9 +160,9 @@
 }
 
 .minigames-btn-locked {
-  background: #999;
-  border: 2px solid var(--c-contour-dark, #2b1712);
-  color: #eee;
+  background: var(--ui-dusk-3);
+  border: 2px solid var(--ui-wood-0);
+  color: var(--ui-linen-3);
   cursor: not-allowed;
   font-size: 11px;
   padding: 5px 8px;
@@ -180,12 +181,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--c-wood-dark, #9c6636);
-  color: var(--c-white, #fffdf8);
-  border: 2px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-wood-2);
+  color: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   padding: 4px 8px;
-  box-shadow: 0 2px 0 var(--c-contour-dark, #2b1712);
+  box-shadow: 0 2px 0 var(--ui-wood-0);
 }
 
 .minigames-hud-title {
@@ -199,11 +200,11 @@
 .minigames-hud-score {
   font-size: 14px;
   font-weight: 700;
-  color: var(--c-gold, #f2c94c);
-  background: var(--c-contour-dark, #2b1712);
+  color: var(--ui-flame-2);
+  background: var(--ui-wood-0);
   padding: 2px 6px;
   border-radius: 4px;
-  border: 1px solid var(--c-gold-dark, #c99a2e);
+  border: 1px solid var(--ui-hay-1);
 }
 
 .minigames-hud-controls {
@@ -212,31 +213,31 @@
 }
 
 .minigames-hud-btn {
-  background: var(--c-cream, #f8eddd);
-  color: var(--c-contour-dark, #2b1712);
-  border: 2px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-linen-2);
+  color: var(--ui-wood-0);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 4px;
   padding: 2px 6px;
   font-family: inherit;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 2px 0 var(--c-contour-dark, #2b1712);
+  box-shadow: 0 2px 0 var(--ui-wood-0);
 }
 
-.minigames-hud-btn:hover { background: var(--c-white, #fffdf8); }
+.minigames-hud-btn:hover { background: var(--ui-linen-3); }
 .minigames-hud-btn:active { transform: translateY(1px); box-shadow: 0 0 0; }
 
 .minigames-canvas-wrapper {
   position: relative;
   width: 100%;
   height: 290px;
-  background: #241d1a;
-  border: 3px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-plum-0);
+  border: 3px solid var(--ui-wood-0);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 
-    0 4px 0 var(--c-contour-dark, #2b1712),
+    0 4px 0 var(--ui-wood-0),
     inset 0 0 10px rgba(0,0,0,0.6);
   display: flex;
   align-items: center;
@@ -274,11 +275,11 @@
 }
 
 .minigames-pause-card {
-  background: var(--c-cream, #f8eddd);
-  border: 3px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-linen-2);
+  border: 3px solid var(--ui-wood-0);
   border-radius: 8px;
   padding: 14px 18px;
-  box-shadow: 0 6px 0 var(--c-contour-dark, #2b1712);
+  box-shadow: 0 6px 0 var(--ui-wood-0);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -290,12 +291,12 @@
 .minigames-pause-title {
   font-size: 16px;
   font-weight: 700;
-  color: var(--c-contour-dark, #2b1712);
+  color: var(--ui-wood-0);
 }
 
 .minigames-pause-sub {
   font-size: 12px;
-  color: #6e6a5c;
+  color: var(--ui-plum-3);
 }
 
 .minigames-pause-actions {
@@ -332,12 +333,12 @@
 }
 
 .minigames-gameover-card {
-  background: var(--c-cream, #f8eddd);
-  border: 4px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-linen-2);
+  border: 4px solid var(--ui-wood-0);
   border-radius: 10px;
   box-shadow: 
-    0 8px 0 var(--c-contour-dark, #2b1712),
-    inset 2px 2px 0 var(--c-white, #fffdf8);
+    0 8px 0 var(--ui-wood-0),
+    inset 2px 2px 0 var(--ui-linen-3);
   padding: 14px;
   width: 100%;
   max-width: 330px;
@@ -351,14 +352,14 @@
 .minigames-gameover-header {
   font-size: 18px;
   font-weight: 700;
-  color: var(--c-contour-dark, #2b1712);
+  color: var(--ui-wood-0);
   letter-spacing: 0.5px;
 }
 
 .minigames-score-box {
-  background: var(--c-contour-dark, #2b1712);
-  color: var(--c-gold, #f2c94c);
-  border: 2px solid var(--c-gold-dark, #c99a2e);
+  background: var(--ui-wood-0);
+  color: var(--ui-flame-2);
+  border: 2px solid var(--ui-hay-1);
   border-radius: 6px;
   padding: 6px 16px;
   display: flex;
@@ -369,7 +370,7 @@
 
 .minigames-score-label {
   font-size: 11px;
-  color: #eedb7c;
+  color: var(--ui-hay-2);
   text-transform: uppercase;
 }
 
@@ -380,9 +381,9 @@
 }
 
 .minigames-record-banner {
-  background: #fdf3cf;
-  color: #b56a15;
-  border: 2px dashed #f2c94c;
+  background: var(--ui-linen-3);
+  color: var(--ui-hay-0);
+  border: 2px dashed var(--ui-flame-2);
   border-radius: 5px;
   padding: 4px 8px;
   font-size: 12px;
@@ -397,8 +398,8 @@
 }
 
 .minigames-rewards-container {
-  background: var(--c-white, #fffdf8);
-  border: 2px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   padding: 8px 10px;
   width: 100%;
@@ -423,20 +424,20 @@
 }
 
 .pill-clovers {
-  background: #e8f5d8;
-  color: var(--c-leaf-dark, #4f8f35);
-  border: 1px solid var(--c-leaf, #7fbf4a);
+  background: var(--ui-linen-3);
+  color: var(--ui-moss-1);
+  border: 1px solid var(--ui-moss-3);
 }
 
 .pill-mood {
-  background: #fee7ec;
-  color: #b83354;
-  border: 1px solid #f5a3a2;
+  background: var(--ui-linen-3);
+  color: var(--ui-brick-2);
+  border: 1px solid var(--ui-rose-0);
 }
 
 .minigames-daily-note {
   font-size: 10px;
-  color: #887a6c;
+  color: var(--ui-plum-3);
   margin-top: 2px;
   text-align: center;
 }
@@ -450,36 +451,36 @@
 
 .minigames-btn-replay {
   flex: 1;
-  background: var(--c-orange, #e98c42);
-  color: #fff;
-  border: 2px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-hay-1);
+  color: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 5px;
   padding: 7px 10px;
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 3px 0 var(--c-contour-dark, #2b1712);
+  box-shadow: 0 3px 0 var(--ui-wood-0);
 }
 
-.minigames-btn-replay:hover { background: var(--c-orange-light, #f7b46e); }
+.minigames-btn-replay:hover { background: var(--ui-hay-2); }
 .minigames-btn-replay:active { transform: translateY(2px); box-shadow: 0 0 0; }
 
 .minigames-btn-menu {
   flex: 1;
-  background: var(--c-wood, #c98d50);
-  color: #fff;
-  border: 2px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-wood-3);
+  color: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 5px;
   padding: 7px 10px;
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 3px 0 var(--c-contour-dark, #2b1712);
+  box-shadow: 0 3px 0 var(--ui-wood-0);
 }
 
-.minigames-btn-menu:hover { background: var(--c-wood-light, #e6b073); }
+.minigames-btn-menu:hover { background: var(--ui-wood-4); }
 .minigames-btn-menu:active { transform: translateY(2px); box-shadow: 0 0 0; }
 
 /* W7-02 Hub additions */
@@ -497,13 +498,13 @@
 }
 .minigames-limit-note {
   font-size: 10px;
-  color: var(--c-red, #e8564c);
+  color: var(--ui-brick-2);
   margin-top: 2px;
   font-weight: 700;
 }
 .minigames-plays-badge {
   font-size: 11px;
-  color: var(--c-wood-deep, #6e4424);
+  color: var(--ui-wood-1);
   font-weight: 700;
   margin-left: 6px;
 }
@@ -521,8 +522,8 @@
   padding: 16px;
 }
 .minigames-hint-card {
-  background: var(--c-cream, #f8eddd);
-  border: 3px solid var(--c-contour-dark, #2b1712);
+  background: var(--ui-linen-2);
+  border: 3px solid var(--ui-wood-0);
   border-radius: 8px;
   padding: 16px;
   max-width: 300px;
@@ -530,22 +531,22 @@
   flex-direction: column;
   gap: 12px;
   text-align: center;
-  box-shadow: 0 4px 0 var(--c-contour-dark, #2b1712);
+  box-shadow: 0 4px 0 var(--ui-wood-0);
 }
 .minigames-hint-title {
   font-size: 16px;
   font-weight: 700;
-  color: var(--c-contour-dark, #2b1712);
+  color: var(--ui-wood-0);
 }
 .minigames-hint-desc {
   font-size: 12px;
-  color: var(--c-contour, #3a1d17);
+  color: var(--ui-wood-0);
   line-height: 1.3;
 }
 .minigames-saving {
   font-size: 14px;
   font-weight: 700;
-  color: var(--c-wood-deep, #6e4424);
+  color: var(--ui-wood-1);
   padding: 20px 0;
   text-align: center;
 }

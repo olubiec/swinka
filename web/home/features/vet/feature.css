@@ -2,13 +2,13 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  color: var(--c-contour);
+  color: var(--ui-wood-0);
   padding-bottom: 8px;
 }
 
 .feature-vet-illustration {
-  background: var(--c-cream);
-  border: 2px solid var(--c-contour);
+  background: var(--ui-linen-2);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   height: 100px;
   position: relative;
@@ -20,8 +20,8 @@
 
 .feature-vet-cross {
   margin-top: 10px;
-  background: var(--c-white);
-  border: 2px solid var(--c-contour);
+  background: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   padding: 4px;
   border-radius: 50%;
   display: flex;
@@ -35,8 +35,8 @@
   bottom: 0;
   width: 100%;
   height: 35px;
-  background: var(--c-wood);
-  border-top: 2px solid var(--c-contour);
+  background: var(--ui-wood-3);
+  border-top: 2px solid var(--ui-wood-0);
   box-shadow: inset 0 4px 0 rgba(255,255,255,0.2);
 }
 
@@ -46,7 +46,7 @@
 }
 
 .feature-vet-healthy {
-  color: var(--c-leaf-dark);
+  color: var(--ui-moss-1);
   font-weight: bold;
 }
 
@@ -60,12 +60,12 @@
 }
 
 .feature-vet-tag {
-  background: var(--c-orange-light);
-  color: var(--c-contour);
+  background: var(--ui-hay-2);
+  color: var(--ui-wood-0);
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 0.9em;
-  border: 1px solid var(--c-orange-dark);
+  border: 1px solid var(--ui-hay-0);
 }
 
 .feature-vet-conditions {
@@ -75,15 +75,15 @@
 }
 
 .feature-vet-card {
-  background: var(--c-white);
-  border: 2px solid var(--c-contour);
+  background: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   padding: 12px;
-  box-shadow: 0 4px 0 var(--c-cream-dark);
+  box-shadow: 0 4px 0 var(--ui-linen-1);
 }
 
 .feature-vet-unknown {
-  background: var(--c-cream);
+  background: var(--ui-linen-2);
   border-style: dashed;
 }
 
@@ -95,11 +95,11 @@
 
 .feature-vet-severity {
   height: 8px;
-  background: var(--c-cream-dark);
+  background: var(--ui-linen-1);
   border-radius: 4px;
   margin: 8px 0;
   overflow: hidden;
-  border: 1px solid var(--c-contour);
+  border: 1px solid var(--ui-wood-0);
 }
 
 .feature-vet-severity-bar {
@@ -115,7 +115,7 @@
 
 .feature-vet-cure-hint {
   font-size: 0.9em;
-  color: var(--c-rust-deep);
+  color: var(--ui-brick-1);
   font-style: italic;
   margin-bottom: 8px;
 }
@@ -130,22 +130,22 @@
 
 .feature-vet-medicine-status {
   font-weight: bold;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
 }
 
 .feature-vet-dose-done {
-  color: var(--c-leaf-dark);
+  color: var(--ui-moss-1);
   font-weight: bold;
 }
 
 .feature-vet-error {
-  color: var(--c-red);
+  color: var(--ui-brick-2);
   font-size: 0.85em;
 }
 
 .feature-vet-history {
-  background: var(--c-white);
-  border: 2px solid var(--c-contour);
+  background: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   padding: 8px 12px;
 }
@@ -163,8 +163,8 @@
 }
 
 .feature-vet-tips {
-  background: var(--c-cream);
-  border: 2px solid var(--c-contour);
+  background: var(--ui-linen-2);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 6px;
   padding: 12px;
   text-align: center;
@@ -173,7 +173,7 @@
 .feature-vet-tips-title {
   font-weight: bold;
   margin-bottom: 6px;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
 }
 
 .feature-vet-tips-text {

@@ -6,17 +6,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--c-wood);
-  color: var(--c-cream);
+  background: var(--ui-wood-3);
+  color: var(--ui-linen-2);
   padding: 8px 12px;
   border-radius: 4px;
   margin-bottom: 12px;
-  border: 2px solid var(--c-wood-deep);
+  border: 2px solid var(--ui-wood-1);
 }
 
 .feature-shop .feature-shop-balance {
   font-size: 16px;
-  color: var(--c-orange-light);
+  color: var(--ui-hay-2);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -26,16 +26,16 @@
   display: flex;
   gap: 4px;
   margin-bottom: 12px;
-  border-bottom: 2px solid var(--c-wood);
+  border-bottom: 2px solid var(--ui-wood-3);
   padding-bottom: 4px;
 }
 
 .feature-shop .feature-shop-tab {
-  background: var(--c-wood-light);
-  border: 2px solid var(--c-wood);
+  background: var(--ui-wood-4);
+  border: 2px solid var(--ui-wood-3);
   border-bottom: none;
   border-radius: 6px 6px 0 0;
-  color: var(--c-contour);
+  color: var(--ui-wood-0);
   padding: 6px 12px;
   font-family: inherit;
   font-size: 14px;
@@ -45,14 +45,14 @@
 }
 
 .feature-shop .feature-shop-tab:hover {
-  background: var(--c-hay-bright);
+  background: var(--ui-hay-3);
 }
 
 .feature-shop .feature-shop-tab.active {
-  background: var(--c-hay);
-  color: var(--c-contour-dark);
+  background: var(--ui-hay-2);
+  color: var(--ui-wood-0);
   font-weight: 700;
-  border-color: var(--c-wood-deep);
+  border-color: var(--ui-wood-1);
 }
 
 .feature-shop .feature-shop-content {
@@ -60,18 +60,18 @@
 }
 
 .feature-shop .feature-shop-note {
-  background: var(--c-leaf-dark);
-  color: #fff;
+  background: var(--ui-moss-1);
+  color: var(--ui-linen-3);
   padding: 8px;
   border-radius: 4px;
   font-size: 12px;
   margin-bottom: 12px;
-  border: 2px solid var(--c-contour-dark);
+  border: 2px solid var(--ui-wood-0);
 }
 
 .feature-shop .feature-shop-empty {
   text-align: center;
-  color: var(--c-wood-light);
+  color: var(--ui-wood-4);
   padding: 20px;
   font-style: italic;
 }
@@ -86,8 +86,8 @@
 }
 
 .feature-shop .feature-shop-item {
-  background: var(--c-wood-light);
-  border: 2px solid var(--c-wood-deep);
+  background: var(--ui-wood-4);
+  border: 2px solid var(--ui-wood-1);
   border-radius: 6px;
   padding: 10px;
   text-align: center;
@@ -95,11 +95,11 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  box-shadow: 2px 2px 0 var(--c-shadow);
+  box-shadow: 2px 2px 0 var(--ui-plum-0);
 }
 
 .feature-shop .feature-shop-desc {
-  color: var(--c-contour);
+  color: var(--ui-wood-0);
   font-size: 11px;
   line-height: 1.2;
   min-height: 30px;
@@ -107,14 +107,14 @@
 
 .feature-shop .feature-shop-price {
   font-weight: 700;
-  color: var(--c-orange-dark);
+  color: var(--ui-hay-0);
   font-size: 14px;
 }
 
 .feature-shop .feature-shop-btn {
-  background: var(--c-leaf);
-  color: #fff;
-  border: 2px solid var(--c-leaf-dark);
+  background: var(--ui-moss-3);
+  color: var(--ui-linen-3);
+  border: 2px solid var(--ui-moss-1);
   border-radius: 4px;
   padding: 4px 8px;
   font-family: inherit;
@@ -125,7 +125,7 @@
 }
 
 .feature-shop .feature-shop-btn:hover:not(:disabled) {
-  background: var(--c-leaf-bright);
+  background: var(--ui-moss-4);
 }
 
 .feature-shop .feature-shop-btn:active:not(:disabled) {
@@ -133,9 +133,9 @@
 }
 
 .feature-shop .feature-shop-btn:disabled {
-  background: var(--c-wood);
-  border-color: var(--c-contour);
-  color: var(--c-hay-bright);
+  background: var(--ui-wood-3);
+  border-color: var(--ui-wood-0);
+  color: var(--ui-hay-3);
   cursor: not-allowed;
   opacity: 0.8;
 }

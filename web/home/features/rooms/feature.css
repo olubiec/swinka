@@ -13,7 +13,7 @@
 }
 .feature-rooms .room-title {
   font-weight: 700;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
   min-width: 24px;
   min-height: 24px;
 }
@@ -21,7 +21,7 @@
 .feature-rooms .room-hint,
 .feature-rooms .room-status {
   font-size: 12px;
-  color: var(--c-wood-dark);
+  color: var(--ui-wood-2);
   margin: 0;
 }
 .feature-rooms .room-canvas {
@@ -30,14 +30,14 @@
   height: auto;
   margin: 0 auto;
   image-rendering: pixelated;
-  border: 3px solid var(--c-wood-dark);
+  border: 3px solid var(--ui-wood-2);
   border-radius: 6px;
-  background: var(--c-cream);
+  background: var(--ui-linen-2);
   cursor: pointer;
   touch-action: none;
 }
 .feature-rooms .room-canvas:focus-visible {
-  outline: 3px solid var(--c-leaf-dark);
+  outline: 3px solid var(--ui-moss-1);
   outline-offset: 2px;
 }
 .feature-rooms .room-drawer {
@@ -52,21 +52,21 @@
   gap: 2px;
   min-width: 0;
   padding: 6px 8px;
-  border: 2px solid var(--c-wood-dark);
+  border: 2px solid var(--ui-wood-2);
   border-radius: 6px;
-  background: var(--c-white);
-  color: var(--c-wood-deep);
+  background: var(--ui-linen-3);
+  color: var(--ui-wood-1);
   font: inherit;
   text-align: left;
   cursor: pointer;
 }
 .feature-rooms .room-item:focus-visible {
-  outline: 3px solid var(--c-leaf-dark);
+  outline: 3px solid var(--ui-moss-1);
   outline-offset: 2px;
 }
 .feature-rooms .room-item.is-picked {
-  background: var(--c-hay);
-  border-color: var(--c-hay-shadow);
+  background: var(--ui-hay-2);
+  border-color: var(--ui-hay-0);
 }
 .feature-rooms .room-item:disabled {
   opacity: 0.55;
@@ -82,11 +82,11 @@
 }
 .feature-rooms .room-item-meta {
   font-size: 11px;
-  color: var(--c-wood-dark);
+  color: var(--ui-wood-2);
 }
 .feature-rooms .room-empty {
   font-size: 13px;
-  color: var(--c-wood-dark);
+  color: var(--ui-wood-2);
   text-align: center;
   margin: 12px 0;
 }
@@ -114,7 +114,7 @@
   font-weight: 700;
 }
 .feature-rooms .room-tab:focus-visible {
-  outline: 3px solid var(--c-leaf-dark);
+  outline: 3px solid var(--ui-moss-1);
   outline-offset: 2px;
 }
 .feature-rooms .room-tab-portrait {
@@ -123,8 +123,8 @@
   height: 24px;
   border-radius: 50%;
   object-fit: cover;
-  background: var(--c-cream);
-  border: 1px solid var(--c-wood-dark);
+  background: var(--ui-linen-2);
+  border: 1px solid var(--ui-wood-2);
 }
 .feature-rooms .room-tab-label {
   min-width: 0;
@@ -143,14 +143,14 @@
   background: none;
   font: inherit;
   font-weight: 700;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
   text-align: left;
   cursor: pointer;
   min-width: 0;
   overflow-wrap: anywhere;
 }
 .feature-rooms button.room-name-btn:focus-visible {
-  outline: 3px solid var(--c-leaf-dark);
+  outline: 3px solid var(--ui-moss-1);
   outline-offset: 2px;
 }
 .feature-rooms .room-level {
@@ -161,5 +161,5 @@
 }
 .feature-rooms .room-level-missing {
   font-size: 12px;
-  color: var(--c-wood-dark);
+  color: var(--ui-wood-2);
 }

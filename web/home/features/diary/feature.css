@@ -11,7 +11,7 @@
   text-align: center;
   margin-top: 40px;
   font-family: 'Pixelify Sans', sans-serif;
-  color: var(--c-rust-deep);
+  color: var(--ui-brick-1);
   font-size: 18px;
 }
 
@@ -22,8 +22,8 @@
 }
 
 .diary-card {
-  background-color: #f7ecd9;
-  border: 2px solid var(--c-contour-dark, #3b2a1a);
+  background-color: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 4px;
   padding: 12px;
   box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
@@ -32,9 +32,9 @@
 .diary-date {
   font-family: 'Pixelify Sans', sans-serif;
   font-size: 14px;
-  color: var(--c-rust);
+  color: var(--ui-brick-2);
   margin-bottom: 8px;
-  border-bottom: 1px dashed var(--c-rust);
+  border-bottom: 1px dashed var(--ui-brick-2);
   padding-bottom: 4px;
   font-weight: 700;
 }
@@ -42,7 +42,7 @@
 .diary-text {
   font-family: 'Pixelify Sans', sans-serif;
   font-size: 16px;
-  color: var(--c-wood, #4a3319);
+  color: var(--ui-wood-3);
   line-height: 1.4;
   white-space: pre-wrap;
 }

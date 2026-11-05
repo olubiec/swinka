@@ -241,7 +241,7 @@
         }
 
         const isToday = isoDate === todayStr;
-        const bgStyle = isToday ? 'style="background: #fff8e1; border-color: var(--c-orange-dark);"' : '';
+        const bgStyle = isToday ? 'style="background: #fff8e1; border-color: var(--ui-hay-0);"' : '';
 
         html += `
           <div class="fc-day" data-date="${isoDate}" ${bgStyle}>
@@ -264,7 +264,7 @@
     html += `</div>`; // end grid
 
     // Detail view section
-    html += `<div id="fcMonthDetail" style="margin-top: 12px; display:none; background: var(--c-cream-dark); padding: 8px; border-radius: 6px;"></div>`;
+    html += `<div id="fcMonthDetail" style="margin-top: 12px; display:none; background: var(--ui-linen-1); padding: 8px; border-radius: 6px;"></div>`;
 
     html += `</div>`; // end content
     return html;

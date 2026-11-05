@@ -19,12 +19,12 @@
 }
 .feature-daily .daily-amount {
   font-size: 20px;
-  color: var(--c-leaf-dark);
+  color: var(--ui-moss-1);
   margin-bottom: 16px;
   font-weight: bold;
 }
 .feature-daily .daily-claimed-msg {
   font-size: 18px;
-  color: var(--c-leaf-dark);
+  color: var(--ui-moss-1);
   margin: 20px 0;
 }

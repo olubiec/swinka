@@ -186,9 +186,9 @@
   }
 
   function getSeverityColor(severity) {
-    if (severity < 0.3) return 'var(--c-leaf)'; // green
-    if (severity < 0.7) return 'var(--c-gold)'; // yellow/orange-ish
-    return 'var(--c-red)'; // red
+    if (severity < 0.3) return 'var(--ui-moss-3)'; // green
+    if (severity < 0.7) return 'var(--ui-flame-2)'; // yellow/orange-ish
+    return 'var(--ui-brick-2)'; // red
   }
 
   window.CuyHome.registerFeature({

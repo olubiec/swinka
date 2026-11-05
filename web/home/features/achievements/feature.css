@@ -12,13 +12,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 6px 10px;
-  background: var(--c-cream);
-  border: 2px solid var(--c-contour-dark);
+  background: var(--ui-linen-2);
+  border: 2px solid var(--ui-wood-0);
   border-radius: 4px;
   font-family: var(--font-pixel);
   font-size: 13px;
   font-weight: 700;
-  box-shadow: 0 2px 0 var(--c-contour-dark);
+  box-shadow: 0 2px 0 var(--ui-wood-0);
 }
 
 .achievements-stat, .achievements-clovers {
@@ -28,7 +28,7 @@
 }
 
 .achievements-clovers {
-  color: var(--c-leaf-dark);
+  color: var(--ui-moss-1);
 }
 
 .achievements-grid {
@@ -46,20 +46,20 @@
   gap: 8px;
   padding: 6px 8px;
   border-radius: 4px;
-  border: 2px solid var(--c-contour-dark);
-  background: var(--c-cream);
-  box-shadow: 0 2px 0 var(--c-contour-dark);
+  border: 2px solid var(--ui-wood-0);
+  background: var(--ui-linen-2);
+  box-shadow: 0 2px 0 var(--ui-wood-0);
   font-family: var(--font-pixel);
   box-sizing: border-box;
 }
 
 .achievement-card.earned {
-  background: #fffdf2;
-  border-color: var(--c-contour-dark);
+  background: var(--ui-linen-3);
+  border-color: var(--ui-wood-0);
 }
 
 .achievement-card.locked {
-  background: #e2dbce;
+  background: var(--ui-linen-2);
   opacity: 0.75;
 }
 
@@ -91,13 +91,13 @@
 .achievement-title {
   font-size: 13px;
   font-weight: 700;
-  color: var(--c-contour-dark);
+  color: var(--ui-wood-0);
   line-height: 1.2;
 }
 
 .achievement-text {
   font-size: 11px;
-  color: var(--c-contour);
+  color: var(--ui-wood-0);
   margin-top: 2px;
   line-height: 1.2;
 }
@@ -111,7 +111,7 @@
 }
 
 .achievement-reward {
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -119,5 +119,5 @@
 }
 
 .achievement-date {
-  color: #7b7468;
+  color: var(--ui-plum-3);
 }

@@ -1,4 +1,4 @@
-/* Record shelf (features/music/shelf.js). Tokens only: --ui-slot/--ui-slot_on/--ui-shelf_plank from ui.json, palette --c-*. */
+/* Record shelf (features/music/shelf.js). Tokens only: --ui-slot/--ui-slot_on/--ui-shelf_plank from ui.json, palette --ui-* (assets/ui/ui_tokens.css). */
 .shelf-root {
   width: 100%;
   box-sizing: border-box;
@@ -14,7 +14,7 @@
   font-size: 12px;
   font-weight: 700;
   text-align: center;
-  color: var(--c-contour);
+  color: var(--ui-wood-0);
 }
 
 .shelf-row {
@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--c-cream);
+  background: var(--ui-linen-2);
   border: 3px solid transparent;
   border-image: var(--ui-slot) 6 fill / 6px;
   image-rendering: pixelated;
@@ -42,7 +42,7 @@
 
 .shelf-slot.is-playing {
   border-image-source: var(--ui-slot_on);
-  box-shadow: 0 0 0 2px var(--c-orange);
+  box-shadow: 0 0 0 2px var(--ui-hay-1);
 }
 
 .shelf-slot.is-locked .pixel-icon {
@@ -56,16 +56,16 @@
   bottom: 0;
   font-size: 10px;
   font-weight: 700;
-  color: var(--c-contour);
+  color: var(--ui-wood-0);
 }
 
 /* Plank under each series row (one row = one series of 6 records). */
 .shelf-plank {
   height: 10px;
-  background-color: var(--c-wood);
+  background-color: var(--ui-wood-3);
   background-image: var(--ui-shelf_plank);
   background-repeat: repeat-x;
   background-size: auto 100%;
-  border-bottom: 2px solid var(--c-wood-dark);
+  border-bottom: 2px solid var(--ui-wood-2);
   image-rendering: pixelated;
 }

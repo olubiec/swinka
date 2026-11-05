@@ -14,31 +14,31 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background-color: #241d1a;
+      background-color: var(--ui-plum-0);
     }
     .minigames-standalone-device {
       width: 100%;
       max-width: 420px;
-      background: var(--c-cream);
-      border: 4px solid var(--c-contour-dark);
+      background: var(--ui-linen-2);
+      border: 4px solid var(--ui-wood-0);
       border-radius: 12px;
       box-shadow: 
-        0 10px 0 #181210,
+        0 10px 0 var(--ui-plum-0),
         0 16px 24px rgba(0,0,0,0.4),
-        inset 3px 3px 0 var(--c-white),
-        inset -3px -3px 0 var(--c-cream-dark);
+        inset 3px 3px 0 var(--ui-linen-3),
+        inset -3px -3px 0 var(--ui-linen-1);
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
     .standalone-header {
-      background: var(--c-wood-dark);
-      border-bottom: 3px solid var(--c-contour-dark);
+      background: var(--ui-wood-2);
+      border-bottom: 3px solid var(--ui-wood-0);
       padding: 8px 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      color: var(--c-white);
+      color: var(--ui-linen-3);
     }
     .standalone-title {
       font-size: 15px;
@@ -55,7 +55,7 @@
   <main class="minigames-standalone-device">
     <header class="standalone-header">
       <span class="standalone-title">GAMES WITH CUY</span>
-      <a href="../index.html" style="color:#eedb7c; text-decoration:none; font-weight:700; font-size:12px;">Home</a>
+      <a href="../index.html" style="color:var(--ui-hay-2); text-decoration:none; font-weight:700; font-size:12px;">Home</a>
     </header>
 
     <div class="standalone-body" id="minigamesContainer">

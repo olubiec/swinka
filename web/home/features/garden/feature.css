@@ -2,49 +2,49 @@
 .feature-garden .garden-panel { display: flex; flex-direction: column; gap: 8px; padding: 4px 2px 8px; }
 .feature-garden .garden-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .feature-garden .garden-tab {
-  padding: 6px 8px; border: 2px solid var(--c-wood-dark); border-radius: 8px;
-  background: var(--c-cream); color: var(--c-wood-deep); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+  padding: 6px 8px; border: 2px solid var(--ui-wood-2); border-radius: 8px;
+  background: var(--ui-linen-2); color: var(--ui-wood-1); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
 }
-.feature-garden .garden-tab.is-current { background: var(--c-leaf); color: var(--c-white); border-color: var(--c-leaf-dark); }
+.feature-garden .garden-tab.is-current { background: var(--ui-moss-3); color: var(--ui-linen-3); border-color: var(--ui-moss-1); }
 .feature-garden .garden-tab:focus-visible,
 .feature-garden .garden-canvas:focus-visible,
 .feature-garden .garden-item:focus-visible,
 .feature-garden .garden-unlock:focus-visible,
-.feature-garden .garden-walk-btn:focus-visible { outline: 3px solid var(--c-leaf-dark); outline-offset: 2px; }
+.feature-garden .garden-walk-btn:focus-visible { outline: 3px solid var(--ui-moss-1); outline-offset: 2px; }
 .feature-garden .garden-canvas {
   display: block; max-width: 100%; height: auto; margin: 0 auto; image-rendering: pixelated;
-  border: 3px solid var(--c-wood-dark); border-radius: 6px; cursor: pointer; touch-action: none;
+  border: 3px solid var(--ui-wood-2); border-radius: 6px; cursor: pointer; touch-action: none;
 }
 .feature-garden .garden-hint,
 .feature-garden .garden-walk-text,
-.feature-garden .garden-memory-title { font-size: 12px; color: var(--c-wood-dark); margin: 0; }
+.feature-garden .garden-memory-title { font-size: 12px; color: var(--ui-wood-2); margin: 0; }
 .feature-garden .garden-drawer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .feature-garden .garden-item {
-  padding: 6px 8px; border: 2px solid var(--c-wood-dark); border-radius: 6px; background: var(--c-white);
-  color: var(--c-wood-deep); font: inherit; font-size: 12px; font-weight: 700; text-align: left; cursor: pointer;
+  padding: 6px 8px; border: 2px solid var(--ui-wood-2); border-radius: 6px; background: var(--ui-linen-3);
+  color: var(--ui-wood-1); font: inherit; font-size: 12px; font-weight: 700; text-align: left; cursor: pointer;
 }
-.feature-garden .garden-item.is-picked { background: var(--c-hay); border-color: var(--c-hay-shadow); }
+.feature-garden .garden-item.is-picked { background: var(--ui-hay-2); border-color: var(--ui-hay-0); }
 .feature-garden .garden-item:disabled { opacity: 0.55; cursor: default; }
-.feature-garden .garden-item-meta { font-weight: 400; font-size: 11px; color: var(--c-wood-dark); }
-.feature-garden .garden-locked { text-align: center; font-size: 13px; color: var(--c-wood-deep); }
+.feature-garden .garden-item-meta { font-weight: 400; font-size: 11px; color: var(--ui-wood-2); }
+.feature-garden .garden-locked { text-align: center; font-size: 13px; color: var(--ui-wood-1); }
 .feature-garden .garden-unlock,
 .feature-garden .garden-walk-btn {
-  display: block; width: 100%; padding: 8px; border: 2px solid var(--c-wood-dark); border-radius: 8px;
-  background: var(--c-orange); color: var(--c-white); font: inherit; font-weight: 700; cursor: pointer;
+  display: block; width: 100%; padding: 8px; border: 2px solid var(--ui-wood-2); border-radius: 8px;
+  background: var(--ui-hay-1); color: var(--ui-linen-3); font: inherit; font-weight: 700; cursor: pointer;
 }
 .feature-garden .garden-walk-btn:disabled { opacity: 0.5; cursor: default; }
 .feature-garden .garden-walk { display: flex; gap: 8px; align-items: center; }
 .feature-garden .garden-walk-scene {
   flex: none; width: 128px; height: 48px; border-radius: 6px; overflow: hidden;
-  background: linear-gradient(#bfe6ff, #7fbf4a); display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(var(--ui-dusk-4), var(--ui-moss-3)); display: flex; align-items: center; justify-content: center;
 }
 .feature-garden .garden-walk-canvas { width: 128px; height: 48px; image-rendering: pixelated; }
-.feature-garden .garden-walk-fallback { font-size: 11px; color: var(--c-wood-deep); }
-.feature-garden .garden-memory { border-top: 2px dashed var(--c-wood); padding-top: 6px; }
+.feature-garden .garden-walk-fallback { font-size: 11px; color: var(--ui-wood-1); }
+.feature-garden .garden-memory { border-top: 2px dashed var(--ui-wood-3); padding-top: 6px; }
 .feature-garden .garden-stone {
   display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; padding: 8px;
-  background: var(--c-cream-dark); border: 2px solid var(--c-wood-dark); border-radius: 10px;
+  background: var(--ui-linen-1); border: 2px solid var(--ui-wood-2); border-radius: 10px;
 }
-.feature-garden .garden-stone-name { font-size: 12px; font-weight: 700; color: var(--c-contour); }
+.feature-garden .garden-stone-name { font-size: 12px; font-weight: 700; color: var(--ui-wood-0); }
 .feature-garden .garden-stone-empty,
-.feature-garden .garden-empty { font-size: 12px; color: var(--c-wood-dark); text-align: center; margin: 6px 0; }
+.feature-garden .garden-empty { font-size: 12px; color: var(--ui-wood-2); text-align: center; margin: 6px 0; }

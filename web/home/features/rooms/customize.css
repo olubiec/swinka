@@ -12,32 +12,32 @@
   flex-direction: column;
   gap: 6px;
   padding: 8px;
-  border: 2px solid var(--c-wood-dark);
+  border: 2px solid var(--ui-wood-2);
   border-radius: 6px;
-  background: var(--c-white);
+  background: var(--ui-linen-3);
   min-width: 0;
 }
 .feature-rooms .rc-heading {
   margin: 0;
   font-size: 14px;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
 }
 .feature-rooms .rc-sub {
   margin: 4px 0 0;
   font-size: 12px;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
 }
 .feature-rooms .rc-item-name {
   margin: 0;
   font-weight: 700;
   font-size: 13px;
-  color: var(--c-wood-deep);
+  color: var(--ui-wood-1);
   overflow-wrap: anywhere;
 }
 .feature-rooms .rc-muted {
   margin: 0;
   font-size: 12px;
-  color: var(--c-wood-dark);
+  color: var(--ui-wood-2);
 }
 .feature-rooms .rc-swatches {
   display: flex;
@@ -54,38 +54,38 @@
   min-width: 52px;
   max-width: 100%;
   padding: 4px 6px;
-  border: 2px solid var(--c-wood-dark);
+  border: 2px solid var(--ui-wood-2);
   border-radius: 6px;
-  background: var(--c-cream);
-  color: var(--c-wood-deep);
+  background: var(--ui-linen-2);
+  color: var(--ui-wood-1);
   font: inherit;
   font-size: 11px;
   cursor: pointer;
 }
 .feature-rooms .rc-swatch.is-current,
 .feature-rooms .rc-skin.is-current {
-  background: var(--c-hay);
-  border-color: var(--c-hay-shadow);
+  background: var(--ui-hay-2);
+  border-color: var(--ui-hay-0);
   font-weight: 700;
 }
 .feature-rooms .rc-swatch:focus-visible,
 .feature-rooms .rc-skin:focus-visible,
 .feature-rooms .rc-btn:focus-visible,
 .feature-rooms .rc-input:focus-visible {
-  outline: 3px solid var(--c-leaf-dark);
+  outline: 3px solid var(--ui-moss-1);
   outline-offset: 2px;
 }
 .feature-rooms .rc-chip {
   display: block;
   width: 18px;
   height: 18px;
-  border: 1px solid var(--c-wood-dark);
+  border: 1px solid var(--ui-wood-2);
   border-radius: 4px;
 }
-.feature-rooms .rc-chip-0 { background: var(--c-cream); }
-.feature-rooms .rc-chip-1 { background: var(--c-hay); }
-.feature-rooms .rc-chip-2 { background: var(--c-leaf-dark); }
-.feature-rooms .rc-chip-3 { background: var(--c-wood-dark); }
+.feature-rooms .rc-chip-0 { background: var(--ui-linen-2); }
+.feature-rooms .rc-chip-1 { background: var(--ui-hay-2); }
+.feature-rooms .rc-chip-2 { background: var(--ui-moss-1); }
+.feature-rooms .rc-chip-3 { background: var(--ui-wood-2); }
 .feature-rooms .rc-price {
   max-width: 100%;
   overflow: hidden;
@@ -113,29 +113,29 @@
   gap: 4px;
   min-width: 0;
   font-size: 12px;
-  color: var(--c-wood-dark);
+  color: var(--ui-wood-2);
 }
 .feature-rooms .rc-input {
   min-width: 0;
   max-width: 100%;
   padding: 4px 6px;
-  border: 2px solid var(--c-wood-dark);
+  border: 2px solid var(--ui-wood-2);
   border-radius: 6px;
-  background: var(--c-white);
-  color: var(--c-wood-deep);
+  background: var(--ui-linen-3);
+  color: var(--ui-wood-1);
   font: inherit;
   font-size: 13px;
 }
 .feature-rooms .rc-btn {
   padding: 4px 8px;
-  border: 2px solid var(--c-wood-dark);
+  border: 2px solid var(--ui-wood-2);
   border-radius: 6px;
-  background: var(--c-hay);
-  color: var(--c-wood-deep);
+  background: var(--ui-hay-2);
+  color: var(--ui-wood-1);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 .feature-rooms .rc-btn-danger {
-  background: var(--c-cream);
+  background: var(--ui-linen-2);
 }

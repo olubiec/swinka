@@ -7,9 +7,9 @@
 .feature-decor .decor-mini-preview {
   width: 240px;
   height: 130px;
-  background-color: #eedb7c;
+  background-color: var(--ui-hay-2);
   image-rendering: pixelated;
-  border: 2px solid #5c3a21;
+  border: 2px solid var(--ui-wood-1);
   border-radius: 4px;
   align-self: center;
   margin-bottom: 8px;
@@ -25,13 +25,13 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background: #2b1712;
+  background: var(--ui-plum-0);
   padding: 8px;
   border-radius: 4px;
 }
 
 .feature-decor .decor-slot-label {
-  color: #eedb7c;
+  color: var(--ui-hay-2);
   font-size: 14px;
   font-weight: bold;
   display: flex;
@@ -47,9 +47,9 @@
 }
 
 .feature-decor .decor-item-btn {
-  background: #3a1d17;
-  color: #c7bca5;
-  border: 2px solid #5c3a21;
+  background: var(--ui-wood-0);
+  color: var(--ui-linen-1);
+  border: 2px solid var(--ui-wood-1);
   border-radius: 4px;
   padding: 4px 8px;
   min-width: 24px;
@@ -61,14 +61,14 @@
 }
 
 .feature-decor .decor-item-btn:hover {
-  background: #4a2d27;
-  color: #eedb7c;
+  background: var(--ui-wood-0);
+  color: var(--ui-hay-2);
 }
 
 .feature-decor .decor-item-btn.active {
-  background: #5c3a21;
-  color: #eedb7c;
-  border-color: #d4ae7f;
+  background: var(--ui-wood-1);
+  color: var(--ui-hay-2);
+  border-color: var(--ui-wood-4);
   font-weight: bold;
 }
 
