@@ -1,0 +1,168 @@
+/* Mini player (features/music/player.js). Tokens only: --ui-* from assets/ui (images via UiAssets, flat colours as fallback). */
+
+/* The panel sits in the free strip of the identity card; absolute, so it never pushes the action buttons. */
+.pet-identity-card {
+  position: relative;
+}
+
+.mp_panel {
+  position: absolute;
+  left: 116px;
+  top: 50%;
+  transform: translateY(-50%);
+  /* The card is 100%; 274px = left offset + the badges column (about 139px) + its padding and a gap. */
+  width: calc(100% - 274px);
+  box-sizing: border-box;
+  padding: 2px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: var(--ui-linen-3);
+  border: 4px solid transparent;
+  border-image: var(--ui-mp_panel) 8 fill / 4px;
+  box-shadow: 0 0 0 1px var(--ui-border);
+  z-index: 2;
+}
+
+.mp_panel.is-muted {
+  opacity: 0.6;
+}
+
+.mp_display {
+  box-sizing: border-box;
+  padding: 2px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background-color: var(--ui-plum-1);
+  border: 2px solid transparent;
+  border-image: var(--ui-mp_display) 5 fill / 2px;
+}
+
+.mp_title {
+  display: block;
+  font-family: var(--ui-font);
+  font-size: var(--ui-fs-s);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ui-ink-gold);
+}
+
+.mp_time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--ui-font);
+  font-size: var(--ui-fs-s);
+  line-height: 1;
+  color: var(--ui-linen-2);
+}
+
+/* Queue position: the thumb marks the current track among the queued ones. */
+.mp_bar {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 4px;
+  background-color: var(--ui-plum-3);
+}
+
+.mp_thumb {
+  position: absolute;
+  top: -3px;
+  width: 8px;
+  height: 10px;
+  margin-left: -4px;
+  background-color: var(--ui-hay-2);
+  background-image: var(--ui-mp_thumb);
+  background-size: 100% 100%;
+  image-rendering: pixelated;
+  transition: left 0.2s steps(4);
+}
+
+.mp_count {
+  flex: none;
+}
+
+.mp_controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mp_btn {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--ui-linen-2);
+  background-image: var(--ui-mp_btn);
+  background-size: 100% 100%;
+  border: 0;
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+
+.mp_btn.mp_btn_pressed {
+  background-image: var(--ui-mp_btn_pressed);
+}
+
+.mp_btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.mp_btn:focus-visible,
+.mp_knob:focus-visible {
+  outline: 2px solid var(--ui-hay-1);
+  outline-offset: 1px;
+}
+
+/* Volume knob: a range input with the knob image as its thumb. */
+.mp_knob {
+  flex: 1;
+  min-width: 0;
+  height: 16px;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.mp_knob::-webkit-slider-runnable-track {
+  height: 4px;
+  background-color: var(--ui-plum-3);
+}
+
+.mp_knob::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border: 0;
+  background-color: transparent;
+  background-image: var(--ui-mp_knob);
+  background-size: 100% 100%;
+  image-rendering: pixelated;
+}
+
+.mp_knob::-moz-range-track {
+  height: 4px;
+  background-color: var(--ui-plum-3);
+}
+
+.mp_knob::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  background-color: transparent;
+  background-image: var(--ui-mp_knob);
+  background-size: 100% 100%;
+  image-rendering: pixelated;
+}

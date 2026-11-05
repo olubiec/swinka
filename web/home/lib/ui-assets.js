@@ -52,5 +52,5 @@
     });
   }
 
-  root.UiAssets = { apply: apply };
+  root.UiAssets = { apply: apply, assetsBase: assetsBase };
 }(typeof window !== 'undefined' ? window : globalThis));
