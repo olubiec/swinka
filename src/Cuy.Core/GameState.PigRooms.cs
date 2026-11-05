@@ -24,11 +24,12 @@ namespace Cuy.Core
             {
                 if (pig == null || string.IsNullOrEmpty(pig.Id)) continue;
 
-                string roomId = config.RoomId(string.IsNullOrEmpty(pig.NamedId) ? pig.Id : pig.NamedId);
-                if (world.PigRoomsEnsured.Contains(pig.Id)) continue;
+                string key = string.IsNullOrEmpty(pig.NamedId) ? pig.Id : pig.NamedId;
+                string roomId = config.RoomId(key);
+                if (world.PigRoomsEnsured.Contains(key)) continue;
                 if (world.Rooms.TryGetValue(roomId, out var existing) && existing != null)
                 {
-                    world.PigRoomsEnsured.Add(pig.Id);
+                    world.PigRoomsEnsured.Add(key);
                     continue;
                 }
                 if (world.RoomShare.ContainsKey(pig.Id)) continue;
@@ -49,7 +50,7 @@ namespace Cuy.Core
                 }
 
                 world.Rooms[roomId] = room;
-                world.PigRoomsEnsured.Add(pig.Id);
+                world.PigRoomsEnsured.Add(key);
                 created++;
             }
             return created;

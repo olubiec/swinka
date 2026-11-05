@@ -47,14 +47,15 @@ namespace Cuy.Core.Tests
             var items = Items();
 
             Assert.Equal(3, state.EnsurePigRooms(cfg, items, NextUid));
-            foreach (var id in new[] { "p1", "p2", "p3" })
+            // Canonical room key is NamedId ?? Id (DECISIONS D1, approved by owner): Kuki -> "kuki".
+            foreach (var key in new[] { "kuki", "p2", "p3" })
             {
-                Assert.True(state.World.Rooms.ContainsKey(cfg.RoomId(id)));
-                Assert.Contains(id, state.World.PigRoomsEnsured);
+                Assert.True(state.World.Rooms.ContainsKey(cfg.RoomId(key)));
+                Assert.Contains(key, state.World.PigRoomsEnsured);
             }
             Assert.Equal(cfg.NameFor("Old", true), state.World.Rooms[cfg.RoomId("p3")].Name);
-            Assert.Equal(cfg.NameFor("Kuki", false), state.World.Rooms[cfg.RoomId("p1")].Name);
-            Assert.NotEmpty(state.World.Rooms[cfg.RoomId("p1")].Items);
+            Assert.Equal(cfg.NameFor("Kuki", false), state.World.Rooms[cfg.RoomId("kuki")].Name);
+            Assert.NotEmpty(state.World.Rooms[cfg.RoomId("kuki")].Items);
 
             Assert.Equal(0, state.EnsurePigRooms(cfg, items, NextUid));
         }

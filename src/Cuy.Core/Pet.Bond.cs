@@ -54,10 +54,12 @@ namespace Cuy.Core
         {
             if (points <= 0) return 0;
             double multiplier = ActiveModifiers.BondGain * (1.0 + BestDormBondBonus());
-            int scaled = (int)Math.Round(points * multiplier, MidpointRounding.AwayFromZero);
-            if (scaled <= 0) return 0;
-
             var bond = State.Bond;
+            // Round as before, but carry the leftover (within ±0.5) to the next gain so long runs add up (DECISIONS D2).
+            double exact = points * multiplier + bond.BondRemainder;
+            int scaled = (int)Math.Round(exact, MidpointRounding.AwayFromZero);
+            bond.BondRemainder = exact - scaled;
+            if (scaled <= 0) return 0;
             string today = Clock.LocalNow().ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             if (bond.PointsTodayDate != today)
             {

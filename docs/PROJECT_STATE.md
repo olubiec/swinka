@@ -13,3 +13,7 @@
 <!-- LOG -->
 - 2026-10-28 · Przebudowa pod pętlę: W3 w formacie `Zmieniaj:`, 9 zadań w `tasks/`; W3-09/W3-10 odłożone; dry-run pętli przeszedł (start W3, brak konfliktów zakresów).
 - 2026-10-28 · Wdrożenie Jules Loop: workflow, orchestrator, `ci.yml` z concurrency i `workflow_dispatch`. Usunięto `jules-dispatch.yml` (omijał pętlę). Fale W1–W2 w `tasks/done/`.
+
+## Zatwierdzone wyjątki od zakazu zmian asercji (5.11.2026, właściciel)
+- `WorldItemCatalogTests.RealCatalog_LoadsAllItems_CountAtLeast50`: 55 → 81 (katalog po handoverze grafik, +26 pozycji).
+- `PigRoomsMigrationTests.ThreeRosterPigsGetThreeRooms_AndSecondCallCreatesNone`: klucze pokoi `NamedId ?? Id` (Kuki → `kuki`), zgodnie z docs/qa/DECISIONS.md D1.

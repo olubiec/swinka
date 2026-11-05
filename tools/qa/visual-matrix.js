@@ -38,12 +38,14 @@ const probe = () => {
     const errs = [];
     page.on('pageerror', e => errs.push(e.message));
     await page.goto(base + '/web/home/index.html?world=1');
-    await page.evaluate(() => document.body.classList.add('webview-mode'));
+    // The desktop widget is a fixed 420px window; force webview-mode only where it fits, phones get the plain page.
+    if (w >= 420) await page.evaluate(() => document.body.classList.add('webview-mode'));
     await page.waitForTimeout(900);
     for (const f of ['home'].concat(features)) {
       errs.length = 0;
       try {
-        if (f !== 'home') { await page.evaluate(id => window.CuyHome.openFeature(id), f); await page.waitForTimeout(450); }
+        // Fresh page per feature so one feature's leftover DOM (e.g. market modal) cannot leak into the next cell.
+        if (f !== 'home') { await page.goto(base + '/web/home/index.html?world=1'); await page.evaluate(() => document.body.classList.toggle('webview-mode', window.innerWidth >= 420)); await page.waitForTimeout(500); await page.evaluate(id => window.CuyHome.openFeature(id), f); await page.waitForTimeout(450); }
         const m = await page.evaluate(probe);
         await page.screenshot({ path: path.join(out, f + '_' + w + 'x' + h + '.png') });
         results.push({ feature: f, vp: w + 'x' + h, errors: errs.slice(), ...m });

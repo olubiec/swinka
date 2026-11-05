@@ -137,6 +137,9 @@ namespace Cuy.Core
 
         /// <summary>Local date that PointsToday refers to, yyyy-MM-dd.</summary>
         public string PointsTodayDate { get; set; }
+
+        /// <summary>Fractional bond points carried to the next gain (missing in old saves = 0).</summary>
+        public double BondRemainder { get; set; }
     }
 
     public sealed class DiaryEntry

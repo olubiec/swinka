@@ -92,3 +92,6 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Touch/click target minimum 24px (visual-matrix tiny buttons, S1) */
+.feature-decor .decor-item-btn { min-height: 24px; }

@@ -10,7 +10,7 @@ const { assertLayout } = require('./lib/layout.js');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const OUT = path.join(__dirname, 'out');
-const ALLOWED_MISSING = ['/mock.js'];
+const ALLOWED_MISSING = require('./known-missing-assets.json').allowed;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
   '.png': 'image/png', '.wav': 'audio/wav', '.ogg': 'audio/ogg', '.mp3': 'audio/mpeg', '.ico': 'image/x-icon', '.svg': 'image/svg+xml' };
 

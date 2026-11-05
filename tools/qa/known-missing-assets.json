@@ -1,0 +1,4 @@
+{
+  "_about": "Assets that are known to be missing and allowed to 404 in web-smoke (DECISIONS D5). Remove an entry in the same commit that adds its file. Any other 404 fails the run.",
+  "allowed": ["/mock.js"]
+}

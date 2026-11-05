@@ -1341,6 +1341,9 @@ body.webview-mode .game-device {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+@media (max-width: 380px) {
+  .places-bar .place-sub { white-space: normal; line-height: 1.1; text-align: center; font-size: 9px; letter-spacing: -0.3px; }
+}
 
 /* ==========================================================================
    9-SLICE UI (assets/ui, --ui-* set by lib/ui-assets.js). `initial` means no image:
