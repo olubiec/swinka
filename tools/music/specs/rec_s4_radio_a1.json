@@ -2,223 +2,240 @@
   "id": "rec_s4_radio_a1",
   "kind": "record",
   "title": "Radio FM · A1 podpisowy",
-  "role": "ballada radiowa ze strojeniem eteru",
+  "role": "płyta serii 4; ballada radiowa ze strojeniem eteru; legenda v7: BACKDOOR C, jeden instrument (ACC)",
   "bpm": 96,
   "meter": 4,
   "key": "C",
   "mode": "major",
-  "bars": 40,
+  "bars": 48,
   "swing": 50,
   "seed": 29004,
   "chords": [
     {
       "bar": 1,
-      "sym": "C"
+      "sym": "Cmaj9"
     },
     {
       "bar": 2,
-      "sym": "Em"
+      "sym": "Am11"
     },
     {
       "bar": 3,
-      "sym": "F"
+      "sym": "Fm9"
     },
     {
       "bar": 4,
-      "sym": "G"
+      "sym": "Bb13"
     },
     {
       "bar": 5,
-      "sym": "C"
+      "sym": "Cmaj13"
     },
     {
       "bar": 6,
-      "sym": "Em"
+      "sym": "Em11"
     },
     {
       "bar": 7,
-      "sym": "F"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "G"
+      "sym": "G13sus4"
     },
     {
       "bar": 9,
-      "sym": "Am"
+      "sym": "Fmaj9"
     },
     {
       "bar": 10,
-      "sym": "Em"
+      "sym": "Dm11"
     },
     {
       "bar": 11,
-      "sym": "F"
+      "sym": "Bbm9"
     },
     {
       "bar": 12,
-      "sym": "G"
+      "sym": "Eb13"
     },
     {
       "bar": 13,
-      "sym": "Am"
+      "sym": "Fmaj13"
     },
     {
       "bar": 14,
-      "sym": "Em"
+      "sym": "Am11"
     },
     {
       "bar": 15,
-      "sym": "F"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "G"
+      "sym": "C13sus4"
     },
     {
       "bar": 17,
-      "sym": "C"
+      "sym": "Cmaj9"
     },
     {
       "bar": 18,
-      "sym": "Em"
+      "sym": "Am11"
     },
     {
       "bar": 19,
-      "sym": "F"
+      "sym": "Fm9"
     },
     {
       "bar": 20,
-      "sym": "G"
+      "sym": "Bb13"
     },
     {
       "bar": 21,
-      "sym": "C"
+      "sym": "Cmaj13"
     },
     {
       "bar": 22,
-      "sym": "Em"
+      "sym": "Em11"
     },
     {
       "bar": 23,
-      "sym": "F"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "G"
+      "sym": "G13sus4"
     },
     {
       "bar": 25,
-      "sym": "Am"
+      "sym": "Fmaj9"
     },
     {
       "bar": 26,
-      "sym": "Em"
+      "sym": "Dm11"
     },
     {
       "bar": 27,
-      "sym": "F"
+      "sym": "Bbm9"
     },
     {
       "bar": 28,
-      "sym": "G"
+      "sym": "Eb13"
     },
     {
       "bar": 29,
-      "sym": "Am"
+      "sym": "Fmaj13"
     },
     {
       "bar": 30,
-      "sym": "Em"
+      "sym": "Am11"
     },
     {
       "bar": 31,
-      "sym": "F"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "G"
+      "sym": "C13sus4"
     },
     {
       "bar": 33,
-      "sym": "C"
+      "sym": "Cmaj9"
     },
     {
       "bar": 34,
-      "sym": "Em"
+      "sym": "Am11"
     },
     {
       "bar": 35,
-      "sym": "F"
+      "sym": "Fm9"
     },
     {
       "bar": 36,
-      "sym": "G"
+      "sym": "Bb13"
     },
     {
       "bar": 37,
-      "sym": "C"
+      "sym": "Cmaj13"
     },
     {
       "bar": 38,
-      "sym": "Em"
+      "sym": "Em11"
     },
     {
       "bar": 39,
-      "sym": "F"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 40,
-      "sym": "G"
+      "sym": "G13sus4"
+    },
+    {
+      "bar": 41,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 42,
+      "sym": "Dm11"
+    },
+    {
+      "bar": 43,
+      "sym": "Bbm9"
+    },
+    {
+      "bar": 44,
+      "sym": "Eb13"
+    },
+    {
+      "bar": 45,
+      "sym": "Fmaj13"
+    },
+    {
+      "bar": 46,
+      "sym": "Am11"
+    },
+    {
+      "bar": 47,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 48,
+      "sym": "C13sus4"
     }
   ],
   "layers": [
     {
-      "role": "mel",
-      "voice": "P50",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia (pusty, radiowy, filtr 6 kHz). Wzór (opis): wg szkieletu 'bal'"
-    },
-    {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -5,
-      "pattern": "",
-      "part": "bas. Wzór (opis): ćwierćnuty korzeń"
-    },
-    {
-      "role": "pad",
-      "voice": "PAD",
-      "db": -10,
-      "pattern": "",
-      "part": "pad. Wzór (opis): długie akordy"
-    },
-    {
-      "role": "noise",
-      "voice": "noise_eter",
-      "db": -42,
-      "pattern": "",
-      "part": "szum eteru (biały HP(5 kHz)) z wolnym „strojeniem” (przesunięcie filtra, LFO 0,03 Hz). Wzór (opis): ciągły",
-      "from_bar": 1
+      "role": "chd",
+      "voice": "ACC",
+      "db": -12,
+      "pattern": "chords.rolled(0.20)",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
-  "drums": {
-    "kit": "ballad",
-    "levels": {
-      "KICK": -10,
-      "SNR": -12
-    }
-  },
+  "drums": null,
   "fx": [
+    {
+      "fx": "SAT(2.0)",
+      "on": "all"
+    },
+    {
+      "fx": "SHELF(-2)",
+      "on": "all"
+    },
     {
       "fx": "REV-S",
       "wet": 0.08,
       "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.3)",
+      "on": "all"
     }
   ],
   "master": {
-    "lufs": -16,
+    "lufs": -18,
     "ceiling_dbtp": -1
   },
   "loop": {

@@ -2,7 +2,7 @@
   "id": "rec_s3_ksiezyc_a2",
   "kind": "record",
   "title": "Księżyc · A2 spokojny",
-  "role": "długi pogłos, lidyjska #11",
+  "role": "płyta serii 3; długi pogłos, lidyjska #11; legenda v7: LYD F, jeden instrument (PAD)",
   "bpm": 47,
   "meter": 4,
   "key": "F",
@@ -13,107 +13,93 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj7#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "Gmaj7"
+      "sym": "Gmaj13"
     },
     {
       "bar": 3,
-      "sym": "Fmaj7#11"
+      "sym": "Am11"
     },
     {
       "bar": 4,
-      "sym": "Em7"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 5,
-      "sym": "Fmaj7#11"
+      "sym": "Fmaj7/A"
     },
     {
       "bar": 6,
-      "sym": "Gmaj7"
+      "sym": "Gm11/C"
     },
     {
       "bar": 7,
-      "sym": "Fmaj7#11"
+      "sym": "Fmaj13"
     },
     {
       "bar": 8,
-      "sym": "Em7"
+      "sym": "C6/9"
     },
     {
       "bar": 9,
-      "sym": "Fmaj7#11"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Gmaj7"
+      "sym": "Cmaj13"
     },
     {
       "bar": 11,
-      "sym": "Fmaj7#11"
+      "sym": "Dm11"
     },
     {
       "bar": 12,
-      "sym": "Em7"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 13,
-      "sym": "Fmaj7#11"
+      "sym": "Bbmaj7/D"
     },
     {
       "bar": 14,
-      "sym": "Gmaj7"
+      "sym": "Cm11/F"
     },
     {
       "bar": 15,
-      "sym": "Fmaj7#11"
+      "sym": "Bbmaj13"
     },
     {
       "bar": 16,
-      "sym": "Em7"
+      "sym": "F6/9"
     },
     {
       "bar": 17,
-      "sym": "Fmaj7#11"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "Gmaj7"
+      "sym": "Gmaj13"
     },
     {
       "bar": 19,
-      "sym": "Fmaj7#11"
+      "sym": "Am11"
     },
     {
       "bar": 20,
-      "sym": "Em7"
+      "sym": "Bbmaj13#11"
     }
   ],
   "layers": [
     {
-      "role": "mel",
-      "voice": "BELL",
-      "db": -3,
-      "pattern": "",
-      "part": "rozległa melodia, długie nuty (cel: A5 C6 E6 w 2. połowie). Wzór (opis): wg szkieletu 'pas'"
-    },
-    {
-      "role": "orn",
-      "voice": "CEL",
-      "db": -8,
-      "pattern": "",
-      "part": "dublowanie melodii oktawę wyżej. Wzór (opis): unison +12",
-      "from_bar": 5
-    },
-    {
-      "role": "pad",
+      "role": "chd",
       "voice": "PAD",
-      "db": -10,
-      "pattern": "",
-      "part": "pad. Wzór (opis): długie akordy"
+      "db": -3,
+      "pattern": "chords.rolled(0.40)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
   "drums": null,
@@ -127,13 +113,21 @@
       "on": "all"
     },
     {
+      "fx": "CHORUS(2)",
+      "on": "all"
+    },
+    {
       "fx": "REV-L",
-      "wet": 0.5,
-      "on": "BELL"
+      "wet": 0.29,
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.3)",
+      "on": "all"
     }
   ],
   "master": {
-    "lufs": -16,
+    "lufs": -18,
     "ceiling_dbtp": -1
   },
   "loop": {

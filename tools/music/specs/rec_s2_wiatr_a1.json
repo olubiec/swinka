@@ -2,7 +2,7 @@
   "id": "rec_s2_wiatr_a1",
   "kind": "record",
   "title": "Wiatr w trawie · A1 podpisowy",
-  "role": "szeroki pad i wiatr",
+  "role": "płyta serii 2; szeroki pad i wiatr; legenda v7: PEDAL D, jeden instrument (PAD)",
   "bpm": 58,
   "meter": 4,
   "key": "D",
@@ -17,15 +17,15 @@
     },
     {
       "bar": 2,
-      "sym": "Bm7"
+      "sym": "E/D"
     },
     {
       "bar": 3,
-      "sym": "Gmaj9"
+      "sym": "F#m11/D"
     },
     {
       "bar": 4,
-      "sym": "A13sus"
+      "sym": "Gmaj7#11/D"
     },
     {
       "bar": 5,
@@ -33,47 +33,47 @@
     },
     {
       "bar": 6,
-      "sym": "Bm7"
+      "sym": "C/D"
     },
     {
       "bar": 7,
-      "sym": "Gmaj9"
+      "sym": "Em11/D"
     },
     {
       "bar": 8,
-      "sym": "A13sus"
+      "sym": "A/D"
     },
     {
       "bar": 9,
-      "sym": "Dmaj9"
+      "sym": "Gmaj9"
     },
     {
       "bar": 10,
-      "sym": "Bm7"
+      "sym": "A/G"
     },
     {
       "bar": 11,
-      "sym": "Gmaj9"
+      "sym": "Bm11/G"
     },
     {
       "bar": 12,
-      "sym": "A13sus"
+      "sym": "Cmaj7#11/G"
     },
     {
       "bar": 13,
-      "sym": "Dmaj9"
-    },
-    {
-      "bar": 14,
-      "sym": "Bm7"
-    },
-    {
-      "bar": 15,
       "sym": "Gmaj9"
     },
     {
+      "bar": 14,
+      "sym": "F/G"
+    },
+    {
+      "bar": 15,
+      "sym": "Am11/G"
+    },
+    {
       "bar": 16,
-      "sym": "A13sus"
+      "sym": "D/G"
     },
     {
       "bar": 17,
@@ -81,15 +81,15 @@
     },
     {
       "bar": 18,
-      "sym": "Bm7"
+      "sym": "E/D"
     },
     {
       "bar": 19,
-      "sym": "Gmaj9"
+      "sym": "F#m11/D"
     },
     {
       "bar": 20,
-      "sym": "A13sus"
+      "sym": "Gmaj7#11/D"
     },
     {
       "bar": 21,
@@ -97,45 +97,49 @@
     },
     {
       "bar": 22,
-      "sym": "Bm7"
+      "sym": "C/D"
     },
     {
       "bar": 23,
-      "sym": "Gmaj9"
+      "sym": "Em11/D"
     },
     {
       "bar": 24,
-      "sym": "A13sus"
+      "sym": "A/D"
     }
   ],
   "layers": [
     {
-      "role": "pad",
+      "role": "chd",
       "voice": "PAD",
       "db": -3,
-      "pattern": "",
-      "part": "pad szeroki, filtr przemiatany 600 Hz-2 kHz (LFO 0,05 Hz). Wzór (opis): długie akordy"
-    },
-    {
-      "role": "mel",
-      "voice": "P12",
-      "db": -8,
-      "pattern": "",
-      "part": "rzadka melodia: 1 nuta na takt. Wzór (opis): po motywie w taktach 1-2"
-    },
-    {
-      "role": "noise",
-      "voice": "noise_wind",
-      "db": -22,
-      "pattern": "",
-      "part": "wiatr. Wzór (opis): pętla",
-      "from_bar": 1
+      "pattern": "chords.rolled(0.35)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
   "drums": null,
-  "fx": [],
+  "fx": [
+    {
+      "fx": "CHORUS(2)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(6000)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-M",
+      "wet": 0.14,
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.5)",
+      "on": "all"
+    }
+  ],
   "master": {
-    "lufs": -16,
+    "lufs": -18,
     "ceiling_dbtp": -1
   },
   "loop": {

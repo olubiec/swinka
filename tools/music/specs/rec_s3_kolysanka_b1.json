@@ -2,218 +2,244 @@
   "id": "rec_s3_kolysanka_b1",
   "kind": "record",
   "title": "Kołysanka · B1 energiczny",
-  "role": "zabawkowa orkiestra",
+  "role": "płyta serii 3; zabawkowa orkiestra; legenda v7: LULL C, jeden instrument (BOX)",
   "bpm": 108,
   "meter": 4,
   "key": "C",
   "mode": "major",
-  "bars": 40,
+  "bars": 48,
   "swing": 50,
   "seed": 39997,
   "chords": [
     {
       "bar": 1,
-      "sym": "C"
+      "sym": "Cmaj9"
     },
     {
       "bar": 2,
-      "sym": "G"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Am"
+      "sym": "Cmaj7/E"
     },
     {
       "bar": 4,
-      "sym": "F"
+      "sym": "Fm6/9"
     },
     {
       "bar": 5,
-      "sym": "C"
+      "sym": "Cmaj13"
     },
     {
       "bar": 6,
-      "sym": "G"
+      "sym": "Dm11"
     },
     {
       "bar": 7,
-      "sym": "Am"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "F"
+      "sym": "Cmaj9"
     },
     {
       "bar": 9,
-      "sym": "C"
+      "sym": "Fmaj9"
     },
     {
       "bar": 10,
-      "sym": "Em"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "F"
+      "sym": "Fmaj7/A"
     },
     {
       "bar": 12,
-      "sym": "G7"
+      "sym": "Bbm6/9"
     },
     {
       "bar": 13,
-      "sym": "C"
+      "sym": "Fmaj13"
     },
     {
       "bar": 14,
-      "sym": "Em"
+      "sym": "Gm11"
     },
     {
       "bar": 15,
-      "sym": "F"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "G7"
+      "sym": "Fmaj9"
     },
     {
       "bar": 17,
-      "sym": "C"
+      "sym": "Cmaj9"
     },
     {
       "bar": 18,
-      "sym": "G"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Am"
+      "sym": "Cmaj7/E"
     },
     {
       "bar": 20,
-      "sym": "F"
+      "sym": "Fm6/9"
     },
     {
       "bar": 21,
-      "sym": "C"
+      "sym": "Cmaj13"
     },
     {
       "bar": 22,
-      "sym": "G"
+      "sym": "Dm11"
     },
     {
       "bar": 23,
-      "sym": "Am"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "F"
+      "sym": "Cmaj9"
     },
     {
       "bar": 25,
-      "sym": "C"
+      "sym": "Fmaj9"
     },
     {
       "bar": 26,
-      "sym": "Em"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "F"
+      "sym": "Fmaj7/A"
     },
     {
       "bar": 28,
-      "sym": "G7"
+      "sym": "Bbm6/9"
     },
     {
       "bar": 29,
-      "sym": "C"
+      "sym": "Fmaj13"
     },
     {
       "bar": 30,
-      "sym": "Em"
+      "sym": "Gm11"
     },
     {
       "bar": 31,
-      "sym": "F"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "G7"
+      "sym": "Fmaj9"
     },
     {
       "bar": 33,
-      "sym": "C"
+      "sym": "Cmaj9"
     },
     {
       "bar": 34,
-      "sym": "G"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 35,
-      "sym": "Am"
+      "sym": "Cmaj7/E"
     },
     {
       "bar": 36,
-      "sym": "F"
+      "sym": "Fm6/9"
     },
     {
       "bar": 37,
-      "sym": "C"
+      "sym": "Cmaj13"
     },
     {
       "bar": 38,
-      "sym": "G"
+      "sym": "Dm11"
     },
     {
       "bar": 39,
-      "sym": "Am"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 40,
-      "sym": "F"
+      "sym": "Cmaj9"
+    },
+    {
+      "bar": 41,
+      "sym": "Fmaj9"
+    },
+    {
+      "bar": 42,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 43,
+      "sym": "Fmaj7/A"
+    },
+    {
+      "bar": 44,
+      "sym": "Bbm6/9"
+    },
+    {
+      "bar": 45,
+      "sym": "Fmaj13"
+    },
+    {
+      "bar": 46,
+      "sym": "Gm11"
+    },
+    {
+      "bar": 47,
+      "sym": "Bbmaj9#11"
+    },
+    {
+      "bar": 48,
+      "sym": "Fmaj9"
     }
   ],
   "layers": [
     {
-      "role": "mel",
-      "voice": "XYL",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia. Wzór (opis): wg szkieletu 'std'"
-    },
-    {
       "role": "chd",
       "voice": "BOX",
-      "db": -6,
-      "pattern": "",
-      "part": "akompaniament. Wzór (opis): arpeggio ósemkami"
-    },
-    {
-      "role": "bass",
-      "voice": "PIZ",
-      "db": -6,
-      "pattern": "",
-      "part": "bas pizzicato. Wzór (opis): ćwierćnuty 1 i 3"
+      "db": -3,
+      "pattern": "chords.rolled(0.25)",
+      "part": "jedna warstwa, jeden instrument (BOX), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
-  "drums": {
-    "kit": "gentle",
-    "levels": {
-      "KICK": -18,
-      "SHK": -20
-    }
-  },
+  "drums": null,
   "fx": [
     {
       "fx": "TAPE(0.3)",
       "on": "all"
     },
     {
-      "fx": "LP(8000)",
+      "fx": "LP(9500)",
+      "on": "all"
+    },
+    {
+      "fx": "CHORUS(2)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-L",
+      "wet": 0.25,
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.3)",
       "on": "all"
     }
   ],
   "master": {
-    "lufs": -16,
+    "lufs": -18,
     "ceiling_dbtp": -1
   },
   "loop": {

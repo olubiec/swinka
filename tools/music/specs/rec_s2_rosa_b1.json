@@ -2,7 +2,7 @@
   "id": "rec_s2_rosa_b1",
   "kind": "record",
   "title": "Rosa · B1 energiczny",
-  "role": "krople rosy (dzwonki)",
+  "role": "płyta serii 2; krople rosy (dzwonki); legenda v7: LULL G, jeden instrument (CEL)",
   "bpm": 78,
   "meter": 4,
   "key": "G",
@@ -13,173 +13,165 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Gmaj7"
+      "sym": "Gmaj9"
     },
     {
       "bar": 2,
-      "sym": "Cmaj7"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "Am7"
+      "sym": "Gmaj7/B"
     },
     {
       "bar": 4,
-      "sym": "D7sus"
+      "sym": "Cm6/9"
     },
     {
       "bar": 5,
-      "sym": "Gmaj7"
+      "sym": "Gmaj13"
     },
     {
       "bar": 6,
-      "sym": "Cmaj7"
+      "sym": "Am11"
     },
     {
       "bar": 7,
-      "sym": "Am7"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "D7sus"
+      "sym": "Gmaj9"
     },
     {
       "bar": 9,
-      "sym": "Em7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 10,
-      "sym": "Bm7"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "Cmaj7"
+      "sym": "Cmaj7/E"
     },
     {
       "bar": 12,
-      "sym": "D7"
+      "sym": "Fm6/9"
     },
     {
       "bar": 13,
-      "sym": "Em7"
+      "sym": "Cmaj13"
     },
     {
       "bar": 14,
-      "sym": "Bm7"
+      "sym": "Dm11"
     },
     {
       "bar": 15,
-      "sym": "Cmaj7"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "D7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 17,
-      "sym": "Gmaj7"
+      "sym": "Gmaj9"
     },
     {
       "bar": 18,
-      "sym": "Cmaj7"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "Am7"
+      "sym": "Gmaj7/B"
     },
     {
       "bar": 20,
-      "sym": "D7sus"
+      "sym": "Cm6/9"
     },
     {
       "bar": 21,
-      "sym": "Gmaj7"
+      "sym": "Gmaj13"
     },
     {
       "bar": 22,
-      "sym": "Cmaj7"
+      "sym": "Am11"
     },
     {
       "bar": 23,
-      "sym": "Am7"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "D7sus"
+      "sym": "Gmaj9"
     },
     {
       "bar": 25,
-      "sym": "Em7"
+      "sym": "Cmaj9"
     },
     {
       "bar": 26,
-      "sym": "Bm7"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "Cmaj7"
+      "sym": "Cmaj7/E"
     },
     {
       "bar": 28,
-      "sym": "D7"
+      "sym": "Fm6/9"
     },
     {
       "bar": 29,
-      "sym": "Em7"
+      "sym": "Cmaj13"
     },
     {
       "bar": 30,
-      "sym": "Bm7"
+      "sym": "Dm11"
     },
     {
       "bar": 31,
-      "sym": "Cmaj7"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 32,
-      "sym": "D7"
+      "sym": "Cmaj9"
     }
   ],
   "layers": [
     {
-      "role": "mel",
-      "voice": "P12",
+      "role": "chd",
+      "voice": "CEL",
       "db": -3,
-      "pattern": "",
-      "part": "melodia pastoralna. Wzór (opis): wg szkieletu 'pas'"
-    },
-    {
-      "role": "orn",
-      "voice": "BELL",
-      "db": -10,
-      "pattern": "",
-      "part": "krople rosy: pojedyncze nuty losowo (G6, D6). Wzór (opis): losowo z seed, 1 nuta na 1-3 takty",
-      "from_bar": 3
-    },
-    {
-      "role": "pad",
-      "voice": "PAD",
-      "db": -9,
-      "pattern": "",
-      "part": "pad. Wzór (opis): długie akordy"
-    },
-    {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -8,
-      "pattern": "",
-      "part": "bas co 2 takty (korzeń). Wzór (opis): takty nieparzyste"
+      "pattern": "chords.rolled(0.25)",
+      "part": "jedna warstwa, jeden instrument (CEL), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
-  "drums": {
-    "kit": "gentle",
-    "levels": {
-      "SHK": -22
+  "drums": null,
+  "fx": [
+    {
+      "fx": "CHORUS(2)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(7500)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-M",
+      "wet": 0.14,
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.5)",
+      "on": "all"
     }
-  },
-  "fx": [],
+  ],
   "master": {
-    "lufs": -16,
+    "lufs": -18,
     "ceiling_dbtp": -1
   },
   "loop": {

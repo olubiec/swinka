@@ -2,297 +2,240 @@
   "id": "rec_s4_taniec_b2",
   "kind": "record",
   "title": "Taniec w klatce · B2 nastrojowy",
-  "role": "najszybszy utwór w grze; własny motyw (nie Nyan Cat: nie zbliżać się do jego skali, rytmu i linii)",
+  "role": "płyta serii 4; najszybszy utwór w grze; własny motyw (nie Nyan Cat: nie zbliżać się do jego skali, rytmu i linii); legenda v7: DORSOUL C, jeden instrument (EP)",
   "bpm": 104,
   "meter": 4,
   "key": "C",
   "mode": "minor",
-  "bars": 60,
+  "bars": 48,
   "swing": 50,
   "seed": 52448,
   "chords": [
     {
       "bar": 1,
-      "sym": "Cm"
+      "sym": "Cm11"
     },
     {
       "bar": 2,
-      "sym": "Ab"
+      "sym": "F13"
     },
     {
       "bar": 3,
-      "sym": "Eb"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Bb"
+      "sym": "G#maj13#11"
     },
     {
       "bar": 5,
-      "sym": "Cm"
+      "sym": "Cm13"
     },
     {
       "bar": 6,
-      "sym": "Ab"
+      "sym": "Dm11"
     },
     {
       "bar": 7,
-      "sym": "Eb"
+      "sym": "G7b13"
     },
     {
       "bar": 8,
-      "sym": "Bb"
+      "sym": "F#9#11"
     },
     {
       "bar": 9,
-      "sym": "Cm"
+      "sym": "Fm11"
     },
     {
       "bar": 10,
-      "sym": "Ab"
+      "sym": "Bb13"
     },
     {
       "bar": 11,
-      "sym": "Eb"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "Bb"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 13,
-      "sym": "Cm"
+      "sym": "Fm13"
     },
     {
       "bar": 14,
-      "sym": "Ab"
+      "sym": "Gm11"
     },
     {
       "bar": 15,
-      "sym": "Eb"
+      "sym": "C7b13"
     },
     {
       "bar": 16,
-      "sym": "Bb"
+      "sym": "B9#11"
     },
     {
       "bar": 17,
-      "sym": "Fm"
+      "sym": "Cm11"
     },
     {
       "bar": 18,
-      "sym": "Ab"
+      "sym": "F13"
     },
     {
       "bar": 19,
-      "sym": "Bb"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 20,
-      "sym": "Cm"
+      "sym": "G#maj13#11"
     },
     {
       "bar": 21,
-      "sym": "Fm"
+      "sym": "Cm13"
     },
     {
       "bar": 22,
-      "sym": "Ab"
+      "sym": "Dm11"
     },
     {
       "bar": 23,
-      "sym": "Bb"
+      "sym": "G7b13"
     },
     {
       "bar": 24,
-      "sym": "Cm"
+      "sym": "F#9#11"
+    },
+    {
+      "bar": 25,
+      "sym": "Fm11"
     },
     {
       "bar": 26,
-      "sym": "Ab"
+      "sym": "Bb13"
     },
     {
       "bar": 27,
-      "sym": "Eb"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 28,
-      "sym": "Bb"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 29,
-      "sym": "Cm"
+      "sym": "Fm13"
     },
     {
       "bar": 30,
-      "sym": "Ab"
+      "sym": "Gm11"
     },
     {
       "bar": 31,
-      "sym": "Eb"
+      "sym": "C7b13"
     },
     {
       "bar": 32,
-      "sym": "Bb"
+      "sym": "B9#11"
     },
     {
       "bar": 33,
-      "sym": "Cm"
+      "sym": "Cm11"
     },
     {
       "bar": 34,
-      "sym": "Ab"
+      "sym": "F13"
     },
     {
       "bar": 35,
-      "sym": "Eb"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 36,
-      "sym": "Bb"
+      "sym": "G#maj13#11"
     },
     {
       "bar": 37,
-      "sym": "Cm"
+      "sym": "Cm13"
     },
     {
       "bar": 38,
-      "sym": "Ab"
+      "sym": "Dm11"
     },
     {
       "bar": 39,
-      "sym": "Eb"
+      "sym": "G7b13"
     },
     {
       "bar": 40,
-      "sym": "Bb"
+      "sym": "F#9#11"
     },
     {
       "bar": 41,
-      "sym": "Fm"
+      "sym": "Fm11"
     },
     {
       "bar": 42,
-      "sym": "Ab"
+      "sym": "Bb13"
     },
     {
       "bar": 43,
-      "sym": "Bb"
+      "sym": "Abmaj9#11"
     },
     {
       "bar": 44,
-      "sym": "Cm"
+      "sym": "Dbmaj13#11"
     },
     {
       "bar": 45,
-      "sym": "Fm"
+      "sym": "Fm13"
     },
     {
       "bar": 46,
-      "sym": "Ab"
+      "sym": "Gm11"
     },
     {
       "bar": 47,
-      "sym": "Bb"
+      "sym": "C7b13"
     },
     {
       "bar": 48,
-      "sym": "Cm"
-    },
-    {
-      "bar": 50,
-      "sym": "Ab"
-    },
-    {
-      "bar": 51,
-      "sym": "Eb"
-    },
-    {
-      "bar": 52,
-      "sym": "Bb"
-    },
-    {
-      "bar": 53,
-      "sym": "Cm"
-    },
-    {
-      "bar": 54,
-      "sym": "Ab"
-    },
-    {
-      "bar": 55,
-      "sym": "Eb"
-    },
-    {
-      "bar": 56,
-      "sym": "Bb"
-    },
-    {
-      "bar": 57,
-      "sym": "Cm"
-    },
-    {
-      "bar": 58,
-      "sym": "Ab"
-    },
-    {
-      "bar": 59,
-      "sym": "Eb"
-    },
-    {
-      "bar": 60,
-      "sym": "Bb"
+      "sym": "B9#11"
     }
   ],
   "layers": [
     {
-      "role": "bass",
-      "voice": "TRI",
+      "role": "chd",
+      "voice": "EP",
       "db": -3,
-      "pattern": "",
-      "part": "bas ósemkami z synkopą. Wzór (opis): ósemki, synkopa na „i” 2"
-    },
-    {
-      "role": "mel",
-      "voice": "P50",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia własna (pentatonika c-moll), motyw Cuy w odwróceniu w taktach 1-2. Wzór (opis): wg szkieletu 'stc'"
-    },
-    {
-      "role": "orn",
-      "voice": "P25",
-      "db": -8,
-      "pattern": "",
-      "part": "kontrmelodia. Wzór (opis): przeciwny kontur do melodii",
-      "from_bar": 9
-    },
-    {
-      "role": "orn",
-      "voice": "GLK",
-      "db": -9,
-      "pattern": "",
-      "part": "hook. Wzór (opis): co 4 takty",
-      "from_bar": 9
+      "pattern": "chords.arp8",
+      "part": "jedna warstwa, jeden instrument (EP), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
-  "drums": {
-    "kit": "four",
-    "levels": {
-      "KICK": -3,
-      "SNR": -3,
-      "HAT": -12
-    }
-  },
+  "drums": null,
   "fx": [
     {
+      "fx": "SAT(2.0)",
+      "on": "all"
+    },
+    {
+      "fx": "SHELF(-2)",
+      "on": "all"
+    },
+    {
       "fx": "REV-S",
-      "wet": 0.08,
+      "wet": 0.14,
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.3)",
       "on": "all"
     }
   ],
   "master": {
-    "lufs": -16,
+    "lufs": -18,
     "ceiling_dbtp": -1
   },
   "loop": {

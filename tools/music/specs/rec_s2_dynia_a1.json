@@ -2,7 +2,7 @@
   "id": "rec_s2_dynia_a1",
   "kind": "record",
   "title": "Dynia · A1 podpisowy",
-  "role": "polka „oom-pa”, akordeon",
+  "role": "płyta serii 2; polka „oom-pa”, akordeon; legenda v7: THIRDS F, jeden instrument (ACC)",
   "bpm": 118,
   "meter": 4,
   "key": "F",
@@ -13,222 +13,229 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "F"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 2,
-      "sym": "C7"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 3,
-      "sym": "F"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 4,
-      "sym": "Bb F"
+      "sym": "Gm11"
     },
     {
       "bar": 5,
-      "sym": "F"
+      "sym": "Gb13"
     },
     {
       "bar": 6,
-      "sym": "C7"
+      "sym": "Fmaj13"
     },
     {
       "bar": 7,
-      "sym": "F"
+      "sym": "Dm11"
     },
     {
       "bar": 8,
-      "sym": "Bb F"
+      "sym": "C13sus4"
     },
     {
       "bar": 9,
-      "sym": "Dm"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 10,
-      "sym": "Gm"
+      "sym": "Gbmaj9#11"
     },
     {
       "bar": 11,
-      "sym": "C7"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 12,
-      "sym": "F"
+      "sym": "Cm11"
     },
     {
       "bar": 13,
-      "sym": "Dm"
+      "sym": "B13"
     },
     {
       "bar": 14,
-      "sym": "Gm"
+      "sym": "Bbmaj13"
     },
     {
       "bar": 15,
-      "sym": "C7"
+      "sym": "Gm11"
     },
     {
       "bar": 16,
-      "sym": "F"
+      "sym": "F13sus4"
+    },
+    {
+      "bar": 17,
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 18,
-      "sym": "C7"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 19,
-      "sym": "F"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 20,
-      "sym": "Bb F"
+      "sym": "Gm11"
     },
     {
       "bar": 21,
-      "sym": "F"
+      "sym": "Gb13"
     },
     {
       "bar": 22,
-      "sym": "C7"
+      "sym": "Fmaj13"
     },
     {
       "bar": 23,
-      "sym": "F"
+      "sym": "Dm11"
     },
     {
       "bar": 24,
-      "sym": "Bb F"
+      "sym": "C13sus4"
     },
     {
       "bar": 25,
-      "sym": "Dm"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 26,
-      "sym": "Gm"
+      "sym": "Gbmaj9#11"
     },
     {
       "bar": 27,
-      "sym": "C7"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 28,
-      "sym": "F"
+      "sym": "Cm11"
     },
     {
       "bar": 29,
-      "sym": "Dm"
+      "sym": "B13"
     },
     {
       "bar": 30,
-      "sym": "Gm"
+      "sym": "Bbmaj13"
     },
     {
       "bar": 31,
-      "sym": "C7"
+      "sym": "Gm11"
     },
     {
       "bar": 32,
-      "sym": "F"
+      "sym": "F13sus4"
+    },
+    {
+      "bar": 33,
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 34,
-      "sym": "C7"
+      "sym": "Dbmaj9#11"
     },
     {
       "bar": 35,
-      "sym": "F"
+      "sym": "Amaj9#11"
     },
     {
       "bar": 36,
-      "sym": "Bb F"
+      "sym": "Gm11"
     },
     {
       "bar": 37,
-      "sym": "F"
+      "sym": "Gb13"
     },
     {
       "bar": 38,
-      "sym": "C7"
+      "sym": "Fmaj13"
     },
     {
       "bar": 39,
-      "sym": "F"
+      "sym": "Dm11"
     },
     {
       "bar": 40,
-      "sym": "Bb F"
+      "sym": "C13sus4"
     },
     {
       "bar": 41,
-      "sym": "Dm"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 42,
-      "sym": "Gm"
+      "sym": "Gbmaj9#11"
     },
     {
       "bar": 43,
-      "sym": "C7"
+      "sym": "Dmaj9#11"
     },
     {
       "bar": 44,
-      "sym": "F"
+      "sym": "Cm11"
     },
     {
       "bar": 45,
-      "sym": "Dm"
+      "sym": "B13"
     },
     {
       "bar": 46,
-      "sym": "Gm"
+      "sym": "Bbmaj13"
     },
     {
       "bar": 47,
-      "sym": "C7"
+      "sym": "Gm11"
     },
     {
       "bar": 48,
-      "sym": "F"
+      "sym": "F13sus4"
     }
   ],
   "layers": [
     {
-      "role": "mel",
-      "voice": "ACC",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia akordeonowa (P25 + tremolo 6 Hz). Wzór (opis): wg szkieletu 'hop'"
-    },
-    {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -4,
-      "pattern": "",
-      "part": "bas „oom”. Wzór (opis): ćwierćnuty 1 i 3"
-    },
-    {
       "role": "chd",
-      "voice": "P25",
-      "db": -6,
-      "pattern": "",
-      "part": "„pa” akordy. Wzór (opis): ćwierćnuty 2 i 4"
+      "voice": "ACC",
+      "db": -12,
+      "pattern": "chords.rolled(0.20)",
+      "part": "jedna warstwa, jeden instrument (ACC), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
-  "drums": {
-    "kit": "polka",
-    "levels": {
-      "KICK": -14,
-      "HAT": -16
+  "drums": null,
+  "fx": [
+    {
+      "fx": "CHORUS(2)",
+      "on": "all"
+    },
+    {
+      "fx": "LP(6000)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-M",
+      "wet": 0.14,
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.5)",
+      "on": "all"
     }
-  },
-  "fx": [],
+  ],
   "master": {
-    "lufs": -16,
+    "lufs": -18,
     "ceiling_dbtp": -1
   },
   "loop": {

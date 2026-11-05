@@ -143,12 +143,16 @@ Stan MW-5 (pokoje, MT-32…41): zrobione 10 specyfikacji `place_room_*` (jedna w
 | PM-24 | MT-113 `s3_ksiezyc`, MT-114 `s3_swietliki`, MT-115 `s3_sowa` |
 | PM-25 | MT-116 `s3_kolysanka`, MT-117 `s3_tupot`, MT-118 `s3_sen` |
 
+Stan MW-6 (płyty serii 2-3, MT-107…118): zrobione 12 płyt x 4 warianty = 48 specyfikacji `rec_s2_*`, `rec_s3_*` (generator `tools/music/gen_records_mw67.py`). Jeden instrument, jedna warstwa (`chords.rolled`, arp8 bez zmian), progresje legendy v7 wg `legend_progs.py`, bez perkusji i szumu. Pomiar: -18 LUFS, TP ≤ -1 dBTP, długość 90-120 s, szew bez kliknięcia. Seria 1 (MT-101…106) poza tym zakresem.
+
 ### MW-7: seria 4 (2 agentów) i końcowy audyt
 
 | Pakiet | Zadania |
 | --- | --- |
 | PM-26 | MT-119 `s4_disco`, MT-120 `s4_synth`, MT-121 `s4_kaseta` |
 | PM-27 | MT-122 `s4_radio`, MT-123 `s4_arcade`, MT-124 `s4_taniec` |
+
+Stan MW-7 (seria 4, MT-119…124): zrobione 6 płyt x 4 warianty = 24 specyfikacje `rec_s4_*` tym samym generatorem, te same reguły co MW-6 (efekty serii 4 z katalogu, bez TAPE poza `s4_kaseta`). Audyt końcowy (MW-8) nie zrobiony.
 
 ### MW-8: zamknięcie (1 agent)
 

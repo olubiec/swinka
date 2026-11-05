@@ -2,7 +2,7 @@
   "id": "rec_s3_sen_b1",
   "kind": "record",
   "title": "Sen o sianiu · B1 energiczny",
-  "role": "falowanie taśmy (wow)",
+  "role": "płyta serii 3; falowanie taśmy (wow); legenda v7: PEDAL F, jeden instrument (PAD)",
   "bpm": 59,
   "meter": 4,
   "key": "F",
@@ -13,138 +13,137 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Fmaj7"
+      "sym": "Fmaj9"
     },
     {
       "bar": 2,
-      "sym": "Am7"
+      "sym": "G/F"
     },
     {
       "bar": 3,
-      "sym": "Dm9"
+      "sym": "Am11/F"
     },
     {
       "bar": 4,
-      "sym": "Bbmaj7"
+      "sym": "Bbmaj7#11/F"
     },
     {
       "bar": 5,
-      "sym": "Fmaj7"
+      "sym": "Fmaj9"
     },
     {
       "bar": 6,
-      "sym": "Am7"
+      "sym": "Eb/F"
     },
     {
       "bar": 7,
-      "sym": "Dm9"
+      "sym": "Gm11/F"
     },
     {
       "bar": 8,
-      "sym": "Bbmaj7"
+      "sym": "C/F"
     },
     {
       "bar": 9,
-      "sym": "Fmaj7"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 10,
-      "sym": "Am7"
+      "sym": "C/Bb"
     },
     {
       "bar": 11,
-      "sym": "Dm9"
+      "sym": "Dm11/Bb"
     },
     {
       "bar": 12,
-      "sym": "Bbmaj7"
+      "sym": "Ebmaj7#11/Bb"
     },
     {
       "bar": 13,
-      "sym": "Fmaj7"
+      "sym": "Bbmaj9"
     },
     {
       "bar": 14,
-      "sym": "Am7"
+      "sym": "Ab/Bb"
     },
     {
       "bar": 15,
-      "sym": "Dm9"
+      "sym": "Cm11/Bb"
     },
     {
       "bar": 16,
-      "sym": "Bbmaj7"
+      "sym": "F/Bb"
     },
     {
       "bar": 17,
-      "sym": "Fmaj7"
+      "sym": "Fmaj9"
     },
     {
       "bar": 18,
-      "sym": "Am7"
+      "sym": "G/F"
     },
     {
       "bar": 19,
-      "sym": "Dm9"
+      "sym": "Am11/F"
     },
     {
       "bar": 20,
-      "sym": "Bbmaj7"
+      "sym": "Bbmaj7#11/F"
     },
     {
       "bar": 21,
-      "sym": "Fmaj7"
+      "sym": "Fmaj9"
     },
     {
       "bar": 22,
-      "sym": "Am7"
+      "sym": "Eb/F"
     },
     {
       "bar": 23,
-      "sym": "Dm9"
+      "sym": "Gm11/F"
     },
     {
       "bar": 24,
-      "sym": "Bbmaj7"
+      "sym": "C/F"
     }
   ],
   "layers": [
     {
-      "role": "pad",
+      "role": "chd",
       "voice": "PAD",
-      "db": -2,
-      "pattern": "",
-      "part": "pad z falowaniem taśmy TAPE(0,5%), LFO 0,4 Hz. Wzór (opis): długie akordy"
-    },
-    {
-      "role": "mel",
-      "voice": "BELL",
-      "db": -10,
-      "pattern": "",
-      "part": "rzadkie nuty. Wzór (opis): po motywie w taktach 1-2"
-    },
-    {
-      "role": "noise",
-      "voice": "noise_tasma",
-      "db": -40,
-      "pattern": "",
-      "part": "szum taśmy (biały LP 8 kHz). Wzór (opis): ciągły",
-      "from_bar": 1
+      "db": -3,
+      "pattern": "chords.rolled(0.35)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
   "drums": null,
   "fx": [
     {
-      "fx": "TAPE(0.3)",
+      "fx": "TAPE(0.5)",
       "on": "all"
     },
     {
-      "fx": "LP(8000)",
+      "fx": "LP(9500)",
+      "on": "all"
+    },
+    {
+      "fx": "CHORUS(2)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-L",
+      "wet": 0.25,
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.3)",
       "on": "all"
     }
   ],
   "master": {
-    "lufs": -16,
+    "lufs": -18,
     "ceiling_dbtp": -1
   },
   "loop": {

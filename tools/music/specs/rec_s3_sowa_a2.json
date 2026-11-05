@@ -2,7 +2,7 @@
   "id": "rec_s3_sowa_a2",
   "kind": "record",
   "title": "Sowa · A2 spokojny",
-  "role": "straszkowa, ale łagodna: „hu-hu” sowy",
+  "role": "płyta serii 3; straszkowa, ale łagodna: „hu-hu” sowy; legenda v7: MINSOUL D, jeden instrument (PAD)",
   "bpm": 54,
   "meter": 4,
   "key": "D",
@@ -13,131 +13,109 @@
   "chords": [
     {
       "bar": 1,
-      "sym": "Dm"
+      "sym": "Dm11"
     },
     {
       "bar": 2,
-      "sym": "Bb"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 3,
-      "sym": "Gm"
+      "sym": "Gm11"
     },
     {
       "bar": 4,
-      "sym": "A7"
+      "sym": "A7alt"
     },
     {
       "bar": 5,
-      "sym": "Dm"
+      "sym": "Dm9"
     },
     {
       "bar": 6,
-      "sym": "Bb"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 7,
-      "sym": "Gm"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 8,
-      "sym": "A7"
+      "sym": "A7b13"
     },
     {
       "bar": 9,
-      "sym": "Dm"
+      "sym": "Gm11"
     },
     {
       "bar": 10,
-      "sym": "Bb"
+      "sym": "Ebmaj13#11"
     },
     {
       "bar": 11,
-      "sym": "Gm"
+      "sym": "Cm11"
     },
     {
       "bar": 12,
-      "sym": "A7"
+      "sym": "D7alt"
     },
     {
       "bar": 13,
-      "sym": "Dm"
+      "sym": "Gm9"
     },
     {
       "bar": 14,
-      "sym": "Bb"
+      "sym": "Fmaj9#11"
     },
     {
       "bar": 15,
-      "sym": "Gm"
+      "sym": "Ebmaj9#11"
     },
     {
       "bar": 16,
-      "sym": "A7"
+      "sym": "D7b13"
     },
     {
       "bar": 17,
-      "sym": "Dm"
+      "sym": "Dm11"
     },
     {
       "bar": 18,
-      "sym": "Bb"
+      "sym": "Bbmaj13#11"
     },
     {
       "bar": 19,
-      "sym": "Gm"
+      "sym": "Gm11"
     },
     {
       "bar": 20,
-      "sym": "A7"
+      "sym": "A7alt"
     },
     {
       "bar": 21,
-      "sym": "Dm"
+      "sym": "Dm9"
     },
     {
       "bar": 22,
-      "sym": "Bb"
+      "sym": "Cmaj9#11"
     },
     {
       "bar": 23,
-      "sym": "Gm"
+      "sym": "Bbmaj9#11"
     },
     {
       "bar": 24,
-      "sym": "A7"
+      "sym": "A7b13"
     }
   ],
   "layers": [
     {
-      "role": "mel",
-      "voice": "BOX",
-      "db": -3,
-      "pattern": "",
-      "part": "melodia kołysanki. Wzór (opis): wg szkieletu 'pas'"
-    },
-    {
-      "role": "pad",
+      "role": "chd",
       "voice": "PAD",
-      "db": -8,
-      "pattern": "",
-      "part": "pad niski na D2-A2. Wzór (opis): długie akordy w niskim rejestrze",
-      "register": "D2-A3"
-    },
-    {
-      "role": "bass",
-      "voice": "TRI",
-      "db": -10,
-      "pattern": "",
-      "part": "bas bardzo wolny. Wzór (opis): korzeń co 2 takty"
-    },
-    {
-      "role": "orn",
-      "voice": "BELL",
-      "db": -10,
-      "pattern": "",
-      "part": "„hu-hu”: dwie nuty D5 A4. Wzór (opis): co 8 taktów, 2. połowa taktu",
-      "from_bar": 5
+      "db": -3,
+      "pattern": "chords.rolled(0.40)",
+      "part": "jedna warstwa, jeden instrument (PAD), akordy rozłożone; forma A B legendy v7",
+      "stem": "base"
     }
   ],
   "drums": null,
@@ -149,10 +127,23 @@
     {
       "fx": "LP(8000)",
       "on": "all"
+    },
+    {
+      "fx": "CHORUS(2)",
+      "on": "all"
+    },
+    {
+      "fx": "REV-L",
+      "wet": 0.29,
+      "on": "all"
+    },
+    {
+      "fx": "WIDTH(1.3)",
+      "on": "all"
     }
   ],
   "master": {
-    "lufs": -16,
+    "lufs": -18,
     "ceiling_dbtp": -1
   },
   "loop": {
