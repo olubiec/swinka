@@ -102,6 +102,21 @@
     </Compile>
   </ItemGroup>
 
+  <!-- AnyCPU build: the WebView2 package only drops the x86 loader, so an x64 process fails with 0x8007000B.
+       Ship the loader for every architecture where Microsoft.Web.WebView2.Core looks for it (runtimes\win-ARCH\native). -->
+  <Target Name="CopyWebView2Loaders" AfterTargets="AfterBuild">
+    <PropertyGroup>
+      <WV2Pkg>$(NuGetPackageRoot)microsoft.web.webview2\1.0.4258.31\runtimes\</WV2Pkg>
+    </PropertyGroup>
+    <ItemGroup>
+      <WV2Loader Include="$(WV2Pkg)win-x86\native\WebView2Loader.dll" Arch="win-x86" />
+      <WV2Loader Include="$(WV2Pkg)win-x64\native\WebView2Loader.dll" Arch="win-x64" />
+      <WV2Loader Include="$(WV2Pkg)win-arm64\native\WebView2Loader.dll" Arch="win-arm64" />
+    </ItemGroup>
+    <Error Condition="!Exists('$(WV2Pkg)win-x64\native\WebView2Loader.dll')" Text="WebView2Loader.dll (win-x64) not found in the NuGet package: $(WV2Pkg)" />
+    <Copy SourceFiles="@(WV2Loader)" DestinationFiles="@(WV2Loader->'$(TargetDir)runtimes\%(Arch)\native\WebView2Loader.dll')" SkipUnchangedFiles="true" />
+  </Target>
+
   <Target Name="CopyAssetsAndWeb" AfterTargets="AfterBuild">
     <ItemGroup>
       <AssetFiles Include="$(MSBuildProjectDirectory)\..\..\assets\**\*.*" />

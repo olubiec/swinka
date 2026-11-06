@@ -82,9 +82,18 @@ namespace Cuy
             Report.AppendLine("Cuy --webview-check");
             Report.AppendLine("exe dir: " + AppDomain.CurrentDomain.BaseDirectory);
             Report.AppendLine(Describe(null));
+            string arch = Environment.Is64BitProcess ? "win-x64" : "win-x86";
+            string myLoader = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runtimes", arch, "native", "WebView2Loader.dll");
+            if (!File.Exists(myLoader))
+            {
+                Report.AppendLine("FAIL: loader for this process is missing: " + myLoader);
+                try { File.WriteAllText(ReportPath, Report.ToString(), new UTF8Encoding(false)); } catch (Exception) { }
+                return 1;
+            }
+
             try
             {
-                Report.AppendLine("browser version: " + CoreWebView2Environment.GetAvailableBrowserVersionString());
+                Report.AppendLine("browser version: " +CoreWebView2Environment.GetAvailableBrowserVersionString());
             }
             catch (Exception ex) { Report.AppendLine("browser version FAILED: " + ex); }
 

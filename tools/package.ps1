@@ -35,6 +35,8 @@ $requiredItems = @(
     (Join-Path $out "Cuy.exe"),
     (Join-Path $out "Newtonsoft.Json.dll"),
     (Join-Path $out "NAudio.dll"),
+    (Join-Path $out "runtimes\win-x64\native\WebView2Loader.dll"),
+    (Join-Path $out "runtimes\win-x86\native\WebView2Loader.dll"),
     (Join-Path $out "assets"),
     (Join-Path $out "web")
 )
