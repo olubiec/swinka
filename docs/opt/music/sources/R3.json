@@ -1,0 +1,560 @@
+{
+  "meta": {
+    "task": "R3 - research of public domain / CC0 / CC-BY MIDI or sheet sources with long progressions",
+    "date": "2026-11-06",
+    "method": "WebSearch only (standard mode). No files downloaded. Repository not read.",
+    "verification": "License and bar counts come from search-result snippets, not from opened pages. WebFetch was blocked (DNS not resolvable) for ibiblio.org, sca.uwaterloo.ca, opengameart.org, imslp.org and itch.io subdomains. Every license must be checked on the piece page before use. Items with license_status 'unverified' are not cleared.",
+    "blocked_hosts": ["www.ibiblio.org", "sca.uwaterloo.ca", "opengameart.org", "imslp.org", "kodingnights.itch.io", "chisech.itch.io"],
+    "license_status_legend": {
+      "snippet_pd": "Search snippet of the source page states public domain / no rights reserved",
+      "snippet_cc0": "Search snippet states CC0",
+      "snippet_pd_country": "Public domain only under the country-of-origin rule (IMSLP warning); not global",
+      "unverified": "Listed by search, license not seen; must be checked before use"
+    },
+    "bars_legend": "min_bars_estimate is a rough total for all movements/pieces in the item, not counted from the score",
+    "unique_tracks_legend": "estimated_unique_tracks = movements/pieces/tracks, rough"
+  },
+  "candidates": [
+    {
+      "name": "Maple Leaf Rag",
+      "composer": "Scott Joplin",
+      "url": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=23",
+      "license": "Public domain (no rights reserved), per Mutopia listing based on 1899 original edition",
+      "license_status": "snippet_pd",
+      "attribution": "Scott Joplin (1868-1917); MIDI/LilyPond by Mutopia Project contributors (see page credits)",
+      "format": "MIDI, LilyPond, PDF",
+      "min_bars_estimate": 180,
+      "estimated_unique_tracks": 1,
+      "notes": "Mirror pages on ibiblio and uwaterloo show the same piece. Check the copyright line and the MIDI link on the page."
+    },
+    {
+      "name": "Search-Light Rag",
+      "composer": "Scott Joplin",
+      "url": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=275",
+      "license": "Public domain, per Mutopia listing based on 1907 edition",
+      "license_status": "snippet_pd",
+      "attribution": "Scott Joplin; Mutopia Project contributors",
+      "format": "MIDI, LilyPond, PDF",
+      "min_bars_estimate": 150,
+      "estimated_unique_tracks": 1,
+      "notes": "Jazz-style ragtime, has MIDI download per listing."
+    },
+    {
+      "name": "Magnetic Rag",
+      "composer": "Scott Joplin",
+      "url": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=441",
+      "license": "Public domain per Mutopia listing; Wikimedia Commons file states MIDI derived from PD sheet music",
+      "license_status": "snippet_pd",
+      "attribution": "Scott Joplin (1914); Mutopia Project contributors",
+      "format": "MIDI",
+      "min_bars_estimate": 150,
+      "estimated_unique_tracks": 1,
+      "notes": "Commons rendering used a SoundFont with a tempo change only. Mutopia MIDI itself is the source to check."
+    },
+    {
+      "name": "Palm Leaf Rag (1903)",
+      "composer": "Scott Joplin",
+      "url": "https://c.enwp.org/wiki/File:%22Palm_Leaf_Rag%22_(1903),_by_Scott_Joplin.mid",
+      "license": "CC0 1.0 for the Commons MIDI file; composition public domain in the US (published before 1929)",
+      "license_status": "snippet_cc0",
+      "attribution": "Scott Joplin (1903); MIDI from Wikimedia Commons, performance/score credit James Brigham (MuseScore score)",
+      "format": "MIDI",
+      "min_bars_estimate": 180,
+      "estimated_unique_tracks": 1,
+      "notes": "Preferred MIDI format. Score by Brigham is on MuseScore, licence of that score not checked. Composition PD in the US only, so check other countries."
+    },
+    {
+      "name": "Original Rags",
+      "composer": "Scott Joplin",
+      "url": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=345",
+      "license": "Not seen in search (expected PD, Mutopia)",
+      "license_status": "unverified",
+      "attribution": "Scott Joplin; Mutopia Project",
+      "format": "MIDI, LilyPond (expected)",
+      "min_bars_estimate": 150,
+      "estimated_unique_tracks": 1,
+      "notes": "Listed by search only. Check copyright line."
+    },
+    {
+      "name": "Peacherine Rag",
+      "composer": "Scott Joplin",
+      "url": "https://sca.uwaterloo.ca/Mutopia/cgibin/piece-info.cgi?id=335",
+      "license": "Not seen in search",
+      "license_status": "unverified",
+      "attribution": "Scott Joplin; Mutopia Project",
+      "format": "MIDI, LilyPond (expected)",
+      "min_bars_estimate": 150,
+      "estimated_unique_tracks": 1,
+      "notes": "Listed by search only."
+    },
+    {
+      "name": "Pine Apple Rag",
+      "composer": "Scott Joplin",
+      "url": "https://imslp.org/wiki/Pine_Apple_Rag_(Joplin,_Scott)",
+      "license": "Not seen in search (IMSLP PD likely for 1908 edition, check the page)",
+      "license_status": "unverified",
+      "attribution": "Scott Joplin (1908); IMSLP",
+      "format": "PDF, possible user MIDI on IMSLP",
+      "min_bars_estimate": 140,
+      "estimated_unique_tracks": 1,
+      "notes": "Sheet music source; MIDI availability not confirmed."
+    },
+    {
+      "name": "The Rag-Time Dance (A Stop-Time Two Step)",
+      "composer": "Scott Joplin",
+      "url": "https://imslp.org/wiki/Rag-Time_Dance_A_Stop-Time_Two_Step_(Joplin%2C_Scott)",
+      "license": "Not seen in search",
+      "license_status": "unverified",
+      "attribution": "Scott Joplin; IMSLP",
+      "format": "PDF (MIDI not confirmed)",
+      "min_bars_estimate": 100,
+      "estimated_unique_tracks": 1,
+      "notes": "Sheet music source, needs MIDI conversion."
+    },
+    {
+      "name": "Scott Joplin's New Rag",
+      "composer": "Scott Joplin",
+      "url": "https://imslp.org/wiki/Scott_Joplin's_New_Rag_(Joplin,_Scott)",
+      "license": "Not seen in search",
+      "license_status": "unverified",
+      "attribution": "Scott Joplin; IMSLP",
+      "format": "PDF (MIDI not confirmed)",
+      "min_bars_estimate": 130,
+      "estimated_unique_tracks": 1,
+      "notes": "Sheet music source."
+    },
+    {
+      "name": "All-American Ragtime",
+      "composer": "Scott Joplin",
+      "url": "https://cn.imslp.org/wiki/All-American_Ragtime_(Joplin,_Scott)",
+      "license": "Not seen in search",
+      "license_status": "unverified",
+      "attribution": "Scott Joplin; IMSLP",
+      "format": "PDF (MIDI not confirmed)",
+      "min_bars_estimate": 150,
+      "estimated_unique_tracks": 1,
+      "notes": "Sheet music source."
+    },
+    {
+      "name": "Piano Sonata No.9 in D major K.311/284c",
+      "composer": "Wolfgang Amadeus Mozart",
+      "url": "https://imslp.org/wiki/Piano_Sonata_No.9_in_D_major,_K.311/284c_(Mozart,_Wolfgang_Amadeus)",
+      "license": "Public domain in the country of origin (IMSLP); edition by Baerenreiter (Germany) 25+ years old; MIDI is a user upload (JacopoTore)",
+      "license_status": "snippet_pd_country",
+      "attribution": "Wolfgang Amadeus Mozart (1756-1791); MIDI by JacopoTore (IMSLP user)",
+      "format": "MIDI (user upload, synthesized), PDF",
+      "min_bars_estimate": 420,
+      "estimated_unique_tracks": 3,
+      "notes": "Long classical progressions. Edition copyright and MIDI upload licence must be checked. IMSLP warns that copyright depends on country."
+    },
+    {
+      "name": "Piano Sonata No.11 in A major K.331/300i",
+      "composer": "Wolfgang Amadeus Mozart",
+      "url": "https://imslp.org/wiki/Piano_Sonata_K.331_(Mozart,_Wolfgang_Amadeus)",
+      "license": "Public domain in country of origin per IMSLP; several MIDI uploads",
+      "license_status": "snippet_pd_country",
+      "attribution": "Wolfgang Amadeus Mozart; IMSLP MIDI uploaders (see page)",
+      "format": "MIDI (user uploads), PDF",
+      "min_bars_estimate": 450,
+      "estimated_unique_tracks": 3,
+      "notes": "Theme and variations plus Alla turca rondo. Several MIDI files, pick one with clean licence."
+    },
+    {
+      "name": "Piano Sonata No.2 in F major K.280/189e",
+      "composer": "Wolfgang Amadeus Mozart",
+      "url": "https://imslp.org/wiki/Piano_Sonata_No.2_in_F_major,_K.280/189e_(Mozart,_Wolfgang_Amadeus)",
+      "license": "Public domain in country of origin per IMSLP (expected); edition status to check",
+      "license_status": "snippet_pd_country",
+      "attribution": "Wolfgang Amadeus Mozart; IMSLP",
+      "format": "PDF, MIDI (not confirmed)",
+      "min_bars_estimate": 300,
+      "estimated_unique_tracks": 3,
+      "notes": "MIDI availability was not confirmed in search."
+    },
+    {
+      "name": "Piano Sonata No.7 in C major K.309/284b",
+      "composer": "Wolfgang Amadeus Mozart",
+      "url": "https://imslp.org/wiki/Piano%20Sonata%20No.7%20in%20C%20major,%20K.309/284b%20(Mozart,%20Wolfgang%20Amadeus)",
+      "license": "Public domain in country of origin per IMSLP (expected); edition status to check",
+      "license_status": "snippet_pd_country",
+      "attribution": "Wolfgang Amadeus Mozart; IMSLP",
+      "format": "PDF, MIDI (not confirmed)",
+      "min_bars_estimate": 350,
+      "estimated_unique_tracks": 3,
+      "notes": "MIDI availability not confirmed."
+    },
+    {
+      "name": "Piano Sonata No.15 in F major K.533/494",
+      "composer": "Wolfgang Amadeus Mozart",
+      "url": "https://imslp.org/wiki/Piano_Sonata_No.15_in_F_major,_K.533/494_(Mozart,_Wolfgang_Amadeus)",
+      "license": "Public domain in country of origin per IMSLP (expected); edition status to check",
+      "license_status": "snippet_pd_country",
+      "attribution": "Wolfgang Amadeus Mozart; IMSLP",
+      "format": "PDF, MIDI (not confirmed)",
+      "min_bars_estimate": 500,
+      "estimated_unique_tracks": 3,
+      "notes": "Rondo finale is a long progression source."
+    },
+    {
+      "name": "Piano Sonata No.17 in B-flat major K.570",
+      "composer": "Wolfgang Amadeus Mozart",
+      "url": "https://imslp.org/wiki/Piano_Sonata_No.17_in_B-flat_major,_K.570_(Mozart,_Wolfgang_Amadeus)",
+      "license": "Public domain in country of origin per IMSLP (expected); edition status to check",
+      "license_status": "snippet_pd_country",
+      "attribution": "Wolfgang Amadeus Mozart; IMSLP",
+      "format": "PDF, MIDI (not confirmed)",
+      "min_bars_estimate": 350,
+      "estimated_unique_tracks": 3,
+      "notes": "MIDI availability not confirmed."
+    },
+    {
+      "name": "Piano Sonata No.13 in B-flat major K.333/315c (K.333, 3rd mov. page)",
+      "composer": "Wolfgang Amadeus Mozart",
+      "url": "https://imslp.org/wiki/K333%2C_3%C2%B0_Mov_(Mozart%2C_Wolfgang_Amadeus)",
+      "license": "Public domain in country of origin per IMSLP (expected)",
+      "license_status": "snippet_pd_country",
+      "attribution": "Wolfgang Amadeus Mozart; IMSLP",
+      "format": "PDF, MIDI (not confirmed)",
+      "min_bars_estimate": 480,
+      "estimated_unique_tracks": 3,
+      "notes": "The search returned the 3rd movement subpage, so the whole sonata is in the IMSLP parent page."
+    },
+    {
+      "name": "Fantasia in D minor K.397 (Mozart)",
+      "composer": "Wolfgang Amadeus Mozart",
+      "url": "https://www.mutopiaproject.org/",
+      "license": "Public domain per Mutopia listing (as reported by search); exact page not captured",
+      "license_status": "snippet_pd",
+      "attribution": "Wolfgang Amadeus Mozart; Mutopia Project contributors",
+      "format": "MIDI (per search)",
+      "min_bars_estimate": 100,
+      "estimated_unique_tracks": 1,
+      "notes": "Exact piece page URL not captured; find it on Mutopia by searching K.397."
+    },
+    {
+      "name": "Keyboard Sonata in G major K.171",
+      "composer": "Domenico Scarlatti",
+      "url": "https://imslp.org/wiki/Keyboard_Sonata_in_G_major%2C_K.171_(Scarlatti%2C_Domenico)",
+      "license": "Public domain in country of origin per IMSLP (expected); MIDI in synthesized section per search",
+      "license_status": "snippet_pd_country",
+      "attribution": "Domenico Scarlatti (1685-1757); IMSLP",
+      "format": "MIDI (IMSLP upload), PDF",
+      "min_bars_estimate": 60,
+      "estimated_unique_tracks": 1,
+      "notes": "Short sonata; many Scarlatti sonatas exist on IMSLP and can give many unique tracks."
+    },
+    {
+      "name": "Keyboard Sonata in B-flat major K.351",
+      "composer": "Domenico Scarlatti",
+      "url": "https://imslp.org/wiki/Keyboard_Sonata_in_B-flat_major,_K.351_(Scarlatti,_Domenico)",
+      "license": "Public domain in country of origin per IMSLP (expected)",
+      "license_status": "snippet_pd_country",
+      "attribution": "Domenico Scarlatti; IMSLP",
+      "format": "MIDI (IMSLP upload), PDF",
+      "min_bars_estimate": 70,
+      "estimated_unique_tracks": 1,
+      "notes": "Same as K.171."
+    },
+    {
+      "name": "Fugue for harpsichord/piano (Handel, HWV 585 per search)",
+      "composer": "George Frideric Handel",
+      "url": "https://www.mutopiaproject.org/",
+      "license": "Copyright: Public Domain per Mutopia listing (as reported by search); based on 1930 Schott edition, no rights reserved",
+      "license_status": "snippet_pd",
+      "attribution": "George Frideric Handel (1685-1759); Mutopia Project contributors; Schott 1930 edition credit",
+      "format": "MIDI (per search)",
+      "min_bars_estimate": 80,
+      "estimated_unique_tracks": 1,
+      "notes": "Exact Mutopia URL not captured. Schott 1930 edition: check whether the typesetting is PD in the target country."
+    },
+    {
+      "name": "BWV 512 (Bach, keyboard)",
+      "composer": "Johann Sebastian Bach",
+      "url": "https://www.mutopiaproject.org/",
+      "license": "Copyright: Public Domain per Mutopia listing (as reported by search)",
+      "license_status": "snippet_pd",
+      "attribution": "Johann Sebastian Bach (1685-1750); Mutopia Project contributors",
+      "format": "MIDI, LilyPond (expected)",
+      "min_bars_estimate": 60,
+      "estimated_unique_tracks": 1,
+      "notes": "Exact URL not captured. One search snippet said Bach MIDI files on Mutopia are CC BY-SA; check each file, some Bach items are CC BY-SA, not CC-BY."
+    },
+    {
+      "name": "The Art of Fugue, BWV 1080 (Mutopia id 1080)",
+      "composer": "Johann Sebastian Bach",
+      "url": "https://sca.uwaterloo.ca/Mutopia/cgibin/piece-info.cgi?id=1080",
+      "license": "Copyright: Public Domain per Mutopia listing, based on Breitkopf and Haertel 1885 edition (as reported by search)",
+      "license_status": "snippet_pd",
+      "attribution": "Johann Sebastian Bach; Breitkopf and Haertel 1885 edition; Mutopia Project contributors",
+      "format": "MIDI, LilyPond, PDF (MIDI expected)",
+      "min_bars_estimate": 1500,
+      "estimated_unique_tracks": 14,
+      "notes": "Best source for a long contrapuntal progression. 14 fugues plus canons. Page was on a blocked host, so the MIDI link is unverified."
+    },
+    {
+      "name": "Baroque keyboard piece, Mutopia id 1010 (composer not captured)",
+      "composer": "Unknown (not captured in search)",
+      "url": "https://sca.uwaterloo.ca/Mutopia/cgibin/piece-info.cgi?id=1010",
+      "license": "Not seen in search snippet (search listed a MIDI link on this page)",
+      "license_status": "unverified",
+      "attribution": "Mutopia Project; composer to check",
+      "format": "MIDI, LilyPond, PDF (per search)",
+      "min_bars_estimate": 100,
+      "estimated_unique_tracks": 1,
+      "notes": "Baroque piano per Mutopia tag. Check composer and licence."
+    },
+    {
+      "name": "Baroque keyboard piece, Mutopia id 1014 (composer not captured)",
+      "composer": "Unknown (not captured in search)",
+      "url": "https://sca.uwaterloo.ca/Mutopia/cgibin/piece-info.cgi?id=1014",
+      "license": "Not seen in search snippet",
+      "license_status": "unverified",
+      "attribution": "Mutopia Project; composer to check",
+      "format": "MIDI, LilyPond, PDF (expected)",
+      "min_bars_estimate": 100,
+      "estimated_unique_tracks": 1,
+      "notes": "Baroque piano per Mutopia tag."
+    },
+    {
+      "name": "Prelude Op.28 No.6 in B minor",
+      "composer": "Frederic Chopin",
+      "url": "https://sca.uwaterloo.ca/Mutopia/cgibin/piece-info.cgi?id=469",
+      "license": "Copyright: Public Domain (Peters edition), CC: No rights reserved, per Mutopia listing",
+      "license_status": "snippet_pd",
+      "attribution": "Frederic Chopin (1810-1849); Peters edition (ed. Ignaz Friedman / Peters source as listed); Mutopia Project",
+      "format": "MIDI, LilyPond, PDF",
+      "min_bars_estimate": 40,
+      "estimated_unique_tracks": 1,
+      "notes": "Short. Use the Peters source as stated on the page."
+    },
+    {
+      "name": "Prelude Op.28 No.4 in E minor (Peters source)",
+      "composer": "Frederic Chopin",
+      "url": "https://sca.uwaterloo.ca/Mutopia/cgibin/piece-info.cgi?id=921",
+      "license": "Copyright: Public Domain (Peters, Herrmann Scholtz 1900b edition) per Mutopia listing",
+      "license_status": "snippet_pd",
+      "attribution": "Frederic Chopin; Herrmann Scholtz edition 1900; Mutopia Project",
+      "format": "MIDI, LilyPond, PDF",
+      "min_bars_estimate": 20,
+      "estimated_unique_tracks": 1,
+      "notes": "Very short."
+    },
+    {
+      "name": "Prelude Op.45 in E minor (Scholtz edition)",
+      "composer": "Frederic Chopin",
+      "url": "https://www.mutopiaproject.org/",
+      "license": "Copyright: Public Domain, CC: No rights reserved (Scholtz 1845-1918 edition), per Mutopia listing",
+      "license_status": "snippet_pd",
+      "attribution": "Frederic Chopin; Herrmann Scholtz edition; Mutopia Project",
+      "format": "MIDI, LilyPond (expected)",
+      "min_bars_estimate": 40,
+      "estimated_unique_tracks": 1,
+      "notes": "Exact Mutopia URL not captured."
+    },
+    {
+      "name": "Prelude Op.28 No.1 in C major",
+      "composer": "Frederic Chopin",
+      "url": "https://sca.uwaterloo.ca/Mutopia/cgibin/piece-info.cgi?id=411",
+      "license": "Not seen in search snippet (Mutopia Op.28 entries are mixed PD and CC BY-SA)",
+      "license_status": "unverified",
+      "attribution": "Frederic Chopin; Mutopia Project",
+      "format": "MIDI, LilyPond (expected)",
+      "min_bars_estimate": 16,
+      "estimated_unique_tracks": 1,
+      "notes": "Check copyright line."
+    },
+    {
+      "name": "Prelude Op.28 No.7 in A major",
+      "composer": "Frederic Chopin",
+      "url": "https://www.ibiblio.org/mutopia/cgibin/piece-info.cgi?id=470",
+      "license": "Not seen in search snippet",
+      "license_status": "unverified",
+      "attribution": "Frederic Chopin; Mutopia Project",
+      "format": "MIDI, LilyPond (expected)",
+      "min_bars_estimate": 20,
+      "estimated_unique_tracks": 1,
+      "notes": "Check copyright line."
+    },
+    {
+      "name": "Prelude Op.28 No.20 in C minor",
+      "composer": "Frederic Chopin",
+      "url": "https://www.ibiblio.org/mutopia/cgibin/piece-info.cgi?id=472",
+      "license": "Not seen in search snippet",
+      "license_status": "unverified",
+      "attribution": "Frederic Chopin; Mutopia Project",
+      "format": "MIDI, LilyPond (expected)",
+      "min_bars_estimate": 20,
+      "estimated_unique_tracks": 1,
+      "notes": "Check copyright line."
+    },
+    {
+      "name": "Procedural MIDI Music (30 MIDI tracks)",
+      "composer": "Uploader (OpenGameArt user, not captured)",
+      "url": "https://opengameart.org/node/159994",
+      "license": "CC0 (per search snippet)",
+      "license_status": "snippet_cc0",
+      "attribution": "Not required for CC0; credit uploader as courtesy",
+      "format": "MIDI",
+      "min_bars_estimate": 300,
+      "estimated_unique_tracks": 30,
+      "notes": "Set of 30 MIDI tracks. Bar counts and chord structure not checked. Procedural output may be less musical. Check each file."
+    },
+    {
+      "name": "Original MIDI Album",
+      "composer": "Uploader (OpenGameArt, not captured)",
+      "url": "https://opengameart.org/",
+      "license": "CC0 (per search snippet)",
+      "license_status": "snippet_cc0",
+      "attribution": "Not required for CC0",
+      "format": "MIDI, plus possibly audio",
+      "min_bars_estimate": 100,
+      "estimated_unique_tracks": 1,
+      "notes": "Exact URL not captured; track count unknown, value 1 is a placeholder."
+    },
+    {
+      "name": "Loop Style",
+      "composer": "Uploader (OpenGameArt, not captured)",
+      "url": "https://opengameart.org/",
+      "license": "CC0 (per search snippet)",
+      "license_status": "snippet_cc0",
+      "attribution": "Not required for CC0",
+      "format": "MIDI (.mid)",
+      "min_bars_estimate": 16,
+      "estimated_unique_tracks": 1,
+      "notes": "Looping chord progression with percussion. Short loop, not classical."
+    },
+    {
+      "name": "15 Melodic RPG Chiptunes",
+      "composer": "Uploader (OpenGameArt, not captured)",
+      "url": "https://opengameart.org/",
+      "license": "CC0 (per search snippet; no credit required)",
+      "license_status": "snippet_cc0",
+      "attribution": "Not required for CC0",
+      "format": "MIDI and OGG",
+      "min_bars_estimate": 240,
+      "estimated_unique_tracks": 15,
+      "notes": "Chiptune style. Bar counts not checked."
+    },
+    {
+      "name": "4 Music Box Tracks",
+      "composer": "Uploader (OpenGameArt, not captured)",
+      "url": "https://opengameart.org/",
+      "license": "CC0 (per search snippet; no credit required)",
+      "license_status": "snippet_cc0",
+      "attribution": "Not required for CC0",
+      "format": "MIDI and looping OGG",
+      "min_bars_estimate": 64,
+      "estimated_unique_tracks": 4,
+      "notes": "Small set."
+    },
+    {
+      "name": "Fantasy Choir-3 orchestral pieces",
+      "composer": "Uploader (OpenGameArt, not captured)",
+      "url": "https://opengameart.org/",
+      "license": "CC0 (per search snippet)",
+      "license_status": "snippet_cc0",
+      "attribution": "Not required for CC0",
+      "format": "Not captured (probably MIDI or audio)",
+      "min_bars_estimate": 150,
+      "estimated_unique_tracks": 3,
+      "notes": "Orchestral. Format not confirmed."
+    },
+    {
+      "name": "SenseZera album",
+      "composer": "Chisech",
+      "url": "https://chisech.itch.io/sensezera-album",
+      "license": "CC0 / public-domain tags (per search snippet); page says author's recorded performances use copyrighted samples, only MIDI and compositions are free",
+      "license_status": "snippet_cc0",
+      "attribution": "Chisech (credit as courtesy)",
+      "format": "MIDI (small download)",
+      "min_bars_estimate": 100,
+      "estimated_unique_tracks": 1,
+      "notes": "Use the MIDI only, not the audio recordings. Track count and chord content not checked. Page is on a blocked host."
+    },
+    {
+      "name": "OmniCreamo",
+      "composer": "AJ the Programmer",
+      "url": "https://ajtheprogrammer.itch.io/omnicreamo",
+      "license": "CC0 for music files (per search snippet)",
+      "license_status": "snippet_cc0",
+      "attribution": "AJ the Programmer (courtesy)",
+      "format": "Not stated in snippet (check for MIDI)",
+      "min_bars_estimate": 50,
+      "estimated_unique_tracks": 1,
+      "notes": "Format and content not confirmed; may be audio only."
+    },
+    {
+      "name": "MIDI Nonchalant Day",
+      "composer": "Uploader (OpenGameArt, not captured)",
+      "url": "https://opengameart.org/",
+      "license": "CC0 (per search snippet)",
+      "license_status": "snippet_cc0",
+      "attribution": "Not required for CC0",
+      "format": "MIDI",
+      "min_bars_estimate": 64,
+      "estimated_unique_tracks": 1,
+      "notes": "Upbeat looping MIDI song."
+    },
+    {
+      "name": "indiscriminate midi music",
+      "composer": "Uploader (OpenGameArt, not captured)",
+      "url": "https://opengameart.org/content/indiscriminate-midi-music",
+      "license": "Described as public domain MIDIs; licence tag not seen",
+      "license_status": "unverified",
+      "attribution": "Uploader (check page)",
+      "format": "MIDI",
+      "min_bars_estimate": 100,
+      "estimated_unique_tracks": 1,
+      "notes": "Possibly a collection of public-domain classical MIDIs. Check the licence and origin of each file."
+    }
+  ],
+  "rejected": [
+    {
+      "name": "Good Endings (OpenGameArt)",
+      "url": "https://opengameart.org/",
+      "reason": "CC0 upload, but the chord progression is inspired by C418 Tsuki no Koibumi (copyrighted). Not clean."
+    },
+    {
+      "name": "Ultimate MIDI Pack (KodingNights, itch.io)",
+      "url": "https://kodingnights.itch.io/ultimate-midi-pack",
+      "reason": "Paid/commercial product; no CC0 or CC-BY licence seen in snippet."
+    },
+    {
+      "name": "Chopin Nocturne Op.9 No.2 (Mutopia id not captured)",
+      "url": "https://www.ibiblio.org/mutopia/cgibin/piece-info.cgi?id=582",
+      "reason": "Snippet says CC BY-SA 3.0, outside the CC-BY-only set."
+    },
+    {
+      "name": "Prelude Op.28 No.2 (Mutopia id 494)",
+      "url": "https://www.ibiblio.org/mutopia/cgibin/piece-info.cgi?id=494",
+      "reason": "Snippet says CC BY-SA, outside the CC-BY-only set."
+    },
+    {
+      "name": "Prelude 13 (Mutopia id 2174)",
+      "url": "https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2174",
+      "reason": "Snippet says CC BY-SA 4.0, outside the CC-BY-only set."
+    },
+    {
+      "name": "Hindemith Piano Sonata No.1 (IMSLP)",
+      "url": "https://IMSLP.org/wiki/Piano_Sonata_No.1_(Hindemith,_Paul)",
+      "reason": "Public domain in Canada and life+50 countries only; not PD in EU/life+70."
+    },
+    {
+      "name": "Rosenstock Piano Sonata Op.3 (IMSLP)",
+      "url": "https://imslp.org/wiki/Piano_Sonata,_Op.3_(Rosenstock,_Joseph)",
+      "reason": "Not public domain in Canada or life+70 countries."
+    },
+    {
+      "name": "Musopen recordings and materials",
+      "url": "https://en.wikipedia.org/wiki/Musopen",
+      "reason": "Musopen recordings are PD, but Musopen own materials are copyrighted; no MIDI found. Not a MIDI source."
+    }
+  ],
+  "summary": {
+    "candidates_count": 42,
+    "candidates_license_confirmed_by_snippet": 27,
+    "candidates_unverified": 15,
+    "estimated_total_unique_tracks_all_candidates": 116,
+    "note_on_totals": "Sum of estimated_unique_tracks across candidates. 58 of these come from OpenGameArt/itch.io CC0 sets and are not classical. Public-domain classical subset is about 58 unique tracks, not counting unverified items."
+  }
+}

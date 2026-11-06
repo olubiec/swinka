@@ -1,0 +1,401 @@
+{
+  "task": "R1 - darmowe zbiory MIDI z dlugimi progresjami akordow (min. 32 takty), licencje CC0 / PD / CC-BY",
+  "date": "2026-11-06",
+  "method": "Tylko wyszukiwanie w sieci (WebSearch, 9 zapytan) i wiedza wlasna. Nie pobrano zadnych plikow, nie odwiedzono stron repozytorium. Liczby oznaczone 'z pamieci' lub 'snippet' nie sa zweryfikowane na stronie zrodlowej.",
+  "status_legend": {
+    "accept": "licencja CC0/PD/CC-BY potwierdzona w wynikach wyszukiwania lub w oficjalnym opisie",
+    "conditional": "licencja zalezy od pliku/utworu lub wymaga sprawdzenia LICENSE w repo; mozliwe do uzycia po weryfikacji",
+    "unclear": "licencja niejasna lub sprzeczne opisy - nie uzywac bez sprawdzenia",
+    "excluded": "NC/SA/MIT/komercyjna lub zly format - poza zakresem wg wymagan"
+  },
+  "candidates": [
+    {
+      "name": "GiantMIDI-Piano",
+      "url": "https://github.com/bytedance/GiantMIDI-Piano",
+      "license": "CC BY 4.0 (repo); przed pobraniem nalezy zaakceptowac disclaimer.md",
+      "attribution": "GiantMIDI-Piano, ByteDance, CC BY 4.0 - https://github.com/bytedance/GiantMIDI-Piano",
+      "format": "MIDI (transkrypcje z nagran, onset/offset/pitch/velocity, pedal)",
+      "min_bars_estimate": "zalezy od utworu; utwory solowe fortepianowe zwykle >32 takty (nieweryfikowane)",
+      "estimated_unique_tracks": 10855,
+      "status": "accept",
+      "notes": "10 855 utworow solowych na fortepian, 2 786 kompozytorow (snippet). Dane to transkrypcje audio z YouTube, nie partytury - akordy trzeba wyekstrahowac algorytmicznie. Czesc nagran moze byc niedostepna. SourceForge mirror mowi o braku ograniczen, ale to nie jest zrodlo autorytatywne."
+    },
+    {
+      "name": "ASAP (Aligned Scores and Performances)",
+      "url": "https://github.com/fosfrancesco/asap-dataset",
+      "license": "CC BY 4.0 (wg publikacji ISMIR); sprawdzic LICENSE w repo",
+      "attribution": "Foscarin, Introduction et al., ASAP dataset, CC BY 4.0 - https://github.com/fosfrancesco/asap-dataset",
+      "format": "MusicXML + MIDI (performance MIDI wyrownane do partytur)",
+      "min_bars_estimate": "klasyka zachodnia, utwory zwykle >32 takty (nieweryfikowane)",
+      "estimated_unique_tracks": 222,
+      "status": "conditional",
+      "notes": "222 partytury, 1068 wykonan (snippet; repo podaje 236 partytur / 1067 wykonan). Wiele wykonan tego samego utworu - unikalnych utworow ~222. PERiScoPe (pochodna) jest CC-BY-NC-SA - NIE uzywac."
+    },
+    {
+      "name": "Mutopia Project",
+      "url": "https://www.mutopiaproject.org/",
+      "license": "per utwor: CC0 / Public Domain dedication / CC BY / CC BY-SA (wg ibiblio.org/mutopia/legal.html)",
+      "attribution": "per utwor: 'none' dla PD/CC0; 'Autor, Mutopia Project, CC BY' dla CC-BY; CC BY-SA odrzucic",
+      "format": "MIDI generowane z LilyPond (+ zrodla .ly)",
+      "min_bars_estimate": "bardzo zroznicowane; wiele utworow klasycznych >32 takty (nieweryfikowane)",
+      "estimated_unique_tracks": null,
+      "status": "conditional",
+      "notes": "Filtrowac po licencji kazdego utworu - tylko PD/CC0/CC-BY. Liczba utworow nieznana z wynikow wyszukiwania. Strony trzecie czesto blednie pisza 'CC BY-SA' dla calosci - wiarygodne jest tylko legal.html."
+    },
+    {
+      "name": "CPDL - Choral Public Domain Library",
+      "url": "https://www.cpdl.org/",
+      "license": "per utwor: public domain, CC BY, CC BY-SA, GFDL itd.",
+      "attribution": "per utwor (filtrowac do PD / CC BY)",
+      "format": "MIDI dla czesci utworow + PDF/MusicXML",
+      "min_bars_estimate": "utwory chorowe, czesto >32 takty (nieweryfikowane)",
+      "estimated_unique_tracks": null,
+      "status": "conditional",
+      "notes": "Glownie chor renesansowy/klasyczny/hymny, nie pop/jazz. Licencja na poziomie utworu - sprawdzac kazdy."
+    },
+    {
+      "name": "PDMX (Public Domain MusicXML)",
+      "url": "https://github.com/pnlong/PDMX",
+      "license": "CC0 (zbior z MuseScore, wg mojej wiedzy - do weryfikacji w README)",
+      "attribution": "none (CC0)",
+      "format": "MusicXML (konwersja do MIDI wymagana)",
+      "min_bars_estimate": "zalezy od utworu (nieweryfikowane)",
+      "estimated_unique_tracks": 254000,
+      "status": "conditional",
+      "notes": "Liczba z pamieci, nieweryfikowana. Ogromna pula, ale wiele utworow to aranze; wymaga filtrowania po dlugosci i gatunku. Sprawdzic licencje per plik w metadanych."
+    },
+    {
+      "name": "OpenScore String Quartets",
+      "url": "https://github.com/OpenScore/StringQuartets",
+      "license": "CC0 (wg mojej wiedzy - do weryfikacji)",
+      "attribution": "none (CC0)",
+      "format": "MuseScore/MusicXML (konwersja do MIDI)",
+      "min_bars_estimate": "kwartety - zwykle >32 takty (nieweryfikowane)",
+      "estimated_unique_tracks": 100,
+      "status": "conditional",
+      "notes": "Liczba ok. 100+ kwartetow z pamieci, nieweryfikowana. Klasyka, bez pop/jazz."
+    },
+    {
+      "name": "OpenScore Lieder",
+      "url": "https://github.com/OpenScore/Lieder",
+      "license": "CC0 (wg mojej wiedzy - do weryfikacji)",
+      "attribution": "none (CC0)",
+      "format": "MuseScore/MusicXML (konwersja do MIDI)",
+      "min_bars_estimate": "piesni, czesto 16-64 takty (nieweryfikowane)",
+      "estimated_unique_tracks": 1400,
+      "status": "conditional",
+      "notes": "Liczba ok. 1400 z pamieci, nieweryfikowana. Piesni z akompaniamentem fortepianu - dobre do progresji."
+    },
+    {
+      "name": "MuseScore - utwory filtrowane na CC0 / public domain",
+      "url": "https://musescore.com/sheetmusic?license=publicdomain",
+      "license": "per utwor: CC0 / public domain (filtr serwisu)",
+      "attribution": "none dla CC0/PD",
+      "format": "MSCZ/MusicXML, eksport MIDI",
+      "min_bars_estimate": "zalezy od utworu (nieweryfikowane)",
+      "estimated_unique_tracks": null,
+      "status": "conditional",
+      "notes": "Duza pula, jakosc i licencja zmienne; licencje trzeba sprawdzac na stronie kazdego utworu. Duplikaty czeste."
+    },
+    {
+      "name": "JSB Chorales / Bach chorales (music21 corpus)",
+      "url": "https://github.com/czhuang/JSB-Chorales-dataset",
+      "license": "kompozycje PD; licencja datasetu do sprawdzenia (BSD/MIT w repo music21 - nieweryfikowane)",
+      "attribution": "none dla kompozycji PD (J.S. Bach); sprawdzic licencje datasetu",
+      "format": "MIDI / symbolic (music21 corpus)",
+      "min_bars_estimate": "zwykle 8-40 taktow (nieweryfikowane)",
+      "estimated_unique_tracks": 382,
+      "status": "conditional",
+      "notes": "382 chorały z pamieci. Progresje dobre, ale wiele chorałow krotszych niz 32 takty - filtrowac po dlugosci."
+    },
+    {
+      "name": "Christian Classics Ethereal Library - 200 MIDI files",
+      "url": "https://www.ccel.org/ccel/ccel/midifiles",
+      "license": "public domain (wg wynikow wyszukiwania; sprawdzic strone)",
+      "attribution": "none",
+      "format": "MIDI",
+      "min_bars_estimate": "hymny typowo 8-16 taktow - za krotkie",
+      "estimated_unique_tracks": 200,
+      "status": "conditional",
+      "notes": "Hymny, zwykle ponizej 32 taktow. Mozliwe uzycie tylko jako sekwencje do zlaczenia."
+    },
+    {
+      "name": "Christian Classics Ethereal Hymnary (CCEH)",
+      "url": "https://ccel.org/cceh/cceh_cpr.htm",
+      "license": "public domain (wg wynikow wyszukiwania)",
+      "attribution": "none",
+      "format": "MIDI + sheet music",
+      "min_bars_estimate": "hymny, zwykle <32 takty",
+      "estimated_unique_tracks": null,
+      "status": "conditional",
+      "notes": "Liczby nieznane. Krotkie formy."
+    },
+    {
+      "name": "NetHymnal MIDI archives",
+      "url": "https://www.nethymnal.org/misc/download.htm",
+      "license": "public domain (wg wynikow wyszukiwania; sprawdzic)",
+      "attribution": "none",
+      "format": "MIDI (ZIP)",
+      "min_bars_estimate": "hymny, zwykle <32 takty",
+      "estimated_unique_tracks": null,
+      "status": "conditional",
+      "notes": "Krotkie formy, warto tylko do banku melodii/harmonii."
+    },
+    {
+      "name": "IMSLP (Petrucci Music Library)",
+      "url": "https://imslp.org/",
+      "license": "per utwor: PD w USA / PD w kraju autora; czesto CC",
+      "attribution": "per utwor",
+      "format": "PDF glownie; MIDI rzadko",
+      "min_bars_estimate": "duze formy, >32 takty",
+      "estimated_unique_tracks": null,
+      "status": "conditional",
+      "notes": "Glownie PDF. Pliki MIDI pojawiaja sie sporadycznie - wymaga przeszukania kategorii MIDI, licencje per utwor."
+    },
+    {
+      "name": "Musopen",
+      "url": "https://musopen.org/",
+      "license": "wg serwisu: domena publiczna (CC0 dla bibliotek) - do weryfikacji",
+      "attribution": "none (jesli PD/CC0)",
+      "format": "nuty/MusicXML; MIDI nieregularnie",
+      "min_bars_estimate": "klasyka, czesto >32 takty",
+      "estimated_unique_tracks": null,
+      "status": "unclear",
+      "notes": "Potwierdzic dostepnosc MIDI i licencje na stronie."
+    },
+    {
+      "name": "Wikimedia Commons - MIDI (kategoria)",
+      "url": "https://commons.wikimedia.org/wiki/Category:MIDI_files",
+      "license": "per plik: PD / CC0 / CC BY / CC BY-SA / inne",
+      "attribution": "per plik",
+      "format": "MIDI",
+      "min_bars_estimate": "zmienne",
+      "estimated_unique_tracks": null,
+      "status": "conditional",
+      "notes": "Filtrowac po licencji kazdego pliku; czesc to krotkie pliki testowe."
+    },
+    {
+      "name": "Essen Folksong Collection (EsAC)",
+      "url": "https://ess.ruhr-uni-bochum.de/essen/ (dataset: EsAC)",
+      "license": "niejasna - zwykle 'wolno do celow badawczych'; do sprawdzenia",
+      "attribution": "wg licencji zrodla",
+      "format": "EsAC/**kern, konwersja do MIDI",
+      "min_bars_estimate": "piesni ludowe, czesto 8-32 takty",
+      "estimated_unique_tracks": 8473,
+      "status": "unclear",
+      "notes": "Liczba 8 473 z pamieci. Licencja nie jest czysta CC - nie uzywac bez sprawdzenia. Krotkie formy."
+    },
+    {
+      "name": "Nottingham Music Database (folk)",
+      "url": "https://abc.sourceforge.net/NMD/",
+      "license": "niejasna: sprzeczne wpisy (Open Access vs 'Other'); IPR Mick Peat dla czesci",
+      "attribution": "do ustalenia",
+      "format": "ABC; MIDI w repo jukedeck/nottingham-dataset",
+      "min_bars_estimate": "zwykle 8-16 taktow",
+      "estimated_unique_tracks": 1200,
+      "status": "unclear",
+      "notes": "Ok. 1200 melodii (snippet). Krotkie, niejasna licencja - odrzucic jesli brak potwierdzenia."
+    },
+    {
+      "name": "POP909",
+      "url": "https://github.com/music-x-lab/POP909-Dataset",
+      "license": "'inne' wg HyperAI; LICENSE w repo do sprawdzenia; utwory komercyjne",
+      "attribution": "do ustalenia",
+      "format": "MIDI + etykiety akordow (MIR)",
+      "min_bars_estimate": "piosenki pop, zwykle >32 takty",
+      "estimated_unique_tracks": 909,
+      "status": "unclear",
+      "notes": "Dobre progresje pop, ale licencja nieustalona; podklad melodyczny to komercyjne piosenki - ryzyko praw autorskich do melodii nawet przy licencji datasetu."
+    },
+    {
+      "name": "Kunstderfuge (MIDI library)",
+      "url": "https://www.kunstderfuge.com/",
+      "license": "mieszana; tylko czesc (ok. 2192 pliki wg snippetu) pod licencja Creative Commons",
+      "attribution": "per plik",
+      "format": "MIDI",
+      "min_bars_estimate": "klasyka, >32 takty",
+      "estimated_unique_tracks": 2192,
+      "status": "conditional",
+      "notes": "Akceptowac tylko pliki z jawna CC0/PD/CC-BY; wiele z pozostalych plikow to licencje NC lub nieokreslone."
+    },
+    {
+      "name": "Slakh2100",
+      "url": "https://zenodo.org/records/4599666",
+      "license": "CC BY 4.0 (wg mojej wiedzy - do weryfikacji)",
+      "attribution": "Manilow et al., Slakh2100, CC BY 4.0",
+      "format": "MIDI (wielosciezkowe) + audio renderowane",
+      "min_bars_estimate": "zmienne (nieweryfikowane)",
+      "estimated_unique_tracks": 2100,
+      "status": "unclear",
+      "notes": "Pochodzi z Lakh MIDI - prawa do melodii/aranzacji moga byc niejasne. Wymaga przegladu licencji zrodlowych."
+    },
+    {
+      "name": "MetaMIDI dataset",
+      "url": "https://github.com/jeffreyjkeller/MetaMIDI (do weryfikacji)",
+      "license": "niejasna (metadane CC BY wg mojej wiedzy; pliki z internetu)",
+      "attribution": "do ustalenia",
+      "format": "MIDI",
+      "min_bars_estimate": "zmienne",
+      "estimated_unique_tracks": null,
+      "status": "unclear",
+      "notes": "Nieprzejrzyste pochodzenie plikow. Nie uzywac bez audytu."
+    },
+    {
+      "name": "NES-MDB",
+      "url": "https://github.com/chrisdonahue/nesmdb",
+      "license": "niejasna (CC BY wg mojej wiedzy - do weryfikacji)",
+      "attribution": "do ustalenia",
+      "format": "MIDI / NES chip",
+      "min_bars_estimate": "krotkie petle gier, czesto <32",
+      "estimated_unique_tracks": 5278,
+      "status": "unclear",
+      "notes": "Liczba z pamieci. Muzyka gier - krotkie, nieprzydatne do dlugich progresji."
+    },
+    {
+      "name": "VGMIDI",
+      "url": "https://github.com/lucasnfe/vgmidi",
+      "license": "niejasna; pochodzi z VGMusic",
+      "attribution": "do ustalenia",
+      "format": "MIDI",
+      "min_bars_estimate": "krotkie",
+      "estimated_unique_tracks": null,
+      "status": "unclear",
+      "notes": "Licencja nieustalona; krotkie utwory gier."
+    },
+    {
+      "name": "Drolez - free-midi-chords",
+      "url": "https://github.com/ldrolez/free-midi-chords",
+      "license": "MIT (repo, wg ecosyste.ms) - NIE jest CC0/PD/CC-BY",
+      "attribution": "wymagany wg MIT (poza zakresem)",
+      "format": "MIDI (akordy i progresje, DAW/MPC)",
+      "min_bars_estimate": "wiekszosc to akordy/progresje krotkie (4-8 akordow) - nie spelnia 32 taktow",
+      "estimated_unique_tracks": 10056,
+      "status": "excluded",
+      "notes": "10 056 plikow wg blogu autora (liczba nie jest tym samym co utwory). Licencja MIT spoza dozwolonych. Zawiera pliki progresji; dlugosc niepotwierdzona."
+    },
+    {
+      "name": "Producer Hive - MIDI Chords (free)",
+      "url": "https://shop.producerhive.com/products/midi-chords-free",
+      "license": "nieokreslona w wynikach; komercyjny sklep",
+      "attribution": "do ustalenia",
+      "format": "MIDI",
+      "min_bars_estimate": "1 takt na plik - za krotkie",
+      "estimated_unique_tracks": 50,
+      "status": "excluded",
+      "notes": "50 jednotaktowych plikow (snippet). Odrzucic."
+    },
+    {
+      "name": "Kirala Music - Free MIDI Chord Pack 01",
+      "url": "https://kiralamusic.gumroad.com/l/FreeMIDIChordPack01",
+      "license": "'100% royalty-free' - nie CC0/PD/CC-BY",
+      "attribution": "nie wymagana wg opisu, ale licencja nie jest dozwolona",
+      "format": "MIDI",
+      "min_bars_estimate": "krotkie progresje (4 akordy)",
+      "estimated_unique_tracks": 5,
+      "status": "excluded",
+      "notes": "5 progresji w C-dur/A-moll, za krotkie."
+    },
+    {
+      "name": "Loopmasters - 12615 Jazz Chord Progressions",
+      "url": "https://www.loopmasters.com/products/12615",
+      "license": "komercyjna ('license free') - nie CC0/PD/CC-BY",
+      "attribution": "n/d",
+      "format": "MIDI",
+      "min_bars_estimate": "krotkie progresje",
+      "estimated_unique_tracks": null,
+      "status": "excluded",
+      "notes": "Produkt komercyjny."
+    },
+    {
+      "name": "LearnBeatMaking - Popular ProGressions (Lite)",
+      "url": "https://learnbeatmaking.com/ (produkt Lite)",
+      "license": "nieokreslona w wynikach",
+      "attribution": "do ustalenia",
+      "format": "MIDI + WAV",
+      "min_bars_estimate": "krotkie progresje (4 akordy)",
+      "estimated_unique_tracks": 31,
+      "status": "excluded",
+      "notes": "31 progresji pop/R&B (snippet). Licencja nieokreslona; krotkie."
+    },
+    {
+      "name": "MAESTRO v3",
+      "url": "https://magenta.tensorflow.org/datasets/maestro",
+      "license": "CC BY-NC-SA 4.0 (wg mojej wiedzy)",
+      "attribution": "n/d",
+      "format": "MIDI",
+      "min_bars_estimate": ">32 takty",
+      "estimated_unique_tracks": 1276,
+      "status": "excluded",
+      "notes": "NC i SA - odrzucone. Liczba z pamieci."
+    },
+    {
+      "name": "Hooktheory TheoryTab",
+      "url": "https://www.hooktheory.com/theorytab",
+      "license": "CC BY-NC-SA (wg mojej wiedzy)",
+      "attribution": "n/d",
+      "format": "dane symboliczne / MIDI",
+      "min_bars_estimate": "zmienne",
+      "estimated_unique_tracks": null,
+      "status": "excluded",
+      "notes": "NC - odrzucone."
+    },
+    {
+      "name": "Weimar Jazz Database (WJazzD)",
+      "url": "https://jazzomat.hfm-weimar.de/",
+      "license": "CC BY-NC-SA (wg mojej wiedzy)",
+      "attribution": "n/d",
+      "format": "dane symboliczne (nie czysty MIDI)",
+      "min_bars_estimate": "solówki, zmienne",
+      "estimated_unique_tracks": 456,
+      "status": "excluded",
+      "notes": "NC - odrzucone. Liczba z pamieci."
+    },
+    {
+      "name": "Lakh MIDI Dataset",
+      "url": "https://colinraffel.com/projects/lmd/",
+      "license": "mieszana - utwory z prawami autorskimi",
+      "attribution": "n/d",
+      "format": "MIDI",
+      "min_bars_estimate": ">32 takty",
+      "estimated_unique_tracks": 176581,
+      "status": "excluded",
+      "notes": "Liczba z pamieci. Prawa autorskie do utworow nie sa pokryte CC - odrzucone."
+    },
+    {
+      "name": "piano-midi.de (Bernd Krueger)",
+      "url": "http://www.piano-midi.de/",
+      "license": "'free for personal use' - niejasne, nie CC",
+      "attribution": "n/d",
+      "format": "MIDI",
+      "min_bars_estimate": "klasyka, >32 takty",
+      "estimated_unique_tracks": null,
+      "status": "excluded",
+      "notes": "Licencja niedozwolona przez wymagania (uzytek prywatny)."
+    },
+    {
+      "name": "KernScores (Humdrum)",
+      "url": "https://kern.humdrum.org/",
+      "license": "per zbior; czesto PD",
+      "attribution": "per zbior",
+      "format": "**kern (nie MIDI)",
+      "min_bars_estimate": "klasyka, >32 takty",
+      "estimated_unique_tracks": null,
+      "status": "excluded",
+      "notes": "Zly format wg wymagan (MIDI). Mozliwa konwersja, ale nie w tym zadaniu."
+    }
+  ],
+  "summary": {
+    "total_candidates": 34,
+    "accept": 1,
+    "conditional": 14,
+    "unclear": 8,
+    "excluded": 11,
+    "note": "Tylko GiantMIDI-Piano ma licencje CC BY 4.0 potwierdzona w wynikach (repo). Pozostale 'conditional' wymagaja sprawdzenia LICENSE w repo lub licencji per utwor przed uzyciem."
+  },
+  "blockers": [
+    "Nie pobrano ani nie odwiedzono zadnej strony zrodlowej (zakres: tylko wyszukiwanie). Licencje i liczby z wynikow wyszukiwania sa snippetami.",
+    "Wiekszosc zbiorow CC0/PD to krotkie formy (hymny, chorały, piosenki); dlugie progresje 32+ taktow daja glownie PDMX, OpenScore, GiantMIDI-Piano, ASAP, Kunstderfuge (filtrowany), Mutopia (filtrowany).",
+    "Brak potwierdzonych zbiorow pop/jazz z progresjami 32+ taktow na licencji CC0/PD/CC-BY w wynikach wyszukiwania. Zbior POP909 ma niejasna licencje.",
+    "Liczby oznaczone jako 'z pamieci' (PDMX, OpenScore, Essen, NES-MDB, Lakh, MAESTRO, WJazzD, Slakh) wymagaja weryfikacji."
+  ]
+}
