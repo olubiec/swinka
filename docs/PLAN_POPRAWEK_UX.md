@@ -78,7 +78,7 @@ Cel: domek, ogród, park, farma, targ to osobne okna; strzałki po bokach przeł
 | P3-03 | Strzałki w domku zmieniają pokoje; na krawędzi domu przechodzą do ogrodu | `web/home/features/rooms/feature.js` | smoke: z ostatniego pokoju strzałka prowadzi do ogrodu |
 
 | P3-04 | Strzałka cofania i krzyżyk zamknięcia z More w stylu designu gry (jedne wspólne ikony SVG/PNG, te same we wszystkich oknach funkcji) | `web/home/style.css`, `web/home/app.js`, `web/home/assets/ui/` | smoke: wszystkie okna funkcji mają te same ikony cofania i zamknięcia |
-| P3-05 | Plan domu: albo widok z góry (rzut pokoi), albo usunięcie planu i zostawienie samego przełączania strzałkami (decyzja człowieka, domyślnie: usunąć plan) | `web/home/features/rooms/feature.js` | smoke: brak planu z ukosa; przełączanie pokoi działa |
+| P3-05 | Plan domu usuwamy (decyzja człowieka 6.11): zostaje samo przełączanie pokoi strzałkami | `web/home/features/rooms/feature.js` | smoke: brak planu z ukosa; przełączanie pokoi działa |
 
 ### Do sprawdzenia po P3
 1. Strzałki po bokach przechodzą: dom (pokoje) → ogród → park → farma → targ.
@@ -178,5 +178,5 @@ Cel: kalendarz opieki to narzędzie gracza: własne dane świnek, własne przypo
 ---
 
 ## Kolejność i zależności
-Zalecana kolejność po uwagach z 6.11: P1 → P2 → P3 → P6 → P7 (zapis dekoracji i pokój w głównym oknie to najbardziej widoczne błędy) → P4 → P5 (P5 zależy od P4 i widoku pokoi z P6) → P8 (niezależna, można wcześniej). Zależności: P7 po P6, P5 po P4. (niezależna od P5-P7, można przesunąć wcześniej).
+Kolejność (decyzja człowieka 6.11): po kolei P1 → P2 → P3 → P4 → P5 → P6 → P7 → P8. Zależności: P5 po P4, P7 po P6. P5 może wymagać widoku pokoi z P6-05; wtedy P6 przesunąć przed P5. (niezależna od P5-P7, można przesunąć wcześniej).
 Pełny test i build tylko w ostatniej paczce fali (`tools/verify.ps1`); przy fali dotykającej C# na Windowsie człowiek robi `tools/build.ps1`.
