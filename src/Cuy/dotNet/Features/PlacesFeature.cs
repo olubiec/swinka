@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cuy.Core;
+using Cuy.Core.Pigs;
+using Cuy.Core.Time;
 using Cuy.Core.World;
 using Newtonsoft.Json.Linq;
 
@@ -10,6 +12,7 @@ namespace Cuy.Features
     public class PlacesFeature : HomeFeatureBase
     {
         public override string Id => "places";
+        private Random _rng;
 
         public override void Initialize(BrainController brain)
         {
@@ -26,7 +29,8 @@ namespace Cuy.Features
 
             pet.Balance.PlacesActive = true;
             var world = pet.EnsureWorld();
-            var catalog = pet.PlaceCatalog;
+            var catalog = pet.PlaceCatalog ?? PlaceCatalog.Current;
+            var gameState = pet.State;
 
             var placesList = new List<object>();
             if (catalog?.Places != null)
@@ -98,17 +102,53 @@ namespace Cuy.Features
                 }
             }
 
+            // Build scene ring order
+            var roomIds = GetRoomIds(gameState, world);
+            Func<string, bool> isUnlocked = s => CheckUnlocked(world, catalog, s);
+            var ring = SceneOrder.Build(roomIds, isUnlocked);
+            var orderList = new List<object>();
+            foreach (var entry in ring)
+            {
+                orderList.Add(new
+                {
+                    id = entry.Id,
+                    title = entry.Title,
+                    locked = entry.Locked,
+                    unlockHint = entry.UnlockHint
+                });
+            }
+
+            // Pig locations
+            var pigLocs = new List<object>();
+            if (gameState?.PigLocations != null)
+            {
+                foreach (var loc in gameState.PigLocations.Values)
+                {
+                    if (loc == null || string.IsNullOrEmpty(loc.PigId)) continue;
+                    pigLocs.Add(new
+                    {
+                        pigId = loc.PigId,
+                        scene = loc.SceneId,
+                        pinned = loc.Pinned
+                    });
+                }
+            }
+
             state["places"] = new
             {
                 places = placesList,
                 rooms = roomsList,
-                clovers = pet.Clovers
+                clovers = pet.Clovers,
+                order = orderList,
+                pigLocations = pigLocs
             };
         }
 
         public override bool HandleMessage(string type, JObject message, BrainController brain)
         {
-            if (type != "place_unlock" && type != "room_unlock" && type != "place_upgrade")
+            if (type != "place_unlock" && type != "room_unlock" && type != "place_upgrade" &&
+                type != "places.pigMove" && type != "places_pig_move" && type != "pig_move" && type != "places_pigMove" &&
+                type != "places.pigPin" && type != "places_pig_pin" && type != "pig_pin" && type != "places_pigPin")
             {
                 return false;
             }
@@ -117,6 +157,49 @@ namespace Cuy.Features
             if (pet == null) return true;
 
             pet.Balance.PlacesActive = true;
+            var world = pet.EnsureWorld();
+            var catalog = pet.PlaceCatalog ?? PlaceCatalog.Current;
+            var gameState = pet.State;
+
+            if (type == "places.pigMove" || type == "places_pig_move" || type == "pig_move" || type == "places_pigMove")
+            {
+                string pigId = message?.Value<string>("pigId") ?? message?.Value<string>("pig_id");
+                string to = message?.Value<string>("to");
+                if (string.IsNullOrEmpty(pigId) || string.IsNullOrEmpty(to) || gameState == null) return true;
+
+                var roomIds = GetRoomIds(gameState, world);
+                Func<string, bool> isUnlocked = s => CheckUnlocked(world, catalog, s);
+                var ring = SceneOrder.Build(roomIds, isUnlocked);
+                var ringIds = ring.Select(r => r.Id).ToList();
+
+                if (!PigRoamer.CanMove(gameState, pigId, to, ringIds, isUnlocked))
+                {
+                    bool locked = !isUnlocked(to);
+                    HomeWindow.PostToPage(new { type = "toast", text = locked ? "Not ready yet" : "Cannot move there" });
+                    return true;
+                }
+
+                if (PigRoamer.TryMove(gameState, pigId, to, ringIds, isUnlocked, pet.Clock))
+                {
+                    try { brain.Session.AutoSaver.SaveNow(); } catch (Exception ex) { BrainController.Log("[WARN] PlacesFeature save: " + ex.Message); }
+                    HomeWindow.NotifyStateChanged();
+                }
+                return true;
+            }
+            else if (type == "places.pigPin" || type == "places_pig_pin" || type == "pig_pin" || type == "places_pigPin")
+            {
+                string pigId = message?.Value<string>("pigId") ?? message?.Value<string>("pig_id");
+                bool pinned = message?.Value<bool?>("pinned") ?? message?.Value<bool?>("isPinned") ?? true;
+                if (string.IsNullOrEmpty(pigId) || gameState == null) return true;
+
+                if (PigRoamer.SetPinned(gameState, pigId, pinned))
+                {
+                    try { brain.Session.AutoSaver.SaveNow(); } catch (Exception ex) { BrainController.Log("[WARN] PlacesFeature save: " + ex.Message); }
+                    HomeWindow.NotifyStateChanged();
+                }
+                return true;
+            }
+
             string id = message?.Value<string>("id");
             if (string.IsNullOrEmpty(id)) return true;
 
@@ -190,6 +273,68 @@ namespace Cuy.Features
             try { brain.Session.AutoSaver.SaveNow(); } catch (Exception ex) { BrainController.Log("[WARN] PlacesFeature save: " + ex.Message); }
             HomeWindow.NotifyStateChanged();
             return true;
+        }
+
+        public override void Tick(TimeSpan gameElapsed, BrainController brain)
+        {
+            var pet = brain?.Pet;
+            var state = pet?.State;
+            if (pet == null || state == null) return;
+
+            var world = pet.EnsureWorld();
+            var catalog = pet.PlaceCatalog ?? PlaceCatalog.Current;
+            IClock clock = pet.Clock ?? brain?.Clock ?? (IClock)new ManualClock(DateTime.UtcNow);
+
+            var roomIds = GetRoomIds(state, world);
+            Func<string, bool> isUnlocked = id => CheckUnlocked(world, catalog, id);
+            var ring = SceneOrder.Build(roomIds, isUnlocked);
+            var orderIds = ring.Select(r => r.Id).ToList();
+
+            if (_rng == null) _rng = new Random();
+            var moved = PigRoamer.Tick(state, orderIds, isUnlocked, clock, _rng, PigRoamingConfig.Current);
+            if (moved != null && moved.Count > 0)
+            {
+                HomeWindow.NotifyStateChanged();
+            }
+        }
+
+        private static List<string> GetRoomIds(GameState state, WorldState world)
+        {
+            var list = new List<string>();
+            if (state?.Roster != null)
+            {
+                foreach (var pig in state.Roster)
+                {
+                    if (pig == null || pig.Memorial) continue;
+                    string id = "pig:" + pig.Id;
+                    if (!list.Contains(id)) list.Add(id);
+                }
+            }
+            if (world?.Rooms != null)
+            {
+                foreach (var k in world.Rooms.Keys)
+                {
+                    if (k.StartsWith("pig:", StringComparison.OrdinalIgnoreCase) && !list.Contains(k))
+                    {
+                        list.Add(k);
+                    }
+                }
+            }
+            return list;
+        }
+
+        private static bool CheckUnlocked(WorldState world, PlaceCatalog catalog, string id)
+        {
+            if (string.Equals(id, SceneOrder.SalonId, StringComparison.OrdinalIgnoreCase)) return true;
+            if (string.Equals(id, SceneOrder.DormId, StringComparison.OrdinalIgnoreCase))
+                return world != null && world.RoomsUnlocked.Contains(SceneOrder.DormId);
+            if (id.StartsWith("pig:", StringComparison.OrdinalIgnoreCase))
+            {
+                if (world != null && world.RoomsUnlocked.Contains(id)) return true;
+                if (world != null && world.Rooms != null && world.Rooms.ContainsKey(id)) return true;
+                return true;
+            }
+            return PlaceUnlock.IsUnlocked(world, catalog, id);
         }
     }
 }
