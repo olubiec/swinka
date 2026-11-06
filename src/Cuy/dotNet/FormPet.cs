@@ -10,6 +10,7 @@ using System.Threading;
 using System.Linq;
 using System.Numerics;
 using Cuy.Properties;
+using Cuy.Core.Physics;
 
 namespace Cuy
 {
@@ -1177,7 +1178,7 @@ namespace Cuy
                 // If there is no repeat, we don't need to calculate the frame index.
                 if (currentStep < CurrentAnimation.Sequence.Frames.Count)
                 {
-                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[currentStep]);
+                    ShowSprite(GetSprite(CurrentAnimation.Sequence.Frames[currentStep]));
                 }
                 else
                 {
@@ -1186,7 +1187,7 @@ namespace Cuy
                     index = Math.Max(0, Math.Min(index, CurrentAnimation.Sequence.Frames.Count - 1));
                     if (CurrentAnimation.Sequence.Frames.Count > 0)
                     {
-                        pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[index]);
+                        ShowSprite(GetSprite(CurrentAnimation.Sequence.Frames[index]));
                     }
                 }
             }
@@ -1610,13 +1611,56 @@ namespace Cuy
             /// <returns>Y position of the window or taskbar. -1 if pet is still falling.</returns>
         private int FallDetect(int y)
         {
-            Dictionary<IntPtr, string> windows = new Dictionary<IntPtr, string>();
-            NativeMethods.TITLEBARINFO titleBarInfo = new NativeMethods.TITLEBARINFO();
-            titleBarInfo.cbSize = Marshal.SizeOf(titleBarInfo);
-
             if (y <= 0) return -1;
             Rectangle area = ScreenArea;
             CheckFullScreen();
+
+                // While tossing, reuse the window list for FallCacheMs (refreshed at the first call of each toss).
+                // Walking and falling still enumerate on every call.
+            double nowMs = motionClock.Elapsed.TotalMilliseconds;
+            if (!IsTossing || nowMs - fallCacheAt >= FallCacheMs)
+            {
+                RefreshFallWindows();
+                fallCacheAt = nowMs;
+            }
+
+            int index = FallWindowPicker.Pick(fallRects, PositionX, PositionY, Width, Height, y, area.Y, i =>
+            {
+                hwndWindow = fallHandles[i];
+                currentWindowSize = ToNativeRect(fallRects[i]);
+                bool covered = CheckTopWindow(false);
+                if (covered) hwndWindow = (IntPtr)0;    // window is covered by other windows, reset handle
+                return covered;
+            });
+            if (index < 0) return -1;                   // no windows detected.
+
+            IntPtr hwndLanding = fallHandles[index];
+            hwndWindow = hwndLanding;
+            currentWindowSize = ToNativeRect(fallRects[index]);
+                // Only if the option is set (this is an invasive functionality)
+            if (Program.MyData.GetWindowForeground())
+            {
+                NativeMethods.ShowWindow(hwndLanding, 5);        // show window again
+                NativeMethods.SetForegroundWindow(hwndLanding);  // set focus to window
+            }
+            return fallRects[index].Top;                    // return the position for the pet
+        }
+
+        /// <summary>
+        /// Lists visible, titled windows (with a usable title bar) in Z-order, with their rectangles.
+        /// The pet position is not used here, so the list can be cached and reused by FallDetect.
+        /// </summary>
+        private static NativeMethods.RECT ToNativeRect(Rectangle r)
+        {
+            return new NativeMethods.RECT { Left = r.Left, Top = r.Top, Right = r.Right, Bottom = r.Bottom };
+        }
+
+        private void RefreshFallWindows()
+        {
+            fallHandles.Clear();
+            fallRects.Clear();
+            NativeMethods.TITLEBARINFO titleBarInfo = new NativeMethods.TITLEBARINFO();
+            titleBarInfo.cbSize = Marshal.SizeOf(titleBarInfo);
 
                 // Enumerate all windows on the desktop.
             NativeMethods.EnumWindows(delegate (IntPtr hWnd, int lParam)
@@ -1624,69 +1668,29 @@ namespace Cuy
                 if (hWnd == Handle) return true;    // form itself, don't parse
 
                     // Enumerate only visible windows
-                if (NativeMethods.IsWindowVisible(hWnd))
-                {
-                    NativeMethods.RECT candidate;
-                    if (!NativeMethods.GetWindowRect(new HandleRef(this, hWnd), out candidate) ||
-                        PositionY + Height >= candidate.Top || PositionY + Height + y < candidate.Top ||
-                        PositionX < candidate.Left - Width / 2 || PositionX + Width > candidate.Right + Width / 2 ||
-                        PositionY <= 20 + area.Y) return true;
-                    StringBuilder sTitle = new StringBuilder(128);
-                    NativeMethods.GetWindowText(hWnd, sTitle, 128);
+                if (!NativeMethods.IsWindowVisible(hWnd)) return true;
+                NativeMethods.RECT candidate;
+                if (!NativeMethods.GetWindowRect(new HandleRef(this, hWnd), out candidate)) return true;
+
+                StringBuilder sTitle = new StringBuilder(128);
+                NativeMethods.GetWindowText(hWnd, sTitle, 128);
 
                     // Sheep windows doesn't have a title bar, but we want detect if another pet is present
-                    if (sTitle.ToString() == "Sheep") { }
+                if (sTitle.ToString() == "Sheep") { }
                     // If there is no title bar, continue enumerating other windows
-                    else if (!NativeMethods.GetTitleBarInfo(hWnd, ref titleBarInfo)) return true;
+                else if (!NativeMethods.GetTitleBarInfo(hWnd, ref titleBarInfo)) return true;
                     // If title bar is not visible, continue enumerating other windows
-                    else if ((titleBarInfo.rgstate[0] & 0x00008000) > 0) // invisible
-                        return true;
-                    
-                        // If window has a title, add this window to list
-                    if (sTitle.Length > 0)
-                    {
-                        windows[hWnd] = sTitle.ToString();
-                    }
+                else if ((titleBarInfo.rgstate[0] & 0x00008000) > 0) // invisible
+                    return true;
+
+                    // If window has a title, add this window to the list
+                if (sTitle.Length > 0)
+                {
+                    fallHandles.Add(hWnd);
+                    fallRects.Add(Rectangle.FromLTRB(candidate.Left, candidate.Top, candidate.Right, candidate.Bottom));
                 }
                 return true;
             }, (IntPtr)0);
-
-                // For each valid window found:
-            foreach (KeyValuePair<IntPtr, string> window in windows)
-            {
-                    // Get size and position of window
-                if (NativeMethods.GetWindowRect(new HandleRef(this, window.Key), out NativeMethods.RECT rct))
-                {
-                        // If vertical position is in the falling range and pet is over window and window is at least 20 pixels under the screen border
-                    if (PositionY + Height < rct.Top && PositionY + Height + y >= rct.Top &&
-						PositionX >= rct.Left - Width / 2 && PositionX + Width <= rct.Right + Width / 2 &&
-						PositionY > 20 + ScreenArea.Y)
-                    {
-                            // Pet need to walk over THIS window!
-                        hwndWindow = window.Key;
-                        currentWindowSize = rct;
-						StringBuilder sTitle = new StringBuilder(128);
-						NativeMethods.GetWindowText(hwndWindow, sTitle, 128);
-
-						// If window is not covered by other windows, set this as current window for the pet.
-						if (!CheckTopWindow(false))
-                        {
-								// Only if the option is set (this is an invasive functionality)
-							if (Program.MyData.GetWindowForeground())
-							{
-								NativeMethods.ShowWindow(window.Key, 5);        // show window again
-								NativeMethods.SetForegroundWindow(window.Key);  // set focus to window
-							}
-                            return rct.Top;                                 // return the position for the pet
-                        }
-                        else
-                        {
-                            hwndWindow = (IntPtr)0;                         // window is covered by other windows, reset handle
-                        }
-                    }
-                }
-            }
-            return -1;      // no windows detected.
         }
 
         /// <summary>
@@ -1954,10 +1958,12 @@ namespace Cuy
                         SetNewAnimation(Animations.AnimationToss);
 
                     IsTossing = true;
+                    ResetTossPerf();
 
                     // Init vertical toss velocity
                     tossVertVel = TossForce.Y;
                     tossUpdatedAt = now;
+                    fallCacheAt = double.NegativeInfinity;   // first FallDetect of this toss refreshes the window list
 
                     // Force the interval while tossing to be a nice and smooth 30 (prevents laggy tossing for pets with slow drag animation intervals)
                     timer1.Interval = 30;

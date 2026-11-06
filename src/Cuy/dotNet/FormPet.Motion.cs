@@ -1,9 +1,11 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Cuy.Core.Physics;
 
 namespace Cuy
 {
@@ -15,6 +17,15 @@ namespace Cuy
         private Timer motionTimer;
         private Point dragAnchor;
         private double tossUpdatedAt;
+        private const double FallCacheMs = 75;     // window list reuse during a toss (D2.2)
+        private double fallCacheAt = double.NegativeInfinity;
+        private readonly List<IntPtr> fallHandles = new List<IntPtr>();
+        private readonly List<Rectangle> fallRects = new List<Rectangle>();
+        private static readonly bool perfEnabled = Environment.GetEnvironmentVariable("CUY_PERF") == "1";
+        private readonly double[] perfTickMs = new double[300];
+        private int perfCount, perfIndex, perfSlowGaps;
+        private int perfGc0Start, perfGc1Start;   // GC.CollectionCount baseline at toss start (D2.4)
+        private double perfLastTickAt = -1;
         private bool spritesFlipped;
         private readonly Dictionary<int, Image> flippedSprites = new Dictionary<int, Image>();
         private Timer followFallback;
@@ -28,6 +39,12 @@ namespace Cuy
         private static extern bool UnhookWinEvent(IntPtr hook);
         [DllImport("user32.dll")]
         private static extern uint GetWindowThreadProcessId(IntPtr window, out uint process);
+
+        // D2.4: assigning the same frame again would make PictureBox repaint for nothing.
+        private void ShowSprite(Image frame)
+        {
+            if (!ReferenceEquals(pictureBox1.Image, frame)) pictureBox1.Image = frame;
+        }
 
         private Image GetSprite(int index)
         {
@@ -65,40 +82,38 @@ namespace Cuy
             followFallback.Enabled = hookedWindow != IntPtr.Zero;
         }
 
+        /// <summary>
+        /// Window rectangles for ShadowForm. Reuses the FallDetect list while it is younger than FallCacheMs (D2.3).
+        /// </summary>
+        internal IList<Rectangle> GetFallWindowRects()
+        {
+            double nowMs = motionClock.Elapsed.TotalMilliseconds;
+            if (nowMs - fallCacheAt >= FallCacheMs)
+            {
+                RefreshFallWindows();
+                fallCacheAt = nowMs;
+            }
+            return fallRects;
+        }
+
         private void AdvanceToss(double now)
         {
-            // Preserve the original force units (pixels per 30 ms), but integrate
-            // continuously. Bound pauses to 50 ms so an interrupted UI cannot teleport.
-            double dt = Math.Max(0, Math.Min(50, now - tossUpdatedAt)) / 30.0;
+            // Physics lives in Cuy.Core (TossPhysics). Pauses are bounded to 50 ms inside the step.
+            var state = new TossState { X = PositionX, Y = PositionY, VelX = TossForce.X, VelY = tossVertVel };
+            var bounds = new TossBounds { Screen = ScreenArea, Width = Width, Height = Height, FootOffsetY = CurrentAnimation.Start.OffsetY };
+            // FallDetect reads PositionX, so the probe gets the X the step has already reached.
+            TossStepResult step = TossPhysics.Step(state, now - tossUpdatedAt, bounds, (x, downStep) => { PositionX = x; return FallDetect(downStep); });
             tossUpdatedAt = now;
-            if (dt == 0) return;
-            Rectangle area = ScreenArea;
-            double nextX = PositionX + TossForce.X * dt;
-            double right = area.Right - Width;
-            if (nextX < area.Left || nextX > right)
-            {
-                double edge = nextX < area.Left ? area.Left : right;
-                // Consume the remaining travel after impact instead of pausing a frame.
-                nextX = edge - (nextX - edge) * .3;
-                TossForce.X *= -.3f;
-            }
-            PositionX = Math.Max(area.Left, Math.Min(right, nextX));
-            double dy = tossVertVel * dt + .75 * dt * dt;
-            tossVertVel += 1.5 * dt;
-            int windowTop = dy > 0 ? FallDetect((int)Math.Ceiling(dy)) : -1;
-            double ground = area.Bottom - Height;
-            bool land = PositionY + dy >= ground;
-            if (windowTop != -1 && windowTop - Height <= ground)
-            {
-                ground = windowTop - Height;
-                land = true;
-            }
-            PositionY = land ? ground : PositionY + dy;
+            if (!step.Stepped) return;
+            PositionX = step.State.X;
+            PositionY = step.State.Y;
+            TossForce.X = (float)step.State.VelX;
+            tossVertVel = step.State.VelY;
             // Same sink as the walking animations, so the feet touch the taskbar and landing does not jump.
-            OffsetY = CurrentAnimation.Start.OffsetY;
+            OffsetY = step.OffsetY;
             motion.Reset(PositionX, PositionY + OffsetY, now);
             RenderMotion(now);
-            if (land)
+            if (step.Landed)
             {
                 if ((TossForce.X < 0 && !spritesFlipped) || (TossForce.X > 0 && spritesFlipped)) // face the throw direction
                 {
@@ -106,7 +121,8 @@ namespace Cuy
                     spritesFlipped = !spritesFlipped;
                 }
                 IsTossing = false;
-                SetNewAnimation(tossVertVel < 40 ? Animations.AnimationFallSoft : Animations.AnimationFallHard);
+                ReportTossPerf();
+                SetNewAnimation(step.Soft ? Animations.AnimationFallSoft : Animations.AnimationFallHard);
                 pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[0]);
                 SyncFollowHook();
             }
@@ -231,6 +247,40 @@ namespace Cuy
         }
 
         private void MotionTimer_Tick(object sender, EventArgs e)
+        {
+            if (!perfEnabled) { MotionTimerStep(); return; }
+            double start = motionClock.Elapsed.TotalMilliseconds;
+            if (perfLastTickAt >= 0 && start - perfLastTickAt > 20) perfSlowGaps++;
+            perfLastTickAt = start;
+            MotionTimerStep();
+            perfTickMs[perfIndex] = motionClock.Elapsed.TotalMilliseconds - start;
+            perfIndex = (perfIndex + 1) % perfTickMs.Length;
+            if (perfCount < perfTickMs.Length) perfCount++;
+        }
+
+        // D0.2: frame-time diagnostics. Only active with CUY_PERF=1; the tick path stays allocation-free.
+        private void ResetTossPerf()
+        {
+            perfCount = 0; perfIndex = 0; perfSlowGaps = 0; perfLastTickAt = -1;
+            perfGc0Start = GC.CollectionCount(0); perfGc1Start = GC.CollectionCount(1);
+        }
+
+        private void ReportTossPerf()
+        {
+            if (!perfEnabled || perfCount == 0) return;
+            double[] sorted = new double[perfCount];
+            Array.Copy(perfTickMs, sorted, perfCount);
+            Array.Sort(sorted);
+            double sum = 0;
+            foreach (double ms in sorted) sum += ms;
+            double p95 = sorted[(int)Math.Ceiling(sorted.Length * 0.95) - 1];
+            BrainController.Log(string.Format(CultureInfo.InvariantCulture,
+                "[PERF] toss-perf ticks={0} min={1:F2} avg={2:F2} p95={3:F2} max={4:F2} gaps>20ms={5} gc0={6} gc1={7} (ms)",
+                sorted.Length, sorted[0], sum / sorted.Length, p95, sorted[sorted.Length - 1], perfSlowGaps,
+                GC.CollectionCount(0) - perfGc0Start, GC.CollectionCount(1) - perfGc1Start));
+        }
+
+        private void MotionTimerStep()
         {
             if (IsDisposed || Disposing) { SetMotionTimer(false); return; }
             double now = motionClock.Elapsed.TotalMilliseconds;

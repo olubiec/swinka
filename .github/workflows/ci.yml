@@ -59,3 +59,56 @@ jobs:
         with:
           name: web-smoke-screenshots
           path: tools/qa/out/
+
+  # D0.4: Windows runner. Builds Release, runs the 1059+ Core tests (inside tools/build.ps1), packs the app and runs
+  # the packaged --selftest (tools/package.ps1), then runs the packaged --diag. Results go to the artifacts.
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      - name: Build, Core tests, pack and packaged --selftest
+        run: powershell -ExecutionPolicy Bypass -File tools/package.ps1
+      - name: Packaged --diag
+        shell: powershell
+        run: |
+          $p = Start-Process -FilePath "dist\Cuy_v1\Cuy.exe" -ArgumentList "--diag" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Write-Host "--diag exit code $($p.ExitCode)"; exit 1 }
+          if (-not (Test-Path (Join-Path $env:TEMP "cuy-diag.json"))) { Write-Host "cuy-diag.json missing"; exit 1 }
+          Copy-Item (Join-Path $env:TEMP "cuy-diag.json") "dist\cuy-diag.json"
+      - name: Collect selftest log
+        if: always()
+        shell: powershell
+        run: |
+          if (Test-Path (Join-Path $env:TEMP "cuy-selftest.txt")) { Copy-Item (Join-Path $env:TEMP "cuy-selftest.txt") "dist\cuy-selftest.txt" }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cuy-windows-ci
+          path: |
+            dist/Cuy_v1/
+            dist/cuy-diag.json
+            dist/cuy-selftest.txt
+            dist/Cuy_v1.zip
+          if-no-files-found: warn
+
+  # Gate: the single required check. Fails unless every job above succeeded.
+  gate:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [core-tests, web, windows]
+    steps:
+      - name: All checks passed
+        env:
+          R_CORE: ${{ needs.core-tests.result }}
+          R_WEB: ${{ needs.web.result }}
+          R_WIN: ${{ needs.windows.result }}
+        run: |
+          echo "core-tests=$R_CORE web=$R_WEB windows=$R_WIN"
+          if [ "$R_CORE" != "success" ] || [ "$R_WEB" != "success" ] || [ "$R_WIN" != "success" ]; then
+            echo "::error::A required job failed"
+            exit 1
+          fi
