@@ -761,7 +761,16 @@
     canvas.addEventListener('pointerup', () => {
       const drag = S.drag;
       S.drag = null;
-      if (drag && !drag.moved && !S.selectedItem) { toggleLamp(drag.uid); return; }
+      if (drag && !drag.moved && !S.selectedItem) {
+        if (drag.itemId === 'gramophone' || drag.itemId === 'player_gramophone') {
+          if (window.CuyMusicPlayer && typeof window.CuyMusicPlayer.toggle === 'function') {
+            window.CuyMusicPlayer.toggle();
+          }
+          return;
+        }
+        toggleLamp(drag.uid);
+        return;
+      }
       if (!drag || !drag.moved) { redraw(); return; }
       const layout = S.layout;
       const def = S.catalogById[drag.itemId];
@@ -796,6 +805,11 @@
           placeAt(S.cursor.x, S.cursor.y);
         } else {
           const hit = itemAt(layout, S.cursor.x, S.cursor.y);
+          if (hit && (hit.itemId === 'gramophone' || hit.itemId === 'player_gramophone')) {
+            if (window.CuyMusicPlayer && typeof window.CuyMusicPlayer.toggle === 'function') {
+              window.CuyMusicPlayer.toggle();
+            }
+          }
           setSelectedUid(hit ? hit.uid : null);
           redraw();
         }
@@ -805,6 +819,9 @@
       } else if (e.key === 'f' || e.key === 'F') {
         if (S.selectedUid) send({ type: 'room_flip', place: S.place, uid: S.selectedUid });
       } else if (e.key === 'Escape') {
+        if (window.CuyMusicPlayer && typeof window.CuyMusicPlayer.isVisible === 'function' && window.CuyMusicPlayer.isVisible()) {
+          window.CuyMusicPlayer.hide();
+        }
         S.selectedItem = null; S.hover = null;
         setSelectedUid(null);
         render();
@@ -933,6 +950,18 @@
         </div>`;
     }
 
+    const cell = CELL * S.scale;
+    const isPlayerOpen = window.CuyMusicPlayer && typeof window.CuyMusicPlayer.isVisible === 'function' ? window.CuyMusicPlayer.isVisible() : false;
+    const gramophones = (layout.items || []).filter(it => it.itemId === 'gramophone' || it.itemId === 'player_gramophone');
+    const gramophoneTriggersHtml = gramophones.map(it => {
+      const def = S.catalogById[it.itemId] || { w: 1, h: 1 };
+      const gx = it.x * cell;
+      const gy = it.y * cell;
+      const gw = (def.w || 1) * cell;
+      const gh = (def.h || 1) * cell;
+      return `<button type="button" class="room-gramophone-trigger" data-uid="${esc(it.uid)}" aria-label="Gramophone" aria-expanded="${isPlayerOpen ? 'true' : 'false'}" style="position:absolute;left:${gx}px;top:${gy}px;width:${gw}px;height:${gh}px;" tabindex="0"></button>`;
+    }).join('');
+
     container.classList.add('rooms-editor');
     container.innerHTML = `
       <div class="room-panel rooms-editor">
@@ -944,8 +973,11 @@
           <button type="button" class="game-btn room-plan-btn" id="roomPlanBtn" aria-haspopup="dialog">House plan</button>
         </div>
         ${levelHtml}
-        <canvas class="room-canvas" width="${w}" height="${h}" style="width:${w}px;height:${h}px" tabindex="0"
-          aria-label="Room grid. Arrow keys move the cursor. Enter places the picked item or picks up one. F flips, Delete removes."></canvas>
+        <div class="room-canvas-wrap" style="position:relative;display:inline-block;line-height:0;">
+          <canvas class="room-canvas" width="${w}" height="${h}" style="width:${w}px;height:${h}px" tabindex="0"
+            aria-label="Room grid. Arrow keys move the cursor. Enter places the picked item or picks up one. F flips, Delete removes."></canvas>
+          ${gramophoneTriggersHtml}
+        </div>
         <p class="room-hint">${S.selectedItem ? 'Tap the room to place it. Esc cancels.' : 'Pick an item below, or drag an item to move it. Right-click or Delete removes. F flips.'}</p>
         ${S.selectedItem ? `<div class="placing-item" data-item="${esc(S.selectedItem)}">Placing: ${esc(S.catalogById[S.selectedItem]?.name || S.selectedItem)}</div>` : ''}
         <div class="room-drawer" role="group" aria-label="Owned items">${items}</div>
@@ -977,6 +1009,24 @@
     S.hasFocus = hadFocus;
     if (hadFocus) S.canvas.focus({ preventScroll: true });
     bindCanvas(S.canvas);
+    container.querySelectorAll('.room-gramophone-trigger').forEach(trig => {
+      trig.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (window.CuyMusicPlayer && typeof window.CuyMusicPlayer.toggle === 'function') {
+          window.CuyMusicPlayer.toggle();
+        }
+      });
+      trig.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+          if (window.CuyMusicPlayer && typeof window.CuyMusicPlayer.toggle === 'function') {
+            window.CuyMusicPlayer.toggle();
+          }
+        }
+      });
+    });
     bindTabs(container, tabs);
     if (dormMode) mountDorm(container, st);
     container.querySelectorAll('.room-item').forEach(btn => {

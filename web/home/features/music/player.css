@@ -21,7 +21,26 @@
   border: 4px solid transparent;
   border-image: var(--ui-mp_panel) 8 fill / 4px;
   box-shadow: 0 0 0 1px var(--ui-border);
-  z-index: 2;
+  z-index: 200;
+}
+
+.mp_panel.hidden,
+.mp_panel.hidden * {
+  display: none !important;
+}
+
+.room-gramophone-trigger {
+  position: absolute;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.room-gramophone-trigger:focus-visible {
+  outline: 2px solid var(--ui-hay-1, #e0b44c);
+  outline-offset: 1px;
 }
 
 .mp_panel.is-muted {

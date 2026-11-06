@@ -237,11 +237,14 @@
     var name = String(r.name || '');
     var locked = !!r.locked;
     var stepper = STEPPER_KINDS[kind] && !locked ? stepperHtml(name) : '';
+    var iconHtml = window.CuyItemIcon
+      ? window.CuyItemIcon.html(r, 32)
+      : '<span class="pixel-icon store-icon icon-' + esc(kind) + '" aria-hidden="true"></span>';
 
     return '<li class="store-card' + (locked ? ' is-locked' : '') + '" data-kind="' + esc(kind) +
       '" data-id="' + esc(r.id) + '">' +
       '<div class="store-card-top">' +
-      '<span class="pixel-icon store-icon icon-' + esc(kind) + '" aria-hidden="true"></span>' +
+      iconHtml +
       (locked ? '<span class="store-lock" aria-hidden="true"></span>' : '') +
       '<h3 class="store-name">' + esc(name) + '</h3>' +
       '</div>' +
@@ -303,6 +306,11 @@
     sendOpen();
     clearInterval(timer);
     timer = setInterval(sendOpen, REFRESH_MS);
+    if (window.CuyItemIcon && window.CuyItemIcon.ready) {
+      window.CuyItemIcon.ready().then(function() {
+        if (root && root.isConnected) refresh();
+      });
+    }
     refresh();
   }
 

@@ -19,3 +19,18 @@
 4. Kup lampę grzybek, kliknij Decorate / Place in room: otwiera się pokój.
 5. Otwórz domek: świnka i jej dymek znikają razem; zamknij: wracają razem.
 
+## Wave P2: Icons, Portraits & Player
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| UX Portraits | `node tools/qa/ux-p2-portraits.js` | 4/4 PASS (portraits-differ, portrait-matches-main-sprite, unnamed-pig-no-404, all-stages) | Miniatury świnek w More, My pigs i oknie adopcji odpowiadają wyglądowi (rasa, maść, stadium), brak 404 |
+| UX Icons | `node tools/qa/ux-p2-icons.js` | 5/5 PASS (shop-icons-unique, store-icons-unique, decor-icons-unique, no-broken-images, icon-scale) | Przedmioty w sklepie, magazynie i dekoracjach mają unikalne ikony ze świata, poprawne skalowanie 16x16 / 32x32 |
+| UX Player | `node tools/qa/ux-p2-player.js` | 5/5 PASS (hidden-by-default, click-gramophone-shows, hide-paths, no-gramophone-no-panel, keyboard) | Panel odtwarzacza ukryty domyślnie, pokazuje się po kliknięciu gramofonu, chowa po kliknięciu obok lub Esc, muzyka gra dalej |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK, brak brakujących lub duplikowanych ikon | Brak brakujących assetów i ikon w interfejsie domku |
+
+### Manual Checklist (Do sprawdzenia po P2)
+1. More: każda świnka ma inną ikonę, zgodną z wyglądem.
+2. Sklep: ikony przedmiotów są różne i rozpoznawalne.
+3. Ekran główny bez stałego odtwarzacza; klik gramofonu go pokazuje, klik obok chowa.
+
+

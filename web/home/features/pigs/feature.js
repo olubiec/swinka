@@ -5,10 +5,53 @@
   let activeContainer = null;
   let activeApi = null;
 
-  function renderPigPortrait(id) {
-    if (id) {
-      return `<img class="pig-portrait" src="../../assets/sprites/portraits/${id}.png" width="32" height="32" alt="" onerror="this.onerror=null; this.outerHTML='<span class=\\'pixel-icon icon-pig-head\\'></span>';">`;
+  const KNOWN_NAMED_PNGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch']);
+
+  function renderPigPortrait(pig, size) {
+    const sz = size === 64 ? 64 : 32;
+    if (!pig) {
+      return `<span class="pixel-icon icon-pig-head"></span>`;
     }
+
+    let look = null;
+    let stage = 'adult';
+    let id = null;
+
+    if (typeof pig === 'string') {
+      id = pig;
+      const offers = getFallbackOffers();
+      const match = offers.find(o => o.id === pig);
+      if (match) {
+        look = match.look;
+        stage = match.stage || 'adult';
+      }
+    } else if (typeof pig === 'object') {
+      id = pig.namedId || pig.id;
+      stage = pig.stage || 'adult';
+      if (pig.look && (pig.look.breed || pig.look.paletteId)) {
+        look = pig.look;
+      } else if (pig.breed || pig.paletteId) {
+        look = { breed: pig.breed, paletteId: pig.paletteId };
+      }
+    }
+
+    if (look && root.CuyPig && typeof root.CuyPig.renderPortrait === 'function') {
+      const cvs = root.CuyPig.renderPortrait(look, stage, sz);
+      if (cvs) {
+        const dataUrl = cvs.toDataURL();
+        const portraitId = 'portrait_' + Math.random().toString(36).substr(2, 9);
+        cvs._onUpdate = (c) => {
+          const el = document.getElementById(portraitId);
+          if (el) el.src = c.toDataURL();
+        };
+        return `<img id="${portraitId}" class="pig-portrait${sz === 64 ? ' size-64' : ''}" src="${dataUrl}" width="${sz}" height="${sz}" alt="">`;
+      }
+    }
+
+    if (id && KNOWN_NAMED_PNGS.has(id)) {
+      return `<img class="pig-portrait${sz === 64 ? ' size-64' : ''}" src="../../assets/sprites/portraits/${id}.png" width="${sz}" height="${sz}" alt="" onerror="this.onerror=null; this.outerHTML='<span class=\\'pixel-icon icon-pig-head\\'></span>';">`;
+    }
+
     return `<span class="pixel-icon icon-pig-head"></span>`;
   }
 
@@ -204,7 +247,7 @@
             ${pig.breed ? `<span class="pig-card-breed">${pig.breed}</span>` : ''}
           </div>
           <div class="pig-card-portrait">
-            ${renderPigPortrait(pig.namedId)}
+            ${renderPigPortrait(pig)}
           </div>
           ${traitsOrBlurbHtml}
           <div class="pig-card-actions">
@@ -244,7 +287,7 @@
             ${starterOffers.map(p => `
               <div class="offer-group-pig">
                 <div class="pig-card-portrait">
-                  ${renderPigPortrait(p.id)}
+                  ${renderPigPortrait(p)}
                 </div>
                 <span class="offer-pig-name">${p.name}</span>
                 ${(p.traits && p.traits.length > 0) ? `
@@ -278,7 +321,7 @@
               <span class="pig-card-name">${offer.name}</span>
             </div>
             <div class="pig-card-portrait">
-              ${renderPigPortrait(offer.id)}
+              ${renderPigPortrait(offer)}
             </div>
             <div class="pig-card-blurb">${offer.blurb || ''}</div>
             <div class="pig-card-actions">
@@ -295,7 +338,7 @@
               <span class="pig-card-name">${offer.name}</span>
             </div>
             <div class="pig-card-portrait">
-              ${renderPigPortrait(offer.id)}
+              ${renderPigPortrait(offer)}
             </div>
             ${(offer.traits && offer.traits.length > 0) ? `
               <div class="pig-card-traits">
@@ -320,7 +363,7 @@
               <span class="pig-card-name">${offer.name}</span>
             </div>
             <div class="pig-card-portrait">
-              ${renderPigPortrait(offer.id)}
+              ${renderPigPortrait(offer)}
             </div>
             <div class="pig-card-blurb">${offer.blurb || ''}</div>
             <div class="offer-locked-info">

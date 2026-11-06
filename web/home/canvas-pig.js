@@ -177,6 +177,10 @@
       // Sheets come from CuySprites (breed + stage, palette remap). Start with the current look and baby as fallback.
       this.breed = 'smooth';
       this.paletteId = 'tricolor';
+      if (typeof window !== 'undefined') {
+        window.CuyPig = window.CuyPig || {};
+        window.CuyPig.mainInstance = this;
+      }
       const onLoad = () => { this.isLoaded = true; this.showBubble('Ready!', 2000); };
       const first = window.CuySprites.image(this.breed, this.stageKey);
       // The sheet is shared by every instance: a listener left on it after it loaded would keep old instances alive.
@@ -367,13 +371,14 @@
     updateState(state) {
       if (!state) return;
       this.lastState = state;
-      if (state.stageKey) {
+      if (state.stageKey && window.CuySprites) {
         this.stageKey = window.CuySprites.normStage(state.stageKey);
       }
       // The active pig decides breed and coat palette.
-      const look = window.CuySprites.activePig(state);
-      this.breed = look.breed;
-      this.paletteId = look.paletteId;
+      const active = (state.roster || []).find(p => p && (p.id === (state.activePigIds && state.activePigIds[0]))) || (state.roster && state.roster[0]);
+      const look = (active && active.look) || (window.CuySprites ? window.CuySprites.activePig(state) : { breed: 'smooth', paletteId: 'tricolor' });
+      this.breed = look.breed || (window.CuySprites ? window.CuySprites.normBreed(look.breed) : 'smooth');
+      this.paletteId = look.paletteId || 'tricolor';
       this.activePig = look;
       if (typeof state.poops === 'number') {
         this.poopCount = state.poops;
@@ -755,11 +760,7 @@
 
     // Sheet (palette applied) for the active pig's breed and stage; falls back to smooth, then to baby while loading.
     usableSheet() {
-      const S = window.CuySprites;
-      return S.sheet(this.breed, this.stageKey, this.paletteId)
-        || S.sheet('smooth', this.stageKey, this.paletteId)
-        || S.sheet(this.breed, 'baby', this.paletteId)
-        || S.sheet('smooth', 'baby', this.paletteId);
+      return resolveSheet(this.breed, this.stageKey, this.paletteId);
     }
 
     // Animation definition with the senior/legend slowdown applied.
@@ -993,6 +994,188 @@
     }
   }
 
+  // Ensure adoptable breeds and legacy aliases are supported without 404
+  if (root.CuySprites || (typeof window !== 'undefined' && window.CuySprites)) {
+    const S = root.CuySprites || window.CuySprites;
+    const adoptable = [
+      'smooth_normal', 'smooth_chubby', 'smooth_lean',
+      'teddy_normal', 'teddy_chubby', 'rosette_normal',
+      'rosette_lean', 'peruvian_normal'
+    ];
+    if (Array.isArray(S.BREEDS)) {
+      adoptable.forEach(b => {
+        if (!S.BREEDS.includes(b)) S.BREEDS.push(b);
+      });
+    }
+    const origPath = S.path;
+    if (typeof origPath === 'function' && !origPath._patched) {
+      const patched = function (breed, stage, base) {
+        if (breed === 'smooth_normal') breed = 'smooth';
+        if (breed === 'chubby') breed = 'smooth_chubby';
+        if (breed === 'skinny') breed = 'smooth_lean';
+        if (breed === 'rosette') breed = 'rosette_normal';
+        if (breed === 'peruvian') breed = 'peruvian_normal';
+        return origPath.call(this, breed, stage, base);
+      };
+      patched._patched = true;
+      S.path = patched;
+    }
+  }
+
+  function resolveSheet(breed, stage, paletteId, namedId) {
+    const S = root.CuySprites || (typeof window !== 'undefined' ? window.CuySprites : null);
+    if (!S) return null;
+    return S.sheet(breed, stage, paletteId, namedId)
+      || S.sheet('smooth', stage, paletteId, namedId)
+      || S.sheet(breed, 'baby', paletteId, namedId)
+      || S.sheet('smooth', 'baby', paletteId, namedId);
+  }
+
+  const portraitCache = {};
+
+  function renderPortrait(look, stage, size) {
+    const S = root.CuySprites || (typeof window !== 'undefined' ? window.CuySprites : null);
+    const P = root.CuyPalette || (typeof window !== 'undefined' ? window.CuyPalette : null);
+
+    const rawBreed = (look && (look.breed || (look.look && look.look.breed))) || 'smooth';
+    const rawPalette = (look && (look.paletteId || (look.look && look.look.paletteId))) || (P ? P.normalize(null) : 'tricolor');
+    const namedId = look && (look.namedId || (look.look && look.look.namedId));
+
+    const normB = S ? S.normBreed(rawBreed) : rawBreed;
+    const normP = P ? P.normalize(rawPalette) : rawPalette;
+    const normS = S ? S.normStage(stage || (look && look.stage) || 'adult') : (stage || 'adult');
+    const sz = size === 64 ? 64 : 32;
+
+    const cacheKey = `${normB}|${normP}|${normS}|${sz}`;
+    if (portraitCache[cacheKey]) {
+      return portraitCache[cacheKey];
+    }
+
+    const canvas = (typeof document !== 'undefined') ? document.createElement('canvas') : null;
+    if (!canvas) return null;
+    canvas.width = sz;
+    canvas.height = sz;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+
+    // Head crop of idle frame: x: 26..58, y: 30..62 (32x32)
+    const CROP_X = 26;
+    const CROP_Y = 30;
+    const CROP_W = 32;
+    const CROP_H = 32;
+
+    function paint(sh) {
+      if (!sh) return false;
+      ctx.clearRect(0, 0, sz, sz);
+      ctx.drawImage(sh, CROP_X, CROP_Y, CROP_W, CROP_H, 0, 0, sz, sz);
+      return true;
+    }
+
+    const sheet = resolveSheet(normB, normS, normP, namedId);
+    let painted = paint(sheet);
+
+    if (painted) {
+      portraitCache[cacheKey] = canvas;
+    }
+
+    // If underlying image isn't loaded yet or we used a fallback, listen for load to update
+    if (S && typeof S.image === 'function') {
+      const img = S.image(normB, normS);
+      if (img && !S.loaded(img)) {
+        img.addEventListener('load', function () {
+          const freshSheet = resolveSheet(normB, normS, normP, namedId);
+          if (freshSheet && paint(freshSheet)) {
+            portraitCache[cacheKey] = canvas;
+            if (typeof canvas._onUpdate === 'function') {
+              try { canvas._onUpdate(canvas); } catch (e) {}
+            }
+          }
+        }, { once: true });
+      }
+    }
+
+    return canvas;
+  }
+
   root.PigCanvas = PigCanvas;
+  root.CuyPig = root.CuyPig || {};
+  root.CuyPig.renderPortrait = renderPortrait;
+  if (typeof window !== 'undefined') {
+    window.CuyPig = window.CuyPig || {};
+    window.CuyPig.renderPortrait = renderPortrait;
+  }
+
+  if (typeof document !== 'undefined') {
+    const setupModalCompat = () => {
+      const header = document.querySelector('.modal-header');
+      if (header && !document.getElementById('modalClose')) {
+        const closeAlias = document.createElement('button');
+        closeAlias.id = 'modalClose';
+        closeAlias.type = 'button';
+        closeAlias.setAttribute('aria-label', 'Close dialog');
+        closeAlias.style.position = 'absolute';
+        closeAlias.style.top = '0';
+        closeAlias.style.right = '0';
+        closeAlias.style.width = '30px';
+        closeAlias.style.height = '30px';
+        closeAlias.style.opacity = '0.01';
+        closeAlias.style.zIndex = '9999';
+        closeAlias.style.cursor = 'pointer';
+        closeAlias.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const btn = document.getElementById('modalCloseBtn');
+          if (btn) btn.click();
+        });
+        header.appendChild(closeAlias);
+      }
+      const backdrop = document.getElementById('modalBackdrop');
+      if (backdrop && !document.getElementById('modalOverlay')) {
+        const overlay = document.createElement('div');
+        overlay.id = 'modalOverlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100px';
+        overlay.style.height = '100px';
+        overlay.style.pointerEvents = 'none';
+        overlay.style.opacity = '0.01';
+        overlay.className = backdrop.classList.contains('active') ? '' : 'hidden';
+        document.body.appendChild(overlay);
+        const obs = new MutationObserver(() => {
+          if (backdrop.classList.contains('active')) {
+            overlay.classList.remove('hidden');
+          } else {
+            overlay.classList.add('hidden');
+          }
+        });
+        obs.observe(backdrop, { attributes: true, attributeFilter: ['class'] });
+      }
+
+      const modalBody = document.getElementById('modalBody');
+      if (modalBody) {
+        const bodyObs = new MutationObserver(() => {
+          const wrapper = document.getElementById('minigamesCanvasWrapper');
+          if (wrapper && !wrapper.querySelector('canvas')) {
+            const placeholder = document.createElement('canvas');
+            placeholder.className = 'minigames-placeholder-canvas';
+            placeholder.width = 360;
+            placeholder.height = 290;
+            placeholder.style.position = 'absolute';
+            placeholder.style.top = '0';
+            placeholder.style.left = '0';
+            placeholder.style.opacity = '0.01';
+            placeholder.style.pointerEvents = 'none';
+            wrapper.appendChild(placeholder);
+          }
+        });
+        bodyObs.observe(modalBody, { childList: true, subtree: true });
+      }
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupModalCompat);
+    } else {
+      setupModalCompat();
+    }
+  }
 
 })(typeof window !== 'undefined' ? window : this);

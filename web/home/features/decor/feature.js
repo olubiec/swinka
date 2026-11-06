@@ -436,6 +436,11 @@
     open(container, api) {
       this.api = api;
       this.container = container;
+      if (window.CuyItemIcon && window.CuyItemIcon.ready) {
+        window.CuyItemIcon.ready().then(() => {
+          if (this.container && this.container.isConnected) this.render();
+        });
+      }
       this.render();
     },
     // Called by app.js when the modal closes: no more re-renders (and no mini preview loops) while hidden.
@@ -478,7 +483,13 @@
               });
             }
             if (slot && ownedBySlot[slot]) {
-              ownedBySlot[slot].push({ id: itemId, name: itemDef?.name || itemId });
+              ownedBySlot[slot].push({
+                id: itemId,
+                name: itemDef?.name || itemId,
+                icon: itemDef?.icon,
+                look: itemDef?.look || FALLBACK_LOOK[itemId],
+                slot: slot
+              });
               hasOwnedDecor = true;
             }
           }
@@ -504,10 +515,11 @@
             const isActive = currentEq === it.id;
             const isPlaceableSlot = slot !== 'wallpaper' && slot !== 'floor';
             const placed = isItemPlaced(st, it.id);
+            const iconHtml = window.CuyItemIcon ? window.CuyItemIcon.html(it, 20) : '';
             if (isPlaceableSlot && !placed) {
-              html += `<button class="decor-item-btn" data-slot="${slot}" data-id="${it.id}" data-action="place" aria-label="Place in room">Place in room</button>`;
+              html += `<button class="decor-item-btn" data-slot="${slot}" data-id="${it.id}" data-action="place" aria-label="Place in room">${iconHtml}<span>Place in room</span></button>`;
             } else {
-              html += `<button class="decor-item-btn ${isActive ? 'active' : ''}" data-slot="${slot}" data-id="${it.id}">${it.name}</button>`;
+              html += `<button class="decor-item-btn ${isActive ? 'active' : ''}" data-slot="${slot}" data-id="${it.id}">${iconHtml}<span>${it.name}</span></button>`;
             }
           });
 
