@@ -228,5 +228,22 @@ namespace Cuy.Core.Tests
             Near(-1911, result.State.X, 1e-9);
             Assert.True(result.State.VelX > 0);
         }
+
+        // D3.3 (table in docs/PHYSICS.md): from rest, one 30 ms step moves 0.75 px and gives 1.5 px/30 ms;
+        // a 60 ms step (dt = 2) moves 0.75 * 2^2 = 3 px and gives 3 px/30 ms.
+        [Fact]
+        public void Gravity_MatchesPhysicsTable()
+        {
+            var state = new TossState { X = 100, Y = 0, VelX = 0, VelY = 0 };
+            TossBounds bounds = Bounds(new Rectangle(0, 0, 1000, 2000), 10, 10);
+
+            TossStepResult oneStep = TossPhysics.Step(state, 30, bounds, null);
+            Near(0.75, oneStep.State.Y, 1e-9);
+            Near(1.5, oneStep.State.VelY, 1e-9);
+
+            TossStepResult twoUnits = TossPhysics.Step(state, 60, bounds, null);
+            Near(3, twoUnits.State.Y, 1e-9);
+            Near(3, twoUnits.State.VelY, 1e-9);
+        }
     }
 }
