@@ -570,8 +570,8 @@
       const p = placeState(st, id);
       const locked = p ? !p.unlocked : false;
       const cur = id === S.place;
-      const label = PLACE_LABELS[id] + (locked ? ' 🔒 ' + p.unlockCost : '');
-      return `<button type="button" role="tab" class="garden-tab${cur ? ' is-current' : ''}" aria-selected="${cur}" data-tab="${id}">${esc(label)}</button>`;
+      const label = esc(PLACE_LABELS[id]) + (locked ? ' <span class="pixel-icon icon-padlock" aria-hidden="true"></span> ' + esc(p.unlockCost) : '');
+      return `<button type="button" role="tab" class="garden-tab${cur ? ' is-current' : ''}" aria-selected="${cur}" data-tab="${id}">${label}</button>`;
     }).join('');
 
     let body;
