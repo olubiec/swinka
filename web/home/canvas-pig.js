@@ -117,9 +117,22 @@
       this.facing = 1; // 1 = right, -1 = left
       this.stageKey = 'adult';
 
-      // Pig position in the scene
-      this.pigX = 90;
-      this.pigY = 60; // floor at ~119px
+      // Pig position in the scene (feet coordinates)
+      this.pigX = 120;
+      this.pigY = 119;
+      this.walk = null;
+      this.depthScale = null;
+      this.exits = null;
+      this.exitsEnabled = false;
+      this.onPigExit = null;
+      this.targetX = null;
+      this.targetY = null;
+      this.targetToy = null;
+      this.targetExit = null;
+      this.currentAnim = 'idle';
+      this.animTimer = 0;
+      this.idleTimer = 400;
+      this.hasExited = false;
 
       // Bubble / notification
       this.bubbleText = 'Wheek!';
@@ -222,6 +235,15 @@
       }
       this.walk = def.walk || null;
       this.depthScale = def.depthScale || null;
+      this.exits = def.exits || null;
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      if (this.pigX < x0 || this.pigX > x1) this.pigX = Math.round((x0 + x1) / 2);
+      if (this.pigY < y0 || this.pigY > y1) this.pigY = Math.round((y0 + y1) / 2);
+      this.targetX = null;
+      this.targetY = null;
+      this.targetToy = null;
+      this.targetExit = null;
+      this.idleTimer = 400;
       this.sceneBgUrl = def.bgUrl || null;
       if (this.sceneBgUrl) {
         this.sceneBgImg = this.loadCachedImage(this.sceneBgUrl);
@@ -253,6 +275,134 @@
       }
     }
 
+    getDrawScale() {
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      const ds = this.depthScale || [0.88, 1.0];
+      const t = (y1 > y0) ? Math.max(0, Math.min(1, (this.pigY - y0) / (y1 - y0))) : 0;
+      const raw = ds[0] + (ds[1] - ds[0]) * t;
+      return Math.round(raw * 8) / 8;
+    }
+
+    setExitsEnabled(enabled) {
+      this.exitsEnabled = !!enabled;
+    }
+
+    enterFrom(side) {
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      this.setPigVisible(true);
+      this.hasExited = false;
+      this.toyPlaying = null;
+      this.targetToy = null;
+      this.targetExit = null;
+
+      const leftX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.left && typeof this.currentScene.exits.left.x === 'number')
+        ? this.currentScene.exits.left.x
+        : x0;
+      const rightX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.right && typeof this.currentScene.exits.right.x === 'number')
+        ? this.currentScene.exits.right.x
+        : x1;
+
+      if (this.pigY < y0 || this.pigY > y1) {
+        this.pigY = Math.round((y0 + y1) / 2);
+      }
+
+      if (side === 'left') {
+        this.pigX = leftX;
+        this.targetX = leftX + 30;
+        this.targetY = this.pigY;
+        this.facing = 1;
+        this.currentAnim = 'walk';
+      } else {
+        this.pigX = rightX;
+        this.targetX = rightX - 30;
+        this.targetY = this.pigY;
+        this.facing = -1;
+        this.currentAnim = 'walk';
+      }
+    }
+
+    setTarget(x, y) {
+      this.targetX = x;
+      this.targetY = (typeof y === 'number') ? y : this.pigY;
+      this.facing = this.targetX >= this.pigX ? 1 : -1;
+      this.currentAnim = 'walk';
+    }
+
+    walkTo(x, y) {
+      this.setTarget(x, y);
+    }
+
+    callPigExit(to) {
+      if (this.hasExited || this.pigVisible === false) return;
+      this.hasExited = true;
+      this.targetExit = null;
+      this.targetX = null;
+      this.targetY = null;
+      this.setPigVisible(false);
+      const ev = { to: to || 'right' };
+      if (typeof this.onPigExit === 'function') {
+        try { this.onPigExit(ev); } catch (e) { console.error(e); }
+      }
+      if (typeof CanvasPig.onPigExit === 'function') {
+        try { CanvasPig.onPigExit(ev); } catch (e) { console.error(e); }
+      }
+      if (typeof window !== 'undefined' && typeof window.onPigExit === 'function') {
+        try { window.onPigExit(ev); } catch (e) { console.error(e); }
+      }
+    }
+
+    fastForward(ms) {
+      const step = 50;
+      let rem = ms;
+      while (rem > 0) {
+        const dt = Math.min(step, rem);
+        this.update(dt);
+        rem -= dt;
+      }
+    }
+
+    pickRandomWalkTarget() {
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      const w = x1 - x0;
+      const h = y1 - y0;
+
+      if (this.exitsEnabled && Math.random() < 0.2) {
+        const side = Math.random() < 0.5 ? 'left' : 'right';
+        const leftX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.left && typeof this.currentScene.exits.left.x === 'number')
+          ? this.currentScene.exits.left.x
+          : x0;
+        const rightX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.right && typeof this.currentScene.exits.right.x === 'number')
+          ? this.currentScene.exits.right.x
+          : x1;
+        this.targetExit = side;
+        this.targetX = side === 'left' ? leftX : rightX;
+        this.targetY = Math.max(y0, Math.min(y1, this.pigY));
+        this.facing = this.targetX >= this.pigX ? 1 : -1;
+        this.currentAnim = 'walk';
+        return;
+      }
+
+      let tx;
+      if (this.pigX < x0 + w * 0.5) {
+        tx = x0 + w * 0.7 + Math.random() * (w * 0.28);
+      } else {
+        tx = x0 + 4 + Math.random() * (w * 0.28);
+      }
+
+      let ty;
+      if (this.pigY < y0 + h * 0.5) {
+        ty = y0 + h * 0.7 + Math.random() * (h * 0.28);
+      } else {
+        ty = y0 + 2 + Math.random() * (h * 0.28);
+      }
+
+      this.targetX = Math.round(Math.max(x0, Math.min(x1, tx)));
+      this.targetY = Math.round(Math.max(y0, Math.min(y1, ty)));
+      this.targetExit = null;
+      this.facing = this.targetX >= this.pigX ? 1 : -1;
+      this.currentAnim = 'walk';
+    }
+
     getOrderedThings() {
       const list = this.things || [];
       const flats = list.filter(t => !!t.flat);
@@ -261,15 +411,36 @@
     }
 
     debug() {
+      const pigFeetY = this.pigY;
       const ordered = this.getOrderedThings();
+      const standing = (this.things || []).filter(t => !t.flat).slice().sort((a, b) => (a.y || 0) - (b.y || 0));
+      const flats = (this.things || []).filter(t => !!t.flat);
+
+      const renderList = [];
+      flats.forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
+      if (this.pigVisible !== false) {
+        standing.filter(t => (t.y || 0) <= pigFeetY).forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
+        renderList.push({ id: 'pig', y: pigFeetY, kind: 'pig' });
+        standing.filter(t => (t.y || 0) > pigFeetY).forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
+      } else {
+        standing.forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
+      }
+
       return {
         sceneId: this.sceneId || (this.currentScene && this.currentScene.id) || 'salon',
         sceneSize: [this.sceneWidth, this.sceneHeight],
         bgUrl: this.sceneBgUrl || null,
         things: ordered.map(t => ({ id: t.id, y: t.y })),
+        renderList: renderList.map(t => ({ id: t.id, y: t.y })),
+        renderOrder: renderList.map(t => t.id),
         pigVisible: this.pigVisible !== false,
         smoothing: this.ctx ? this.ctx.imageSmoothingEnabled : false,
-        pigDraws: this.pigDraws || 0
+        pigDraws: this.pigDraws || 0,
+        pig: {
+          x: this.pigX,
+          y: this.pigY,
+          scale: this.getDrawScale()
+        }
       };
     }
 
@@ -344,7 +515,12 @@
     }
 
     isOverPig(x, y) {
-      return x >= this.pigX && x <= this.pigX + 64 && y >= this.pigY + 20 && y <= this.pigY + 64;
+      const scale = this.getDrawScale();
+      const hw = 28 * scale;
+      const th = 50 * scale;
+      const bh = 10 * scale;
+      return x >= this.pigX - hw && x <= this.pigX + hw &&
+             y >= this.pigY - th && y <= this.pigY + bh;
     }
 
     bindEvents() {
@@ -372,15 +548,19 @@
             this.drag = null;
             this.suppressClick = true;
             try { this.canvas.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
-            this.pigY = 60;
+            const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+            this.pigY = Math.round((y0 + y1) / 2);
             if (root.bridge) root.bridge.send({ type: 'take_out' });
             return;
           }
           const p = this.toScene(e);
-          this.pigX = Math.max(-16, Math.min(this.sceneWidth - 48, p.x - 32));
-          this.pigY = Math.max(-10, Math.min(60, p.y - 40));
+          const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+          this.pigX = Math.max(x0, Math.min(x1, p.x));
+          this.pigY = Math.max(y0, Math.min(y1, p.y));
           this.currentAnim = 'idle';
           this.animTimer = 1000;
+          this.targetX = null;
+          this.targetY = null;
           return;
         }
         // Change the cursor over the pig
@@ -391,8 +571,9 @@
         if (!this.drag) return;
         if (this.drag.moved) this.suppressClick = true;
         this.drag = null;
-        this.fallTimer = 250;
-        this.fallStartY = this.pigY;
+        const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+        this.pigX = Math.max(x0, Math.min(x1, this.pigX));
+        this.pigY = Math.max(y0, Math.min(y1, this.pigY));
       };
       this.canvas.addEventListener('pointerup', endDrag);
       this.canvas.addEventListener('pointercancel', endDrag);
@@ -408,11 +589,11 @@
       const f = 119;
       // Hit test toys
       if (this.inventory.house && x >= 42 && x <= 42 + 48 && y >= f - 48 && y <= f) {
-        this.startToyWalk('house', 42 + 24);
+        this.startToyWalk('house', 66);
         return;
       }
       if (this.inventory.tunnel && x >= this.sceneWidth - 8 - 48 && x <= this.sceneWidth - 8 && y >= f - 48 && y <= f) {
-        this.startToyWalk('tunnel', this.sceneWidth - 8 - 48 + 24);
+        this.startToyWalk('tunnel', this.sceneWidth - 32);
         return;
       }
       if (this.inventory.ball && x >= this.ballX && x <= this.ballX + 32 && y >= f - 32 && y <= f) {
@@ -430,11 +611,11 @@
       }
 
       // Clicking the pig = petting!
-      if (x >= this.pigX - 10 && x <= this.pigX + 74 && y >= this.pigY && y <= this.pigY + 64) {
+      if (this.isOverPig(x, y)) {
         this.pet();
       } else {
         // Clicking next to it = the pig turns around, curious
-        this.facing = x > this.pigX + 32 ? 1 : -1;
+        this.facing = x > this.pigX ? 1 : -1;
         this.playAnim('sniff', 1800);
         this.showBubble('Sniff sniff...', 1500);
         if (root.Sound) root.Sound.click();
@@ -449,7 +630,7 @@
       // Emit hearts
       for (let i = 0; i < 4; i++) {
         setTimeout(() => {
-          this.spawnHeart(this.pigX + 20 + Math.random() * 24, this.pigY + 16 + Math.random() * 10);
+          this.spawnHeart(this.pigX - 10 + Math.random() * 20, this.pigY - 35 + Math.random() * 10);
         }, i * 150);
       }
 
@@ -572,32 +753,54 @@
         }
       }
 
-      // Pig falling animation
-      if (this.fallTimer > 0 && !this.drag) {
-        this.fallTimer -= dt;
-        if (this.fallTimer <= 0) {
-          this.pigY = 60;
-        } else {
-          // ease-out: t is from 0 to 1. f(t) = 1 - (1-t)^2.
-          const t = 1 - (this.fallTimer / 250);
-          const easeOut = 1 - Math.pow(1 - t, 2);
-          this.pigY = this.fallStartY + (60 - this.fallStartY) * easeOut;
-        }
-      }
+      // Walking logic (toys, exits, or autonomous walk)
+      if (this.targetX !== null && !this.drag) {
+        const speed = (70 * dt) / 1000;
+        const dx = this.targetX - this.pigX;
+        const ty = (this.targetY !== null) ? this.targetY : this.pigY;
+        const dy = ty - this.pigY;
+        const dist = Math.hypot(dx, dy);
 
-      // Toy walking logic
-      if (this.targetToy) {
-        const speed = (60 * dt) / 1000;
-        const dx = this.targetX - (this.pigX + 32);
-
-        if (Math.abs(dx) <= speed) {
-          this.pigX = this.targetX - 32;
-          const toy = this.targetToy;
-          this.targetToy = null;
-          this.playToy(toy);
+        if (dist <= speed || (this.targetExit && ((this.targetExit === 'right' && this.pigX >= this.targetX) || (this.targetExit === 'left' && this.pigX <= this.targetX)))) {
+          this.pigX = this.targetX;
+          this.pigY = ty;
+          if (this.targetToy) {
+            const toy = this.targetToy;
+            this.targetToy = null;
+            this.targetX = null;
+            this.targetY = null;
+            this.playToy(toy);
+          } else if (this.targetExit) {
+            const to = this.targetExit;
+            this.callPigExit(to);
+          } else if (this.exitsEnabled) {
+            const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+            const leftX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.left && typeof this.currentScene.exits.left.x === 'number')
+              ? this.currentScene.exits.left.x
+              : x0;
+            const rightX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.right && typeof this.currentScene.exits.right.x === 'number')
+              ? this.currentScene.exits.right.x
+              : x1;
+            if (this.pigX >= rightX - 2) {
+              this.callPigExit('right');
+            } else if (this.pigX <= leftX + 2) {
+              this.callPigExit('left');
+            } else {
+              this.targetX = null;
+              this.targetY = null;
+              this.currentAnim = 'idle';
+              this.idleTimer = 300 + Math.random() * 300;
+            }
+          } else {
+            this.targetX = null;
+            this.targetY = null;
+            this.currentAnim = 'idle';
+            this.idleTimer = 800 + Math.random() * 800;
+          }
         } else {
-          this.facing = dx > 0 ? 1 : -1;
-          this.pigX += this.facing * speed;
+          this.facing = dx >= 0 ? 1 : -1;
+          this.pigX += (dx / dist) * speed;
+          this.pigY += (dy / dist) * speed;
           if (this.currentAnim !== 'walk') {
             this.currentAnim = 'walk';
             this.animTimer = 0;
@@ -628,7 +831,7 @@
             this.toyTimer = 2000;
           } else if (this.toyPlaying === 'house_phase2') {
             this.toyPlaying = 'house_phase3';
-            this.pigY = 60; // restore pig
+            const [wx0, wy0, wx1, wy1] = this.walk || [10, 96, 230, 126]; this.pigY = Math.max(wy0, Math.min(wy1, 119));
             this.playAnim('house_exit', (13 / 10) * 1000);
             this.toyTimer = (13 / 10) * 1000;
           } else {
@@ -643,33 +846,32 @@
       // Timer of the current forced animation
       if (this.animTimer > 0 && !this.targetToy && !this.toyPlaying) {
         this.animTimer -= dt;
-        if (this.animTimer <= 0 && !def.loop) {
+        if (this.animTimer <= 0) {
           this.currentAnim = 'idle';
           this.currentFrame = 0;
         }
       }
 
-      // Autonomous idle behaviours
-      if (this.currentAnim === 'idle' && !this.targetToy && !this.toyPlaying) {
-        this.idleBehaviorTimer -= dt;
-        if (this.idleBehaviorTimer <= 0) {
-          this.idleBehaviorTimer = 4000 + Math.random() * 6000;
+      if (this.targetX === null && this.currentAnim === 'walk' && !this.targetToy) {
+        this.currentAnim = 'idle';
+        this.animTimer = 0;
+      }
+
+      // Autonomous idle behaviours and walk trigger
+      if (this.currentAnim === 'idle' && !this.targetToy && !this.toyPlaying && !this.drag && this.targetX === null) {
+        this.idleTimer = (this.idleTimer || 0) - dt;
+        if (this.idleTimer <= 0) {
           const r = Math.random();
-          if (r < 0.35) {
-            this.playAnim('sniff', 2000);
-          } else if (r < 0.55) {
-            this.playAnim('scratch', 2200);
-            this.showBubble('Scratch scratch...', 1800);
-          } else if (r < 0.70) {
-            this.playAnim('yawn', 2000);
-            this.showBubble('*yawn*', 1800);
-          } else if (r < 0.85) {
-            this.facing = this.facing * -1;
-            this.playAnim('idle', 1000);
-          } else if (r < 0.95) {
-            this.playAnim('popcorn', 2000);
-            this.showBubble('Popcorn!', 2000);
+          if (r < 0.20) {
+            this.playAnim('sniff', 1500);
+            this.idleTimer = 1600;
+          } else if (r < 0.30) {
+            this.playAnim('popcorn', 1500);
+            this.showBubble('Popcorn!', 1500);
             if (root.Sound) root.Sound.wheek();
+            this.idleTimer = 1800;
+          } else {
+            this.pickRandomWalkTarget();
           }
         }
       }
@@ -744,7 +946,7 @@
 
       const standing = (this.things || []).filter(t => !t.flat).slice().sort((a, b) => (a.y || 0) - (b.y || 0));
       const isPigVisible = this.pigVisible !== false;
-      const pigFeetY = this.pigY + 59;
+      const pigFeetY = this.pigY;
 
       if (isPigVisible) {
         // Standing objects behind pig
@@ -936,6 +1138,8 @@
     startToyWalk(toyName, targetX) {
       this.targetToy = toyName;
       this.targetX = targetX;
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      this.targetY = Math.max(y0, Math.min(y1, 119));
     }
 
     playToy(toy) {
@@ -967,11 +1171,19 @@
       if (this.pigVisible === false) return;
       if (this.pigY < -100) return; // Hidden
 
+      const scale = this.getDrawScale();
+      const dw = Math.round(FRAME_SIZE * scale);
+      const dh = Math.round(FRAME_SIZE * scale);
+      const anchorX = Math.round(32 * scale);
+      const anchorY = Math.round(59 * scale);
+      const drawX = Math.round(this.pigX - anchorX);
+      const drawY = Math.round(this.pigY - anchorY);
+
       const sheet = this.usableSheet();
       if (!sheet) {
         // Placeholder while loading
         ctx.fillStyle = '#e98c42';
-        ctx.fillRect(this.pigX + 10, this.pigY + 30, 44, 28);
+        ctx.fillRect(Math.round(this.pigX - 22 * scale), Math.round(this.pigY - 29 * scale), Math.round(44 * scale), Math.round(28 * scale));
         return;
       }
 
@@ -994,23 +1206,23 @@
         }
       } else {
         // Shadow under the pig
-        const h = Math.max(0, 60 - this.pigY);
+        const h = Math.max(0, 119 - this.pigY);
         const factor = Math.max(0.4, Math.min(1, 1 - h / 80));
         const shadowAlpha = 0.45 * Math.max(0.2, Math.min(1, 1 - h / 80));
 
         ctx.fillStyle = `rgba(70, 45, 30, ${shadowAlpha})`;
         ctx.beginPath();
-        ctx.ellipse(this.pigX + 32, 119, 22 * factor, 6 * factor, 0, 0, Math.PI * 2);
+        ctx.ellipse(Math.round(this.pigX), Math.round(this.pigY), Math.round(22 * factor * scale), Math.round(6 * factor * scale), 0, 0, Math.PI * 2);
         ctx.fill();
       }
 
       // Draw the pig frame, mirrored if needed
       if (this.facing < 0) {
-        ctx.translate(this.pigX + FRAME_SIZE, this.pigY);
+        ctx.translate(drawX + dw, drawY);
         ctx.scale(-1, 1);
-        ctx.drawImage(frame, fx, fy, FRAME_SIZE, FRAME_SIZE, 0, 0, FRAME_SIZE, FRAME_SIZE);
+        ctx.drawImage(frame, fx, fy, FRAME_SIZE, FRAME_SIZE, 0, 0, dw, dh);
       } else {
-        ctx.drawImage(frame, fx, fy, FRAME_SIZE, FRAME_SIZE, this.pigX, this.pigY, FRAME_SIZE, FRAME_SIZE);
+        ctx.drawImage(frame, fx, fy, FRAME_SIZE, FRAME_SIZE, drawX, drawY, dw, dh);
       }
 
       ctx.restore();
@@ -1028,10 +1240,13 @@
 
     // Contact shadow sprite at (32 - width/2, 57) inside the pig frame.
     drawContactShadow(ctx) {
+      const scale = this.getDrawScale();
       const key = PIG_SHADOW_BY_STAGE[this.stageKey] || 'adult';
       const img = this.pigShadowImage(key);
       if (!img.complete || !img.naturalWidth) return; // not loaded yet
-      ctx.drawImage(img, this.pigX + 32 - PIG_SHADOW_WIDTH[key] / 2, this.pigY + 57);
+      const sw = Math.round(PIG_SHADOW_WIDTH[key] * scale);
+      const sh = Math.round((img.naturalHeight || 8) * scale);
+      ctx.drawImage(img, Math.round(this.pigX - sw / 2), Math.round(this.pigY - 2 * scale), sw, sh);
     }
 
     pigShadowImage(key) {
@@ -1065,7 +1280,7 @@
       }
       const data = img.data;
       const ambient = sceneAmbient(scene);
-      const origin = scene.origin || { x: this.pigX, y: this.pigY };
+      const scale = this.getDrawScale(); const origin = scene.origin || { x: Math.round(this.pigX - 32 * scale), y: Math.round(this.pigY - 59 * scale) };
       const cx = origin.x + FRAME_SIZE / 2;
       const cy = origin.y + FRAME_SIZE / 2;
       const sources = (scene.sources || [])
@@ -1125,9 +1340,8 @@
 
     drawSpeechBubble(ctx) {
       const text = this.bubbleText;
-      const bx = Math.max(16, Math.min(this.sceneWidth - 110, this.pigX - 10));
-      // Just above the head (the sprite body starts ~36 px into the 64 px frame); the top of the scene may be cropped.
-      const by = Math.max(42, this.pigY + 8);
+      const bx = Math.max(16, Math.min(this.sceneWidth - 110, this.pigX - 30));
+      const by = Math.max(16, this.pigY - 60);
 
       ctx.font = 'bold 11px "Pixelify Sans", monospace';
       const textWidth = ctx.measureText(text).width;
@@ -1273,6 +1487,43 @@
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst) return inst.setPigVisible(visible);
     },
+    setExitsEnabled(enabled) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) return inst.setExitsEnabled(enabled);
+    },
+    enterFrom(side) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) return inst.enterFrom(side);
+    },
+    setTarget(x, y) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) return inst.setTarget(x, y);
+    },
+    walkTo(x, y) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) return inst.walkTo(x, y);
+    },
+    fastForward(ms) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) return inst.fastForward(ms);
+    },
+    onPigExit: null,
+    get pigY() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      return inst ? inst.pigY : 0;
+    },
+    set pigY(val) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) inst.pigY = val;
+    },
+    get pigX() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      return inst ? inst.pigX : 0;
+    },
+    set pigX(val) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) inst.pigX = val;
+    },
     debug() {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst) return inst.debug();
@@ -1287,6 +1538,11 @@
   PigCanvas.setScene = (def) => CanvasPig.setScene(def);
   PigCanvas.setThings = (l) => CanvasPig.setThings(l);
   PigCanvas.setPigVisible = (v) => CanvasPig.setPigVisible(v);
+  PigCanvas.setExitsEnabled = (e) => CanvasPig.setExitsEnabled(e);
+  PigCanvas.enterFrom = (s) => CanvasPig.enterFrom(s);
+  PigCanvas.setTarget = (x, y) => CanvasPig.setTarget(x, y);
+  PigCanvas.walkTo = (x, y) => CanvasPig.walkTo(x, y);
+  PigCanvas.fastForward = (ms) => CanvasPig.fastForward(ms);
   PigCanvas.debug = () => CanvasPig.debug();
   if (typeof window !== 'undefined') {
     window.CanvasPig = CanvasPig;

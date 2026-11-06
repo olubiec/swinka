@@ -89,4 +89,20 @@
 2. Domek wygląda jak przed zmianą (brak regresji): tapeta, podłoga, meble, świnka chodzi.
 3. Klik i przeciąganie świnki działają jak wcześniej.
 
+## Wave P34: Pig Walking & Exits (Places Rework)
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass | App builds cleanly with no compilation or regression errors |
+| UX Pig Walk | `node tools/qa/ux-p34-pig-walk.js` | Exit code 0, 8/8 PASS (W1-W8) | Świnka chodzi po całej podłodze 2D z głębią, skalowaniem wg y, y-sort z meblami, wchodzi i wychodzi przez krawędzie sceny |
+| UX All Suite | `node tools/qa/ux-all.js` | ux-p32, ux-p33, ux-p34 PASS (skrypty Playwright wymagają pakietu) | Wszystkie skrypty QA bez zewnętrznych zależności przechodzą pomyślnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+
+### Manual Checklist (Do sprawdzenia po P34)
+1. Świnka w domku chodzi po całej podłodze, także w głąb ekranu, i jest trochę mniejsza, gdy stoi wyżej.
+2. Zabawki (tunel, domek) nadal działają.
+3. Przeciągnięcie świnki poza okno nadal wyprowadza ją na pulpit.
+4. Brak migotania, przeskoków rozmiaru i rozmycia.
+
+
 
