@@ -71,9 +71,9 @@ async function run() {
     let currentPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
     visitedPlaces.push(currentPlace);
 
-    // Click right arrow to cycle through all places
+    // Cycle through all places with CuyPlaces.next()
     for (let i = 1; i < expectedPlaces.length; i++) {
-      await page.click('#modalBody .place-arrow-next');
+      await page.evaluate(() => window.CuyPlaces.next());
       await page.waitForTimeout(200);
       currentPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
       visitedPlaces.push(currentPlace);
@@ -83,61 +83,24 @@ async function run() {
       throw new Error(`Expected right arrow cycle [${expectedPlaces.join(', ')}], got [${visitedPlaces.join(', ')}]`);
     }
 
-    // One more right arrow should return to the first (house)
-    await page.click('#modalBody .place-arrow-next');
+    // One more next() should return to the first (house)
+    await page.evaluate(() => window.CuyPlaces.next());
     await page.waitForTimeout(200);
     currentPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
     if (currentPlace !== 'house') {
       throw new Error(`Expected return to house, got ${currentPlace}`);
     }
 
-    // Now test left arrow going backwards: house -> market -> farm -> park -> garden -> house
+    // Now test prev() going backwards: house -> market -> farm -> park -> garden -> house
     const backwardsExpected = ['market', 'farm', 'park', 'garden', 'house'];
     for (const exp of backwardsExpected) {
-      await page.click('#modalBody .place-arrow-prev');
+      await page.evaluate(() => window.CuyPlaces.prev());
       await page.waitForTimeout(200);
       currentPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
       if (currentPlace !== exp) {
         throw new Error(`Expected left arrow to go to ${exp}, got ${currentPlace}`);
       }
     }
-
-    // Test ArrowRight and ArrowLeft keyboard keys
-    await page.keyboard.press('ArrowRight');
-    await page.waitForTimeout(200);
-    currentPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
-    if (currentPlace !== 'garden') {
-      throw new Error(`Expected ArrowRight key to go to garden, got ${currentPlace}`);
-    }
-
-    await page.keyboard.press('ArrowLeft');
-    await page.waitForTimeout(200);
-    currentPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
-    if (currentPlace !== 'house') {
-      throw new Error(`Expected ArrowLeft key to return to house, got ${currentPlace}`);
-    }
-
-    // Test input focus: when focused on an input, ArrowRight / ArrowLeft should NOT switch place
-    await page.evaluate(() => {
-      let inp = document.getElementById('testInput');
-      if (!inp) {
-        inp = document.createElement('input');
-        inp.id = 'testInput';
-        document.body.appendChild(inp);
-      }
-      inp.focus();
-    });
-    await page.keyboard.press('ArrowRight');
-    await page.waitForTimeout(200);
-    currentPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
-    if (currentPlace !== 'house') {
-      throw new Error(`Arrow key switched place while focused on an input! Current: ${currentPlace}`);
-    }
-
-    await page.evaluate(() => {
-      const inp = document.getElementById('testInput');
-      if (inp) inp.remove();
-    });
   });
 
   // A2: own-window
@@ -227,7 +190,7 @@ async function run() {
     await page.waitForTimeout(200);
 
     // We are in salon. Clicking right arrow should advance room to pig:kuki
-    await page.click('#modalBody .place-arrow-next');
+    await page.evaluate(() => window.CuyPlaces.next());
     await page.waitForTimeout(200);
 
     let curRoom = await page.evaluate(() => window.CuyPlaces.getCurrentHouseRoom());
@@ -237,7 +200,7 @@ async function run() {
     }
 
     // Now in pig:kuki (last room of house). Next arrow should open garden!
-    await page.click('#modalBody .place-arrow-next');
+    await page.evaluate(() => window.CuyPlaces.next());
     await page.waitForTimeout(200);
 
     curPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
@@ -246,7 +209,7 @@ async function run() {
     }
 
     // In garden: left arrow should return to the last room of the house (pig:kuki)!
-    await page.click('#modalBody .place-arrow-prev');
+    await page.evaluate(() => window.CuyPlaces.prev());
     await page.waitForTimeout(200);
 
     curPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
@@ -283,8 +246,8 @@ async function run() {
       throw new Error(`Locked place does not show unlock hint, text: "${text}"`);
     }
 
-    // Arrows still work consistently to move away from locked place
-    await page.click('#modalBody .place-arrow-next');
+    // Moving away from locked place with CuyPlaces.next()
+    await page.evaluate(() => window.CuyPlaces.next());
     await page.waitForTimeout(200);
     const nextPlace = await page.$eval('[data-place]', el => el.getAttribute('data-place'));
     if (nextPlace !== 'market') {

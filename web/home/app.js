@@ -163,7 +163,6 @@
     bindOnboarding();
     updateSoundButtonUI();
     buildPlacesBar();
-    buildPlacesStage();
   }
 
   // ---- First run: welcome -> intro -> gift letter ----
@@ -704,32 +703,6 @@
         }
       });
     });
-  }
-
-  // --- PLACES CAROUSEL STAGE (PK-P3a): replaces old places bar ---
-  function buildPlacesStage() {
-    if (document.getElementById('placesStageNav')) return;
-    const stage = document.querySelector('.stage-viewport');
-    if (!stage) return;
-    const nav = document.createElement('div');
-    nav.id = 'placesStageNav';
-    nav.className = 'places-carousel-stage';
-    nav.innerHTML = '<button type="button" class="place-arrow place-arrow-prev" data-dir="prev" aria-label="Previous place">‹</button>' +
-      '<button type="button" class="place-stage-current" id="placeStageCurrent" aria-label="Open House">House</button>' +
-      '<button type="button" class="place-arrow place-arrow-next" data-dir="next" aria-label="Next place">›</button>';
-    stage.appendChild(nav);
-
-    if (window.CuyPlaces) {
-      window.CuyPlaces.bindArrows(nav);
-      const curBtn = nav.querySelector('#placeStageCurrent');
-      if (curBtn) {
-        curBtn.onclick = () => {
-          if (window.Sound) window.Sound.click();
-          window.CuyPlaces.openPlace();
-        };
-      }
-      window.CuyPlaces.updateStageNav();
-    }
   }
 
   function removeBackBtn() {

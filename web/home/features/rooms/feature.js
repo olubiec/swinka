@@ -4,7 +4,6 @@
 // The server decides every placement; the ghost colour uses a local copy of the rules only as a hint.
 // Dispatches document 'room-select' (detail: { uid }) when the picked item changes; customize.js listens to it.
 // W26-07: shared bedroom tab (room id 'dorm', layout 'dorm'), panel from dorm.js (window.DormPanel), loaded on demand.
-// W27-08: 'House plan' opens plan.js (window.HousePlan, loaded on demand) in an overlay; a pig click (room-pig) opens its home card (pig_home).
 (function () {
   'use strict';
 
@@ -39,9 +38,6 @@
     hover: null,          // { x, y } for the ghost preview
     scale: 1,
     canvas: null,
-    planOverlay: null,    // House plan overlay element while it is open
-    planPigId: null,      // pig whose home card is shown in the plan
-    planReturn: null,     // button that opened the plan (focus returns to it)
     period: null,         // time of day of the last render
     periodAt: 0,          // when the period was last checked (once a minute)
     animating: false,     // a lamp strip or flicker runs: redraw on every frame tick
@@ -336,17 +332,14 @@
     S.canvas = null;
     container.dataset.place = 'house';
     container.setAttribute('data-place', 'house');
-    const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('house') : '';
     container.innerHTML = `
       <div class="room-panel" data-place="house">
-        ${arrows}
         <div class="room-tabs" role="tablist" aria-label="Rooms">${tabsHtmlOf(tabs)}</div>
         <div class="room-dorm"></div>
         <p class="room-hint">${dormOf(st).unlocked ? 'Move a pig in above to use the shared bedroom.' : ''}</p>
         <p class="room-status" aria-live="polite"></p>
       </div>`;
     bindTabs(container, tabs);
-    if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
     mountDorm(container, st);
   }
 
@@ -370,141 +363,6 @@
     };
     document.head.appendChild(s);
   }
-
-  // House plan overlay (W27-06 / W27-08). plan.js is loaded on demand; Esc closes the pig card first, then the plan.
-  function planCtx(st) {
-    return {
-      state: st.rooms || {},
-      homes: st.homes || { pigs: [], rooms: [] },
-      places: st.places,
-      dorm: st.dorm,
-      assetUrl: (rel) => url(rel),
-      select: (id) => { closePlan(false); switchRoom(id, true); }
-    };
-  }
-
-  function loadPlanAssets() {
-    if (!document.querySelector('link[data-house-plan]')) {
-      const l = document.createElement('link');
-      l.rel = 'stylesheet';
-      l.href = 'features/rooms/plan.css';
-      l.dataset.housePlan = '1';
-      document.head.appendChild(l);
-    }
-    if (window.HousePlan || document.querySelector('script[data-house-plan]')) return;
-    const s = document.createElement('script');
-    s.src = 'features/rooms/plan.js';
-    s.dataset.housePlan = '1';
-    s.onload = () => { if (S.planOverlay) mountPlan(); };
-    document.head.appendChild(s);
-  }
-
-  function openPlan(returnTo) {
-    if (S.planOverlay || !S.api) return;
-    const overlay = document.createElement('div');
-    overlay.className = 'house-plan-overlay';
-    overlay.innerHTML = '<div class="house-plan-dialog" role="dialog" aria-modal="true" aria-labelledby="housePlanTitle">' +
-      '<div class="house-plan-head"><h2 class="house-plan-title" id="housePlanTitle">House plan</h2>' +
-      '<button type="button" class="game-btn house-plan-close">Close</button></div>' +
-      '<div class="house-plan-body"></div>' +
-      '<div class="house-plan-card" hidden></div>' +
-      '</div>';
-    document.body.appendChild(overlay);
-    S.planOverlay = overlay;
-    S.planReturn = returnTo || null;
-    S.planPigId = null;
-    overlay.querySelector('.house-plan-close').addEventListener('click', () => closePlan(true));
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) closePlan(true); });
-    document.addEventListener('keydown', onPlanKey);
-    overlay.querySelector('.house-plan-close').focus();
-    mountPlan();
-    loadPlanAssets();
-  }
-
-  function closePlan(restoreFocus) {
-    const overlay = S.planOverlay;
-    if (!overlay) return;
-    document.removeEventListener('keydown', onPlanKey);
-    overlay.remove();
-    S.planOverlay = null;
-    S.planPigId = null;
-    const back = S.planReturn;
-    S.planReturn = null;
-    if (restoreFocus && back && back.isConnected) back.focus();
-  }
-
-  function onPlanKey(e) {
-    if (e.key !== 'Escape' || !S.planOverlay) return;
-    e.preventDefault();
-    if (S.planPigId) { S.planPigId = null; renderPigCard(); } else closePlan(true);
-  }
-
-  function mountPlan() {
-    const overlay = S.planOverlay;
-    if (!overlay || !S.api) return;
-    const body = overlay.querySelector('.house-plan-body');
-    if (!window.HousePlan || typeof window.HousePlan.mount !== 'function') {
-      body.innerHTML = '<p class="room-empty">Loading the house plan…</p>';
-      return;
-    }
-    window.HousePlan.mount(body, planCtx(S.api.getState() || {}));
-    renderPigCard();
-  }
-
-  function roomNameOf(st, homes, id) {
-    const r = (homes.rooms || []).find(x => x.id === id);
-    if (r) return r.name;
-    return labelOf(st, id);
-  }
-
-  // Home card of the pig picked in the plan: portrait, activity and the home switch (pig_home).
-  function renderPigCard() {
-    const overlay = S.planOverlay;
-    if (!overlay || !S.api) return;
-    const card = overlay.querySelector('.house-plan-card');
-    const st = S.api.getState() || {};
-    const homes = st.homes || { pigs: [], rooms: [] };
-    const pig = S.planPigId ? (homes.pigs || []).find(p => p.pigId === S.planPigId) : null;
-    if (!pig) { card.hidden = true; card.innerHTML = ''; return; }
-    const rooms = homes.rooms || [];
-    const act = window.HousePlan && window.HousePlan.activityLabel ? window.HousePlan.activityLabel(pig.activity) : String(pig.activity || '');
-    let mode = 'Roams the house';
-    let switchHtml = '';
-    if (pig.memorial) {
-      mode = 'Memorial pigs stay in their memory room.';
-    } else if (pig.mode === 'room') {
-      mode = 'Tied to ' + roomNameOf(st, homes, pig.room);
-      switchHtml = '<button type="button" class="game-btn house-plan-switch" data-pig-mode="free">Roam the house</button>';
-    } else {
-      const target = rooms.find(r => r.id === pig.location) || rooms[0];
-      if (target) switchHtml = '<button type="button" class="game-btn house-plan-switch" data-pig-mode="room" data-room="' + esc(target.id) + '">Stay in ' + esc(target.name) + '</button>';
-    }
-    const portrait = pig.portrait ? '<img class="house-plan-card-portrait" src="' + esc(url(pig.portrait)) + '" width="48" height="48" alt="" onerror="this.style.visibility=\'hidden\'">' : '';
-    card.innerHTML = portrait +
-      '<div class="house-plan-card-text"><p class="house-plan-card-name">' + esc(pig.name) + '</p><p>' + esc(act) + '</p><p>' + esc(mode) + '</p></div>' +
-      switchHtml +
-      '<button type="button" class="game-btn house-plan-card-close">Done</button>';
-    card.hidden = false;
-    const sw = card.querySelector('.house-plan-switch');
-    if (sw) {
-      sw.addEventListener('click', () => {
-        const msg = { type: 'pig_home', pigId: pig.pigId, mode: sw.dataset.pigMode };
-        if (msg.mode === 'room') msg.room = sw.dataset.room;
-        send(msg);
-      });
-    }
-    card.querySelector('.house-plan-card-close').addEventListener('click', () => { S.planPigId = null; renderPigCard(); });
-  }
-
-  // A pig picked in the plan (dispatched by plan.js) opens its home card.
-  function onRoomPig(e) {
-    if (!S.planOverlay || !e.detail) return;
-    S.planPigId = e.detail.pigId;
-    renderPigCard();
-    const first = S.planOverlay.querySelector('.house-plan-card button');
-    if (first) first.focus();
-  }
-  document.addEventListener('room-pig', onRoomPig);
 
   function setSelectedUid(uid) {
     S.selectedUid = uid;
@@ -882,12 +740,9 @@
     container.setAttribute('data-place', 'house');
     const housePlace = ((st && st.places && st.places.places) || []).find(p => p.id === 'house');
     if (housePlace && housePlace.unlocked === false) {
-      const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('house') : '';
       container.innerHTML = `<div class="room-panel room-locked" data-place="house">
-        ${arrows}
         <p class="room-locked-text">The house is locked. ${housePlace.unlockCost ? 'Open for ' + housePlace.unlockCost + ' clovers' : 'Locked'}</p>
       </div>`;
-      if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
       return;
     }
     const hadFocus = !!(S.canvas && document.activeElement === S.canvas);
@@ -984,18 +839,14 @@
       return `<button type="button" class="room-gramophone-trigger" data-uid="${esc(it.uid)}" aria-label="Gramophone" aria-expanded="${isPlayerOpen ? 'true' : 'false'}" style="position:absolute;left:${gx}px;top:${gy}px;width:${gw}px;height:${gh}px;" tabindex="0"></button>`;
     }).join('');
 
-    const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('house') : '';
-    const planBtnHtml = S.fromPlaces ? '' : '<button type="button" class="game-btn room-plan-btn" id="roomPlanBtn" aria-haspopup="dialog">House plan</button>';
     container.classList.add('rooms-editor');
     container.innerHTML = `
       <div class="room-panel rooms-editor" data-place="house">
-        ${arrows}
         <div class="room-tabs" role="tablist" aria-label="Rooms">${tabsHtml}</div>
         ${dormMode ? '<div class="room-dorm"></div>' : ''}
         <div class="room-head">
           <button type="button" class="room-title room-name-btn" aria-label="Rename this room">${esc(layout.name || labelOf(st, S.place))}</button>
           <span class="room-count">${placedTotal} placed</span>
-          ${planBtnHtml}
         </div>
         ${levelHtml}
         <div class="room-canvas-wrap" style="position:relative;display:inline-block;line-height:0;">
@@ -1071,9 +922,7 @@
     }
     const levelBtn = container.querySelector('#roomLevelBtn');
     if (levelBtn) levelBtn.addEventListener('click', () => send({ type: 'place_upgrade', id: S.place }));
-    const planBtn = container.querySelector('#roomPlanBtn');
-    if (planBtn) planBtn.addEventListener('click', () => openPlan(planBtn));
-    if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
+
 
     // Customize panel (W25-05); nothing breaks when it is not loaded
     const customize = container.querySelector('.room-customize');
@@ -1121,7 +970,6 @@
       render();
     },
     close() {
-      closePlan(false);
       if (S.from === 'decor') {
         const btn = document.querySelector('.modal-back');
         if (btn) btn.remove();
@@ -1134,7 +982,6 @@
     },
     onState() {
       if (S.container && S.container.isConnected) render();
-      if (S.planOverlay) mountPlan();
     }
   });
 })();

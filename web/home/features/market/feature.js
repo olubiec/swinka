@@ -177,12 +177,9 @@
     const st = S.api.getState();
     const marketPlace = ((st && st.places && st.places.places) || []).find(p => p.id === 'market');
     if (marketPlace && marketPlace.unlocked === false) {
-      const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('market') : '';
       container.innerHTML = `<div class="market-panel market-locked" data-place="market">
-        ${arrows}
         <p class="market-locked-text">The market is still closed. ${marketPlace.unlockCost ? 'Open for ' + marketPlace.unlockCost + ' clovers' : 'Locked'}</p>
       </div>`;
-      if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
       return;
     }
     if (!st || !st.market) {
@@ -205,10 +202,8 @@
     ensureLights();
     loadAtlas();
 
-    const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('market') : '';
     container.innerHTML = `
       <div class="market-panel" data-place="market" style="position:relative">
-        ${arrows}
         ${tintHtml()}
         <img class="market-stall-banner" src="${esc(S.api.assetUrl('world/market/stall_basic.png'))}" alt="" />
         ${postersHtml()}
@@ -269,7 +264,6 @@
     } else {
       loadExtras();
     }
-    if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
   }
 
   window.CuyHome.registerFeature({

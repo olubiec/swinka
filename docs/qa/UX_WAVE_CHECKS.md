@@ -104,5 +104,21 @@
 3. Przeciągnięcie świnki poza okno nadal wyprowadza ją na pulpit.
 4. Brak migotania, przeskoków rozmiaru i rozmycia.
 
+## Wave P35: UI Art & Cleanup (Places Rework)
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass | App builds cleanly with no compilation or regression errors |
+| UX Cleanup | `node tools/qa/ux-p35-cleanup.js` | Exit code 0, 5/5 PASS (C1-C5) | Brak strzałek nawigacji w oknach, brak planu domu, zakładki pokoi działają, brak błędów konsoli |
+| UX All Suite | `node tools/qa/ux-all.js` | Exit code 0, 12/12 PASS | Wszystkie skrypty QA pakietu UX przechodzą pomyślnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| UI Style Check | `python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt` | Exit code 0, 0 violations | Nowe ikony UI (strzałki, wstecz) zgodne ze stylebookiem i paletą |
+
+### Manual Checklist (Do sprawdzenia po P35)
+1. Obejrzyj `docs/qa/shots/p35a-ui-pieces.png`: strzałki i „wstecz" są z tej samej rodziny co X (drewniana ramka, jasny znak). Jeśli nie, napisz co poprawić.
+2. W oknach Pokoje, Ogród, Farma, Targ nie ma już strzałek na bokach ani planu domu. Pokoje przełączasz zakładkami w oknie Pokoi.
+3. Decorate działa jak wcześniej.
+
+
 
 

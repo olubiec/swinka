@@ -612,10 +612,8 @@
       ? S.memorial.map(p => `<span class="garden-stone-name">${esc(p.name)}</span>`).join('')
       : '<span class="garden-stone-empty">No memorial pigs yet</span>';
 
-    const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml(S.place) : '';
     container.innerHTML = `
       <div class="garden-panel" data-place="${esc(S.place)}">
-        ${arrows}
         ${body}
         <div class="garden-walk" aria-label="Walks"></div>
         <button type="button" class="garden-walk-btn" ${unlocked ? '' : 'disabled'}>Go for a walk</button>
@@ -624,7 +622,6 @@
           <div class="garden-stone">${memorial}</div>
         </section>
       </div>`;
-    if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
 
     S.canvas = container.querySelector('.garden-canvas');
     S.hasFocus = hadFocus;

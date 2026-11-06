@@ -184,59 +184,15 @@
     },
 
     renderArrowsHtml(placeId) {
-      return '<button type="button" class="place-arrow place-arrow-prev" data-dir="prev" aria-label="Previous place">‹</button>' +
-        '<button type="button" class="place-arrow place-arrow-next" data-dir="next" aria-label="Next place">›</button>';
+      return '';
     },
 
-    bindArrows(container) {
-      if (!container) return;
-      container.querySelectorAll('.place-arrow-prev').forEach(btn => {
-        btn.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          CuyPlaces.prev();
-        };
-      });
-      container.querySelectorAll('.place-arrow-next').forEach(btn => {
-        btn.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          CuyPlaces.next();
-        };
-      });
-    },
+    bindArrows(container) {},
 
-    updateStageNav() {
-      const curBtn = document.getElementById('placeStageCurrent');
-      if (curBtn) {
-        const label = PLACE_TITLES[S.currentPlace] || S.currentPlace;
-        curBtn.textContent = label;
-        curBtn.setAttribute('aria-label', 'Open ' + label);
-      }
-    }
+    updateStageNav() {}
   };
 
   window.CuyPlaces = CuyPlaces;
-
-  // Global keydown handler for ArrowLeft and ArrowRight
-  window.addEventListener('keydown', function (e) {
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-    const target = document.activeElement;
-    if (target) {
-      const tag = target.tagName ? target.tagName.toUpperCase() : '';
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
-        return;
-      }
-    }
-    // Only handle if places are relevant (modal is open or user is viewing home)
-    if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      CuyPlaces.next();
-    } else if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      CuyPlaces.prev();
-    }
-  });
 
   if (window.CuyHome && window.CuyHome.registerFeature) {
     window.CuyHome.registerFeature({

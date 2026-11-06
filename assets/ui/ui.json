@@ -624,6 +624,48 @@
     0,
     0
    ]
+  },
+  "arrow_left": {
+   "file": "ui/arrow_left.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "arrow_left_pressed": {
+   "file": "ui/arrow_left_pressed.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "arrow_right": {
+   "file": "ui/arrow_right.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "arrow_right_pressed": {
+   "file": "ui/arrow_right_pressed.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "back_btn": {
+   "file": "ui/back_btn.png",
+   "size": [
+    16,
+    16
+   ]
+  },
+  "back_btn_pressed": {
+   "file": "ui/back_btn_pressed.png",
+   "size": [
+    16,
+    16
+   ]
   }
  }
 }
