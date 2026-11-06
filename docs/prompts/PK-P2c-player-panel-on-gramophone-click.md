@@ -1,8 +1,9 @@
 # PK-P2c: Player controls only after clicking the gramophone (package, wave P2)
 Zmieniaj: web/home/features/music/player.js, web/home/features/music/player.css, web/home/app.js, web/home/index.html, web/home/features/rooms/feature.js, tools/qa/ux-p2-player.js, docs/opt/log/PK-P2c.md
 Wymagane: tools/qa/ux-p2-player.js
-Weryfikacja: node --check web/home/features/music/player.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p2-player.js && node tools/qa/ux-p2-player.js && node tools/qa/web-smoke.js
+Weryfikacja: node --check web/home/features/music/player.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p2-player.js && node tools/qa/ux-p2-player.js
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 25 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: Report: "Player controls should appear only after clicking the gramophone/player, not permanently." Today `web/home/features/music/player.js` mounts a panel that is always visible. Hide it by default; show it when the player/gramophone object in the room is clicked; hide it again on a second click, on Escape, or on a click outside.
 Depends on: P1 merged. The music engine and audio keep running while the panel is hidden (do not stop playback).

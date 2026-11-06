@@ -694,28 +694,28 @@
    "tier": "high",
    "title": "Feature window lifecycle and Back to More",
    "manual": "docs/prompts/PK-P1a-feature-window-lifecycle.md",
-   "verify": "node --check web/home/app.js && node --check web/home/features/calendar/feature.js && node --check web/home/features/diary/feature.js && node --check web/home/features/settings/feature.js && node --check web/home/features/shop/feature.js && node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p1-lifecycle.js && node tools/qa/ux-p1-lifecycle.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/app.js && node --check web/home/features/calendar/feature.js && node --check web/home/features/diary/feature.js && node --check web/home/features/settings/feature.js && node --check web/home/features/shop/feature.js && node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p1-lifecycle.js && node tools/qa/ux-p1-lifecycle.js",
    "items": []
   },
   {
    "id": "PK-P1b",
-   "tier": "high",
+   "tier": "mid",
    "title": "Coloring Play level and Vet Check-up",
    "manual": "docs/prompts/PK-P1b-coloring-play-and-vet-checkup.md",
-   "verify": "node --check web/home/features/coloring/feature.js && node --check web/home/features/vet/feature.js && node --check web/home/features/vet/mock.js && node --check tools/qa/ux-p1-buttons.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~VetCheckupTests|FullyQualifiedName~HealthSystemTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/ux-p1-buttons.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/coloring/feature.js && node --check web/home/features/vet/feature.js && node --check web/home/features/vet/mock.js && node --check tools/qa/ux-p1-buttons.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~VetCheckupTests|FullyQualifiedName~HealthSystemTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/ux-p1-buttons.js",
    "items": []
   },
   {
    "id": "PK-P1c",
-   "tier": "high",
+   "tier": "mid",
    "title": "Decorate opens the room editor",
    "manual": "docs/prompts/PK-P1c-decorate-opens-room-editor.md",
-   "verify": "node --check web/home/features/decor/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/ux-p1-decorate.js && node tools/qa/ux-p1-decorate.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/decor/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/ux-p1-decorate.js && node tools/qa/ux-p1-decorate.js",
    "items": []
   },
   {
    "id": "PK-P1d",
-   "tier": "high",
+   "tier": "low",
    "title": "Speech bubble hides with the pig",
    "manual": "docs/prompts/PK-P1d-speech-bubble-hides-with-pig.md",
    "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
@@ -723,7 +723,7 @@
   },
   {
    "id": "PK-P1q",
-   "tier": "high",
+   "tier": "low",
    "title": "Windows checks after wave P1",
    "manual": "docs/prompts/PK-P1q-windows-checks-wave-p1.md",
    "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js p1 && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
@@ -731,31 +731,31 @@
   },
   {
    "id": "PK-P2a",
-   "tier": "high",
+   "tier": "mid",
    "title": "Every pig gets its own portrait",
    "manual": "docs/prompts/PK-P2a-pig-portraits-from-look.md",
-   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p2-portraits.js && node tools/qa/ux-p2-portraits.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p2-portraits.js && node tools/qa/ux-p2-portraits.js",
    "items": []
   },
   {
    "id": "PK-P2b",
-   "tier": "high",
+   "tier": "mid",
    "title": "Unique item icons in shop, store and decor",
    "manual": "docs/prompts/PK-P2b-item-icons-from-world-atlas.md",
-   "verify": "node --check web/home/features/shop/feature.js && node --check web/home/features/store/feature.js && node --check web/home/features/decor/feature.js && node --check tools/qa/check-assets.js && node --check tools/qa/ux-p2-icons.js && node tools/qa/ux-p2-icons.js && node tools/qa/check-assets.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/shop/feature.js && node --check web/home/features/store/feature.js && node --check web/home/features/decor/feature.js && node --check tools/qa/check-assets.js && node --check tools/qa/ux-p2-icons.js && node tools/qa/ux-p2-icons.js && node tools/qa/check-assets.js",
    "items": []
   },
   {
    "id": "PK-P2c",
-   "tier": "high",
+   "tier": "mid",
    "title": "Player panel only after gramophone click",
    "manual": "docs/prompts/PK-P2c-player-panel-on-gramophone-click.md",
-   "verify": "node --check web/home/features/music/player.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p2-player.js && node tools/qa/ux-p2-player.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/music/player.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p2-player.js && node tools/qa/ux-p2-player.js",
    "items": []
   },
   {
    "id": "PK-P2q",
-   "tier": "high",
+   "tier": "low",
    "title": "Windows checks after wave P2",
    "manual": "docs/prompts/PK-P2q-windows-checks-wave-p2.md",
    "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",

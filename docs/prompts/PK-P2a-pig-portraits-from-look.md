@@ -1,8 +1,9 @@
 # PK-P2a: Every pig gets its own portrait (package, wave P2)
 Zmieniaj: web/home/features/pigs/feature.js, web/home/features/pigs/feature.css, web/home/canvas-pig.js, tools/qa/ux-p2-portraits.js, docs/opt/log/PK-P2a.md
 Wymagane: tools/qa/ux-p2-portraits.js
-Weryfikacja: node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p2-portraits.js && node tools/qa/ux-p2-portraits.js && node tools/qa/web-smoke.js
+Weryfikacja: node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p2-portraits.js && node tools/qa/ux-p2-portraits.js
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 25 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: Report: "All pig icons in More look the same." Diagnosis: `renderPigPortrait(id)` in `pigs/feature.js` loads `assets/sprites/portraits/<id>.png`; PNGs exist only for named pigs (kuki, ned, james, glen...), every other pig falls to the same `icon-pig-head`. Draw the portrait from the pig's look (breed + paletteId + coat) so each pig is different, with no new art files.
 Depends on: P1 merged (feature windows have a clean lifecycle).

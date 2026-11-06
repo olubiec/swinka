@@ -3,6 +3,7 @@ Zmieniaj: src/Cuy/dotNet/FormPet.cs, src/Cuy/dotNet/StatusBubble.cs, docs/opt/lo
 Wymagane: src/Cuy/dotNet/FormPet.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 25 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: When Home (the house window) opens, the pig leaves the desktop (`HomeWindow.OnVisibleChanged` calls `pet.EnterHome()`); the speech bubble (`StatusBubble`, a separate topmost form owned by `FormPet`) can stay on screen with nobody under it. Hide it whenever the pig is hidden, and never show it while the pig is in the house.
 Depends on: nothing (C# only, WinForms cannot be run on Linux: the build is the check; a Windows scenario is in PK-P1q).

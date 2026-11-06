@@ -3,6 +3,7 @@ Zmieniaj: tools/qa/run-exe-smoke.ps1, tools/qa/ux-all.js, docs/qa/UX_WAVE_CHECKS
 Wymagane: tools/qa/run-exe-smoke.ps1, docs/qa/UX_WAVE_CHECKS.md
 Weryfikacja: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js p1 && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): każdą komendę uruchom raz, nie ponawiaj nieudanej. Nie naprawiaj kodu produktowego. Wynik porównuj z docs/opt/log/baseline-smoke.txt (jeśli istnieje): błąd obecny w baseline to „stary”. Maks. 20 wywołań narzędzi.
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj, all product code (src/, web/home/, assets/)
 Goal: After the wave P1 packages are merged, run the full battery on Windows and report what really works. This package does NOT fix product code. If a check fails, write it in the log with the output lines and let the verification line fail: the human decides.
 Depends on: PK-P1a, PK-P1b, PK-P1c, PK-P1d merged. Run on Windows with the .NET SDK, Node and Playwright chromium installed (`bash setup.sh` equivalent: `npm --prefix tools/qa ci` and `npx --prefix tools/qa playwright install chromium`).

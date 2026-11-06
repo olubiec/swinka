@@ -798,7 +798,7 @@
     "tools/qa/ux-p1-lifecycle.js",
     "docs/opt/log/PK-P1a.md"
    ],
-   "verify": "node --check web/home/app.js && node --check web/home/features/calendar/feature.js && node --check web/home/features/diary/feature.js && node --check web/home/features/settings/feature.js && node --check web/home/features/shop/feature.js && node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p1-lifecycle.js && node tools/qa/ux-p1-lifecycle.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/app.js && node --check web/home/features/calendar/feature.js && node --check web/home/features/diary/feature.js && node --check web/home/features/settings/feature.js && node --check web/home/features/shop/feature.js && node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p1-lifecycle.js && node tools/qa/ux-p1-lifecycle.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -819,7 +819,7 @@
     "docs/contracts/vet.md",
     "docs/opt/log/PK-P1b.md"
    ],
-   "verify": "node --check web/home/features/coloring/feature.js && node --check web/home/features/vet/feature.js && node --check web/home/features/vet/mock.js && node --check tools/qa/ux-p1-buttons.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~VetCheckupTests|FullyQualifiedName~HealthSystemTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/ux-p1-buttons.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/coloring/feature.js && node --check web/home/features/vet/feature.js && node --check web/home/features/vet/mock.js && node --check tools/qa/ux-p1-buttons.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~VetCheckupTests|FullyQualifiedName~HealthSystemTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/ux-p1-buttons.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -836,7 +836,7 @@
     "tools/qa/ux-p1-decorate.js",
     "docs/opt/log/PK-P1c.md"
    ],
-   "verify": "node --check web/home/features/decor/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/ux-p1-decorate.js && node tools/qa/ux-p1-decorate.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/decor/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/ux-p1-decorate.js && node tools/qa/ux-p1-decorate.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -853,7 +853,7 @@
    ],
    "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": false,
-   "model": "gemini-3.8-flash-high",
+   "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P1d-speech-bubble-hides-with-pig.md"
   },
@@ -869,7 +869,7 @@
    ],
    "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js p1 && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
    "gate": false,
-   "model": "gemini-3.8-flash-high",
+   "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P1q-windows-checks-wave-p1.md"
   },
@@ -884,7 +884,7 @@
     "tools/qa/ux-p2-portraits.js",
     "docs/opt/log/PK-P2a.md"
    ],
-   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p2-portraits.js && node tools/qa/ux-p2-portraits.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p2-portraits.js && node tools/qa/ux-p2-portraits.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -903,7 +903,7 @@
     "tools/qa/ux-p2-icons.js",
     "docs/opt/log/PK-P2b.md"
    ],
-   "verify": "node --check web/home/features/shop/feature.js && node --check web/home/features/store/feature.js && node --check web/home/features/decor/feature.js && node --check tools/qa/check-assets.js && node --check tools/qa/ux-p2-icons.js && node tools/qa/ux-p2-icons.js && node tools/qa/check-assets.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/shop/feature.js && node --check web/home/features/store/feature.js && node --check web/home/features/decor/feature.js && node --check tools/qa/check-assets.js && node --check tools/qa/ux-p2-icons.js && node tools/qa/ux-p2-icons.js && node tools/qa/check-assets.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -922,7 +922,7 @@
     "tools/qa/ux-p2-player.js",
     "docs/opt/log/PK-P2c.md"
    ],
-   "verify": "node --check web/home/features/music/player.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p2-player.js && node tools/qa/ux-p2-player.js && node tools/qa/web-smoke.js",
+   "verify": "node --check web/home/features/music/player.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p2-player.js && node tools/qa/ux-p2-player.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -938,7 +938,7 @@
    ],
    "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
    "gate": false,
-   "model": "gemini-3.8-flash-high",
+   "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P2q-windows-checks-wave-p2.md"
   }

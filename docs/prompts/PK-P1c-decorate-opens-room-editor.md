@@ -1,8 +1,9 @@
 # PK-P1c: "Decorate" opens the room editor (package, wave P1)
 Zmieniaj: web/home/features/decor/feature.js, web/home/features/rooms/feature.js, web/home/features/rooms/mock.js, tools/qa/ux-p1-decorate.js, docs/opt/log/PK-P1c.md
 Wymagane: tools/qa/ux-p1-decorate.js
-Weryfikacja: node --check web/home/features/decor/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/ux-p1-decorate.js && node tools/qa/ux-p1-decorate.js && node tools/qa/web-smoke.js
+Weryfikacja: node --check web/home/features/decor/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/ux-p1-decorate.js && node tools/qa/ux-p1-decorate.js
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 25 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: Report: "Mushroom lamp: Decorate does nothing." A bought decor item must be placeable. For now (full stash and free placement come in wave P6) make Decorate open the room editor of the pig's room with that item ready to place.
 Depends on: PK-P1a merged (`tools/qa/lib/ux.js`, one feature-window lifecycle, `openFeature(id, arg, opts)`).
