@@ -230,7 +230,8 @@ namespace Cuy.Core.Tests
         }
 
         // D3.3 (table in docs/PHYSICS.md): from rest, one 30 ms step moves 0.75 px and gives 1.5 px/30 ms;
-        // a 60 ms step (dt = 2) moves 0.75 * 2^2 = 3 px and gives 3 px/30 ms.
+        // Steps are clamped to 50 ms, so a 60 ms step is the same as 50 ms (dt = 5/3):
+        // it moves 0.75 * (5/3)^2 = 25/12 px and gives 1.5 * 5/3 = 2.5 px/30 ms.
         [Fact]
         public void Gravity_MatchesPhysicsTable()
         {
@@ -241,9 +242,9 @@ namespace Cuy.Core.Tests
             Near(0.75, oneStep.State.Y, 1e-9);
             Near(1.5, oneStep.State.VelY, 1e-9);
 
-            TossStepResult twoUnits = TossPhysics.Step(state, 60, bounds, null);
-            Near(3, twoUnits.State.Y, 1e-9);
-            Near(3, twoUnits.State.VelY, 1e-9);
+            TossStepResult clamped = TossPhysics.Step(state, 60, bounds, null);
+            Near(25.0 / 12.0, clamped.State.Y, 1e-9);
+            Near(2.5, clamped.State.VelY, 1e-9);
         }
     }
 }
