@@ -7,7 +7,7 @@ Wyprowadzona z `docs/STYL_SWIATA.md`: „ciepły, trochę lofi, vintage'owy dome
 - Brzmienia: miękkie pady, pianino lub rhodes, harfa, dzwonki, nylonowa gitara, szum winylu lub taśmy, odgłosy natury w tle (deszcz, świerszcze, wiatr).
 - Harmonia: akordy z siódemkami i dziewiątkami, powolne zmiany (jeden akord na 2-4 takty), progresja 8-16 taktów. Pętla o długości co najmniej 1 minuty, najlepiej 2-4 minuty, żeby nie nudziła się w tle.
 - Tempo 50-85 BPM albo bez wyraźnego pulsu.
-- **Liczba utworów:** minimum 6 na porę dnia (rano, dzień, wieczór, noc), czyli 24 lub więcej. Gra losuje albo gracz wybiera w radiu.
+- **Liczba utworów:** wdrożone 15 (rano 3, dzień 5, wieczór 4, noc 3), wybrane przez właściciela. Tło gra w losowej kolejności z puli bieżącej pory; kolejny utwór startuje po zakończeniu poprzedniego.
 - Nastrój pory dnia jak w `lights.json`: rano jasno i lekko (różowo), dzień neutralnie, wieczór cieplej i wolniej (pomarańcz), noc chłodniej, ale czytelnie (nie mroczno).
 
 ## 2. Gry: styl „jak z Undertale"
@@ -19,7 +19,7 @@ Wyprowadzona z `docs/STYL_SWIATA.md`: „ciepły, trochę lofi, vintage'owy dome
 Epicka orkiestra filmowa, metal, EDM, kosmos / sci-fi, horror, głośny perkusyjny groove w tle Home.
 
 ## 4. Licencja i format
-Tylko CC0 lub CC-BY. Ogg Vorbis, pętla bez trzasku (crossfade na szwie), głośność ok. −14 LUFS dla gier, ok. −18 LUFS dla ambientów (cichsze tło).
+Tylko CC0 lub CC-BY. Ogg Vorbis, pętla bez trzasku (crossfade na szwie: wdrożone dla pętli gier nie zostało, do sprawdzenia uchem), głośność ok. −14 LUFS dla gier, ok. −18 LUFS dla ambientów (cichsze tło).
 
 ## 5. Radio
-Gracz może wybrać stację: „Auto" (pora dnia, losowo) albo konkretny utwór z listy pory dnia. Wybór zapamiętany w `localStorage`. Szczegóły UI w `docs/PLAN.md` po decyzji o miejscu radia.
+Zmieniarka tła (`web/home/features/music/changer.js`) odblokowuje się, gdy gracz kupi odtwarzacz inny niż startowy. Przycisk ♪ w nagłówku otwiera listę: „Auto” albo konkretny utwór z puli każdej pory. Wybór zapamiętany w `localStorage` (`cuy_music_station`). Gramofon startowy nie odblokowuje zmieniarki.

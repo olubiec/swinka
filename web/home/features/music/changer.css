@@ -1,0 +1,7 @@
+/* Radio window (changer.js): station list on top of the shared modal classes. */
+.radio-card { max-width: 420px; }
+.radio-body { display: flex; flex-direction: column; gap: 6px; max-height: 70vh; overflow-y: auto; }
+.radio-slot { margin: 10px 0 2px; font-size: 12px; opacity: 0.8; }
+.radio-slot.now { opacity: 1; }
+.radio-btn { text-align: left; width: 100%; font: inherit; padding: 6px 10px; }
+.radio-btn.on { outline: 2px solid currentColor; outline-offset: -4px; }

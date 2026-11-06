@@ -9,6 +9,8 @@
   const FADE_STEP_MS = FADE_MS / FADE_STEPS;
   const LOCAL_STORAGE_VOL_KEY = 'cuy_music_volume';
   const LOCAL_STORAGE_ON_KEY = 'cuy_music_on';
+  const STATION_KEY = 'cuy_music_station';
+  const SLOTS = ['morning', 'day', 'evening', 'night'];
   const ASSET_PREFIX = (window.chrome && window.chrome.webview) ? 'https://cuy.assets/' : '../../assets/';
 
   // State
@@ -119,16 +121,30 @@
     return trackData;
   }
 
-  // Time-of-day loops: morning 5-11, day 11-17, evening 17-21, night 21-5 (local time).
-  function slotTrackId(date) {
+  // Home slots (local time): morning 5-11, day 11-17, evening 17-21, night 21-5.
+  function currentSlot(date = new Date()) {
     const h = date.getHours();
-    if (h >= 21 || h < 5) return 'tod_night';
-    if (h >= 17) return 'tod_evening';
-    if (h >= 11) return 'tod_day';
-    return 'tod_morning';
+    if (h >= 21 || h < 5) return 'night';
+    if (h >= 17) return 'evening';
+    if (h >= 11) return 'day';
+    return 'morning';
   }
 
-  function doPlay(id, loop, forceVolume) {
+  function getStation() {
+    try { return localStorage.getItem(STATION_KEY) || 'auto'; } catch (e) { return 'auto'; }
+  }
+
+  // Auto: random track of the current slot, never the one that just ended; the next pick happens when it ends,
+  // so a change of time of day takes effect with the next track.
+  function playAuto() {
+    const pool = (trackData || []).filter(t => t.use === 'ambient' && t.slot === currentSlot()).map(t => t.id);
+    if (!pool.length) return;
+    const choices = pool.length > 1 ? pool.filter(id => id !== currentId) : pool;
+    const id = choices[Math.floor(Math.random() * choices.length)];
+    doPlay(id, false, undefined, () => { if (ambientOn && getStation() === 'auto') playAuto(); });
+  }
+
+  function doPlay(id, loop, forceVolume, onEnd) {
     const tracks = trackData;
     if (!tracks) return;
 
@@ -161,6 +177,7 @@
     currentId = id;
     const audio = new Audio(ASSET_PREFIX + track.file);
     audio.loop = loop;
+    if (onEnd) audio.addEventListener('ended', onEnd, { once: true });
     audio.volume = 0; // Start silent for fade-in
     currentAudio = audio;
 
@@ -171,7 +188,7 @@
         fadeTo(audio, vol, FADE_MS);
       }).catch(e => {
         // Autoplay policy prevented playback
-        pendingPlay = { id, loop, volume: forceVolume };
+        pendingPlay = { id, loop, volume: forceVolume, onEnd };
         console.warn('CuyMusic: Autoplay blocked, waiting for interaction');
         // audio might be kept in currentAudio but paused, we'll try again on pointerdown
       });
@@ -181,17 +198,45 @@
   // API
   window.CuyMusic = {
     play: async function (id, { loop = true, volume } = {}) {
-      if (!String(id).startsWith('tod_')) ambientOn = false;
+      ambientOn = false;
       const tracks = await loadTracks();
       if (!tracks) return;
       doPlay(id, loop, volume);
     },
-    // Home background: one loop per time of day, switched by the minute timer below.
-    ambient: async function () {
+    // Home background. Auto plays the slot's tracks one after another; a chosen station loops its track.
+    // force = true restarts it (used after a station change); otherwise a running Home track is kept.
+    ambient: async function (force = false) {
+      const wasOn = ambientOn;
       ambientOn = true;
       const tracks = await loadTracks();
       if (!tracks) return;
-      doPlay(slotTrackId(new Date()), true);
+      if (!force && wasOn && currentAudio && !currentAudio.paused) return;
+      const st = getStation();
+      if (st !== 'auto' && tracks.some(t => t.id === st && t.use === 'ambient')) doPlay(st, true);
+      else playAuto();
+    },
+    station: function () {
+      return getStation();
+    },
+    // Radio: 'auto' or the id of an ambient track. Saved in localStorage; applied at once if Home is playing.
+    setStation: async function (s) {
+      const tracks = await loadTracks();
+      if (!tracks) return;
+      if (s !== 'auto' && !tracks.some(t => t.id === s && t.use === 'ambient')) return;
+      try {
+        localStorage.setItem(STATION_KEY, s);
+      } catch (e) {
+        console.warn('CuyMusic: Could not save station', e);
+      }
+      if (ambientOn) CuyMusic.ambient(true);
+    },
+    // Ambient tracks grouped by slot, in the order of SLOTS (for the radio window).
+    ambientSlots: async function () {
+      const tracks = (await loadTracks()) || [];
+      return SLOTS.map(slot => ({ slot, tracks: tracks.filter(t => t.use === 'ambient' && t.slot === slot) }));
+    },
+    currentSlot: function () {
+      return currentSlot();
     },
     stop: function (fadeMs = FADE_MS) {
       ambientOn = false;
@@ -276,13 +321,6 @@
     }
   }, 500);
 
-  // Switch the Home loop when the time of day changes.
-  setInterval(() => {
-    if (!ambientOn || !trackData || !currentId || !currentId.startsWith('tod_')) return;
-    const want = slotTrackId(new Date());
-    if (want !== currentId) doPlay(want, true);
-  }, 60000);
-
   // Handle Visibility change
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
@@ -311,7 +349,7 @@
     if (pendingPlay) {
       const p = pendingPlay;
       pendingPlay = null;
-      CuyMusic.play(p.id, { loop: p.loop, volume: p.volume });
+      doPlay(p.id, p.loop, p.volume, p.onEnd);
     } else if (currentAudio && currentAudio.paused && currentId && isEnabled && !(window.Sound && window.Sound.isMuted)) {
       // It might have been paused due to other autoplay restrictions
       currentAudio.play().then(() => {
