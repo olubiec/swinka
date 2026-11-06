@@ -551,10 +551,13 @@
     }
   ],
   "summary": {
-    "candidates_count": 42,
-    "candidates_license_confirmed_by_snippet": 27,
-    "candidates_unverified": 15,
+    "candidates_count": 41,
+    "candidates_license_confirmed_by_snippet": 29,
+    "candidates_unverified": 12,
     "estimated_total_unique_tracks_all_candidates": 116,
-    "note_on_totals": "Sum of estimated_unique_tracks across candidates. 58 of these come from OpenGameArt/itch.io CC0 sets and are not classical. Public-domain classical subset is about 58 unique tracks, not counting unverified items."
+    "estimated_classical_unique_tracks": 58,
+    "estimated_classical_unique_tracks_license_confirmed_by_snippet": 47,
+    "estimated_cc0_nonclassical_unique_tracks": 58,
+    "note_on_totals": "Sums of estimated_unique_tracks (rough). Classical items (PD, Joplin, Mozart, Scarlatti, Handel, Bach, Chopin) total 58; 47 of them have a licence seen in a snippet. The 58 CC0 OpenGameArt/itch.io tracks are mostly not classical and some are chiptune or procedural. Counts are not verified against the files."
   }
 }
