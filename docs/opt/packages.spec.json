@@ -1,765 +1,849 @@
 {
- "comment": "Hand-curated source for tools/opt/gen_packages.py. Items are the old per-task prompts in docs/prompts/items/. Regenerate with: python3 tools/opt/gen_packages.py",
- "defaults": {
-  "timeout_base": 20,
-  "timeout_per_item": 8,
-  "timeout_max": 60
- },
- "models": {
-  "low": "gemini-3.8-flash-medium",
-  "mid": "gemini-3.8-flash-high",
-  "high": "gemini-3.8-flash-high"
- },
- "deferred": {
-  "W20-03": "undo/redo and snapping in the room editor",
-  "W21-03": "sounds for the world",
-  "W21-05": "canvas draw limits",
-  "W27-07": "pigs walking inside the room editor",
-  "W28-01": "garden run",
-  "W28-02": "garden run",
-  "W28-03": "garden run",
-  "W28-04": "garden run",
-  "W28-05": "garden run",
-  "W28-06": "garden run",
-  "W28-07": "garden run",
-  "W28-08": "garden run",
-  "W28-09": "desktop props audit",
-  "W29-01": "desktop props",
-  "W29-02": "desktop props",
-  "W29-03": "desktop props",
-  "W29-04": "desktop props",
-  "W29-05": "desktop props",
-  "W29-06": "desktop props",
-  "W29-07": "desktop props",
-  "W29-08": "desktop props",
-  "W29-09": "desktop props"
- },
- "waves": [
-  {
-   "id": "PK-00",
-   "packages": [
-    "PK-00"
-   ]
+  "comment": "Hand-curated source for tools/opt/gen_packages.py. Items are the old per-task prompts in docs/prompts/items/. Regenerate with: python3 tools/opt/gen_packages.py",
+  "defaults": {
+    "timeout_base": 20,
+    "timeout_per_item": 8,
+    "timeout_max": 60
   },
-  {
-   "id": "W17",
-   "packages": [
-    "PK-17a",
-    "PK-17b",
-    "PK-17c"
-   ]
+  "models": {
+    "low": "gemini-3.8-flash-medium",
+    "mid": "gemini-3.8-flash-high",
+    "high": "gemini-3.8-flash-high"
   },
-  {
-   "id": "W18a",
-   "packages": [
-    "PK-18a"
-   ]
+  "deferred": {
+    "W20-03": "undo/redo and snapping in the room editor",
+    "W21-03": "sounds for the world",
+    "W21-05": "canvas draw limits",
+    "W27-07": "pigs walking inside the room editor",
+    "W28-01": "garden run",
+    "W28-02": "garden run",
+    "W28-03": "garden run",
+    "W28-04": "garden run",
+    "W28-05": "garden run",
+    "W28-06": "garden run",
+    "W28-07": "garden run",
+    "W28-08": "garden run",
+    "W28-09": "desktop props audit",
+    "W29-01": "desktop props",
+    "W29-02": "desktop props",
+    "W29-03": "desktop props",
+    "W29-04": "desktop props",
+    "W29-05": "desktop props",
+    "W29-06": "desktop props",
+    "W29-07": "desktop props",
+    "W29-08": "desktop props",
+    "W29-09": "desktop props"
   },
-  {
-   "id": "W18b",
-   "packages": [
-    "PK-18b",
-    "PK-18c"
-   ]
-  },
-  {
-   "id": "W19",
-   "packages": [
-    "PK-19"
-   ]
-  },
-  {
-   "id": "W20a",
-   "packages": [
-    "PK-20a"
-   ]
-  },
-  {
-   "id": "W20b",
-   "packages": [
-    "PK-20b",
-    "PK-20c"
-   ]
-  },
-  {
-   "id": "W21",
-   "packages": [
-    "PK-21"
-   ]
-  },
-  {
-   "id": "W22",
-   "packages": [
-    "PK-22a",
-    "PK-22b",
-    "PK-22c"
-   ]
-  },
-  {
-   "id": "W23a",
-   "packages": [
-    "PK-23a"
-   ]
-  },
-  {
-   "id": "W23b",
-   "packages": [
-    "PK-23b"
-   ]
-  },
-  {
-   "id": "W24",
-   "packages": [
-    "PK-24a",
-    "PK-24b"
-   ]
-  },
-  {
-   "id": "W25",
-   "packages": [
-    "PK-25a",
-    "PK-25b"
-   ]
-  },
-  {
-   "id": "W26a",
-   "packages": [
-    "PK-26a"
-   ]
-  },
-  {
-   "id": "W26b",
-   "packages": [
-    "PK-26b"
-   ]
-  },
-  {
-   "id": "W26c",
-   "packages": [
-    "PK-26c"
-   ]
-  },
-  {
-   "id": "W27a",
-   "packages": [
-    "PK-27a"
-   ]
-  },
-  {
-   "id": "W27b",
-   "packages": [
-    "PK-27b"
-   ]
-  },
-  {
-   "id": "W30a",
-   "packages": [
-    "PK-30a"
-   ]
-  },
-  {
-   "id": "W30b",
-   "packages": [
-    "PK-30b"
-   ]
-  },
-  {
-   "id": "W30c",
-   "packages": [
-    "PK-30c"
-   ]
-  },
-  {
-   "id": "W31",
-   "packages": [
-    "PK-31a",
-    "PK-31b"
-   ]
-  },
-  {
-   "id": "W32",
-   "packages": [
-    "PK-32a",
-    "PK-32b"
-   ]
-  },
-  {
-   "id": "W33",
-   "packages": [
-    "PK-33"
-   ]
-  },
-  {
-   "id": "P1a",
-   "packages": [
-    "PK-P1a"
-   ]
-  },
-  {
-   "id": "P1b",
-   "packages": [
-    "PK-P1b",
-    "PK-P1c",
-    "PK-P1d"
-   ]
-  },
-  {
-   "id": "P1q",
-   "packages": [
-    "PK-P1q"
-   ]
-  },
-  {
-   "id": "P2a",
-   "packages": [
-    "PK-P2a",
-    "PK-P2b",
-    "PK-P2c"
-   ]
-  },
-  {
-   "id": "P2q",
-   "packages": [
-    "PK-P2q"
-   ]
-  }
- ],
- "packages": [
-  {
-   "id": "PK-00",
-   "tier": "mid",
-   "title": "Per-feature files for validation, mock and contracts",
-   "manual": "docs/prompts/PK-00-per-feature-files.md",
-   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MessageValidatorTests && node --check web/home/bridge.js && node --check web/home/app.js && node tools/qa/web-smoke.js",
-   "items": []
-  },
-  {
-   "id": "PK-17a",
-   "tier": "mid",
-   "title": "Room layout, comfort, place unlock, legacy decor migration",
-   "items": [
-    "W17-01",
-    "W17-02",
-    "W17-07",
-    "W17-08"
-   ]
-  },
-  {
-   "id": "PK-17b",
-   "tier": "mid",
-   "title": "Farm engine and farm expansion",
-   "items": [
-    "W17-03",
-    "W17-04"
-   ]
-  },
-  {
-   "id": "PK-17c",
-   "tier": "mid",
-   "title": "Market pricing and market stock",
-   "items": [
-    "W17-05",
-    "W17-06"
-   ]
-  },
-  {
-   "id": "PK-18a",
-   "tier": "mid",
-   "title": "Pet.World, Pet.Rooms and diary lines for the world",
-   "items": [
-    "W18-01",
-    "W18-06",
-    "W18-02"
-   ]
-  },
-  {
-   "id": "PK-18b",
-   "tier": "mid",
-   "title": "Pet.Farm, Pet.Walk and world save migration",
-   "items": [
-    "W18-03",
-    "W18-05",
-    "W18-07"
-   ]
-  },
-  {
-   "id": "PK-18c",
-   "tier": "mid",
-   "title": "Pet.Market",
-   "items": [
-    "W18-04"
-   ]
-  },
-  {
-   "id": "PK-19",
-   "tier": "mid",
-   "title": "C# features for places, rooms, farm, market with contracts and validation",
-   "items": [
-    "W19-01",
-    "W19-02",
-    "W19-03",
-    "W19-04",
-    "W19-05",
-    "W19-06"
-   ],
-   "overrides": {
-    "W19-05": {
-     "files": [
-      "docs/contracts/places.md",
-      "docs/contracts/rooms.md",
-      "docs/contracts/farm.md",
-      "docs/contracts/market.md"
-     ],
-     "note": "Write four separate files `docs/contracts/<feature>.md` (not sections of `docs/contracts.md`; do not edit `contracts.md`). Put the one-line 'superseded by rooms once WorldDecorActive is on' note at the top of `docs/contracts/rooms.md`."
+  "waves": [
+    {
+      "id": "PK-00",
+      "packages": [
+        "PK-00"
+      ]
     },
-    "W19-06": {
-     "files": [
-      "src/Cuy.Core/Input/Validation/PlacesMessages.cs",
-      "src/Cuy.Core/Input/Validation/RoomsMessages.cs",
-      "src/Cuy.Core/Input/Validation/FarmMessages.cs",
-      "src/Cuy.Core/Input/Validation/MarketMessages.cs",
-      "tests/Cuy.Core.Tests/WorldMessageTests.cs"
-     ],
-     "note": "`MessageValidator` and `IMessageRuleSet` already exist (package PK-00): do not create or edit `MessageValidator.cs`. Implement one `IMessageRuleSet` class per feature (places+rooms message types split between `PlacesMessages` and `RoomsMessages`, farm and orchard types in `FarmMessages`, market types in `MarketMessages`) and test through `MessageValidator.Validate(type, JObject)`. Ignore the `IsValid(string json, ...)` signature mentioned in the item."
-    }
-   }
-  },
-  {
-   "id": "PK-20a",
-   "tier": "high",
-   "title": "Browser mocks for the world, places bar and room editor",
-   "items": [
-    "W20-08",
-    "W20-01",
-    "W20-02"
-   ],
-   "overrides": {
-    "W20-08": {
-     "files": [
-      "web/home/features/rooms/mock.js",
-      "web/home/features/farm/mock.js",
-      "web/home/features/market/mock.js"
-     ],
-     "note": "Do the mock FIRST (the UI items need it). Do not edit `bridge.js`: use `bridge.registerMockHandler` / `bridge.registerMockState` (package PK-00) in `features/rooms/mock.js` (places and rooms), `features/farm/mock.js` and `features/market/mock.js`. Each mock reads `?world=1` itself for the everything-unlocked start. The farm and market UI is built in later packages against these mocks. The room editor extras (undo/redo, snapping) are deferred: do not build them."
-    }
-   }
-  },
-  {
-   "id": "PK-20b",
-   "tier": "high",
-   "title": "Garden and park view, farm view",
-   "items": [
-    "W20-04",
-    "W20-05"
-   ]
-  },
-  {
-   "id": "PK-20c",
-   "tier": "high",
-   "title": "Market view, orders board and daily specials",
-   "items": [
-    "W20-06",
-    "W20-07"
-   ]
-  },
-  {
-   "id": "PK-21",
-   "tier": "low",
-   "title": "Harvest notification, world settings, My Pigs links",
-   "items": [
-    "W21-01",
-    "W21-02",
-    "W21-04"
-   ]
-  },
-  {
-   "id": "PK-22a",
-   "tier": "mid",
-   "title": "Switch world flags on, SelfTest, save size, asset contract tests",
-   "items": [
-    "W22-01",
-    "W22-05",
-    "W22-06",
-    "W22-07"
-   ]
-  },
-  {
-   "id": "PK-22b",
-   "tier": "mid",
-   "title": "World economy invariants test (data level, no simulator port)",
-   "items": [
-    "W22-02"
-   ],
-   "overrides": {
-    "W22-02": {
-     "files": [
-      "tests/Cuy.Core.Tests/WorldInvariantsTests.cs"
-     ],
-     "verify_extra": [
-      "node tools/qa/economy-sim.js --runs 12 --variant baseline --sweep --check"
-     ],
-     "note": "REDUCED SCOPE: do not port the simulator and do not edit `tools/Cuy.Simulator/Program.cs` or `docs/economy-report.md`. The test reads the real data and the real `FarmEngine`, `MarketPricing`, `PlaceUnlock`, `Comfort` and enforces the data-level invariants of `docs/WORLD.md` section 6.4 (items 2, 3, 5, 6 and 10: sell price below shop price including the wiggle, profit per cycle 1-20, forbidden crops absent, seed prices equal the catalog, one harvest per plot after a 400-day clock jump, comfort cap 100 and mood reduction at most 15 percent, demand meter formula, sales never above the daily cap). The 365-day thresholds are covered by the Node simulator in the verification command."
-    }
-   }
-  },
-  {
-   "id": "PK-22c",
-   "tier": "low",
-   "title": "Web smoke for world screens and manual test steps",
-   "items": [
-    "W22-03",
-    "W22-04"
-   ]
-  },
-  {
-   "id": "PK-23a",
-   "tier": "low",
-   "title": "Pig room config, world-state fields, flags, home economy config, invariants test",
-   "items": [
-    "W23-01",
-    "W23-02",
-    "W23-06",
-    "W23-07",
-    "W23-08"
-   ]
-  },
-  {
-   "id": "PK-23b",
-   "tier": "mid",
-   "title": "PigComfort, PigRoomOps and pig-room levels in the catalog",
-   "items": [
-    "W23-03",
-    "W23-04",
-    "W23-05"
-   ]
-  },
-  {
-   "id": "PK-24a",
-   "tier": "mid",
-   "title": "Pet integration of pig rooms: rooms, comfort, items, memory room",
-   "items": [
-    "W24-01",
-    "W24-02",
-    "W24-03",
-    "W24-04"
-   ]
-  },
-  {
-   "id": "PK-24b",
-   "tier": "low",
-   "title": "Pig rooms for old saves and diary lines",
-   "items": [
-    "W24-05",
-    "W24-06"
-   ]
-  },
-  {
-   "id": "PK-25a",
-   "tier": "mid",
-   "title": "RoomsFeature for pig rooms with contract and validation",
-   "items": [
-    "W25-01",
-    "W25-03",
-    "W25-02"
-   ],
-   "overrides": {
-    "W25-02": {
-     "files": [
-      "docs/contracts/pigrooms.md"
-     ],
-     "note": "Write `docs/contracts/pigrooms.md` (new file); do not edit `docs/contracts.md`."
+    {
+      "id": "W17",
+      "packages": [
+        "PK-17a",
+        "PK-17b",
+        "PK-17c"
+      ]
     },
-    "W25-03": {
-     "files": [
-      "src/Cuy.Core/Input/Validation/PigRoomsMessages.cs",
-      "tests/Cuy.Core.Tests/PigRoomMessageTests.cs"
-     ],
-     "note": "Do not edit `MessageValidator.cs`: add one `IMessageRuleSet` class `PigRoomsMessages` (package PK-00) and test through `MessageValidator.Validate`."
-    }
-   }
-  },
-  {
-   "id": "PK-25b",
-   "tier": "high",
-   "title": "Pig room tabs, customize panel, My Pigs link, mock",
-   "items": [
-    "W25-07",
-    "W25-04",
-    "W25-05",
-    "W25-06"
-   ],
-   "overrides": {
-    "W25-07": {
-     "files": [
-      "web/home/features/rooms/mock.js"
-     ],
-     "note": "Do this FIRST. Do not edit `bridge.js`: extend `features/rooms/mock.js` (created in PK-20a) with `registerMockHandler` / `registerMockState`."
-    }
-   }
-  },
-  {
-   "id": "PK-26a",
-   "tier": "mid",
-   "title": "Shared bedroom: SharedRoomOps, Pet.Dorm and roommate comfort",
-   "items": [
-    "W26-01",
-    "W26-02",
-    "W26-03"
-   ]
-  },
-  {
-   "id": "PK-26b",
-   "tier": "mid",
-   "title": "DormFeature, contract and validation, flags on for pig rooms and the dorm",
-   "items": [
-    "W26-04",
-    "W26-05",
-    "W26-08"
-   ],
-   "overrides": {
-    "W26-05": {
-     "files": [
-      "docs/contracts/dorm.md",
-      "src/Cuy.Core/Input/Validation/DormMessages.cs",
-      "tests/Cuy.Core.Tests/DormMessageTests.cs"
-     ],
-     "note": "Do not edit `docs/contracts.md` or `MessageValidator.cs`: write `docs/contracts/dorm.md` and one `IMessageRuleSet` class `DormMessages` (package PK-00)."
-    }
-   }
-  },
-  {
-   "id": "PK-26c",
-   "tier": "high",
-   "title": "Shared bedroom page, wiring and smoke test",
-   "items": [
-    "W26-06",
-    "W26-07",
-    "W26-09"
-   ],
-   "overrides": {
-    "W26-07": {
-     "files": [
-      "web/home/features/rooms/feature.js",
-      "web/home/features/rooms/mock.js"
-     ],
-     "note": "Do not edit `bridge.js`: the dorm mock goes into `features/rooms/mock.js`."
-    }
-   }
-  },
-  {
-   "id": "PK-27a",
-   "tier": "mid",
-   "title": "Roaming and home mode: state, PigWander, Pet.Homes, HomesFeature, contract, validation",
-   "items": [
-    "W27-01",
-    "W27-02",
-    "W27-03",
-    "W27-04",
-    "W27-05"
-   ],
-   "overrides": {
-    "W27-05": {
-     "files": [
-      "docs/contracts/homes.md",
-      "src/Cuy.Core/Input/Validation/HomesMessages.cs",
-      "tests/Cuy.Core.Tests/HomesMessageTests.cs"
-     ],
-     "note": "Do not edit `docs/contracts.md` or `MessageValidator.cs`: write `docs/contracts/homes.md` and one `IMessageRuleSet` class `HomesMessages` (package PK-00)."
-    }
-   }
-  },
-  {
-   "id": "PK-27b",
-   "tier": "high",
-   "title": "House plan and wiring of plan and home chips",
-   "items": [
-    "W27-06",
-    "W27-08"
-   ],
-   "overrides": {
-    "W27-08": {
-     "files": [
-      "web/home/features/rooms/feature.js",
-      "web/home/features/rooms/mock.js"
-     ],
-     "note": "Do not edit `bridge.js`: the homes mock goes into `features/rooms/mock.js`. The pigs-walking-in-the-editor item (W27-07, `residents.js`) is deferred: wire only the plan and the home chips and skip anything that needs `residents.js`."
-    }
-   }
-  },
-  {
-   "id": "PK-30a",
-   "tier": "mid",
-   "title": "HomeStore catalogue, Pet.Store and store totals test",
-   "items": [
-    "W30-01",
-    "W30-02",
-    "W30-06"
-   ],
-   "overrides": {
-    "W30-01": {
-     "note": "SCOPE CHANGE: the garden run (W28) and desktop props (W29) are deferred. Leave out of the store rows every item with `prop_of` and `gate_garden`. Keep the asserted total above 35000 only if it still holds without them; otherwise lower the bound to the real total minus 5 percent and say so in the PR."
+    {
+      "id": "W18a",
+      "packages": [
+        "PK-18a"
+      ]
     },
-    "W30-06": {
-     "note": "SCOPE CHANGE: the run and desktop props are deferred; the totals test must exclude `prop_of` items and `gate_garden` from the expected sums, consistently with HomeStore."
-    }
-   }
-  },
-  {
-   "id": "PK-30b",
-   "tier": "high",
-   "title": "StoreFeature with contract and validation, store page",
-   "items": [
-    "W30-03",
-    "W30-04",
-    "W30-05"
-   ],
-   "overrides": {
-    "W30-04": {
-     "files": [
-      "docs/contracts/store.md",
-      "src/Cuy.Core/Input/Validation/StoreMessages.cs",
-      "tests/Cuy.Core.Tests/StoreMessageTests.cs"
-     ],
-     "note": "Do not edit `docs/contracts.md` or `MessageValidator.cs`: write `docs/contracts/store.md` and one `IMessageRuleSet` class `StoreMessages` (package PK-00)."
-    }
-   }
-  },
-  {
-   "id": "PK-30c",
-   "tier": "mid",
-   "title": "Data checks, smoke test and manual steps, flags on for roaming",
-   "items": [
-    "W30-07",
-    "W30-09",
-    "W30-08"
-   ],
-   "overrides": {
-    "W30-09": {
-     "note": "SCOPE CHANGE: the run and desktop props are deferred (no `RunActive`/`PropsActive` flags exist). Switch on `HomesActive` only, skip the W29-04 migration call and the toys test; the other assertions about homes stay."
+    {
+      "id": "W18b",
+      "packages": [
+        "PK-18b",
+        "PK-18c"
+      ]
     },
-    "W30-08": {
-     "note": "SCOPE CHANGE: skip every smoke scenario and manual-test section about the garden run, the tray and desktop props. Keep roaming (house plan, home switch) and the store."
+    {
+      "id": "W19",
+      "packages": [
+        "PK-19"
+      ]
+    },
+    {
+      "id": "W20a",
+      "packages": [
+        "PK-20a"
+      ]
+    },
+    {
+      "id": "W20b",
+      "packages": [
+        "PK-20b",
+        "PK-20c"
+      ]
+    },
+    {
+      "id": "W21",
+      "packages": [
+        "PK-21"
+      ]
+    },
+    {
+      "id": "W22",
+      "packages": [
+        "PK-22a",
+        "PK-22b",
+        "PK-22c"
+      ]
+    },
+    {
+      "id": "W23a",
+      "packages": [
+        "PK-23a"
+      ]
+    },
+    {
+      "id": "W23b",
+      "packages": [
+        "PK-23b"
+      ]
+    },
+    {
+      "id": "W24",
+      "packages": [
+        "PK-24a",
+        "PK-24b"
+      ]
+    },
+    {
+      "id": "W25",
+      "packages": [
+        "PK-25a",
+        "PK-25b"
+      ]
+    },
+    {
+      "id": "W26a",
+      "packages": [
+        "PK-26a"
+      ]
+    },
+    {
+      "id": "W26b",
+      "packages": [
+        "PK-26b"
+      ]
+    },
+    {
+      "id": "W26c",
+      "packages": [
+        "PK-26c"
+      ]
+    },
+    {
+      "id": "W27a",
+      "packages": [
+        "PK-27a"
+      ]
+    },
+    {
+      "id": "W27b",
+      "packages": [
+        "PK-27b"
+      ]
+    },
+    {
+      "id": "W30a",
+      "packages": [
+        "PK-30a"
+      ]
+    },
+    {
+      "id": "W30b",
+      "packages": [
+        "PK-30b"
+      ]
+    },
+    {
+      "id": "W30c",
+      "packages": [
+        "PK-30c"
+      ]
+    },
+    {
+      "id": "W31",
+      "packages": [
+        "PK-31a",
+        "PK-31b"
+      ]
+    },
+    {
+      "id": "W32",
+      "packages": [
+        "PK-32a",
+        "PK-32b"
+      ]
+    },
+    {
+      "id": "W33",
+      "packages": [
+        "PK-33"
+      ]
+    },
+    {
+      "id": "P1a",
+      "packages": [
+        "PK-P1a"
+      ]
+    },
+    {
+      "id": "P1b",
+      "packages": [
+        "PK-P1b",
+        "PK-P1c",
+        "PK-P1d"
+      ]
+    },
+    {
+      "id": "P1q",
+      "packages": [
+        "PK-P1q"
+      ]
+    },
+    {
+      "id": "P2a",
+      "packages": [
+        "PK-P2a",
+        "PK-P2b",
+        "PK-P2c"
+      ]
+    },
+    {
+      "id": "P2q",
+      "packages": [
+        "PK-P2q"
+      ]
+    },
+    {
+      "id": "P3a",
+      "packages": [
+        "PK-P3a"
+      ]
+    },
+    {
+      "id": "P3b",
+      "packages": [
+        "PK-P3b"
+      ]
+    },
+    {
+      "id": "P3q",
+      "packages": [
+        "PK-P3q"
+      ]
+    },
+    {
+      "id": "P4a",
+      "packages": [
+        "PK-P4a"
+      ]
+    },
+    {
+      "id": "P4b",
+      "packages": [
+        "PK-P4b"
+      ]
+    },
+    {
+      "id": "P4q",
+      "packages": [
+        "PK-P4q"
+      ]
     }
-   }
-  },
-  {
-   "id": "PK-31a",
-   "tier": "low",
-   "title": "Asset checker, light engine and 9-slice UI assets",
-   "items": [
-    "W31-01",
-    "W31-04",
-    "W31-03"
-   ]
-  },
-  {
-   "id": "PK-31b",
-   "tier": "low",
-   "title": "New app icon and favicon",
-   "items": [
-    "W31-02"
-   ]
-  },
-  {
-   "id": "PK-32a",
-   "tier": "mid",
-   "title": "Light and time of day in rooms, garden, farm and market views",
-   "items": [
-    "W32-01",
-    "W32-02",
-    "W32-03",
-    "W32-04"
-   ]
-  },
-  {
-   "id": "PK-32b",
-   "tier": "mid",
-   "title": "Apply UI assets in the main menu, pig lighting and contact shadow",
-   "items": [
-    "W32-05",
-    "W32-06"
-   ]
-  },
-  {
-   "id": "PK-33",
-   "tier": "low",
-   "title": "Stop using _x2 files and final verification record",
-   "items": [
-    "W33-01",
-    "W33-02"
-   ]
-  },
-  {
-   "id": "PK-P1a",
-   "tier": "high",
-   "title": "Feature window lifecycle and Back to More",
-   "manual": "docs/prompts/PK-P1a-feature-window-lifecycle.md",
-   "verify": "node --check web/home/app.js && node --check web/home/features/calendar/feature.js && node --check web/home/features/diary/feature.js && node --check web/home/features/settings/feature.js && node --check web/home/features/shop/feature.js && node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p1-lifecycle.js && node tools/qa/ux-p1-lifecycle.js",
-   "items": []
-  },
-  {
-   "id": "PK-P1b",
-   "tier": "mid",
-   "title": "Coloring Play level and Vet Check-up",
-   "manual": "docs/prompts/PK-P1b-coloring-play-and-vet-checkup.md",
-   "verify": "node --check web/home/features/coloring/feature.js && node --check web/home/features/vet/feature.js && node --check web/home/features/vet/mock.js && node --check tools/qa/ux-p1-buttons.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~VetCheckupTests|FullyQualifiedName~HealthSystemTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/ux-p1-buttons.js",
-   "items": []
-  },
-  {
-   "id": "PK-P1c",
-   "tier": "mid",
-   "title": "Decorate opens the room editor",
-   "manual": "docs/prompts/PK-P1c-decorate-opens-room-editor.md",
-   "verify": "node --check web/home/features/decor/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/ux-p1-decorate.js && node tools/qa/ux-p1-decorate.js",
-   "items": []
-  },
-  {
-   "id": "PK-P1d",
-   "tier": "low",
-   "title": "Speech bubble hides with the pig",
-   "manual": "docs/prompts/PK-P1d-speech-bubble-hides-with-pig.md",
-   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
-   "items": []
-  },
-  {
-   "id": "PK-P1q",
-   "tier": "low",
-   "title": "Windows checks after wave P1",
-   "manual": "docs/prompts/PK-P1q-windows-checks-wave-p1.md",
-   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js p1 && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
-   "items": []
-  },
-  {
-   "id": "PK-P2a",
-   "tier": "mid",
-   "title": "Every pig gets its own portrait",
-   "manual": "docs/prompts/PK-P2a-pig-portraits-from-look.md",
-   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p2-portraits.js && node tools/qa/ux-p2-portraits.js",
-   "items": []
-  },
-  {
-   "id": "PK-P2b",
-   "tier": "mid",
-   "title": "Unique item icons in shop, store and decor",
-   "manual": "docs/prompts/PK-P2b-item-icons-from-world-atlas.md",
-   "verify": "node --check web/home/features/shop/feature.js && node --check web/home/features/store/feature.js && node --check web/home/features/decor/feature.js && node --check tools/qa/check-assets.js && node --check tools/qa/ux-p2-icons.js && node tools/qa/ux-p2-icons.js && node tools/qa/check-assets.js",
-   "items": []
-  },
-  {
-   "id": "PK-P2c",
-   "tier": "mid",
-   "title": "Player panel only after gramophone click",
-   "manual": "docs/prompts/PK-P2c-player-panel-on-gramophone-click.md",
-   "verify": "node --check web/home/features/music/player.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p2-player.js && node tools/qa/ux-p2-player.js",
-   "items": []
-  },
-  {
-   "id": "PK-P2q",
-   "tier": "low",
-   "title": "Windows checks after wave P2",
-   "manual": "docs/prompts/PK-P2q-windows-checks-wave-p2.md",
-   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
-   "items": []
-  }
- ]
+  ],
+  "packages": [
+    {
+      "id": "PK-00",
+      "tier": "mid",
+      "title": "Per-feature files for validation, mock and contracts",
+      "manual": "docs/prompts/PK-00-per-feature-files.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter FullyQualifiedName~MessageValidatorTests && node --check web/home/bridge.js && node --check web/home/app.js && node tools/qa/web-smoke.js",
+      "items": []
+    },
+    {
+      "id": "PK-17a",
+      "tier": "mid",
+      "title": "Room layout, comfort, place unlock, legacy decor migration",
+      "items": [
+        "W17-01",
+        "W17-02",
+        "W17-07",
+        "W17-08"
+      ]
+    },
+    {
+      "id": "PK-17b",
+      "tier": "mid",
+      "title": "Farm engine and farm expansion",
+      "items": [
+        "W17-03",
+        "W17-04"
+      ]
+    },
+    {
+      "id": "PK-17c",
+      "tier": "mid",
+      "title": "Market pricing and market stock",
+      "items": [
+        "W17-05",
+        "W17-06"
+      ]
+    },
+    {
+      "id": "PK-18a",
+      "tier": "mid",
+      "title": "Pet.World, Pet.Rooms and diary lines for the world",
+      "items": [
+        "W18-01",
+        "W18-06",
+        "W18-02"
+      ]
+    },
+    {
+      "id": "PK-18b",
+      "tier": "mid",
+      "title": "Pet.Farm, Pet.Walk and world save migration",
+      "items": [
+        "W18-03",
+        "W18-05",
+        "W18-07"
+      ]
+    },
+    {
+      "id": "PK-18c",
+      "tier": "mid",
+      "title": "Pet.Market",
+      "items": [
+        "W18-04"
+      ]
+    },
+    {
+      "id": "PK-19",
+      "tier": "mid",
+      "title": "C# features for places, rooms, farm, market with contracts and validation",
+      "items": [
+        "W19-01",
+        "W19-02",
+        "W19-03",
+        "W19-04",
+        "W19-05",
+        "W19-06"
+      ],
+      "overrides": {
+        "W19-05": {
+          "files": [
+            "docs/contracts/places.md",
+            "docs/contracts/rooms.md",
+            "docs/contracts/farm.md",
+            "docs/contracts/market.md"
+          ],
+          "note": "Write four separate files `docs/contracts/<feature>.md` (not sections of `docs/contracts.md`; do not edit `contracts.md`). Put the one-line 'superseded by rooms once WorldDecorActive is on' note at the top of `docs/contracts/rooms.md`."
+        },
+        "W19-06": {
+          "files": [
+            "src/Cuy.Core/Input/Validation/PlacesMessages.cs",
+            "src/Cuy.Core/Input/Validation/RoomsMessages.cs",
+            "src/Cuy.Core/Input/Validation/FarmMessages.cs",
+            "src/Cuy.Core/Input/Validation/MarketMessages.cs",
+            "tests/Cuy.Core.Tests/WorldMessageTests.cs"
+          ],
+          "note": "`MessageValidator` and `IMessageRuleSet` already exist (package PK-00): do not create or edit `MessageValidator.cs`. Implement one `IMessageRuleSet` class per feature (places+rooms message types split between `PlacesMessages` and `RoomsMessages`, farm and orchard types in `FarmMessages`, market types in `MarketMessages`) and test through `MessageValidator.Validate(type, JObject)`. Ignore the `IsValid(string json, ...)` signature mentioned in the item."
+        }
+      }
+    },
+    {
+      "id": "PK-20a",
+      "tier": "high",
+      "title": "Browser mocks for the world, places bar and room editor",
+      "items": [
+        "W20-08",
+        "W20-01",
+        "W20-02"
+      ],
+      "overrides": {
+        "W20-08": {
+          "files": [
+            "web/home/features/rooms/mock.js",
+            "web/home/features/farm/mock.js",
+            "web/home/features/market/mock.js"
+          ],
+          "note": "Do the mock FIRST (the UI items need it). Do not edit `bridge.js`: use `bridge.registerMockHandler` / `bridge.registerMockState` (package PK-00) in `features/rooms/mock.js` (places and rooms), `features/farm/mock.js` and `features/market/mock.js`. Each mock reads `?world=1` itself for the everything-unlocked start. The farm and market UI is built in later packages against these mocks. The room editor extras (undo/redo, snapping) are deferred: do not build them."
+        }
+      }
+    },
+    {
+      "id": "PK-20b",
+      "tier": "high",
+      "title": "Garden and park view, farm view",
+      "items": [
+        "W20-04",
+        "W20-05"
+      ]
+    },
+    {
+      "id": "PK-20c",
+      "tier": "high",
+      "title": "Market view, orders board and daily specials",
+      "items": [
+        "W20-06",
+        "W20-07"
+      ]
+    },
+    {
+      "id": "PK-21",
+      "tier": "low",
+      "title": "Harvest notification, world settings, My Pigs links",
+      "items": [
+        "W21-01",
+        "W21-02",
+        "W21-04"
+      ]
+    },
+    {
+      "id": "PK-22a",
+      "tier": "mid",
+      "title": "Switch world flags on, SelfTest, save size, asset contract tests",
+      "items": [
+        "W22-01",
+        "W22-05",
+        "W22-06",
+        "W22-07"
+      ]
+    },
+    {
+      "id": "PK-22b",
+      "tier": "mid",
+      "title": "World economy invariants test (data level, no simulator port)",
+      "items": [
+        "W22-02"
+      ],
+      "overrides": {
+        "W22-02": {
+          "files": [
+            "tests/Cuy.Core.Tests/WorldInvariantsTests.cs"
+          ],
+          "verify_extra": [
+            "node tools/qa/economy-sim.js --runs 12 --variant baseline --sweep --check"
+          ],
+          "note": "REDUCED SCOPE: do not port the simulator and do not edit `tools/Cuy.Simulator/Program.cs` or `docs/economy-report.md`. The test reads the real data and the real `FarmEngine`, `MarketPricing`, `PlaceUnlock`, `Comfort` and enforces the data-level invariants of `docs/WORLD.md` section 6.4 (items 2, 3, 5, 6 and 10: sell price below shop price including the wiggle, profit per cycle 1-20, forbidden crops absent, seed prices equal the catalog, one harvest per plot after a 400-day clock jump, comfort cap 100 and mood reduction at most 15 percent, demand meter formula, sales never above the daily cap). The 365-day thresholds are covered by the Node simulator in the verification command."
+        }
+      }
+    },
+    {
+      "id": "PK-22c",
+      "tier": "low",
+      "title": "Web smoke for world screens and manual test steps",
+      "items": [
+        "W22-03",
+        "W22-04"
+      ]
+    },
+    {
+      "id": "PK-23a",
+      "tier": "low",
+      "title": "Pig room config, world-state fields, flags, home economy config, invariants test",
+      "items": [
+        "W23-01",
+        "W23-02",
+        "W23-06",
+        "W23-07",
+        "W23-08"
+      ]
+    },
+    {
+      "id": "PK-23b",
+      "tier": "mid",
+      "title": "PigComfort, PigRoomOps and pig-room levels in the catalog",
+      "items": [
+        "W23-03",
+        "W23-04",
+        "W23-05"
+      ]
+    },
+    {
+      "id": "PK-24a",
+      "tier": "mid",
+      "title": "Pet integration of pig rooms: rooms, comfort, items, memory room",
+      "items": [
+        "W24-01",
+        "W24-02",
+        "W24-03",
+        "W24-04"
+      ]
+    },
+    {
+      "id": "PK-24b",
+      "tier": "low",
+      "title": "Pig rooms for old saves and diary lines",
+      "items": [
+        "W24-05",
+        "W24-06"
+      ]
+    },
+    {
+      "id": "PK-25a",
+      "tier": "mid",
+      "title": "RoomsFeature for pig rooms with contract and validation",
+      "items": [
+        "W25-01",
+        "W25-03",
+        "W25-02"
+      ],
+      "overrides": {
+        "W25-02": {
+          "files": [
+            "docs/contracts/pigrooms.md"
+          ],
+          "note": "Write `docs/contracts/pigrooms.md` (new file); do not edit `docs/contracts.md`."
+        },
+        "W25-03": {
+          "files": [
+            "src/Cuy.Core/Input/Validation/PigRoomsMessages.cs",
+            "tests/Cuy.Core.Tests/PigRoomMessageTests.cs"
+          ],
+          "note": "Do not edit `MessageValidator.cs`: add one `IMessageRuleSet` class `PigRoomsMessages` (package PK-00) and test through `MessageValidator.Validate`."
+        }
+      }
+    },
+    {
+      "id": "PK-25b",
+      "tier": "high",
+      "title": "Pig room tabs, customize panel, My Pigs link, mock",
+      "items": [
+        "W25-07",
+        "W25-04",
+        "W25-05",
+        "W25-06"
+      ],
+      "overrides": {
+        "W25-07": {
+          "files": [
+            "web/home/features/rooms/mock.js"
+          ],
+          "note": "Do this FIRST. Do not edit `bridge.js`: extend `features/rooms/mock.js` (created in PK-20a) with `registerMockHandler` / `registerMockState`."
+        }
+      }
+    },
+    {
+      "id": "PK-26a",
+      "tier": "mid",
+      "title": "Shared bedroom: SharedRoomOps, Pet.Dorm and roommate comfort",
+      "items": [
+        "W26-01",
+        "W26-02",
+        "W26-03"
+      ]
+    },
+    {
+      "id": "PK-26b",
+      "tier": "mid",
+      "title": "DormFeature, contract and validation, flags on for pig rooms and the dorm",
+      "items": [
+        "W26-04",
+        "W26-05",
+        "W26-08"
+      ],
+      "overrides": {
+        "W26-05": {
+          "files": [
+            "docs/contracts/dorm.md",
+            "src/Cuy.Core/Input/Validation/DormMessages.cs",
+            "tests/Cuy.Core.Tests/DormMessageTests.cs"
+          ],
+          "note": "Do not edit `docs/contracts.md` or `MessageValidator.cs`: write `docs/contracts/dorm.md` and one `IMessageRuleSet` class `DormMessages` (package PK-00)."
+        }
+      }
+    },
+    {
+      "id": "PK-26c",
+      "tier": "high",
+      "title": "Shared bedroom page, wiring and smoke test",
+      "items": [
+        "W26-06",
+        "W26-07",
+        "W26-09"
+      ],
+      "overrides": {
+        "W26-07": {
+          "files": [
+            "web/home/features/rooms/feature.js",
+            "web/home/features/rooms/mock.js"
+          ],
+          "note": "Do not edit `bridge.js`: the dorm mock goes into `features/rooms/mock.js`."
+        }
+      }
+    },
+    {
+      "id": "PK-27a",
+      "tier": "mid",
+      "title": "Roaming and home mode: state, PigWander, Pet.Homes, HomesFeature, contract, validation",
+      "items": [
+        "W27-01",
+        "W27-02",
+        "W27-03",
+        "W27-04",
+        "W27-05"
+      ],
+      "overrides": {
+        "W27-05": {
+          "files": [
+            "docs/contracts/homes.md",
+            "src/Cuy.Core/Input/Validation/HomesMessages.cs",
+            "tests/Cuy.Core.Tests/HomesMessageTests.cs"
+          ],
+          "note": "Do not edit `docs/contracts.md` or `MessageValidator.cs`: write `docs/contracts/homes.md` and one `IMessageRuleSet` class `HomesMessages` (package PK-00)."
+        }
+      }
+    },
+    {
+      "id": "PK-27b",
+      "tier": "high",
+      "title": "House plan and wiring of plan and home chips",
+      "items": [
+        "W27-06",
+        "W27-08"
+      ],
+      "overrides": {
+        "W27-08": {
+          "files": [
+            "web/home/features/rooms/feature.js",
+            "web/home/features/rooms/mock.js"
+          ],
+          "note": "Do not edit `bridge.js`: the homes mock goes into `features/rooms/mock.js`. The pigs-walking-in-the-editor item (W27-07, `residents.js`) is deferred: wire only the plan and the home chips and skip anything that needs `residents.js`."
+        }
+      }
+    },
+    {
+      "id": "PK-30a",
+      "tier": "mid",
+      "title": "HomeStore catalogue, Pet.Store and store totals test",
+      "items": [
+        "W30-01",
+        "W30-02",
+        "W30-06"
+      ],
+      "overrides": {
+        "W30-01": {
+          "note": "SCOPE CHANGE: the garden run (W28) and desktop props (W29) are deferred. Leave out of the store rows every item with `prop_of` and `gate_garden`. Keep the asserted total above 35000 only if it still holds without them; otherwise lower the bound to the real total minus 5 percent and say so in the PR."
+        },
+        "W30-06": {
+          "note": "SCOPE CHANGE: the run and desktop props are deferred; the totals test must exclude `prop_of` items and `gate_garden` from the expected sums, consistently with HomeStore."
+        }
+      }
+    },
+    {
+      "id": "PK-30b",
+      "tier": "high",
+      "title": "StoreFeature with contract and validation, store page",
+      "items": [
+        "W30-03",
+        "W30-04",
+        "W30-05"
+      ],
+      "overrides": {
+        "W30-04": {
+          "files": [
+            "docs/contracts/store.md",
+            "src/Cuy.Core/Input/Validation/StoreMessages.cs",
+            "tests/Cuy.Core.Tests/StoreMessageTests.cs"
+          ],
+          "note": "Do not edit `docs/contracts.md` or `MessageValidator.cs`: write `docs/contracts/store.md` and one `IMessageRuleSet` class `StoreMessages` (package PK-00)."
+        }
+      }
+    },
+    {
+      "id": "PK-30c",
+      "tier": "mid",
+      "title": "Data checks, smoke test and manual steps, flags on for roaming",
+      "items": [
+        "W30-07",
+        "W30-09",
+        "W30-08"
+      ],
+      "overrides": {
+        "W30-09": {
+          "note": "SCOPE CHANGE: the run and desktop props are deferred (no `RunActive`/`PropsActive` flags exist). Switch on `HomesActive` only, skip the W29-04 migration call and the toys test; the other assertions about homes stay."
+        },
+        "W30-08": {
+          "note": "SCOPE CHANGE: skip every smoke scenario and manual-test section about the garden run, the tray and desktop props. Keep roaming (house plan, home switch) and the store."
+        }
+      }
+    },
+    {
+      "id": "PK-31a",
+      "tier": "low",
+      "title": "Asset checker, light engine and 9-slice UI assets",
+      "items": [
+        "W31-01",
+        "W31-04",
+        "W31-03"
+      ]
+    },
+    {
+      "id": "PK-31b",
+      "tier": "low",
+      "title": "New app icon and favicon",
+      "items": [
+        "W31-02"
+      ]
+    },
+    {
+      "id": "PK-32a",
+      "tier": "mid",
+      "title": "Light and time of day in rooms, garden, farm and market views",
+      "items": [
+        "W32-01",
+        "W32-02",
+        "W32-03",
+        "W32-04"
+      ]
+    },
+    {
+      "id": "PK-32b",
+      "tier": "mid",
+      "title": "Apply UI assets in the main menu, pig lighting and contact shadow",
+      "items": [
+        "W32-05",
+        "W32-06"
+      ]
+    },
+    {
+      "id": "PK-33",
+      "tier": "low",
+      "title": "Stop using _x2 files and final verification record",
+      "items": [
+        "W33-01",
+        "W33-02"
+      ]
+    },
+    {
+      "id": "PK-P1a",
+      "tier": "high",
+      "title": "Feature window lifecycle and Back to More",
+      "manual": "docs/prompts/PK-P1a-feature-window-lifecycle.md",
+      "verify": "node --check web/home/app.js && node --check web/home/features/calendar/feature.js && node --check web/home/features/diary/feature.js && node --check web/home/features/settings/feature.js && node --check web/home/features/shop/feature.js && node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p1-lifecycle.js && node tools/qa/ux-p1-lifecycle.js",
+      "items": []
+    },
+    {
+      "id": "PK-P1b",
+      "tier": "mid",
+      "title": "Coloring Play level and Vet Check-up",
+      "manual": "docs/prompts/PK-P1b-coloring-play-and-vet-checkup.md",
+      "verify": "node --check web/home/features/coloring/feature.js && node --check web/home/features/vet/feature.js && node --check web/home/features/vet/mock.js && node --check tools/qa/ux-p1-buttons.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~VetCheckupTests|FullyQualifiedName~HealthSystemTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/ux-p1-buttons.js",
+      "items": []
+    },
+    {
+      "id": "PK-P1c",
+      "tier": "mid",
+      "title": "Decorate opens the room editor",
+      "manual": "docs/prompts/PK-P1c-decorate-opens-room-editor.md",
+      "verify": "node --check web/home/features/decor/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/ux-p1-decorate.js && node tools/qa/ux-p1-decorate.js",
+      "items": []
+    },
+    {
+      "id": "PK-P1d",
+      "tier": "low",
+      "title": "Speech bubble hides with the pig",
+      "manual": "docs/prompts/PK-P1d-speech-bubble-hides-with-pig.md",
+      "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": []
+    },
+    {
+      "id": "PK-P1q",
+      "tier": "low",
+      "title": "Windows checks after wave P1",
+      "manual": "docs/prompts/PK-P1q-windows-checks-wave-p1.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js p1 && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P2a",
+      "tier": "mid",
+      "title": "Every pig gets its own portrait",
+      "manual": "docs/prompts/PK-P2a-pig-portraits-from-look.md",
+      "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p2-portraits.js && node tools/qa/ux-p2-portraits.js",
+      "items": []
+    },
+    {
+      "id": "PK-P2b",
+      "tier": "mid",
+      "title": "Unique item icons in shop, store and decor",
+      "manual": "docs/prompts/PK-P2b-item-icons-from-world-atlas.md",
+      "verify": "node --check web/home/features/shop/feature.js && node --check web/home/features/store/feature.js && node --check web/home/features/decor/feature.js && node --check tools/qa/check-assets.js && node --check tools/qa/ux-p2-icons.js && node tools/qa/ux-p2-icons.js && node tools/qa/check-assets.js",
+      "items": []
+    },
+    {
+      "id": "PK-P2c",
+      "tier": "mid",
+      "title": "Player panel only after gramophone click",
+      "manual": "docs/prompts/PK-P2c-player-panel-on-gramophone-click.md",
+      "verify": "node --check web/home/features/music/player.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p2-player.js && node tools/qa/ux-p2-player.js",
+      "items": []
+    },
+    {
+      "id": "PK-P2q",
+      "tier": "low",
+      "title": "Windows checks after wave P2",
+      "manual": "docs/prompts/PK-P2q-windows-checks-wave-p2.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P3a",
+      "tier": "mid",
+      "title": "Places carousel with arrows",
+      "manual": "docs/prompts/PK-P3a-places-carousel.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p3-places.js && node tools/qa/ux-p3-places.js",
+      "items": []
+    },
+    {
+      "id": "PK-P3b",
+      "tier": "low",
+      "title": "One back arrow and one close X in the game style",
+      "manual": "docs/prompts/PK-P3b-ui-back-close-icons.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p3-icons.js && node tools/qa/ux-p3-icons.js && node tools/qa/check-assets.js",
+      "items": []
+    },
+    {
+      "id": "PK-P3q",
+      "tier": "low",
+      "title": "Windows checks after wave P3",
+      "manual": "docs/prompts/PK-P3q-windows-checks-wave-p3.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P4a",
+      "tier": "high",
+      "title": "Core: adoption gate and one look source",
+      "manual": "docs/prompts/PK-P4a-core-adoption-gate.md",
+      "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~Adoption|FullyQualifiedName~PigLook\"",
+      "items": []
+    },
+    {
+      "id": "PK-P4b",
+      "tier": "mid",
+      "title": "Adoption popup, hidden Kuki and Ned, same look everywhere",
+      "manual": "docs/prompts/PK-P4b-adoption-popup-and-list.md",
+      "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": []
+    },
+    {
+      "id": "PK-P4q",
+      "tier": "low",
+      "title": "Windows checks after wave P4",
+      "manual": "docs/prompts/PK-P4q-windows-checks-wave-p4.md",
+      "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": []
+    }
+  ]
 }

@@ -941,6 +941,115 @@
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P2q-windows-checks-wave-p2.md"
+  },
+  "PK-P3a": {
+   "wave": "P3a",
+   "title": "Places carousel with arrows",
+   "items": [],
+   "files": [
+    "web/home/features/places/feature.js",
+    "web/home/features/places/feature.css",
+    "web/home/app.js",
+    "web/home/index.html",
+    "web/home/style.css",
+    "web/home/features/rooms/feature.js",
+    "web/home/features/garden/feature.js",
+    "web/home/features/farm/feature.js",
+    "web/home/features/market/feature.js",
+    "tools/qa/ux-p3-places.js",
+    "docs/opt/log/PK-P3a.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p3-places.js && node tools/qa/ux-p3-places.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P3a-places-carousel.md"
+  },
+  "PK-P3b": {
+   "wave": "P3b",
+   "title": "One back arrow and one close X in the game style",
+   "items": [],
+   "files": [
+    "web/home/style.css",
+    "web/home/app.js",
+    "web/home/assets/ui/back.svg",
+    "web/home/assets/ui/close.svg",
+    "tools/qa/ux-p3-icons.js",
+    "docs/opt/log/PK-P3b.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check tools/qa/ux-p3-icons.js && node tools/qa/ux-p3-icons.js && node tools/qa/check-assets.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P3b-ui-back-close-icons.md"
+  },
+  "PK-P3q": {
+   "wave": "P3q",
+   "title": "Windows checks after wave P3",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P3q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P3q-windows-checks-wave-p3.md"
+  },
+  "PK-P4a": {
+   "wave": "P4a",
+   "title": "Core: adoption gate and one look source",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Pigs/AdoptionGate.cs",
+    "src/Cuy.Core/GameState.Adoption.cs",
+    "assets/data/adoption_gate.json",
+    "src/Cuy.Core/Pigs/PigRoster.cs",
+    "src/Cuy/Graphics/PigLook.cs",
+    "tests/Cuy.Core.Tests/AdoptionGateTests.cs",
+    "docs/opt/log/PK-P4a.md"
+   ],
+   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~Adoption|FullyQualifiedName~PigLook\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P4a-core-adoption-gate.md"
+  },
+  "PK-P4b": {
+   "wave": "P4b",
+   "title": "Adoption popup, hidden Kuki and Ned, same look everywhere",
+   "items": [],
+   "files": [
+    "web/home/features/pigs/feature.js",
+    "web/home/features/pigs/adoption-popup.js",
+    "web/home/features/pigs/mock.js",
+    "web/home/canvas-pig.js",
+    "src/Cuy/dotNet/Features/PigsFeature.cs",
+    "src/Cuy/dotNet/Features/PigsMessages.cs",
+    "web/home/index.html",
+    "tools/qa/ux-p4-adoption.js",
+    "docs/opt/log/PK-P4b.md"
+   ],
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P4b-adoption-popup-and-list.md"
+  },
+  "PK-P4q": {
+   "wave": "P4q",
+   "title": "Windows checks after wave P4",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P4q.md"
+   ],
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P4q-windows-checks-wave-p4.md"
   }
  }
 }
