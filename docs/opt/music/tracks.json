@@ -1,0 +1,62 @@
+[
+  {
+    "id": "games_1",
+    "name": "Chiptune Adventures - Stage 1 (Juhani Junkala, CC0)",
+    "role": "minigry: start gry Nyan Cuy i minigier (na zmianę z games_2)",
+    "key": null,
+    "tempo": null,
+    "length_sec": 41.14,
+    "mood": "energiczne chiptune, akcja (wnioskowane z tytułu i roli, nieodsłuchane)",
+    "source_file": "assets/music/adventure_stage1.ogg",
+    "generation_method": "audio",
+    "playback_file": "web/home/music.js (CuyMusic.play, doPlay); wywołania: web/home/minigames/minigames-api.js:363, web/home/minigames/nyan-cuy.js:46"
+  },
+  {
+    "id": "games_2",
+    "name": "Chiptune Adventures - Stage 2 (Juhani Junkala, CC0)",
+    "role": "minigry: drugi utwór minigier, naprzemiennie z games_1",
+    "key": null,
+    "tempo": null,
+    "length_sec": 56.10,
+    "mood": "energiczne chiptune, akcja (wnioskowane z tytułu i roli, nieodsłuchane)",
+    "source_file": "assets/music/adventure_stage2.ogg",
+    "generation_method": "audio",
+    "playback_file": "web/home/music.js (CuyMusic.play, doPlay); wywołanie: web/home/minigames/minigames-api.js:363 (wybór w linii 362)"
+  },
+  {
+    "id": "games_boss",
+    "name": "Chiptune Adventures - Boss (Juhani Junkala, CC0)",
+    "role": "minigra Veggie Rain: podmiana w ostatnich 15 s gry (s === 15)",
+    "key": null,
+    "tempo": null,
+    "length_sec": 71.72,
+    "mood": "intensywne chiptune, walka (wnioskowane z tytułu i roli, nieodsłuchane)",
+    "source_file": "assets/music/adventure_boss.ogg",
+    "generation_method": "audio",
+    "playback_file": "web/home/music.js (CuyMusic.play, doPlay); wywołanie: web/home/minigames/minigames-api.js:446"
+  },
+  {
+    "id": "menu",
+    "name": "Chiptune Adventures - Stage Select (Juhani Junkala, CC0)",
+    "role": "ekran wyniku po grze (menu), głośność 0.6",
+    "key": null,
+    "tempo": null,
+    "length_sec": 21.33,
+    "mood": "lekkie chiptune, wybór poziomu (wnioskowane z tytułu i roli, nieodsłuchane)",
+    "source_file": "assets/music/adventure_select.ogg",
+    "generation_method": "audio",
+    "playback_file": "web/home/music.js (CuyMusic.play, doPlay); wywołanie: web/home/minigames/minigames-api.js:540"
+  },
+  {
+    "id": "calm",
+    "name": "Exploring Town (Spring Spring, CC0)",
+    "role": "kolorowanka (ekran coloring): start w feature.js:421, stop w :909",
+    "key": null,
+    "tempo": null,
+    "length_sec": 265.99,
+    "mood": "spokojny, eksploracyjny (wnioskowane z tytułu i roli, nieodsłuchane)",
+    "source_file": "assets/music/calm_loop.ogg",
+    "generation_method": "audio",
+    "playback_file": "web/home/music.js (CuyMusic.play/stop); wywołania: web/home/features/coloring/feature.js:421, :909"
+  }
+]
