@@ -21,6 +21,9 @@ Zasady z `AGENTS.md` obowiązują: liczby w `assets/data/*.json`, nowe pola zapi
 | 12 | Kolorowanie: Play lvl 1 nic nie robi, panel pojawia się po ponownym wejściu | P1-02 |
 | 13 | Mushroom lamp: Decorate nic nie robi | P1-04 (wejście), P6-02 (edytor) |
 | 14 | Sterowanie odtwarzaczem tylko po kliknięciu gramofonu/odtwarzacza | P2-05 |
+| 16 | Dekoracje da się zamontować, ale ich miejsce się nie zapisuje; design pokoi (lampki, układ) nie jest widoczny w głównym oknie; świnka nie chodzi po całym pokoju | P6-04, P6-05, P7-03 |
+| 17 | Strzałka cofania i krzyżyk zamknięcia w More nie pasują do designu | P3-04 |
+| 18 | Plan domu ma być widziany od góry, albo zrezygnować z planu i zostawić samo przełączanie pokoi | P3-05 |
 | 15 | Brak sposobu, by dwie świnki były na ekranie; każda chodzi między pokojami, albo przypięta na stałe | P5-01..P5-04 |
 
 Podejrzenie wspólnej przyczyny uwag 5, 11, 12, 13 (przyciski w funkcjach „nic nie robią", a panel pojawia się po powrocie): cykl życia okna funkcji (`openFeature` / modal w `web/home/app.js`, `openMoreModal` ok. linii 783). Zadanie P1-01 ma najpierw to zdiagnozować; P1-02..P1-04 dopiero po nim.
@@ -74,6 +77,9 @@ Cel: domek, ogród, park, farma, targ to osobne okna; strzałki po bokach przeł
 | P3-02 | Każde miejsce ma własne okno z własnym widokiem (dom: pokoje; ogród; park; farma; targ), bez wspólnego kontenera, który się nakłada | `web/home/features/{rooms,garden,farm,market}/feature.js` | smoke: 5 miejsc, każde z innym `data-place` i widokiem |
 | P3-03 | Strzałki w domku zmieniają pokoje; na krawędzi domu przechodzą do ogrodu | `web/home/features/rooms/feature.js` | smoke: z ostatniego pokoju strzałka prowadzi do ogrodu |
 
+| P3-04 | Strzałka cofania i krzyżyk zamknięcia z More w stylu designu gry (jedne wspólne ikony SVG/PNG, te same we wszystkich oknach funkcji) | `web/home/style.css`, `web/home/app.js`, `web/home/assets/ui/` | smoke: wszystkie okna funkcji mają te same ikony cofania i zamknięcia |
+| P3-05 | Plan domu: albo widok z góry (rzut pokoi), albo usunięcie planu i zostawienie samego przełączania strzałkami (decyzja człowieka, domyślnie: usunąć plan) | `web/home/features/rooms/feature.js` | smoke: brak planu z ukosa; przełączanie pokoi działa |
+
 ### Do sprawdzenia po P3
 1. Strzałki po bokach przechodzą: dom (pokoje) → ogród → park → farma → targ.
 2. Każde miejsce wygląda jak własne okno, bez śladów poprzedniego.
@@ -126,7 +132,11 @@ Cel: kupione rzeczy trafiają do schowka; z niego wyciągasz je do pokoju lub og
 | P6-02 | Edytor rzutu pokoju (ten sam widok z góry co pokój ze świnką) otwierany po zakupie i z Decorate; przeciąganie, obrót, usuwanie do schowka | `web/home/features/decor/feature.js`, `web/home/features/rooms/feature.js` | smoke: kup → edytor → przedmiot ustawiony i zapisany |
 | P6-03 | Okno schowka z filtrami (pokój, ogród, zabawki, meble) dostępne z More i z edytora | `web/home/features/store/feature.js` | smoke: wyciągnięcie z schowka stawia przedmiot w edytorze |
 
+| P6-04 | Zapis pozycji dekoracji (miejsce, obrót, pokój) w stanie gry; odczyt po restarcie | `src/Cuy.Core/Decor/*`, `GameState.Decor.cs`, `web/home/features/decor/feature.js` | testy: ustaw → zapis → wczytanie, ta sama pozycja |
+| P6-05 | Główne okno pokazuje wybrany design pokoju (lampka, meble z zapisanych pozycji); świnka porusza się po całej podłodze pokoju | `web/home/features/rooms/feature.js`, `web/home/canvas-pig.js` | smoke: lampka postawiona w edytorze jest w głównym oknie; świnka dochodzi do obu końców pokoju |
+
 ### Do sprawdzenia po P6
+0. Postaw lampkę w edytorze: po restarcie stoi w tym samym miejscu i widać ją w głównym oknie; świnka chodzi po całym pokoju.
 1. Kup przedmiot: otwiera się edytor, stawiasz gdzie chcesz.
 2. Schowek: odkładasz i wyciągasz mebel, zabawkę i rzecz do ogrodu.
 3. Po restarcie układ pokoju się zgadza.
@@ -168,5 +178,5 @@ Cel: kalendarz opieki to narzędzie gracza: własne dane świnek, własne przypo
 ---
 
 ## Kolejność i zależności
-P1 → P2 → P3 (P2 i P3 rozłączne, można równolegle) → P4 → P5 (zależy od P4) → P6 → P7 (zależy od P6) → P8 (niezależna od P5-P7, można przesunąć wcześniej).
+Zalecana kolejność po uwagach z 6.11: P1 → P2 → P3 → P6 → P7 (zapis dekoracji i pokój w głównym oknie to najbardziej widoczne błędy) → P4 → P5 (P5 zależy od P4 i widoku pokoi z P6) → P8 (niezależna, można wcześniej). Zależności: P7 po P6, P5 po P4. (niezależna od P5-P7, można przesunąć wcześniej).
 Pełny test i build tylko w ostatniej paczce fali (`tools/verify.ps1`); przy fali dotykającej C# na Windowsie człowiek robi `tools/build.ps1`.
