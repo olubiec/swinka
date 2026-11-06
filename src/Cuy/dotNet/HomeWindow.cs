@@ -77,6 +77,34 @@ namespace Cuy
             if (IsOpen) _instance.Hide();
         }
 
+        private bool _initFailed;
+
+        /// <summary>Last WebView2 start-up failure (full exception text) for the log and the error dialog.</summary>
+        public static string LastInitError { get; private set; }
+
+        /// <summary>
+        /// WebView2 could not start. Puts the pig back on the desktop first (it must never stay hidden), then tells the
+        /// user, then disposes the window so the next click on the house retries from scratch.
+        /// </summary>
+        private void FailInit(string what, Exception ex)
+        {
+            _initFailed = true;
+            LastInitError = ex == null ? what : ex.ToString();
+            BrainController.Log("[ERROR] Home: " + what + " | " + WebView2Probe.Describe(ex));
+            try { if (this.Visible) this.Hide(); } catch (Exception) { }
+            try
+            {
+                var pet = FormPet.ActivePet;
+                if (pet != null && !pet.IsDisposed)
+                    pet.LeaveHome(new Point(this.Left + this.Width / 2, this.Bottom - 40));
+            }
+            catch (Exception e2) { BrainController.Log("[WARN] FailInit LeaveHome: " + e2.Message); }
+            string detail = ex == null ? "" : ex.GetType().Name + " (0x" + ex.HResult.ToString("X8") + "): " + ex.Message;
+            MessageBox.Show(what + "\n" + detail + "\nLog: %LocalAppData%\\Cuy\\logs\\cuy.log",
+                "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try { BeginInvoke(new Action(Close)); } catch (Exception) { }
+        }
+
         // Where the pig appears when Home closes; set by "take_out" (drag the pig out), otherwise below the window.
         private Point? _leavePoint;
 
@@ -87,6 +115,12 @@ namespace Cuy
             if (pet == null || pet.IsDisposed) return;
             if (this.Visible)
             {
+                if (_initFailed)
+                {
+                    // WebView2 failed before the window became visible: the pig must not go into a Home that cannot open.
+                    try { BeginInvoke(new Action(() => { Hide(); })); } catch (Exception) { }
+                    return;
+                }
                 pet.EnterHome();
             }
             else
@@ -307,18 +341,22 @@ namespace Cuy
                 {
                     WebView2Missing = true;
                     BrainController.Log("[WebView2] runtime missing");
-                    BrainController.Log("[ERROR] Home: the WebView2 runtime is not installed.");
-                    this.Hide();
+                    _initFailed = true;
+                    try { if (this.Visible) this.Hide(); } catch (Exception) { }
+                    try
+                    {
+                        var pet = FormPet.ActivePet;
+                        if (pet != null && !pet.IsDisposed)
+                            pet.LeaveHome(new Point(this.Left + this.Width / 2, this.Bottom - 40));
+                    }
+                    catch (Exception) { }
                     MessageBox.Show(WebView2MissingMessage, "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    try { BeginInvoke(new Action(Close)); } catch (Exception) { }
                     return;
                 }
                 catch (Exception ex)
                 {
-                    
-                    BrainController.Log("[ERROR] Home: failed to initialise WebView2: " + ex.Message);
-                    this.Hide();
-                    MessageBox.Show("Home could not start WebView2: " + ex.Message + "\nLog: %LocalAppData%\\Cuy\\logs\\cuy.log", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    try { BeginInvoke(new Action(Close)); } catch { }
+                    FailInit("Home could not start WebView2.", ex);
                     return;
                 }
 
@@ -396,8 +434,7 @@ namespace Cuy
             }
             catch (Exception ex)
             {
-                BrainController.Log("[HomeWindow] WebView2 init error: " + ex.ToString());
-                MessageBox.Show("Home could not start: " + ex.Message + "\nLog: %LocalAppData%\\Cuy\\logs\\cuy.log", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                FailInit("Home could not start.", ex);
             }
         }
 
