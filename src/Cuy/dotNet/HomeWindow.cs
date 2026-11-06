@@ -734,7 +734,7 @@ namespace Cuy
                         break;
 
                     case "admin":
-                        HandleAdmin(obj.Value<string>("cmd"), obj.Value<int?>("amount") ?? 0);
+                        HandleAdmin(obj.Value<string>("cmd"), obj.Value<int?>("amount") ?? 0, obj.Value<string>("arg"));
                         break;
 
                     case "log":
@@ -928,12 +928,21 @@ namespace Cuy
         }
 
         // Admin/test commands, sent from the Home UI (Ctrl+Shift+A, or "/admin" in the name field).
-        private void HandleAdmin(string cmd, int amount)
+        private void HandleAdmin(string cmd, int amount, string arg = null)
         {
             var pet = BrainController.Instance?.Pet;
             if (pet == null) return;
             switch ((cmd ?? "").ToLowerInvariant())
             {
+                case "age":
+                    bool ok = pet.AdminSetStage(arg);
+                    if (!ok && double.TryParse(arg, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double pd))
+                    {
+                        pet.AdminSetAgePigDays(pd);
+                        ok = true;
+                    }
+                    BrainController.Log("[Admin] age " + arg + (ok ? " set." : " unknown."));
+                    break;
                 case "unlockall":
                     int n = pet.AdminUnlockAll(amount > 0 ? amount : 100000);
                     BrainController.Log("[Admin] unlockall: " + n + " places/rooms unlocked.");
