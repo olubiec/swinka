@@ -907,6 +907,7 @@
 
        if (window.CuyMusic && window.CuyMusic.stop) {
           window.CuyMusic.stop('calm');
+          window.CuyMusic.ambient();
        }
     }
   }

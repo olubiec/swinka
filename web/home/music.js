@@ -21,6 +21,7 @@
   let isEnabled = true;
   let pollInterval = null;
   let pendingPlay = null;
+  let ambientOn = false;
 
   // Init local storage values
   try {
@@ -118,6 +119,15 @@
     return trackData;
   }
 
+  // Time-of-day loops: morning 5-11, day 11-17, evening 17-21, night 21-5 (local time).
+  function slotTrackId(date) {
+    const h = date.getHours();
+    if (h >= 21 || h < 5) return 'tod_night';
+    if (h >= 17) return 'tod_evening';
+    if (h >= 11) return 'tod_day';
+    return 'tod_morning';
+  }
+
   function doPlay(id, loop, forceVolume) {
     const tracks = trackData;
     if (!tracks) return;
@@ -171,11 +181,20 @@
   // API
   window.CuyMusic = {
     play: async function (id, { loop = true, volume } = {}) {
+      if (!String(id).startsWith('tod_')) ambientOn = false;
       const tracks = await loadTracks();
       if (!tracks) return;
       doPlay(id, loop, volume);
     },
+    // Home background: one loop per time of day, switched by the minute timer below.
+    ambient: async function () {
+      ambientOn = true;
+      const tracks = await loadTracks();
+      if (!tracks) return;
+      doPlay(slotTrackId(new Date()), true);
+    },
     stop: function (fadeMs = FADE_MS) {
+      ambientOn = false;
       pendingPlay = null;
       stopCurrent(fadeMs);
     },
@@ -256,6 +275,13 @@
       }
     }
   }, 500);
+
+  // Switch the Home loop when the time of day changes.
+  setInterval(() => {
+    if (!ambientOn || !trackData || !currentId || !currentId.startsWith('tod_')) return;
+    const want = slotTrackId(new Date());
+    if (want !== currentId) doPlay(want, true);
+  }, 60000);
 
   // Handle Visibility change
   document.addEventListener('visibilitychange', () => {

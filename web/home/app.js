@@ -127,6 +127,7 @@
   // App initialisation
   function init() {
     applyUiAssets();
+    if (window.CuyMusic) window.CuyMusic.ambient();
 
     // Set the icon sheet from assets depending on WebView2 / a normal browser
     const isWebView = !!(window.chrome && window.chrome.webview);
@@ -899,6 +900,7 @@
       window.Minigry.pause();
     }
     if (window.CuyHome) window.CuyHome.closeFeature();
+    if (window.CuyMusic && !(window.Minigry && window.Minigry.activeGame)) window.CuyMusic.ambient();
     elements.modalBackdrop.classList.remove('active');
     // Return focus to whatever opened the dialog, if it is still on the page.
     if (modalOpener && document.body.contains(modalOpener) && typeof modalOpener.focus === 'function') {

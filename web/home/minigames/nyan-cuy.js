@@ -43,7 +43,7 @@
     root.NyanAudio = {
       startMusic() {
         if (root.CuyMusic && typeof root.CuyMusic.play === 'function') {
-          root.CuyMusic.play('games_1');
+          root.CuyMusic.play('game_nyan_cuy');
         }
       },
 

@@ -141,7 +141,7 @@
       this.currentConfig = null;
       this.currentScore = 0;
       this.rootElement = null;
-      this.musicTrack = 'games_1';
+      this.musicTrack = null;
 
       // Global listener for Home closing or the tab being hidden
       this.bindWindowEvents();
@@ -359,7 +359,7 @@
       this.activeGameId = gameId;
       this.currentScore = 0;
       this.isPaused = false;
-      this.musicTrack = this.musicTrack === 'games_1' ? 'games_2' : 'games_1';
+      this.musicTrack = 'game_' + gameId;
       if (window.CuyMusic) window.CuyMusic.play(this.musicTrack);
 
       const container = customConfig.container || this.rootElement || document.getElementById('modalBody');
@@ -442,10 +442,6 @@
           height: 290,
           stageKey: state?.stageKey || 'adult',
           pigLook: root.CuySprites.activePig(state),
-          onTimeLeft: (s) => {
-            if (s === 15 && window.CuyMusic) window.CuyMusic.play('games_boss');
-          },
-          
           // Update the points in the HUD in real time
           updateScore: (newScore) => {
             this.currentScore = newScore;
