@@ -5,10 +5,10 @@
   gap: 8px;
   padding: 10px;
   margin: 0 0 8px;
-  border: 2px solid #c98d50;
-  border-radius: 10px;
-  background: #fffdf8;
-  color: #3a1d17;
+  border: 8px solid transparent;
+  border-image: var(--ui-panel_paper) 8 / 8px stretch;
+  background: var(--ui-linen-3);
+  color: var(--ui-wood-0);
   box-sizing: border-box;
   max-width: 100%;
 }
@@ -32,22 +32,22 @@
   gap: 6px;
   min-height: 32px;
   padding: 4px 10px 4px 4px;
-  border: 2px solid #c98d50;
-  border-radius: 16px;
-  background: #fff;
-  color: #3a1d17;
+  border: 6px solid transparent;
+  border-image: var(--ui-btn_normal) 6 / 6px stretch;
+  background: var(--ui-linen-2);
+  color: var(--ui-wood-1);
   font: inherit;
   cursor: pointer;
 }
 
 .dorm-chip.is-on {
-  background: #eedb7c;
-  border-color: #4f8f35;
+  border-image: var(--ui-btn_pressed) 6 / 6px stretch;
+  background: var(--ui-hay-2);
 }
 
 .dorm-chip:focus-visible,
 .dorm .game-btn:focus-visible {
-  outline: 2px solid #4f8f35;
+  outline: 3px solid var(--ui-moss-1);
   outline-offset: 2px;
 }
 
@@ -96,7 +96,7 @@
 }
 
 .dorm-notice {
-  color: #7a3b1e;
+  color: var(--ui-brick-1);
   font-weight: bold;
 }
 

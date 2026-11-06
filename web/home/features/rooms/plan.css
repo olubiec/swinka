@@ -19,13 +19,15 @@
 }
 .house-plan-dialog {
   width: 100%; max-width: 760px; max-height: calc(100vh - 32px); overflow: auto; box-sizing: border-box;
-  padding: 16px; border-radius: 12px; background: #fffdf8; color: #3a1d17; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+  padding: 16px; border: 8px solid transparent; border-image: var(--ui-panel_wood) 8 / 8px stretch;
+  background: var(--ui-linen-2); color: var(--ui-wood-0);
 }
 .house-plan-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .house-plan-title { margin: 0; font-size: 20px; }
 .house-plan-card {
   display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; padding: 12px;
-  box-sizing: border-box; border-radius: 10px; background: #f8eddd;
+  box-sizing: border-box; border: 8px solid transparent; border-image: var(--ui-panel_paper) 8 / 8px stretch;
+  background: var(--ui-linen-3);
 }
 .house-plan-card[hidden] { display: none; }
 .house-plan-card-portrait { width: 48px; height: 48px; image-rendering: pixelated; }
