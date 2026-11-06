@@ -67,6 +67,17 @@
       </div>
     </section>
 
+    <!-- Places bar (PK-P36a) -->
+    <div class="places-bar" id="placesBar" role="region" aria-label="Scene navigation">
+      <button type="button" class="ui-arrow-left" id="placesPrevBtn" aria-label="Previous scene"></button>
+      <div class="places-bar-title" id="placesBarTitle">Salon</div>
+      <button type="button" class="ui-arrow-right" id="placesNextBtn" aria-label="Next scene"></button>
+    </div>
+    <div class="places-locked-hint" id="placesLockedHint" hidden>
+      <span class="pixel-icon icon-padlock" aria-hidden="true"></span>
+      <span class="places-hint-text" id="placesHintText"></span>
+    </div>
+
     <!-- 3. Live pig animation on a canvas (from the sprite sheet, image-rendering: pixelated) -->
     <section class="stage-viewport" aria-label="Pig run">
       <canvas id="pigCanvas" width="240" height="130" title="Click the pig to pet it!"></canvas>
@@ -289,6 +300,7 @@
   <script src="features/music/economy.js"></script>
   <script src="features/music/shelf.js"></script>
   <script src="music.js"></script>
+  <script src="features/places/scenes.js"></script>
   <script src="features/places/feature.js"></script>
   <script src="app.js"></script>
 </body>

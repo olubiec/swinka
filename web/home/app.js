@@ -640,6 +640,20 @@
           window.bridge.send({ type: 'settings', action: 'close' });
         }
       }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+        if (tag === 'input' || tag === 'textarea' || tag === 'select' || (document.activeElement && document.activeElement.isContentEditable)) return;
+        if (elements.modalBackdrop && elements.modalBackdrop.classList.contains('active')) return;
+        if (e.key === 'ArrowLeft') {
+          if (window.CuyPlaces && typeof window.CuyPlaces.prev === 'function') {
+            window.CuyPlaces.prev();
+          }
+        } else if (e.key === 'ArrowRight') {
+          if (window.CuyPlaces && typeof window.CuyPlaces.next === 'function') {
+            window.CuyPlaces.next();
+          }
+        }
+      }
     });
   }
 
@@ -650,59 +664,56 @@
   }
 
 
-  // --- PLACES BAR (W20-01): House, Garden, Farm, Park, Market ---
-  const PLACE_BAR = [
-    { id: 'house',  label: 'House',  icon: 'icon-house',  open: { feature: 'rooms', arg: 'salon' } },
-    { id: 'garden', label: 'Garden', icon: 'icon-clover', open: { feature: 'garden', arg: 'garden' } },
-    { id: 'farm',   label: 'Farm',   icon: 'icon-hay',    open: { feature: 'farm' } },
-    { id: 'park',   label: 'Park',   icon: 'icon-star',   open: { feature: 'garden', arg: 'park' } },
-    { id: 'market', label: 'Market', icon: 'icon-carrot', open: { feature: 'market' } }
-  ];
-
+  // --- PLACES BAR (PK-P36a): Main window scene switching bar ---
   function buildPlacesBar() {
-    if (document.getElementById('placesBar')) return;
-    const stage = document.querySelector('.stage-viewport');
-    if (!stage) return;
-    const bar = document.createElement('div');
-    bar.id = 'placesBar';
-    bar.className = 'places-bar';
-    bar.setAttribute('role', 'toolbar');
-    bar.setAttribute('aria-label', 'Places');
-    stage.appendChild(bar);
+    let bar = document.getElementById('placesBar');
+    if (!bar) {
+      const stage = document.querySelector('.stage-viewport');
+      if (!stage) return;
+      bar = document.createElement('div');
+      bar.id = 'placesBar';
+      bar.className = 'places-bar';
+      bar.setAttribute('role', 'region');
+      bar.setAttribute('aria-label', 'Scene navigation');
+      bar.innerHTML = '<button type="button" class="ui-arrow-left" id="placesPrevBtn" aria-label="Previous scene"></button>' +
+        '<div class="places-bar-title" id="placesBarTitle">Salon</div>' +
+        '<button type="button" class="ui-arrow-right" id="placesNextBtn" aria-label="Next scene"></button>';
+      stage.parentNode.insertBefore(bar, stage);
+
+      const hint = document.createElement('div');
+      hint.id = 'placesLockedHint';
+      hint.className = 'places-locked-hint';
+      hint.hidden = true;
+      hint.innerHTML = '<span class="pixel-icon icon-padlock" aria-hidden="true"></span><span class="places-hint-text" id="placesHintText"></span>';
+      stage.parentNode.insertBefore(hint, stage);
+    }
+
+    const prevBtn = document.getElementById('placesPrevBtn');
+    if (prevBtn && !prevBtn._bound) {
+      prevBtn._bound = true;
+      prevBtn.addEventListener('click', () => {
+        if (window.CuyPlaces && typeof window.CuyPlaces.prev === 'function') {
+          window.CuyPlaces.prev();
+        }
+      });
+    }
+
+    const nextBtn = document.getElementById('placesNextBtn');
+    if (nextBtn && !nextBtn._bound) {
+      nextBtn._bound = true;
+      nextBtn.addEventListener('click', () => {
+        if (window.CuyPlaces && typeof window.CuyPlaces.next === 'function') {
+          window.CuyPlaces.next();
+        }
+      });
+    }
   }
 
   function renderPlacesBar(state) {
-    const bar = document.getElementById('placesBar');
-    if (!bar) return;
-    const list = (state && state.places && state.places.places) || [];
-    const byId = {};
-    list.forEach(p => { byId[p.id] = p; });
-
-    bar.innerHTML = PLACE_BAR.map((def, i) => {
-      const p = byId[def.id] || { unlocked: true, unlockCost: 0, level: 1 };
-      const locked = !p.unlocked;
-      const sub = locked
-        ? '<span class="pixel-icon icon-padlock" aria-hidden="true"></span>' + p.unlockCost
-        : (p.level > 1 ? 'Lv. ' + p.level : def.label);
-      const aria = locked
-        ? def.label + ', locked, costs ' + p.unlockCost + ' clovers'
-        : def.label + (p.level > 1 ? ', level ' + p.level : '');
-      return `<button type="button" class="place-btn${locked ? ' is-locked' : ''}" data-place-id="${def.id}" tabindex="${i === 0 ? '0' : '-1'}" aria-label="${aria}">` +
-        `<span class="pixel-icon ${def.icon}" aria-hidden="true"></span>` +
-        `<span class="place-sub">${sub}</span></button>`;
-    }).join('');
-
-    bar.querySelectorAll('.place-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.placeId;
-        if (window.CuyPlaces) {
-          window.CuyPlaces.openPlace(id);
-        } else {
-          const def = PLACE_BAR.find(d => d.id === id);
-          if (def) window.CuyHome.openFeature(def.open.feature, def.open.arg);
-        }
-      });
-    });
+    buildPlacesBar();
+    if (window.CuyPlaces && typeof window.CuyPlaces.updateStageNav === 'function') {
+      window.CuyPlaces.updateStageNav(state);
+    }
   }
 
   function removeBackBtn() {

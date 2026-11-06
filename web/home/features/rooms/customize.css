@@ -3,6 +3,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
+  max-width: 100%;
 }
 .feature-rooms .room-customize:empty {
   display: none;
@@ -16,6 +18,7 @@
   border-radius: 6px;
   background: var(--ui-linen-3);
   min-width: 0;
+  max-width: 100%;
 }
 .feature-rooms .rc-heading {
   margin: 0;

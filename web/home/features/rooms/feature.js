@@ -712,11 +712,22 @@
     }
   }
 
+  function scrollActiveTab(container) {
+    if (!container) return;
+    const activeTab = container.querySelector('.room-tab.is-selected');
+    if (activeTab && typeof activeTab.scrollIntoView === 'function') {
+      activeTab.scrollIntoView({ inline: 'center' });
+    }
+  }
+
   function bindTabs(container, tabs) {
     const list = container.querySelector('.room-tabs');
     if (!list) return;
     container.querySelectorAll('.room-tab').forEach((btn) => {
-      btn.addEventListener('click', () => switchRoom(btn.dataset.room, false));
+      btn.addEventListener('click', () => {
+        switchRoom(btn.dataset.room, false);
+        scrollActiveTab(container);
+      });
     });
     list.addEventListener('keydown', (e) => {
       const ids = tabs.map(t => t.id);
@@ -729,7 +740,9 @@
       e.preventDefault();
       e.stopPropagation();
       switchRoom(ids[i], true);
+      scrollActiveTab(container);
     });
+    scrollActiveTab(container);
   }
 
   function render() {

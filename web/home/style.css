@@ -197,6 +197,27 @@ body.webview-mode .game-device {
   box-shadow: 0 0 0;
 }
 
+#btnClose {
+  width: 32px;
+  height: 32px;
+  background-image: var(--ui-close_btn, url('../../assets/ui/close_btn.png'));
+  background-size: 32px 32px;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+  image-rendering: pixelated;
+}
+
+#btnClose:active {
+  background-image: var(--ui-close_btn_pressed, url('../../assets/ui/close_btn_pressed.png'));
+  transform: none;
+}
+
 /* ==========================================================================
    PIG PROFILE CARD (name, age, life stage)
    ========================================================================== */
@@ -1405,30 +1426,102 @@ body.webview-mode .game-device {
 }
 .album-locked .album-sprite { filter: brightness(0); opacity: 0.25; }
 
-/* ---- Places bar (W20-01) ---- */
-.stage-viewport .places-bar {
-  position: absolute;
-  top: 4px;
-  left: 6px;
-  right: 6px;
-  height: 28px;
-  z-index: 1;
+/* ---- Places bar (PK-P36a) ---- */
+.places-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  opacity: 0.001;
-  pointer-events: none;
+  height: 32px;
+  background-color: var(--ui-wood-2);
+  background-image: var(--ui-header_banner, url('../../assets/ui/header_banner.png'));
+  background-repeat: repeat-x;
+  background-size: auto 32px;
+  box-sizing: border-box;
+  padding: 0 4px;
+  font-family: var(--ui-font, 'Pixelify Sans', monospace);
+  color: var(--ui-text-on-wood);
+  image-rendering: pixelated;
+  user-select: none;
+  position: relative;
+  z-index: 5;
 }
-.places-bar .place-btn {
+
+.places-bar .ui-arrow-left,
+.places-bar .ui-arrow-right {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  background-position: center;
+  background-size: 32px 32px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+  outline: none;
+}
+
+.places-bar .ui-arrow-left {
+  background-image: var(--ui-arrow_left, url('../../assets/ui/arrow_left.png'));
+}
+
+.places-bar .ui-arrow-left:active {
+  background-image: var(--ui-arrow_left_pressed, url('../../assets/ui/arrow_left_pressed.png'));
+}
+
+.places-bar .ui-arrow-right {
+  background-image: var(--ui-arrow_right, url('../../assets/ui/arrow_right.png'));
+}
+
+.places-bar .ui-arrow-right:active {
+  background-image: var(--ui-arrow_right_pressed, url('../../assets/ui/arrow_right_pressed.png'));
+}
+
+.places-bar-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--ui-font, 'Pixelify Sans', monospace);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ui-text-on-wood);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2px 10px;
+  margin: 0 4px;
+  border-style: solid;
+  border-width: 0 12px;
+  border-color: transparent;
+  border-image: var(--ui-header_banner, url('../../assets/ui/header_banner.png')) 0 12 0 12 fill / 0 12px;
+  line-height: 20px;
+  height: 24px;
+  box-sizing: border-box;
+}
+
+.places-locked-hint {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  min-width: 0;
-  border: 0;
-  background: none;
-  font-size: 10px;
+  gap: 6px;
+  padding: 2px 8px;
+  background: var(--ui-wood-3);
+  color: var(--ui-linen-3);
+  font-family: var(--ui-font, 'Pixelify Sans', monospace);
+  font-size: 11px;
+  border-bottom: 2px solid var(--ui-wood-0);
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+.places-locked-hint[hidden] {
+  display: none !important;
 }
 
 /* ---- Places carousel stage (PK-P3a): replaces old places bar ---- */

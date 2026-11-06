@@ -1,9 +1,43 @@
-/* Room editor (W20-02). Every selector is prefixed with .feature-rooms. */
+/* Room editor (W20-02, PK-P36b). Modal body is the single scroll container. */
+body.webview-mode:has(.feature-rooms) {
+  width: 100%;
+  max-width: 420px;
+}
+
+.modal-card:has(.feature-rooms) {
+  overflow-y: hidden;
+  max-height: 85vh;
+}
+
+.modal-body.feature-rooms,
+.feature-rooms {
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  flex: 1 1 auto;
+  max-width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ui-wood-2) transparent;
+}
+
+.modal-body.feature-rooms::-webkit-scrollbar,
+.feature-rooms::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body.feature-rooms::-webkit-scrollbar-thumb,
+.feature-rooms::-webkit-scrollbar-thumb {
+  background: var(--ui-wood-2);
+  border-radius: 3px;
+}
+
 .feature-rooms .room-panel {
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 4px 2px 8px;
+  min-width: 0;
+  max-width: 100%;
 }
 .feature-rooms .room-head {
   display: flex;
@@ -23,6 +57,9 @@
   font-size: 12px;
   color: var(--ui-wood-2);
   margin: 0;
+}
+.feature-rooms .room-canvas-wrap {
+  max-width: 100%;
 }
 .feature-rooms .room-canvas {
   display: block;
@@ -90,11 +127,25 @@
   text-align: center;
   margin: 12px 0;
 }
-/* Tabs, name header and level button (W25-04) */
+/* Tabs, name header and level button (W25-04, PK-P36b) */
 .feature-rooms .room-tabs {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
   gap: 6px;
+  padding: 2px 2px 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ui-wood-2) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.feature-rooms .room-tabs::-webkit-scrollbar {
+  height: 4px;
+}
+.feature-rooms .room-tabs::-webkit-scrollbar-thumb {
+  background: var(--ui-wood-2);
+  border-radius: 2px;
 }
 .feature-rooms .room-tab {
   display: inline-flex;
@@ -106,6 +157,8 @@
   font: inherit;
   font-size: 12px;
   cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .feature-rooms .room-tab.is-memorial {
   filter: grayscale(0.6);

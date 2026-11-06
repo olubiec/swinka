@@ -119,6 +119,26 @@
 2. W oknach Pokoje, Ogród, Farma, Targ nie ma już strzałek na bokach ani planu domu. Pokoje przełączasz zakładkami w oknie Pokoi.
 3. Decorate działa jak wcześniej.
 
+## Wave P36: Main Window Bar & Rooms Scroll (Places Rework)
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass | App builds cleanly with no compilation or regression errors |
+| UX Places Bar | `node tools/qa/ux-p36-bar.js` | Exit code 0, 7/7 PASS (M1-M7) | Belka miejsc nad sceną z drewnianym tłem i strzałkami, cykliczne przełączanie scen, klawisze lewo/prawo, podpowiedź kłódki na zablokowanych scenach, widoczność świnki |
+| UX Rooms Scroll | `node tools/qa/ux-p36-rooms-scroll.js` | Exit code 0, 5/5 PASS (R1-R5) | Przewijanie okna pokoi jako jeden kontener (overflow-y: auto), zakładki pokoi w jednym rzędzie (nowrap, scroll poziomy), aktywna zakładka widoczna, brak poziomego przelewania |
+| UX All Suite | `node tools/qa/ux-all.js` | ux-p36-bar i ux-p36-rooms-scroll PASS | Skrypty pakietu UX dla fali P36 przechodzą pomyślnie |
+| Web Smoke | `node tools/qa/web-smoke.js` | Ekrany domku renderują się poprawnie | WebView2 home screens, nawigacja i moduły renderują się poprawnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| EXE Smoke | `powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Exit code 0, selftest passes, EXE SMOKE OK | Świnka chodzi po pulpicie, brak wyjątków i crashów podczas uruchomienia |
+
+### Manual Checklist (Do sprawdzenia po P36)
+1. Nad sceną jest belka `[<] Nazwa [>]` w drewnianym stylu gry, w jednym rzędzie.
+2. Strzałki przechodzą: salon, pokoje świnek, wspólna sypialnia, ogród, park, farma, targ, od nowa. Każde miejsce ma własne tło z gry. Klawisze ←/→ też.
+3. Żadne okno się nie otwiera przy przełączaniu.
+4. Zablokowane miejsce jest przyciemnione z kłódką i podpowiedzią odblokowania.
+5. Okno Pokoi przewija się do końca, zakładki w jednym rzędzie, aktywna widoczna (spróbuj przy 4 i 6 pokojach).
+
+
 
 
 
