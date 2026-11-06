@@ -225,7 +225,8 @@ namespace Cuy.Features
                 int price = pet.HealthSystem.CheckupPrice;
                 if (pet.TryPay(price, "vet"))
                 {
-                    pet.Checkup();
+                    var result = pet.CheckupWithResult();
+                    HomeWindow.PostToPage(new { type = "vet_checkup_result", found = result.Found, newlyKnown = result.NewlyKnown });
                     HomeWindow.NotifyStateChanged();
                     brain.Session.AutoSaver.SaveNow();
                 }

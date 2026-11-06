@@ -17,13 +17,18 @@ window.CuyHome.registerFeature({
     // render the feature UI into container
   },
   close() {
-    // optional, called when the modal closes
+    // optional, called when the modal closes (null stored container/api)
   },
   onState(state) {
-    // optional, called on every state update (also when closed)
+    // optional, called on state update while open (or if alwaysOnState: true)
   }
 });
 ```
+
+### Lifecycle and Container Rule
+Every feature that stores a container must implement `close()` and null it.
+`onState` must return early when closed (`if (!containerNode) return;`).
+The app calls `onState` only for the currently open feature (plus features declaring `alwaysOnState: true`).
 
 ### The `api` object
 Passed to `open()`, it provides:

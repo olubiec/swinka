@@ -1,6 +1,7 @@
 (() => {
   let currentState = null;
   let apiRef = null;
+  let containerNode = null;
   let currentTab = 'food';
 
   function render(container) {
@@ -129,16 +130,19 @@
     icon: 'icon-shop',
     order: 5,
     open(container, api) {
+      containerNode = container;
       apiRef = api;
       currentState = api.getState();
       render(container);
     },
+    close() {
+      containerNode = null;
+      apiRef = null;
+    },
     onState(state) {
+      if (!containerNode) return;
       currentState = state;
-      const container = document.querySelector('.feature-shop');
-      if (container) {
-        render(container);
-      }
+      render(containerNode);
     }
   });
 })();

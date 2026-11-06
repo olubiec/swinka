@@ -332,6 +332,17 @@ namespace Cuy
             base.OnFormClosing(e);
         }
 
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+            if (!Visible)
+            {
+                _bubbleHoverTimer?.Stop();
+                HideStatusBubble();
+                _statusBubble?.Cancel();
+            }
+        }
+
         protected override void WndProc(ref Message m)
         {
 #if DEBUG
@@ -532,6 +543,8 @@ namespace Cuy
             if (_inHome) return;
             _inHome = true;
             Visible = false;
+            HideStatusBubble();
+            _statusBubble?.Cancel();
             BrainController.Log("[Home] The pig went into Home.");
         }
 
@@ -546,6 +559,8 @@ namespace Cuy
             }
             if (!_inHome) return;
             _inHome = false;
+            _statusBubble?.Cancel();
+            HideStatusBubble();
 
             Rectangle wa = Screen.FromPoint(screenPoint).WorkingArea;
             int x = Math.Max(wa.Left, Math.Min(screenPoint.X - Width / 2, wa.Right - Width));
@@ -614,6 +629,11 @@ namespace Cuy
         {
             if (Name.IndexOf("child") >= 0) return;
             if (this.IsDisposed) return;
+            if (_inHome || !Visible)
+            {
+                BrainController.Log("[Bubble] skipped, pig is in the house");
+                return;
+            }
             if (text == null) text = string.Empty;
             if (text.Length > 60) text = text.Substring(0, 60);
 
@@ -649,6 +669,11 @@ namespace Cuy
         {
             if (Name.IndexOf("child") >= 0) return;
             if (this.IsDisposed) return;
+            if (_inHome || !Visible)
+            {
+                BrainController.Log("[Bubble] skipped, pig is in the house");
+                return;
+            }
             if (this.InvokeRequired)
             {
                 try { this.BeginInvoke(new Action(ShowStatusBubble)); } catch (Exception ex) { BrainController.Log("[WARN] FormPet.ShowStatusBubble: " + ex.Message); }

@@ -7,6 +7,12 @@ using Cuy.Core.Time;
 
 namespace Cuy.Core
 {
+    public sealed class CheckupResult
+    {
+        public int Found { get; set; }
+        public int NewlyKnown { get; set; }
+    }
+
     public sealed partial class Pet
     {
         private HealthSystem _healthSystem;
@@ -42,13 +48,25 @@ namespace Cuy.Core
             }
         }
 
-        public List<ActiveCondition> Checkup()
+        public CheckupResult CheckupWithResult()
         {
+            int found = State.Health.Active.Count;
+            int newlyKnown = 0;
             foreach (var active in State.Health.Active)
             {
-                active.Known = true;
+                if (!active.Known)
+                {
+                    newlyKnown++;
+                    active.Known = true;
+                }
             }
             State.Health.LastCheckupUtc = Clock.UtcNow;
+            return new CheckupResult { Found = found, NewlyKnown = newlyKnown };
+        }
+
+        public List<ActiveCondition> Checkup()
+        {
+            CheckupWithResult();
             return State.Health.Active.ToList();
         }
 

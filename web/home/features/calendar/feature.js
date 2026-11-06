@@ -724,6 +724,10 @@
       monthOffset = 0;
       render();
     },
+    close() {
+      containerNode = null;
+      featureApi = null;
+    },
     onState(state) {
       if (!containerNode) return; // ignore if closed
       currentState = state?.calendar || null;

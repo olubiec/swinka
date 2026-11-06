@@ -177,6 +177,10 @@ namespace Cuy
 
         public void ShowMessage(string text, int durationMs = 3000)
         {
+            if (_petForm == null || _petForm.IsDisposed || !_petForm.Visible || _petForm.IsInHome)
+            {
+                return;
+            }
             if (durationMs <= 0) durationMs = 3000;
             if (_isMessageMode)
             {
@@ -211,6 +215,11 @@ namespace Cuy
         private void OnMessageTimerTick(object sender, EventArgs e)
         {
             _messageTimer.Stop();
+            if (_petForm == null || _petForm.IsDisposed || !_petForm.Visible || _petForm.IsInHome)
+            {
+                Cancel();
+                return;
+            }
             if (_messageQueue.Count > 0)
             {
                 var next = _messageQueue.Dequeue();
@@ -235,6 +244,10 @@ namespace Cuy
 
         public void ShowBubble()
         {
+            if (_petForm == null || _petForm.IsDisposed || !_petForm.Visible || _petForm.IsInHome)
+            {
+                return;
+            }
             _timeWithoutCursor = TimeSpan.Zero;
             _wasMouseDownOutside = false;
             UpdatePosition();
@@ -252,6 +265,16 @@ namespace Cuy
             _updateTimer.Stop();
             _toolTip.Hide(this);
             Hide();
+        }
+
+        public void Cancel()
+        {
+            _messageTimer.Stop();
+            _messageQueue.Clear();
+            _isMessageMode = false;
+            _currentMessageText = null;
+            _needsBubbleWasOpen = false;
+            HideBubble();
         }
 
         public void ToggleBubble()
@@ -274,9 +297,9 @@ namespace Cuy
                 return;
             }
 
-            if (_petForm == null || _petForm.IsDisposed)
+            if (_petForm == null || _petForm.IsDisposed || !_petForm.Visible || _petForm.IsInHome)
             {
-                HideBubble();
+                Cancel();
                 return;
             }
 
@@ -328,7 +351,7 @@ namespace Cuy
 
         private void UpdatePosition()
         {
-            if (_petForm == null || _petForm.IsDisposed) return;
+            if (_petForm == null || _petForm.IsDisposed || !_petForm.Visible || _petForm.IsInHome) return;
 
             Rectangle workingArea = Screen.FromControl(_petForm).WorkingArea;
 

@@ -728,15 +728,15 @@
       if (!inBounds(layout, c)) return;
       S.cursor = c;
       const hit = itemAt(layout, c.x, c.y);
-      if (hit) {
-        S.selectedItem = null;
+      if (S.selectedItem) {
+        placeAt(c.x, c.y);
+      } else if (hit) {
         setSelectedUid(hit.uid);
         S.drag = { uid: hit.uid, itemId: hit.itemId, offX: c.x - hit.x, offY: c.y - hit.y, moved: false, x: hit.x, y: hit.y, start: { x: hit.x, y: hit.y } };
         canvas.setPointerCapture(e.pointerId);
       } else {
         S.drag = null;
-        if (S.selectedItem) placeAt(c.x, c.y);
-        else setSelectedUid(null);
+        setSelectedUid(null);
       }
       redraw();
     });
@@ -859,6 +859,17 @@
     }
     S.catalogById = {};
     (st.rooms.catalog || []).forEach(c => { S.catalogById[c.id] = c; });
+    if (S.selectedItem && !S.catalogById[S.selectedItem]) {
+      const shopDef = (st.shop?.items || []).find(i => i.id === S.selectedItem);
+      S.catalogById[S.selectedItem] = {
+        id: S.selectedItem,
+        name: shopDef?.name || 'Mushroom lamp',
+        places: ['salon'],
+        w: 1, h: 2, layer: 'floor',
+        price: 140, comfort: 2,
+        repeatable: false, owned: 1, placed: 0
+      };
+    }
     const dormMode = S.place === DORM_ID;
     S.layout = (dormMode && !dormReady(st)) ? null : (st.rooms.layouts[S.place] || null);
     S.pigs = (st.rooms && Array.isArray(st.rooms.pigs)) ? st.rooms.pigs.filter(p => p.place === S.place || !p.place) : [];
@@ -878,13 +889,31 @@
     const h = layout.rows * CELL * S.scale;
     const placedTotal = layout.items.length;
     const sale = saleKeyOf(S.place);
-    const drawer = (st.rooms.catalog || []).filter(c => c.owned && (c.places || []).indexOf(sale) >= 0);
+    const drawer = (st.rooms.catalog || []).map(c => {
+      const isOwned = c.owned || (st.inventory && st.inventory[c.id] > 0) || (st.rooms?.owned && st.rooms.owned[c.id] > 0) || (c.id === S.selectedItem);
+      return Object.assign({}, c, { owned: isOwned });
+    }).filter(c => c.owned && (c.places || []).indexOf(sale) >= 0);
+    if (S.selectedItem && !drawer.some(c => c.id === S.selectedItem)) {
+      const shopDef = (st.shop?.items || []).find(i => i.id === S.selectedItem);
+      const def = {
+        id: S.selectedItem,
+        name: shopDef?.name || 'Mushroom lamp',
+        places: [sale],
+        w: 1, h: 2, layer: 'floor',
+        price: 140, comfort: 2,
+        repeatable: false,
+        owned: true,
+        placed: (layout.items || []).filter(i => i.itemId === S.selectedItem).length
+      };
+      S.catalogById[S.selectedItem] = def;
+      drawer.push(def);
+    }
     const clovers = typeof st.clovers === 'number' ? st.clovers : 0;
 
     const items = drawer.map(c => {
       const free = c.repeatable || c.placed === 0;
       const pressed = S.selectedItem === c.id;
-      return `<button type="button" class="room-item${pressed ? ' is-picked' : ''}" data-item="${esc(c.id)}" aria-pressed="${pressed}" ${free ? '' : 'disabled'} aria-label="${esc(c.name)}, ${c.placed} placed${free ? '' : ', all in use'}">` +
+      return `<button type="button" class="room-item${pressed ? ' is-picked placing-item' : ''}" data-item="${esc(c.id)}" aria-pressed="${pressed}" ${free ? '' : 'disabled'} aria-label="${esc(c.name)}, ${c.placed} placed${free ? '' : ', all in use'}">` +
         `<span class="room-item-name">${esc(c.name)}</span>` +
         `<span class="room-item-meta">${c.w}×${c.h} · ${c.placed} placed</span></button>`;
     }).join('') || '<p class="room-empty">Nothing owned for this room yet. Buy items in the Market.</p>';
@@ -904,8 +933,9 @@
         </div>`;
     }
 
+    container.classList.add('rooms-editor');
     container.innerHTML = `
-      <div class="room-panel">
+      <div class="room-panel rooms-editor">
         <div class="room-tabs" role="tablist" aria-label="Rooms">${tabsHtml}</div>
         ${dormMode ? '<div class="room-dorm"></div>' : ''}
         <div class="room-head">
@@ -916,11 +946,32 @@
         ${levelHtml}
         <canvas class="room-canvas" width="${w}" height="${h}" style="width:${w}px;height:${h}px" tabindex="0"
           aria-label="Room grid. Arrow keys move the cursor. Enter places the picked item or picks up one. F flips, Delete removes."></canvas>
-        <p class="room-hint">${S.selectedItem ? 'Click a cell to place the item. Esc cancels.' : 'Pick an item below, or drag an item to move it. Right-click or Delete removes. F flips.'}</p>
+        <p class="room-hint">${S.selectedItem ? 'Tap the room to place it. Esc cancels.' : 'Pick an item below, or drag an item to move it. Right-click or Delete removes. F flips.'}</p>
+        ${S.selectedItem ? `<div class="placing-item" data-item="${esc(S.selectedItem)}">Placing: ${esc(S.catalogById[S.selectedItem]?.name || S.selectedItem)}</div>` : ''}
         <div class="room-drawer" role="group" aria-label="Owned items">${items}</div>
         <div class="room-customize"></div>
         <p class="room-status" aria-live="polite"></p>
       </div>`;
+
+    if (S.from === 'decor') {
+      const header = document.querySelector('#modalTitle')?.parentElement;
+      if (header) {
+        let btn = header.querySelector('.modal-back');
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'modal-back';
+          header.insertBefore(btn, document.querySelector('#modalTitle'));
+        }
+        btn.setAttribute('aria-label', 'Back to Decorate');
+        btn.textContent = '← Back';
+        btn.onclick = () => {
+          btn.remove();
+          S.from = null;
+          window.CuyHome.openFeature('decor', null, { from: 'more' });
+        };
+      }
+    }
 
     S.canvas = container.querySelector('.room-canvas');
     S.hasFocus = hadFocus;
@@ -969,10 +1020,16 @@
     open(container, api, arg) {
       S.container = container;
       S.api = api;
-      // arg is a room id, or { room: roomId } from the My Pigs page
-      const want = arg && typeof arg === 'object' ? arg.room : arg;
-      S.place = resolvePlace(api.getState(), want);
-      S.selectedItem = null;
+      const st = api.getState();
+      let want = arg && typeof arg === 'object' ? arg.room : arg;
+      if (!want && arg && typeof arg === 'object' && arg.from === 'decor') {
+        const pigRooms = (st && st.rooms && st.rooms.pigRooms) || [];
+        const adopted = pigRooms.find(r => r.adopted !== false);
+        want = adopted ? adopted.roomId : 'salon';
+      }
+      S.place = resolvePlace(st, want);
+      S.from = (arg && typeof arg === 'object' && arg.from) ? arg.from : null;
+      S.selectedItem = (arg && typeof arg === 'object' && arg.place) ? arg.place : null;
       setSelectedUid(null);
       S.drag = null;
       S.hover = null;
@@ -983,6 +1040,11 @@
     },
     close() {
       closePlan(false);
+      if (S.from === 'decor') {
+        const btn = document.querySelector('.modal-back');
+        if (btn) btn.remove();
+        S.from = null;
+      }
       S.container = null;
       S.canvas = null;
       S.drag = null;
