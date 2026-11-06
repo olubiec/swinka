@@ -60,20 +60,16 @@
   min-width: 0;
   text-align: center;
   font-family: var(--ui-font, 'Pixelify Sans', monospace);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  color: var(--ui-text-on-wood);
+  color: #ffffff;
+  text-shadow: 1px 1px 0 var(--ui-wood-0);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 2px 10px;
-  margin: 0 4px;
-  border-style: solid;
-  border-width: 0 12px;
-  border-color: transparent;
-  border-image: var(--ui-header_banner, url('../../../assets/ui/header_banner.png')) 0 12 0 12 fill / 0 12px;
-  line-height: 20px;
-  height: 24px;
+  padding: 0 8px;
+  line-height: 32px;
+  height: 32px;
   box-sizing: border-box;
 }
 

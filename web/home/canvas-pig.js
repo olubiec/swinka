@@ -930,8 +930,11 @@
 
         this.drawHabitat(ctx, scene);
         zNegLayers.forEach(l => l.drawFn(ctx, scene));
-        this.drawPoops(ctx);
-        this.drawProps(ctx);
+        const isSalon = !this.sceneId || this.sceneId === 'salon';
+        if (isSalon) {
+          this.drawPoops(ctx);
+          this.drawProps(ctx);
+        }
       }
 
       // --- 2. FLAT THINGS ---
@@ -940,7 +943,8 @@
 
       // --- 3. STANDING OBJECTS & GUINEA PIG (sorted by bottom edge y) ---
       const lit = !!this.lightScene;
-      if (!isOutdoor && !lit) {
+      const isSalon = !this.sceneId || this.sceneId === 'salon';
+      if (!isOutdoor && !lit && isSalon) {
         this.drawToys(ctx);
       }
 

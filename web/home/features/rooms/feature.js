@@ -714,9 +714,13 @@
 
   function scrollActiveTab(container) {
     if (!container) return;
+    const list = container.querySelector('.room-tabs');
     const activeTab = container.querySelector('.room-tab.is-selected');
-    if (activeTab && typeof activeTab.scrollIntoView === 'function') {
-      activeTab.scrollIntoView({ inline: 'center' });
+    if (list && activeTab) {
+      const tabLeft = activeTab.offsetLeft;
+      const tabWidth = activeTab.offsetWidth;
+      const listWidth = list.clientWidth;
+      list.scrollLeft = Math.max(0, tabLeft - (listWidth / 2) + (tabWidth / 2));
     }
   }
 
