@@ -553,6 +553,8 @@
     if (!container) return;
     const st = S.api.getState();
     const hadFocus = !!(S.canvas && document.activeElement === S.canvas);
+    container.dataset.place = S.place;
+    container.setAttribute('data-place', S.place);
     if (!st || !st.rooms || !st.rooms.layouts) {
       container.innerHTML = '<p class="garden-empty">Loading the garden…</p>';
       S.canvas = null;
@@ -610,9 +612,10 @@
       ? S.memorial.map(p => `<span class="garden-stone-name">${esc(p.name)}</span>`).join('')
       : '<span class="garden-stone-empty">No memorial pigs yet</span>';
 
+    const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml(S.place) : '';
     container.innerHTML = `
-      <div class="garden-panel">
-        <div class="garden-tabs" role="tablist" aria-label="Places">${tabs}</div>
+      <div class="garden-panel" data-place="${esc(S.place)}">
+        ${arrows}
         ${body}
         <div class="garden-walk" aria-label="Walks"></div>
         <button type="button" class="garden-walk-btn" ${unlocked ? '' : 'disabled'}>Go for a walk</button>
@@ -621,6 +624,7 @@
           <div class="garden-stone">${memorial}</div>
         </section>
       </div>`;
+    if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
 
     S.canvas = container.querySelector('.garden-canvas');
     S.hasFocus = hadFocus;
@@ -677,6 +681,7 @@
       S.container = container;
       S.api = api;
       S.place = PLACE_LABELS[arg] ? arg : 'garden';
+      if (window.CuyPlaces) window.CuyPlaces.setCurrentPlace(S.place);
       S.selectedItem = null;
       S.selectedUid = null;
       S.drag = null;

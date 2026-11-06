@@ -33,4 +33,18 @@
 2. Sklep: ikony przedmiotów są różne i rozpoznawalne.
 3. Ekran główny bez stałego odtwarzacza; klik gramofonu go pokazuje, klik obok chowa.
 
+## Wave P3: Places with Arrows & Consistent UI Icons
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| UX Places | `node tools/qa/ux-p3-places.js` | 6/6 PASS (A1 arrow-cycle, A2 own-window, A3 state-kept, A4 rooms-then-garden, A5 locked-hint, A6 no-plan) | Strzałki nawigacji przełączają pokoje i miejsca (dom → ogród → park → farma → targ), brak planu domu, zablokowane miejsca pokazują podpowiedź |
+| UX Icons | `node tools/qa/ux-p3-icons.js` | 4/4 PASS (same-icons, size-and-hit, works, no-text-glyph) | Strzałka cofania i krzyżyk zamknięcia we wszystkich oknach to spójne ikony w stylu gry (brak znaków tekstowych) |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK, brak błędów assetów i ikon | Brak brakujących assetów i ikon w interfejsie domku |
+
+### Manual Checklist (Do sprawdzenia po P3)
+1. Strzałki po bokach przechodzą: dom (pokoje) → ogród → park → farma → targ.
+2. Każde miejsce wygląda jak własne okno, bez śladów poprzedniego.
+3. Zablokowane miejsca pokazują, co je odblokuje, a nie puste okno.
+
+
 

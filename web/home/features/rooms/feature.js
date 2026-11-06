@@ -276,6 +276,7 @@
 
   function resolvePlace(st, want) {
     if (PLACE_LABELS[want]) return want;
+    if (st && st.rooms && st.rooms.layouts && st.rooms.layouts[want]) return want;
     if (isPigRoom(want) && st && st.rooms && st.rooms.layouts && st.rooms.layouts[want]) return residentRoom(st, want) ? DORM_ID : want;
     return 'salon';
   }
@@ -283,11 +284,6 @@
   // Tabs: shared rooms first (garden and park once unlocked), then one tab per pig room, then the shared bedroom.
   function tabsOf(st) {
     const tabs = [{ id: 'salon', label: PLACE_LABELS.salon, portrait: null, memorial: false }];
-    const places = (st.places && st.places.places) || [];
-    ['garden', 'park'].forEach((id) => {
-      const p = places.find(x => x && x.id === id);
-      if (p && p.unlocked) tabs.push({ id: id, label: PLACE_LABELS[id], portrait: null, memorial: false });
-    });
     ((st.rooms && st.rooms.pigRooms) || []).forEach((r) => {
       if (!r || r.adopted === false) return;
       tabs.push({ id: r.roomId, label: r.displayName || r.roomId, portrait: r.portrait || null, memorial: !!r.memorial,
@@ -338,14 +334,19 @@
   // Locked or empty shared bedroom: the panel and the tabs, no canvas.
   function renderDormWithoutRoom(container, st, tabs) {
     S.canvas = null;
+    container.dataset.place = 'house';
+    container.setAttribute('data-place', 'house');
+    const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('house') : '';
     container.innerHTML = `
-      <div class="room-panel">
+      <div class="room-panel" data-place="house">
+        ${arrows}
         <div class="room-tabs" role="tablist" aria-label="Rooms">${tabsHtmlOf(tabs)}</div>
         <div class="room-dorm"></div>
         <p class="room-hint">${dormOf(st).unlocked ? 'Move a pig in above to use the shared bedroom.' : ''}</p>
         <p class="room-status" aria-live="polite"></p>
       </div>`;
     bindTabs(container, tabs);
+    if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
     mountDorm(container, st);
   }
 
@@ -832,9 +833,16 @@
   // Changes the room shown. Picks and drags are dropped, the customize panel is told that no item is picked.
   function switchRoom(id, focusTab) {
     if (!id) return;
+    if (id === 'garden' || id === 'park') {
+      if (window.CuyPlaces) {
+        window.CuyPlaces.openPlace(id);
+        return;
+      }
+    }
     if (S.api && residentRoom(S.api.getState(), id)) id = DORM_ID;
     if (id === S.place) return;
     S.place = id;
+    if (window.CuyPlaces) window.CuyPlaces.setCurrentHouseRoom(id);
     S.selectedItem = null;
     S.drag = null;
     S.hover = null;
@@ -848,6 +856,7 @@
 
   function bindTabs(container, tabs) {
     const list = container.querySelector('.room-tabs');
+    if (!list) return;
     container.querySelectorAll('.room-tab').forEach((btn) => {
       btn.addEventListener('click', () => switchRoom(btn.dataset.room, false));
     });
@@ -860,6 +869,7 @@
       else if (e.key === 'End') i = ids.length - 1;
       else return;
       e.preventDefault();
+      e.stopPropagation();
       switchRoom(ids[i], true);
     });
   }
@@ -868,6 +878,18 @@
     const container = S.container;
     if (!container) return;
     const st = S.api.getState();
+    container.dataset.place = 'house';
+    container.setAttribute('data-place', 'house');
+    const housePlace = ((st && st.places && st.places.places) || []).find(p => p.id === 'house');
+    if (housePlace && housePlace.unlocked === false) {
+      const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('house') : '';
+      container.innerHTML = `<div class="room-panel room-locked" data-place="house">
+        ${arrows}
+        <p class="room-locked-text">The house is locked. ${housePlace.unlockCost ? 'Open for ' + housePlace.unlockCost + ' clovers' : 'Locked'}</p>
+      </div>`;
+      if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
+      return;
+    }
     const hadFocus = !!(S.canvas && document.activeElement === S.canvas);
     if (!st || !st.rooms || !st.rooms.layouts) {
       container.innerHTML = '<p class="room-empty">Loading the house…</p>';
@@ -962,15 +984,18 @@
       return `<button type="button" class="room-gramophone-trigger" data-uid="${esc(it.uid)}" aria-label="Gramophone" aria-expanded="${isPlayerOpen ? 'true' : 'false'}" style="position:absolute;left:${gx}px;top:${gy}px;width:${gw}px;height:${gh}px;" tabindex="0"></button>`;
     }).join('');
 
+    const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('house') : '';
+    const planBtnHtml = S.fromPlaces ? '' : '<button type="button" class="game-btn room-plan-btn" id="roomPlanBtn" aria-haspopup="dialog">House plan</button>';
     container.classList.add('rooms-editor');
     container.innerHTML = `
-      <div class="room-panel rooms-editor">
+      <div class="room-panel rooms-editor" data-place="house">
+        ${arrows}
         <div class="room-tabs" role="tablist" aria-label="Rooms">${tabsHtml}</div>
         ${dormMode ? '<div class="room-dorm"></div>' : ''}
         <div class="room-head">
           <button type="button" class="room-title room-name-btn" aria-label="Rename this room">${esc(layout.name || labelOf(st, S.place))}</button>
           <span class="room-count">${placedTotal} placed</span>
-          <button type="button" class="game-btn room-plan-btn" id="roomPlanBtn" aria-haspopup="dialog">House plan</button>
+          ${planBtnHtml}
         </div>
         ${levelHtml}
         <div class="room-canvas-wrap" style="position:relative;display:inline-block;line-height:0;">
@@ -1048,6 +1073,7 @@
     if (levelBtn) levelBtn.addEventListener('click', () => send({ type: 'place_upgrade', id: S.place }));
     const planBtn = container.querySelector('#roomPlanBtn');
     if (planBtn) planBtn.addEventListener('click', () => openPlan(planBtn));
+    if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
 
     // Customize panel (W25-05); nothing breaks when it is not loaded
     const customize = container.querySelector('.room-customize');
@@ -1077,8 +1103,14 @@
         const adopted = pigRooms.find(r => r.adopted !== false);
         want = adopted ? adopted.roomId : 'salon';
       }
+      if (!want && S.place) want = S.place;
       S.place = resolvePlace(st, want);
+      if (window.CuyPlaces) {
+        window.CuyPlaces.setCurrentPlace('house');
+        window.CuyPlaces.setCurrentHouseRoom(S.place);
+      }
       S.from = (arg && typeof arg === 'object' && arg.from) ? arg.from : null;
+      S.fromPlaces = (arg && typeof arg === 'object' && arg.fromPlaces) || false;
       S.selectedItem = (arg && typeof arg === 'object' && arg.place) ? arg.place : null;
       setSelectedUid(null);
       S.drag = null;

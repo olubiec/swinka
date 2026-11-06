@@ -1094,30 +1094,60 @@ body.webview-mode .game-device {
   border-image: var(--ui-bar_wood) 5 fill / 5px;
   font-size: 15px;
   font-weight: 700;
+  gap: 8px;
 }
 
-.modal-close-btn:active { background-image: var(--ui-close_btn_pressed); }
+.modal-header #modalTitle {
+  margin: 0 8px;
+}
 
+.modal-back,
 .modal-close-btn {
-  background-image: var(--ui-close_btn);
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
   background-position: center;
   background-size: 16px 16px;
   background-repeat: no-repeat;
-  border: 0;
-  color: var(--ui-linen-3);
-  font-family: var(--font-pixel);
-  font-size: 13px;
-  font-weight: 700;
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  min-height: 24px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
   box-shadow: none;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.modal-back {
+  background-image: url('assets/ui/back.svg');
+}
+
+.modal-close-btn {
+  background-image: url('assets/ui/close.svg');
+}
+
+.modal-back:hover,
+.modal-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.modal-back:active,
+.modal-close-btn:active {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.modal-back:focus-visible,
+.modal-close-btn:focus-visible {
+  outline: 2px solid var(--ui-hay-2);
+  outline-offset: 1px;
 }
 
 .modal-body {
@@ -1375,58 +1405,77 @@ body.webview-mode .game-device {
 }
 .album-locked .album-sprite { filter: brightness(0); opacity: 0.25; }
 
-/* ---- Places bar (W20-01): one row laid over the top of the pig stage ---- */
+/* ---- Places bar (W20-01) ---- */
 .stage-viewport .places-bar {
   position: absolute;
   top: 4px;
   left: 6px;
   right: 6px;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 3px;
-  padding: 2px;
-  border-radius: 8px;
-  background: rgba(255, 253, 248, 0.85);
+  height: 28px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0.001;
+  pointer-events: none;
 }
 .places-bar .place-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  width: 20px;
+  height: 20px;
   min-width: 0;
-  height: 24px;
-  padding: 0 3px;
-  border-width: 3px 2px;
-  border-style: solid;
-  border-color: transparent;
-  border-image: var(--ui-tab_off) 5 fill / 3px 2px;
-  image-rendering: pixelated;
-  border-radius: 0;
+  border: 0;
   background: none;
-  color: var(--ui-text-on-wood);
-  font: inherit;
   font-size: 10px;
-  line-height: 1;
-  cursor: pointer;
 }
-.places-bar .place-btn:hover { border-image-source: var(--ui-tab_on); }
-.places-bar .place-btn:focus-visible { outline: 3px solid var(--ui-moss-1); outline-offset: 1px; }
-.places-bar .place-btn.is-locked { opacity: 0.6; }
-.places-bar .place-btn.is-pending { border-image-source: var(--ui-tab_on); }
-.places-bar .place-btn .pixel-icon { flex: none; }
-.places-bar .place-sub {
-  display: inline-flex;
+
+/* ---- Places carousel stage (PK-P3a): replaces old places bar ---- */
+.stage-viewport .places-carousel-stage {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  right: 6px;
+  z-index: 2;
+  display: flex;
   align-items: center;
-  gap: 2px;
-  min-width: 0;
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  justify-content: space-between;
+  height: 28px;
 }
-@media (max-width: 380px) {
-  .places-bar .place-sub { white-space: normal; line-height: 1.1; text-align: center; font-size: 9px; letter-spacing: -0.3px; }
+.places-carousel-stage .place-arrow {
+  position: static;
+  transform: none;
+  width: 26px;
+  height: 26px;
+  font-size: 16px;
+  box-shadow: none;
+  background: rgba(255, 253, 248, 0.85);
+  border: 1px solid var(--ui-border, #6a3e2a);
+  color: #47281c;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.places-carousel-stage .place-stage-current {
+  flex: 1;
+  margin: 0 4px;
+  height: 26px;
+  background: rgba(255, 253, 248, 0.9);
+  border: 1px solid var(--ui-border, #6a3e2a);
+  color: #47281c;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.places-carousel-stage .place-stage-current:hover,
+.places-carousel-stage .place-arrow:hover {
+  background: #fffdf8;
 }
 
 /* ==========================================================================

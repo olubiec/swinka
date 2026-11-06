@@ -172,7 +172,19 @@
   function render() {
     const container = S.container;
     if (!container) return;
+    container.dataset.place = 'market';
+    container.setAttribute('data-place', 'market');
     const st = S.api.getState();
+    const marketPlace = ((st && st.places && st.places.places) || []).find(p => p.id === 'market');
+    if (marketPlace && marketPlace.unlocked === false) {
+      const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('market') : '';
+      container.innerHTML = `<div class="market-panel market-locked" data-place="market">
+        ${arrows}
+        <p class="market-locked-text">The market is still closed. ${marketPlace.unlockCost ? 'Open for ' + marketPlace.unlockCost + ' clovers' : 'Locked'}</p>
+      </div>`;
+      if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
+      return;
+    }
     if (!st || !st.market) {
       container.innerHTML = '<p class="market-empty">Opening the market…</p>';
       return;
@@ -193,8 +205,10 @@
     ensureLights();
     loadAtlas();
 
+    const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('market') : '';
     container.innerHTML = `
-      <div class="market-panel" style="position:relative">
+      <div class="market-panel" data-place="market" style="position:relative">
+        ${arrows}
         ${tintHtml()}
         <img class="market-stall-banner" src="${esc(S.api.assetUrl('world/market/stall_basic.png'))}" alt="" />
         ${postersHtml()}
@@ -255,6 +269,7 @@
     } else {
       loadExtras();
     }
+    if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
   }
 
   window.CuyHome.registerFeature({
@@ -265,6 +280,7 @@
     open(container, api) {
       S.container = container;
       S.api = api;
+      if (window.CuyPlaces) window.CuyPlaces.setCurrentPlace('market');
       S.tab = 'seeds';
       S.quotes = {};
       if (S.lightTimer) clearInterval(S.lightTimer);

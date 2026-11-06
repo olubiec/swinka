@@ -163,6 +163,7 @@
     bindOnboarding();
     updateSoundButtonUI();
     buildPlacesBar();
+    buildPlacesStage();
   }
 
   // ---- First run: welcome -> intro -> gift letter ----
@@ -321,6 +322,9 @@
     if (!state) return;
     loadFeatures(state);
     renderPlacesBar(state);
+    if (window.CuyPlaces && typeof window.CuyPlaces.updateStageNav === 'function') {
+      window.CuyPlaces.updateStageNav();
+    }
 
     // Broadcast state to all registered features
     window.CuyHome.listFeatures().forEach(feat => {
@@ -617,6 +621,10 @@
     });
 
     // Close the dialog
+    if (elements.modalCloseBtn) {
+      elements.modalCloseBtn.setAttribute('aria-label', 'Close');
+      elements.modalCloseBtn.textContent = '';
+    }
     elements.modalCloseBtn?.addEventListener('click', closeModal);
     elements.modalBackdrop?.addEventListener('click', (e) => {
       if (e.target === elements.modalBackdrop) closeModal();
@@ -643,7 +651,7 @@
   }
 
 
-  // --- PLACES BAR (W20-01): House, Garden, Farm, Park, Market under the pig ---
+  // --- PLACES BAR (W20-01): House, Garden, Farm, Park, Market ---
   const PLACE_BAR = [
     { id: 'house',  label: 'House',  icon: 'icon-house',  open: { feature: 'rooms', arg: 'salon' } },
     { id: 'garden', label: 'Garden', icon: 'icon-clover', open: { feature: 'garden', arg: 'garden' } },
@@ -651,11 +659,9 @@
     { id: 'park',   label: 'Park',   icon: 'icon-star',   open: { feature: 'garden', arg: 'park' } },
     { id: 'market', label: 'Market', icon: 'icon-carrot', open: { feature: 'market' } }
   ];
-  let placePending = null; // id of a locked place waiting for a second tap
 
   function buildPlacesBar() {
     if (document.getElementById('placesBar')) return;
-    // Overlay on the top of the pig stage: the Home page has no spare height for a row.
     const stage = document.querySelector('.stage-viewport');
     if (!stage) return;
     const bar = document.createElement('div');
@@ -663,73 +669,67 @@
     bar.className = 'places-bar';
     bar.setAttribute('role', 'toolbar');
     bar.setAttribute('aria-label', 'Places');
-    bar.addEventListener('keydown', onPlacesKeydown);
     stage.appendChild(bar);
   }
 
   function renderPlacesBar(state) {
     const bar = document.getElementById('placesBar');
-    if (!bar || !state) return;
-    const list = (state.places && state.places.places) || [];
+    if (!bar) return;
+    const list = (state && state.places && state.places.places) || [];
     const byId = {};
     list.forEach(p => { byId[p.id] = p; });
-    const focusedId = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.place : null;
 
     bar.innerHTML = PLACE_BAR.map((def, i) => {
       const p = byId[def.id] || { unlocked: true, unlockCost: 0, level: 1 };
       const locked = !p.unlocked;
-      const pending = locked && placePending === def.id;
       const sub = locked
-        ? (pending ? 'Confirm?' : '<span class="pixel-icon icon-padlock" aria-hidden="true"></span>' + p.unlockCost)
+        ? '<span class="pixel-icon icon-padlock" aria-hidden="true"></span>' + p.unlockCost
         : (p.level > 1 ? 'Lv. ' + p.level : def.label);
       const aria = locked
-        ? def.label + ', locked, costs ' + p.unlockCost + ' clovers' + (pending ? ', tap again to unlock' : '')
+        ? def.label + ', locked, costs ' + p.unlockCost + ' clovers'
         : def.label + (p.level > 1 ? ', level ' + p.level : '');
-      return `<button type="button" class="place-btn${locked ? ' is-locked' : ''}${pending ? ' is-pending' : ''}" data-place="${def.id}" tabindex="${i === 0 ? '0' : '-1'}" aria-label="${aria}">` +
+      return `<button type="button" class="place-btn${locked ? ' is-locked' : ''}" data-place-id="${def.id}" tabindex="${i === 0 ? '0' : '-1'}" aria-label="${aria}">` +
         `<span class="pixel-icon ${def.icon}" aria-hidden="true"></span>` +
         `<span class="place-sub">${sub}</span></button>`;
     }).join('');
 
     bar.querySelectorAll('.place-btn').forEach(btn => {
-      btn.addEventListener('click', () => onPlaceClick(btn.dataset.place, byId));
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.placeId;
+        if (window.CuyPlaces) {
+          window.CuyPlaces.openPlace(id);
+        } else {
+          const def = PLACE_BAR.find(d => d.id === id);
+          if (def) window.CuyHome.openFeature(def.open.feature, def.open.arg);
+        }
+      });
     });
-    if (focusedId) {
-      const again = bar.querySelector(`[data-place="${focusedId}"]`);
-      if (again) again.focus({ preventScroll: true });
-    }
   }
 
-  function onPlaceClick(id, byId) {
-    const def = PLACE_BAR.find(d => d.id === id);
-    const p = byId[id] || { unlocked: true, unlockCost: 0 };
-    if (!def) return;
-    if (!p.unlocked) {
-      if (placePending !== id) {
-        placePending = id;
-        if (window.bridge) renderPlacesBar(window.bridge.getState());
-        return;
+  // --- PLACES CAROUSEL STAGE (PK-P3a): replaces old places bar ---
+  function buildPlacesStage() {
+    if (document.getElementById('placesStageNav')) return;
+    const stage = document.querySelector('.stage-viewport');
+    if (!stage) return;
+    const nav = document.createElement('div');
+    nav.id = 'placesStageNav';
+    nav.className = 'places-carousel-stage';
+    nav.innerHTML = '<button type="button" class="place-arrow place-arrow-prev" data-dir="prev" aria-label="Previous place">‹</button>' +
+      '<button type="button" class="place-stage-current" id="placeStageCurrent" aria-label="Open House">House</button>' +
+      '<button type="button" class="place-arrow place-arrow-next" data-dir="next" aria-label="Next place">›</button>';
+    stage.appendChild(nav);
+
+    if (window.CuyPlaces) {
+      window.CuyPlaces.bindArrows(nav);
+      const curBtn = nav.querySelector('#placeStageCurrent');
+      if (curBtn) {
+        curBtn.onclick = () => {
+          if (window.Sound) window.Sound.click();
+          window.CuyPlaces.openPlace();
+        };
       }
-      placePending = null;
-      if (window.bridge) window.bridge.send({ type: 'place_unlock', id: id });
-      return;
+      window.CuyPlaces.updateStageNav();
     }
-    placePending = null;
-    window.CuyHome.openFeature(def.open.feature, def.open.arg);
-  }
-
-  function onPlacesKeydown(e) {
-    const btns = Array.from(e.currentTarget.querySelectorAll('.place-btn'));
-    const idx = btns.indexOf(document.activeElement);
-    if (idx < 0) return;
-    let next = -1;
-    if (e.key === 'ArrowRight') next = (idx + 1) % btns.length;
-    else if (e.key === 'ArrowLeft') next = (idx - 1 + btns.length) % btns.length;
-    else if (e.key === 'Home') next = 0;
-    else if (e.key === 'End') next = btns.length - 1;
-    if (next < 0) return;
-    e.preventDefault();
-    btns.forEach((b, i) => { b.tabIndex = i === next ? 0 : -1; });
-    btns[next].focus();
   }
 
   function removeBackBtn() {
@@ -745,7 +745,7 @@
     btn.type = 'button';
     btn.className = 'modal-back';
     btn.setAttribute('aria-label', 'Back to More');
-    btn.textContent = '← Back';
+    btn.textContent = 'Back';
     btn.addEventListener('click', () => {
       removeBackBtn();
       window.CuyHome.closeFeature({ keepBackdrop: true });
@@ -802,6 +802,7 @@
       if (elements.modalBody) {
         elements.modalBody.className = 'modal-body';
         elements.modalBody.innerHTML = '';
+        elements.modalBody.removeAttribute('data-place');
       }
     },
     api: {

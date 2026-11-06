@@ -128,6 +128,8 @@
       return;
     }
     S.lastState = st;
+    container.dataset.place = 'farm';
+    container.setAttribute('data-place', 'farm');
     const f = st.farm;
     const crops = f.crops || [];
     const plots = f.plots || [];
@@ -138,9 +140,12 @@
     if (!f.unlocked) {
       const place = ((st.places && st.places.places) || []).find(x => x.id === 'farm') || { unlockCost: 600 };
       const pending = S.unlockPending;
-      container.innerHTML = `<div class="farm-panel farm-locked">
+      const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('farm') : '';
+      container.innerHTML = `<div class="farm-panel farm-locked" data-place="farm">
+        ${arrows}
         <p>The farm is still closed.</p>
         <button type="button" class="farm-btn" data-open-farm="1">${pending ? 'Tap again to open' : 'Open for ' + place.unlockCost + ' clovers'}</button></div>`;
+      if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
       const openBtn = container.querySelector('[data-open-farm]');
       openBtn.addEventListener('click', () => {
         if (!S.unlockPending) { S.unlockPending = true; render(); return; }
@@ -204,8 +209,10 @@
     }).join('');
 
     const watered = Math.min(tools.plotsPerWater || 1, growingUnwatered);
+    const arrows = window.CuyPlaces ? window.CuyPlaces.renderArrowsHtml('farm') : '';
     container.innerHTML = `
-      <div class="farm-panel">
+      <div class="farm-panel" data-place="farm">
+        ${arrows}
         <div class="farm-top">
           <span class="farm-title">Farm</span>
           <span class="farm-meta">${f.harvests || 0} harvests · ${ripe} ready</span>
@@ -227,6 +234,7 @@
     });
     S.period = lightPeriod();
     ensureLights();
+    if (window.CuyPlaces) window.CuyPlaces.bindArrows(container);
 
     container.querySelectorAll('.farm-plot').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -325,6 +333,7 @@
     open(container, api) {
       S.container = container;
       S.api = api;
+      if (window.CuyPlaces) window.CuyPlaces.setCurrentPlace('farm');
       S.menuPlot = null;
       S.periodAt = Date.now();
       render();
