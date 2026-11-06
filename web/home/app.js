@@ -194,10 +194,25 @@
     }
   }
 
+  // Admin console: Ctrl+Shift+A -> "unlockall" or "clovers 5000"
+  document.addEventListener('keydown', (e) => {
+    if (!(e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a')) return;
+    const text = (window.prompt('Admin: unlockall | clovers <n> | age baby|junior|adult|senior|legend|<pig days>') || '').trim().toLowerCase();
+    const a = /^age\s+([\w.]+)$/.exec(text);
+    if (a) { window.bridge.send({ type: 'admin', cmd: 'age', arg: a[1] }); return; }
+    const m = /^(unlockall|clovers)(?:\s+(\d+))?$/.exec(text);
+    if (m) window.bridge.send({ type: 'admin', cmd: m[1], amount: m[2] ? parseInt(m[2], 10) : 0 });
+  });
+
   function submitName() {
     const input = document.getElementById('nameInput');
     const error = document.getElementById('nameError');
     const name = (input.value || '').trim().replace(/\s+/g, ' ');
+    if (name.toLowerCase() === '/admin') {
+      window.bridge.send({ type: 'admin', cmd: 'unlockall' });
+      input.value = '';
+      return;
+    }
     if (!name || !/^[\p{L}\p{N} ]+$/u.test(name)) {
       error.hidden = false;
       return;

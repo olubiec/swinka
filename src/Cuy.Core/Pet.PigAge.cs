@@ -28,6 +28,33 @@ namespace Cuy.Core
             return null;
         }
 
+        /// <summary>Admin/test command: sets the lead pig's age (and the pet's birth date) to the given pig days.</summary>
+        public void AdminSetAgePigDays(double pigDays)
+        {
+            double perDay = Balance.PigDaysPerRealDay > 0 ? Balance.PigDaysPerRealDay : 21.0;
+            DateTime birth = Clock.UtcNow.AddDays(-Math.Max(0, pigDays) / perDay);
+            State.BirthDateUtc = birth;
+            var lead = LeadPig();
+            if (lead != null) lead.BornAtUtc = birth;
+        }
+
+        /// <summary>Admin/test command: jumps to the start of a life stage ("baby", "junior", "adult", "senior", "legend").</summary>
+        public bool AdminSetStage(string stage)
+        {
+            double days;
+            switch ((stage ?? "").ToLowerInvariant())
+            {
+                case "baby": days = 0; break;
+                case "junior": days = LifeStages.JuniorFromPigDays + 0.5; break;
+                case "adult": days = LifeStages.AdultFromPigDays + 0.5; break;
+                case "senior": days = LifeStages.SeniorFromPigDays + 0.5; break;
+                case "legend": days = LifeStages.LegendFromPigDays + 0.5; break;
+                default: return false;
+            }
+            AdminSetAgePigDays(days);
+            return true;
+        }
+
         private DateTime? LeadBirthUtc()
         {
             return LeadPig()?.BornAtUtc;
