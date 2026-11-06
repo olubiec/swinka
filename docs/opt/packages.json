@@ -997,69 +997,163 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P3q-windows-checks-wave-p3.md"
   },
-  "PK-P3c": {
-   "wave": "P3c",
-   "title": "Core: pig location and scene data",
+  "PK-P31a": {
+   "wave": "P31a",
+   "title": "Scene data JSON for all places",
    "items": [],
    "files": [
-    "src/Cuy.Core/Pigs/PigLocation.cs",
-    "src/Cuy.Core/GameState.PigLocation.cs",
-    "assets/data/pig_roaming.json",
     "assets/data/place_scenes.json",
-    "src/Cuy/dotNet/Features/PlacesFeature.cs",
-    "tests/Cuy.Core.Tests/PigLocationTests.cs",
     "tools/qa/place-scenes-check.js",
-    "docs/opt/log/PK-P3c.md"
+    "docs/opt/log/PK-P31a.md"
    ],
-   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLocation\" && node tools/qa/place-scenes-check.js",
+   "verify": "node --check tools/qa/place-scenes-check.js && node tools/qa/place-scenes-check.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P3c-core-pig-location-and-scene-data.md"
+   "prompt_file": "docs/prompts/PK-P31a-scene-data-json.md"
   },
-  "PK-P3d": {
-   "wave": "P3d",
-   "title": "Scene engine: walkable pseudo-3D places",
+  "PK-P31b": {
+   "wave": "P31a",
+   "title": "Core: pig location and roaming",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Pigs/PigLocation.cs",
+    "src/Cuy.Core/Pigs/PigRoamingConfig.cs",
+    "src/Cuy.Core/GameState.PigLocation.cs",
+    "assets/data/pig_roaming.json",
+    "tests/Cuy.Core.Tests/PigLocationTests.cs",
+    "docs/opt/log/PK-P31b.md"
+   ],
+   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLocation\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P31b-core-pig-location.md"
+  },
+  "PK-P31q": {
+   "wave": "P31q",
+   "title": "Windows checks after wave P31",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P31q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/place-scenes-check.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P31q-windows-checks-wave-p31.md"
+  },
+  "PK-P32a": {
+   "wave": "P32a",
+   "title": "Bridge: scene order and pig messages",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Pigs/SceneOrder.cs",
+    "tests/Cuy.Core.Tests/SceneOrderTests.cs",
+    "src/Cuy/dotNet/Features/PlacesFeature.cs",
+    "docs/contracts/places-pig-location.md",
+    "docs/opt/log/PK-P32a.md"
+   ],
+   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~SceneOrder|FullyQualifiedName~PigLocation\" && node --check tools/qa/lib/ux.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P32a-bridge-scene-order-and-pig-messages.md"
+  },
+  "PK-P32b": {
+   "wave": "P32a",
+   "title": "scenes.js and browser mock",
+   "items": [],
+   "files": [
+    "web/home/features/places/scenes.js",
+    "web/home/features/places/mock.js",
+    "web/home/features/index.json",
+    "tools/qa/ux-p32-scenes-data.js",
+    "docs/opt/log/PK-P32b.md"
+   ],
+   "verify": "node --check web/home/features/places/scenes.js && node --check web/home/features/places/mock.js && node --check tools/qa/ux-p32-scenes-data.js && node tools/qa/ux-p32-scenes-data.js && node tools/qa/place-scenes-check.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P32b-scenes-js-and-browser-mock.md"
+  },
+  "PK-P32q": {
+   "wave": "P32q",
+   "title": "Windows checks after wave P32",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P32q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/place-scenes-check.js && node tools/qa/ux-p32-scenes-data.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P32q-windows-checks-wave-p32.md"
+  },
+  "PK-P33a": {
+   "wave": "P33a",
+   "title": "Canvas draws any scene",
    "items": [],
    "files": [
     "web/home/canvas-pig.js",
     "web/home/features/places/scenes.js",
-    "web/home/features/places/mock.js",
-    "tools/qa/ux-p3-scenes.js",
-    "docs/opt/log/PK-P3d.md"
+    "tools/qa/ux-p33-scene-draw.js",
+    "docs/opt/log/PK-P33a.md"
    ],
-   "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p3-scenes.js && node tools/qa/ux-p3-scenes.js && node tools/qa/check-assets.js",
+   "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/check-assets.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P3d-scene-engine-walkable-places.md"
+   "prompt_file": "docs/prompts/PK-P33a-canvas-scene-background-and-draw-order.md"
   },
-  "PK-P3e": {
-   "wave": "P3e",
-   "title": "Main window shows the place, bar in game style",
+  "PK-P33q": {
+   "wave": "P33q",
+   "title": "Windows checks after wave P33",
    "items": [],
    "files": [
-    "web/home/app.js",
-    "web/home/index.html",
-    "web/home/style.css",
-    "web/home/features/places/feature.js",
-    "web/home/features/places/feature.css",
-    "web/home/features/rooms/feature.js",
-    "web/home/features/garden/feature.js",
-    "web/home/features/farm/feature.js",
-    "web/home/features/market/feature.js",
-    "tools/qa/ux-p3-world.js",
-    "docs/opt/log/PK-P3e.md"
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P33q.md"
    ],
-   "verify": "node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p3-world.js && node tools/qa/ux-p3-world.js && node tools/qa/ux-p3-places.js",
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P33q-windows-checks-wave-p33.md"
+  },
+  "PK-P34a": {
+   "wave": "P34a",
+   "title": "Pig walks in 2D, depth, exits",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p34-pig-walk.js",
+    "docs/opt/log/PK-P34a.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p34-pig-walk.js && node tools/qa/ux-p34-pig-walk.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P3e-main-window-places-bar.md"
+   "prompt_file": "docs/prompts/PK-P34a-pig-walks-in-2d-with-depth-and-exits.md"
   },
-  "PK-P3f": {
-   "wave": "P3f",
-   "title": "Arrows, back and close from the pixel-art UI library",
+  "PK-P34q": {
+   "wave": "P34q",
+   "title": "Windows checks after wave P34",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P34q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P34q-windows-checks-wave-p34.md"
+  },
+  "PK-P35a": {
+   "wave": "P35a",
+   "title": "UI art: arrows and back in the library",
    "items": [],
    "files": [
     "tools/art/ui_arrows.py",
@@ -1070,33 +1164,171 @@
     "assets/ui/back_btn.png",
     "assets/ui/back_btn_pressed.png",
     "assets/ui/ui.json",
+    "docs/qa/shots/p35a-ui-pieces.png",
+    "docs/opt/log/PK-P35a.md"
+   ],
+   "verify": "python3 tools/art/ui_arrows.py && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js && node tools/qa/check-icons.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P35a-ui-art-arrows-and-back.md"
+  },
+  "PK-P35b": {
+   "wave": "P35a",
+   "title": "Remove old preview arrows and house plan",
+   "items": [],
+   "files": [
+    "web/home/features/places/feature.js",
+    "web/home/features/places/feature.css",
+    "web/home/features/rooms/feature.js",
+    "web/home/features/rooms/plan.js",
+    "web/home/features/rooms/plan.css",
+    "web/home/features/garden/feature.js",
+    "web/home/features/farm/feature.js",
+    "web/home/features/market/feature.js",
+    "web/home/app.js",
+    "web/home/index.html",
+    "tools/qa/ux-p3-places.js",
+    "tools/qa/ux-p35-cleanup.js",
+    "docs/opt/log/PK-P35b.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p35-cleanup.js && node tools/qa/ux-p35-cleanup.js && node tools/qa/ux-p1-decorate.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P35b-remove-old-places-ui.md"
+  },
+  "PK-P35q": {
+   "wave": "P35q",
+   "title": "Windows checks after wave P35",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P35q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P35q-windows-checks-wave-p35.md"
+  },
+  "PK-P36a": {
+   "wave": "P36a",
+   "title": "Main window places bar",
+   "items": [],
+   "files": [
+    "web/home/app.js",
+    "web/home/index.html",
+    "web/home/style.css",
+    "web/home/features/places/feature.js",
+    "web/home/features/places/feature.css",
+    "tools/qa/ux-p36-bar.js",
+    "docs/opt/log/PK-P36a.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check tools/qa/ux-p36-bar.js && node tools/qa/ux-p36-bar.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P36a-main-window-places-bar.md"
+  },
+  "PK-P36b": {
+   "wave": "P36a",
+   "title": "Rooms window scroll",
+   "items": [],
+   "files": [
+    "web/home/features/rooms/feature.css",
+    "web/home/features/rooms/customize.css",
+    "web/home/features/rooms/dorm.css",
+    "web/home/features/rooms/feature.js",
+    "tools/qa/ux-p36-rooms-scroll.js",
+    "docs/opt/log/PK-P36b.md"
+   ],
+   "verify": "node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p36-rooms-scroll.js && node tools/qa/ux-p36-rooms-scroll.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P36b-rooms-window-scroll.md"
+  },
+  "PK-P36q": {
+   "wave": "P36q",
+   "title": "Windows checks after wave P36",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P36q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P36q-windows-checks-wave-p36.md"
+  },
+  "PK-P37a": {
+   "wave": "P37a",
+   "title": "Unify close, back, arrow controls",
+   "items": [],
+   "files": [
     "web/home/style.css",
     "web/home/app.js",
     "web/home/assets/ui/back.svg",
     "web/home/assets/ui/close.svg",
+    "web/home/features/places/feature.css",
     "tools/qa/ux-p3-icons.js",
     "docs/qa/shots/",
-    "docs/opt/log/PK-P3f.md"
+    "docs/opt/log/PK-P37a.md"
    ],
    "verify": "node --check web/home/app.js && node --check tools/qa/ux-p3-icons.js && node tools/qa/ux-p3-icons.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P3f-ui-icons-from-library.md"
+   "prompt_file": "docs/prompts/PK-P37a-unify-close-back-arrow-controls.md"
   },
-  "PK-P3rq": {
-   "wave": "P3rq",
-   "title": "Windows checks after the P3 rework",
+  "PK-P37q": {
+   "wave": "P37q",
+   "title": "Windows checks after wave P37",
    "items": [],
    "files": [
     "docs/qa/UX_WAVE_CHECKS.md",
-    "docs/opt/log/PK-P3rq.md"
+    "docs/opt/log/PK-P37q.md"
    ],
-   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && node tools/qa/place-scenes-check.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
    "gate": false,
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P3rq-windows-checks-wave-p3-rework.md"
+   "prompt_file": "docs/prompts/PK-P37q-windows-checks-wave-p37.md"
+  },
+  "PK-P38a": {
+   "wave": "P38a",
+   "title": "Pig presence, chip, exits",
+   "items": [],
+   "files": [
+    "web/home/features/places/feature.js",
+    "web/home/features/places/feature.css",
+    "web/home/features/places/mock.js",
+    "web/home/app.js",
+    "web/home/style.css",
+    "tools/qa/ux-p38-presence.js",
+    "docs/opt/log/PK-P38a.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p38-presence.js && node tools/qa/ux-p38-presence.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P38a-pig-presence-chip-and-exits.md"
+  },
+  "PK-P38q": {
+   "wave": "P38q",
+   "title": "Windows checks after wave P38",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P38q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P38q-windows-checks-wave-p38.md"
   },
   "PK-P4a": {
    "wave": "P4a",

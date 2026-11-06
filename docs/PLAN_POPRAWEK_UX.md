@@ -80,26 +80,65 @@ Cel: domek, ogród, park, farma, targ to osobne okna; strzałki po bokach przeł
 | P3-04 | Strzałka cofania i krzyżyk zamknięcia z More w stylu designu gry (jedne wspólne ikony SVG/PNG, te same we wszystkich oknach funkcji) | `web/home/style.css`, `web/home/app.js`, `web/home/assets/ui/` | smoke: wszystkie okna funkcji mają te same ikony cofania i zamknięcia |
 | P3-05 | Plan domu usuwamy (decyzja człowieka 6.11): zostaje samo przełączanie pokoi strzałkami | `web/home/features/rooms/feature.js` | smoke: brak planu z ukosa; przełączanie pokoi działa |
 
-### Wynik testu P3 (6.11) i rework P3c-P3f
-Test właściciela: P3 nie przeszedł. Belka przełączania nie trzyma stylu, cofnij i X słabe (nowe SVG zamiast biblioteki gry), pokoje się nie przewijają, strzałka otwiera tylko podgląd, do miejsc nie da się wejść, tła ogrodu, parku, farmy i targu nie są wdrożone jako miejsca. Przyczyna: P3a/P3b zrobiły tylko interfejs, a świnka i scena zostały jednym domkiem. Decyzja: „pełne 3D" = pseudo-3D (widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, zasłaniana przez rzeczy stojące niżej), bez prawdziwego 3D/WebGL, bo łamie legendę stylu. Podgląd miejsc znika, bo każde miejsce jest sceną w głównym oknie.
+### Wynik testu P3 (6.11) i rework w falach P31-P38
+Test właściciela: P3 nie przeszedł. Belka nie trzyma stylu, cofnij i X słabe (nowe SVG zamiast biblioteki gry), pokoje się nie przewijają, strzałka otwiera tylko podgląd, do miejsc nie da się wejść, tła ogrodu, parku, farmy i targu nie są wdrożone jako miejsca. Przyczyna: P3a/P3b zrobiły tylko interfejs; scena i świnka zostały jednym domkiem. Decyzja: „pełne 3D" = pseudo-3D (widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, zasłaniana przez rzeczy stojące niżej), bez prawdziwego 3D/WebGL, bo łamie legendę stylu. Podgląd miejsc znika: każde miejsce jest sceną w głównym oknie. Prompty paczek: `docs/prompts/PK-P3N*.md`. Każda paczka grafiki ma blok zasad stylu (legenda `docs/STYL_SWIATA.md`, paleta 42 kolorów, najpierw gotowy PNG z `assets/`, nowy tylko skryptem z `tools/art/` + `style_check.py`).
 
-| ID | Zadanie | Paczka |
+| Fala | Paczki (równolegle w obrębie wpisu) | Zadanie |
 |---|---|---|
-| P3c | Core: jedna lokalizacja każdej świnki (miejsce, pokój, przypięcie), wędrówka tylko do sąsiednich odblokowanych miejsc, dane scen (pas podłogi, wyjścia) dla 5 miejsc. Wciąga P5-01 | PK-P3c |
-| P3d | Silnik scen: tło miejsca z `assets/world/bg`, chodzenie w 2D z głębią, y-sort, wyjścia, rysowanie zapisanych dekoracji | PK-P3d |
-| P3e | Główne okno pokazuje miejsce, belka w stylu gry, brak okien podglądu i strzałek w oknach, pasek „Cuy is in ...", przewijanie pokoi | PK-P3e |
-| P3f | Strzałki, cofnij i X z biblioteki PNG gry (`close_btn.png` wszędzie), usunięcie SVG, zrzuty ekranu do oceny | PK-P3f |
-| P3rq | Testy na Windowsie | PK-P3rq |
+| P31 | PK-P31a, PK-P31b, potem PK-P31q | a: dane scen (tło, pas podłogi, wyjścia) + checker; b: Core: jedna lokalizacja świnki, wędrówka do sąsiadów, przypięcie (wciąga P5-01) |
+| P32 | PK-P32a, PK-P32b, PK-P32q | a: C#: kolejność scen i wiadomości `pigMove`/`pigPin`; b: `scenes.js` + mock przeglądarkowy |
+| P33 | PK-P33a, PK-P33q | płótno rysuje dowolną scenę: tło, rozmiar, y-sort, zapisane dekoracje, ukrycie świnki |
+| P34 | PK-P34a, PK-P34q | świnka chodzi w 2D z głębią i skalą, wychodzi i wchodzi przez wyjścia |
+| P35 | PK-P35a, PK-P35b, PK-P35q | a: nowe PNG strzałek i „wstecz" w stylu `close_btn.png`; b: usunięcie strzałek w oknach i planu domu |
+| P36 | PK-P36a, PK-P36b, PK-P36q | a: belka miejsc w głównym oknie przełącza sceny; b: okno Pokoi się przewija |
+| P37 | PK-P37a, PK-P37q | jedne X, cofnij i strzałki z PNG wszędzie, usunięcie SVG, zrzuty ekranu |
+| P38 | PK-P38a, PK-P38q | chip „Cuy is in ...", „Go there", wyjścia zmieniają miejsce świnki |
 
-Każda paczka grafiki ma w prompcie obowiązkowy blok: legenda `docs/STYL_SWIATA.md`, paleta 42 kolorów, najpierw istniejący PNG z `assets/`, nowy tylko skryptem z `tools/art/` i `style_check.py`.
+Kolejność sesji: 31, 32, 33, 34, 35, 36, 37, 38. Zależności są między falami, więc nie zmieniaj kolejności.
 
-### Do sprawdzenia po P3 (rework)
-1. Belka nad sceną ma ramkę i strzałki jak reszta okna gry, jeden rząd, bez glifów tekstowych.
-2. Strzałki przechodzą: salon, pokoje świnek, ogród, park, farma, targ, od nowa. Każde miejsce to własne tło z gry, nie okno podglądu.
-3. Świnka chodzi po całej podłodze (w głąb i wszerz), wchodzi i wychodzi przez drzwi lub furtkę. W innym miejscu widzisz „Cuy is in ...".
-4. Wszystkie X i cofnij wyglądają tak jak X w nagłówku. W oknach z More nie ma dodatkowych strzałek.
-5. Okno pokoi przewija się do końca.
-6. Zrzuty `docs/qa/shots/p3f-*.png` wyglądają jak gra.
+### Do sprawdzenia po P31 (Core i dane, nic jeszcze nie widać)
+1. Testy Core `PigLocation` i `place-scenes-check` zielone w logu `PK-P31q`.
+2. `assets/data/place_scenes.json` ma 4 miejsca i pas podłogi dla każdego (log PK-P31a podaje prostokąty). Opcjonalnie: otwórz `assets/world/bg/garden_day.png` i sprawdź, czy prostokąt leży na trawie, nie na stawie.
+3. Gra startuje jak dotąd, nic się nie zmieniło.
+
+### Do sprawdzenia po P32 (mostek)
+1. Gra startuje, Home się otwiera, brak błędów w `%LocalAppData%\Cuy\logs\cuy.log` ze słowami places/pigLocation.
+2. W logu `PK-P32a` jest kontrakt wiadomości (`docs/contracts/places-pig-location.md`).
+3. Wizualnie bez zmian.
+
+### Do sprawdzenia po P33 (płótno rysuje sceny)
+1. Wizualnie nadal bez belki, ale testy `ux-p33-scene-draw` pokazują, że ogród, park, farma, targ mają własne tło, a pokój nadal ma tapetę i podłogę.
+2. Domek wygląda jak przed zmianą (brak regresji): tapeta, podłoga, meble, świnka chodzi.
+3. Klik i przeciąganie świnki działają jak wcześniej.
+
+### Do sprawdzenia po P34 (chodzenie)
+1. Świnka w domku chodzi po całej podłodze, także w głąb ekranu, i jest trochę mniejsza, gdy stoi wyżej.
+2. Zabawki (tunel, domek) nadal działają.
+3. Przeciągnięcie świnki poza okno nadal wyprowadza ją na pulpit.
+4. Brak migotania, przeskoków rozmiaru i rozmycia.
+
+### Do sprawdzenia po P35 (grafika UI i sprzątanie)
+1. Obejrzyj `docs/qa/shots/p35a-ui-pieces.png`: strzałki i „wstecz" są z tej samej rodziny co X (drewniana ramka, jasny znak). Jeśli nie, napisz co poprawić.
+2. W oknach Pokoje, Ogród, Farma, Targ nie ma już strzałek na bokach ani planu domu. Pokoje przełączasz zakładkami w oknie Pokoi.
+3. Decorate działa jak wcześniej.
+
+### Do sprawdzenia po P36 (belka w głównym oknie)
+1. Nad sceną jest belka `[<] Nazwa [>]` w drewnianym stylu gry, w jednym rzędzie.
+2. Strzałki przechodzą: salon, pokoje świnek, wspólna sypialnia, ogród, park, farma, targ, od nowa. Każde miejsce ma własne tło z gry. Klawisze ←/→ też.
+3. Żadne okno się nie otwiera przy przełączaniu.
+4. Zablokowane miejsce jest przyciemnione z kłódką i podpowiedzią odblokowania.
+5. Okno Pokoi przewija się do końca, zakładki w jednym rzędzie, aktywna widoczna (spróbuj przy 4 i 6 pokojach).
+
+### Do sprawdzenia po P37 (jednolite przyciski)
+1. Obejrzyj `docs/qa/shots/p37-*.png`: wszystkie X wyglądają jak X w nagłówku, wszystkie „wstecz" i strzałki jak z biblioteki.
+2. Klikasz X i wstecz w 6 różnych oknach z More: te same ikony, działają, Esc zamyka.
+3. Brak cienkich białych X i znaków tekstowych.
+
+### Do sprawdzenia po P38 (świnka w jednym miejscu)
+1. W miejscu, w którym świnki nie ma, widać chip „Cuy is in <miejsce>" i przycisk „Go there".
+2. Poczekaj kilka minut: świnka wychodzi drzwiami lub furtką i po chwili jest w sąsiednim miejscu. Jeśli patrzysz tam, widzisz jak wchodzi.
+3. Zablokowane miejsce nie przyjmuje świnki.
+4. Po restarcie gry świnka jest tam, gdzie była.
 
 ### Do sprawdzenia po P3 (pierwsza wersja, nieaktualna)
 1. Strzałki po bokach przechodzą: dom (pokoje) → ogród → park → farma → targ.

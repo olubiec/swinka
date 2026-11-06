@@ -242,33 +242,103 @@
       ]
     },
     {
-      "id": "P3c",
+      "id": "P31a",
       "packages": [
-        "PK-P3c"
+        "PK-P31a",
+        "PK-P31b"
       ]
     },
     {
-      "id": "P3d",
+      "id": "P31q",
       "packages": [
-        "PK-P3d"
+        "PK-P31q"
       ]
     },
     {
-      "id": "P3e",
+      "id": "P32a",
       "packages": [
-        "PK-P3e"
+        "PK-P32a",
+        "PK-P32b"
       ]
     },
     {
-      "id": "P3f",
+      "id": "P32q",
       "packages": [
-        "PK-P3f"
+        "PK-P32q"
       ]
     },
     {
-      "id": "P3rq",
+      "id": "P33a",
       "packages": [
-        "PK-P3rq"
+        "PK-P33a"
+      ]
+    },
+    {
+      "id": "P33q",
+      "packages": [
+        "PK-P33q"
+      ]
+    },
+    {
+      "id": "P34a",
+      "packages": [
+        "PK-P34a"
+      ]
+    },
+    {
+      "id": "P34q",
+      "packages": [
+        "PK-P34q"
+      ]
+    },
+    {
+      "id": "P35a",
+      "packages": [
+        "PK-P35a",
+        "PK-P35b"
+      ]
+    },
+    {
+      "id": "P35q",
+      "packages": [
+        "PK-P35q"
+      ]
+    },
+    {
+      "id": "P36a",
+      "packages": [
+        "PK-P36a",
+        "PK-P36b"
+      ]
+    },
+    {
+      "id": "P36q",
+      "packages": [
+        "PK-P36q"
+      ]
+    },
+    {
+      "id": "P37a",
+      "packages": [
+        "PK-P37a"
+      ]
+    },
+    {
+      "id": "P37q",
+      "packages": [
+        "PK-P37q"
+      ]
+    },
+    {
+      "id": "P38a",
+      "packages": [
+        "PK-P38a"
+      ]
+    },
+    {
+      "id": "P38q",
+      "packages": [
+        "PK-P38q"
       ]
     },
     {
@@ -876,43 +946,163 @@
       "items": []
     },
     {
-      "id": "PK-P3c",
-      "tier": "high",
-      "title": "Core: pig location and scene data",
-      "manual": "docs/prompts/PK-P3c-core-pig-location-and-scene-data.md",
-      "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLocation\" && node tools/qa/place-scenes-check.js",
-      "items": []
-    },
-    {
-      "id": "PK-P3d",
-      "tier": "high",
-      "title": "Scene engine: walkable pseudo-3D places",
-      "manual": "docs/prompts/PK-P3d-scene-engine-walkable-places.md",
-      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p3-scenes.js && node tools/qa/ux-p3-scenes.js && node tools/qa/check-assets.js",
-      "items": []
-    },
-    {
-      "id": "PK-P3e",
+      "id": "PK-P31a",
       "tier": "mid",
-      "title": "Main window shows the place, bar in game style",
-      "manual": "docs/prompts/PK-P3e-main-window-places-bar.md",
-      "verify": "node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p3-world.js && node tools/qa/ux-p3-world.js && node tools/qa/ux-p3-places.js",
+      "title": "Scene data JSON for all places",
+      "manual": "docs/prompts/PK-P31a-scene-data-json.md",
+      "verify": "node --check tools/qa/place-scenes-check.js && node tools/qa/place-scenes-check.js",
       "items": []
     },
     {
-      "id": "PK-P3f",
+      "id": "PK-P31b",
+      "tier": "high",
+      "title": "Core: pig location and roaming",
+      "manual": "docs/prompts/PK-P31b-core-pig-location.md",
+      "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLocation\"",
+      "items": []
+    },
+    {
+      "id": "PK-P32a",
+      "tier": "high",
+      "title": "Bridge: scene order and pig messages",
+      "manual": "docs/prompts/PK-P32a-bridge-scene-order-and-pig-messages.md",
+      "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~SceneOrder|FullyQualifiedName~PigLocation\" && node --check tools/qa/lib/ux.js",
+      "items": []
+    },
+    {
+      "id": "PK-P32b",
       "tier": "mid",
-      "title": "Arrows, back and close from the pixel-art UI library",
-      "manual": "docs/prompts/PK-P3f-ui-icons-from-library.md",
+      "title": "scenes.js and browser mock",
+      "manual": "docs/prompts/PK-P32b-scenes-js-and-browser-mock.md",
+      "verify": "node --check web/home/features/places/scenes.js && node --check web/home/features/places/mock.js && node --check tools/qa/ux-p32-scenes-data.js && node tools/qa/ux-p32-scenes-data.js && node tools/qa/place-scenes-check.js",
+      "items": []
+    },
+    {
+      "id": "PK-P33a",
+      "tier": "high",
+      "title": "Canvas draws any scene",
+      "manual": "docs/prompts/PK-P33a-canvas-scene-background-and-draw-order.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/check-assets.js",
+      "items": []
+    },
+    {
+      "id": "PK-P34a",
+      "tier": "high",
+      "title": "Pig walks in 2D, depth, exits",
+      "manual": "docs/prompts/PK-P34a-pig-walks-in-2d-with-depth-and-exits.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p34-pig-walk.js && node tools/qa/ux-p34-pig-walk.js",
+      "items": []
+    },
+    {
+      "id": "PK-P35a",
+      "tier": "mid",
+      "title": "UI art: arrows and back in the library",
+      "manual": "docs/prompts/PK-P35a-ui-art-arrows-and-back.md",
+      "verify": "python3 tools/art/ui_arrows.py && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js && node tools/qa/check-icons.js",
+      "items": []
+    },
+    {
+      "id": "PK-P35b",
+      "tier": "mid",
+      "title": "Remove old preview arrows and house plan",
+      "manual": "docs/prompts/PK-P35b-remove-old-places-ui.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p35-cleanup.js && node tools/qa/ux-p35-cleanup.js && node tools/qa/ux-p1-decorate.js",
+      "items": []
+    },
+    {
+      "id": "PK-P36a",
+      "tier": "high",
+      "title": "Main window places bar",
+      "manual": "docs/prompts/PK-P36a-main-window-places-bar.md",
+      "verify": "node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check tools/qa/ux-p36-bar.js && node tools/qa/ux-p36-bar.js",
+      "items": []
+    },
+    {
+      "id": "PK-P36b",
+      "tier": "mid",
+      "title": "Rooms window scroll",
+      "manual": "docs/prompts/PK-P36b-rooms-window-scroll.md",
+      "verify": "node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p36-rooms-scroll.js && node tools/qa/ux-p36-rooms-scroll.js",
+      "items": []
+    },
+    {
+      "id": "PK-P37a",
+      "tier": "mid",
+      "title": "Unify close, back, arrow controls",
+      "manual": "docs/prompts/PK-P37a-unify-close-back-arrow-controls.md",
       "verify": "node --check web/home/app.js && node --check tools/qa/ux-p3-icons.js && node tools/qa/ux-p3-icons.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt",
       "items": []
     },
     {
-      "id": "PK-P3rq",
+      "id": "PK-P38a",
+      "tier": "high",
+      "title": "Pig presence, chip, exits",
+      "manual": "docs/prompts/PK-P38a-pig-presence-chip-and-exits.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p38-presence.js && node tools/qa/ux-p38-presence.js",
+      "items": []
+    },
+    {
+      "id": "PK-P31q",
       "tier": "low",
-      "title": "Windows checks after the P3 rework",
-      "manual": "docs/prompts/PK-P3rq-windows-checks-wave-p3-rework.md",
-      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && node tools/qa/place-scenes-check.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "title": "Windows checks after wave P31",
+      "manual": "docs/prompts/PK-P31q-windows-checks-wave-p31.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/place-scenes-check.js",
+      "items": []
+    },
+    {
+      "id": "PK-P32q",
+      "tier": "low",
+      "title": "Windows checks after wave P32",
+      "manual": "docs/prompts/PK-P32q-windows-checks-wave-p32.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/place-scenes-check.js && node tools/qa/ux-p32-scenes-data.js",
+      "items": []
+    },
+    {
+      "id": "PK-P33q",
+      "tier": "low",
+      "title": "Windows checks after wave P33",
+      "manual": "docs/prompts/PK-P33q-windows-checks-wave-p33.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js",
+      "items": []
+    },
+    {
+      "id": "PK-P34q",
+      "tier": "low",
+      "title": "Windows checks after wave P34",
+      "manual": "docs/prompts/PK-P34q-windows-checks-wave-p34.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js",
+      "items": []
+    },
+    {
+      "id": "PK-P35q",
+      "tier": "low",
+      "title": "Windows checks after wave P35",
+      "manual": "docs/prompts/PK-P35q-windows-checks-wave-p35.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt",
+      "items": []
+    },
+    {
+      "id": "PK-P36q",
+      "tier": "low",
+      "title": "Windows checks after wave P36",
+      "manual": "docs/prompts/PK-P36q-windows-checks-wave-p36.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P37q",
+      "tier": "low",
+      "title": "Windows checks after wave P37",
+      "manual": "docs/prompts/PK-P37q-windows-checks-wave-p37.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P38q",
+      "tier": "low",
+      "title": "Windows checks after wave P38",
+      "manual": "docs/prompts/PK-P38q-windows-checks-wave-p38.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
       "items": []
     }
   ]

@@ -1046,62 +1046,131 @@ waves:
     test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
-- id: P3c
+- id: P31a
   tasks:
-  - id: PK-P3c
-    title: 'PK-P3c: Core: pig location and scene data'
-    prompt_file: docs/prompts/PK-P3c-core-pig-location-and-scene-data.md
+  - id: PK-P31a
+    title: 'PK-P31a: Scene data JSON for all places'
+    prompt_file: docs/prompts/PK-P31a-scene-data-json.md
     files:
-    - src/Cuy.Core/Pigs/PigLocation.cs
-    - src/Cuy.Core/GameState.PigLocation.cs
-    - assets/data/pig_roaming.json
     - assets/data/place_scenes.json
-    - src/Cuy/dotNet/Features/PlacesFeature.cs
-    - tests/Cuy.Core.Tests/PigLocationTests.cs
     - tools/qa/place-scenes-check.js
-    - docs/opt/log/PK-P3c.md
-    test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigLocation" && node tools/qa/place-scenes-check.js
+    - docs/opt/log/PK-P31a.md
+    test_command: node --check tools/qa/place-scenes-check.js && node tools/qa/place-scenes-check.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
-- id: P3d
+  - id: PK-P31b
+    title: 'PK-P31b: Core: pig location and roaming'
+    prompt_file: docs/prompts/PK-P31b-core-pig-location.md
+    files:
+    - src/Cuy.Core/Pigs/PigLocation.cs
+    - src/Cuy.Core/Pigs/PigRoamingConfig.cs
+    - src/Cuy.Core/GameState.PigLocation.cs
+    - assets/data/pig_roaming.json
+    - tests/Cuy.Core.Tests/PigLocationTests.cs
+    - docs/opt/log/PK-P31b.md
+    test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigLocation"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P31q
   tasks:
-  - id: PK-P3d
-    title: 'PK-P3d: Scene engine: walkable pseudo-3D places'
-    prompt_file: docs/prompts/PK-P3d-scene-engine-walkable-places.md
+  - id: PK-P31q
+    title: 'PK-P31q: Windows checks after wave P31'
+    prompt_file: docs/prompts/PK-P31q-windows-checks-wave-p31.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P31q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/place-scenes-check.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P32a
+  tasks:
+  - id: PK-P32a
+    title: 'PK-P32a: Bridge: scene order and pig messages'
+    prompt_file: docs/prompts/PK-P32a-bridge-scene-order-and-pig-messages.md
+    files:
+    - src/Cuy.Core/Pigs/SceneOrder.cs
+    - tests/Cuy.Core.Tests/SceneOrderTests.cs
+    - src/Cuy/dotNet/Features/PlacesFeature.cs
+    - docs/contracts/places-pig-location.md
+    - docs/opt/log/PK-P32a.md
+    test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~SceneOrder|FullyQualifiedName~PigLocation" && node --check tools/qa/lib/ux.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P32b
+    title: 'PK-P32b: scenes.js and browser mock'
+    prompt_file: docs/prompts/PK-P32b-scenes-js-and-browser-mock.md
+    files:
+    - web/home/features/places/scenes.js
+    - web/home/features/places/mock.js
+    - web/home/features/index.json
+    - tools/qa/ux-p32-scenes-data.js
+    - docs/opt/log/PK-P32b.md
+    test_command: node --check web/home/features/places/scenes.js && node --check web/home/features/places/mock.js && node --check tools/qa/ux-p32-scenes-data.js && node tools/qa/ux-p32-scenes-data.js && node tools/qa/place-scenes-check.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P32q
+  tasks:
+  - id: PK-P32q
+    title: 'PK-P32q: Windows checks after wave P32'
+    prompt_file: docs/prompts/PK-P32q-windows-checks-wave-p32.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P32q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/place-scenes-check.js && node tools/qa/ux-p32-scenes-data.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P33a
+  tasks:
+  - id: PK-P33a
+    title: 'PK-P33a: Canvas draws any scene'
+    prompt_file: docs/prompts/PK-P33a-canvas-scene-background-and-draw-order.md
     files:
     - web/home/canvas-pig.js
     - web/home/features/places/scenes.js
-    - web/home/features/places/mock.js
-    - tools/qa/ux-p3-scenes.js
-    - docs/opt/log/PK-P3d.md
-    test_command: node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p3-scenes.js && node tools/qa/ux-p3-scenes.js && node tools/qa/check-assets.js
+    - tools/qa/ux-p33-scene-draw.js
+    - docs/opt/log/PK-P33a.md
+    test_command: node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/check-assets.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
-- id: P3e
+- id: P33q
   tasks:
-  - id: PK-P3e
-    title: 'PK-P3e: Main window shows the place, bar in game style'
-    prompt_file: docs/prompts/PK-P3e-main-window-places-bar.md
+  - id: PK-P33q
+    title: 'PK-P33q: Windows checks after wave P33'
+    prompt_file: docs/prompts/PK-P33q-windows-checks-wave-p33.md
     files:
-    - web/home/app.js
-    - web/home/index.html
-    - web/home/style.css
-    - web/home/features/places/feature.js
-    - web/home/features/places/feature.css
-    - web/home/features/rooms/feature.js
-    - web/home/features/garden/feature.js
-    - web/home/features/farm/feature.js
-    - web/home/features/market/feature.js
-    - tools/qa/ux-p3-world.js
-    - docs/opt/log/PK-P3e.md
-    test_command: node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p3-world.js && node tools/qa/ux-p3-world.js && node tools/qa/ux-p3-places.js
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P33q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P34a
+  tasks:
+  - id: PK-P34a
+    title: 'PK-P34a: Pig walks in 2D, depth, exits'
+    prompt_file: docs/prompts/PK-P34a-pig-walks-in-2d-with-depth-and-exits.md
+    files:
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p34-pig-walk.js
+    - docs/opt/log/PK-P34a.md
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p34-pig-walk.js && node tools/qa/ux-p34-pig-walk.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
-- id: P3f
+- id: P34q
   tasks:
-  - id: PK-P3f
-    title: 'PK-P3f: Arrows, back and close from the pixel-art UI library'
-    prompt_file: docs/prompts/PK-P3f-ui-icons-from-library.md
+  - id: PK-P34q
+    title: 'PK-P34q: Windows checks after wave P34'
+    prompt_file: docs/prompts/PK-P34q-windows-checks-wave-p34.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P34q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P35a
+  tasks:
+  - id: PK-P35a
+    title: 'PK-P35a: UI art: arrows and back in the library'
+    prompt_file: docs/prompts/PK-P35a-ui-art-arrows-and-back.md
     files:
     - tools/art/ui_arrows.py
     - assets/ui/arrow_left.png
@@ -1111,25 +1180,135 @@ waves:
     - assets/ui/back_btn.png
     - assets/ui/back_btn_pressed.png
     - assets/ui/ui.json
+    - docs/qa/shots/p35a-ui-pieces.png
+    - docs/opt/log/PK-P35a.md
+    test_command: python3 tools/art/ui_arrows.py && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js && node tools/qa/check-icons.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P35b
+    title: 'PK-P35b: Remove old preview arrows and house plan'
+    prompt_file: docs/prompts/PK-P35b-remove-old-places-ui.md
+    files:
+    - web/home/features/places/feature.js
+    - web/home/features/places/feature.css
+    - web/home/features/rooms/feature.js
+    - web/home/features/rooms/plan.js
+    - web/home/features/rooms/plan.css
+    - web/home/features/garden/feature.js
+    - web/home/features/farm/feature.js
+    - web/home/features/market/feature.js
+    - web/home/app.js
+    - web/home/index.html
+    - tools/qa/ux-p3-places.js
+    - tools/qa/ux-p35-cleanup.js
+    - docs/opt/log/PK-P35b.md
+    test_command: node --check web/home/features/places/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p35-cleanup.js && node tools/qa/ux-p35-cleanup.js && node tools/qa/ux-p1-decorate.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P35q
+  tasks:
+  - id: PK-P35q
+    title: 'PK-P35q: Windows checks after wave P35'
+    prompt_file: docs/prompts/PK-P35q-windows-checks-wave-p35.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P35q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P36a
+  tasks:
+  - id: PK-P36a
+    title: 'PK-P36a: Main window places bar'
+    prompt_file: docs/prompts/PK-P36a-main-window-places-bar.md
+    files:
+    - web/home/app.js
+    - web/home/index.html
+    - web/home/style.css
+    - web/home/features/places/feature.js
+    - web/home/features/places/feature.css
+    - tools/qa/ux-p36-bar.js
+    - docs/opt/log/PK-P36a.md
+    test_command: node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check tools/qa/ux-p36-bar.js && node tools/qa/ux-p36-bar.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P36b
+    title: 'PK-P36b: Rooms window scroll'
+    prompt_file: docs/prompts/PK-P36b-rooms-window-scroll.md
+    files:
+    - web/home/features/rooms/feature.css
+    - web/home/features/rooms/customize.css
+    - web/home/features/rooms/dorm.css
+    - web/home/features/rooms/feature.js
+    - tools/qa/ux-p36-rooms-scroll.js
+    - docs/opt/log/PK-P36b.md
+    test_command: node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p36-rooms-scroll.js && node tools/qa/ux-p36-rooms-scroll.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P36q
+  tasks:
+  - id: PK-P36q
+    title: 'PK-P36q: Windows checks after wave P36'
+    prompt_file: docs/prompts/PK-P36q-windows-checks-wave-p36.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P36q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P37a
+  tasks:
+  - id: PK-P37a
+    title: 'PK-P37a: Unify close, back, arrow controls'
+    prompt_file: docs/prompts/PK-P37a-unify-close-back-arrow-controls.md
+    files:
     - web/home/style.css
     - web/home/app.js
     - web/home/assets/ui/back.svg
     - web/home/assets/ui/close.svg
+    - web/home/features/places/feature.css
     - tools/qa/ux-p3-icons.js
     - docs/qa/shots/
-    - docs/opt/log/PK-P3f.md
+    - docs/opt/log/PK-P37a.md
     test_command: node --check web/home/app.js && node --check tools/qa/ux-p3-icons.js && node tools/qa/ux-p3-icons.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt
     model: gemini-3.8-flash-high
     timeout_minutes: 44
-- id: P3rq
+- id: P37q
   tasks:
-  - id: PK-P3rq
-    title: 'PK-P3rq: Windows checks after the P3 rework'
-    prompt_file: docs/prompts/PK-P3rq-windows-checks-wave-p3-rework.md
+  - id: PK-P37q
+    title: 'PK-P37q: Windows checks after wave P37'
+    prompt_file: docs/prompts/PK-P37q-windows-checks-wave-p37.md
     files:
     - docs/qa/UX_WAVE_CHECKS.md
-    - docs/opt/log/PK-P3rq.md
-    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && node tools/qa/place-scenes-check.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    - docs/opt/log/PK-P37q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P38a
+  tasks:
+  - id: PK-P38a
+    title: 'PK-P38a: Pig presence, chip, exits'
+    prompt_file: docs/prompts/PK-P38a-pig-presence-chip-and-exits.md
+    files:
+    - web/home/features/places/feature.js
+    - web/home/features/places/feature.css
+    - web/home/features/places/mock.js
+    - web/home/app.js
+    - web/home/style.css
+    - tools/qa/ux-p38-presence.js
+    - docs/opt/log/PK-P38a.md
+    test_command: node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p38-presence.js && node tools/qa/ux-p38-presence.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P38q
+  tasks:
+  - id: PK-P38q
+    title: 'PK-P38q: Windows checks after wave P38'
+    prompt_file: docs/prompts/PK-P38q-windows-checks-wave-p38.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P38q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
 - id: P4a
