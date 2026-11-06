@@ -1,0 +1,7 @@
+# PK-P4b: adoption popup, hidden Kuki and Ned, same look - status: PARTIAL (JS green; C# NOT compiled, dotnet missing)
+- `node tools/qa/ux-p4-adoption.js` passes D1-D6; node --check passes on all changed JS. `dotnet build` could not run (no dotnet here): PigsFeature.cs / PigsMessages.cs are unverified.
+- JS: new `adoption-popup.js` (popup + `CuyAdoption` helpers, loaded from index.html), `mock.js` (fresh mock = starter pig only; `mock_adoption_available`, `adoption_accept`), feature.js filters roster/offers, canvas-pig.js `lookFromRoster` (roster entry only, shared by room and portraits).
+- C#: state gets `adoption {pending, accepted, pigs}` and `look` per roster entry (AdoptionGate.LookOf); Tick runs AdoptionGate.Evaluate and posts one toast + pet status bubble ("Two pigs wait for adoption!"); `adoption_accept` -> AdoptionGate.Accept; adopt_named/adopt_group refuse gate pigs.
+- Gap 1: `PigsMessages` lives in the desktop assembly, but MessageValidator only scans Core, so it is not auto-discovered (unknown types pass as Unknown); move it to Core `Input/Validation/` later.
+- Gap 2: `GameSession.Open` (not in Zmieniaj) still calls EnsureRosterInitialized with a catalog (creates Kuki+Ned) and must call `EnsureStarterPig` first; until then C# hides Kuki/Ned only while AdoptionAccepted is false, and Evaluate migrates such saves to accepted.
+- Gap 3: `PigLook` (WinForms, not in Zmieniaj) still must use AdoptionGate.LookOf so the desktop pig matches. No rename control exists in My Pigs, so D4 holds trivially.

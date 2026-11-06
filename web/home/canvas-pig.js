@@ -375,11 +375,12 @@
         this.stageKey = window.CuySprites.normStage(state.stageKey);
       }
       // The active pig decides breed and coat palette.
-      const active = (state.roster || []).find(p => p && (p.id === (state.activePigIds && state.activePigIds[0]))) || (state.roster && state.roster[0]);
-      const look = (active && active.look) || (window.CuySprites ? window.CuySprites.activePig(state) : { breed: 'smooth', paletteId: 'tricolor' });
+      // The look comes from the roster entry only (same entry the portraits use).
+      const look = lookFromRoster(state);
       this.breed = look.breed || (window.CuySprites ? window.CuySprites.normBreed(look.breed) : 'smooth');
       this.paletteId = look.paletteId || 'tricolor';
       this.activePig = look;
+      if (window.CuyPig) window.CuyPig.lastRoomLook = look;
       if (typeof state.poops === 'number') {
         this.poopCount = state.poops;
       }
@@ -1031,6 +1032,16 @@
       || S.sheet('smooth', 'baby', paletteId, namedId);
   }
 
+  // Pure: the look of the active roster pig. Only the roster entry decides (entry.look, else its breed + paletteId).
+  function lookFromRoster(state) {
+    const roster = (state && state.roster) || [];
+    const first = state && state.activePigIds && state.activePigIds[0];
+    const active = roster.find(p => p && p.id === first) || roster[0];
+    if (!active) return { breed: 'smooth', paletteId: 'tricolor' };
+    const src = active.look || active;
+    return { breed: src.breed || active.breed || 'smooth', paletteId: src.paletteId || active.paletteId || 'tricolor' };
+  }
+
   const portraitCache = {};
 
   function renderPortrait(look, stage, size) {
@@ -1100,9 +1111,11 @@
   root.PigCanvas = PigCanvas;
   root.CuyPig = root.CuyPig || {};
   root.CuyPig.renderPortrait = renderPortrait;
+  root.CuyPig.lookFromRoster = lookFromRoster;
   if (typeof window !== 'undefined') {
     window.CuyPig = window.CuyPig || {};
     window.CuyPig.renderPortrait = renderPortrait;
+    window.CuyPig.lookFromRoster = lookFromRoster;
   }
 
   if (typeof document !== 'undefined') {

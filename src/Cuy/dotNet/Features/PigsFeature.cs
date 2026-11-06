@@ -11,6 +11,8 @@ namespace Cuy.Features
     /// <summary>My Pigs: publishes the roster (breed, palette, traits, age, offers) and handles adopting and bringing pigs to the desk.</summary>
     public class PigsFeature : HomeFeatureBase
     {
+        private bool _offerNotified;
+
         private static readonly string[] DefaultNames = { "Piko", "Milo", "Luna", "Koko", "Buba", "Zuzu" };
 
         public override string Id { get { return "pigs"; } }
@@ -53,6 +55,31 @@ namespace Cuy.Features
             {
                 var nowUtc = pet.Clock != null ? pet.Clock.UtcNow : DateTime.UtcNow;
                 pet.CheckOffers(nowUtc);
+                TickAdoptionGate(pet, nowUtc);
+            }
+        }
+
+        /// <summary>Moves the adoption gate forward and shows one desktop notification when the Kuki and Ned offer appears.</summary>
+        private void TickAdoptionGate(Pet pet, DateTime nowUtc)
+        {
+            try
+            {
+                var gs = pet.State;
+                if (gs == null) return;
+                double pdr = pet.Balance != null ? pet.Balance.PigDaysPerRealDay : 21.0;
+                AdoptionGate.Evaluate(gs, nowUtc, pdr, new Random(), AdoptionGateConfig.Current, pet.NamedPigs);
+                if (_offerNotified || !gs.IsAdoptionOfferPending(AdoptionGateConfig.Current, pet.NamedPigs)) return;
+                _offerNotified = true;
+                const string text = "Two pigs wait for adoption!";
+                BrainController.Log("[Pigs] adoption offer is pending");
+                HomeWindow.PostToPage(new { type = "toast", text = text });
+                var petForm = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                petForm?.ShowStatusMessage(text);
+                HomeWindow.NotifyStateChanged();
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] PigsFeature.TickAdoptionGate: " + ex.Message);
             }
         }
 
@@ -71,9 +98,12 @@ namespace Cuy.Features
             DateTime fallbackBirth = gs.BirthDateUtc;
 
             var rosterList = new List<object>();
+            var gateCfg = AdoptionGateConfig.Current;
             foreach (var p in gs.Roster)
             {
                 if (p == null) continue;
+                // Kuki and Ned stay hidden until the offer is accepted.
+                if (!gs.AdoptionAccepted && AdoptionGate.IsGateMember(p.NamedId, gateCfg, catalog)) continue;
 
                 var age = PigLife.AgeOf(p, nowUtc, pigDaysPerRealDay, fallbackBirth);
                 double ageYears = Math.Round(age.PigDays / LifeStages.DaysPerYear, 1);
@@ -105,7 +135,8 @@ namespace Cuy.Features
                     ["ageYears"] = ageYears,
                     ["stage"] = stage,
                     ["memorial"] = p.Memorial,
-                    ["blurb"] = blurb
+                    ["blurb"] = blurb,
+                    ["look"] = new { breed = AdoptionGate.LookOf(p, gateCfg).Breed, paletteId = AdoptionGate.LookOf(p, gateCfg).PaletteId }
                 };
 
                 if (namedDef != null && roundedModifiers != null)
@@ -140,6 +171,7 @@ namespace Cuy.Features
                 foreach (var s in offerStatuses)
                 {
                     if (s == null) continue;
+                    if (!gs.AdoptionAccepted && AdoptionGate.IsGateMember(s.Id, gateCfg, catalog)) continue;
                     var def = catalog?.Find(s.Id);
                     offersList.Add(new
                     {
@@ -161,11 +193,31 @@ namespace Cuy.Features
                 }
             }
             state["offers"] = offersList;
+
+            var adoptionPigs = new List<object>();
+            foreach (var def in (IEnumerable<NamedPigDefinition>)catalog?.OfferGroup(gateCfg.OfferGroup) ?? Array.Empty<NamedPigDefinition>())
+            {
+                if (def == null) continue;
+                adoptionPigs.Add(new
+                {
+                    id = def.Id,
+                    name = def.Name,
+                    stage = "junior",
+                    look = new { breed = def.Breed ?? string.Empty, paletteId = def.PaletteId ?? string.Empty },
+                    blurb = def.Blurb ?? string.Empty
+                });
+            }
+            state["adoption"] = new Dictionary<string, object>
+            {
+                ["pending"] = gs.IsAdoptionOfferPending(gateCfg, catalog),
+                ["accepted"] = gs.AdoptionAccepted,
+                ["pigs"] = adoptionPigs
+            };
         }
 
         public override bool HandleMessage(string type, JObject message, BrainController brain)
         {
-            if (type != "adopt_pig" && type != "toggle_pig_active" && type != "adopt_named" && type != "adopt_group" && type != "set_memorial")
+            if (type != "adoption_accept" && type != "adopt_pig" && type != "toggle_pig_active" && type != "adopt_named" && type != "adopt_group" && type != "set_memorial")
             {
                 return false;
             }
@@ -177,7 +229,24 @@ namespace Cuy.Features
 
             DateTime nowUtc = pet.Clock != null ? pet.Clock.UtcNow : DateTime.UtcNow;
 
-            if (type == "adopt_pig")
+            if (type == "adoption_accept")
+            {
+                var result = AdoptionGate.Accept(pet, new Random(), nowUtc);
+                if (result == AdoptResult.Ok)
+                {
+                    BrainController.Log("[Pigs] adoption offer accepted");
+                    HomeWindow.PostToPage(new { type = "toast", text = "Welcome Kuki and Ned to the family!" });
+                }
+                else if (result == AdoptResult.RosterFull)
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "The family is full" });
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else if (type == "adopt_pig")
             {
                 var cfg = LoadConfig();
                 int cost = (int?)cfg["adopt_cost"] ?? 80;
@@ -231,6 +300,7 @@ namespace Cuy.Features
                 var catalog = pet.NamedPigs ?? NamedPigCatalog.Current;
                 var def = catalog?.Find(id);
                 if (def == null) return true;
+                if (!memorial && !AdoptionGate.IsAdoptable(gs, id, AdoptionGateConfig.Current, catalog)) return true;
 
                 var cfg = LoadConfig();
                 int maxRoster = (int?)cfg["max_roster"] ?? 6;
@@ -271,6 +341,7 @@ namespace Cuy.Features
             {
                 string groupId = message?.Value<string>("id") ?? message?.Value<string>("groupId");
                 if (string.IsNullOrEmpty(groupId)) return true;
+                if (string.Equals(groupId, AdoptionGateConfig.Current.OfferGroup, StringComparison.OrdinalIgnoreCase)) return true; // use adoption_accept
 
                 var catalog = pet.NamedPigs ?? NamedPigCatalog.Current;
                 var groupPigs = catalog?.OfferGroup(groupId);

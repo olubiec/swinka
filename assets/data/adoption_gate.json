@@ -1,0 +1,8 @@
+{
+ "note": "Adoption gate: the game starts with one ordinary pig; Kuki and Ned come later as ONE adoption offer. Numbers are tuned by the human (loader: Cuy.Core.Pigs.AdoptionGateConfig). delay_days are real days after the starter pig reaches starter_stage.",
+ "version": 1,
+ "starter_stage": "junior",
+ "delay_days": { "min": 1, "max": 3 },
+ "offer_group": "starter",
+ "starter_look": { "breed": "smooth", "palette_id": "tricolor" }
+}

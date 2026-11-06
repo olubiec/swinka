@@ -157,9 +157,12 @@
       }
     ];
 
-    const roster = (state && state.roster && state.roster.length > 0) ? state.roster : defaultRoster;
+    const A = root.CuyAdoption;
+    const visibleRoster = A ? A.visibleRoster(state) : ((state && state.roster) || []);
+    const roster = visibleRoster.length > 0 ? visibleRoster : defaultRoster;
     const activeIds = (state && state.activePigIds) || [roster[0]?.id || 'pig_default'];
-    const offers = (state && state.offers && state.offers.length > 0) ? state.offers : getFallbackOffers(roster);
+    const rawOffers = (state && state.offers && state.offers.length > 0) ? state.offers : getFallbackOffers(roster);
+    const offers = A ? A.visibleOffers(state, rawOffers) : rawOffers;
 
     let html = `
       <div class="feature-pigs-container">
