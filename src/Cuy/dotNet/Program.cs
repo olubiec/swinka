@@ -175,6 +175,12 @@ namespace Cuy
                 return;
             }
 
+            if (Array.Exists(args, x => string.Equals(x, "--webview-check", StringComparison.OrdinalIgnoreCase)))
+            {
+                Environment.Exit(WebView2Probe.Run());
+                return;
+            }
+
             EventWaitHandle showHomeEvent = new EventWaitHandle(false, EventResetMode.AutoReset, ShowHomeEventName);
             try
             {

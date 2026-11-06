@@ -79,6 +79,13 @@ jobs:
           if ($p.ExitCode -ne 0) { Write-Host "--diag exit code $($p.ExitCode)"; exit 1 }
           if (-not (Test-Path (Join-Path $env:TEMP "cuy-diag.json"))) { Write-Host "cuy-diag.json missing"; exit 1 }
           Copy-Item (Join-Path $env:TEMP "cuy-diag.json") "dist\cuy-diag.json"
+      - name: Packaged --webview-check (real WebView2 start, catches 0x8007000B)
+        shell: powershell
+        run: |
+          $p = Start-Process -FilePath "dist\Cuy_v1\Cuy.exe" -ArgumentList "--webview-check" -Wait -PassThru
+          $r = Join-Path $env:TEMP "cuy-webview-check.txt"
+          if (Test-Path $r) { Get-Content $r | Write-Host; Copy-Item $r "dist\cuy-webview-check.txt" } else { Write-Host "report missing" }
+          if ($p.ExitCode -ne 0) { Write-Host "--webview-check exit code $($p.ExitCode)"; exit 1 }
       - name: Collect selftest log
         if: always()
         shell: powershell
@@ -92,6 +99,7 @@ jobs:
             dist/Cuy_v1/
             dist/cuy-diag.json
             dist/cuy-selftest.txt
+            dist/cuy-webview-check.txt
             dist/Cuy_v1.zip
           if-no-files-found: warn
 
