@@ -38,6 +38,7 @@
     { id: 'plant_pot',    name: 'Plant pot',    places: ['salon'],                 w: 1, h: 1, layer: 'floor', price: 25,  comfort: 2, repeatable: true,  owned: 2 },
     { id: 'wall_picture', name: 'Wall picture', places: ['salon'],                 w: 2, h: 1, layer: 'wall',  price: 40,  comfort: 3, repeatable: true,  owned: 0 },
     { id: 'lamp_floor',   name: 'Floor lamp',   places: ['salon'],                 w: 1, h: 2, layer: 'floor', price: 60,  comfort: 2, repeatable: true,  owned: 0 },
+    { id: 'lamp_mushroom', name: 'Mushroom lamp', places: ['salon'],               w: 1, h: 2, layer: 'floor', price: 140, comfort: 2, repeatable: false, owned: 0 },
     { id: 'fence_wood',   name: 'Wood fence',   places: ['garden', 'park'],        w: 1, h: 1, layer: 'floor', price: 20,  comfort: 1, repeatable: true,  owned: 0 },
     { id: 'bench_wood',   name: 'Wood bench',   places: ['garden', 'park'],        w: 2, h: 1, layer: 'floor', price: 90,  comfort: 4, repeatable: true,  owned: 0 }
   ];
@@ -244,8 +245,15 @@
   }
 
   function rebuildCatalog(st) {
+    if (st.inventory) {
+      Object.keys(st.inventory).forEach((k) => {
+        if (st.inventory[k] > 0) {
+          st.rooms.owned[k] = Math.max(st.rooms.owned[k] || 0, st.inventory[k]);
+        }
+      });
+    }
     st.rooms.catalog = CATALOG.map((c) => {
-      const owned = (st.rooms.owned[c.id] || 0) > 0;
+      const owned = ((st.rooms.owned && st.rooms.owned[c.id]) || (st.inventory && st.inventory[c.id]) || 0) > 0;
       return {
         id: c.id, name: c.name, places: c.places.slice(), w: c.w, h: c.h, layer: c.layer,
         price: c.price, comfort: c.comfort, icon: 'icon-' + c.id.replace(/_/g, '-'),
@@ -367,6 +375,11 @@
     const err = checkSpot(st, layout, def, x, y, null);
     if (err) { this.dispatchMessage({ type: 'toast', text: err }); return; }
     layout.items.push({ uid: uid(), itemId: def.id, x: x, y: y, flip: false });
+    if (def.id === 'lamp_mushroom' || def.id.startsWith('lamp_')) {
+      if (!st.decor) st.decor = { equipped: {} };
+      if (!st.decor.equipped) st.decor.equipped = {};
+      st.decor.equipped.lamp = def.id;
+    }
   });
 
   bridge.registerMockHandler('room_move', function (st, action) {

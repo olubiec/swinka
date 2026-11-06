@@ -2,6 +2,8 @@
   'use strict';
 
   let prevUpdateStatus = null;
+  let containerNode = null;
+  let featureApi = null;
 
   function render(container) {
     container.innerHTML = `
@@ -328,13 +330,20 @@
     icon: 'icon-gear',
     order: 90,
     open(container, api) {
+      containerNode = container;
+      featureApi = api;
       render(container);
       bindEvents(api);
 
       const state = window.bridge ? window.bridge.getState() : null;
       updateUI(state);
     },
+    close() {
+      containerNode = null;
+      featureApi = null;
+    },
     onState(state) {
+      if (!containerNode) return;
       updateUI(state);
     }
   });

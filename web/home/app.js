@@ -325,7 +325,11 @@
     // Broadcast state to all registered features
     window.CuyHome.listFeatures().forEach(feat => {
       if (feat.onState) {
-        try { feat.onState(state); } catch (e) { console.error('[feature ' + feat.id + ']', e); }
+        try {
+          feat.onState(state);
+        } catch (err) {
+          console.error('[feature ' + feat.id + '] onState', err);
+        }
       }
     });
 
@@ -728,6 +732,28 @@
     btns[next].focus();
   }
 
+  function removeBackBtn() {
+    const existing = document.querySelector('.modal-back');
+    if (existing) existing.remove();
+  }
+
+  function showBackBtn() {
+    removeBackBtn();
+    const header = elements.modalTitle ? elements.modalTitle.parentElement : null;
+    if (!header) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'modal-back';
+    btn.setAttribute('aria-label', 'Back to More');
+    btn.textContent = '← Back';
+    btn.addEventListener('click', () => {
+      removeBackBtn();
+      window.CuyHome.closeFeature({ keepBackdrop: true });
+      openMoreModal();
+    });
+    header.insertBefore(btn, elements.modalTitle);
+  }
+
   // --- FEATURES MODULE SYSTEM ---
   window.CuyHome = {
     features: [],
@@ -738,10 +764,20 @@
     listFeatures() {
       return this.features;
     },
-    openFeature(id, arg) {
+    openFeature(id, arg, opts) {
+      if (arg && typeof arg === 'object' && !opts && ('from' in arg)) {
+        opts = arg;
+        arg = undefined;
+      }
+      this.closeFeature({ keepBackdrop: true });
       const feat = this.features.find(f => f.id === id);
       if (!feat) return;
       openModal(feat.title, '');
+      if (opts && opts.from === 'more') {
+        showBackBtn();
+      } else {
+        removeBackBtn();
+      }
       if (elements.modalBody) {
         elements.modalBody.className = 'modal-body feature-' + id;
         try {
@@ -752,17 +788,20 @@
       }
       this.currentFeatureId = id;
     },
-    closeFeature() {
+    closeFeature(opts) {
       if (this.currentFeatureId) {
         const feat = this.features.find(f => f.id === this.currentFeatureId);
         if (feat && feat.close) {
-          try { feat.close(); } catch (e) { console.error(e); }
+          try { feat.close(); } catch (e) { console.error('[feature ' + this.currentFeatureId + '] close', e); }
         }
         this.currentFeatureId = null;
-      if (elements.modalBackdrop) elements.modalBackdrop.classList.remove('active');
+      }
+      if (!opts || !opts.keepBackdrop) {
+        if (elements.modalBackdrop) elements.modalBackdrop.classList.remove('active');
       }
       if (elements.modalBody) {
         elements.modalBody.className = 'modal-body';
+        elements.modalBody.innerHTML = '';
       }
     },
     api: {
@@ -781,6 +820,7 @@
   };
 
   function openMoreModal() {
+    removeBackBtn();
     let html = `<div class="album-grid">`;
 
     // Always include Album first
@@ -820,9 +860,9 @@
           const id = b.dataset.openFeature;
           if (id === 'album') {
             if (window.bridge) window.bridge.send({ type: 'album' });
-            openAlbumModal();
+            openAlbumModal({ from: 'more' });
           } else {
-            window.CuyHome.openFeature(id);
+            window.CuyHome.openFeature(id, null, { from: 'more' });
           }
         });
       });
@@ -910,6 +950,7 @@
 
   function closeModal() {
     if (!elements.modalBackdrop) return;
+    removeBackBtn();
     if (window.Minigry && window.Minigry.activeGame && !window.Minigry.isPaused) {
       window.Minigry.pause();
     }
@@ -979,7 +1020,7 @@
     return parseInt(parts[2], 10) + ' ' + (months[m - 1] || '');
   }
 
-  function openAlbumModal() {
+  function openAlbumModal(opts) {
     const state = window.bridge ? window.bridge.getState() : null;
     const seen = new Set();
     const seenDates = {};
@@ -1031,6 +1072,11 @@
     });
     html += `</div>`;
     openModal('Behaviour Album', html);
+    if (opts && opts.from === 'more') {
+      showBackBtn();
+    } else {
+      removeBackBtn();
+    }
   }
 
   // Developer test dialog / mock tester

@@ -244,6 +244,94 @@
       html += `</div></div>`;
       this.container.innerHTML = html;
 
+      // Attach button events immediately so clicks are never ignored during async thumbnail loading
+      const playLevelBtn = this.container.querySelector('.play-level');
+      if (playLevelBtn) {
+        playLevelBtn.addEventListener('click', async (e) => {
+          if (e && e.preventDefault) e.preventDefault();
+          try {
+            const currentState = this.store.getState();
+            const packOrder = ['guinea_pigs', 'food_and_toys'];
+            let allPacks = [...packOrder];
+            if (this.indexData && Array.isArray(this.indexData.packs)) {
+              this.indexData.packs.forEach(p => {
+                if (p.price === 0 || (currentState.unlockedPacks && currentState.unlockedPacks.includes(p.id))) {
+                  if (!allPacks.includes(p.id)) allPacks.push(p.id);
+                }
+              });
+            }
+            if (Array.isArray(currentState.unlockedPacks)) {
+              currentState.unlockedPacks.forEach(p => { if (!allPacks.includes(p)) allPacks.push(p); });
+            }
+
+            let completedCount = Array.isArray(currentState.completed) ? currentState.completed.length : 0;
+            let targetLevel = completedCount + 1;
+
+            let played = 0;
+            let targetPic = null;
+            let targetPack = null;
+            for (const packId of allPacks) {
+              const pData = await this.loadPack(packId);
+              if (!pData || !Array.isArray(pData.pictures)) continue;
+              for (const pic of pData.pictures) {
+                played++;
+                if (played === targetLevel) {
+                  targetPic = pic;
+                  targetPack = pData;
+                  break;
+                }
+              }
+              if (targetPic) break;
+            }
+
+            if (!targetPic) {
+              const pData = await this.loadPack(allPacks[0] || 'guinea_pigs');
+              if (pData && pData.pictures && pData.pictures[0]) {
+                targetPic = pData.pictures[0];
+                targetPack = pData;
+              }
+            }
+
+            if (targetPic && typeof this.onOpenEditor === 'function') {
+              this.onOpenEditor(targetPack, targetPic, targetLevel);
+            } else {
+              console.error('[coloring] No picture found or onOpenEditor missing', { targetPic, hasOnOpenEditor: typeof this.onOpenEditor });
+              if (this.api && typeof this.api.showToast === 'function') {
+                this.api.showToast('Could not load level');
+              }
+            }
+          } catch (err) {
+            console.error('[coloring] Failed to play level:', err);
+            if (this.api && typeof this.api.showToast === 'function') {
+              this.api.showToast('Could not load level');
+            }
+          }
+        });
+      }
+
+      this.container.querySelectorAll('.coloring-pack-card').forEach(el => {
+        el.addEventListener('click', async () => {
+          const unlocked = el.dataset.unlocked === 'true';
+          const id = el.dataset.id;
+          const price = parseInt(el.dataset.price, 10);
+
+          if (!unlocked) {
+            if (this.store.isMock) {
+              this.store.unlockPack(id);
+              this.renderPacks();
+            } else if (userClovers >= price) {
+              this.store.unlockPack(id);
+            }
+            return;
+          }
+
+          const pData = await this.loadPack(id);
+          if (pData) {
+            this.renderPack(pData);
+          }
+        });
+      });
+
       // Render thumbs
       for (const pack of this.indexData.packs) {
          const pData = await this.loadPack(pack.id);
@@ -263,66 +351,6 @@
             if (cEl) cEl.innerText = `${completedInPack} / ${pack.count}`;
          }
       }
-
-      // events
-      this.container.querySelectorAll('.coloring-pack-card').forEach(el => {
-         el.addEventListener('click', async () => {
-            const unlocked = el.dataset.unlocked === 'true';
-            const id = el.dataset.id;
-            const price = parseInt(el.dataset.price);
-
-            if (!unlocked) {
-               if (this.store.isMock) {
-                  this.store.unlockPack(id);
-                  this.renderPacks();
-               } else if (userClovers >= price) {
-                  this.store.unlockPack(id);
-                  // C# will update state, bridge onState will handle
-               } else {
-                  // Not enough clovers
-               }
-               return;
-            }
-
-            const pData = await this.loadPack(id);
-            this.renderPack(pData);
-         });
-      });
-
-      const playLevelBtn = this.container.querySelector('.play-level');
-      if (playLevelBtn) playLevelBtn.addEventListener('click', async () => {
-         // Auto play logic N
-         const packOrder = ['guinea_pigs', 'food_and_toys'];
-         let allPacks = [...packOrder];
-         state.unlockedPacks.forEach(p => { if (!allPacks.includes(p)) allPacks.push(p); });
-
-         let played = 0;
-         let targetPic = null;
-         let targetPack = null;
-         for (const packId of allPacks) {
-            const pData = await this.loadPack(packId);
-            if (!pData) continue;
-            for (const pic of pData.pictures) {
-               played++;
-               if (played === nextLevel) {
-                  targetPic = pic;
-                  targetPack = pData;
-                  break;
-               }
-            }
-            if (targetPic) break;
-         }
-
-         if (targetPic) {
-            if (this.onOpenEditor) this.onOpenEditor(targetPack, targetPic, nextLevel);
-         } else {
-             // fallback to first
-             const pData = await this.loadPack(allPacks[0]);
-             if (pData && pData.pictures[0] && this.onOpenEditor) {
-                this.onOpenEditor(pData, pData.pictures[0], nextLevel);
-             }
-         }
-      });
     }
 
     renderPack(packData) {
@@ -923,22 +951,30 @@
       containerNode = container;
       featureApi = api;
       const store = new Store(api);
+      if (editorInstance) {
+        editorInstance.destroy();
+        editorInstance = null;
+      }
       galleryInstance = new Gallery(container, api, store);
       galleryInstance.onOpenEditor = (pack, pic, level) => {
          if (editorInstance) editorInstance.destroy();
          editorInstance = new Editor(container, api, store, pack, pic, level, () => {
              editorInstance = null;
-             galleryInstance.renderPacks();
+             if (galleryInstance) galleryInstance.renderPacks();
          });
       };
       galleryInstance.renderPacks();
     },
     close() {
-      if (editorInstance) editorInstance.destroy();
+      if (editorInstance) {
+        editorInstance.destroy();
+        editorInstance = null;
+      }
+      galleryInstance = null;
     },
     onState(state) {
-       // Re-render if new pack unlocked
-       if (galleryInstance && !galleryInstance.currentPack) {
+       // Re-render if new pack unlocked and editor is not open
+       if (galleryInstance && !galleryInstance.currentPack && !editorInstance) {
            galleryInstance.renderPacks();
        }
     }

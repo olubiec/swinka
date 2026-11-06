@@ -1,7 +1,163 @@
 (() => {
   let currentState = null;
   let apiRef = null;
+  let containerNode = null;
   let currentTab = 'food';
+
+  function esc(value) {
+    return String(value === null || value === undefined ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  const LOOK_COLORS = {
+    wallpaper_mint: '#bfe3c9',
+    wallpaper_peach: '#f9dcc4',
+    wallpaper_sky: '#a0d1f7',
+    wallpaper_lilac: '#d9c8ef',
+    wallpaper_night: '#2e3557',
+    wallpaper_cream: '#fef5e7',
+    floor_wood_light: '#d4ae7f',
+    floor_tiles_checker: '#444444',
+    floor_grass: '#6ab84b',
+    floor_carpet_red: '#c73a45',
+    floor_wood: '#b58a57',
+    floor_soil: '#7a5230',
+    floor_stone: '#8a8a8a',
+    floor_straw: '#e0c870',
+    floor_fleece: '#e8e8e8',
+    rug_round_pink: '#f2a2c0',
+    rug_stripes: '#8ec5d6',
+    rug_heart: '#f75c7b'
+  };
+
+  const FLOOR_COLORS = {
+    wood_light: '#d4ae7f',
+    tiles_checker: '#444444',
+    grass: '#6ab84b',
+    carpet_red: '#c73a45',
+    wood: '#b58a57',
+    soil: '#7a5230',
+    stone: '#8a8a8a',
+    straw: '#e0c870',
+    fleece: '#e8e8e8'
+  };
+
+  function resolveAssetUrl(rel) {
+    if (apiRef && typeof apiRef.assetUrl === 'function') {
+      return apiRef.assetUrl(rel);
+    }
+    const isWebView = !!(window.chrome && window.chrome.webview);
+    return isWebView ? 'https://cuy.assets/' + rel : '../../assets/' + rel;
+  }
+
+  let atlasItems = null;
+  let atlasPromise = null;
+
+  function loadAtlas() {
+    if (atlasPromise) return atlasPromise;
+    const url = resolveAssetUrl('world/atlas.json');
+    atlasPromise = fetch(url)
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => {
+        atlasItems = data && data.items ? data.items : {};
+        return atlasItems;
+      })
+      .catch(() => {
+        atlasItems = {};
+        return atlasItems;
+      });
+    return atlasPromise;
+  }
+
+  // Preload atlas as early as possible
+  loadAtlas();
+
+  function resolve(item) {
+    if (!item) return null;
+    const id = item.id;
+
+    // (1) world atlas sprite for item.id
+    if (atlasItems && atlasItems[id] && atlasItems[id].file) {
+      const entry = atlasItems[id];
+      return {
+        type: 'atlas',
+        file: entry.file,
+        size: entry.size || [32, 32]
+      };
+    }
+
+    // (2) item.look swatch (small coloured square with the colour from the item's look/palette: wallpaper, floor, rug)
+    let color = null;
+    if (item.look) {
+      color = item.look.color1 || item.look.bg || (item.look.clouds ? '#a0d1f7' : null);
+      if (!color && item.look.type && FLOOR_COLORS[item.look.type]) {
+        color = FLOOR_COLORS[item.look.type];
+      }
+    }
+    if (!color && LOOK_COLORS[id]) {
+      color = LOOK_COLORS[id];
+    }
+    if (color) {
+      return {
+        type: 'swatch',
+        color: color
+      };
+    }
+
+    // (3) existing pixel-icon class by item.icon
+    let icon = item.icon || ('icon-' + String(id || '').replace(/_/g, '-'));
+    if (!icon.startsWith('icon-')) icon = 'icon-' + icon.replace(/_/g, '-');
+    return {
+      type: 'icon',
+      iconClass: icon
+    };
+  }
+
+  function html(item, size) {
+    if (!item) return '';
+    const res = resolve(item);
+    if (!res) return '';
+
+    const boxSize = typeof size === 'number' && size > 0 ? size : 32;
+
+    if (res.type === 'atlas') {
+      const src = resolveAssetUrl('world/' + res.file);
+      const srcW = res.size[0] || 32;
+      const srcH = res.size[1] || 32;
+      const scale = Math.max(1, Math.min(Math.floor(boxSize / srcW), Math.floor(boxSize / srcH)));
+      const renderW = srcW * scale;
+      const renderH = srcH * scale;
+      const boxW = Math.max(boxSize, renderW);
+      const boxH = Math.max(boxSize, renderH);
+
+      return '<span class="item-icon-box" style="width:' + boxW + 'px;height:' + boxH + 'px;">' +
+        '<img class="item-icon-img" src="' + src + '" width="' + renderW + '" height="' + renderH + '" style="width:' + renderW + 'px;height:' + renderH + 'px;" alt="' + esc(item.name || item.id) + '">' +
+        '</span>';
+    }
+
+    if (res.type === 'swatch') {
+      const swatchSize = Math.max(12, boxSize - 8);
+      return '<span class="item-icon-box" style="width:' + boxSize + 'px;height:' + boxSize + 'px;">' +
+        '<span class="item-icon-swatch" style="background-color:' + res.color + ';width:' + swatchSize + 'px;height:' + swatchSize + 'px;" data-color="' + res.color + '" aria-hidden="true"></span>' +
+        '</span>';
+    }
+
+    const sizeCls = boxSize <= 16 ? '' : (boxSize <= 24 ? 'x1_5' : 'x2');
+    return '<span class="item-icon-box" style="width:' + boxSize + 'px;height:' + boxSize + 'px;">' +
+      '<span class="pixel-icon ' + sizeCls + ' ' + res.iconClass + '" aria-hidden="true"></span>' +
+      '</span>';
+  }
+
+  window.CuyItemIcon = {
+    html: html,
+    resolve: resolve,
+    loadAtlas: loadAtlas,
+    ready: function() { return atlasPromise || loadAtlas(); }
+  };
 
   function render(container) {
     let shopState = currentState?.shop;
@@ -78,7 +234,7 @@
 
         html += `
           <div class="feature-shop-item">
-            <div class="pixel-icon x1_5 ${it.icon || 'icon-' + it.id.replace(/_/g, '-')}"></div>
+            ${window.CuyItemIcon.html(it, 32)}
             <b>${it.name}</b>
             <small class="feature-shop-desc">${it.description}</small>
             <span class="feature-shop-price">${it.price} <span class="pixel-icon icon-clover"></span></span>
@@ -129,16 +285,22 @@
     icon: 'icon-shop',
     order: 5,
     open(container, api) {
+      containerNode = container;
       apiRef = api;
       currentState = api.getState();
+      loadAtlas().then(() => {
+        if (containerNode && containerNode.isConnected) render(containerNode);
+      });
       render(container);
     },
+    close() {
+      containerNode = null;
+      apiRef = null;
+    },
     onState(state) {
+      if (!containerNode) return;
       currentState = state;
-      const container = document.querySelector('.feature-shop');
-      if (container) {
-        render(container);
-      }
+      render(containerNode);
     }
   });
 })();

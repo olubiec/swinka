@@ -1611,6 +1611,45 @@ body.webview-mode .game-device {
   outline-offset: 2px;
 }
 
+/* item icons */
+.item-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  vertical-align: middle;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.item-icon-img {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  object-fit: contain;
+  display: block;
+}
+
+.item-icon-swatch {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+  image-rendering: pixelated;
+  box-sizing: border-box;
+}
+
+.feature-decor .decor-item-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 /* Respect the OS "reduce motion" setting: stop endless animations (e.g. daily-bounce). */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

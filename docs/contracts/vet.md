@@ -20,10 +20,12 @@ healthDisplay: object                 // summary for the health panel
 | `vet_checkup` | `{}` | pays the checkup price |
 | `vet_treat` | `{ conditionId }` | condition must be active, known and not yet treated; pays its treatment price |
 | `vet_dose` | `{ conditionId }` | gives a dose of the course; no payment |
+| `vet_checkup_result` | `{ found, newlyKnown }` | posted to the page after check-up with counts of total conditions found and newly discovered |
 
 ## Replies
 
 State refresh through `HomeWindow.NotifyStateChanged()` after a successful action.
+`vet_checkup_result`: `{ type: "vet_checkup_result", found: int, newlyKnown: int }` dispatched after check-up completes.
 
 ## Toasts
 

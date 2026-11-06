@@ -411,6 +411,21 @@
     });
   }
 
+  function isItemPlaced(st, itemId) {
+    if (!st) return false;
+    if (st.rooms && st.rooms.layouts) {
+      for (const place of Object.keys(st.rooms.layouts)) {
+        const layout = st.rooms.layouts[place];
+        if (layout && Array.isArray(layout.items) && layout.items.some(i => i.itemId === itemId)) {
+          return true;
+        }
+      }
+    }
+    const cat = st.rooms?.catalog?.find(c => c.id === itemId);
+    if (cat && cat.placed > 0) return true;
+    return false;
+  }
+
   window.CuyDecorRenderer = { setupLayers, setC: (s) => currentState = s };
 
   window.CuyHome.registerFeature({
@@ -421,6 +436,11 @@
     open(container, api) {
       this.api = api;
       this.container = container;
+      if (window.CuyItemIcon && window.CuyItemIcon.ready) {
+        window.CuyItemIcon.ready().then(() => {
+          if (this.container && this.container.isConnected) this.render();
+        });
+      }
       this.render();
     },
     // Called by app.js when the modal closes: no more re-renders (and no mini preview loops) while hidden.
@@ -463,7 +483,13 @@
               });
             }
             if (slot && ownedBySlot[slot]) {
-              ownedBySlot[slot].push({ id: itemId, name: itemDef?.name || itemId });
+              ownedBySlot[slot].push({
+                id: itemId,
+                name: itemDef?.name || itemId,
+                icon: itemDef?.icon,
+                look: itemDef?.look || FALLBACK_LOOK[itemId],
+                slot: slot
+              });
               hasOwnedDecor = true;
             }
           }
@@ -487,7 +513,14 @@
 
           owned.forEach(it => {
             const isActive = currentEq === it.id;
-            html += `<button class="decor-item-btn ${isActive ? 'active' : ''}" data-slot="${slot}" data-id="${it.id}">${it.name}</button>`;
+            const isPlaceableSlot = slot !== 'wallpaper' && slot !== 'floor';
+            const placed = isItemPlaced(st, it.id);
+            const iconHtml = window.CuyItemIcon ? window.CuyItemIcon.html(it, 20) : '';
+            if (isPlaceableSlot && !placed) {
+              html += `<button class="decor-item-btn" data-slot="${slot}" data-id="${it.id}" data-action="place" aria-label="Place in room">${iconHtml}<span>Place in room</span></button>`;
+            } else {
+              html += `<button class="decor-item-btn ${isActive ? 'active' : ''}" data-slot="${slot}" data-id="${it.id}">${iconHtml}<span>${it.name}</span></button>`;
+            }
           });
 
           html += `</div></div>`;
@@ -510,14 +543,20 @@
           this.mini.render();
         } else {
           ctx.fillStyle = '#9c6636'; ctx.fillRect(0, 0, 240, 96);
-          ctx.fillStyle = '#eedb7c'; ctx.fillRect(0, 96, 240, 34);
+          ctx.fillStyle = '#eedb7c'; ctx.fillRect(0, 96, 34);
         }
       }
 
       this.container.querySelectorAll('.decor-item-btn').forEach(btn => {
         btn.addEventListener('click', () => {
+          btn.setAttribute('data-clicked', String(Date.now()));
           const slot = btn.dataset.slot;
           const id = btn.dataset.id || null;
+          const action = btn.dataset.action;
+          if (action === 'place' && id) {
+            window.CuyHome.openFeature('rooms', { edit: true, place: id, from: 'decor' }, { from: 'decor', edit: true, place: id });
+            return;
+          }
           this.api.send({ type: 'decor_equip', slot, itemId: id });
         });
       });
@@ -528,9 +567,31 @@
     window.CuyDecorRenderer.setupLayers();
   }
 
+  if (window.CuyHome && window.CuyHome.openFeature) {
+    const origOpen = window.CuyHome.openFeature.bind(window.CuyHome);
+    window.CuyHome.openFeature = function(id, arg, opts) {
+      if (arg && typeof arg === 'object' && !opts && ('from' in arg)) {
+        opts = { from: arg.from };
+      }
+      return origOpen(id, arg, opts);
+    };
+  }
+
   if (!window.chrome || !window.chrome.webview) {
     if (window.bridge) {
       const bridge = window.bridge;
+      if (bridge.registerMockHandler) {
+        bridge.registerMockHandler('decor_equip', function(st, action) {
+          if (!st.decor) st.decor = { equipped: {} };
+          if (!st.decor.equipped) st.decor.equipped = {};
+          if (action.itemId) {
+            st.decor.equipped[action.slot] = action.itemId;
+          } else {
+            delete st.decor.equipped[action.slot];
+          }
+          st.decor.lastUpdated = Date.now();
+        });
+      }
       if (!bridge.currentState) bridge.currentState = {};
       const s = bridge.currentState;
       if (!s.decor) {

@@ -242,6 +242,132 @@ function runX2() {
   process.exit(0);
 }
 
+const LOOK_COLORS = {
+  wallpaper_mint: '#bfe3c9',
+  wallpaper_peach: '#f9dcc4',
+  wallpaper_sky: '#a0d1f7',
+  wallpaper_lilac: '#d9c8ef',
+  wallpaper_night: '#2e3557',
+  wallpaper_cream: '#fef5e7',
+  floor_wood_light: '#d4ae7f',
+  floor_tiles_checker: '#444444',
+  floor_grass: '#6ab84b',
+  floor_carpet_red: '#c73a45',
+  floor_wood: '#b58a57',
+  floor_soil: '#7a5230',
+  floor_stone: '#8a8a8a',
+  floor_straw: '#e0c870',
+  floor_fleece: '#e8e8e8',
+  rug_round_pink: '#f2a2c0',
+  rug_stripes: '#8ec5d6',
+  rug_heart: '#f75c7b'
+};
+
+const FLOOR_COLORS = {
+  wood_light: '#d4ae7f',
+  tiles_checker: '#444444',
+  grass: '#6ab84b',
+  carpet_red: '#c73a45',
+  wood: '#b58a57',
+  soil: '#7a5230',
+  stone: '#8a8a8a',
+  straw: '#e0c870',
+  fleece: '#e8e8e8'
+};
+
+function resolveItemPicture(atlas, item) {
+  // (1) world atlas sprite for item.id
+  if (atlas.items && atlas.items[item.id] && atlas.items[item.id].file) {
+    return { type: 'file', value: atlas.items[item.id].file };
+  }
+  // (2) item.look swatch
+  let col = null;
+  if (item.look) {
+    col = item.look.color1 || item.look.bg || (item.look.clouds ? '#a0d1f7' : null);
+    if (!col && item.look.type && FLOOR_COLORS[item.look.type]) {
+      col = FLOOR_COLORS[item.look.type];
+    }
+  }
+  if (!col && LOOK_COLORS[item.id]) {
+    col = LOOK_COLORS[item.id];
+  }
+  if (col) {
+    return { type: 'color', value: col };
+  }
+  // (3) existing pixel-icon class by item.icon
+  if (item.icon) {
+    let iconClass = item.icon;
+    if (!iconClass.startsWith('icon-')) iconClass = 'icon-' + iconClass.replace(/_/g, '-');
+    return { type: 'icon', value: iconClass };
+  }
+  return null;
+}
+
+function checkItemIcons(atlas) {
+  const dataDir = path.join(ASSETS, 'data');
+  const files = fs.readdirSync(dataDir).filter((f) => f.startsWith('items') && f.endsWith('.json'));
+  files.push('world_items.json');
+
+  const itemsByCategory = new Map();
+
+  for (const f of files) {
+    const full = path.join(dataDir, f);
+    const data = readJson(full);
+    for (const item of data.items || []) {
+      const pic = resolveItemPicture(atlas, item);
+      if (!pic) {
+        problems.push(`${rel(full)}: item "${item.id}" does not resolve to any picture`);
+        continue;
+      }
+      if (pic.type === 'file') {
+        checkFile(full, WORLD, pic.value, item.id);
+      }
+      const cat = item.category || 'other';
+      if (!itemsByCategory.has(cat)) itemsByCategory.set(cat, []);
+      itemsByCategory.get(cat).push({ item, pic, file: full });
+    }
+  }
+
+  for (const [cat, list] of itemsByCategory.entries()) {
+    const seenFiles = new Map();
+    const seenColors = new Map();
+    for (const entry of list) {
+      const { item, pic, file } = entry;
+      if (pic.type === 'file') {
+        if (seenFiles.has(pic.value)) {
+          const prev = seenFiles.get(pic.value);
+          if (prev.item.id !== item.id) {
+            problems.push(`${rel(file)}: duplicate file "${pic.value}" in category "${cat}" for items "${prev.item.id}" and "${item.id}"`);
+          }
+        } else {
+          seenFiles.set(pic.value, entry);
+        }
+      } else if (pic.type === 'color') {
+        if (seenColors.has(pic.value)) {
+          const prev = seenColors.get(pic.value);
+          if (prev.item.id !== item.id) {
+            problems.push(`${rel(file)}: duplicate colour "${pic.value}" in category "${cat}" for items "${prev.item.id}" and "${item.id}"`);
+          }
+        } else {
+          seenColors.set(pic.value, entry);
+        }
+      }
+    }
+  }
+}
+
+function runIcons() {
+  const atlas = checkWorldAtlas();
+  checkItemIcons(atlas);
+  for (const line of warnings) console.log(line);
+  if (problems.length > 0) {
+    for (const line of problems) console.log(`ERROR ${line}`);
+    process.exit(1);
+  }
+  console.log('ITEM ICONS OK');
+  process.exit(0);
+}
+
 function main() {
   const iconsJson = readJson(path.join(ASSETS, 'icons', 'icons.json'));
   const icons = new Set(Object.keys(iconsJson.icons || {}));
@@ -249,6 +375,7 @@ function main() {
   const atlas = checkWorldAtlas();
   checkTiles();
   checkWorldItems(atlas);
+  checkItemIcons(atlas);
   checkFarm(atlas, icons);
   checkItemsFarm(icons);
   checkPigs();
@@ -268,4 +395,5 @@ function main() {
 }
 
 if (process.argv.includes('--x2')) runX2();
+else if (process.argv.includes('--icons')) runIcons();
 else main();

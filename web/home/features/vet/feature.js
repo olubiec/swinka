@@ -9,6 +9,26 @@
 
   let currentFactIndex = 0;
   let factInterval = null;
+  let lastCheckupResult = null;
+  let activeContainer = null;
+  let activeApi = null;
+  let unregisterCallbacks = [];
+
+  function showVetToast(container, text) {
+    if (!container || !text) return;
+    const toastContainer = container.querySelector('#vet-toast-container');
+    if (toastContainer) {
+      const toast = document.createElement('div');
+      toast.className = 'feature-vet-toast';
+      toast.textContent = text;
+      toastContainer.appendChild(toast);
+      setTimeout(() => {
+        if (toastContainer.contains(toast)) {
+          toastContainer.removeChild(toast);
+        }
+      }, 2500);
+    }
+  }
 
   function render(container, api, state) {
     if (!state) return;
@@ -53,6 +73,7 @@
     }
 
     const clovers = state.clovers || 0;
+    const canAffordCheckup = clovers >= (vetState.checkupPrice || 0);
 
     let html = `
       <div class="feature-vet">
@@ -75,6 +96,19 @@
             <div class="feature-vet-healthy">Your pig looks healthy!</div>
           `}
         </div>
+
+        <div class="feature-vet-checkup" style="margin: 10px 0; text-align: center;">
+          <button class="game-btn" id="btn-vet-checkup" ${canAffordCheckup ? '' : 'disabled'}>
+            <span class="pixel-icon icon-clover"></span> Check-up – ${vetState.checkupPrice}
+          </button>
+          ${!canAffordCheckup ? `<div class="feature-vet-error" style="color:var(--ui-brick-2, #c33); font-size:12px; margin-top:4px;">Not enough clovers</div>` : ''}
+          ${lastCheckupResult ? `
+            <div class="vet-checkup-result" style="margin-top:8px; font-weight:bold; color:var(--ui-moss-3, #2a7);">
+              ${lastCheckupResult.found === 0 ? 'No problems found.' : `Found ${lastCheckupResult.found} problem(s)`}
+            </div>
+          ` : ''}
+        </div>
+
         <div class="feature-vet-conditions">
     `;
 
@@ -122,16 +156,9 @@
           html += `</div>`;
         } else {
           // Unknown condition
-          const canAffordCheckup = clovers >= vetState.checkupPrice;
           html += `
             <div class="feature-vet-card-info">
                ${vetState.symptoms && vetState.symptoms.length > 0 ? 'Symptoms: ' + vetState.symptoms.join(', ') : 'The vet needs to examine your pig.'}
-            </div>
-            <div class="feature-vet-card-actions">
-              <button class="game-btn" id="btn-vet-checkup" ${canAffordCheckup ? '' : 'disabled'}>
-                <span class="pixel-icon icon-clover"></span> Check-up – ${vetState.checkupPrice}
-              </button>
-              ${!canAffordCheckup ? `<div class="feature-vet-error">Not enough clovers</div>` : ''}
             </div>
           `;
         }
@@ -168,6 +195,12 @@
     const btnCheckup = container.querySelector('#btn-vet-checkup');
     if (btnCheckup) {
       btnCheckup.addEventListener('click', () => {
+        const canAfford = (state.clovers || 0) >= (vetState.checkupPrice || 0);
+        if (!canAfford) {
+          api.send({ type: 'vet_checkup' });
+          showVetToast(container, 'Not enough clovers');
+          return;
+        }
         api.send({ type: 'vet_checkup' });
       });
     }
@@ -197,6 +230,9 @@
     icon: 'icon-vet',
     order: 15,
     open(container, api) {
+      activeContainer = container;
+      activeApi = api;
+      lastCheckupResult = null;
       render(container, api, api.getState());
 
       // Start fact rotation
@@ -215,26 +251,34 @@
       }, 5000);
 
       // Listen for toasts
-      api.onMessage('toast', (msg) => {
-        const toastContainer = container.querySelector('#vet-toast-container');
-        if (toastContainer && msg.text) {
-          const toast = document.createElement('div');
-          toast.className = 'feature-vet-toast';
-          toast.textContent = msg.text;
-          toastContainer.appendChild(toast);
-          setTimeout(() => {
-            if (toastContainer.contains(toast)) {
-              toastContainer.removeChild(toast);
-            }
-          }, 2500);
+      const offToast = api.onMessage('toast', (msg) => {
+        if (msg && msg.text && activeContainer) {
+          showVetToast(activeContainer, msg.text);
         }
       });
+      unregisterCallbacks.push(offToast);
+
+      // Listen for checkup result
+      const offCheckup = api.onMessage('vet_checkup_result', (msg) => {
+        lastCheckupResult = msg;
+        if (activeContainer && activeApi) {
+          render(activeContainer, activeApi, activeApi.getState());
+        }
+      });
+      unregisterCallbacks.push(offCheckup);
     },
     close() {
       if (factInterval) {
         clearInterval(factInterval);
         factInterval = null;
       }
+      unregisterCallbacks.forEach(fn => {
+        try { fn(); } catch (e) {}
+      });
+      unregisterCallbacks = [];
+      lastCheckupResult = null;
+      activeContainer = null;
+      activeApi = null;
     },
     onState(state, container, api) {
       if (container && container.offsetParent !== null) { // visible

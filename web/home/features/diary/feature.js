@@ -1,60 +1,73 @@
-window.CuyHome.registerFeature({
-  id: 'diary',
-  title: 'Diary',
-  icon: 'icon-m-diary',
-  order: 6,
+(() => {
+  let containerNode = null;
+  let featureApi = null;
 
-  open(container, api) {
-    const state = api.getState();
-    const diaryEntries = state.diary || [];
+  window.CuyHome.registerFeature({
+    id: 'diary',
+    title: 'Diary',
+    icon: 'icon-m-diary',
+    order: 6,
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'diary-container';
+    open(container, api) {
+      containerNode = container;
+      featureApi = api;
+      const state = api.getState();
+      const diaryEntries = state.diary || [];
 
-    if (diaryEntries.length === 0) {
-      const emptyMsg = document.createElement('div');
-      emptyMsg.className = 'diary-empty';
-      emptyMsg.textContent = 'No entries yet. Come back this evening!';
-      wrapper.appendChild(emptyMsg);
-    } else {
-      const list = document.createElement('div');
-      list.className = 'diary-list';
+      const wrapper = document.createElement('div');
+      wrapper.className = 'diary-container';
 
-      // Sort newest first
-      const sortedEntries = [...diaryEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
+      if (diaryEntries.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'diary-empty';
+        emptyMsg.textContent = 'No entries yet. Come back this evening!';
+        wrapper.appendChild(emptyMsg);
+      } else {
+        const list = document.createElement('div');
+        list.className = 'diary-list';
 
-      sortedEntries.forEach(entry => {
-        const card = document.createElement('div');
-        card.className = 'diary-card';
+        // Sort newest first
+        const sortedEntries = [...diaryEntries].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        const dateHeader = document.createElement('div');
-        dateHeader.className = 'diary-date';
-        // Parse date string like '2026-10-24'
-        const parts = entry.date.split('-');
-        if (parts.length === 3) {
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            dateHeader.textContent = `${parts[2]} ${months[parseInt(parts[1], 10) - 1]} ${parts[0]}`;
-        } else {
-            dateHeader.textContent = entry.date;
-        }
+        sortedEntries.forEach(entry => {
+          const card = document.createElement('div');
+          card.className = 'diary-card';
 
-        const textBody = document.createElement('div');
-        textBody.className = 'diary-text';
-        textBody.textContent = entry.text;
+          const dateHeader = document.createElement('div');
+          dateHeader.className = 'diary-date';
+          // Parse date string like '2026-10-24'
+          const parts = entry.date.split('-');
+          if (parts.length === 3) {
+              const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              dateHeader.textContent = `${parts[2]} ${months[parseInt(parts[1], 10) - 1]} ${parts[0]}`;
+          } else {
+              dateHeader.textContent = entry.date;
+          }
 
-        card.appendChild(dateHeader);
-        card.appendChild(textBody);
-        list.appendChild(card);
-      });
+          const textBody = document.createElement('div');
+          textBody.className = 'diary-text';
+          textBody.textContent = entry.text;
 
-      wrapper.appendChild(list);
+          card.appendChild(dateHeader);
+          card.appendChild(textBody);
+          list.appendChild(card);
+        });
+
+        wrapper.appendChild(list);
+      }
+
+      container.innerHTML = '';
+      container.appendChild(wrapper);
+    },
+
+    close() {
+      containerNode = null;
+      featureApi = null;
+    },
+
+    onState(state) {
+      if (!containerNode) return;
+      // No automatic popup required
     }
-
-    container.innerHTML = '';
-    container.appendChild(wrapper);
-  },
-
-  onState(state) {
-    // No automatic popup required
-  }
-});
+  });
+})();
