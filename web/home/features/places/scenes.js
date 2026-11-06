@@ -84,6 +84,8 @@
 
   let scenesData = null;
   let loadPromise = null;
+  let atlasData = null;
+  let atlasPromise = null;
 
   function getAssetUrl(rel) {
     if (!rel) return null;
@@ -97,11 +99,55 @@
     return '../../assets/' + rel;
   }
 
+  function getAtlas() {
+    if (atlasData) return atlasData;
+    if (typeof require !== 'undefined') {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const candidates = [
+          path.resolve(__dirname, '../../../assets/world/atlas.json'),
+          path.resolve(__dirname, '../../../../assets/world/atlas.json'),
+          path.resolve(process.cwd(), 'assets/world/atlas.json')
+        ];
+        for (const p of candidates) {
+          if (fs.existsSync(p)) {
+            atlasData = JSON.parse(fs.readFileSync(p, 'utf8'));
+            return atlasData;
+          }
+        }
+      } catch (e) {}
+    }
+    return atlasData;
+  }
+
+  async function loadAtlas() {
+    if (atlasData) return atlasData;
+    if (atlasPromise) return atlasPromise;
+
+    atlasPromise = (async () => {
+      if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
+        const url = getAssetUrl('world/atlas.json');
+        try {
+          const res = await window.fetch(url);
+          if (res.ok) {
+            atlasData = await res.json();
+            return atlasData;
+          }
+        } catch (e) {}
+      }
+      return getAtlas();
+    })();
+
+    return atlasPromise;
+  }
+
   async function load() {
-    if (scenesData) return scenesData;
+    if (scenesData && atlasData) return scenesData;
     if (loadPromise) return loadPromise;
 
     loadPromise = (async () => {
+      loadAtlas().catch(() => {});
       if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
         const url = getAssetUrl('data/place_scenes.json');
         try {
@@ -140,6 +186,7 @@
   // Pre-trigger loading if in browser
   if (typeof window !== 'undefined') {
     load();
+    loadAtlas();
   }
 
   function getScenesDict() {
@@ -257,13 +304,84 @@
     return 'salon';
   }
 
+  function placedThings(state, sceneId) {
+    const effectiveId = sceneId || 'salon';
+    let layout = null;
+    if (state) {
+      if (state.rooms && state.rooms.layouts) {
+        layout = state.rooms.layouts[effectiveId];
+        if (!layout && (effectiveId === 'room' || effectiveId === 'salon')) {
+          layout = state.rooms.layouts.salon || state.rooms.layouts.room;
+        }
+      }
+      if (!layout && state[effectiveId] && state[effectiveId].layout) {
+        layout = state[effectiveId].layout;
+      }
+      if (!layout && state.places && state.places.layouts) {
+        layout = state.places.layouts[effectiveId];
+      }
+    }
+
+    if (!layout || !Array.isArray(layout.items)) {
+      return [];
+    }
+
+    const atlas = getAtlas();
+    const items = [];
+
+    for (const it of layout.items) {
+      if (!it) continue;
+      const itemId = it.itemId || it.id;
+      const entry = (atlas && atlas.items) ? atlas.items[itemId] : null;
+
+      const cw = (entry && entry.cells) ? entry.cells[0] : (it.w || 1);
+      const ch = (entry && entry.cells) ? entry.cells[1] : (it.h || 1);
+
+      let x, y;
+      if (it.isPixel) {
+        x = it.x;
+        y = it.y;
+      } else {
+        x = Math.round((it.x || 0) * 16 + (cw * 16) / 2);
+        y = Math.round(((it.y || 0) + ch) * 16);
+      }
+
+      const sw = (entry && entry.size) ? entry.size[0] : (cw * 16);
+      const sh = (entry && entry.size) ? entry.size[1] : (ch * 16);
+
+      const anchorX = (entry && entry.anchor) ? entry.anchor[0] : Math.round(sw / 2);
+      const anchorY = (entry && entry.anchor) ? entry.anchor[1] : sh;
+
+      const url = (entry && entry.file) ? getAssetUrl('world/' + entry.file) : null;
+      const isFlat = !!(it.flat || (entry && entry.flat) || (itemId && (itemId.startsWith('rug_') || itemId.startsWith('mat_') || itemId.includes('carpet'))));
+
+      items.push({
+        id: it.uid || it.id || itemId,
+        itemId: itemId,
+        url: url,
+        img: null,
+        x: x,
+        y: y,
+        anchorX: anchorX,
+        anchorY: anchorY,
+        flat: isFlat,
+        flip: !!it.flip
+      });
+    }
+
+    return items;
+  }
+
   const CuyScenes = {
     load: load,
+    loadAtlas: loadAtlas,
     order: order,
     neighbor: neighbor,
     def: def,
     timeOfDay: timeOfDay,
-    pigScene: pigScene
+    pigScene: pigScene,
+    placedThings: placedThings,
+    getAtlas: getAtlas
   };
 
   if (typeof window !== 'undefined') {

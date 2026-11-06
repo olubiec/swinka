@@ -150,23 +150,150 @@
       this.targetToy = null;
       this.targetX = null;
 
+      // Scene, things, and visibility
+      this.things = [];
+      this.imageCache = {};
+      this.pigVisible = true;
+      this.pigDraws = 0;
+      this.currentScene = null;
+      this.sceneId = 'salon';
+      this.sceneKind = 'room';
+      this.sceneBgUrl = null;
+      this.sceneBgImg = null;
+      this.explicitThings = false;
+      CanvasPig.instance = this;
+      PigCanvas.instance = this;
+
       this.initAssets();
       this.bindEvents();
-      this.lastTime = performance.now();
+      this.lastTime = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
 
       this.layers = [];
-      window.CuyRoom = {
-        addLayer: (name, z, drawFn) => {
-          this.layers = this.layers.filter((l) => l.name !== name);
-          this.layers.push({ name, z, drawFn });
-          this.layers.sort((a, b) => a.z - b.z);
-        },
-        removeLayer: (name) => {
-          this.layers = this.layers.filter((l) => l.name !== name);
-        }
-      };
+      if (typeof window !== 'undefined') {
+        window.CuyRoom = {
+          addLayer: (name, z, drawFn) => {
+            this.layers = this.layers.filter((l) => l.name !== name);
+            this.layers.push({ name, z, drawFn });
+            this.layers.sort((a, b) => a.z - b.z);
+          },
+          removeLayer: (name) => {
+            this.layers = this.layers.filter((l) => l.name !== name);
+          }
+        };
+      }
 
-      requestAnimationFrame((t) => this.loop(t));
+      if (typeof requestAnimationFrame !== 'undefined') {
+        requestAnimationFrame((t) => this.loop(t));
+      }
+    }
+
+    loadCachedImage(url) {
+      if (!url) return null;
+      if (!this.imageCache) this.imageCache = {};
+      if (this.imageCache[url]) return this.imageCache[url];
+      if (typeof Image !== 'undefined') {
+        const img = new Image();
+        img.onerror = () => { console.error('[canvas-pig] Failed to load image: ' + url); };
+        img.src = url;
+        this.imageCache[url] = img;
+        return img;
+      }
+      return { src: url, naturalWidth: 32, naturalHeight: 32, width: 32, height: 32, complete: true };
+    }
+
+    setScene(def) {
+      if (!def) return;
+      if (typeof def === 'string') {
+        if (typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.def === 'function') {
+          def = window.CuyScenes.def(def);
+        } else {
+          def = { id: def, kind: 'room', size: [240, 130] };
+        }
+      }
+      this.currentScene = def;
+      this.sceneId = def.id || 'salon';
+      this.sceneKind = def.kind || 'room';
+      if (def.size && Array.isArray(def.size) && def.size.length >= 2) {
+        this.sceneWidth = def.size[0];
+        this.sceneHeight = def.size[1];
+        this.canvas.width = this.sceneWidth;
+        this.canvas.height = this.sceneHeight;
+        if (this.ctx) this.ctx.imageSmoothingEnabled = false;
+      }
+      this.walk = def.walk || null;
+      this.depthScale = def.depthScale || null;
+      this.sceneBgUrl = def.bgUrl || null;
+      if (this.sceneBgUrl) {
+        this.sceneBgImg = this.loadCachedImage(this.sceneBgUrl);
+      } else {
+        this.sceneBgImg = null;
+      }
+      if (!this.explicitThings && this.lastState && typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.placedThings === 'function') {
+        this.setThings(window.CuyScenes.placedThings(this.lastState, this.sceneId), false);
+      }
+    }
+
+    setThings(list, explicit = true) {
+      if (explicit) this.explicitThings = true;
+      this.things = Array.isArray(list) ? list.slice() : [];
+      this.things.forEach(t => {
+        if (t && t.url && !t.img) {
+          t.img = this.loadCachedImage(t.url);
+        }
+      });
+    }
+
+    setPigVisible(visible) {
+      this.pigVisible = !!visible;
+      if (!this.pigVisible) {
+        this.pigDraws = 0;
+        this.currentAnim = 'idle';
+        this.toyPlaying = null;
+        this.targetToy = null;
+      }
+    }
+
+    getOrderedThings() {
+      const list = this.things || [];
+      const flats = list.filter(t => !!t.flat);
+      const standing = list.filter(t => !t.flat).slice().sort((a, b) => (a.y || 0) - (b.y || 0));
+      return flats.concat(standing);
+    }
+
+    debug() {
+      const ordered = this.getOrderedThings();
+      return {
+        sceneId: this.sceneId || (this.currentScene && this.currentScene.id) || 'salon',
+        sceneSize: [this.sceneWidth, this.sceneHeight],
+        bgUrl: this.sceneBgUrl || null,
+        things: ordered.map(t => ({ id: t.id, y: t.y })),
+        pigVisible: this.pigVisible !== false,
+        smoothing: this.ctx ? this.ctx.imageSmoothingEnabled : false,
+        pigDraws: this.pigDraws || 0
+      };
+    }
+
+    drawThing(ctx, thing) {
+      if (!thing) return;
+      const img = thing.img || (thing.url ? this.loadCachedImage(thing.url) : null);
+      if (!img) return;
+      const ready = (img.naturalWidth && img.naturalWidth > 0) || (img.width && img.width > 0);
+      if (!ready) return;
+      const sw = img.naturalWidth || img.width;
+      const sh = img.naturalHeight || img.height;
+      const ax = thing.anchorX !== undefined ? thing.anchorX : Math.round(sw / 2);
+      const ay = thing.anchorY !== undefined ? thing.anchorY : sh;
+      const dx = Math.round((thing.x || 0) - ax);
+      const dy = Math.round((thing.y || 0) - ay);
+      ctx.save();
+      if (thing.flip) {
+        ctx.translate(dx + sw, dy);
+        ctx.scale(-1, 1);
+        ctx.drawImage(img, 0, 0, sw, sh, 0, 0, sw, sh);
+      } else {
+        ctx.drawImage(img, dx, dy, sw, sh);
+      }
+      ctx.restore();
     }
 
     initAssets() {
@@ -182,12 +309,14 @@
         window.CuyPig.mainInstance = this;
       }
       const onLoad = () => { this.isLoaded = true; this.showBubble('Ready!', 2000); };
-      const first = window.CuySprites.image(this.breed, this.stageKey);
-      // The sheet is shared by every instance: a listener left on it after it loaded would keep old instances alive.
-      if (window.CuySprites.loaded(first)) onLoad();
-      else first.addEventListener('load', onLoad, { once: true });
-      window.CuySprites.image('smooth', 'baby');
-      window.CuySprites.init();
+      if (typeof window !== 'undefined' && window.CuySprites) {
+        const first = window.CuySprites.image(this.breed, this.stageKey);
+        // The sheet is shared by every instance: a listener left on it after it loaded would keep old instances alive.
+        if (window.CuySprites.loaded(first)) onLoad();
+        else if (first && first.addEventListener) first.addEventListener('load', onLoad, { once: true });
+        window.CuySprites.image('smooth', 'baby');
+        window.CuySprites.init();
+      }
 
       const loadImage = (src) => {
         const img = new Image();
@@ -371,6 +500,9 @@
     updateState(state) {
       if (!state) return;
       this.lastState = state;
+      if (!this.explicitThings && typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.placedThings === 'function') {
+        this.setThings(window.CuyScenes.placedThings(state, this.sceneId || 'salon'), false);
+      }
       if (state.stageKey && window.CuySprites) {
         this.stageKey = window.CuySprites.normStage(state.stageKey);
       }
@@ -410,6 +542,13 @@
     }
 
     update(dt) {
+      if (this.pigVisible === false) {
+        this.currentAnim = 'idle';
+        this.currentFrame = 0;
+        this.toyPlaying = null;
+        this.targetToy = null;
+        return;
+      }
       // Update the animation frame
       const def = this.defFor(this.currentAnim);
       const frameDuration = 1000 / def.fps;
@@ -558,70 +697,92 @@
     render() {
       const ctx = this.ctx;
       ctx.clearRect(0, 0, this.sceneWidth, this.sceneHeight);
+      ctx.imageSmoothingEnabled = false;
 
       const scene = {
         width: this.sceneWidth,
         height: this.sceneHeight,
         floorY: 119,
         state: this.lastState || {},
-        time: performance.now(),
+        time: (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(),
         skipDefaultWall: false,
         skipDefaultFloor: false
       };
 
-      // Z < 0: drawn after the wall but before props (wallpaper, rugs)
-      // These layers might set scene.skipDefaultWall or scene.skipDefaultFloor
-      // Wait, we need to know the flags BEFORE drawing defaults!
-      // But if they set it inside drawFn, they will draw behind the defaults if defaults are drawn after!
-      // Wait, the spec says: "a layer may set scene.skipDefaultWall = true... read these flags before drawing the defaults".
-      // Let's first scan z < 0 layers to set flags:
-      const zNegLayers = this.layers.filter(l => l.z < 0);
-      // Only skip a default when that decor slot is really equipped; otherwise the room would be left empty.
-      const equipped = (this.lastState && this.lastState.decor && this.lastState.decor.equipped) || {};
-      zNegLayers.forEach(l => {
-        if (l.name === 'wallpaper' && equipped.wallpaper) scene.skipDefaultWall = true;
-        if (l.name === 'floor' && equipped.floor) scene.skipDefaultFloor = true;
-      });
+      const isOutdoor = this.sceneKind === 'outdoor';
 
-      // --- 1. RUN / ROOM BACKGROUND (pixel art habitat) ---
-      this.drawHabitat(ctx, scene);
+      // --- 1. BACKGROUND ---
+      if (isOutdoor) {
+        scene.skipDefaultWall = true;
+        scene.skipDefaultFloor = true;
+        if (this.sceneBgImg && ((this.sceneBgImg.naturalWidth && this.sceneBgImg.naturalWidth > 0) || this.sceneBgImg.complete)) {
+          ctx.drawImage(this.sceneBgImg, 0, 0, this.sceneWidth, this.sceneHeight);
+        }
+      } else {
+        const zNegLayers = this.layers.filter(l => l.z < 0);
+        const equipped = (this.lastState && this.lastState.decor && this.lastState.decor.equipped) || {};
+        zNegLayers.forEach(l => {
+          if (l.name === 'wallpaper' && equipped.wallpaper) scene.skipDefaultWall = true;
+          if (l.name === 'floor' && equipped.floor) scene.skipDefaultFloor = true;
+        });
 
-      // Draw Z < 0 layers
-      zNegLayers.forEach(l => l.drawFn(ctx, scene));
+        this.drawHabitat(ctx, scene);
+        zNegLayers.forEach(l => l.drawFn(ctx, scene));
+        this.drawPoops(ctx);
+        this.drawProps(ctx);
+      }
 
-      // --- 2. POOPS IN THE RUN (if any) ---
-      this.drawPoops(ctx);
+      // --- 2. FLAT THINGS ---
+      const flats = (this.things || []).filter(t => !!t.flat);
+      flats.forEach(t => this.drawThing(ctx, t));
 
-      // --- 3. ACCESSORIES / HAY RACK / WATER BOTTLE ---
-      this.drawProps(ctx);
-
-      // --- 3.5. OWNED TOYS (desktop order) ---
-      // Home scene (lightScene): background, furniture and contact shadow are lit together, then the toys
-      // (assets/props, the Pulpit props) are drawn unlit on top of the light, as docs/SWIATLO_SWINEK.md point 4 says.
+      // --- 3. STANDING OBJECTS & GUINEA PIG (sorted by bottom edge y) ---
       const lit = !!this.lightScene;
-      if (!lit) this.drawToys(ctx);
-
-      // Draw 0 <= Z < 10 layers
-      this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
-
-      if (lit) {
-        this.drawContactShadow(ctx);
-        this.applySceneLight(ctx, this.lightScene);
+      if (!isOutdoor && !lit) {
         this.drawToys(ctx);
       }
 
-      // --- 4. THE GUINEA PIG (from the sprite sheet) ---
-      this.drawPig(ctx, this.lightScene);
+      const standing = (this.things || []).filter(t => !t.flat).slice().sort((a, b) => (a.y || 0) - (b.y || 0));
+      const isPigVisible = this.pigVisible !== false;
+      const pigFeetY = this.pigY + 59;
+
+      if (isPigVisible) {
+        // Standing objects behind pig
+        standing.filter(t => (t.y || 0) <= pigFeetY).forEach(t => this.drawThing(ctx, t));
+
+        // Layers 0 <= z < 10
+        this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
+
+        if (lit) {
+          this.drawContactShadow(ctx);
+          this.applySceneLight(ctx, this.lightScene);
+          if (!isOutdoor) this.drawToys(ctx);
+        }
+
+        // Draw Pig
+        this.drawPig(ctx, this.lightScene);
+        this.pigDraws = (this.pigDraws || 0) + 1;
+
+        // Standing objects in front of pig
+        standing.filter(t => (t.y || 0) > pigFeetY).forEach(t => this.drawThing(ctx, t));
+      } else {
+        standing.forEach(t => this.drawThing(ctx, t));
+        this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
+        if (lit) {
+          this.applySceneLight(ctx, this.lightScene);
+          if (!isOutdoor) this.drawToys(ctx);
+        }
+      }
 
       // Draw Z >= 10 layers
       this.layers.filter(l => l.z >= 10).forEach(l => l.drawFn(ctx, scene));
 
-      // --- 5. PARTICLES (hearts, crumbs) ---
-      this.drawParticles(ctx);
-
-      // --- 6. THOUGHT / MOOD BUBBLE ---
-      if (this.bubbleVisible) {
-        this.drawSpeechBubble(ctx);
+      // --- 4. PARTICLES & SPEECH BUBBLE ---
+      if (isPigVisible) {
+        this.drawParticles(ctx);
+        if (this.bubbleVisible) {
+          this.drawSpeechBubble(ctx);
+        }
       }
     }
 
@@ -803,6 +964,7 @@
 
     // lightScene is optional: without it the frame and the desktop shadow ellipse are drawn exactly as before.
     drawPig(ctx, lightScene) {
+      if (this.pigVisible === false) return;
       if (this.pigY < -100) return; // Hidden
 
       const sheet = this.usableSheet();
@@ -1097,7 +1259,38 @@
     return canvas;
   }
 
+  const CanvasPig = {
+    instance: null,
+    setScene(def) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) return inst.setScene(def);
+    },
+    setThings(list) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) return inst.setThings(list);
+    },
+    setPigVisible(visible) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) return inst.setPigVisible(visible);
+    },
+    debug() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) return inst.debug();
+      return null;
+    }
+  };
+
   root.PigCanvas = PigCanvas;
+  root.CanvasPig = CanvasPig;
+  PigCanvas.CanvasPig = CanvasPig;
+  PigCanvas.instance = null;
+  PigCanvas.setScene = (def) => CanvasPig.setScene(def);
+  PigCanvas.setThings = (l) => CanvasPig.setThings(l);
+  PigCanvas.setPigVisible = (v) => CanvasPig.setPigVisible(v);
+  PigCanvas.debug = () => CanvasPig.debug();
+  if (typeof window !== 'undefined') {
+    window.CanvasPig = CanvasPig;
+  }
   root.CuyPig = root.CuyPig || {};
   root.CuyPig.renderPortrait = renderPortrait;
   if (typeof window !== 'undefined') {

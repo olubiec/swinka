@@ -75,3 +75,18 @@
 2. W logu `PK-P32a` jest kontrakt wiadomości (`docs/contracts/places-pig-location.md`).
 3. Wizualnie bez zmian.
 
+## Wave P33: Scene Drawing & Canvas Background (Places Rework)
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass | App builds cleanly with no compilation or regression errors |
+| UX Scene Drawing | `node tools/qa/ux-p33-scene-draw.js` | Exit code 0, 7/7 PASS (E1-E7) | Płótno CanvasPig rysuje tło sceny, sortuje elementy wg y, chowa świnkę i zachowuje wsteczną zgodność z pokojem |
+| UX All Suite | `node tools/qa/ux-all.js` | ux-p32 i ux-p33 PASS (skrypty Playwright wymagają pakietu) | Wszystkie skrypty QA bez zewnętrznych zależności przechodzą pomyślnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+
+### Manual Checklist (Do sprawdzenia po P33)
+1. Wizualnie nadal bez belki, ale testy `ux-p33-scene-draw` pokazują, że ogród, park, farma, targ mają własne tło, a pokój nadal ma tapetę i podłogę.
+2. Domek wygląda jak przed zmianą (brak regresji): tapeta, podłoga, meble, świnka chodzi.
+3. Klik i przeciąganie świnki działają jak wcześniej.
+
+
