@@ -47,6 +47,7 @@ namespace Cuy.Core
             var load = saveSystem.Load();
             var isNewGame = load.State == null;
             var state = load.State ?? GameState.CreateNew(newPetName, clock.UtcNow);
+            state.EnsureStarterPig(clock.UtcNow);
             state.EnsureRosterInitialized(Cuy.Core.Pigs.NamedPigCatalog.Current, nowUtc: clock.UtcNow);
             state.EnsureWorld(Cuy.Core.World.WorldItemCatalog.Current, ItemCatalog.Default);
             state.EnsureMusic();

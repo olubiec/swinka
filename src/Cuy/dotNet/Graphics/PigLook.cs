@@ -173,8 +173,9 @@ namespace Cuy
                 }
 
                 // Fall back to shape + palette path
-                string breed = profile != null ? profile.Breed : "smooth";
-                string palette = profile != null ? profile.PaletteId : null;
+                var look = AdoptionGate.LookOf(profile);
+                string breed = look.Breed;
+                string palette = look.PaletteId;
                 if (palette == null) palette = PaletteRemap.Table.Default;
                 var sprites = xml.BuildStageSprites(effectiveStageKey, breed, palette);
                 if (sprites != null)
