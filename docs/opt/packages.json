@@ -782,6 +782,165 @@
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 36,
    "prompt_file": "docs/prompts/PK-33-stop-using-x2-files-and-final-verification-r.md"
+  },
+  "PK-P1a": {
+   "wave": "P1a",
+   "title": "Feature window lifecycle and Back to More",
+   "items": [],
+   "files": [
+    "web/home/app.js",
+    "web/home/features/calendar/feature.js",
+    "web/home/features/diary/feature.js",
+    "web/home/features/settings/feature.js",
+    "web/home/features/shop/feature.js",
+    "web/home/features/README.md",
+    "tools/qa/lib/ux.js",
+    "tools/qa/ux-p1-lifecycle.js",
+    "docs/opt/log/PK-P1a.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check web/home/features/calendar/feature.js && node --check web/home/features/diary/feature.js && node --check web/home/features/settings/feature.js && node --check web/home/features/shop/feature.js && node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p1-lifecycle.js && node tools/qa/ux-p1-lifecycle.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P1a-feature-window-lifecycle.md"
+  },
+  "PK-P1b": {
+   "wave": "P1b",
+   "title": "Coloring Play level and Vet Check-up",
+   "items": [],
+   "files": [
+    "web/home/features/coloring/feature.js",
+    "web/home/features/vet/feature.js",
+    "web/home/features/vet/mock.js",
+    "src/Cuy/dotNet/Features/VetFeature.cs",
+    "src/Cuy.Core/Pet.Health.cs",
+    "tests/Cuy.Core.Tests/VetCheckupTests.cs",
+    "tools/qa/ux-p1-buttons.js",
+    "docs/contracts/vet.md",
+    "docs/opt/log/PK-P1b.md"
+   ],
+   "verify": "node --check web/home/features/coloring/feature.js && node --check web/home/features/vet/feature.js && node --check web/home/features/vet/mock.js && node --check tools/qa/ux-p1-buttons.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~VetCheckupTests|FullyQualifiedName~HealthSystemTests\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true && node tools/qa/ux-p1-buttons.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P1b-coloring-play-and-vet-checkup.md"
+  },
+  "PK-P1c": {
+   "wave": "P1b",
+   "title": "Decorate opens the room editor",
+   "items": [],
+   "files": [
+    "web/home/features/decor/feature.js",
+    "web/home/features/rooms/feature.js",
+    "web/home/features/rooms/mock.js",
+    "tools/qa/ux-p1-decorate.js",
+    "docs/opt/log/PK-P1c.md"
+   ],
+   "verify": "node --check web/home/features/decor/feature.js && node --check web/home/features/rooms/feature.js && node --check web/home/features/rooms/mock.js && node --check tools/qa/ux-p1-decorate.js && node tools/qa/ux-p1-decorate.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P1c-decorate-opens-room-editor.md"
+  },
+  "PK-P1d": {
+   "wave": "P1b",
+   "title": "Speech bubble hides with the pig",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/FormPet.cs",
+    "src/Cuy/dotNet/StatusBubble.cs",
+    "docs/opt/log/PK-P1d.md"
+   ],
+   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P1d-speech-bubble-hides-with-pig.md"
+  },
+  "PK-P1q": {
+   "wave": "P1q",
+   "title": "Windows checks after wave P1",
+   "items": [],
+   "files": [
+    "tools/qa/run-exe-smoke.ps1",
+    "tools/qa/ux-all.js",
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P1q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js p1 && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P1q-windows-checks-wave-p1.md"
+  },
+  "PK-P2a": {
+   "wave": "P2a",
+   "title": "Every pig gets its own portrait",
+   "items": [],
+   "files": [
+    "web/home/features/pigs/feature.js",
+    "web/home/features/pigs/feature.css",
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p2-portraits.js",
+    "docs/opt/log/PK-P2a.md"
+   ],
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p2-portraits.js && node tools/qa/ux-p2-portraits.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P2a-pig-portraits-from-look.md"
+  },
+  "PK-P2b": {
+   "wave": "P2a",
+   "title": "Unique item icons in shop, store and decor",
+   "items": [],
+   "files": [
+    "web/home/features/shop/feature.js",
+    "web/home/features/store/feature.js",
+    "web/home/features/decor/feature.js",
+    "web/home/style.css",
+    "tools/qa/check-assets.js",
+    "tools/qa/ux-p2-icons.js",
+    "docs/opt/log/PK-P2b.md"
+   ],
+   "verify": "node --check web/home/features/shop/feature.js && node --check web/home/features/store/feature.js && node --check web/home/features/decor/feature.js && node --check tools/qa/check-assets.js && node --check tools/qa/ux-p2-icons.js && node tools/qa/ux-p2-icons.js && node tools/qa/check-assets.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P2b-item-icons-from-world-atlas.md"
+  },
+  "PK-P2c": {
+   "wave": "P2a",
+   "title": "Player panel only after gramophone click",
+   "items": [],
+   "files": [
+    "web/home/features/music/player.js",
+    "web/home/features/music/player.css",
+    "web/home/app.js",
+    "web/home/index.html",
+    "web/home/features/rooms/feature.js",
+    "tools/qa/ux-p2-player.js",
+    "docs/opt/log/PK-P2c.md"
+   ],
+   "verify": "node --check web/home/features/music/player.js && node --check web/home/app.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p2-player.js && node tools/qa/ux-p2-player.js && node tools/qa/web-smoke.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P2c-player-panel-on-gramophone-click.md"
+  },
+  "PK-P2q": {
+   "wave": "P2q",
+   "title": "Windows checks after wave P2",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P2q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P2q-windows-checks-wave-p2.md"
   }
  }
 }
