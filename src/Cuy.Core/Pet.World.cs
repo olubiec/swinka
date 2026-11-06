@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cuy.Core.World;
 
 namespace Cuy.Core
@@ -99,6 +100,29 @@ namespace Cuy.Core
 
             Raise(PlaceUnlocked, new PlaceUnlockedEventArgs(id));
             return WorldResult.Ok;
+        }
+
+        /// <summary>Admin/test command: gives clovers and unlocks every place and room (and the dorm).</summary>
+        public int AdminUnlockAll(int clovers)
+        {
+            if (clovers > 0) AddClovers(clovers);
+            int unlocked = 0;
+            if (PlaceCatalog?.Places == null) return 0;
+            EnsureWorld();
+            for (int pass = 0; pass < 2; pass++)
+            {
+                foreach (var place in PlaceCatalog.Places.ToList())
+                {
+                    if (UnlockPlace(place.Id) == WorldResult.Ok) unlocked++;
+                    if (place.Rooms == null) continue;
+                    foreach (var room in place.Rooms.ToList())
+                    {
+                        if (UnlockRoom(room.Id) == WorldResult.Ok) unlocked++;
+                    }
+                }
+            }
+            if (UnlockDorm() == WorldResult.Ok) unlocked++;
+            return unlocked;
         }
 
         public WorldResult UnlockRoom(string id)

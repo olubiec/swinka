@@ -32,6 +32,7 @@ namespace Cuy
         private bool _isWebViewReady = false;
         private Point _dragStartCursor;
         private Point _dragStartLocation;
+        private double _fitZoom = 1.0;
 
         #region Win32 API (DWM & Window Drag)
 
@@ -280,6 +281,20 @@ namespace Cuy
                 Rectangle wa = screen.WorkingArea;
                 Rectangle bounds = screen.Bounds;
 
+                // PerMonitorV2: the WebView lays out at 420x640 CSS px, so the window must be 420x640 * DPI scale
+                // (otherwise the page is squeezed into a narrower viewport and gets clipped). Shrink to fit small screens.
+                float dpiScale = Math.Max(1f, this.DeviceDpi / 96f);
+                float fit = Math.Min(1f, Math.Min((wa.Width - 24) / (420f * dpiScale), (wa.Height - 24) / (640f * dpiScale)));
+                fit = Math.Max(0.5f, fit);
+                int w = (int)Math.Round(420 * dpiScale * fit);
+                int h = (int)Math.Round(640 * dpiScale * fit);
+                this.MinimumSize = new Size(0, 0);
+                this.MaximumSize = new Size(w, h);
+                this.MinimumSize = new Size(w, h);
+                this.Size = new Size(w, h);
+                _fitZoom = fit;
+                try { if (_webView != null) _webView.ZoomFactor = fit; } catch (Exception) { }
+
                 const int padding = 12;
                 int targetX = wa.Right - this.Width - padding;
                 int targetY = wa.Bottom - this.Height - padding;
@@ -424,6 +439,7 @@ namespace Cuy
                 _webView.CoreWebView2.NavigationCompleted += (s, e) =>
                 {
                     _isWebViewReady = true;
+                    try { _webView.ZoomFactor = _fitZoom; } catch (Exception) { }
                     BrainController.Log("[HomeWindow] Navigation to https://cuy.home/index.html done. success=" + e.IsSuccess + " status=" + e.WebErrorStatus);
                     if (!e.IsSuccess)
                         MessageBox.Show("Home page failed to load (" + e.WebErrorStatus + ").\nLog: %LocalAppData%\\Cuy\\logs\\cuy.log", "Cuy", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -717,6 +733,10 @@ namespace Cuy
                         HandleMinigameResult(gameId, score);
                         break;
 
+                    case "admin":
+                        HandleAdmin(obj.Value<string>("cmd"), obj.Value<int?>("amount") ?? 0);
+                        break;
+
                     case "log":
                         BrainController.Log("[Home JS] " + obj.Value<string>("msg"));
                         return;
@@ -905,6 +925,24 @@ namespace Cuy
             pet.Count("calls");
             brain.RequestAnimation("greet");
             BrainController.Log("[HomeWindow] Pig called inside Home.");
+        }
+
+        // Admin/test commands, sent from the Home UI (Ctrl+Shift+A, or "/admin" in the name field).
+        private void HandleAdmin(string cmd, int amount)
+        {
+            var pet = BrainController.Instance?.Pet;
+            if (pet == null) return;
+            switch ((cmd ?? "").ToLowerInvariant())
+            {
+                case "unlockall":
+                    int n = pet.AdminUnlockAll(amount > 0 ? amount : 100000);
+                    BrainController.Log("[Admin] unlockall: " + n + " places/rooms unlocked.");
+                    break;
+                case "clovers":
+                    pet.AddClovers(amount > 0 ? amount : 10000);
+                    BrainController.Log("[Admin] clovers +" + amount);
+                    break;
+            }
         }
 
         private void HandlePet()
