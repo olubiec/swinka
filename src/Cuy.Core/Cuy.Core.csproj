@@ -15,6 +15,8 @@
   <ItemGroup>
     <!-- Same version as in packages.config to avoid a DLL conflict. -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <!-- Vector2 (netstandard2.0 has no System.Numerics); used by DragVelocity. -->
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
