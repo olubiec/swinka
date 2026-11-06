@@ -1,0 +1,9 @@
+{
+  "interval_min_s": 600,
+  "interval_max_s": 1800,
+  "sleep_hours": [
+    22,
+    7
+  ],
+  "pinned_default": false
+}

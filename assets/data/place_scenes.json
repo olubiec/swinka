@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "time_of_day": [
+    "morning",
+    "day",
+    "evening",
+    "night"
+  ],
+  "scenes": {
+    "room": {
+      "kind": "room",
+      "title": "Room",
+      "size": [240, 130],
+      "walk": [10, 96, 230, 126],
+      "depth_scale": [0.88, 1.0],
+      "bg": null
+    },
+    "garden": {
+      "kind": "outdoor",
+      "title": "Garden",
+      "size": [256, 144],
+      "walk": [8, 80, 248, 138],
+      "depth_scale": [0.82, 1.0],
+      "bg": {
+        "morning": "world/bg/garden_morning.png",
+        "day": "world/bg/garden_day.png",
+        "evening": "world/bg/garden_evening.png",
+        "night": "world/bg/garden_night.png"
+      },
+      "exits": {
+        "left": { "to": "house", "x": 2 },
+        "right": { "to": "park", "x": 253 }
+      }
+    },
+    "park": {
+      "kind": "outdoor",
+      "title": "Park",
+      "size": [384, 192],
+      "walk": [10, 110, 374, 186],
+      "depth_scale": [0.78, 1.0],
+      "bg": {
+        "morning": "world/bg/park_morning.png",
+        "day": "world/bg/park_day.png",
+        "evening": "world/bg/park_evening.png",
+        "night": "world/bg/park_night.png"
+      },
+      "exits": {
+        "left": { "to": "garden", "x": 4 },
+        "right": { "to": "farm", "x": 380 }
+      }
+    },
+    "farm": {
+      "kind": "outdoor",
+      "title": "Farm",
+      "size": [256, 144],
+      "walk": [8, 80, 248, 138],
+      "depth_scale": [0.82, 1.0],
+      "bg": {
+        "morning": "world/bg/farm.png",
+        "day": "world/bg/farm.png",
+        "evening": "world/bg/farm.png",
+        "night": "world/bg/farm.png"
+      },
+      "exits": {
+        "left": { "to": "park", "x": 3 },
+        "right": { "to": "market", "x": 252 }
+      }
+    },
+    "market": {
+      "kind": "outdoor",
+      "title": "Market",
+      "size": [256, 144],
+      "walk": [8, 120, 248, 140],
+      "depth_scale": [0.92, 1.0],
+      "bg": {
+        "morning": "world/bg/market.png",
+        "day": "world/bg/market.png",
+        "evening": "world/bg/market.png",
+        "night": "world/bg/market.png"
+      },
+      "exits": {
+        "left": { "to": "farm", "x": 3 },
+        "right": { "to": "house", "x": 252 }
+      }
+    }
+  },
+  "house_exits": {
+    "left": "market",
+    "right": "garden"
+  }
+}

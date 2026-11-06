@@ -48,3 +48,15 @@
 
 
 
+## Wave P31: Core & Scene Data (Places Rework)
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass | App builds cleanly with no compilation or regression errors |
+| Place Scenes Data Validator | `node tools/qa/place-scenes-check.js` | Exit code 0, 7/7 checks OK (C1-C7) | assets/data/place_scenes.json poprawnie definiuje tła, wymiary, pasy podłogi i pierścień wyjść dla wszystkich miejsc |
+| Core Pig Location & Roaming | `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigLocationTests"` | Exit code 0, 12/12 tests PASS (L1-L10, config, roamer helpers) | Logika lokacji świnki, wędrowania po sąsiednich scenach, przypinania i snu nocnego |
+
+### Manual Checklist (Do sprawdzenia po P31)
+1. Testy Core `PigLocation` i `place-scenes-check` zielone w logu `PK-P31q`.
+2. `assets/data/place_scenes.json` ma 4 miejsca i pas podłogi dla każdego (log PK-P31a podaje prostokąty). Opcjonalnie: otwórz `assets/world/bg/garden_day.png` i sprawdź, czy prostokąt leży na trawie, nie na stawie.
+3. Gra startuje jak dotąd, nic się nie zmieniło.
