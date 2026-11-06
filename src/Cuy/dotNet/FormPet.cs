@@ -1627,7 +1627,7 @@ namespace Cuy
             int index = FallWindowPicker.Pick(fallRects, PositionX, PositionY, Width, Height, y, area.Y, i =>
             {
                 hwndWindow = fallHandles[i];
-                currentWindowSize = fallRects[i];
+                currentWindowSize = ToNativeRect(fallRects[i]);
                 bool covered = CheckTopWindow(false);
                 if (covered) hwndWindow = (IntPtr)0;    // window is covered by other windows, reset handle
                 return covered;
@@ -1636,7 +1636,7 @@ namespace Cuy
 
             IntPtr hwndLanding = fallHandles[index];
             hwndWindow = hwndLanding;
-            currentWindowSize = fallRects[index];
+            currentWindowSize = ToNativeRect(fallRects[index]);
                 // Only if the option is set (this is an invasive functionality)
             if (Program.MyData.GetWindowForeground())
             {
@@ -1650,6 +1650,11 @@ namespace Cuy
         /// Lists visible, titled windows (with a usable title bar) in Z-order, with their rectangles.
         /// The pet position is not used here, so the list can be cached and reused by FallDetect.
         /// </summary>
+        private static NativeMethods.RECT ToNativeRect(Rectangle r)
+        {
+            return new NativeMethods.RECT { Left = r.Left, Top = r.Top, Right = r.Right, Bottom = r.Bottom };
+        }
+
         private void RefreshFallWindows()
         {
             fallHandles.Clear();
