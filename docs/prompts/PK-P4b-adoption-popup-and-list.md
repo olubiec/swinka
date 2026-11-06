@@ -19,5 +19,10 @@ Depends on: PK-P4a merged (Core API names are in docs/opt/log/PK-P4a.md).
    - D6 `random-adoption`: the random adoption picker never returns Kuki/Ned while the gate is closed.
 3. Implement: popup file, list filtering, `CuyPig` drawing from the roster entry only, C# handler that forwards the Core offer/accept (use the API from the PK-P4a log) and a desktop notification through the existing notification path (grep how other features notify).
 4. Verification line; fix until green. Log (max 10 lines).
+## Zasady grafiki (obowiązkowe, owner wymusił po teście P3)
+- Legenda stylu to `docs/STYL_SWIATA.md` (czytaj tylko pkt 0-2 i 5, ~60 linii) i paleta `assets/data/style_palette.json` (42 kolory). Zakaz kolorów spoza palety, zakaz `#fff` i `#000`, zakaz gradientów CSS i rozmycia, `image-rendering: pixelated`, skala tylko całkowita.
+- Biblioteka pixel artów: najpierw szukaj gotowego w `assets/world/` (`atlas.json`, tła `assets/world/bg/*`), `assets/ui/` (`ui.json`, `ui_tokens.css`), `assets/icons/`, `assets/props/`. Używaj istniejącego PNG. Nowy sprite tylko, gdy w bibliotece naprawdę nie ma, i wtedy: skrypt w `tools/art/` rysujący tylko kolorami palety, wpis w `ui.json` lub `atlas.json`, kontrola `python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt` bez nowych błędów.
+- Elementy interfejsu (belka, strzałki, cofnij, zamknij, przyciski) mają wyglądać jak reszta okna gry: panel/9-slice z `assets/ui/`, kolory `--ui-*` z `ui_tokens.css`, czcionka `--ui-font`. Żadnych własnych SVG, glifów tekstowych (✕ ← → ‹ ›) ani domyślnych kontrolek przeglądarki.
+
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj".
 Log: write `docs/opt/log/PK-P4b.md` (max 10 lines). Do not run git.

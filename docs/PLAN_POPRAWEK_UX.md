@@ -80,7 +80,28 @@ Cel: domek, ogród, park, farma, targ to osobne okna; strzałki po bokach przeł
 | P3-04 | Strzałka cofania i krzyżyk zamknięcia z More w stylu designu gry (jedne wspólne ikony SVG/PNG, te same we wszystkich oknach funkcji) | `web/home/style.css`, `web/home/app.js`, `web/home/assets/ui/` | smoke: wszystkie okna funkcji mają te same ikony cofania i zamknięcia |
 | P3-05 | Plan domu usuwamy (decyzja człowieka 6.11): zostaje samo przełączanie pokoi strzałkami | `web/home/features/rooms/feature.js` | smoke: brak planu z ukosa; przełączanie pokoi działa |
 
-### Do sprawdzenia po P3
+### Wynik testu P3 (6.11) i rework P3c-P3f
+Test właściciela: P3 nie przeszedł. Belka przełączania nie trzyma stylu, cofnij i X słabe (nowe SVG zamiast biblioteki gry), pokoje się nie przewijają, strzałka otwiera tylko podgląd, do miejsc nie da się wejść, tła ogrodu, parku, farmy i targu nie są wdrożone jako miejsca. Przyczyna: P3a/P3b zrobiły tylko interfejs, a świnka i scena zostały jednym domkiem. Decyzja: „pełne 3D" = pseudo-3D (widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, zasłaniana przez rzeczy stojące niżej), bez prawdziwego 3D/WebGL, bo łamie legendę stylu. Podgląd miejsc znika, bo każde miejsce jest sceną w głównym oknie.
+
+| ID | Zadanie | Paczka |
+|---|---|---|
+| P3c | Core: jedna lokalizacja każdej świnki (miejsce, pokój, przypięcie), wędrówka tylko do sąsiednich odblokowanych miejsc, dane scen (pas podłogi, wyjścia) dla 5 miejsc. Wciąga P5-01 | PK-P3c |
+| P3d | Silnik scen: tło miejsca z `assets/world/bg`, chodzenie w 2D z głębią, y-sort, wyjścia, rysowanie zapisanych dekoracji | PK-P3d |
+| P3e | Główne okno pokazuje miejsce, belka w stylu gry, brak okien podglądu i strzałek w oknach, pasek „Cuy is in ...", przewijanie pokoi | PK-P3e |
+| P3f | Strzałki, cofnij i X z biblioteki PNG gry (`close_btn.png` wszędzie), usunięcie SVG, zrzuty ekranu do oceny | PK-P3f |
+| P3rq | Testy na Windowsie | PK-P3rq |
+
+Każda paczka grafiki ma w prompcie obowiązkowy blok: legenda `docs/STYL_SWIATA.md`, paleta 42 kolorów, najpierw istniejący PNG z `assets/`, nowy tylko skryptem z `tools/art/` i `style_check.py`.
+
+### Do sprawdzenia po P3 (rework)
+1. Belka nad sceną ma ramkę i strzałki jak reszta okna gry, jeden rząd, bez glifów tekstowych.
+2. Strzałki przechodzą: salon, pokoje świnek, ogród, park, farma, targ, od nowa. Każde miejsce to własne tło z gry, nie okno podglądu.
+3. Świnka chodzi po całej podłodze (w głąb i wszerz), wchodzi i wychodzi przez drzwi lub furtkę. W innym miejscu widzisz „Cuy is in ...".
+4. Wszystkie X i cofnij wyglądają tak jak X w nagłówku. W oknach z More nie ma dodatkowych strzałek.
+5. Okno pokoi przewija się do końca.
+6. Zrzuty `docs/qa/shots/p3f-*.png` wyglądają jak gra.
+
+### Do sprawdzenia po P3 (pierwsza wersja, nieaktualna)
 1. Strzałki po bokach przechodzą: dom (pokoje) → ogród → park → farma → targ.
 2. Każde miejsce wygląda jak własne okno, bez śladów poprzedniego.
 3. Zablokowane miejsca pokazują, co je odblokuje, a nie puste okno.
@@ -111,7 +132,7 @@ Uwaga ryzyka: pulpit (`BrainController`) dziś obsługuje jedną świnkę; P5-04
 
 | ID | Zadanie | Pliki | Akceptacja |
 |---|---|---|---|
-| P5-01 | Core: lokalizacja świnki (pokój, przypięta tak/nie), wędrówka między pokojami co losowy czas z JSON | `src/Cuy.Core/Pigs/PigLocation.cs`, `assets/data/pig_roaming.json` | testy z `ManualClock`: wędrówka, przypięta zostaje |
+| P5-01 | (zrobione w P3c) Core: lokalizacja świnki (pokój, przypięta tak/nie), wędrówka między pokojami co losowy czas z JSON | `src/Cuy.Core/Pigs/PigLocation.cs`, `assets/data/pig_roaming.json` | testy z `ManualClock`: wędrówka, przypięta zostaje |
 | P5-02 | Widok pokoju pokazuje wszystkie świnki, które w nim są; przejście między pokojami widoczne (wejście przy drzwiach) | `web/home/features/rooms/feature.js`, `canvas-pig.js` | smoke: 2 świnki w 2 pokojach, po czasie zmieniają pokój |
 | P5-03 | Menu świnki: „Zostań w tym pokoju" (przypięcie) i „Chodź swobodnie" | `web/home/features/pigs/feature.js`, walidacja `PigsMessages.cs` | smoke: przypięta zostaje po czasie |
 | P5-04 | Przełącznik „pokaż na pulpicie" (max 2); drugie okno świnki na pulpicie | `src/Cuy/dotNet/*`, `HomeWindow` | ręcznie na Windowsie: dwie świnki chodzą po pulpicie |

@@ -997,6 +997,107 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P3q-windows-checks-wave-p3.md"
   },
+  "PK-P3c": {
+   "wave": "P3c",
+   "title": "Core: pig location and scene data",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Pigs/PigLocation.cs",
+    "src/Cuy.Core/GameState.PigLocation.cs",
+    "assets/data/pig_roaming.json",
+    "assets/data/place_scenes.json",
+    "src/Cuy/dotNet/Features/PlacesFeature.cs",
+    "tests/Cuy.Core.Tests/PigLocationTests.cs",
+    "tools/qa/place-scenes-check.js",
+    "docs/opt/log/PK-P3c.md"
+   ],
+   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLocation\" && node tools/qa/place-scenes-check.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P3c-core-pig-location-and-scene-data.md"
+  },
+  "PK-P3d": {
+   "wave": "P3d",
+   "title": "Scene engine: walkable pseudo-3D places",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "web/home/features/places/scenes.js",
+    "web/home/features/places/mock.js",
+    "tools/qa/ux-p3-scenes.js",
+    "docs/opt/log/PK-P3d.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p3-scenes.js && node tools/qa/ux-p3-scenes.js && node tools/qa/check-assets.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P3d-scene-engine-walkable-places.md"
+  },
+  "PK-P3e": {
+   "wave": "P3e",
+   "title": "Main window shows the place, bar in game style",
+   "items": [],
+   "files": [
+    "web/home/app.js",
+    "web/home/index.html",
+    "web/home/style.css",
+    "web/home/features/places/feature.js",
+    "web/home/features/places/feature.css",
+    "web/home/features/rooms/feature.js",
+    "web/home/features/garden/feature.js",
+    "web/home/features/farm/feature.js",
+    "web/home/features/market/feature.js",
+    "tools/qa/ux-p3-world.js",
+    "docs/opt/log/PK-P3e.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p3-world.js && node tools/qa/ux-p3-world.js && node tools/qa/ux-p3-places.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P3e-main-window-places-bar.md"
+  },
+  "PK-P3f": {
+   "wave": "P3f",
+   "title": "Arrows, back and close from the pixel-art UI library",
+   "items": [],
+   "files": [
+    "tools/art/ui_arrows.py",
+    "assets/ui/arrow_left.png",
+    "assets/ui/arrow_left_pressed.png",
+    "assets/ui/arrow_right.png",
+    "assets/ui/arrow_right_pressed.png",
+    "assets/ui/back_btn.png",
+    "assets/ui/back_btn_pressed.png",
+    "assets/ui/ui.json",
+    "web/home/style.css",
+    "web/home/app.js",
+    "web/home/assets/ui/back.svg",
+    "web/home/assets/ui/close.svg",
+    "tools/qa/ux-p3-icons.js",
+    "docs/qa/shots/",
+    "docs/opt/log/PK-P3f.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check tools/qa/ux-p3-icons.js && node tools/qa/ux-p3-icons.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P3f-ui-icons-from-library.md"
+  },
+  "PK-P3rq": {
+   "wave": "P3rq",
+   "title": "Windows checks after the P3 rework",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P3rq.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && node tools/qa/place-scenes-check.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P3rq-windows-checks-wave-p3-rework.md"
+  },
   "PK-P4a": {
    "wave": "P4a",
    "title": "Core: adoption gate and one look source",

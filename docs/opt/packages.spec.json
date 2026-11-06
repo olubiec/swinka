@@ -242,6 +242,36 @@
       ]
     },
     {
+      "id": "P3c",
+      "packages": [
+        "PK-P3c"
+      ]
+    },
+    {
+      "id": "P3d",
+      "packages": [
+        "PK-P3d"
+      ]
+    },
+    {
+      "id": "P3e",
+      "packages": [
+        "PK-P3e"
+      ]
+    },
+    {
+      "id": "P3f",
+      "packages": [
+        "PK-P3f"
+      ]
+    },
+    {
+      "id": "P3rq",
+      "packages": [
+        "PK-P3rq"
+      ]
+    },
+    {
       "id": "P4a",
       "packages": [
         "PK-P4a"
@@ -843,6 +873,46 @@
       "title": "Windows checks after wave P4",
       "manual": "docs/prompts/PK-P4q-windows-checks-wave-p4.md",
       "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": []
+    },
+    {
+      "id": "PK-P3c",
+      "tier": "high",
+      "title": "Core: pig location and scene data",
+      "manual": "docs/prompts/PK-P3c-core-pig-location-and-scene-data.md",
+      "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLocation\" && node tools/qa/place-scenes-check.js",
+      "items": []
+    },
+    {
+      "id": "PK-P3d",
+      "tier": "high",
+      "title": "Scene engine: walkable pseudo-3D places",
+      "manual": "docs/prompts/PK-P3d-scene-engine-walkable-places.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p3-scenes.js && node tools/qa/ux-p3-scenes.js && node tools/qa/check-assets.js",
+      "items": []
+    },
+    {
+      "id": "PK-P3e",
+      "tier": "mid",
+      "title": "Main window shows the place, bar in game style",
+      "manual": "docs/prompts/PK-P3e-main-window-places-bar.md",
+      "verify": "node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check web/home/features/rooms/feature.js && node --check tools/qa/ux-p3-world.js && node tools/qa/ux-p3-world.js && node tools/qa/ux-p3-places.js",
+      "items": []
+    },
+    {
+      "id": "PK-P3f",
+      "tier": "mid",
+      "title": "Arrows, back and close from the pixel-art UI library",
+      "manual": "docs/prompts/PK-P3f-ui-icons-from-library.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p3-icons.js && node tools/qa/ux-p3-icons.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt",
+      "items": []
+    },
+    {
+      "id": "PK-P3rq",
+      "tier": "low",
+      "title": "Windows checks after the P3 rework",
+      "manual": "docs/prompts/PK-P3rq-windows-checks-wave-p3-rework.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && node tools/qa/place-scenes-check.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
       "items": []
     }
   ]
