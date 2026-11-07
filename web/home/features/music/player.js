@@ -89,7 +89,11 @@
       const items = (layouts[rid] && layouts[rid].items) || [];
       if (items.some(i => i.itemId === 'gramophone' || i.itemId === 'player_gramophone')) return true;
     }
+    const storage = (st.rooms && st.rooms.storage) || [];
+    if (Array.isArray(storage) && storage.some(s => (s.itemId === 'gramophone' || s.itemId === 'player_gramophone') && (s.count > 0))) return true;
     if (st.inventory && (st.inventory.gramophone || st.inventory.player_gramophone)) return true;
+    const shop = (st.shop && st.shop.items) || [];
+    if (shop.some(i => (i.id === 'gramophone' || i.id === 'player_gramophone') && i.owned > 0)) return true;
     const music = st.music || {};
     if (Array.isArray(music.playerOwned) && music.playerOwned.length > 0) return true;
     if (music.playerPlaced && Object.keys(music.playerPlaced).length > 0) return true;

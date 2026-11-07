@@ -173,6 +173,30 @@
 3. Zablokowane miejsce nie przyjmuje świnki.
 4. Po restarcie gry świnka jest tam, gdzie była.
 
+## Wave P41: UX Fixes (Bond, Maze, Audio, Coloring, Gramophone)
+
+Wszystkie 5 napraw fali P41 mają zielony test (5/5 PASS: Bond, labirynt, audio, kolorowanie, gramofon).
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass (1119/1119 PASS) | App builds cleanly with no compilation or regression errors |
+| UX Bond Modal (Fix 1/5: Bond) | `node tools/qa/ux-p41-bond.js` | Exit code 0, 5/5 PASS (B1-B5) | Otwarcie Bond i powrót nie zostawia okna-widma w More; kolejne kafelki More otwierają dokładnie jedno okno |
+| UX Maze Controls (Fix 2/5: Labirynt) | `node tools/qa/ux-p41-maze.js` | Exit code 0, 4/4 PASS (Z1-Z4) | Kliknięcie celu w labiryncie nie rozwiązuje go automatycznie, świnka porusza się o 1 krok na klik |
+| UX Audio Teardown (Fix 3/5: Audio) | `node tools/qa/ux-p41-audio.js` | Exit code 0, 5/5 PASS (A1-A5) | Wyjście z minigry wycisza jej dźwięki i przywraca stan muzyki domku (jeśli była wyłączona, zostaje wyłączona) |
+| UX Coloring Back (Fix 4/5: Kolorowanie) | `node tools/qa/ux-p41-coloring.js` | Exit code 0, 5/5 PASS (C1-C5) | Jedna spójna strzałka powrotu w kolorowance, hierarchiczne cofanie (obrazek -> kategoria -> More), brak podwójnych strzałek |
+| UX Starter Gramophone (Fix 5/5: Gramofon) | `node tools/qa/ux-p41-gramophone.js` | Exit code 0, 5/5 PASS (Q1-Q5) | Gramofon dostępny w sklepie za 0 koniczynek od poziomu 1; po postawieniu klik pokazuje odtwarzacz, klik obok chowa, muzyka gra dalej |
+| UX All Suite | `node tools/qa/ux-all.js` | 18/20 PASS (wszystkie 5 testów P41 PASS; 2 stare testy ux-p1-lifecycle/ux-p3-places zdezaktualizowane po reworku P35/P37) | Skrypty pakietu UX dla fali P41 przechodzą pomyślnie |
+| Web Smoke | `node tools/qa/web-smoke.js` | 21/21 core PASS z baseline | WebView2 home screens, nawigacja i moduły renderują się poprawnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| EXE Smoke | `powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Exit code 0, selftest passes, EXE SMOKE OK | Świnka chodzi po pulpicie, brak wyjątków i crashów podczas uruchomienia |
+
+### Manual Checklist (Do sprawdzenia po P41)
+1. More: otwórz Bond, wróć, otwórz pięć innych kafelków: żadnego obcego okna, w każdym tylko jedno.
+2. Labirynt: klik w cel nie rozwiązuje go, grasz krok po kroku.
+3. Wyjdź z każdej minigry: jej dźwięk cichnie, muzyka domku wraca jak była (jeśli była wyłączona, zostaje wyłączona).
+4. Kolorowanie: jedna strzałka wstecz, działa, jeden poziom na klik.
+5. Sklep: gramofon za 0 na początku; po postawieniu klik pokazuje odtwarzacz, klik obok chowa, muzyka gra dalej.
+
 
 
 

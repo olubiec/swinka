@@ -325,13 +325,17 @@
       window.CuyPlaces.updateStageNav();
     }
 
-    // Broadcast state to all registered features
+    // Broadcast state to currently open feature (or background listeners)
     window.CuyHome.listFeatures().forEach(feat => {
       if (feat.onState) {
-        try {
-          feat.onState(state);
-        } catch (err) {
-          console.error('[feature ' + feat.id + '] onState', err);
+        const isActive = (window.CuyHome && window.CuyHome.currentFeatureId === feat.id);
+        const isAlways = Boolean(feat.alwaysOnState || feat.id === 'daily' || feat.id === 'decor' || feat.id === 'places');
+        if (isActive || isAlways) {
+          try {
+            feat.onState(state);
+          } catch (err) {
+            console.error('[feature ' + feat.id + '] onState', err);
+          }
         }
       }
     });
@@ -837,6 +841,7 @@
 
   function openMoreModal() {
     removeBackBtn();
+    if (window.CuyHome) window.CuyHome.closeFeature({ keepBackdrop: true });
     let html = `<div class="album-grid">`;
 
     // Always include Album first
@@ -986,6 +991,7 @@
 
   // Modal Minigier
   function openMinigamesModal() {
+    if (window.CuyHome) window.CuyHome.closeFeature({ keepBackdrop: true });
     openModal('Games', '');
     if (window.Minigry && elements.modalBody) {
       window.Minigry.renderSelectScreen(elements.modalBody);
@@ -1038,6 +1044,7 @@
   }
 
   function openAlbumModal(opts) {
+    if (window.CuyHome) window.CuyHome.closeFeature({ keepBackdrop: true });
     const state = window.bridge ? window.bridge.getState() : null;
     const seen = new Set();
     const seenDates = {};
@@ -1098,6 +1105,7 @@
 
   // Developer test dialog / mock tester
   function openDevTestModal() {
+    if (window.CuyHome) window.CuyHome.closeFeature({ keepBackdrop: true });
     let html = `
       <div class="test-panel-content">
         <p style="color:#6e6a5c; font-size:12px;">Test tools for checking the stage, age and bar colours:</p>

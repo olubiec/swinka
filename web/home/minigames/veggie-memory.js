@@ -90,6 +90,12 @@
       }
 
       create() {
+        const mg = root.MiniGames || root.Minigry;
+        if (mg && typeof mg.track === 'function') {
+          if (this.sound && this.sound.context) mg.track(this.sound.context);
+          if (config && config.audio) mg.track(config.audio);
+        }
+
         // Wooden tabletop background
         this.add.rectangle(W / 2, H / 2, W, H, 0x8b5a2b);
         // Tablecloth / playmat area

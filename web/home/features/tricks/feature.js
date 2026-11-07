@@ -211,11 +211,13 @@
         clearInterval(timerInterval);
         timerInterval = null;
       }
+      currentContainer = null;
+      currentApi = null;
       setAllowClip();
     },
 
     onState(state) {
-      if (currentContainer && currentApi) {
+      if (currentContainer && currentApi && currentContainer.isConnected) {
         render(currentContainer, state);
       }
       setAllowClip();

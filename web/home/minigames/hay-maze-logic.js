@@ -158,8 +158,65 @@
         return [];
     }
 
+    function stepToward(maze, pos, target) {
+        if (!maze || !pos || !target) {
+            return { x: pos ? pos.x : 0, y: pos ? pos.y : 0, finished: false };
+        }
+
+        const currentX = pos.x;
+        const currentY = pos.y;
+        const isGoal = (x, y) => !!(maze.goal && maze.goal.x === x && maze.goal.y === y);
+
+        if (currentX === target.x && currentY === target.y) {
+            return { x: currentX, y: currentY, finished: isGoal(currentX, currentY) };
+        }
+
+        const dx = target.x - currentX;
+        const dy = target.y - currentY;
+        const cell = (maze.cells && maze.cells[currentY]) ? maze.cells[currentY][currentX] : null;
+
+        if (!cell) {
+            return { x: currentX, y: currentY, finished: isGoal(currentX, currentY) };
+        }
+
+        const candX = dx > 0 ? { dir: 'e', stepX: 1, stepY: 0 } : (dx < 0 ? { dir: 'w', stepX: -1, stepY: 0 } : null);
+        const candY = dy > 0 ? { dir: 's', stepX: 0, stepY: 1 } : (dy < 0 ? { dir: 'n', stepX: 0, stepY: -1 } : null);
+
+        let chosen = null;
+        if (Math.abs(dx) >= Math.abs(dy)) {
+            if (candX && cell[candX.dir]) {
+                chosen = candX;
+            } else if (candY && cell[candY.dir]) {
+                chosen = candY;
+            }
+        } else {
+            if (candY && cell[candY.dir]) {
+                chosen = candY;
+            } else if (candX && cell[candX.dir]) {
+                chosen = candX;
+            }
+        }
+
+        if (chosen) {
+            const nextX = currentX + chosen.stepX;
+            const nextY = currentY + chosen.stepY;
+            return {
+                x: nextX,
+                y: nextY,
+                finished: isGoal(nextX, nextY)
+            };
+        }
+
+        return {
+            x: currentX,
+            y: currentY,
+            finished: isGoal(currentX, currentY)
+        };
+    }
+
     return {
         generate,
-        solve
+        solve,
+        stepToward
     };
 }));

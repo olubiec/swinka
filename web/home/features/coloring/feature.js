@@ -208,6 +208,12 @@
     }
 
     async renderPacks() {
+      this.currentPack = null;
+      if (hasFeatureCreatedBackBtn) {
+        const btn = document.querySelector('.modal-back');
+        if (btn) btn.remove();
+        hasFeatureCreatedBackBtn = false;
+      }
       if (!this.indexData) await this.loadIndex();
       if (!this.indexData) {
         this.container.innerHTML = '<div>Failed to load data</div>';
@@ -355,11 +361,11 @@
 
     renderPack(packData) {
        this.currentPack = packData;
+       ensureModalBackBtn();
        const state = this.store.getState();
        let html = `
        <div class="coloring-pack-view">
           <div class="coloring-header">
-             <button class="coloring-btn back-btn">⬅</button>
              <span class="pack-title-header">${packData.title}</span>
           </div>
           <div class="coloring-pics-grid">
@@ -378,10 +384,6 @@
        packData.pictures.forEach(pic => {
           const canvas = this.container.querySelector(`#thumb_pic_${pic.id}`);
           this.drawThumb(canvas, pic, state, false);
-       });
-
-       this.container.querySelector('.back-btn').addEventListener('click', () => {
-          this.renderPacks();
        });
 
        this.container.querySelectorAll('.coloring-pic-card').forEach(el => {
@@ -454,7 +456,6 @@
        let html = `
        <div class="coloring-editor">
           <div class="coloring-header">
-             <button class="coloring-btn back-gallery">⬅</button>
              <span class="editor-title">${this.level ? `Level ${this.level}` : this.pic.title}</span>
              <span class="editor-progress">0%</span>
              <button class="coloring-btn toggle-style">${this.isFlat ? 'Flat' : 'Beads'}</button>
@@ -473,11 +474,6 @@
           </div>
        </div>`;
        this.container.innerHTML = html;
-
-       this.container.querySelector('.back-gallery').addEventListener('click', () => {
-          this.destroy();
-          if (this.onBack) this.onBack();
-       });
 
        this.container.querySelector('.toggle-style').addEventListener('click', (e) => {
           this.isFlat = !this.isFlat;
@@ -941,6 +937,59 @@
 
   let galleryInstance = null;
   let editorInstance = null;
+  let hasFeatureCreatedBackBtn = false;
+
+  function ensureModalBackBtn() {
+    let btn = document.querySelector('.modal-back');
+    if (!btn) {
+      const title = document.querySelector('#modalTitle');
+      const header = title ? title.parentElement : null;
+      if (header) {
+        btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'ui-back modal-back';
+        btn.setAttribute('aria-label', 'Back');
+        header.insertBefore(btn, title);
+        hasFeatureCreatedBackBtn = true;
+      }
+    }
+  }
+
+  function handleBackClick(e) {
+    const backBtn = e.target && e.target.closest && e.target.closest('.modal-back');
+    if (!backBtn) return;
+    if (!galleryInstance && !editorInstance) return;
+
+    if (editorInstance) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      const ed = editorInstance;
+      ed.destroy();
+      if (ed.onBack) {
+        ed.onBack();
+      } else {
+        editorInstance = null;
+        if (galleryInstance) {
+          if (galleryInstance.currentPack) {
+            galleryInstance.renderPack(galleryInstance.currentPack);
+          } else {
+            galleryInstance.renderPacks();
+          }
+        }
+      }
+      return;
+    }
+
+    if (galleryInstance && galleryInstance.currentPack) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      galleryInstance.currentPack = null;
+      galleryInstance.renderPacks();
+      return;
+    }
+  }
 
   window.CuyHome.registerFeature({
     id: 'coloring',
@@ -950,6 +999,11 @@
     open(container, api) {
       containerNode = container;
       featureApi = api;
+      hasFeatureCreatedBackBtn = false;
+
+      document.removeEventListener('click', handleBackClick, true);
+      document.addEventListener('click', handleBackClick, true);
+
       const store = new Store(api);
       if (editorInstance) {
         editorInstance.destroy();
@@ -957,15 +1011,33 @@
       }
       galleryInstance = new Gallery(container, api, store);
       galleryInstance.onOpenEditor = (pack, pic, level) => {
+         ensureModalBackBtn();
          if (editorInstance) editorInstance.destroy();
          editorInstance = new Editor(container, api, store, pack, pic, level, () => {
              editorInstance = null;
-             if (galleryInstance) galleryInstance.renderPacks();
+             if (galleryInstance) {
+               if (galleryInstance.currentPack) {
+                 galleryInstance.renderPack(galleryInstance.currentPack);
+               } else {
+                 galleryInstance.renderPacks();
+               }
+             }
+             if (hasFeatureCreatedBackBtn && !galleryInstance?.currentPack) {
+               const btn = document.querySelector('.modal-back');
+               if (btn) btn.remove();
+               hasFeatureCreatedBackBtn = false;
+             }
          });
       };
       galleryInstance.renderPacks();
     },
     close() {
+      document.removeEventListener('click', handleBackClick, true);
+      if (hasFeatureCreatedBackBtn) {
+        const btn = document.querySelector('.modal-back');
+        if (btn) btn.remove();
+        hasFeatureCreatedBackBtn = false;
+      }
       if (editorInstance) {
         editorInstance.destroy();
         editorInstance = null;

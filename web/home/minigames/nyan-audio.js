@@ -120,7 +120,8 @@
   const TOTAL_STEPS = LEAD_MELODY.length;
 
   function getAudioContext() {
-    if (!audioCtx) {
+    if (!audioCtx || audioCtx.state === 'closed') {
+      audioCtx = null;
       if (root.zzfxX && typeof root.zzfxX.createGain === 'function') {
         audioCtx = root.zzfxX;
       } else {
@@ -128,6 +129,10 @@
         if (AudioContextClass) {
           audioCtx = new AudioContextClass();
         }
+      }
+      const mg = root.MiniGames || root.Minigry;
+      if (audioCtx && mg && typeof mg.track === 'function') {
+        mg.track(audioCtx);
       }
     }
     if (audioCtx && audioCtx.state === 'suspended') {
@@ -254,6 +259,10 @@
     musicMasterGain = ctx.createGain();
     musicMasterGain.gain.setValueAtTime(getMusicVolume(), ctx.currentTime);
     musicMasterGain.connect(ctx.destination);
+    const mg = root.MiniGames || root.Minigry;
+    if (mg && typeof mg.track === 'function') {
+      mg.track(musicMasterGain);
+    }
 
     timerId = setInterval(scheduler, 25);
   }
@@ -277,6 +286,9 @@
         } catch (e) {}
       }
       musicMasterGain = null;
+    }
+    if (audioCtx && audioCtx.state === 'closed') {
+      audioCtx = null;
     }
   }
 

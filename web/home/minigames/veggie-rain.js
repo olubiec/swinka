@@ -39,6 +39,12 @@
       }
 
       create() {
+        const mg = root.MiniGames || root.Minigry;
+        if (mg && typeof mg.track === 'function') {
+          if (this.sound && this.sound.context) mg.track(this.sound.context);
+          if (config && config.audio) mg.track(config.audio);
+        }
+
         // Room: wooden wall and a straw floor
         this.add.rectangle(W / 2, H / 2, W, H, 0x9c6636);
         for (let x = 0; x < W; x += 30) this.add.rectangle(x, 120, 2, 240, 0x6e4424).setOrigin(0, 0.5);

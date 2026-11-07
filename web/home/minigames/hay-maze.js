@@ -69,7 +69,7 @@
           right: this.input.keyboard.addKey('D')
         };
 
-        // Pointer click to walk
+        // Pointer click to move one step
         this.input.on('pointerdown', (pointer) => {
           if (ended || this.isMoving || !this.maze) return;
           if (pointer.y < 28) return; // Skip HUD clicks
@@ -78,7 +78,10 @@
           const clickedRow = Math.floor((pointer.y - this.offsetY) / this.cellSize);
 
           if (clickedCol >= 0 && clickedCol < this.maze.width && clickedRow >= 0 && clickedRow < this.maze.height) {
-            this.walkTo(clickedCol, clickedRow);
+            const next = root.HayMazeLogic.stepToward(this.maze, this.pigCell, { x: clickedCol, y: clickedRow });
+            if (next.x !== this.pigCell.x || next.y !== this.pigCell.y) {
+              this.stepPig(next.x, next.y);
+            }
           }
         });
 
@@ -109,7 +112,6 @@
 
         timeLeft = 60;
         this.isMoving = false;
-        this.moveQueue = [];
 
         // Maze dimensions: 9x9 + 2 per level, max 21x21
         const side = Math.min(21, 9 + (lvl - 1) * 2);
@@ -255,61 +257,7 @@
         }
       }
 
-      walkTo(targetX, targetY) {
-        if (this.pigCell.x === targetX && this.pigCell.y === targetY) return;
-
-        // BFS pathfinding from pig to target
-        const w = this.maze.width;
-        const h = this.maze.height;
-        const visited = Array.from({ length: h }, () => Array(w).fill(false));
-        const parent = Array.from({ length: h }, () => Array(w).fill(null));
-
-        const queue = [{ x: this.pigCell.x, y: this.pigCell.y }];
-        visited[this.pigCell.y][this.pigCell.x] = true;
-
-        while (queue.length > 0) {
-          const curr = queue.shift();
-          if (curr.x === targetX && curr.y === targetY) break;
-
-          const cell = this.maze.cells[curr.y][curr.x];
-          const neighbors = [];
-          if (cell.n) neighbors.push({ x: curr.x, y: curr.y - 1 });
-          if (cell.e) neighbors.push({ x: curr.x + 1, y: curr.y });
-          if (cell.s) neighbors.push({ x: curr.x, y: curr.y + 1 });
-          if (cell.w) neighbors.push({ x: curr.x - 1, y: curr.y });
-
-          for (const n of neighbors) {
-            if (n.x >= 0 && n.x < w && n.y >= 0 && n.y < h && !visited[n.y][n.x]) {
-              visited[n.y][n.x] = true;
-              parent[n.y][n.x] = curr;
-              queue.push(n);
-            }
-          }
-        }
-
-        if (!visited[targetY][targetX]) return; // Unreachable
-
-        // Reconstruct path
-        const path = [];
-        let cur = { x: targetX, y: targetY };
-        while (cur.x !== this.pigCell.x || cur.y !== this.pigCell.y) {
-          path.unshift(cur);
-          cur = parent[cur.y][cur.x];
-        }
-
-        this.moveQueue = path;
-        this.processNextMove();
-      }
-
-      processNextMove() {
-        if (this.moveQueue.length === 0) return;
-        const next = this.moveQueue.shift();
-        this.stepPig(next.x, next.y, () => {
-          this.processNextMove();
-        });
-      }
-
-      stepPig(tx, ty, onDone) {
+      stepPig(tx, ty) {
         this.isMoving = true;
         const targetPixelX = this.offsetX + tx * this.cellSize + this.cellSize / 2;
         const targetPixelY = this.offsetY + ty * this.cellSize + this.cellSize / 2;
@@ -331,8 +279,7 @@
             this.pigCell = { x: tx, y: ty };
             this.checkCellEvents();
             this.isMoving = false;
-            if (this.pig.anims && !this.moveQueue.length) this.pig.play('pig_idle', true);
-            if (onDone) onDone();
+            if (this.pig.anims) this.pig.play('pig_idle', true);
           }
         });
       }

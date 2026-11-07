@@ -44,6 +44,10 @@
       startMusic() {
         if (root.CuyMusic && typeof root.CuyMusic.play === 'function') {
           root.CuyMusic.play('games_1');
+          const mg = root.MiniGames || root.Minigry;
+          if (mg && typeof mg.track === 'function' && root.CuyMusic.currentAudio) {
+            mg.track(root.CuyMusic.currentAudio);
+          }
         }
       },
 
@@ -153,6 +157,12 @@
         this.scheduleObstacleSpawn();
 
         // 9. Audio lifecycle
+        const mg = root.MiniGames || root.Minigry;
+        if (mg && typeof mg.track === 'function') {
+          if (this.sound && this.sound.context) mg.track(this.sound.context);
+          if (config && config.audio) mg.track(config.audio);
+        }
+
         if (root.NyanAudio && typeof root.NyanAudio.startMusic === 'function') {
           root.NyanAudio.startMusic();
         }

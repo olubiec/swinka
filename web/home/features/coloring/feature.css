@@ -231,3 +231,8 @@
    color: var(--ui-wood-0);
    font-weight: bold;
 }
+
+.feature-coloring .back-btn,
+.feature-coloring .back-gallery {
+   display: none;
+}

@@ -142,6 +142,11 @@
       this.currentScore = 0;
       this.rootElement = null;
       this.musicTrack = 'games_1';
+      this.trackedAudio = [];
+      this.savedHomeMusicState = null;
+      this.homeMusic = null;
+      this._clickHandled = false;
+      this._leaving = false;
 
       // Global listener for Home closing or the tab being hidden
       this.bindWindowEvents();
@@ -160,7 +165,8 @@
     }
 
     getGame(id) {
-      return this.games.get(id);
+      if (!id) return null;
+      return this.games.get(id) || this.games.get(id.replace(/-/g, '_')) || this.games.get(id.replace(/_/g, '-'));
     }
 
     getAllGames() {
@@ -168,21 +174,262 @@
     }
 
     bindWindowEvents() {
-      // Pause when visibility is lost (e.g. Home hidden, minimised, window switched)
-      if (typeof document !== 'undefined' && document.addEventListener) {
-        document.addEventListener('visibilitychange', () => {
-          if (document.hidden && this.activeGame && !this.isPaused) {
-            this.pause();
+      if (typeof window !== 'undefined' && window.addEventListener) {
+        window.addEventListener('pagehide', () => {
+          if (this.activeGame || this.activeGameId || this.trackedAudio.length > 0 || this.savedHomeMusicState) {
+            this.leave();
           }
         });
-      }
 
-      if (typeof window !== 'undefined' && window.addEventListener) {
+        window.addEventListener('keydown', (e) => {
+          if (e && (e.key === 'Escape' || e.key === 'Esc')) {
+            if (this.activeGame || this.activeGameId || this.trackedAudio.length > 0 || this.savedHomeMusicState) {
+              this.leave();
+            }
+          }
+        });
+
         window.addEventListener('blur', () => {
           if (this.activeGame && !this.isPaused) {
             this.pause();
           }
         });
+      }
+
+      if (typeof document !== 'undefined' && document.addEventListener) {
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            if (this.activeGame || this.activeGameId || this.trackedAudio.length > 0 || this.savedHomeMusicState) {
+              this.leave();
+            }
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!this.activeGame && !this.activeGameId && this.trackedAudio.length === 0 && !this.savedHomeMusicState) return;
+          const target = e && e.target;
+          if (!target || typeof target.closest !== 'function') return;
+
+          // Back button
+          if (target.closest('#minigamesBtnBack, #minigamesBtnQuit, #minigamesBtnGameOverMenu, .modal-back, .ui-back, [data-action="back"]')) {
+            if (this._clickHandled) return;
+            this._clickHandled = true;
+            setTimeout(() => { this._clickHandled = false; }, 0);
+            if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
+            this.leave();
+            return;
+          }
+
+          // X (close) button
+          if (target.closest('#modalCloseBtn, .modal-close-btn, .ui-close, [data-action="close"]')) {
+            if (this._clickHandled) return;
+            this._clickHandled = true;
+            setTimeout(() => { this._clickHandled = false; }, 0);
+            if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
+            this.leave();
+            return;
+          }
+        });
+      }
+    }
+
+    track(audio) {
+      if (!audio) return audio;
+      if (!this.trackedAudio.includes(audio)) {
+        this.trackedAudio.push(audio);
+      }
+      return audio;
+    }
+
+    untrack(audio) {
+      const idx = this.trackedAudio.indexOf(audio);
+      if (idx >= 0) this.trackedAudio.splice(idx, 1);
+    }
+
+    getTrackedSources() {
+      return this.trackedAudio.slice();
+    }
+
+    getLiveSources() {
+      return this.trackedAudio.filter((item) => {
+        if (!item) return false;
+        if (typeof item.paused === 'boolean') return !item.paused;
+        if (typeof item.state === 'string') return item.state !== 'closed';
+        if (typeof item.isPlaying === 'boolean') return item.isPlaying;
+        if (item._playing) return true;
+        return false;
+      });
+    }
+
+    setHomeMusic(music) {
+      this.homeMusic = music;
+    }
+
+    getHomeMusicState() {
+      return this.savedHomeMusicState;
+    }
+
+    captureHomeMusicState() {
+      const music = this.homeMusic || (typeof window !== 'undefined' ? (window.homeMusic || window.CuyMusic) : null);
+      if (!music) return null;
+
+      let playing = false;
+      let volume = 1;
+      let position = 0;
+      let trackId = null;
+
+      if (typeof music.paused === 'boolean') {
+        playing = !music.paused;
+        volume = typeof music.volume === 'number' ? music.volume : 1;
+        position = typeof music.currentTime === 'number' ? music.currentTime : 0;
+        trackId = music.src || null;
+      } else {
+        if (typeof music.isPlaying === 'function') {
+          playing = Boolean(music.isPlaying());
+        } else if (typeof music.isPlaying === 'boolean') {
+          playing = music.isPlaying;
+        } else if (typeof music.isEnabled === 'function') {
+          playing = Boolean(music.isEnabled());
+        } else if (typeof music.paused === 'boolean') {
+          playing = !music.paused;
+        } else if (typeof music.playing === 'boolean') {
+          playing = music.playing;
+        } else if (music.getState && typeof music.getState === 'function') {
+          const st = music.getState();
+          playing = st.status === 'playing' || st.status === 'waiting';
+          if (typeof st.volume === 'number') volume = st.volume;
+          if (st.recordId) trackId = st.recordId;
+          if (typeof st.index === 'number') position = st.index;
+        }
+
+        if (typeof music.getVolume === 'function') {
+          volume = music.getVolume();
+        } else if (typeof music.volume === 'number') {
+          volume = music.volume;
+        }
+
+        if (typeof music.getPosition === 'function') {
+          position = music.getPosition();
+        } else if (typeof music.currentTime === 'number') {
+          position = music.currentTime;
+        } else if (typeof music.position === 'number') {
+          position = music.position;
+        }
+
+        if (music.currentId) trackId = music.currentId;
+        else if (music._currentId) trackId = music._currentId;
+      }
+
+      return {
+        target: music,
+        playing,
+        volume,
+        position,
+        trackId
+      };
+    }
+
+    restoreHomeMusicState() {
+      const saved = this.savedHomeMusicState;
+      if (!saved) return;
+      const music = saved.target || this.homeMusic || (typeof window !== 'undefined' ? (window.homeMusic || window.CuyMusic) : null);
+      if (!music) {
+        this.savedHomeMusicState = null;
+        return;
+      }
+
+      // Restore volume
+      if (typeof music.setVolume === 'function') {
+        try { music.setVolume(saved.volume); } catch (e) {}
+      } else if ('volume' in music) {
+        try { music.volume = saved.volume; } catch (e) {}
+      }
+
+      // Restore position
+      if ('currentTime' in music && typeof saved.position === 'number') {
+        try { music.currentTime = saved.position; } catch (e) {}
+      } else if ('position' in music && typeof saved.position === 'number') {
+        try { music.position = saved.position; } catch (e) {}
+      } else if (typeof music.seek === 'function' && typeof saved.position === 'number') {
+        try { music.seek(saved.position); } catch (e) {}
+      }
+
+      // Restore play/pause state
+      if (saved.playing) {
+        if (typeof music.play === 'function') {
+          try {
+            if (saved.trackId && music.play.length > 0) {
+              music.play(saved.trackId, { volume: saved.volume });
+            } else {
+              music.play();
+            }
+          } catch (e) {}
+        } else if (typeof music.resume === 'function') {
+          try { music.resume(); } catch (e) {}
+        } else if ('paused' in music) {
+          music.paused = false;
+        }
+      } else {
+        if (typeof music.pause === 'function') {
+          try { music.pause(); } catch (e) {}
+        } else if (typeof music.stop === 'function') {
+          try { music.stop(); } catch (e) {}
+        } else if ('paused' in music) {
+          music.paused = true;
+        }
+      }
+
+      this.savedHomeMusicState = null;
+    }
+
+    leave() {
+      if (this._leaving) return;
+      if (!this.activeGame && !this.activeGameId && this.trackedAudio.length === 0 && !this.savedHomeMusicState) {
+        return;
+      }
+      this._leaving = true;
+      try {
+        // 1. Stop and disconnect every tracked audio source and close AudioContexts
+        const sources = this.trackedAudio.slice();
+        for (const item of sources) {
+          if (!item) continue;
+          try {
+            if (typeof item.stop === 'function') item.stop();
+          } catch (e) {}
+          try {
+            if (typeof item.pause === 'function') item.pause();
+          } catch (e) {}
+          try {
+            if (typeof item.disconnect === 'function') item.disconnect();
+          } catch (e) {}
+          try {
+            if (typeof item.close === 'function' && item.state !== 'closed') {
+              item.close();
+            }
+          } catch (e) {}
+        }
+
+        if (root.NyanAudio && typeof root.NyanAudio.stopMusic === 'function') {
+          try { root.NyanAudio.stopMusic(); } catch (e) {}
+        }
+
+        this.trackedAudio = [];
+
+        // 2. Stop game instance
+        this.stopCurrentGame();
+
+        // 3. Restore home music state
+        this.restoreHomeMusicState();
+
+        // 4. Return to select screen if rootElement exists
+        if (this.rootElement && typeof this.rootElement === 'object') {
+          try {
+            this.renderSelectScreen(this.rootElement);
+          } catch (e) {}
+        }
+      } finally {
+        this._leaving = false;
+        this._clickHandled = false;
       }
     }
 
@@ -349,7 +596,7 @@
      * @returns {Promise<Object>} result { points, clovers, record }
      */
     start(gameId, customConfig = {}) {
-      const gameDef = this.games.get(gameId);
+      const gameDef = this.getGame(gameId);
       if (!gameDef) {
         console.error(`[Minigames] No registered game found: ${gameId}`);
         return Promise.reject(new Error(`Game ${gameId} is not registered.`));
@@ -359,13 +606,25 @@
       this.activeGameId = gameId;
       this.currentScore = 0;
       this.isPaused = false;
-      this.musicTrack = this.musicTrack === 'games_1' ? 'games_2' : 'games_1';
-      if (window.CuyMusic) window.CuyMusic.play(this.musicTrack);
+      this._clickHandled = false;
 
-      const container = customConfig.container || this.rootElement || document.getElementById('modalBody');
+      // 1. Capture home music state before switching to minigame track
+      this.savedHomeMusicState = this.captureHomeMusicState();
+      this.trackedAudio = [];
+
+      this.musicTrack = this.musicTrack === 'games_1' ? 'games_2' : 'games_1';
+      if (window.CuyMusic && (!this.savedHomeMusicState || this.savedHomeMusicState.playing)) {
+        window.CuyMusic.play(this.musicTrack);
+        if (window.CuyMusic.currentAudio) {
+          this.track(window.CuyMusic.currentAudio);
+        }
+      }
+
+      const container = customConfig.container || this.rootElement || (typeof document !== 'undefined' ? document.getElementById('modalBody') : null);
       if (!container) {
         throw new Error('[Minigames] No container for the minigames!');
       }
+      this.rootElement = container;
 
       return new Promise((resolve) => {
         // Build the gameplay DOM (HUD + canvas wrapper + pause overlay + game over overlay)
@@ -424,15 +683,8 @@
           this.resume();
         });
 
-        document.getElementById('minigamesBtnQuit')?.addEventListener('click', () => {
-          if (root.Sound) root.Sound.click();
-          this.renderSelectScreen(container);
-        });
-
-        document.getElementById('minigamesBtnBack')?.addEventListener('click', () => {
-          if (root.Sound) root.Sound.click();
-          this.renderSelectScreen(container);
-        });
+        // Note: minigamesBtnQuit and minigamesBtnBack are handled by the delegated click listener in bindWindowEvents,
+        // which triggers this.leave() exactly once and plays the click sound.
 
         // Prepare the config for the game
         const state = root.bridge ? root.bridge.getState() : null;
@@ -467,8 +719,14 @@
           root.MinigryPig.setLook(gameConfig.pigLook.breed, gameConfig.pigLook.paletteId);
           this.activeGame = gameDef.start(gameConfig);
           // If a Phaser.Game instance was returned, remember it
-          if (this.activeGame instanceof Phaser.Game) {
+          if (root.Phaser && this.activeGame instanceof root.Phaser.Game) {
             this.phaserInstance = this.activeGame;
+          }
+          if (this.phaserInstance && this.phaserInstance.sound && this.phaserInstance.sound.context) {
+            this.track(this.phaserInstance.sound.context);
+          }
+          if (customConfig.audio) {
+            this.track(customConfig.audio);
           }
         } catch (err) {
           console.error('[Minigames] Error while starting the game:', err);
@@ -537,7 +795,12 @@
     // --- Shared game over screen with the reward ---
     endGame(score, gameId, container, resolvePromise) {
       this.stopCurrentGame();
-      if (window.CuyMusic) window.CuyMusic.play('menu', { volume: 0.6 });
+      if (root.NyanAudio && typeof root.NyanAudio.stopMusic === 'function') {
+        try { root.NyanAudio.stopMusic(); } catch (e) {}
+      }
+      if (this.savedHomeMusicState ? this.savedHomeMusicState.playing : true) {
+        if (window.CuyMusic) window.CuyMusic.play('menu', { volume: 0.6 });
+      }
 
       // Notify the bridge
       if (root.bridge) {
@@ -634,10 +897,8 @@
           this.start(gameId, { container });
         });
 
-        document.getElementById('minigamesBtnGameOverMenu')?.addEventListener('click', () => {
-          if (root.Sound) root.Sound.click();
-          this.renderSelectScreen(container);
-        });
+        // Note: minigamesBtnGameOverMenu is handled by the delegated click listener in bindWindowEvents,
+        // which triggers this.leave() and restores home music.
       };
 
       const curState = root.bridge ? root.bridge.getState() : null;
@@ -668,13 +929,17 @@
   // Expose globally
   const manager = new MinigryManager();
   root.Minigry = manager;
+  root.MiniGames = manager;
   root.MinigryPig = MinigryPig;
 
   // Load games.json and append minigame scripts
   // Resolve against this script's own URL: it is loaded both from web/home/index.html and from minigames/index.html.
   const apiUrl = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src)
-    || 'minigames/minigames-api.js';
-  const gamesJsonUrl = new URL('games.json', apiUrl).href;
+    || (typeof location !== 'undefined' && location.href ? location.href : 'http://localhost/web/home/minigames/minigames-api.js');
+  let gamesJsonUrl = 'games.json';
+  try {
+    gamesJsonUrl = new URL('games.json', apiUrl).href;
+  } catch (e) {}
 
   fetch(gamesJsonUrl)
     .then(res => {
@@ -685,7 +950,11 @@
       for (const file of files) {
         await new Promise((resolve) => {
           const script = document.createElement('script');
-          script.src = new URL(file, apiUrl).href;
+          try {
+            script.src = new URL(file, apiUrl).href;
+          } catch (e) {
+            script.src = file;
+          }
           script.onload = resolve;
           script.onerror = () => {
             console.warn(`[Minigames] Failed to load ${file}`);
