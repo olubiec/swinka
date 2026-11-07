@@ -443,8 +443,8 @@
 
     const hasInInventory = !!(state.inventory && (state.inventory.gramophone > 0 || state.inventory.player_gramophone > 0));
     const hasInShop = Array.isArray(state.shop?.items) && state.shop.items.some(i => (i.id === 'gramophone' || i.id === 'player_gramophone') && i.owned > 0);
-    const hasInMusic = Array.isArray(state.music?.playerOwned) && state.music.playerOwned.length > 0;
-    const hasInPlaced = state.music?.playerPlaced && Object.keys(state.music.playerPlaced).length > 0;
+    const hasInMusic = Array.isArray(state.music?.playerOwned) && state.music.playerOwned.some(id => id === 'gramophone' || id === 'player_gramophone');
+    const hasInPlaced = state.music?.playerPlaced && Object.values(state.music.playerPlaced).some(id => id === 'gramophone' || id === 'player_gramophone');
     let hasInRooms = false;
     if (state.rooms?.layouts) {
       for (const r of Object.values(state.rooms.layouts)) {
@@ -452,6 +452,11 @@
           hasInRooms = true;
           break;
         }
+      }
+    }
+    if (state.rooms?.catalog) {
+      if (state.rooms.catalog.some(c => (c.id === 'gramophone' || c.id === 'player_gramophone') && (c.owned > 0 || c.placed > 0))) {
+        hasInRooms = true;
       }
     }
 
@@ -553,10 +558,13 @@
       if (window.Sound) window.Sound.click();
       if (window.bridge) {
         window.bridge.send({ type: 'buy', itemId: 'gramophone' });
+        setTimeout(() => {
+          window.bridge.send({ type: 'room_place', place: 'salon', itemId: 'gramophone', x: 4, y: 3 });
+        }, 150);
       }
       const banner = document.getElementById('gramophoneClaimBanner');
       if (banner) banner.hidden = true;
-      showToast('Gramophone claimed!');
+      showToast('Gramophone claimed and added to living room!');
     });
 
     document.getElementById('btnCloseClaimGramophone')?.addEventListener('click', () => {

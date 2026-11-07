@@ -135,6 +135,17 @@ namespace Cuy.Features
             if (pet.TryPay(price, "shop"))
             {
                 pet.AddItem(def.Id, 1);
+                var worldDef = pet.WorldItemCatalog?.Find(def.Id);
+                if (worldDef != null)
+                {
+                    var w = pet.EnsureWorld();
+                    if (w != null)
+                    {
+                        if (w.OwnedItems == null) w.OwnedItems = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                        if (!w.OwnedItems.ContainsKey(def.Id)) w.OwnedItems[def.Id] = 1;
+                        else w.OwnedItems[def.Id] += 1;
+                    }
+                }
                 pet.Count("purchases");
                 pet.Count(counterKey); // increment daily purchase counter
 

@@ -229,7 +229,7 @@
         const canAfford = clovers >= it.price && !isOwned && !reachedLimit;
 
         let btnText = 'Buy';
-        if (isOwned) btnText = 'Owned';
+        if (isOwned) btnText = it.category === 'decor' ? 'In Room' : 'Owned';
         else if (reachedLimit) btnText = 'Limit today';
         else if (it.price === 0) btnText = 'Claim';
 
@@ -274,6 +274,11 @@
           if (apiRef.sound) apiRef.sound.fanfare();
         } else if (apiRef) {
           apiRef.send({ type: 'buy', itemId: itemId });
+          if (itemId === 'gramophone') {
+            setTimeout(() => {
+              apiRef.send({ type: 'room_place', place: 'salon', itemId: 'gramophone', x: 4, y: 3 });
+            }, 150);
+          }
           if (apiRef.sound) apiRef.sound.fanfare();
         }
       });

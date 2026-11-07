@@ -624,7 +624,7 @@
         if (window.CuyMusic && typeof window.CuyMusic.stop === 'function') {
           window.CuyMusic.stop(100);
         }
-      } else if (window.CuyMusic && (!this.savedHomeMusicState || this.savedHomeMusicState.playing)) {
+      } else if (window.CuyMusic) {
         window.CuyMusic.play(this.musicTrack);
         if (window.CuyMusic.currentAudio) {
           this.track(window.CuyMusic.currentAudio);

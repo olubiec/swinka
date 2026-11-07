@@ -277,10 +277,36 @@
     return autoMounted ? autoMounted.isVisible() : false;
   }
 
+  function updateGramophoneButton() {
+    if (typeof document === 'undefined') return;
+    let btn = document.getElementById('btnGramophoneToggle');
+    const owned = hasGramophone();
+    if (!btn && owned) {
+      const badges = document.querySelector('.identity-badges');
+      if (badges) {
+        btn = document.createElement('button');
+        btn.id = 'btnGramophoneToggle';
+        btn.type = 'button';
+        btn.className = 'gramophone-toggle-badge';
+        btn.title = 'Music Player';
+        btn.setAttribute('aria-label', 'Music Player');
+        btn.innerHTML = '<span class="pixel-icon icon-gramophone"></span> Player';
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggle();
+        });
+        badges.appendChild(btn);
+      }
+    } else if (btn) {
+      btn.style.display = owned ? 'inline-flex' : 'none';
+    }
+  }
+
   if (typeof window !== 'undefined') {
     const listenState = () => {
       if (window.bridge && typeof window.bridge.onState === 'function') {
         window.bridge.onState(() => {
+          updateGramophoneButton();
           if (autoMounted && autoMounted.isVisible() && !hasGramophone()) {
             autoMounted.hide();
           }
@@ -292,8 +318,15 @@
   }
 
   if (typeof document !== 'undefined') {
-    if (document.readyState !== 'loading') autoMount();
-    else document.addEventListener('DOMContentLoaded', autoMount);
+    if (document.readyState !== 'loading') {
+      autoMount();
+      updateGramophoneButton();
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        autoMount();
+        updateGramophoneButton();
+      });
+    }
   }
 
   return { STATUS_TEXT, playerModel, togglePlay, next, setVolume, mount, autoEngine, show, hide, toggle, isVisible, hasGramophone };

@@ -2044,6 +2044,26 @@ body.webview-mode .game-device {
   color: #ffffff;
 }
 
+.gramophone-toggle-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--ui-wood-2, #3b2216);
+  border: 1px solid var(--ui-gold-0, #eedb7c);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 11px;
+  font-family: inherit;
+  color: #eedb7c;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.gramophone-toggle-badge:hover {
+  background: var(--ui-wood-3, #4d2d1e);
+  filter: brightness(1.15);
+}
+
 /* Respect the OS "reduce motion" setting: stop endless animations (e.g. daily-bounce). */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

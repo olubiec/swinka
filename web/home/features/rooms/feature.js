@@ -800,10 +800,11 @@
     const h = layout.rows * CELL * S.scale;
     const placedTotal = layout.items.length;
     const sale = saleKeyOf(S.place);
+    const isHouseRoom = sale === 'salon' || sale === 'house' || S.place === 'salon' || isPigRoom(S.place) || S.place === DORM_ID;
     const drawer = (st.rooms.catalog || []).map(c => {
       const isOwned = c.owned || (st.inventory && st.inventory[c.id] > 0) || (st.rooms?.owned && st.rooms.owned[c.id] > 0) || (c.id === S.selectedItem);
       return Object.assign({}, c, { owned: isOwned });
-    }).filter(c => c.owned && (c.places || []).indexOf(sale) >= 0);
+    }).filter(c => c.owned && (c.places || []).some(p => p === sale || p === S.place || (p === 'house' && isHouseRoom)));
     if (S.selectedItem && !drawer.some(c => c.id === S.selectedItem)) {
       const shopDef = (st.shop?.items || []).find(i => i.id === S.selectedItem);
       const def = {
