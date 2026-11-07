@@ -10,7 +10,7 @@ CZYTAJ TYLKO: AGENTS.md (raz), sekcję "Do sprawdzenia po P<FALA>" i wiersz fali
 KROK 0 (raz na całą pracę, tylko jeśli pliku nie ma): node tools/qa/web-smoke.js > docs/opt/log/baseline-smoke.txt 2>&1
 To jest stan wyjściowy. Poza paczką q nikt nie uruchamia web-smoke.js.
 
-KROK 1: dla każdej paczki wpisu P<FALA>a (pliki docs/prompts/PK-P<FALA>[a-z]-*.md, bez "q") uruchom jednego subagenta, wszystkie równolegle, na modelu z waves.yaml. Przekaż mu tylko ścieżkę jego promptu. Prompt zawiera Limity i zakres, nie dodawaj nic więcej. Subagent nie używa git.
+KROK 1: wpisy P<FALA>a, P<FALA>b, P<FALA>c... (kolejne etapy, bez "q") wykonuj PO KOLEI; w jednym wpisie dla każdej paczki uruchom jednego subagenta, wszystkie równolegle, na modelu z waves.yaml. Etap n+1 startuje dopiero, gdy etap n nie ma BLOCKED. Prompty: docs/prompts/PK-<id paczki>-*.md. Przekaż mu tylko ścieżkę jego promptu. Prompt zawiera Limity i zakres, nie dodawaj nic więcej. Subagent nie używa git.
 Paczka BLOCKED: nie ponawiaj, nie ruszaj jej. Reszta idzie dalej.
 
 KROK 2: gdy żadna paczka nie jest BLOCKED, uruchom PK-P<FALA>q (jeden subagent, docs/prompts/PK-P<FALA>q-*.md). Nie naprawia kodu, każdą komendę raz. Jeśli była BLOCKED, pomiń krok 2 i 3.
@@ -29,4 +29,4 @@ RAPORT (po polsku, maks. 12 linii):
 - Odpisz mi: "OK" albo "krok X: opis" dla każdego, co nie działa.
 ```
 
-Kolejność sesji naprawczych po nieudanym P3: 31-37 (zrobione), potem 41, 38, 39, 40. Potem 4 (adopcja), z wpisami P4a, P4b, P4q: wtedy w kroku 1 uruchom P4a, po jego zakończeniu P4b (P4b czyta log PK-P4a), na końcu P4q.
+Kolejność sesji: 31-37 (zrobione), potem 41, 42, 38, 39, 40, 43, 44, na końcu 4 (adopcja, wpisy P4a, P4b, P4q po kolei).

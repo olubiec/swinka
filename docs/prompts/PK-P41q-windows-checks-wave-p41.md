@@ -1,17 +1,17 @@
-# PK-P41q: Windows checks after wave P41
-Zmieniaj: docs/qa/UX_WAVE_CHECKS.md, docs/opt/log/PK-P41q.md
+# PK-P41q: Windows checks after wave P41 (paczka q, biegnie ostatnia)
+Zmieniaj: docs/qa/UX_WAVE_CHECKS.md, docs/qa/shots, tools/qa/ux-p41-shots.js, docs/opt/log/PK-P41q.md
 Wymagane: docs/qa/UX_WAVE_CHECKS.md
 Weryfikacja: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
-Limity (twarde): maks. 45 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
-Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
-Goal: Run the Windows checks of wave P41 and record the result. This package does NOT fix product code.
+Limity (twarde): każdą komendę uruchom raz, nie ponawiaj nieudanej. Nie naprawiaj kodu produktowego. Maks. 25 wywołań narzędzi.
+Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj, all product code (src/, web/home/, assets/, tools/art/)
+Goal: Run the Windows checks of wave P41 and record the result. A failing check is written in the log and makes the line fail.
 Depends on: all other packages of wave P41 merged.
 
-
 ## Steps
-1. Append a section "Wave P41" to `docs/qa/UX_WAVE_CHECKS.md` in the format of the earlier sections: one row per test of this wave (`ux-p41-*`) plus the verification line, and the manual bullets of "Do sprawdzenia po P41" from `docs/PLAN_POPRAWEK_UX.md`.
-2. Run the verification line once (each command once, never retry), compare with `docs/opt/log/baseline-smoke.txt`, write the result in the log (max 10 lines: PASS/FAIL per command, new vs old errors).
+1. Dopisz sekcję "Wave P41" do `docs/qa/UX_WAVE_CHECKS.md` w formacie wcześniejszych sekcji: wiersz na każdy test `ux-p41-*` z logów `docs/opt/log/PK-P41*.md` plus linię Weryfikacja, oraz punkty ręczne z "Do sprawdzenia po P41" z `docs/PLAN_POPRAWEK_UX.md`.
+2. Odpal wszystkie testy `ux-p41-*`. W `docs/qa/UX_WAVE_CHECKS.md` zapisz, które z 5 napraw (Bond, labirynt, audio, kolorowanie, gramofon) mają zielony test.
+3. Uruchom linię Weryfikacja RAZ (każdą komendę raz, bez ponawiania), porównaj z `docs/opt/log/baseline-smoke.txt`, zapisz w logu (maks. 10 linii): PASS/FAIL na komendę, nowe vs stare błędy.
 
-Prohibited: changing or deleting existing test assertions (poza wskazanymi w krokach), new dependencies, touching files outside "Zmieniaj", extra refactors.
-Log: write `docs/opt/log/PK-P41q.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.
+Prohibited: product code changes.
+Log: write `docs/opt/log/PK-P41q.md` (max 10 lines). Do not run git.

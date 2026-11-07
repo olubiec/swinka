@@ -93,13 +93,20 @@ Test właściciela: P3 nie przeszedł. Belka nie trzyma stylu, cofnij i X słabe
 | P36 | PK-P36a, PK-P36b, PK-P36q | a: belka miejsc w głównym oknie przełącza sceny; b: okno Pokoi się przewija |
 | P37 | PK-P37a, PK-P37q | jedne X, cofnij i strzałki z PNG wszędzie, usunięcie SVG, zrzuty ekranu |
 | P38 | PK-P38a, PK-P38q | chip „Cuy is in ...", „Go there", wyjścia zmieniają miejsce świnki |
-| P39 | PK-P39a, PK-P39b, PK-P39q | a: przeszkody w tłach (fontanna, stragany, staw, stodoła) i ruch świnki wokół nich, poprawna skala świnki; b: cała scena widoczna (belka nie przycina) i światło/ambient we wszystkich scenach |
-| P40 | PK-P40a, PK-P40q | tryb edycji ze schowkiem w głównym oknie zamiast okien Pokoje i Ogród; Farma i Targ zostają jako okna aktywności, otwierane przyciskiem w belce |
-| P41 | PK-P41a, PK-P41b, PK-P41c, PK-P41d, PK-P41q | poprawki z testu 7.11: okno Bond wyciekające do wszystkich okien More; labirynt rozwiązuje się sam, muzyka po minigrze, dwie strzałki w kolorowaniu; gramofon od startu; skóry świnek jednakowe wszędzie i odliczanie adopcji w dniach, godzinach, minutach |
+| P41 | PK-P41a..e, PK-P41q | poprawki z testu 7.11 (równolegle, małe): a Bond wyciekający do okien More, b labirynt rozwiązuje się sam, c muzyka po minigrze, d dwie strzałki w kolorowaniu, e gramofon od startu |
+| P42 | etap a: PK-P42a (Core: jedno źródło wyglądu świnki), PK-P42b (odliczanie adopcji d h m); etap b: PK-P42c (Home rysuje z `look`); PK-P42q | skóry świnek jednakowe na pulpicie i w Home |
+| P39 | etap a: PK-P39a (przeszkody w danych), PK-P39b (scena cała widoczna); etap b: PK-P39c (siatka i ścieżki wokół przeszkód), PK-P39d (światło scen); etap c: PK-P39e (skala i chowanie za obiektami); PK-P39q | fizyka chodzenia, perspektywa, światło |
+| P40 | etapy a-e po kolei: PK-P40a (przycisk Edit i szuflada), b (przeciągnięcie ze schowka na scenę), c (przesuń, obróć, usuń), d (okna Pokoje i Ogród znikają), e (poziom i odblokowanie w szufladzie); PK-P40q | edycja w scenie |
+| P43 | etap a: PK-P43a (punkty klikalne w danych), PK-P43b (silnik punktów); etap b: PK-P43c (stragany), PK-P43d (grządki, sad, sklep), PK-P43e (przedmioty w pokojach i ogrodzie); etap c: PK-P43f (okna Farmy i Targu znikają); PK-P43q | interakcja bezpośrednio w scenie |
+| P44 | etap a: PK-P44a (przeciąganie świnki do krawędzi), etap b: PK-P44b (zmiana sceny i `places.pigMove`); PK-P44q | przenoszenie świnki między pokojami i miejscami |
 
-Zakres obcięty (decyzja 7.11, wraca po P4 i teście): przeciąganie świnki do sąsiedniego pokoju, klikalne stragany i grządki w scenie, likwidacja okien Farmy i Targu, druga świnka na pulpicie (P5), edytor i schowek rozbudowany (P6), fizyka i grafika (P7), kalendarz opieki (P8). Park, farma i targ są na razie scenami do chodzenia, bez nowej mechaniki.
+Etapy w jednej fali: uruchamiaj wpisy `P<N>a`, `P<N>b`... po kolei (paczki w jednym wpisie równolegle), na końcu `P<N>q`.
 
-Kolejność sesji: 31-37 (zrobione), potem 41 (poprawki), 38, 39, 40, a po nich 4 (adopcja). Zależności są między falami, więc nie zmieniaj kolejności.
+Mapa uwag właściciela (7.11) na fale: Bond -> P41a; labirynt -> P41b; muzyka -> P41c; dwie strzałki -> P41d; brak gramofonu -> P41e; skóry i Kuki na pasku -> P42a, P42c; odliczanie -> P42b; szare sylwetki do adopcji -> P4b; fontanna i skala -> P39a, P39c, P39e; belka przycina -> P39b; shader -> P39d; zbędne okna Rooms, Garden -> P40; okna Farm, Market i interakcja -> P43; przenoszenie świnki -> P44; panel edycji i schowek -> P40.
+
+Dalej (prompty powstaną po teście P44, bo zależą od realnego API): P5 druga świnka na pulpicie (5a okno-świnka, 5b stan wielu świnek, 5c przeciąganie między pulpitem a Home); P6 rozbudowany schowek i edytor (6a kategorie i wyszukiwanie, 6b zapis układów, 6c cofnij i ponów); P7 fizyka i grafika (7a cienie, 7b animacje wejścia i wyjścia, 7c efekty pogody); P8 kalendarz opieki (8a dane, 8b widok miesiąca, 8c przypomnienia).
+
+Kolejność sesji: 31-37 (zrobione), potem 41, 42, 38, 39, 40, 43, 44, a po nich 4 (adopcja). Zależności są między falami, więc nie zmieniaj kolejności.
 
 ### Do sprawdzenia po P31 (Core i dane, nic jeszcze nie widać)
 1. Testy Core `PigLocation` i `place-scenes-check` zielone w logu `PK-P31q`.
@@ -145,24 +152,39 @@ Kolejność sesji: 31-37 (zrobione), potem 41 (poprawki), 38, 39, 40, a po nich 
 3. Zablokowane miejsce nie przyjmuje świnki.
 4. Po restarcie gry świnka jest tam, gdzie była.
 
-### Do sprawdzenia po P39 (przeszkody, skala, światło)
-1. Świnka nie wchodzi w fontannę, stragany, staw, stodołę ani ogrodzenia. Za obiektem, którego podstawa jest wyżej, przechodzi tyłem i jest przez niego zasłonięta.
-2. Świnka jest proporcjonalna do sceny (ok. 1/6 szerokości przy dolnej krawędzi podłogi) i mniejsza, gdy jest wyżej.
-3. Belka nie zasłania sceny: widać całe drzewa w parku i dom na farmie. Obraz jest ostry, bez rozciągania.
-4. Każda scena ma światło jak okna ogrodu i farmy: inne o 12:00 i o 23:00, lampy świecą. Zrzuty scen: `docs/qa/shots/p39-*.png`.
+### Do sprawdzenia po P41
+1. More: otwórz Bond, wróć, otwórz pięć innych kafelków: żadnego obcego okna, w każdym tylko jedno.
+2. Labirynt: klik w cel nie rozwiązuje go, grasz krok po kroku.
+3. Wyjdź z każdej minigry: jej dźwięk cichnie, muzyka domku wraca jak była (jeśli była wyłączona, zostaje wyłączona).
+4. Kolorowanie: jedna strzałka wstecz, działa, jeden poziom na klik.
+5. Sklep: gramofon za 0 na początku; po postawieniu klik pokazuje odtwarzacz, klik obok chowa, muzyka gra dalej.
 
-### Do sprawdzenia po P40 (edycja w scenie)
-1. Przycisk Edytuj w głównym oknie otwiera schowek. Przeciągnij przedmiot na scenę, przesuń go, schowaj z powrotem.
-2. W ogrodzie schowek ma tylko rzeczy zewnętrzne, w pokoju tylko wnętrzowe.
-3. Nigdzie nie otwiera się już okno Pokoje ani Ogród.
-4. Na farmie i targu przycisk w belce otwiera dotychczasowe okno, Wstecz wraca do sceny.
+### Do sprawdzenia po P42
+1. Ta sama świnka wygląda tak samo na pulpicie, w domku, w More, na liście. Pierwsza świnka nie ma skóry Kuki.
+2. Odliczanie adopcji to np. `2d 5h 40m`, bez ułamków i przecinków.
 
-### Do sprawdzenia po P41 (poprawki z testu)
-1. More: otwórz Bond, wróć, otwórz pięć innych kafelków: żadnego obcego okna.
-2. Labirynt: klik w cel nie rozwiązuje go. Wyjście z minigry: muzyka minigry cichnie, muzyka domku wraca jak była.
-3. Kolorowanie: jedna strzałka wstecz i działa. Każda minigra: jeden X i jedno Wstecz.
-4. W salonie stoi gramofon, klik pokazuje odtwarzacz, klik obok chowa.
-5. Każda świnka wygląda tak samo na pulpicie, w domku, w More i na liście. Odliczanie adopcji to np. `2d 5h 40m`, bez ułamków.
+### Do sprawdzenia po P39
+1. Świnka nie wchodzi w fontannę, stragany, staw, stodołę ani ogrodzenia, obchodzi je. Za obiektem o podstawie wyżej przechodzi tyłem i jest zasłonięta.
+2. Świnka jest proporcjonalna (ok. 1/6 szerokości sceny przy dole podłogi) i mniejsza, gdy stoi wyżej.
+3. Belka nie zasłania sceny: cały park (drzewa) i dom na farmie widoczne, obraz ostry.
+4. Światło jak w oknach ogrodu: inne o 12:00 i o 23:00, lampy świecą. Zrzuty: `docs/qa/shots/p39-*.png`.
+
+### Do sprawdzenia po P40
+1. Przycisk Edit otwiera szufladę ze schowkiem, w ogrodzie rzeczy zewnętrzne, w pokoju wnętrzowe.
+2. Przeciągnij przedmiot na scenę: widać duch, na złym miejscu czerwony i nic się nie stawia.
+3. Kliknij postawiony przedmiot: przesuń, obróć, usuń (też przeciągnięciem na szufladę).
+4. W More nie ma już Pokoi ani Ogrodu. Poziom i odblokowanie miejsca są w nagłówku szuflady.
+
+### Do sprawdzenia po P43
+1. Targ: klik w stragan otwiera mały panel przy nim, kupno i sprzedaż działają, bez osobnego okna.
+2. Farma: klik w grządkę sadzi, podlewa albo zbiera; ikony kropli i kosza na grządkach; sad i sklep działają.
+3. Klik w lampę włącza i gasi, w grzybek gramofonu pokazuje odtwarzacz, w zabawkę świnka do niej idzie, w miskę otwiera się szuflada jedzenia.
+4. Nie ma już okien Farma ani Targ w More.
+
+### Do sprawdzenia po P44
+1. Przeciągnij świnkę do prawej krawędzi i przytrzymaj chwilę: pojawia się strzałka, scena przełącza się na sąsiednią, świnka dalej w ręce. Puść: została tam.
+2. Zablokowane miejsce: komunikat z podpowiedzią, scena się nie zmienia.
+3. Po restarcie gry świnka jest w nowym miejscu. Przeciągnięcie poza okno nadal wyprowadza ją na pulpit.
 
 ### Do sprawdzenia po P3 (pierwsza wersja, nieaktualna)
 1. Strzałki po bokach przechodzą: dom (pokoje) → ogród → park → farma → targ.

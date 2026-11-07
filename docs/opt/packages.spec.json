@@ -347,7 +347,8 @@
         "PK-P41a",
         "PK-P41b",
         "PK-P41c",
-        "PK-P41d"
+        "PK-P41d",
+        "PK-P41e"
       ]
     },
     {
@@ -357,10 +358,42 @@
       ]
     },
     {
+      "id": "P42a",
+      "packages": [
+        "PK-P42a",
+        "PK-P42b"
+      ]
+    },
+    {
+      "id": "P42b",
+      "packages": [
+        "PK-P42c"
+      ]
+    },
+    {
+      "id": "P42q",
+      "packages": [
+        "PK-P42q"
+      ]
+    },
+    {
       "id": "P39a",
       "packages": [
         "PK-P39a",
         "PK-P39b"
+      ]
+    },
+    {
+      "id": "P39b",
+      "packages": [
+        "PK-P39c",
+        "PK-P39d"
+      ]
+    },
+    {
+      "id": "P39c",
+      "packages": [
+        "PK-P39e"
       ]
     },
     {
@@ -376,9 +409,78 @@
       ]
     },
     {
+      "id": "P40b",
+      "packages": [
+        "PK-P40b"
+      ]
+    },
+    {
+      "id": "P40c",
+      "packages": [
+        "PK-P40c"
+      ]
+    },
+    {
+      "id": "P40d",
+      "packages": [
+        "PK-P40d"
+      ]
+    },
+    {
+      "id": "P40e",
+      "packages": [
+        "PK-P40e"
+      ]
+    },
+    {
       "id": "P40q",
       "packages": [
         "PK-P40q"
+      ]
+    },
+    {
+      "id": "P43a",
+      "packages": [
+        "PK-P43a",
+        "PK-P43b"
+      ]
+    },
+    {
+      "id": "P43b",
+      "packages": [
+        "PK-P43c",
+        "PK-P43d",
+        "PK-P43e"
+      ]
+    },
+    {
+      "id": "P43c",
+      "packages": [
+        "PK-P43f"
+      ]
+    },
+    {
+      "id": "P43q",
+      "packages": [
+        "PK-P43q"
+      ]
+    },
+    {
+      "id": "P44a",
+      "packages": [
+        "PK-P44a"
+      ]
+    },
+    {
+      "id": "P44b",
+      "packages": [
+        "PK-P44b"
+      ]
+    },
+    {
+      "id": "P44q",
+      "packages": [
+        "PK-P44q"
       ]
     },
     {
@@ -1148,33 +1250,41 @@
     {
       "id": "PK-P41a",
       "tier": "high",
-      "title": "More windows: stray Bond window",
-      "manual": "docs/prompts/PK-P41a-more-windows-leak.md",
-      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p41-more-windows.js && node tools/qa/ux-p41-more-windows.js",
+      "title": "Stray window after Bond in More",
+      "manual": "docs/prompts/PK-P41a-bond-leak.md",
+      "verify": "node --check web/home/app.js && node --check web/home/features/tricks/feature.js && node --check tools/qa/ux-p41-bond.js && node tools/qa/ux-p41-bond.js",
       "items": []
     },
     {
       "id": "PK-P41b",
       "tier": "high",
-      "title": "Minigames: maze, music, back arrows",
-      "manual": "docs/prompts/PK-P41b-minigames-and-coloring.md",
-      "verify": "node --check web/home/minigames/hay-maze.js && node --check web/home/minigames/minigames-api.js && node --check tools/qa/ux-p41-games.js && node tools/qa/ux-p41-games.js",
+      "title": "Hay maze must not solve itself",
+      "manual": "docs/prompts/PK-P41b-maze-goal-click.md",
+      "verify": "node --check web/home/minigames/hay-maze.js && node --check web/home/minigames/hay-maze-logic.js && node --check tools/qa/ux-p41-maze.js && node tools/qa/ux-p41-maze.js",
       "items": []
     },
     {
       "id": "PK-P41c",
-      "tier": "mid",
-      "title": "Gramophone available from the start",
-      "manual": "docs/prompts/PK-P41c-gramophone-start.md",
-      "verify": "node --check web/home/features/music/player.js && node --check tools/qa/ux-p41-gramophone.js && node tools/qa/ux-p41-gramophone.js",
+      "tier": "high",
+      "title": "Music state around minigames",
+      "manual": "docs/prompts/PK-P41c-minigame-audio.md",
+      "verify": "node --check web/home/minigames/minigames-api.js && node --check web/home/minigames/nyan-audio.js && node --check tools/qa/ux-p41-audio.js && node tools/qa/ux-p41-audio.js",
       "items": []
     },
     {
       "id": "PK-P41d",
-      "tier": "high",
-      "title": "Pig looks match everywhere, adoption clock",
-      "manual": "docs/prompts/PK-P41d-pig-looks-and-adoption-clock.md",
-      "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p41-looks.js && node tools/qa/ux-p41-looks.js",
+      "tier": "mid",
+      "title": "Coloring: one working Back arrow",
+      "manual": "docs/prompts/PK-P41d-coloring-back-arrow.md",
+      "verify": "node --check web/home/features/coloring/feature.js && node --check tools/qa/ux-p41-coloring.js && node tools/qa/ux-p41-coloring.js",
+      "items": []
+    },
+    {
+      "id": "PK-P41e",
+      "tier": "mid",
+      "title": "Gramophone available from the start",
+      "manual": "docs/prompts/PK-P41e-gramophone-start.md",
+      "verify": "node --check web/home/features/music/player.js && node --check tools/qa/ux-p41-gramophone.js && node tools/qa/ux-p41-gramophone.js",
       "items": []
     },
     {
@@ -1186,19 +1296,75 @@
       "items": []
     },
     {
+      "id": "PK-P42a",
+      "tier": "high",
+      "title": "Core: one pig look source of truth",
+      "manual": "docs/prompts/PK-P42a-pig-look-contract.md",
+      "verify": "node --check tools/qa/ux-p42-pig-look-core.js && node tools/qa/ux-p42-pig-look-core.js",
+      "items": []
+    },
+    {
+      "id": "PK-P42b",
+      "tier": "mid",
+      "title": "Adoption countdown as days, hours, minutes",
+      "manual": "docs/prompts/PK-P42b-countdown-format.md",
+      "verify": "node --check web/home/features/pigs/feature.js && node --check tools/qa/ux-p42-countdown.js && node tools/qa/ux-p42-countdown.js",
+      "items": []
+    },
+    {
+      "id": "PK-P42c",
+      "tier": "high",
+      "title": "Home window draws pigs from the look descriptor",
+      "manual": "docs/prompts/PK-P42c-web-look-unify.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/pigs/feature.js && node --check tools/qa/ux-p42-web-look.js && node tools/qa/ux-p42-web-look.js",
+      "items": []
+    },
+    {
+      "id": "PK-P42q",
+      "tier": "low",
+      "title": "Windows checks after wave P42",
+      "manual": "docs/prompts/PK-P42q-windows-checks-wave-p42.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
       "id": "PK-P39a",
       "tier": "high",
-      "title": "Obstacles, walk physics and pig scale",
-      "manual": "docs/prompts/PK-P39a-obstacles-and-scale.md",
-      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node tools/qa/place-scenes-check.js && node --check tools/qa/ux-p39-physics.js && node tools/qa/ux-p39-physics.js",
+      "title": "Scene blockers data and checker",
+      "manual": "docs/prompts/PK-P39a-blockers-data.md",
+      "verify": "node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p39-blockers.js && node tools/qa/ux-p39-blockers.js",
       "items": []
     },
     {
       "id": "PK-P39b",
       "tier": "high",
-      "title": "Scene layout (no clipping) and scene light",
-      "manual": "docs/prompts/PK-P39b-scene-fit-and-light.md",
-      "verify": "node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p39-layout-light.js && node tools/qa/ux-p39-layout-light.js",
+      "title": "Whole scene visible: layout below the places bar",
+      "manual": "docs/prompts/PK-P39b-scene-layout-fit.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p39-layout.js && node tools/qa/ux-p39-layout.js",
+      "items": []
+    },
+    {
+      "id": "PK-P39c",
+      "tier": "high",
+      "title": "Walk grid and pathfinding around blockers",
+      "manual": "docs/prompts/PK-P39c-walk-grid-pathfinding.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-grid.js && node tools/qa/ux-p39-grid.js",
+      "items": []
+    },
+    {
+      "id": "PK-P39d",
+      "tier": "high",
+      "title": "Scene light and ambient in all scenes",
+      "manual": "docs/prompts/PK-P39d-scene-light.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p39-light.js && node tools/qa/ux-p39-light.js",
+      "items": []
+    },
+    {
+      "id": "PK-P39e",
+      "tier": "high",
+      "title": "Pig scale and passing behind objects",
+      "manual": "docs/prompts/PK-P39e-depth-sort-and-scale.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-depth.js && node tools/qa/ux-p39-depth.js",
       "items": []
     },
     {
@@ -1212,9 +1378,41 @@
     {
       "id": "PK-P40a",
       "tier": "high",
-      "title": "Edit panel instead of Rooms and Garden windows",
-      "manual": "docs/prompts/PK-P40a-edit-panel-replaces-windows.md",
-      "verify": "node --check web/home/features/places/feature.js && node --check web/home/features/places/edit-panel.js && node --check web/home/app.js && node --check tools/qa/ux-p40-edit.js && node tools/qa/ux-p40-edit.js",
+      "title": "Edit mode: Edit button and stash drawer",
+      "manual": "docs/prompts/PK-P40a-edit-drawer.md",
+      "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-drawer.js && node tools/qa/ux-p40-edit-drawer.js",
+      "items": []
+    },
+    {
+      "id": "PK-P40b",
+      "tier": "high",
+      "title": "Edit mode: drag from stash onto the scene",
+      "manual": "docs/prompts/PK-P40b-edit-place.md",
+      "verify": "node --check web/home/features/places/edit-panel.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p40-edit-place.js && node tools/qa/ux-p40-edit-place.js",
+      "items": []
+    },
+    {
+      "id": "PK-P40c",
+      "tier": "high",
+      "title": "Edit mode: move, flip and remove placed items",
+      "manual": "docs/prompts/PK-P40c-edit-move-remove.md",
+      "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-move.js && node tools/qa/ux-p40-edit-move.js",
+      "items": []
+    },
+    {
+      "id": "PK-P40d",
+      "tier": "high",
+      "title": "Rooms and Garden windows retired",
+      "manual": "docs/prompts/PK-P40d-retire-rooms-garden-windows.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p40-retire.js && node tools/qa/ux-p40-retire.js",
+      "items": []
+    },
+    {
+      "id": "PK-P40e",
+      "tier": "mid",
+      "title": "Upgrade and unlock row in the edit drawer",
+      "manual": "docs/prompts/PK-P40e-edit-upgrade-unlock-row.md",
+      "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-upgrade.js && node tools/qa/ux-p40-edit-upgrade.js",
       "items": []
     },
     {
@@ -1222,6 +1420,86 @@
       "tier": "low",
       "title": "Windows checks after wave P40",
       "manual": "docs/prompts/PK-P40q-windows-checks-wave-p40.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P43a",
+      "tier": "mid",
+      "title": "Scene hotspots data",
+      "manual": "docs/prompts/PK-P43a-hotspot-data.md",
+      "verify": "node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p43-hotspot-data.js && node tools/qa/ux-p43-hotspot-data.js",
+      "items": []
+    },
+    {
+      "id": "PK-P43b",
+      "tier": "high",
+      "title": "Hotspots in the canvas",
+      "manual": "docs/prompts/PK-P43b-hotspot-engine.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p43-hotspot-engine.js && node tools/qa/ux-p43-hotspot-engine.js",
+      "items": []
+    },
+    {
+      "id": "PK-P43c",
+      "tier": "high",
+      "title": "Market: stalls interact in the scene",
+      "manual": "docs/prompts/PK-P43c-market-stalls-in-scene.md",
+      "verify": "node --check web/home/features/market/feature.js && node --check tools/qa/ux-p43-market-scene.js && node tools/qa/ux-p43-market-scene.js",
+      "items": []
+    },
+    {
+      "id": "PK-P43d",
+      "tier": "high",
+      "title": "Farm: plots interact in the scene",
+      "manual": "docs/prompts/PK-P43d-farm-plots-in-scene.md",
+      "verify": "node --check web/home/features/farm/feature.js && node --check tools/qa/ux-p43-farm-scene.js && node tools/qa/ux-p43-farm-scene.js",
+      "items": []
+    },
+    {
+      "id": "PK-P43e",
+      "tier": "mid",
+      "title": "Rooms and garden: objects act in the scene",
+      "manual": "docs/prompts/PK-P43e-room-and-garden-objects.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check web/home/features/garden/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js",
+      "items": []
+    },
+    {
+      "id": "PK-P43f",
+      "tier": "high",
+      "title": "Farm and Market windows retired",
+      "manual": "docs/prompts/PK-P43f-retire-farm-market-windows.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p43-retire-fm.js && node tools/qa/ux-p43-retire-fm.js",
+      "items": []
+    },
+    {
+      "id": "PK-P43q",
+      "tier": "low",
+      "title": "Windows checks after wave P43",
+      "manual": "docs/prompts/PK-P43q-windows-checks-wave-p43.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P44a",
+      "tier": "high",
+      "title": "Drag the pig to the screen edge",
+      "manual": "docs/prompts/PK-P44a-drag-edge-engine.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p44-drag-edge.js",
+      "items": []
+    },
+    {
+      "id": "PK-P44b",
+      "tier": "high",
+      "title": "Drag switches the scene and moves the pig",
+      "manual": "docs/prompts/PK-P44b-drag-switch-scene.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p44-drag-switch.js",
+      "items": []
+    },
+    {
+      "id": "PK-P44q",
+      "tier": "low",
+      "title": "Windows checks after wave P44",
+      "manual": "docs/prompts/PK-P44q-windows-checks-wave-p44.md",
       "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
       "items": []
     }
