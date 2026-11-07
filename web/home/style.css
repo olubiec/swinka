@@ -73,19 +73,21 @@ body.webview-mode {
   background-image: none !important;
   padding: 10px;
   margin: 0;
-  width: 420px;
-  height: 640px;
-  min-height: 640px;
-  max-height: 640px;
+  width: 100vw;
+  height: 100vh;
+  min-height: 0;
+  max-height: 100vh;
   overflow: hidden;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 body.webview-mode .game-device {
-  width: 400px;
-  height: 620px;
+  width: 100%;
+  height: 100%;
   max-width: 400px;
-  min-height: 620px;
   max-height: 620px;
   margin: 0 auto;
 }
@@ -385,7 +387,7 @@ body.webview-mode .game-device {
    ========================================================================== */
 
 .needs-section {
-  padding: 8px 12px;
+  padding: 4px 10px 4px;
   background: var(--ui-linen-2);
   border-bottom: 3px solid var(--ui-wood-0);
 }
@@ -394,7 +396,7 @@ body.webview-mode .game-device {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .section-label {
@@ -419,7 +421,7 @@ body.webview-mode .game-device {
 .needs-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 4px;
 }
 
 .need-card {
@@ -428,11 +430,11 @@ body.webview-mode .game-device {
   border-image: var(--ui-card) 5 fill / 4px;
   image-rendering: pixelated;
   border-radius: 0;
-  padding: 2px 4px;
+  padding: 1px 4px;
   box-shadow: none;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .need-card-top {
@@ -518,11 +520,12 @@ body.webview-mode .game-device {
    ========================================================================== */
 
 .actions-section {
-  padding: 8px 12px 8px;
+  padding: 4px 10px 6px;
   /* bg:menu (assets/world/bg/menu.png, 256x144) at 3x, centred behind the menu buttons */
   background: var(--ui-linen-1) var(--menu-bg) center / 768px 432px no-repeat;
   image-rendering: pixelated;
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -531,7 +534,7 @@ body.webview-mode .game-device {
 .actions-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: 4px;
 }
 
 .game-btn {

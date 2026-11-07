@@ -93,8 +93,10 @@ Test właściciela: P3 nie przeszedł. Belka nie trzyma stylu, cofnij i X słabe
 | P36 | PK-P36a, PK-P36b, PK-P36q | a: belka miejsc w głównym oknie przełącza sceny; b: okno Pokoi się przewija |
 | P37 | PK-P37a, PK-P37q | jedne X, cofnij i strzałki z PNG wszędzie, usunięcie SVG, zrzuty ekranu |
 | P38 | PK-P38a, PK-P38q | chip „Cuy is in ...", „Go there", wyjścia zmieniają miejsce świnki |
+| P39 | PK-P39a, PK-P39b, PK-P39q | a: Skalowanie świnek, perspektywa z góry i granice chodzenia po tłach (omijanie straganów/stawu/ogrodzeń); b: Przenoszenie świnki między pokojami (drag & drop do krawędzi ekranu z auto-przełączaniem pokoju i zapisem `pig_move`) |
+| P40 | PK-P40a, PK-P40b, PK-P40q | a: Interaktywne lokacje w scenie (klikalne stragany na targu, grządki na farmie bez osobnych okien modalnych); b: Likwidacja zbędnych okien modalnych farmy, targu i pokoi na rzecz bezpośredniej interakcji na scenie |
 
-Kolejność sesji: 31, 32, 33, 34, 35, 36, 37, 38. Zależności są między falami, więc nie zmieniaj kolejności.
+Kolejność sesji: 31, 32, 33, 34, 35, 36, 37, 38, 39, 40. Zależności są między falami, więc nie zmieniaj kolejności.
 
 ### Do sprawdzenia po P31 (Core i dane, nic jeszcze nie widać)
 1. Testy Core `PigLocation` i `place-scenes-check` zielone w logu `PK-P31q`.
@@ -139,6 +141,18 @@ Kolejność sesji: 31, 32, 33, 34, 35, 36, 37, 38. Zależności są między fala
 2. Poczekaj kilka minut: świnka wychodzi drzwiami lub furtką i po chwili jest w sąsiednim miejscu. Jeśli patrzysz tam, widzisz jak wchodzi.
 3. Zablokowane miejsce nie przyjmuje świnki.
 4. Po restarcie gry świnka jest tam, gdzie była.
+
+### Do sprawdzenia po P39 (skalowanie perspektywy i przenoszenie do pokojów)
+1. Przeciągnięcie świnki w kierunku lewej lub prawej krawędzi płótna: po przytrzymaniu przy krawędzi scena automatycznie przeskakuje na sąsiedni pokój/miejsce.
+2. Upuszczenie świnki na scenie: świnka zostaje w nowym pokoju, a jej lokalizacja zapisuje się (`pig_move`).
+3. Świnka jest odpowiednio przeskalowana do perspektywy z góry; im bliżej góry podłogi, tym jest mniejsza (fizyka oddalenia).
+4. Granice chodzenia (`walk` bounds) omijają elementy stałe tła (stragany targu, stodołę farmy, ogrodzenia).
+
+### Do sprawdzenia po P40 (interaktywne sceny zamiast okien modalnych)
+1. Na targu: kliknięcie straganu bezpośrednio w scenie głównej pozwala na interakcję i handel bez otwierania osobnego okna.
+2. Na farmie: kliknięcie grządek na scenie pozwala na podlewanie i zbiory bezpośrednio.
+3. W pokojach: kliknięcie mebli/zabawek w scenie wywołuje bezpośrednie akcje.
+4. Zlikwidowano zbędne okna modalne Farmy, Targu i Pokoi.
 
 ### Do sprawdzenia po P3 (pierwsza wersja, nieaktualna)
 1. Strzałki po bokach przechodzą: dom (pokoje) → ogród → park → farma → targ.
