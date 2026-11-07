@@ -428,6 +428,35 @@
     if (canvasPig) {
       canvasPig.updateState(state);
     }
+
+    checkGramophoneClaimBanner(state);
+  }
+
+  function checkGramophoneClaimBanner(state) {
+    const banner = document.getElementById('gramophoneClaimBanner');
+    if (!banner || !state) return;
+
+    let dismissed = false;
+    try {
+      dismissed = sessionStorage.getItem('cuy_gramophone_dismissed') === 'true';
+    } catch (e) {}
+
+    const hasInInventory = !!(state.inventory && (state.inventory.gramophone > 0 || state.inventory.player_gramophone > 0));
+    const hasInShop = Array.isArray(state.shop?.items) && state.shop.items.some(i => (i.id === 'gramophone' || i.id === 'player_gramophone') && i.owned > 0);
+    const hasInMusic = Array.isArray(state.music?.playerOwned) && state.music.playerOwned.length > 0;
+    const hasInPlaced = state.music?.playerPlaced && Object.keys(state.music.playerPlaced).length > 0;
+    let hasInRooms = false;
+    if (state.rooms?.layouts) {
+      for (const r of Object.values(state.rooms.layouts)) {
+        if (r && Array.isArray(r.items) && r.items.some(it => it.itemId === 'gramophone' || it.itemId === 'player_gramophone')) {
+          hasInRooms = true;
+          break;
+        }
+      }
+    }
+
+    const alreadyOwned = hasInInventory || hasInShop || hasInMusic || hasInPlaced || hasInRooms;
+    banner.hidden = Boolean(alreadyOwned || dismissed);
   }
 
   function getStageIcon(key) {
@@ -519,6 +548,27 @@
 
   // UI button handlers
   function bindButtons() {
+    // Claim starter gramophone banner
+    document.getElementById('btnClaimGramophone')?.addEventListener('click', () => {
+      if (window.Sound) window.Sound.click();
+      if (window.bridge) {
+        window.bridge.send({ type: 'buy', itemId: 'gramophone' });
+      }
+      const banner = document.getElementById('gramophoneClaimBanner');
+      if (banner) banner.hidden = true;
+      showToast('Gramophone claimed!');
+    });
+
+    document.getElementById('btnCloseClaimGramophone')?.addEventListener('click', () => {
+      if (window.Sound) window.Sound.click();
+      try {
+        sessionStorage.setItem('cuy_gramophone_dismissed', 'true');
+      } catch (e) {}
+      const banner = document.getElementById('gramophoneClaimBanner');
+      if (banner) banner.hidden = true;
+      showToast('Available in Shop (Decor) for free!');
+    });
+
     // 1. FEED — opens the food drawer above the buttons (× / Feed again / Esc closes it)
     elements.btnFeed?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
@@ -973,8 +1023,19 @@
   function closeModal() {
     if (!elements.modalBackdrop) return;
     removeBackBtn();
-    if (window.Minigry && window.Minigry.activeGame && !window.Minigry.isPaused) {
-      window.Minigry.pause();
+    if (window.Minigry) {
+      try {
+        if (typeof window.Minigry.leave === 'function') {
+          window.Minigry.leave();
+        } else if (window.Minigry.activeGame && !window.Minigry.isPaused) {
+          window.Minigry.pause();
+        }
+      } catch (e) {}
+    }
+    if (window.CuyMusic && (!window.Minigry || !window.Minigry.getHomeMusicState || !window.Minigry.getHomeMusicState()?.playing)) {
+      if (typeof window.CuyMusic.stop === 'function') {
+        try { window.CuyMusic.stop(100); } catch (e) {}
+      }
     }
     if (window.CuyHome) window.CuyHome.closeFeature();
     elements.modalBackdrop.classList.remove('active');

@@ -288,8 +288,10 @@
           playing = Boolean(music.isPlaying());
         } else if (typeof music.isPlaying === 'boolean') {
           playing = music.isPlaying;
-        } else if (typeof music.isEnabled === 'function') {
-          playing = Boolean(music.isEnabled());
+        } else if (music.currentAudio && typeof music.currentAudio.paused === 'boolean') {
+          playing = !music.currentAudio.paused;
+          volume = typeof music.currentAudio.volume === 'number' ? music.currentAudio.volume : 1;
+          position = typeof music.currentAudio.currentTime === 'number' ? music.currentAudio.currentTime : 0;
         } else if (typeof music.paused === 'boolean') {
           playing = !music.paused;
         } else if (typeof music.playing === 'boolean') {
@@ -370,10 +372,10 @@
           music.paused = false;
         }
       } else {
-        if (typeof music.pause === 'function') {
+        if (typeof music.stop === 'function') {
+          try { music.stop(100); } catch (e) {}
+        } else if (typeof music.pause === 'function') {
           try { music.pause(); } catch (e) {}
-        } else if (typeof music.stop === 'function') {
-          try { music.stop(); } catch (e) {}
         } else if ('paused' in music) {
           music.paused = true;
         }
@@ -420,6 +422,11 @@
 
         // 3. Restore home music state
         this.restoreHomeMusicState();
+        if (window.CuyMusic && (!this.savedHomeMusicState || !this.savedHomeMusicState.playing)) {
+          if (typeof window.CuyMusic.stop === 'function') {
+            try { window.CuyMusic.stop(100); } catch (e) {}
+          }
+        }
 
         // 4. Return to select screen if rootElement exists
         if (this.rootElement && typeof this.rootElement === 'object') {
@@ -613,7 +620,11 @@
       this.trackedAudio = [];
 
       this.musicTrack = this.musicTrack === 'games_1' ? 'games_2' : 'games_1';
-      if (window.CuyMusic && (!this.savedHomeMusicState || this.savedHomeMusicState.playing)) {
+      if (gameId === 'nyan_cuy' || gameId === 'nyan-cuy') {
+        if (window.CuyMusic && typeof window.CuyMusic.stop === 'function') {
+          window.CuyMusic.stop(100);
+        }
+      } else if (window.CuyMusic && (!this.savedHomeMusicState || this.savedHomeMusicState.playing)) {
         window.CuyMusic.play(this.musicTrack);
         if (window.CuyMusic.currentAudio) {
           this.track(window.CuyMusic.currentAudio);
@@ -798,8 +809,15 @@
       if (root.NyanAudio && typeof root.NyanAudio.stopMusic === 'function') {
         try { root.NyanAudio.stopMusic(); } catch (e) {}
       }
-      if (this.savedHomeMusicState ? this.savedHomeMusicState.playing : true) {
-        if (window.CuyMusic) window.CuyMusic.play('menu', { volume: 0.6 });
+      if (this.savedHomeMusicState && this.savedHomeMusicState.playing) {
+        if (window.CuyMusic) {
+          window.CuyMusic.play('menu', { volume: 0.6 });
+          if (window.CuyMusic.currentAudio) {
+            this.track(window.CuyMusic.currentAudio);
+          }
+        }
+      } else if (window.CuyMusic && typeof window.CuyMusic.stop === 'function') {
+        window.CuyMusic.stop(100);
       }
 
       // Notify the bridge

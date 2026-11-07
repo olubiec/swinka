@@ -107,7 +107,7 @@ namespace Cuy.Features
                 return true;
             }
 
-            if (!def.Price.HasValue || def.Price.Value <= 0 || def.IsUnlimited)
+            if (!def.Price.HasValue || def.Price.Value < 0 || def.IsUnlimited)
             {
                 HomeWindow.PostToPage(new { type = "toast", text = "Item not for sale" });
                 return true;
@@ -140,7 +140,8 @@ namespace Cuy.Features
 
                 brain.Session.AutoSaver.SaveNow();
 
-                HomeWindow.PostToPage(new { type = "toast", text = $"Bought {def.Name}!" });
+                string toastText = price == 0 ? $"Claimed {def.Name}!" : $"Bought {def.Name}!";
+                HomeWindow.PostToPage(new { type = "toast", text = toastText });
                 BrainController.Log($"[ShopFeature] Bought {def.Id} for {price} clovers.");
             }
             else

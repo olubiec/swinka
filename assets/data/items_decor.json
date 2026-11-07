@@ -19,6 +19,7 @@
     { "id": "picture_sunset", "name": "Sunset picture", "category": "decor", "price": 100, "icon": "picture_frame", "one_time": true, "slot": "picture", "description": "A framed sunset.", "look": { "type": "sunset" } },
     { "id": "picture_carrot", "name": "Carrot picture", "category": "decor", "price": 100, "icon": "picture_frame", "one_time": true, "slot": "picture", "description": "A framed carrot.", "look": { "type": "carrot" } },
     { "id": "lamp_mushroom", "name": "Mushroom lamp", "category": "decor", "price": 140, "icon": "lamp", "one_time": true, "slot": "lamp", "description": "Warm glow.", "look": { "type": "mushroom" } },
-    { "id": "lamp_star", "name": "Star lamp", "category": "decor", "price": 140, "icon": "lamp", "one_time": true, "slot": "lamp", "description": "A star lamp.", "look": { "type": "star" } }
+    { "id": "lamp_star", "name": "Star lamp", "category": "decor", "price": 140, "icon": "lamp", "one_time": true, "slot": "lamp", "description": "A star lamp.", "look": { "type": "star" } },
+    { "id": "gramophone", "name": "Gramophone", "category": "decor", "price": 0, "icon": "gramophone", "one_time": true, "slot": "gramophone", "description": "Free starter music player. Plays your record collection.", "look": { "type": "gramophone" } }
   ]
 }

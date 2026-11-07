@@ -231,6 +231,7 @@
         let btnText = 'Buy';
         if (isOwned) btnText = 'Owned';
         else if (reachedLimit) btnText = 'Limit today';
+        else if (it.price === 0) btnText = 'Claim';
 
         html += `
           <div class="feature-shop-item">

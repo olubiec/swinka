@@ -170,6 +170,15 @@
 
   // API
   window.CuyMusic = {
+    get currentAudio() {
+      return currentAudio;
+    },
+    getCurrentAudio: function () {
+      return currentAudio;
+    },
+    isPlaying: function () {
+      return !!(currentAudio && !currentAudio.paused);
+    },
     play: async function (id, { loop = true, volume } = {}) {
       const tracks = await loadTracks();
       if (!tracks) return;
@@ -177,6 +186,18 @@
     },
     stop: function (fadeMs = FADE_MS) {
       pendingPlay = null;
+      if (fadeMs <= 0 && currentAudio) {
+        const a = currentAudio;
+        currentAudio = null;
+        currentId = null;
+        if (a.fadeInterval) {
+          clearInterval(a.fadeInterval);
+          a.fadeInterval = null;
+        }
+        try { a.pause(); } catch (e) {}
+        try { a.src = ''; } catch (e) {}
+        return;
+      }
       stopCurrent(fadeMs);
     },
     pause: function () {

@@ -1965,6 +1965,85 @@ body.webview-mode .game-device {
   gap: 4px;
 }
 
+/* Special starter gift claim banner */
+.claim-banner {
+  margin: 4px 8px 6px 8px;
+  padding: 6px 10px;
+  background: var(--ui-wood-2, #3b2216);
+  border: 2px solid var(--ui-wood-0, #1b0e09);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+  color: var(--ui-linen-3, #fdf8eb);
+  position: relative;
+  z-index: 10;
+}
+
+.claim-banner[hidden] {
+  display: none !important;
+}
+
+.claim-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.claim-banner-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.claim-banner-title {
+  color: #eedb7c;
+  font-size: 13px;
+}
+
+.claim-banner-desc {
+  font-size: 11px;
+  color: #e2d2b6;
+}
+
+.claim-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.claim-btn-confirm {
+  background: #4ca338;
+  color: #ffffff;
+  border: 1px solid #2d6b1f;
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.claim-btn-confirm:hover {
+  background: #5cbf45;
+}
+
+.claim-btn-dismiss {
+  background: transparent;
+  color: #c98d50;
+  border: none;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.claim-btn-dismiss:hover {
+  color: #ffffff;
+}
+
 /* Respect the OS "reduce motion" setting: stop endless animations (e.g. daily-bounce). */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
