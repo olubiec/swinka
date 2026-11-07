@@ -202,22 +202,42 @@ body.webview-mode .game-device {
 #btnClose {
   width: 32px;
   height: 32px;
-  background-image: var(--ui-close_btn, url('../../assets/ui/close_btn.png'));
-  background-size: 32px 32px;
-  background-repeat: no-repeat;
-  background-position: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
   border: 0;
   border-radius: 0;
+  background-color: transparent;
+  background-position: center;
+  background-size: 32px 32px;
+  background-repeat: no-repeat;
+  background-image: var(--ui-close_btn, url('../../assets/ui/close_btn.png'));
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: none;
   color: transparent;
   font-size: 0;
   line-height: 0;
   image-rendering: pixelated;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+#btnClose:hover {
+  background-color: transparent;
 }
 
 #btnClose:active {
   background-image: var(--ui-close_btn_pressed, url('../../assets/ui/close_btn_pressed.png'));
+  background-color: transparent;
   transform: none;
+}
+
+#btnClose:focus-visible {
+  outline: 2px solid var(--ui-hay-2);
+  outline-offset: 1px;
 }
 
 /* ==========================================================================
@@ -644,13 +664,44 @@ body.webview-mode .game-device {
 }
 
 .food-drawer-close {
-  background: none;
-  border: none;
-  font-size: 18px;
-  line-height: 1;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  background-position: center;
+  background-size: 32px 32px;
+  background-repeat: no-repeat;
+  background-image: var(--ui-close_btn, url('../../assets/ui/close_btn.png'));
   cursor: pointer;
-  color: var(--ui-wood-0);
-  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.food-drawer-close:hover {
+  background-color: transparent;
+}
+
+.food-drawer-close:active {
+  background-image: var(--ui-close_btn_pressed, url('../../assets/ui/close_btn_pressed.png'));
+  background-color: transparent;
+  transform: none;
+}
+
+.food-drawer-close:focus-visible {
+  outline: 2px solid var(--ui-hay-2);
+  outline-offset: 1px;
 }
 
 .food-empty {
@@ -1125,8 +1176,11 @@ body.webview-mode .game-device {
   margin: 0 8px;
 }
 
-.modal-back,
-.modal-close-btn {
+/* Shared UI controls: close, back (PK-P37a) */
+.ui-close,
+.ui-back,
+.modal-close-btn,
+.modal-back {
   width: 32px;
   height: 32px;
   min-width: 32px;
@@ -1136,10 +1190,10 @@ body.webview-mode .game-device {
   border-radius: 0;
   background-color: transparent;
   background-position: center;
-  background-size: 16px 16px;
+  background-size: 32px 32px;
   background-repeat: no-repeat;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   color: transparent;
@@ -1148,28 +1202,47 @@ body.webview-mode .game-device {
   box-shadow: none;
   image-rendering: pixelated;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
-.modal-back {
-  background-image: url('assets/ui/back.svg');
-}
-
+.ui-close,
 .modal-close-btn {
-  background-image: url('assets/ui/close.svg');
+  background-image: var(--ui-close_btn, url('../../assets/ui/close_btn.png'));
 }
 
-.modal-back:hover,
+.ui-close:hover,
 .modal-close-btn:hover {
-  background-color: rgba(255, 255, 255, 0.12);
+  background-color: transparent;
 }
 
-.modal-back:active,
+.ui-close:active,
 .modal-close-btn:active {
-  background-color: rgba(0, 0, 0, 0.25);
+  background-image: var(--ui-close_btn_pressed, url('../../assets/ui/close_btn_pressed.png'));
+  background-color: transparent;
+  transform: none;
 }
 
-.modal-back:focus-visible,
-.modal-close-btn:focus-visible {
+.ui-back,
+.modal-back {
+  background-image: var(--ui-back_btn, url('../../assets/ui/back_btn.png'));
+}
+
+.ui-back:hover,
+.modal-back:hover {
+  background-color: transparent;
+}
+
+.ui-back:active,
+.modal-back:active {
+  background-image: var(--ui-back_btn_pressed, url('../../assets/ui/back_btn_pressed.png'));
+  background-color: transparent;
+  transform: none;
+}
+
+.ui-close:focus-visible,
+.ui-back:focus-visible,
+.modal-close-btn:focus-visible,
+.modal-back:focus-visible {
   outline: 2px solid var(--ui-hay-2);
   outline-offset: 1px;
 }
@@ -1449,6 +1522,8 @@ body.webview-mode .game-device {
   z-index: 5;
 }
 
+.ui-arrow-left,
+.ui-arrow-right,
 .places-bar .ui-arrow-left,
 .places-bar .ui-arrow-right {
   width: 32px;
@@ -1467,23 +1542,49 @@ body.webview-mode .game-device {
   color: transparent;
   font-size: 0;
   line-height: 0;
-  outline: none;
+  box-sizing: border-box;
 }
 
+.ui-arrow-left,
 .places-bar .ui-arrow-left {
   background-image: var(--ui-arrow_left, url('../../assets/ui/arrow_left.png'));
 }
 
-.places-bar .ui-arrow-left:active {
-  background-image: var(--ui-arrow_left_pressed, url('../../assets/ui/arrow_left_pressed.png'));
+.ui-arrow-left:hover,
+.places-bar .ui-arrow-left:hover {
+  background-color: transparent;
 }
 
+.ui-arrow-left:active,
+.places-bar .ui-arrow-left:active {
+  background-image: var(--ui-arrow_left_pressed, url('../../assets/ui/arrow_left_pressed.png'));
+  background-color: transparent;
+  transform: none;
+}
+
+.ui-arrow-right,
 .places-bar .ui-arrow-right {
   background-image: var(--ui-arrow_right, url('../../assets/ui/arrow_right.png'));
 }
 
+.ui-arrow-right:hover,
+.places-bar .ui-arrow-right:hover {
+  background-color: transparent;
+}
+
+.ui-arrow-right:active,
 .places-bar .ui-arrow-right:active {
   background-image: var(--ui-arrow_right_pressed, url('../../assets/ui/arrow_right_pressed.png'));
+  background-color: transparent;
+  transform: none;
+}
+
+.ui-arrow-left:focus-visible,
+.ui-arrow-right:focus-visible,
+.places-bar .ui-arrow-left:focus-visible,
+.places-bar .ui-arrow-right:focus-visible {
+  outline: 2px solid var(--ui-hay-2);
+  outline-offset: 1px;
 }
 
 .places-bar-title {
@@ -1600,6 +1701,12 @@ body.webview-mode .game-device {
   --ui-tab_on: initial;
   --ui-close_btn: initial;
   --ui-close_btn_pressed: initial;
+  --ui-back_btn: initial;
+  --ui-back_btn_pressed: initial;
+  --ui-arrow_left: initial;
+  --ui-arrow_left_pressed: initial;
+  --ui-arrow_right: initial;
+  --ui-arrow_right_pressed: initial;
   --ui-bar_groove: initial;
   --ui-bar_fill_high: initial;
   --ui-bar_fill_mid: initial;

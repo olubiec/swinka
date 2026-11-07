@@ -138,6 +138,24 @@
 4. Zablokowane miejsce jest przyciemnione z kłódką i podpowiedzią odblokowania.
 5. Okno Pokoi przewija się do końca, zakładki w jednym rzędzie, aktywna widoczna (spróbuj przy 4 i 6 pokojach).
 
+## Wave P37: Unified Controls (Close, Back, Arrows)
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass | App builds cleanly with no compilation or regression errors |
+| UX Controls & Icons | `node tools/qa/ux-p3-icons.js` | Exit code 0, 5/5 PASS (I1-I5) | Jednolite przyciski zamknięcia, powrotu i nawigacji (PNG, min 32x32px, ramka drewniana, brak SVG/tekstu, aria-labels) we wszystkich oknach |
+| UX All Suite | `node tools/qa/ux-all.js` | 12/14 PASS (ux-p3-icons oraz p32-p36 PASS; stare ux-p1/ux-p3 zdezaktualizowane przez rework P35/P37) | Skrypty pakietu UX dla fali P37 przechodzą pomyślnie |
+| Web Smoke | `node tools/qa/web-smoke.js` | 21/21 core PASS, mocki i ekrany renderują się poprawnie | WebView2 home screens, nawigacja i moduły renderują się poprawnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| EXE Smoke | `powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Exit code 0, selftest passes, EXE SMOKE OK | Świnka chodzi po pulpicie, brak wyjątków i crashów podczas uruchomienia |
+| Accessibility Check | `node tools/qa/a11y-check.js` | Exit code 0, A11Y OK | Brak błędów dostępności i etykiet ARIA |
+
+### Manual Checklist (Do sprawdzenia po P37)
+1. Obejrzyj `docs/qa/shots/p37-*.png`: wszystkie X wyglądają jak X w nagłówku, wszystkie „wstecz" i strzałki jak z biblioteki.
+2. Klikasz X i wstecz w 6 różnych oknach z More: te same ikony, działają, Esc zamyka.
+3. Brak cienkich białych X i znaków tekstowych.
+
+
 
 
 

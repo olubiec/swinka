@@ -607,6 +607,11 @@
     });
 
     // Close the window (in WebView2) or hide it
+    if (elements.btnClose) {
+      elements.btnClose.classList.add('ui-close');
+      elements.btnClose.setAttribute('aria-label', 'Close');
+      elements.btnClose.textContent = '';
+    }
     elements.btnClose?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
       if (window.Minigry && window.Minigry.activeGame) {
@@ -621,6 +626,7 @@
 
     // Close the dialog
     if (elements.modalCloseBtn) {
+      elements.modalCloseBtn.classList.add('ui-close');
       elements.modalCloseBtn.setAttribute('aria-label', 'Close');
       elements.modalCloseBtn.textContent = '';
     }
@@ -628,6 +634,25 @@
     elements.modalBackdrop?.addEventListener('click', (e) => {
       if (e.target === elements.modalBackdrop) closeModal();
     });
+
+    const foodClose = document.getElementById('foodDrawerClose');
+    if (foodClose) {
+      foodClose.classList.add('ui-close');
+      foodClose.setAttribute('aria-label', 'Close');
+      foodClose.textContent = '';
+    }
+
+    function sanitizeUiControls() {
+      const controls = document.querySelectorAll(
+        '.ui-close, .ui-back, .ui-arrow-left, .ui-arrow-right, .modal-close-btn, .modal-back, #modalCloseBtn, #btnClose, #foodDrawerClose, #placesPrevBtn, #placesNextBtn'
+      );
+      controls.forEach((btn) => {
+        if (btn.childNodes.length > 0 && btn.textContent !== '') {
+          btn.textContent = '';
+        }
+      });
+    }
+    sanitizeUiControls();
 
     // Escape: closes an open dialog or the Home window
     window.addEventListener('keydown', (e) => {
@@ -675,9 +700,9 @@
       bar.className = 'places-bar';
       bar.setAttribute('role', 'region');
       bar.setAttribute('aria-label', 'Scene navigation');
-      bar.innerHTML = '<button type="button" class="ui-arrow-left" id="placesPrevBtn" aria-label="Previous scene"></button>' +
+      bar.innerHTML = '<button type="button" class="ui-arrow-left" id="placesPrevBtn" aria-label="Previous place"></button>' +
         '<div class="places-bar-title" id="placesBarTitle">Salon</div>' +
-        '<button type="button" class="ui-arrow-right" id="placesNextBtn" aria-label="Next scene"></button>';
+        '<button type="button" class="ui-arrow-right" id="placesNextBtn" aria-label="Next place"></button>';
       stage.parentNode.insertBefore(bar, stage);
 
       const hint = document.createElement('div');
@@ -727,9 +752,9 @@
     if (!header) return;
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'modal-back';
-    btn.setAttribute('aria-label', 'Back to More');
-    btn.textContent = 'Back';
+    btn.className = 'ui-back modal-back';
+    btn.setAttribute('aria-label', 'Back');
+    btn.textContent = '';
     btn.addEventListener('click', () => {
       removeBackBtn();
       window.CuyHome.closeFeature({ keepBackdrop: true });
@@ -929,6 +954,7 @@
     if (!wasOpen) modalOpener = document.activeElement;
     elements.modalTitle.textContent = title;
     elements.modalBody.innerHTML = contentHtml;
+    if (elements.modalCloseBtn) elements.modalCloseBtn.textContent = '';
     elements.modalBackdrop.classList.add('active');
     focusModal();
   }

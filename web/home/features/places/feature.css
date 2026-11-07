@@ -54,6 +54,12 @@
   background-image: var(--ui-arrow_right_pressed, url('../../../assets/ui/arrow_right_pressed.png'));
 }
 
+.places-bar .ui-arrow-left:focus-visible,
+.places-bar .ui-arrow-right:focus-visible {
+  outline: 2px solid var(--ui-hay-2);
+  outline-offset: 1px;
+}
+
 .places-bar-title {
   flex: 1;
   min-width: 0;
@@ -61,7 +67,7 @@
   font-family: var(--ui-font, 'Pixelify Sans', monospace);
   font-size: 13px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--ui-text-on-wood);
   text-shadow: 1px 1px 0 var(--ui-wood-0);
   white-space: nowrap;
   overflow: hidden;
