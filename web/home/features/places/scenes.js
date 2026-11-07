@@ -86,6 +86,8 @@
   let loadPromise = null;
   let atlasData = null;
   let atlasPromise = null;
+  let tilesData = null;
+  let tilesPromise = null;
 
   function getAssetUrl(rel) {
     if (!rel) return null;
@@ -97,6 +99,60 @@
       return isWebView ? 'https://cuy.assets/' + rel : '../../assets/' + rel;
     }
     return '../../assets/' + rel;
+  }
+
+  function getTiles() {
+    if (tilesData) return tilesData;
+    if (typeof require !== 'undefined') {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const candidates = [
+          path.resolve(__dirname, '../../../assets/world/tiles.json'),
+          path.resolve(__dirname, '../../../../assets/world/tiles.json'),
+          path.resolve(process.cwd(), 'assets/world/tiles.json')
+        ];
+        for (const p of candidates) {
+          if (fs.existsSync(p)) {
+            tilesData = JSON.parse(fs.readFileSync(p, 'utf8'));
+            return tilesData;
+          }
+        }
+      } catch (e) {}
+    }
+    return tilesData;
+  }
+
+  async function loadTiles() {
+    if (tilesData) return tilesData;
+    if (tilesPromise) return tilesPromise;
+
+    tilesPromise = (async () => {
+      if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
+        const url = getAssetUrl('world/tiles.json');
+        try {
+          const res = await window.fetch(url);
+          if (res.ok) {
+            tilesData = await res.json();
+            return tilesData;
+          }
+        } catch (e) {}
+      }
+      return getTiles();
+    })();
+
+    return tilesPromise;
+  }
+
+  function getTileUrl(tileId) {
+    if (!tileId) return null;
+    const td = tilesData || getTiles();
+    if (!td || !td.tiles) return null;
+    const entry = td.tiles[tileId];
+    if (entry && entry.file) {
+      return getAssetUrl('world/' + entry.file);
+    }
+    return null;
   }
 
   function getAtlas() {
@@ -187,6 +243,7 @@
   if (typeof window !== 'undefined') {
     load();
     loadAtlas();
+    loadTiles();
   }
 
   function getScenesDict() {
@@ -313,6 +370,18 @@
         if (!layout && (effectiveId === 'room' || effectiveId === 'salon')) {
           layout = state.rooms.layouts.salon || state.rooms.layouts.room;
         }
+        if (!layout && Array.isArray(state.rooms.pigRooms)) {
+          const pr = state.rooms.pigRooms.find(r => r && (
+            r.roomId === effectiveId ||
+            r.pigId === effectiveId ||
+            ('pig:' + r.pigId) === effectiveId ||
+            r.name === effectiveId ||
+            ('pig:' + r.name) === effectiveId
+          ));
+          if (pr) {
+            layout = state.rooms.layouts[pr.roomId] || state.rooms.layouts['pig:' + pr.pigId] || state.rooms.layouts[pr.pigId];
+          }
+        }
       }
       if (!layout && state[effectiveId] && state[effectiveId].layout) {
         layout = state[effectiveId].layout;
@@ -375,13 +444,16 @@
   const CuyScenes = {
     load: load,
     loadAtlas: loadAtlas,
+    loadTiles: loadTiles,
     order: order,
     neighbor: neighbor,
     def: def,
     timeOfDay: timeOfDay,
     pigScene: pigScene,
     placedThings: placedThings,
-    getAtlas: getAtlas
+    getAtlas: getAtlas,
+    getTiles: getTiles,
+    getTileUrl: getTileUrl
   };
 
   if (typeof window !== 'undefined') {

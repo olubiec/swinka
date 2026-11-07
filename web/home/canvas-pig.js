@@ -206,7 +206,7 @@
       if (this.imageCache[url]) return this.imageCache[url];
       if (typeof Image !== 'undefined') {
         const img = new Image();
-        img.onerror = () => { console.error('[canvas-pig] Failed to load image: ' + url); };
+        img.onerror = () => { img.failed = true; };
         img.src = url;
         this.imageCache[url] = img;
         return img;
@@ -962,7 +962,7 @@
         if (lit) {
           this.drawContactShadow(ctx);
           this.applySceneLight(ctx, this.lightScene);
-          if (!isOutdoor) this.drawToys(ctx);
+          if (!isOutdoor && isSalon) this.drawToys(ctx);
         }
 
         // Draw Pig
@@ -976,7 +976,7 @@
         this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
         if (lit) {
           this.applySceneLight(ctx, this.lightScene);
-          if (!isOutdoor) this.drawToys(ctx);
+          if (!isOutdoor && isSalon) this.drawToys(ctx);
         }
       }
 
@@ -993,52 +993,106 @@
     }
 
     drawHabitat(ctx, scene) {
-      // Wooden plank wall (panels)
-      if (!scene.skipDefaultWall) {
-        const woodDark = '#6e4424';
-        const woodMid = '#9c6636';
-        const woodLight = '#c98d50';
-        const woodShine = '#e6b073';
-
-        ctx.fillStyle = woodMid;
-        ctx.fillRect(0, 0, this.sceneWidth, 96);
-
-        // Vertical planks on the wall
-        ctx.fillStyle = woodDark;
-        for (let x = 0; x < this.sceneWidth; x += 30) {
-          ctx.fillRect(x, 0, 2, 96);
-        }
-        // Horizontal wall trim
-        ctx.fillStyle = woodLight;
-        ctx.fillRect(0, 36, this.sceneWidth, 4);
-        ctx.fillStyle = woodDark;
-        ctx.fillRect(0, 40, this.sceneWidth, 1);
+      const isSalon = !this.sceneId || this.sceneId === 'salon';
+      const effectiveId = this.sceneId || 'salon';
+      const layouts = (this.lastState && this.lastState.rooms && this.lastState.rooms.layouts) || {};
+      let layout = layouts[effectiveId];
+      if (!layout && isSalon) layout = layouts.salon || layouts.room;
+      if (!layout && this.sceneId && this.sceneId.startsWith('pig:') && Array.isArray(this.lastState && this.lastState.rooms && this.lastState.rooms.pigRooms)) {
+        const pr = this.lastState.rooms.pigRooms.find(r => r && (r.roomId === effectiveId || ('pig:' + r.pigId) === effectiveId));
+        if (pr) layout = layouts[pr.roomId] || layouts['pig:' + pr.pigId];
       }
 
-      // Floor with straw and hay (the main living space)
+      let wallTile = (layout && layout.wallpaper) || null;
+      let floorTile = (layout && layout.floor) || null;
+
+      if (!wallTile && isSalon) {
+        const eqWall = this.lastState && this.lastState.decor && this.lastState.decor.equipped && this.lastState.decor.equipped.wallpaper;
+        wallTile = eqWall || 'wallpaper_cream';
+      }
+      if (!floorTile && isSalon) {
+        const eqFloor = this.lastState && this.lastState.decor && this.lastState.decor.equipped && this.lastState.decor.equipped.floor;
+        floorTile = eqFloor || 'floor_wood_light';
+      }
+
+      if (!wallTile && this.sceneId && this.sceneId.startsWith('pig:')) {
+        const pigName = this.sceneId.slice(4).toLowerCase();
+        wallTile = 'wall_pig_' + pigName;
+      }
+      if (!floorTile && this.sceneId && this.sceneId.startsWith('pig:')) {
+        const pigName = this.sceneId.slice(4).toLowerCase();
+        floorTile = 'floor_pig_' + pigName;
+      }
+
+      let wallUrl = (window.CuyScenes && typeof window.CuyScenes.getTileUrl === 'function')
+        ? window.CuyScenes.getTileUrl(wallTile)
+        : null;
+      if (!wallUrl && window.CuyScenes && typeof window.CuyScenes.getTileUrl === 'function') {
+        wallUrl = window.CuyScenes.getTileUrl('wallpaper_cream');
+      }
+
+      let floorUrl = (window.CuyScenes && typeof window.CuyScenes.getTileUrl === 'function')
+        ? window.CuyScenes.getTileUrl(floorTile)
+        : null;
+      if (!floorUrl && window.CuyScenes && typeof window.CuyScenes.getTileUrl === 'function') {
+        floorUrl = window.CuyScenes.getTileUrl('floor_wood_light');
+      }
+
+      const wallH = 96;
+      const w = this.sceneWidth;
+
+      // 1. Wall rendering (pixel art tiles)
+      if (!scene.skipDefaultWall) {
+        const wallImg = wallUrl ? this.loadCachedImage(wallUrl) : null;
+        let drawnWall = false;
+        if (wallImg && !wallImg.failed && ((wallImg.naturalWidth && wallImg.naturalWidth > 0) || (wallImg.width && wallImg.width > 0))) {
+          try {
+            const ptrn = ctx.createPattern(wallImg, 'repeat');
+            if (ptrn) {
+              ctx.fillStyle = ptrn;
+              ctx.fillRect(0, 0, w, wallH);
+              drawnWall = true;
+            }
+          } catch (e) {}
+        }
+        if (!drawnWall) {
+          ctx.fillStyle = '#f7f4eb';
+          ctx.fillRect(0, 0, w, wallH);
+        }
+
+        // Horizontal wall trim
+        ctx.fillStyle = '#c98d50';
+        ctx.fillRect(0, wallH - 2, w, 2);
+        ctx.fillStyle = '#6e4424';
+        ctx.fillRect(0, wallH, w, 1);
+      }
+
+      // 2. Floor rendering (pixel art tiles)
       if (!scene.skipDefaultFloor) {
-        const floorY = 96;
-        ctx.fillStyle = '#eedb7c'; // light hay
-        ctx.fillRect(0, floorY, this.sceneWidth, this.sceneHeight - floorY);
+        const floorH = this.sceneHeight - wallH;
+        const floorImg = floorUrl ? this.loadCachedImage(floorUrl) : null;
+        let drawnFloor = false;
+        if (floorImg && !floorImg.failed && ((floorImg.naturalWidth && floorImg.naturalWidth > 0) || (floorImg.width && floorImg.width > 0))) {
+          try {
+            ctx.save();
+            ctx.translate(0, wallH);
+            const ptrn = ctx.createPattern(floorImg, 'repeat');
+            if (ptrn) {
+              ctx.fillStyle = ptrn;
+              ctx.fillRect(0, 0, w, floorH);
+              drawnFloor = true;
+            }
+            ctx.restore();
+          } catch (e) {}
+        }
+        if (!drawnFloor) {
+          ctx.fillStyle = '#e6b073';
+          ctx.fillRect(0, wallH, w, floorH);
+        }
 
-        // Shadow under the trim
-        ctx.fillStyle = '#cdb556';
-        ctx.fillRect(0, floorY, this.sceneWidth, 4);
-
-        // Pixel hay strands on the floor
-        ctx.fillStyle = '#cdb556';
-        const haySpots = [
-          [15, 102], [35, 115], [75, 106], [120, 118], [150, 105],
-          [185, 114], [210, 104], [60, 122], [140, 124], [195, 122]
-        ];
-        haySpots.forEach(([x, y]) => {
-          ctx.fillRect(x, y, 6, 2);
-          ctx.fillRect(x + 2, y - 2, 2, 2);
-        });
-        ctx.fillStyle = '#99903d';
-        haySpots.forEach(([x, y]) => {
-          ctx.fillRect(x + 1, y + 2, 4, 1);
-        });
+        // Shadow under wall trim
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        ctx.fillRect(0, wallH + 1, w, 3);
       }
     }
 

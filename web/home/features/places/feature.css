@@ -4,10 +4,9 @@
   align-items: center;
   justify-content: space-between;
   height: 32px;
-  background-color: var(--ui-wood-2);
-  background-image: var(--ui-header_banner, url('../../../assets/ui/header_banner.png'));
-  background-repeat: repeat-x;
-  background-size: auto 32px;
+  background-color: var(--ui-wood-2, #9c6636);
+  border-top: 2px solid var(--ui-wood-1, #c98d50);
+  border-bottom: 2px solid var(--ui-wood-0, #6e4424);
   box-sizing: border-box;
   padding: 0 4px;
   font-family: var(--ui-font, 'Pixelify Sans', monospace);
