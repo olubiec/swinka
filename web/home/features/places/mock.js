@@ -68,6 +68,50 @@
         }
       });
     }
+
+    if (window.bridge && typeof window.bridge.registerMockHandler === 'function') {
+      const handlePigMove = function (st, action) {
+        if (!action || !action.to) return;
+        const pigId = action.pigId || action.pig_id || 'pig_1';
+        const to = action.to;
+
+        if (!st.places) st.places = {};
+        if (!Array.isArray(st.places.order)) {
+          st.places.order = createState().places.order;
+        }
+        if (!Array.isArray(st.places.pigLocations)) {
+          st.places.pigLocations = createState().places.pigLocations;
+        }
+
+        const ring = st.places.order;
+        const targetEntry = ring.find(s => s.id === to);
+        if (!targetEntry || targetEntry.locked) {
+          return;
+        }
+
+        let loc = st.places.pigLocations.find(p => p.pigId === pigId);
+        if (!loc) {
+          loc = { pigId: pigId, scene: 'salon', pinned: false };
+          st.places.pigLocations.push(loc);
+        }
+
+        const fromScene = loc.scene || 'salon';
+        const idxA = ring.findIndex(s => s.id === fromScene);
+        const idxB = ring.findIndex(s => s.id === to);
+
+        if (idxA !== -1 && idxB !== -1) {
+          const prev = (idxA - 1 + ring.length) % ring.length;
+          const next = (idxA + 1) % ring.length;
+          const isAdjacent = (idxB === prev || idxB === next);
+          if (!isAdjacent) return;
+        }
+
+        loc.scene = to;
+      };
+
+      window.bridge.registerMockHandler('places.pigMove', handlePigMove);
+      window.bridge.registerMockHandler('places_pig_move', handlePigMove);
+    }
   }
 
   if (typeof module !== 'undefined' && module.exports) {

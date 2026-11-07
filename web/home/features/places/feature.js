@@ -5,6 +5,8 @@
 
   const DEFAULT_PLACES = ['house', 'garden', 'park', 'farm', 'market'];
   let currentSceneId = null;
+  let previousPigLocations = null;
+  let exitDisabledUntil = 0;
 
   function getState() {
     return (window.CuyHome && window.CuyHome.api && window.CuyHome.api.getState()) ||
@@ -24,6 +26,35 @@
       return st.roster[0].id || st.roster[0].pigId;
     }
     return st.id || st.pigId || 'pig_1';
+  }
+
+  function getPigLocations(st) {
+    if (!st) return [];
+    if (st.places && Array.isArray(st.places.pigLocations)) {
+      return st.places.pigLocations;
+    }
+    if (Array.isArray(st.pigLocations)) {
+      return st.pigLocations;
+    }
+    return [];
+  }
+
+  function getPigName(pigId, st) {
+    if (!st) st = getState();
+    if (st) {
+      if (Array.isArray(st.roster)) {
+        const found = st.roster.find(p => p && (p.id === pigId || p.pigId === pigId));
+        if (found && (found.name || found.petName)) return found.name || found.petName;
+      }
+      if (Array.isArray(st.rooms && st.rooms.pigRooms)) {
+        const pr = st.rooms.pigRooms.find(r => r && (r.pigId === pigId || ('pig:' + r.pigId) === pigId));
+        if (pr && (pr.name || pr.displayName)) return pr.name || pr.displayName;
+      }
+      if (st.name && (!pigId || pigId === 'pig_1' || pigId === st.id)) {
+        return st.name;
+      }
+    }
+    return 'Cuy';
   }
 
   function getOrder(st) {
@@ -61,6 +92,186 @@
     return sceneId ? (sceneId.charAt(0).toUpperCase() + sceneId.slice(1)) : '';
   }
 
+  function isHouseRoom(id) {
+    if (!id) return true;
+    if (id === 'room' || id === 'salon' || id === 'dorm') return true;
+    if (typeof id === 'string' && id.startsWith('pig:')) return true;
+    return false;
+  }
+
+  function computeNeighbourScene(currentScene, direction, st) {
+    const ord = getOrder(st);
+    if (!ord || ord.length === 0) return null;
+
+    // Check if place_scenes house_exits apply
+    if (isHouseRoom(currentScene)) {
+      if (direction === 'left') {
+        const marketEntry = ord.find(s => s.id === 'market');
+        if (marketEntry) return marketEntry;
+      } else if (direction === 'right') {
+        const gardenEntry = ord.find(s => s.id === 'garden');
+        if (gardenEntry) return gardenEntry;
+      }
+    }
+
+    const idx = ord.findIndex(s => s.id === currentScene);
+    if (idx === -1) return null;
+
+    const step = direction === 'left' ? -1 : 1;
+    const targetIdx = (idx + step + ord.length) % ord.length;
+    return ord[targetIdx];
+  }
+
+  function updatePresenceChips(st) {
+    if (!st) st = getState();
+    let container = document.getElementById('placesPresenceChips');
+    if (!container) {
+      const stage = document.querySelector('.stage-viewport');
+      if (stage && stage.parentNode) {
+        container = document.createElement('div');
+        container.id = 'placesPresenceChips';
+        container.className = 'places-presence-chips';
+        stage.parentNode.insertBefore(container, stage);
+      }
+    }
+    if (!container) return;
+
+    const pigLocs = getPigLocations(st);
+    if (pigLocs.length === 0) {
+      container.innerHTML = '';
+      container.hidden = true;
+      return;
+    }
+
+    // Filter pigs that are NOT in the current scene
+    const elsewherePigs = pigLocs.filter(p => {
+      const sc = p.scene || p.sceneId || p.Scene || p.SceneId || 'salon';
+      return sc !== currentSceneId;
+    });
+
+    if (elsewherePigs.length === 0) {
+      container.innerHTML = '';
+      container.hidden = true;
+      return;
+    }
+
+    container.innerHTML = '';
+    container.hidden = false;
+
+    const multiplePigs = (pigLocs.length >= 2);
+
+    elsewherePigs.forEach(p => {
+      const pigId = p.pigId || p.PigId || 'pig_1';
+      const sceneId = p.scene || p.sceneId || p.Scene || p.SceneId || 'salon';
+      const sceneTitle = getSceneTitle(sceneId, st);
+      const pigName = getPigName(pigId, st);
+
+      const chip = document.createElement('div');
+      chip.className = 'places-presence-chip';
+
+      const label = document.createElement('span');
+      label.className = 'chip-text';
+      if (multiplePigs) {
+        label.textContent = pigName + ' is in ' + sceneTitle;
+      } else {
+        label.textContent = 'Cuy is in ' + sceneTitle;
+      }
+      chip.appendChild(label);
+
+      const goBtn = document.createElement('button');
+      goBtn.type = 'button';
+      goBtn.className = 'chip-go-btn ui-btn';
+      goBtn.textContent = 'Go there';
+      goBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        applyScene(sceneId, getState());
+      });
+      chip.appendChild(goBtn);
+
+      container.appendChild(chip);
+    });
+  }
+
+  function handlePigExit(ev) {
+    const st = getState();
+    const pigLocs = getPigLocations(st);
+    const activePigId = getFirstPigId(st);
+
+    const pigEntry = pigLocs.find(p => (p.pigId || p.PigId) === activePigId) || pigLocs[0];
+    if (pigEntry && pigEntry.pinned) {
+      return;
+    }
+
+    const direction = (ev && ev.to === 'left') ? 'left' : 'right';
+    const targetScene = computeNeighbourScene(currentSceneId, direction, st);
+
+    if (!targetScene || targetScene.locked) {
+      exitDisabledUntil = Date.now() + 60000;
+      if (window.CanvasPig && typeof window.CanvasPig.setExitsEnabled === 'function') {
+        window.CanvasPig.setExitsEnabled(false);
+      }
+      return;
+    }
+
+    const pigId = (pigEntry && (pigEntry.pigId || pigEntry.PigId)) || activePigId;
+    if (window.bridge && typeof window.bridge.send === 'function') {
+      window.bridge.send({
+        type: 'places.pigMove',
+        pigId: pigId,
+        to: targetScene.id
+      });
+    }
+  }
+
+  function bindCanvasExits() {
+    if (window.CanvasPig) {
+      window.CanvasPig.onPigExit = handlePigExit;
+    }
+  }
+
+  function checkArrivals(st) {
+    if (!st) st = getState();
+    const currentLocs = getPigLocations(st);
+
+    if (!previousPigLocations) {
+      previousPigLocations = JSON.parse(JSON.stringify(currentLocs));
+      return;
+    }
+
+    const ord = getOrder(st);
+
+    for (const cur of currentLocs) {
+      const pigId = cur.pigId || cur.PigId;
+      const prev = previousPigLocations.find(p => (p.pigId || p.PigId) === pigId);
+      const curScene = cur.scene || cur.sceneId || cur.Scene || cur.SceneId;
+      const prevScene = prev ? (prev.scene || prev.sceneId || prev.Scene || prev.SceneId) : null;
+
+      if (prevScene && curScene !== prevScene && curScene === currentSceneId) {
+        // Pig arrived at currently viewed scene!
+        let enterSide = 'left';
+        if (ord && ord.length > 0) {
+          const idxCur = ord.findIndex(s => s.id === curScene);
+          const idxPrev = ord.findIndex(s => s.id === prevScene);
+          if (idxCur !== -1 && idxPrev !== -1) {
+            const rightNeighbour = (idxCur + 1) % ord.length;
+            if (idxPrev === rightNeighbour) {
+              enterSide = 'right';
+            } else {
+              enterSide = 'left';
+            }
+          }
+        }
+
+        if (window.CanvasPig && typeof window.CanvasPig.enterFrom === 'function') {
+          window.CanvasPig.enterFrom(enterSide);
+        }
+      }
+    }
+
+    previousPigLocations = JSON.parse(JSON.stringify(currentLocs));
+  }
+
   function applyScene(sceneId, st) {
     if (!st) st = getState();
     if (!sceneId) {
@@ -82,6 +293,7 @@
     }
 
     // 2. Set CanvasPig scene & things
+    const currentInstScene = (window.CuyPig && window.CuyPig.mainInstance && window.CuyPig.mainInstance.sceneId) || null;
     const tod = (window.CuyScenes && typeof window.CuyScenes.timeOfDay === 'function')
       ? window.CuyScenes.timeOfDay()
       : 'day';
@@ -89,8 +301,10 @@
       ? window.CuyScenes.def(currentSceneId, tod)
       : { id: currentSceneId, size: [240, 130], walk: [10, 80, 230, 125] };
 
-    if (window.CanvasPig && typeof window.CanvasPig.setScene === 'function') {
-      window.CanvasPig.setScene(sceneDef);
+    if (currentInstScene !== currentSceneId) {
+      if (window.CanvasPig && typeof window.CanvasPig.setScene === 'function') {
+        window.CanvasPig.setScene(sceneDef);
+      }
     }
 
     const things = (window.CuyScenes && typeof window.CuyScenes.placedThings === 'function')
@@ -100,12 +314,23 @@
       window.CanvasPig.setThings(things, true);
     }
 
-    // 3. Pig visibility
+    // 3. Pig visibility and exits
+    const pigLocs = getPigLocations(st);
     const firstPig = getFirstPigId(st);
-    const pigScene = (window.CuyScenes && typeof window.CuyScenes.pigScene === 'function')
-      ? window.CuyScenes.pigScene(st, firstPig)
-      : 'salon';
-    const isPigHere = (currentSceneId === pigScene);
+    const firstPigLoc = pigLocs.find(p => (p.pigId || p.PigId) === firstPig) || pigLocs[0];
+    const isPigPinned = firstPigLoc ? !!firstPigLoc.pinned : false;
+
+    const isAnyPigHere = pigLocs.length > 0
+      ? pigLocs.some(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId)
+      : (currentSceneId === 'salon');
+
+    bindCanvasExits();
+
+    if (window.CanvasPig && typeof window.CanvasPig.setExitsEnabled === 'function') {
+      const now = Date.now();
+      const exitsAllowed = isAnyPigHere && !isPigPinned && (now >= exitDisabledUntil);
+      window.CanvasPig.setExitsEnabled(exitsAllowed);
+    }
 
     // 4. Locked overlay and hint
     const hintBar = document.getElementById('placesLockedHint');
@@ -137,9 +362,12 @@
       }
 
       if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
-        window.CanvasPig.setPigVisible(isPigHere);
+        window.CanvasPig.setPigVisible(isAnyPigHere);
       }
     }
+
+    // 5. Update presence chips
+    updatePresenceChips(st);
   }
 
   function next() {
@@ -252,6 +480,7 @@
     bindArrows(container) {},
     updateStageNav(st) {
       applyScene(currentSceneId, st || getState());
+      checkArrivals(st);
     },
     applyScene
   };

@@ -1628,6 +1628,69 @@ body.webview-mode .game-device {
   display: none !important;
 }
 
+/* Pig presence chips (PK-P38a) */
+.places-presence-chips {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--ui-wood-3);
+  border-bottom: 2px solid var(--ui-wood-0);
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+.places-presence-chips[hidden] {
+  display: none !important;
+}
+
+.places-presence-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 8px;
+  background-color: var(--ui-wood-2);
+  border: 4px solid var(--ui-wood-0);
+  border-image: var(--ui-badge) 4 fill / 4px;
+  color: var(--ui-linen-3);
+  font-family: var(--ui-font, 'Pixelify Sans', monospace);
+  font-size: 11px;
+  font-weight: 700;
+  text-shadow: 1px 1px 0 var(--ui-wood-0);
+  image-rendering: pixelated;
+  box-sizing: border-box;
+}
+
+.places-presence-chip .chip-text {
+  white-space: nowrap;
+}
+
+.places-presence-chip .chip-go-btn {
+  background: var(--ui-wood-4);
+  border: 3px solid var(--ui-wood-0);
+  border-image: var(--ui-btn_normal) 6 fill / 6px;
+  color: var(--ui-wood-0);
+  font-family: var(--ui-font, 'Pixelify Sans', monospace);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 1px 6px;
+  image-rendering: pixelated;
+  text-shadow: none;
+}
+
+.places-presence-chip .chip-go-btn:hover {
+  background: var(--ui-hay-2);
+  border-image: var(--ui-btn_hover) 6 fill / 6px;
+}
+
+.places-presence-chip .chip-go-btn:active {
+  border-image: var(--ui-btn_pressed) 6 fill / 6px;
+}
+
+
 /* ---- Places carousel stage (PK-P3a): replaces old places bar ---- */
 .stage-viewport .places-carousel-stage {
   position: absolute;

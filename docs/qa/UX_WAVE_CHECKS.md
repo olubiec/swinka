@@ -155,6 +155,25 @@
 2. Klikasz X i wstecz w 6 różnych oknach z More: te same ikony, działają, Esc zamyka.
 3. Brak cienkich białych X i znaków tekstowych.
 
+## Wave P38: Pig Presence Chip & Exits
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass | App builds cleanly with no compilation or regression errors |
+| UX Presence & Exits | `node tools/qa/ux-p38-presence.js` | Exit code 0, 7/7 PASS (Pr1-Pr7) | Chip informujący o lokacji świnki, przycisk "Go there" przenoszący do sceny świnki, wyjścia zmieniające lokację, zablokowane lokacje blokujące wyjście, przypięta świnka nie wychodzi |
+| UX All Suite | `node tools/qa/ux-all.js` | 13/15 PASS (ux-p38-presence oraz p32-p36 PASS; stare ux-p1/ux-p3 zdezaktualizowane przez rework P35/P37) | Skrypty pakietu UX dla fali P38 przechodzą pomyślnie |
+| Web Smoke | `node tools/qa/web-smoke.js` | 21/21 core PASS z baseline | WebView2 home screens, nawigacja i moduły renderują się poprawnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| EXE Smoke | `powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Exit code 0, selftest passes, EXE SMOKE OK | Świnka chodzi po pulpicie, brak wyjątków i crashów podczas uruchomienia |
+| Accessibility Check | `node tools/qa/a11y-check.js` | Exit code 0, A11Y OK | Brak błędów dostępności i etykiet ARIA |
+
+### Manual Checklist (Do sprawdzenia po P38)
+1. W miejscu, w którym świnki nie ma, widać chip „Cuy is in <miejsce>" i przycisk „Go there".
+2. Poczekaj kilka minut: świnka wychodzi drzwiami lub furtką i po chwili jest w sąsiednim miejscu. Jeśli patrzysz tam, widzisz jak wchodzi.
+3. Zablokowane miejsce nie przyjmuje świnki.
+4. Po restarcie gry świnka jest tam, gdzie była.
+
+
 
 
 
