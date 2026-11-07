@@ -29,4 +29,4 @@ RAPORT (po polsku, maks. 12 linii):
 - Odpisz mi: "OK" albo "krok X: opis" dla każdego, co nie działa.
 ```
 
-Kolejność sesji naprawczych po nieudanym P3: 31, 32, 33, 34, 35, 36, 37, 38. Potem 4 (adopcja), z wpisami P4a, P4b, P4q: wtedy w kroku 1 uruchom P4a, po jego zakończeniu P4b (P4b czyta log PK-P4a), na końcu P4q.
+Kolejność sesji naprawczych po nieudanym P3: 31-37 (zrobione), potem 41, 38, 39, 40. Potem 4 (adopcja), z wpisami P4a, P4b, P4q: wtedy w kroku 1 uruchom P4a, po jego zakończeniu P4b (P4b czyta log PK-P4a), na końcu P4q.

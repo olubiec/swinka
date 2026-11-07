@@ -1311,6 +1311,138 @@ waves:
     test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
+- id: P41a
+  tasks:
+  - id: PK-P41a
+    title: 'PK-P41a: More windows: stray Bond window'
+    prompt_file: docs/prompts/PK-P41a-more-windows-leak.md
+    files:
+    - web/home/app.js
+    - web/home/features/tricks/feature.js
+    - tools/qa/ux-p41-more-windows.js
+    - docs/opt/log/PK-P41a.md
+    test_command: node --check web/home/app.js && node --check tools/qa/ux-p41-more-windows.js && node tools/qa/ux-p41-more-windows.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P41b
+    title: 'PK-P41b: Minigames: maze, music, back arrows'
+    prompt_file: docs/prompts/PK-P41b-minigames-and-coloring.md
+    files:
+    - web/home/minigames/hay-maze.js
+    - web/home/minigames/hay-maze-logic.js
+    - web/home/minigames/minigames-api.js
+    - web/home/minigames/index.html
+    - web/home/features/coloring/feature.js
+    - web/home/features/coloring/feature.css
+    - tools/qa/ux-p41-games.js
+    - docs/opt/log/PK-P41b.md
+    test_command: node --check web/home/minigames/hay-maze.js && node --check web/home/minigames/minigames-api.js && node --check tools/qa/ux-p41-games.js && node tools/qa/ux-p41-games.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P41c
+    title: 'PK-P41c: Gramophone available from the start'
+    prompt_file: docs/prompts/PK-P41c-gramophone-start.md
+    files:
+    - web/home/features/music/player.js
+    - web/home/features/music/prices.js
+    - web/home/features/rooms/mock.js
+    - assets/data/world_items.json
+    - tools/qa/ux-p41-gramophone.js
+    - docs/opt/log/PK-P41c.md
+    test_command: node --check web/home/features/music/player.js && node --check tools/qa/ux-p41-gramophone.js && node tools/qa/ux-p41-gramophone.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P41d
+    title: 'PK-P41d: Pig looks match everywhere, adoption clock'
+    prompt_file: docs/prompts/PK-P41d-pig-looks-and-adoption-clock.md
+    files:
+    - src/Cuy/Graphics/PigLook.cs
+    - src/Cuy.Core/Pigs/PigRoster.cs
+    - web/home/features/pigs/feature.js
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p41-looks.js
+    - docs/opt/log/PK-P41d.md
+    test_command: node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p41-looks.js && node tools/qa/ux-p41-looks.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P41q
+  tasks:
+  - id: PK-P41q
+    title: 'PK-P41q: Windows checks after wave P41'
+    prompt_file: docs/prompts/PK-P41q-windows-checks-wave-p41.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P41q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P39a
+  tasks:
+  - id: PK-P39a
+    title: 'PK-P39a: Obstacles, walk physics and pig scale'
+    prompt_file: docs/prompts/PK-P39a-obstacles-and-scale.md
+    files:
+    - assets/data/place_scenes.json
+    - tools/qa/place-scenes-check.js
+    - web/home/canvas-pig.js
+    - web/home/features/places/scenes.js
+    - tools/qa/ux-p39-physics.js
+    - docs/opt/log/PK-P39a.md
+    test_command: node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node tools/qa/place-scenes-check.js && node --check tools/qa/ux-p39-physics.js && node tools/qa/ux-p39-physics.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P39b
+    title: 'PK-P39b: Scene layout (no clipping) and scene light'
+    prompt_file: docs/prompts/PK-P39b-scene-fit-and-light.md
+    files:
+    - web/home/features/places/feature.js
+    - web/home/features/places/feature.css
+    - web/home/style.css
+    - web/home/app.js
+    - tools/qa/ux-p39-layout-light.js
+    - docs/opt/log/PK-P39b.md
+    test_command: node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p39-layout-light.js && node tools/qa/ux-p39-layout-light.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P39q
+  tasks:
+  - id: PK-P39q
+    title: 'PK-P39q: Windows checks after wave P39'
+    prompt_file: docs/prompts/PK-P39q-windows-checks-wave-p39.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P39q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P40a
+  tasks:
+  - id: PK-P40a
+    title: 'PK-P40a: Edit panel instead of Rooms and Garden windows'
+    prompt_file: docs/prompts/PK-P40a-edit-panel-replaces-windows.md
+    files:
+    - web/home/features/places/feature.js
+    - web/home/features/places/feature.css
+    - web/home/features/places/edit-panel.js
+    - web/home/index.html
+    - web/home/app.js
+    - web/home/features/index.json
+    - tools/qa/ux-p40-edit.js
+    - docs/opt/log/PK-P40a.md
+    test_command: node --check web/home/features/places/feature.js && node --check web/home/features/places/edit-panel.js && node --check web/home/app.js && node --check tools/qa/ux-p40-edit.js && node tools/qa/ux-p40-edit.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P40q
+  tasks:
+  - id: PK-P40q
+    title: 'PK-P40q: Windows checks after wave P40'
+    prompt_file: docs/prompts/PK-P40q-windows-checks-wave-p40.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P40q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
 - id: P4a
   tasks:
   - id: PK-P4a

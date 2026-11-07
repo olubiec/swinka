@@ -342,6 +342,46 @@
       ]
     },
     {
+      "id": "P41a",
+      "packages": [
+        "PK-P41a",
+        "PK-P41b",
+        "PK-P41c",
+        "PK-P41d"
+      ]
+    },
+    {
+      "id": "P41q",
+      "packages": [
+        "PK-P41q"
+      ]
+    },
+    {
+      "id": "P39a",
+      "packages": [
+        "PK-P39a",
+        "PK-P39b"
+      ]
+    },
+    {
+      "id": "P39q",
+      "packages": [
+        "PK-P39q"
+      ]
+    },
+    {
+      "id": "P40a",
+      "packages": [
+        "PK-P40a"
+      ]
+    },
+    {
+      "id": "P40q",
+      "packages": [
+        "PK-P40q"
+      ]
+    },
+    {
       "id": "P4a",
       "packages": [
         "PK-P4a"
@@ -1102,6 +1142,86 @@
       "tier": "low",
       "title": "Windows checks after wave P38",
       "manual": "docs/prompts/PK-P38q-windows-checks-wave-p38.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P41a",
+      "tier": "high",
+      "title": "More windows: stray Bond window",
+      "manual": "docs/prompts/PK-P41a-more-windows-leak.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p41-more-windows.js && node tools/qa/ux-p41-more-windows.js",
+      "items": []
+    },
+    {
+      "id": "PK-P41b",
+      "tier": "high",
+      "title": "Minigames: maze, music, back arrows",
+      "manual": "docs/prompts/PK-P41b-minigames-and-coloring.md",
+      "verify": "node --check web/home/minigames/hay-maze.js && node --check web/home/minigames/minigames-api.js && node --check tools/qa/ux-p41-games.js && node tools/qa/ux-p41-games.js",
+      "items": []
+    },
+    {
+      "id": "PK-P41c",
+      "tier": "mid",
+      "title": "Gramophone available from the start",
+      "manual": "docs/prompts/PK-P41c-gramophone-start.md",
+      "verify": "node --check web/home/features/music/player.js && node --check tools/qa/ux-p41-gramophone.js && node tools/qa/ux-p41-gramophone.js",
+      "items": []
+    },
+    {
+      "id": "PK-P41d",
+      "tier": "high",
+      "title": "Pig looks match everywhere, adoption clock",
+      "manual": "docs/prompts/PK-P41d-pig-looks-and-adoption-clock.md",
+      "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p41-looks.js && node tools/qa/ux-p41-looks.js",
+      "items": []
+    },
+    {
+      "id": "PK-P41q",
+      "tier": "low",
+      "title": "Windows checks after wave P41",
+      "manual": "docs/prompts/PK-P41q-windows-checks-wave-p41.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P39a",
+      "tier": "high",
+      "title": "Obstacles, walk physics and pig scale",
+      "manual": "docs/prompts/PK-P39a-obstacles-and-scale.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node tools/qa/place-scenes-check.js && node --check tools/qa/ux-p39-physics.js && node tools/qa/ux-p39-physics.js",
+      "items": []
+    },
+    {
+      "id": "PK-P39b",
+      "tier": "high",
+      "title": "Scene layout (no clipping) and scene light",
+      "manual": "docs/prompts/PK-P39b-scene-fit-and-light.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p39-layout-light.js && node tools/qa/ux-p39-layout-light.js",
+      "items": []
+    },
+    {
+      "id": "PK-P39q",
+      "tier": "low",
+      "title": "Windows checks after wave P39",
+      "manual": "docs/prompts/PK-P39q-windows-checks-wave-p39.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P40a",
+      "tier": "high",
+      "title": "Edit panel instead of Rooms and Garden windows",
+      "manual": "docs/prompts/PK-P40a-edit-panel-replaces-windows.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check web/home/features/places/edit-panel.js && node --check web/home/app.js && node --check tools/qa/ux-p40-edit.js && node tools/qa/ux-p40-edit.js",
+      "items": []
+    },
+    {
+      "id": "PK-P40q",
+      "tier": "low",
+      "title": "Windows checks after wave P40",
+      "manual": "docs/prompts/PK-P40q-windows-checks-wave-p40.md",
       "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
       "items": []
     }

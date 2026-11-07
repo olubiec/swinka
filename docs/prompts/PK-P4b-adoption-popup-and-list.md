@@ -24,5 +24,9 @@ Depends on: PK-P4a merged (Core API names are in docs/opt/log/PK-P4a.md).
 - Biblioteka pixel artów: najpierw szukaj gotowego w `assets/world/` (`atlas.json`, tła `assets/world/bg/*`), `assets/ui/` (`ui.json`, `ui_tokens.css`), `assets/icons/`, `assets/props/`. Używaj istniejącego PNG. Nowy sprite tylko, gdy w bibliotece naprawdę nie ma, i wtedy: skrypt w `tools/art/` rysujący tylko kolorami palety, wpis w `ui.json` lub `atlas.json`, kontrola `python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt` bez nowych błędów.
 - Elementy interfejsu (belka, strzałki, cofnij, zamknij, przyciski) mają wyglądać jak reszta okna gry: panel/9-slice z `assets/ui/`, kolory `--ui-*` z `ui_tokens.css`, czcionka `--ui-font`. Żadnych własnych SVG, glifów tekstowych (✕ ← → ‹ ›) ani domyślnych kontrolek przeglądarki.
 
+## Dodatek właściciela (7.11)
+- Świnki czekające na adopcję są SZARE jak ukryte postacie: sylwetka (ten sam sprite, jednolity szary z palety), BEZ ikony i BEZ imienia (napis `???`). Dopiero po przyjęciu pokazują wygląd i imię.
+- Odliczanie do adopcji w formacie `Xd Yh Zm` (jak w PK-P41d), bez ułamków.
+
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj".
 Log: write `docs/opt/log/PK-P4b.md` (max 10 lines). Do not run git.

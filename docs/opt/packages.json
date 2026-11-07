@@ -1330,6 +1330,176 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P38q-windows-checks-wave-p38.md"
   },
+  "PK-P41a": {
+   "wave": "P41a",
+   "title": "More windows: stray Bond window",
+   "items": [],
+   "files": [
+    "web/home/app.js",
+    "web/home/features/tricks/feature.js",
+    "tools/qa/ux-p41-more-windows.js",
+    "docs/opt/log/PK-P41a.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check tools/qa/ux-p41-more-windows.js && node tools/qa/ux-p41-more-windows.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P41a-more-windows-leak.md"
+  },
+  "PK-P41b": {
+   "wave": "P41a",
+   "title": "Minigames: maze, music, back arrows",
+   "items": [],
+   "files": [
+    "web/home/minigames/hay-maze.js",
+    "web/home/minigames/hay-maze-logic.js",
+    "web/home/minigames/minigames-api.js",
+    "web/home/minigames/index.html",
+    "web/home/features/coloring/feature.js",
+    "web/home/features/coloring/feature.css",
+    "tools/qa/ux-p41-games.js",
+    "docs/opt/log/PK-P41b.md"
+   ],
+   "verify": "node --check web/home/minigames/hay-maze.js && node --check web/home/minigames/minigames-api.js && node --check tools/qa/ux-p41-games.js && node tools/qa/ux-p41-games.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P41b-minigames-and-coloring.md"
+  },
+  "PK-P41c": {
+   "wave": "P41a",
+   "title": "Gramophone available from the start",
+   "items": [],
+   "files": [
+    "web/home/features/music/player.js",
+    "web/home/features/music/prices.js",
+    "web/home/features/rooms/mock.js",
+    "assets/data/world_items.json",
+    "tools/qa/ux-p41-gramophone.js",
+    "docs/opt/log/PK-P41c.md"
+   ],
+   "verify": "node --check web/home/features/music/player.js && node --check tools/qa/ux-p41-gramophone.js && node tools/qa/ux-p41-gramophone.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P41c-gramophone-start.md"
+  },
+  "PK-P41d": {
+   "wave": "P41a",
+   "title": "Pig looks match everywhere, adoption clock",
+   "items": [],
+   "files": [
+    "src/Cuy/Graphics/PigLook.cs",
+    "src/Cuy.Core/Pigs/PigRoster.cs",
+    "web/home/features/pigs/feature.js",
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p41-looks.js",
+    "docs/opt/log/PK-P41d.md"
+   ],
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p41-looks.js && node tools/qa/ux-p41-looks.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P41d-pig-looks-and-adoption-clock.md"
+  },
+  "PK-P41q": {
+   "wave": "P41q",
+   "title": "Windows checks after wave P41",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P41q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P41q-windows-checks-wave-p41.md"
+  },
+  "PK-P39a": {
+   "wave": "P39a",
+   "title": "Obstacles, walk physics and pig scale",
+   "items": [],
+   "files": [
+    "assets/data/place_scenes.json",
+    "tools/qa/place-scenes-check.js",
+    "web/home/canvas-pig.js",
+    "web/home/features/places/scenes.js",
+    "tools/qa/ux-p39-physics.js",
+    "docs/opt/log/PK-P39a.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node tools/qa/place-scenes-check.js && node --check tools/qa/ux-p39-physics.js && node tools/qa/ux-p39-physics.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P39a-obstacles-and-scale.md"
+  },
+  "PK-P39b": {
+   "wave": "P39a",
+   "title": "Scene layout (no clipping) and scene light",
+   "items": [],
+   "files": [
+    "web/home/features/places/feature.js",
+    "web/home/features/places/feature.css",
+    "web/home/style.css",
+    "web/home/app.js",
+    "tools/qa/ux-p39-layout-light.js",
+    "docs/opt/log/PK-P39b.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p39-layout-light.js && node tools/qa/ux-p39-layout-light.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P39b-scene-fit-and-light.md"
+  },
+  "PK-P39q": {
+   "wave": "P39q",
+   "title": "Windows checks after wave P39",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P39q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P39q-windows-checks-wave-p39.md"
+  },
+  "PK-P40a": {
+   "wave": "P40a",
+   "title": "Edit panel instead of Rooms and Garden windows",
+   "items": [],
+   "files": [
+    "web/home/features/places/feature.js",
+    "web/home/features/places/feature.css",
+    "web/home/features/places/edit-panel.js",
+    "web/home/index.html",
+    "web/home/app.js",
+    "web/home/features/index.json",
+    "tools/qa/ux-p40-edit.js",
+    "docs/opt/log/PK-P40a.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node --check web/home/features/places/edit-panel.js && node --check web/home/app.js && node --check tools/qa/ux-p40-edit.js && node tools/qa/ux-p40-edit.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P40a-edit-panel-replaces-windows.md"
+  },
+  "PK-P40q": {
+   "wave": "P40q",
+   "title": "Windows checks after wave P40",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P40q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P40q-windows-checks-wave-p40.md"
+  },
   "PK-P4a": {
    "wave": "P4a",
    "title": "Core: adoption gate and one look source",
