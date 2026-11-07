@@ -421,8 +421,9 @@
         this.stopCurrentGame();
 
         // 3. Restore home music state
+        const wasHomeMusicPlaying = Boolean(this.savedHomeMusicState && this.savedHomeMusicState.playing);
         this.restoreHomeMusicState();
-        if (window.CuyMusic && (!this.savedHomeMusicState || !this.savedHomeMusicState.playing)) {
+        if (!wasHomeMusicPlaying && window.CuyMusic) {
           if (typeof window.CuyMusic.stop === 'function') {
             try { window.CuyMusic.stop(100); } catch (e) {}
           }

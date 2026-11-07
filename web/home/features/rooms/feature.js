@@ -802,9 +802,12 @@
     const sale = saleKeyOf(S.place);
     const isHouseRoom = sale === 'salon' || sale === 'house' || S.place === 'salon' || isPigRoom(S.place) || S.place === DORM_ID;
     const drawer = (st.rooms.catalog || []).map(c => {
-      const isOwned = c.owned || (st.inventory && st.inventory[c.id] > 0) || (st.rooms?.owned && st.rooms.owned[c.id] > 0) || (c.id === S.selectedItem);
-      return Object.assign({}, c, { owned: isOwned });
-    }).filter(c => c.owned && (c.places || []).some(p => p === sale || p === S.place || (p === 'house' && isHouseRoom)));
+      const invCount = (st.inventory && typeof st.inventory[c.id] === 'number') ? st.inventory[c.id] : 0;
+      const roomOwned = (st.rooms?.owned && typeof st.rooms.owned[c.id] === 'number') ? st.rooms.owned[c.id] : 0;
+      const baseOwned = typeof c.owned === 'number' ? c.owned : (c.owned ? 1 : 0);
+      const count = Math.max(baseOwned, invCount, roomOwned, (c.id === S.selectedItem ? 1 : 0));
+      return Object.assign({}, c, { owned: count });
+    }).filter(c => c.owned > 0 && (c.places || []).some(p => p === sale || p === S.place || (p === 'house' && isHouseRoom)));
     if (S.selectedItem && !drawer.some(c => c.id === S.selectedItem)) {
       const shopDef = (st.shop?.items || []).find(i => i.id === S.selectedItem);
       const def = {
@@ -823,7 +826,7 @@
     const clovers = typeof st.clovers === 'number' ? st.clovers : 0;
 
     const items = drawer.map(c => {
-      const free = c.repeatable || c.placed === 0;
+      const free = c.repeatable || (c.placed < (c.owned || 1));
       const pressed = S.selectedItem === c.id;
       return `<button type="button" class="room-item${pressed ? ' is-picked placing-item' : ''}" data-item="${esc(c.id)}" aria-pressed="${pressed}" ${free ? '' : 'disabled'} aria-label="${esc(c.name)}, ${c.placed} placed${free ? '' : ', all in use'}">` +
         `<span class="room-item-name">${esc(c.name)}</span>` +

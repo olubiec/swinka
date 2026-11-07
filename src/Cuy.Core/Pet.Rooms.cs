@@ -84,6 +84,12 @@ namespace Cuy.Core
                 }
             }
 
+            if (owned < 1 && State.Inventory != null && State.Inventory.TryGetValue(def.Id, out int invCount) && invCount > 0)
+            {
+                owned = invCount;
+                world.OwnedItems[def.Id] = invCount;
+            }
+
             if (owned < 1) return PlaceResult.NotAllowedHere;
 
             if (!def.Repeatable)

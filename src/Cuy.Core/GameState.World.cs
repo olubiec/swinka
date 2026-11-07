@@ -38,6 +38,21 @@ namespace Cuy.Core
                 world.OwnedItems = new Dictionary<string, int>();
             }
 
+            // Sync any items present in Inventory that belong to the world/room item catalog
+            if (Inventory != null && items != null)
+            {
+                foreach (var kv in Inventory)
+                {
+                    if (kv.Value > 0 && items.Find(kv.Key) != null)
+                    {
+                        if (!world.OwnedItems.ContainsKey(kv.Key) || world.OwnedItems[kv.Key] < kv.Value)
+                        {
+                            world.OwnedItems[kv.Key] = kv.Value;
+                        }
+                    }
+                }
+            }
+
             if (Roster != null && Roster.Any(p => p != null && p.Memorial))
             {
                 if (!world.OwnedItems.ContainsKey("memory_corner"))

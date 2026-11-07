@@ -1040,6 +1040,9 @@
         }
       } catch (e) {}
     }
+    if (window.NyanAudio && typeof window.NyanAudio.stopMusic === 'function') {
+      try { window.NyanAudio.stopMusic(); } catch (e) {}
+    }
     if (window.CuyMusic && (!window.Minigry || !window.Minigry.getHomeMusicState || !window.Minigry.getHomeMusicState()?.playing)) {
       if (typeof window.CuyMusic.stop === 'function') {
         try { window.CuyMusic.stop(100); } catch (e) {}
