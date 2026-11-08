@@ -1,0 +1,30 @@
+# PK-P47d1: Menu panel container with pig and feed contents
+Zmieniaj: web/home/menu-panel.js, web/home/menu-panel.css, web/home/index.html, tools/qa/ux-p47-menu-core.js, docs/opt/log/PK-P47d1.md
+Wymagane: tools/qa/ux-p47-menu-core.js
+Weryfikacja: node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu-core.js && node tools/qa/ux-p47-menu-core.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 35 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
+Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
+Goal: A new `window.CuyMenuPanel` opens one stage-sized panel under the HUD strip; built-in contents `pig` (moves `#pigPanel` in) and `feed` (moves `#foodDrawer` in). Esc, the x and the same call close it. `app.js` is NOT touched here.
+Depends on: PK-P47c2 merged.
+
+## Kontekst (fakty zweryfikowane w repo 8.11.2026, nie szukaj ich drugi raz)
+- Owner's problem: the Home window (420x640) crops the scene (`.stage-viewport` 132 px, `#pigCanvas` `object-fit: cover`). P47 makes the window landscape 640x400 CSS px: 40 px HUD strip (`#hudStrip`) on top, stage below it with the WHOLE scene (`contain`), bottom panel gone, menu opens as full-stage panel.
+- After c2: `#pigPanel` (hidden section holding the identity card and needs) and `#foodDrawer` (`#foodDrawerClose`, `#foodGrid`, `#foodEmpty`) exist as children of `#gameDevice`; `--hud-h: 40px` is defined by c1; `.stage-viewport` fills the rest. `index.html` currently links CSS at lines 28-30 (`features/music/player.css`, `features/places/feature.css`) and loads scripts in order up to `features/places/feature.js` then `app.js` (line ~300).
+- Esc: `app.js` (window keydown, ~line 663) skips when `e.defaultPrevented`. `menu-panel.js` loads before `app.js`, so its own `window` keydown listener (Escape while a panel is open: close, `preventDefault()`) wins; no app.js change needed.
+- Control look: close button = `<button class="ui-close">` pattern used by `#modalCloseBtn` (empty text, app.js `sanitizeUiControls` clears glyph text; here create it with empty text). Panel look: `var(--ui-linen-2)` body, header bar `var(--ui-wood-2)` like `.modal-header` (`style.css` 1136+). No glyphs.
+- Module style: a plain IIFE on `window` like `features/places/feature.js`; no ES modules.
+- Order: P47 runs AFTER waves P39 (scene fit, blockers), P45 (perspective in `canvas-pig.js`, `CuyRoomGeometry`), P40 (edit mode), P43 (hotspots) and P44 (pig drag to the edge). Do not undo what they added (hotspot, edit-mode and drag overlays, the Edit button and drawer); if a log `docs/opt/log/PK-P39b.md` or `PK-P45e*.md` exists, read only its last lines.
+
+## Pliki i elementy (zweryfikowane)
+- `window.CuyMenuPanel`: `open(id)` (returns false for unknown id; closes the current panel first; opening the current id is a no-op), `close()`, `current()` (id or null), `toggle(id)`, `register(id, provider)` with `provider = { title, mount(body), unmount(body) }`, `onChange(cb)`. DOM: `#menuPanel` (child of `#gameDevice`, `position: absolute; top: var(--hud-h); left: 0; right: 0; bottom: 0; z-index: 50`, below the modal z-index 100) with `.menu-panel-head` (title + `#menuPanelClose`) and `#menuPanelBody` (scrolls inside, `overflow-y: auto`). `#menuPanel[hidden]` is `display: none`.
+- Built-ins: `pig` moves the real `#pigPanel` node into the body and removes `hidden`; on close puts it back where it was and sets `hidden` again (DOM move, never a copy: ids stay unique). `feed` does the same with `#foodDrawer` and adds class `in-panel`; CSS `.menu-panel .food-drawer.in-panel { display: block; position: static; box-shadow: none; border: 0 }` (the drawer's own `.active` class is not used in the panel).
+- Provider hook for d3: if a provider has `open(): void` and `close(): void` instead of `mount/unmount`, `CuyMenuPanel` only tracks `current()` and calls them (so shop/games/more can reuse the modal). Implement that now with a test using a fake provider; d3 registers the real ones.
+
+## Steps
+1. Write `tools/qa/ux-p47-menu-core.js` first (viewport 640x400, mock `seven`): M1 `open-pig` (`CuyMenuPanel.open('pig')`: `#menuPanel` visible, rect covers the stage rect +-1 px and starts at y = 40, `#pigPanel` visible inside it, `#petName` unique in the document), M2 `open-feed` (`#foodDrawer` visible inside the panel), M3 `one-at-a-time` (opening `feed` then `pig`: only one body content visible, `current()` is `pig`, `#foodDrawer` back in `#gameDevice`, hidden), M4 `scene-stays` (`#pigCanvas` still in the DOM and the HUD strip buttons still clickable: `#btnClose` rect not covered, check with `elementFromPoint`), M5 `close-ways` (Esc, `#menuPanelClose`, and `toggle(same id)` each close; `#pigPanel` is hidden again and a child of `#gameDevice`), M6 `unknown-id` (returns false, no panel), M7 `fake-provider` (register + open + close hooks called), M8 `no-page-errors`.
+2. Create `menu-panel.css` and `menu-panel.js`; add to `index.html` `<link rel="stylesheet" href="menu-panel.css">` after the `features/places/feature.css` link and `<script src="menu-panel.js"></script>` right before `<script src="app.js">`. Do not touch `style.css`.
+3. Run Weryfikacja.
+
+Prohibited: Nie dodawaj zabawek (piłka, tunel itp. zostały usunięte). Bez glifów/emoji w grafice, tylko paleta i sprite'y z biblioteki UI. No refactors, no new abstractions, no edits outside Zmieniaj.
+Log: write `docs/opt/log/PK-P47d1.md` (max 10 lines). Do not run git.

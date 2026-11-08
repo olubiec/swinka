@@ -6,7 +6,7 @@ Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje l
 Limity (twarde): maks. 45 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: The Home window is 640x400 instead of 420x640, still fits small screens and still sits at the bottom-right corner.
-Depends on: PK-P44b, all packages of wave P45 (perspective, `docs/opt/PERSPECTIVE_PLAN.md`) and PK-P39b merged.
+Depends on: waves P39 (PK-P39b), P40, P43, P44 and P45 merged (P47 is the last UI wave before P4).
 
 ## Kontekst (fakty zweryfikowane w repo 8.11.2026, nie szukaj ich drugi raz)
 - Problem właściciela: okno domku (420x640) przycina scenę: `.stage-viewport` ma 132 px wysokości, a `#pigCanvas` ma `object-fit: cover; object-position: 50% 100%`, więc góra tła i boki są ucięte (sceny mają 240x130, 256x144 i 384x192, `web/home/features/places/scenes.js`, `canvas-pig.js` 276 i 394). Pod sceną są: nagłówek, karta tożsamości, belka miejsc, potrzeby (`.needs-section`) i dolny pasek 6 przycisków (`.actions-grid`: `btnFeed btnClean btnCall btnShop btnMinigames btnMore`).

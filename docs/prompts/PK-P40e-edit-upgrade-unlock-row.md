@@ -16,15 +16,18 @@ Depends on: PK-P40d merged.
 - Testy: Playwright przez `tools/qa/lib/ux.js` (helpery `openHome`, `openMore`, `openFromMore`), mock przeglądarkowy per funkcja (`features/<f>/mock.js`, `CuyScenesMock.state('seven')` daje 7 scen). Testy uruchamia `tools/qa/ux-all.js` (pliki `ux-pN-*.js`).
 
 ## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
-- `web/home/features/places/edit-panel.js` + `.css`: drawer header row only.
-- `CuyPlaces.upgrade(id)` / `CuyPlaces.unlock(id)`: from PK-P40d (`places/feature.js`).
-- Cost/level fields: old `rooms/feature.js` and `garden/feature.js` (grep `nextCost`, `level`, `place_upgrade`); `state.world.places[*]`.
+- Line numbers below are from 8.11.2026, BEFORE waves P39 and P45 (they edit `canvas-pig.js`, `scenes.js`, `places/feature.js`, `index.html`). Find every function by name with grep, never by line.
+- `web/home/features/places/edit-panel.js` + `.css`: drawer header row only (`.edit-head`, `.edit-level`, `#editUpgradeBtn`, `#editUnlockBtn`).
+- `CuyPlaces.upgrade(id)` / `CuyPlaces.unlock(id)`: from PK-P40d (`places/feature.js`). Messages `place_upgrade {id}` / `place_unlock {id}` (mock handlers `rooms/mock.js` ~308-345; they spend `st.clovers`).
+- State fields (server `PlacesFeature.cs` ~40-110): `state.places.places[]` and `state.places.rooms[]` each `{id,name,unlocked,level,maxLevel?,unlockCost,nextLevelCost,cols,rows}`; pig rooms also in `state.rooms.pigRooms[]` `{roomId,level,maxLevel,nextLevelCost}` (the old rooms window only offered "Bigger room" for pig rooms: `rooms/feature.js` ~828-850). Locked flag + hint of the scene: `state.places.order[]` `{id,title,locked,unlockHint}`. `nextLevelCost == null` means max level. Currency is clovers: `state.clovers`, library icon `clover` (`assets/icons/icons.json` id 13), not coins.
+- Scene id to entry: by `id` in `places.places` / `places.rooms`; pig scene `pig:<pigId>` maps to a `pigRooms` entry (lookup order in `scenes.js` `placedThings` ~369-379).
 
 ## Steps
-1. Read `docs/opt/log/PK-P40d.md`. grep `place_upgrade` costs in the state (`state.places`/`state.world.places[*].level|nextCost`) in the old rooms/garden feature to reuse the same fields.
-2. Drawer header row: scene title, `Level N`, button `Upgrade (cost)` (disabled with reason when not affordable or max), for locked scenes `Unlock (cost)`. Library button class, `--ui-*` colours, price with the coin icon from the library.
-3. Tests FIRST, `tools/qa/ux-p40-edit-upgrade.js` (Playwright, mock): U1 `row-shows-level-and-cost`, U2 `upgrade-sends`, U3 `disabled-when-poor`, U4 `max-level-hides-upgrade`, U5 `locked-scene-shows-unlock-and-sends`.
+1. Read `docs/opt/log/PK-P40d.md`. grep `nextLevelCost` and `unlockCost` once in `rooms/feature.js` and `garden/feature.js` to confirm the fields above.
+2. Drawer header row: scene title, `Level N`, button `Upgrade (cost)` (disabled with a reason text when `clovers < cost`; hidden at max level), for locked scenes `Unlock (cost)` (disabled when poor). Library button class, `--ui-*` colours, price with the `clover` icon. Re-render on `bridge.onState`.
+3. Tests FIRST, `tools/qa/ux-p40-edit-upgrade.js` (Playwright, mock): U1 `row-shows-level-and-cost`, U2 `upgrade-sends`, U3 `disabled-when-poor`, U4 `max-level-hides-upgrade`, U5 `locked-scene-shows-unlock-and-sends`, U6 `scene-without-entry-shows-title-only` (no crash).
 4. Run Weryfikacja; fix until green.
+
 ## Zasady grafiki i interfejsu (obowiązkowe)
 - Legenda stylu: `docs/STYL_SWIATA.md` (czytaj pkt 0-2 i 5, ok. 60 linii) i paleta `assets/data/style_palette.json` (42 kolory). Zakaz kolorów spoza palety, zakaz `#ffffff` i `#000000`, zakaz gradientów CSS, rozmycia i cieni z blur. `image-rendering: pixelated`, skala tylko całkowita, pozycje w pełnych pikselach.
 - Biblioteka pixel artów: najpierw szukaj gotowego w `assets/world/`, `assets/ui/`, `assets/icons/`, `assets/props/`. Nowy sprite tylko gdy go tam naprawdę nie ma: skrypt w `tools/art/` + `python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt` bez nowych błędów.
