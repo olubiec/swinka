@@ -168,7 +168,6 @@
         items: [
           { id: 'pellets', name: 'Pellets', category: 'food', price: 5, icon: 'icon-pellets', description: 'A filling extra' },
           { id: 'carrot', name: 'Carrot', category: 'food', price: 8, icon: 'icon-carrot', dailyLimit: 1, description: 'Sweet treat' },
-          { id: 'ball', name: 'Ball', category: 'toy', price: 60, icon: 'icon-ball', oneTime: true, description: 'For playing' },
           { id: 'vitamin_drops', name: 'Vitamin drops', category: 'care', price: 25, icon: 'icon-vitamin-drops', dailyLimit: 1, description: 'Added into the water.' }
         ],
         categories: ['food', 'toy', 'decor', 'care']

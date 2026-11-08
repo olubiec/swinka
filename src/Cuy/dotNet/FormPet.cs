@@ -1102,8 +1102,7 @@ namespace Cuy
         {
             if (string.IsNullOrEmpty(name)) return false;
             return name.IndexOf("peek", StringComparison.OrdinalIgnoreCase) >= 0
-                || name.IndexOf("house", StringComparison.OrdinalIgnoreCase) >= 0
-                || name.IndexOf("tunnel", StringComparison.OrdinalIgnoreCase) >= 0;
+                || name.IndexOf("house", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         /// <summary>

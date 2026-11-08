@@ -17,7 +17,7 @@ namespace Cuy.Core.Tests
 
             var brain = Brain.CreateDefault(pet, new Random(42));
 
-            var actionDef = brain.Config.Actions.Find(a => a.Id == "ball_play");
+            var actionDef = brain.Config.Actions.Find(a => a.Id == "chew_stick");
             Assert.NotNull(actionDef);
 
             return (brain, pet, actionDef);
@@ -27,18 +27,18 @@ namespace Cuy.Core.Tests
         public void ForceAction_OwnedAndReady_ReturnsActionDecisionAndRecordsCooldown()
         {
             var (brain, pet, actionDef) = SetupBrainWithAction();
-            pet.State.Inventory["ball"] = 1; // Own the item
+            pet.State.Inventory["chew_stick"] = 1; // Own the item
             pet.State.Needs.Energy = 100; // Meet energy requirement (min 30)
 
-            var decision = brain.ForceAction("ball_play");
+            var decision = brain.ForceAction("chew_stick");
 
             Assert.NotNull(decision);
-            Assert.Equal("ball_play", decision.ActionId);
+            Assert.Equal("chew_stick", decision.ActionId);
 
             // Check cooldown was recorded
             double totalSecs = brain.TotalSimulatedSeconds;
             // Trying again immediately should return null due to cooldown
-            var decision2 = brain.ForceAction("ball_play");
+            var decision2 = brain.ForceAction("chew_stick");
             Assert.Null(decision2);
         }
 
@@ -46,10 +46,10 @@ namespace Cuy.Core.Tests
         public void ForceAction_NotOwned_ReturnsNull()
         {
             var (brain, pet, actionDef) = SetupBrainWithAction();
-            // ball is NOT in inventory
+            // chew stick is NOT in inventory
             pet.State.Needs.Energy = 100;
 
-            var decision = brain.ForceAction("ball_play");
+            var decision = brain.ForceAction("chew_stick");
 
             Assert.Null(decision);
         }
@@ -58,15 +58,15 @@ namespace Cuy.Core.Tests
         public void ForceAction_OnCooldown_ReturnsNull()
         {
             var (brain, pet, actionDef) = SetupBrainWithAction();
-            pet.State.Inventory["ball"] = 1; // Own the item
+            pet.State.Inventory["chew_stick"] = 1; // Own the item
             pet.State.Needs.Energy = 100;
 
             // First time works
-            var decision1 = brain.ForceAction("ball_play");
+            var decision1 = brain.ForceAction("chew_stick");
             Assert.NotNull(decision1);
 
             // Second time fails due to cooldown
-            var decision2 = brain.ForceAction("ball_play");
+            var decision2 = brain.ForceAction("chew_stick");
             Assert.Null(decision2);
         }
 

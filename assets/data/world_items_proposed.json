@@ -249,19 +249,6 @@
    "icon": "memory_frame"
   },
   {
-   "id": "willow_tunnel",
-   "name": "Willow tunnel",
-   "place": [
-    "garden"
-   ],
-   "w": 3,
-   "h": 2,
-   "price": null,
-   "comfort": null,
-   "layer": "floor",
-   "icon": "willow_tunnel"
-  },
-  {
    "id": "torch",
    "name": "Torch",
    "place": [

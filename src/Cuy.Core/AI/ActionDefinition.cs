@@ -234,7 +234,6 @@ namespace Cuy.Core.AI
                 case "nap":
                 case "sleep":
                 case "sleep_house":
-                case "sleep_in_house":
                 case "heat":
                 case "cold":
                     return "rest_and_naps";

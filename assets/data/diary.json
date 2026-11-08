@@ -1199,8 +1199,6 @@
     "freezing"
   ],
   "toys": [
-    "ball",
-    "tunnel",
     "chew stick",
     "bell"
   ],
@@ -1232,7 +1230,6 @@
   "games_type": [
     "hide and seek",
     "chase",
-    "tunnel run",
     "floor time"
   ],
   "pets_type": [

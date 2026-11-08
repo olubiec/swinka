@@ -542,7 +542,7 @@ namespace Cuy.Core.AI
                         case "energy_max":
                             double maxEnergy = (double)kv.Value;
                             // When the user is idle the pig goes to sleep, unless energy is already full
-                            if (IsUserIdle && (action.Id == "sleep" || action.Id == "sleep_in_house" || action.Id == "nap"))
+                            if (IsUserIdle && (action.Id == "sleep" || action.Id == "nap"))
                             {
                                 maxEnergy = 95.0;
                             }
@@ -628,7 +628,7 @@ namespace Cuy.Core.AI
             // Time of day multiplier
             string group = ActionDefinition.GetBudgetGroup(action.Id, _config?.DailyBudget);
             bool isNight = (hour >= 23 || hour < 7);
-            bool isSleepOrDoze = (action.Id == "sleep" || action.Id == "sleep_in_house" || action.Id == "nap");
+            bool isSleepOrDoze = (action.Id == "sleep" || action.Id == "nap");
 
             if (isNight)
             {
@@ -685,7 +685,7 @@ namespace Cuy.Core.AI
                 double idleSleepBonus = (needs.Satiety < 15.0) ? 0.0 : 3.5;
                 double idleDozeBonus = (needs.Satiety < 15.0) ? 0.0 : 2.0;
 
-                if (action.Id == "sleep" || action.Id == "sleep_house" || action.Id == "sleep_in_house")
+                if (action.Id == "sleep" || action.Id == "sleep_house")
                 {
                     baseZysk += idleSleepBonus;
                 }
@@ -880,7 +880,7 @@ namespace Cuy.Core.AI
                 double decay;
                 if (_config.DecayPerHour.TryGetValue("fullness", out decay)) n.Satiety = Math.Max(0.0, n.Satiety - (decay * hours));
                 if (_config.DecayPerHour.TryGetValue("vitamin_c", out decay)) n.VitaminC = Math.Max(0.0, n.VitaminC - (decay * hours));
-                bool isAutoSleeping = (_currentAction != null && (_currentAction.ActionId == "sleep" || _currentAction.ActionId == "sleep_house" || _currentAction.ActionId == "sleep_in_house" || _currentAction.ActionId == "doze" || _currentAction.ActionId == "nap"));
+                bool isAutoSleeping = (_currentAction != null && (_currentAction.ActionId == "sleep" || _currentAction.ActionId == "sleep_house" || _currentAction.ActionId == "doze" || _currentAction.ActionId == "nap"));
                 if (isAutoSleeping)
                 {
                     // Sleep raises energy

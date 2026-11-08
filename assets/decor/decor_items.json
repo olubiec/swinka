@@ -223,19 +223,6 @@
    }
   },
   {
-   "id": "hide_willow_tunnel",
-   "name": "Willow tunnel",
-   "category": "decor",
-   "price": 220,
-   "icon": "hide",
-   "one_time": true,
-   "slot": "hide",
-   "description": "A woven willow tunnel.",
-   "look": {
-    "atlas": "hide_willow_tunnel"
-   }
-  },
-  {
    "id": "hide_cardboard_box",
    "name": "Cardboard box",
    "category": "decor",
@@ -272,19 +259,6 @@
    "description": "A cosy igloo made of soft blocks.",
    "look": {
     "atlas": "hide_igloo"
-   }
-  },
-  {
-   "id": "hide_wooden_house",
-   "name": "Wooden house",
-   "category": "decor",
-   "price": 260,
-   "icon": "hide",
-   "one_time": true,
-   "slot": "hide",
-   "description": "A wooden house with a window and a door.",
-   "look": {
-    "atlas": "hide_wooden_house"
    }
   },
   {

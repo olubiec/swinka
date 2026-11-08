@@ -32,7 +32,7 @@ namespace Cuy.Core.Tests
   'lastActiveUtc': '2026-10-01T10:00:00Z',
   'needs': { },
   'inventory': { 'papryka': 3, 'siano': 2 },
-  'stats': { 'counters': { 'papryka': 4, 'domek': 1 } }
+  'stats': { 'counters': { 'papryka': 4 } }
 }";
             File.WriteAllText(Path.Combine(_testDir, SaveSystem.FileName), json);
 
@@ -44,7 +44,6 @@ namespace Cuy.Core.Tests
             Assert.Equal(3, state.Inventory["bell_pepper"]);
             Assert.Equal(2, state.Inventory["hay"]);
             Assert.Equal(4, state.Stats.Counters["bell_pepper"]);
-            Assert.Equal(1, state.Stats.Counters["house"]);
         }
 
         [Fact]

@@ -25,8 +25,6 @@ namespace Cuy
             { "carrot", 3 },
             { "pellets", 4 },
             { "chew_stick", 5 },
-            { "ball", 6 },
-            { "tunnel", 7 },
             { "house", 8 },
             { "water_bottle", 9 },
             { "poop", 10 },

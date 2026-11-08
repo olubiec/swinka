@@ -512,19 +512,6 @@
    "icon": "pond_big"
   },
   {
-   "id": "tunnel_playground",
-   "name": "Play tunnel",
-   "place": [
-    "park"
-   ],
-   "w": 3,
-   "h": 2,
-   "price": 320,
-   "comfort": 6,
-   "layer": "floor",
-   "icon": "tunnel_playground"
-  },
-  {
    "id": "bench_park",
    "name": "Park bench",
    "place": [
@@ -700,74 +687,6 @@
    "layer": "floor",
    "icon": "gate_garden",
    "note": "Closes a fence line. A run needs one gate."
-  },
-  {
-   "id": "prop_ball",
-   "name": "Ball (desk toy)",
-   "place": [
-    "house",
-    "garden"
-   ],
-   "w": 1,
-   "h": 1,
-   "price": 0,
-   "comfort": 1,
-   "layer": "floor",
-   "icon": "prop_ball",
-   "note": "The toy from your desktop, placed in a room.",
-   "prop_of": "ball",
-   "free": true
-  },
-  {
-   "id": "prop_tunnel",
-   "name": "Tunnel (desk toy)",
-   "place": [
-    "house",
-    "garden"
-   ],
-   "w": 2,
-   "h": 1,
-   "price": 0,
-   "comfort": 1,
-   "layer": "floor",
-   "icon": "prop_tunnel",
-   "note": "The tunnel from your desktop, placed in a room.",
-   "prop_of": "tunnel",
-   "free": true
-  },
-  {
-   "id": "prop_hay_ball",
-   "name": "Hay ball (desk toy)",
-   "place": [
-    "house",
-    "garden"
-   ],
-   "w": 1,
-   "h": 1,
-   "price": 0,
-   "comfort": 1,
-   "layer": "floor",
-   "icon": "prop_hay_ball",
-   "note": "The hay ball from your desktop, placed in a room.",
-   "prop_of": "hay_ball",
-   "free": true
-  },
-  {
-   "id": "prop_house",
-   "name": "Hideout (desk item)",
-   "place": [
-    "house",
-    "garden"
-   ],
-   "w": 2,
-   "h": 2,
-   "price": 0,
-   "comfort": 2,
-   "layer": "floor",
-   "icon": "prop_house",
-   "note": "The little house from your desktop, placed in a room.",
-   "prop_of": "house",
-   "free": true
   },
   {
     "id": "fireplace",
@@ -1016,19 +935,6 @@
     "comfort": 0,
     "layer": "wall",
     "icon": "memory_frame"
-  },
-  {
-    "id": "willow_tunnel",
-    "name": "Willow tunnel",
-    "place": [
-      "garden"
-    ],
-    "w": 3,
-    "h": 2,
-    "price": 110,
-    "comfort": 5,
-    "layer": "floor",
-    "icon": "willow_tunnel"
   },
   {
     "id": "torch",

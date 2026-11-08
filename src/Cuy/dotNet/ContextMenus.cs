@@ -55,13 +55,6 @@ namespace Cuy
             };
             menu.Items.Add(callMenuItem);
 
-            // Play submenu
-            var playMenuItem = new ToolStripMenuItem("Play");
-            playMenuItem.Image = PetIcons.GetIconBitmap("ball");
-            playMenuItem.DropDownOpening += (s, e) => PopulatePlaySubmenu(playMenuItem);
-            PopulatePlaySubmenu(playMenuItem);
-            menu.Items.Add(playMenuItem);
-
             // Tricks submenu
             var tricksMenuItem = new ToolStripMenuItem("Tricks");
             tricksMenuItem.DropDownOpening += (s, e) => PopulateTricksSubmenu(tricksMenuItem);
@@ -211,60 +204,6 @@ namespace Cuy
             }
         }
 
-        public static void PopulatePlaySubmenu(ToolStripMenuItem playMenu)
-        {
-            playMenu.DropDownItems.Clear();
-
-            var pet = BrainController.Instance?.Pet;
-            var inventory = pet?.State?.Inventory;
-
-            bool hasToys = false;
-            string[] toys = { "ball", "tunnel", "hay_ball" };
-
-            foreach (var toyId in toys)
-            {
-                if (inventory != null && inventory.ContainsKey(toyId) && inventory[toyId] > 0)
-                {
-                    hasToys = true;
-                    var def = ItemCatalogLoader.GetItem(toyId);
-                    string title = def.Name ?? toyId;
-
-                    ToolStripMenuItem toyItem = new ToolStripMenuItem(title);
-                    toyItem.Image = PetIcons.GetIconBitmap(def.IconName ?? toyId);
-                    toyItem.Click += async (s, e) =>
-                    {
-                        if (BrainController.Instance != null)
-                        {
-                            string actionId = null;
-                            if (toyId == "ball") actionId = "ball_play";
-                            else if (toyId == "tunnel") actionId = "tunnel";
-                            else if (toyId == "hay_ball") actionId = "hay_ball_play";
-
-                            if (actionId != null)
-                            {
-                                if (!BrainController.Instance.ForceAction(actionId))
-                                {
-                                    if (HomeWindow.IsOpen)
-                                    {
-                                        HomeWindow.CloseIfOpen();
-                                        await System.Threading.Tasks.Task.Delay(1500);
-                                        BrainController.Instance.ForceAction(actionId);
-                                    }
-                                }
-                            }
-                        }
-                    };
-                    playMenu.DropDownItems.Add(toyItem);
-                }
-            }
-
-            if (!hasToys)
-            {
-                var emptyItem = new ToolStripMenuItem("Buy toys in the Shop") { Enabled = false };
-                playMenu.DropDownItems.Add(emptyItem);
-            }
-        }
-
         public static void PopulateFeedSubmenu(ToolStripMenuItem feedMenu)
         {
             feedMenu.DropDownItems.Clear();
@@ -291,6 +230,7 @@ namespace Cuy
                     int count = kvp.Value;
                     if (count <= 0) continue;
                     if (string.Equals(itemId, "hay", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (!ItemCatalogLoader.Exists(itemId)) continue; // removed item left in an old save
 
                     var def = ItemCatalogLoader.GetItem(itemId);
                     string title = string.Format("{0} ({1})", def.Name, count);

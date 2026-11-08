@@ -58,7 +58,7 @@ namespace Cuy.Core.Tests
 
                 bool isNight = before.Hour >= 23 || before.Hour < 7;
                 pet.IsSleeping = (brain.CurrentAction != null && 
-                    (brain.CurrentAction.ActionId == "sleep" || brain.CurrentAction.ActionId == "sleep_in_house" || brain.CurrentAction.ActionId == "nap")) 
+                    (brain.CurrentAction.ActionId == "sleep" || brain.CurrentAction.ActionId == "nap")) 
                     || isNight;
 
                 pet.Update();
