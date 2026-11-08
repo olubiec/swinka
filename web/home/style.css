@@ -895,6 +895,7 @@ body.webview-mode .game-device {
 .icon-statue-pig { --i: 209; }
 .icon-flower-arch { --i: 210; }
 .icon-pond-big { --i: 211; }
+.icon-tunnel-playground { --i: 212; }
 .icon-bench-park { --i: 213; }
 .icon-path-cobble { --i: 214; }
 .icon-scarecrow { --i: 215; }
@@ -926,6 +927,7 @@ body.webview-mode .game-device {
 .icon-plant-shelf { --i: 245; }
 .icon-plant-trailing { --i: 246; }
 .icon-memory-frame { --i: 247; }
+.icon-willow-tunnel { --i: 248; }
 .icon-torch { --i: 249; }
 .icon-lamp-oil { --i: 250; }
 .icon-brazier { --i: 251; }
