@@ -117,7 +117,7 @@
           return {
             spriteKey: 'sprites/' + s + '/spritesheet.png',
             breed: 'smooth',
-            coat: 'tricolor',
+            coat: 'blaze_only.ginger',
             stage: s,
             named: null
           };
@@ -145,20 +145,24 @@
       if (pig.look && pig.look.spriteKey) {
         const s = normStage(stageOverride || pig.look.stage || pig.stage);
         const named = pig.look.named || (pig.look.spriteKey.includes('sprites/pigs/') ? pig.look.spriteKey.split('/')[2] : null);
+        let coat = pig.look.coat || pig.look.paletteId || pig.paletteId || 'blaze_only.ginger';
+        if (!coat || coat === 'tricolor') coat = 'blaze_only.ginger';
         return {
           spriteKey: pig.look.spriteKey,
           breed: pig.look.breed || normBreed(pig.breed),
-          coat: pig.look.coat || pig.look.paletteId || pig.paletteId || 'tricolor',
+          coat: coat,
           stage: s,
           named: named
         };
       }
 
       if (pig.spriteKey) {
+        let coat = pig.coat || pig.paletteId || 'blaze_only.ginger';
+        if (!coat || coat === 'tricolor') coat = 'blaze_only.ginger';
         return {
           spriteKey: pig.spriteKey,
           breed: pig.breed || 'smooth',
-          coat: pig.coat || pig.paletteId || 'tricolor',
+          coat: coat,
           stage: normStage(stageOverride || pig.stage),
           named: pig.named || null
         };
@@ -167,7 +171,8 @@
       // Fallback for old state without look
       const s = normStage(stageOverride || pig.stage || (pig.look && pig.look.stage));
       const b = normBreed(pig.breed || (pig.look && pig.look.breed));
-      const coat = pig.paletteId || (pig.look && pig.look.paletteId) || pig.coat || 'tricolor';
+      let coat = pig.paletteId || (pig.look && pig.look.paletteId) || pig.coat || 'blaze_only.ginger';
+      if (!coat || coat === 'tricolor') coat = 'blaze_only.ginger';
 
       let rawNamed = pig.namedId || (pig.look && pig.look.namedId);
       if (!rawNamed && pig.id && KNOWN_NAMED_PIGS.has(String(pig.id).toLowerCase())) {
