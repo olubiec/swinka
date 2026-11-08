@@ -1590,21 +1590,21 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P39q-windows-checks-wave-p39.md"
   },
-  "PK-P45a": {
+  "PK-P45a1": {
    "wave": "P45a",
-   "title": "Scene calibration overlay tool",
+   "title": "Overlay tool: background, walk band, blockers, exits, grid",
    "items": [],
    "files": [
     "tools/qa/scene-overlay.js",
     "tools/qa/ux-p45-overlay.js",
     "docs/qa/calibration/README.md",
-    "docs/opt/log/PK-P45a.md"
+    "docs/opt/log/PK-P45a1.md"
    ],
    "verify": "node --check tools/qa/scene-overlay.js && node --check tools/qa/ux-p45-overlay.js && node tools/qa/ux-p45-overlay.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45a-scene-overlay-tool.md"
+   "prompt_file": "docs/prompts/PK-P45a1-overlay-tool-background-walk-band-blocke.md"
   },
   "PK-P45b": {
    "wave": "P45a",
@@ -1620,88 +1620,195 @@
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45b-room-geometry.md"
+   "prompt_file": "docs/prompts/PK-P45b-room-geometry-from-the-layout-grid.md"
   },
-  "PK-P45c": {
+  "PK-P45c1": {
    "wave": "P45a",
-   "title": "Room trim and floor-edge shadow art",
+   "title": "Art: baseboard strip",
    "items": [],
    "files": [
-    "tools/art/room_trim_art.py",
+    "tools/art/room_trim_baseboard.py",
     "assets/world/house/trim_baseboard.png",
-    "assets/world/house/trim_floor_shadow.png",
-    "assets/world/tiles.json",
-    "tools/qa/ux-p45-trim-art.js",
-    "docs/opt/log/PK-P45c.md"
+    "tools/qa/ux-p45-trim-baseboard.js",
+    "docs/opt/log/PK-P45c1.md"
    ],
-   "verify": "python3 tools/art/room_trim_art.py assets && node --check tools/qa/ux-p45-trim-art.js && node tools/qa/ux-p45-trim-art.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js",
+   "verify": "python3 tools/art/room_trim_baseboard.py assets && node --check tools/qa/ux-p45-trim-baseboard.js && node tools/qa/ux-p45-trim-baseboard.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45c-room-trim-art.md"
+   "prompt_file": "docs/prompts/PK-P45c1-art-baseboard-strip.md"
   },
-  "PK-P45d": {
+  "PK-P45c2": {
+   "wave": "P45a",
+   "title": "Art: floor-edge dither shadow",
+   "items": [],
+   "files": [
+    "tools/art/room_trim_shadow.py",
+    "assets/world/house/trim_floor_shadow.png",
+    "tools/qa/ux-p45-trim-shadow.js",
+    "docs/opt/log/PK-P45c2.md"
+   ],
+   "verify": "python3 tools/art/room_trim_shadow.py assets && node --check tools/qa/ux-p45-trim-shadow.js && node tools/qa/ux-p45-trim-shadow.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45c2-art-floor-edge-dither-shadow.md"
+  },
+  "PK-P45a2": {
    "wave": "P45b",
-   "title": "Calibrate walk bands and depth scale in the scene data",
+   "title": "Overlay tool: window crop and pig silhouette",
+   "items": [],
+   "files": [
+    "tools/qa/scene-overlay.js",
+    "tools/qa/ux-p45-overlay-pig.js",
+    "docs/opt/log/PK-P45a2.md"
+   ],
+   "verify": "node --check tools/qa/scene-overlay.js && node --check tools/qa/ux-p45-overlay-pig.js && node tools/qa/ux-p45-overlay-pig.js && node tools/qa/ux-p45-overlay.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45a2-overlay-tool-window-crop-and-pig-silhoue.md"
+  },
+  "PK-P45c3": {
+   "wave": "P45b",
+   "title": "Register trim sprites in tiles.json",
+   "items": [],
+   "files": [
+    "assets/world/tiles.json",
+    "tools/qa/ux-p45-trim-art.js",
+    "docs/opt/log/PK-P45c3.md"
+   ],
+   "verify": "node --check tools/qa/ux-p45-trim-art.js && node tools/qa/ux-p45-trim-art.js && node tools/qa/check-assets.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45c3-register-trim-sprites-in-tiles-json.md"
+  },
+  "PK-P45d1": {
+   "wave": "P45b",
+   "title": "Scene data: depth_scale, room size_from_layout, checker rules",
    "items": [],
    "files": [
     "assets/data/place_scenes.json",
     "tools/qa/place-scenes-check.js",
     "tools/qa/ux-p45-scene-data.js",
-    "docs/opt/log/PK-P45d.md"
+    "docs/opt/log/PK-P45d1.md"
    ],
    "verify": "node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45d-scene-data-calibration.md"
+   "prompt_file": "docs/prompts/PK-P45d1-scene-data-depth-scale-room-size-from-la.md"
   },
-  "PK-P45e": {
+  "PK-P45d2": {
    "wave": "P45c",
-   "title": "Room scene drawn from the layout grid",
+   "title": "Scene data: calibrate walk bands from the overlay",
    "items": [],
    "files": [
-    "web/home/canvas-pig.js",
-    "web/home/features/places/scenes.js",
-    "tools/qa/ux-p45-room-scene.js",
-    "docs/opt/log/PK-P45e.md"
+    "assets/data/place_scenes.json",
+    "tools/qa/ux-p45-walk-bands.js",
+    "docs/qa/calibration/MEASURED.md",
+    "docs/qa/calibration/garden.png",
+    "docs/qa/calibration/park.png",
+    "docs/qa/calibration/farm.png",
+    "docs/qa/calibration/market.png",
+    "docs/qa/calibration/room.png",
+    "docs/opt/log/PK-P45d2.md"
    ],
-   "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p34-pig-walk.js",
+   "verify": "node --check tools/qa/ux-p45-walk-bands.js && node tools/qa/ux-p45-walk-bands.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p45-scene-data.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45e-room-scene-engine.md"
+   "prompt_file": "docs/prompts/PK-P45d2-scene-data-calibrate-walk-bands-from-the.md"
   },
-  "PK-P45f": {
-   "wave": "P45d",
-   "title": "Pig depth in 1/16 steps and sprite shadow",
+  "PK-P45e1": {
+   "wave": "P45c",
+   "title": "Room scene definition from the layout grid",
+   "items": [],
+   "files": [
+    "web/home/features/places/scenes.js",
+    "tools/qa/ux-p45-room-scene.js",
+    "docs/opt/log/PK-P45e1.md"
+   ],
+   "verify": "node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45e1-room-scene-definition-from-the-layout-gr.md"
+  },
+  "PK-P45f1": {
+   "wave": "P45c",
+   "title": "Pig depth scale in 1/16 steps",
    "items": [],
    "files": [
     "web/home/canvas-pig.js",
     "tools/qa/ux-p45-pig-depth.js",
-    "docs/opt/log/PK-P45f.md"
+    "docs/opt/log/PK-P45f1.md"
    ],
    "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js && node tools/qa/ux-p39-depth.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45f-pig-depth-steps-and-shadow.md"
+   "prompt_file": "docs/prompts/PK-P45f1-pig-depth-scale-in-1-16-steps.md"
   },
-  "PK-P45q": {
-   "wave": "P45q",
-   "title": "Windows checks after wave P45",
+  "PK-P45e2": {
+   "wave": "P45d",
+   "title": "Room drawn from the grid with trim sprites",
    "items": [],
    "files": [
-    "docs/qa/UX_WAVE_CHECKS.md",
-    "docs/qa/shots",
-    "tools/qa/ux-p45-shots.js",
-    "docs/opt/log/PK-P45q.md"
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p45-room-draw.js",
+    "docs/opt/log/PK-P45e2.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p34-pig-walk.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45e2-room-drawn-from-the-grid-with-trim-sprit.md"
+  },
+  "PK-P45f2": {
+   "wave": "P45e",
+   "title": "Pig shadow: one sprite, no ellipse",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p45-pig-shadow.js",
+    "docs/opt/log/PK-P45f2.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45f2-pig-shadow-one-sprite-no-ellipse.md"
+  },
+  "PK-P45q1": {
+   "wave": "P45q",
+   "title": "Stage gate for wave P45 (full checks)",
+   "items": [],
+   "files": [
+    "docs/opt/log/PK-P45q1.md"
    ],
    "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
    "gate": false,
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45q-windows-checks-wave-p45.md"
+   "prompt_file": "docs/prompts/PK-P45q1-stage-gate-for-wave-p45-full-checks.md"
+  },
+  "PK-P45q2": {
+   "wave": "P45q",
+   "title": "Owner test sheet and screenshots for wave P45",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "tools/qa/ux-p45-shots.js",
+    "docs/qa/shots",
+    "docs/opt/log/PK-P45q2.md"
+   ],
+   "verify": "node --check tools/qa/ux-p45-shots.js && node tools/qa/ux-p45-shots.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45q2-owner-test-sheet-and-screenshots-for-wav.md"
   },
   "PK-P40a": {
    "wave": "P40a",

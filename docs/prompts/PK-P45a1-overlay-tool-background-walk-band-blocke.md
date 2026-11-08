@@ -1,0 +1,28 @@
+# PK-P45a1: Overlay tool: background, walk band, blockers, exits, grid (wave P45a)
+Zmieniaj: tools/qa/scene-overlay.js, tools/qa/ux-p45-overlay.js, docs/qa/calibration/README.md, docs/opt/log/PK-P45a1.md
+Wymagane: tools/qa/ux-p45-overlay.js
+Weryfikacja: node --check tools/qa/scene-overlay.js && node --check tools/qa/ux-p45-overlay.js && node tools/qa/ux-p45-overlay.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 30 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
+Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
+Goal: A Node+Playwright tool that draws any scene background at 4x with its walk band, blockers, exits and an optional 16 px grid, so every later package can calibrate against one picture.
+Depends on: PK-P39q merged (scene data from P39a: `blockers`, `behindLine`).
+Produces (names other packages rely on): API `renderOverlay(sceneId, outPath, opts)`, `opts.layers` = array of `walk|blockers|exits|grid|crop|pig` (this package implements the first four and ignores unknown names so PK-P45a2 can add `crop` and `pig`), exported `LAYERS`, CLI `node tools/qa/scene-overlay.js [sceneId...] [--out dir] [--layers a,b] [--grid]`.
+
+## Kontekst perspektywy (fakty z pomiaru 8.11, nie szukaj ich drugi raz)
+- Jedna kamera dla całej gry: **rzut ukośny z góry bez punktu zbiegu** (jak tła garden/farm/park). Skala rzeczy NIE zależy od głębi: grządka na y~80 ma ~32 px, ta sama na y~125 ma ~31 px. Świnka (sprite 64x64, ciało ok. 46x29, stopy w y=59, widok z boku) ma więc tylko lekką skalę głębi: `depthScale` = `[0.9375, 1.0]` (kroki 1/16, bo 64*k/16 to zawsze liczba całkowita).
+- Pokój ma dziś dwa niezgodne układy: edytor i Core używają siatki `layout.cols x layout.rows` po 16 px (12x7 = 192x112, `wallRows` 2 = ściana 32 px), a płótno rysuje 240x130 ze ścianą 96 px (`drawHabitat`, `wallH=96`). `CuyScenes.placedThings` liczy y jako `y*16`. Zmieniamy płótno, NIE Core (`wallRows` jest stałą w C# i testach, nie ruszać).
+- Okno Home pokazuje scenę przez `object-fit: cover` zakotwiczone do dołu; P39b przechodzi na całą scenę w całkowitej skali (`--scene-k`).
+- Kolejność: te pakiety biegną PO fali P39 (blockers, layout, grid, depth) i PRZED P40. Dane `blockers`, `behindLine`, `pigWidthFrac` pochodzą z P39; nie dubluj ich. Jeśli log P39 podaje inną nazwę, użyj prawdziwej i zapisz różnicę w logu.
+- Plan całości i tabela fal: `docs/opt/PERSPECTIVE_PLAN.md` (nie czytaj, jeśli ten prompt wystarcza).
+
+## Steps
+1. Read `tools/qa/lib/ux.js` (`startServer`, `openHome`) and the `CuyScenes.def` shape in `web/home/features/places/scenes.js` (grep `function def`). Do not read canvas-pig.js.
+2. Create `tools/qa/scene-overlay.js`: open the Home page via `ux.js`, in the page create an offscreen canvas of `size*4`, draw the scene bg (`def.bg` URL from `place_scenes.json`; for the room use `CuyScenes.def('salon')` size and the wall/floor tiles are NOT needed: fill the room with palette `linen[1]`) with `imageSmoothingEnabled=false`, then the layers. Export PNG via `canvas.toDataURL`, write with `fs`.
+3. Layers (1 scene px = 4 output px; outlines are 4 px wide rectangles drawn on the 4x canvas): `walk` = outline of `def.walk` in palette `moss[3]`; `blockers` = each `blockers[].rect` in `brick[2]`, `behindLine` as a horizontal line in `rose[1]`; `exits` = 8x8 scene-px mark at each `exits.*.x` on the bottom edge in `flame[1]`; `grid` = 16-scene-px lines in `dusk[4]` with a dither (every other 4 px dash). Colours only from `assets/data/style_palette.json`. Missing `blockers` or `exits` => skip that layer silently.
+4. Default scenes when no id is given: garden, park, farm, market, room. Default output `docs/qa/calibration`, file `<scene>.png`. Write `docs/qa/calibration/README.md` (max 12 lines: how to run, what each colour means, that PNGs are QA only and never shipped).
+5. Test `tools/qa/ux-p45-overlay.js` (writes ONLY to `os.tmpdir()`, never into the repo): O1 every default scene produces a PNG; O2 PNG width/height = scene size x 4 (read the IHDR); O3 two runs give byte-identical files; O4 a scene without `blockers` renders; O5 `--grid` output differs from no-grid output.
+6. Run Weryfikacja; fix until green. Do NOT commit generated PNGs (PK-P45d2 does that).
+
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj", extra refactors, running git.
+Log: write `docs/opt/log/PK-P45a1.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.
