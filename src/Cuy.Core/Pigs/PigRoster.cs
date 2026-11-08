@@ -104,7 +104,7 @@ namespace Cuy.Core.Pigs
         {
             if (pig == null)
             {
-                return Resolve("smooth", "blaze_only.ginger", stage ?? "adult", null);
+                return Resolve("smooth", "tricolor", stage ?? "adult", null);
             }
 
             string effectiveStage = stage;
@@ -120,11 +120,7 @@ namespace Cuy.Core.Pigs
         {
             string normStage = NormalizeStage(stage);
             string normBreed = NormalizeBreed(breed);
-            string normCoat = string.IsNullOrWhiteSpace(coat) ? "blaze_only.ginger" : coat.Trim();
-            if (string.Equals(normCoat, "tricolor", StringComparison.OrdinalIgnoreCase))
-            {
-                normCoat = "blaze_only.ginger";
-            }
+            string normCoat = string.IsNullOrWhiteSpace(coat) ? "tricolor" : coat.Trim();
 
             string normNamed = null;
             if (!string.IsNullOrWhiteSpace(namedId))

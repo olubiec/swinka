@@ -113,8 +113,6 @@ namespace Cuy.Features
                     pigMap["modifiers"] = roundedModifiers;
                 }
 
-                PigRoster.AttachLook(pigMap, p, stage);
-
                 rosterList.Add(pigMap);
             }
 

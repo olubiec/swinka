@@ -49,7 +49,7 @@
         look: {
           spriteKey: 'sprites/adult/spritesheet.png',
           breed: 'smooth',
-          coat: 'blaze_only.ginger',
+          coat: 'tricolor',
           stage: 'adult',
           named: null
         }
