@@ -1509,6 +1509,168 @@ waves:
     test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
+- id: P45a
+  tasks:
+  - id: PK-P45a1
+    title: 'PK-P45a1: Overlay tool: background, walk band, blockers, exits, grid'
+    prompt_file: docs/prompts/PK-P45a1-overlay-tool-background-walk-band-blocke.md
+    files:
+    - tools/qa/scene-overlay.js
+    - tools/qa/ux-p45-overlay.js
+    - docs/qa/calibration/README.md
+    - docs/opt/log/PK-P45a1.md
+    test_command: node --check tools/qa/scene-overlay.js && node --check tools/qa/ux-p45-overlay.js && node tools/qa/ux-p45-overlay.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P45b
+    title: 'PK-P45b: Room geometry from the layout grid'
+    prompt_file: docs/prompts/PK-P45b-room-geometry-from-the-layout-grid.md
+    files:
+    - web/home/features/places/room-geometry.js
+    - web/home/index.html
+    - tools/qa/ux-p45-room-geometry.js
+    - docs/opt/log/PK-P45b.md
+    test_command: node --check web/home/features/places/room-geometry.js && node --check tools/qa/ux-p45-room-geometry.js && node tools/qa/ux-p45-room-geometry.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P45c1
+    title: 'PK-P45c1: Art: baseboard strip'
+    prompt_file: docs/prompts/PK-P45c1-art-baseboard-strip.md
+    files:
+    - tools/art/room_trim_baseboard.py
+    - assets/world/house/trim_baseboard.png
+    - tools/qa/ux-p45-trim-baseboard.js
+    - docs/opt/log/PK-P45c1.md
+    test_command: python3 tools/art/room_trim_baseboard.py assets && node --check tools/qa/ux-p45-trim-baseboard.js && node tools/qa/ux-p45-trim-baseboard.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P45c2
+    title: 'PK-P45c2: Art: floor-edge dither shadow'
+    prompt_file: docs/prompts/PK-P45c2-art-floor-edge-dither-shadow.md
+    files:
+    - tools/art/room_trim_shadow.py
+    - assets/world/house/trim_floor_shadow.png
+    - tools/qa/ux-p45-trim-shadow.js
+    - docs/opt/log/PK-P45c2.md
+    test_command: python3 tools/art/room_trim_shadow.py assets && node --check tools/qa/ux-p45-trim-shadow.js && node tools/qa/ux-p45-trim-shadow.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P45b
+  tasks:
+  - id: PK-P45a2
+    title: 'PK-P45a2: Overlay tool: window crop and pig silhouette'
+    prompt_file: docs/prompts/PK-P45a2-overlay-tool-window-crop-and-pig-silhoue.md
+    files:
+    - tools/qa/scene-overlay.js
+    - tools/qa/ux-p45-overlay-pig.js
+    - docs/opt/log/PK-P45a2.md
+    test_command: node --check tools/qa/scene-overlay.js && node --check tools/qa/ux-p45-overlay-pig.js && node tools/qa/ux-p45-overlay-pig.js && node tools/qa/ux-p45-overlay.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P45c3
+    title: 'PK-P45c3: Register trim sprites in tiles.json'
+    prompt_file: docs/prompts/PK-P45c3-register-trim-sprites-in-tiles-json.md
+    files:
+    - assets/world/tiles.json
+    - tools/qa/ux-p45-trim-art.js
+    - docs/opt/log/PK-P45c3.md
+    test_command: node --check tools/qa/ux-p45-trim-art.js && node tools/qa/ux-p45-trim-art.js && node tools/qa/check-assets.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P45d1
+    title: 'PK-P45d1: Scene data: depth_scale, room size_from_layout, checker rules'
+    prompt_file: docs/prompts/PK-P45d1-scene-data-depth-scale-room-size-from-la.md
+    files:
+    - assets/data/place_scenes.json
+    - tools/qa/place-scenes-check.js
+    - tools/qa/ux-p45-scene-data.js
+    - docs/opt/log/PK-P45d1.md
+    test_command: node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P45c
+  tasks:
+  - id: PK-P45d2
+    title: 'PK-P45d2: Scene data: calibrate walk bands from the overlay'
+    prompt_file: docs/prompts/PK-P45d2-scene-data-calibrate-walk-bands-from-the.md
+    files:
+    - assets/data/place_scenes.json
+    - tools/qa/ux-p45-walk-bands.js
+    - docs/qa/calibration/MEASURED.md
+    - docs/qa/calibration/garden.png
+    - docs/qa/calibration/park.png
+    - docs/qa/calibration/farm.png
+    - docs/qa/calibration/market.png
+    - docs/qa/calibration/room.png
+    - docs/opt/log/PK-P45d2.md
+    test_command: node --check tools/qa/ux-p45-walk-bands.js && node tools/qa/ux-p45-walk-bands.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p45-scene-data.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P45e1
+    title: 'PK-P45e1: Room scene definition from the layout grid'
+    prompt_file: docs/prompts/PK-P45e1-room-scene-definition-from-the-layout-gr.md
+    files:
+    - web/home/features/places/scenes.js
+    - tools/qa/ux-p45-room-scene.js
+    - docs/opt/log/PK-P45e1.md
+    test_command: node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P45f1
+    title: 'PK-P45f1: Pig depth scale in 1/16 steps'
+    prompt_file: docs/prompts/PK-P45f1-pig-depth-scale-in-1-16-steps.md
+    files:
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p45-pig-depth.js
+    - docs/opt/log/PK-P45f1.md
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js && node tools/qa/ux-p39-depth.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P45d
+  tasks:
+  - id: PK-P45e2
+    title: 'PK-P45e2: Room drawn from the grid with trim sprites'
+    prompt_file: docs/prompts/PK-P45e2-room-drawn-from-the-grid-with-trim-sprit.md
+    files:
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p45-room-draw.js
+    - docs/opt/log/PK-P45e2.md
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p34-pig-walk.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P45e
+  tasks:
+  - id: PK-P45f2
+    title: 'PK-P45f2: Pig shadow: one sprite, no ellipse'
+    prompt_file: docs/prompts/PK-P45f2-pig-shadow-one-sprite-no-ellipse.md
+    files:
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p45-pig-shadow.js
+    - docs/opt/log/PK-P45f2.md
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P45q
+  tasks:
+  - id: PK-P45q1
+    title: 'PK-P45q1: Stage gate for wave P45 (full checks)'
+    prompt_file: docs/prompts/PK-P45q1-stage-gate-for-wave-p45-full-checks.md
+    files:
+    - docs/opt/log/PK-P45q1.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+  - id: PK-P45q2
+    title: 'PK-P45q2: Owner test sheet and screenshots for wave P45'
+    prompt_file: docs/prompts/PK-P45q2-owner-test-sheet-and-screenshots-for-wav.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - tools/qa/ux-p45-shots.js
+    - docs/qa/shots
+    - docs/opt/log/PK-P45q2.md
+    test_command: node --check tools/qa/ux-p45-shots.js && node tools/qa/ux-p45-shots.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
 - id: P40a
   tasks:
   - id: PK-P40a
