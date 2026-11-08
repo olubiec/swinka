@@ -153,7 +153,8 @@ namespace Cuy
                 }
 
                 var profile = pet.Profile;
-                string namedId = profile?.NamedId;
+                var descriptor = PigLookResolver.Resolve(profile, effectiveStageKey);
+                string namedId = descriptor?.Named;
                 if (!string.IsNullOrWhiteSpace(namedId) && IsNamedPigAvailable(namedId, effectiveStageKey))
                 {
                     try
@@ -173,8 +174,8 @@ namespace Cuy
                 }
 
                 // Fall back to shape + palette path
-                string breed = profile != null ? profile.Breed : "smooth";
-                string palette = profile != null ? profile.PaletteId : null;
+                string breed = descriptor?.Breed ?? (profile != null ? profile.Breed : "smooth");
+                string palette = descriptor?.Coat ?? (profile != null ? profile.PaletteId : null);
                 if (palette == null) palette = PaletteRemap.Table.Default;
                 var sprites = xml.BuildStageSprites(effectiveStageKey, breed, palette);
                 if (sprites != null)
