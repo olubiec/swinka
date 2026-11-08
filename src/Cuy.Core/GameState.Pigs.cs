@@ -59,7 +59,7 @@ namespace Cuy.Core
                 }
                 else
                 {
-                    var initialPig = new PigProfile(Name ?? "Cuy", "smooth", "tricolor");
+                    var initialPig = new PigProfile(Name ?? "Cuy", "smooth", "tricolor") { NamedId = "cuy" };
                     initialPig.Traits.Add("cuddly");
                     initialPig.DiscoverTrait("cuddly");
                     Roster.Add(initialPig);

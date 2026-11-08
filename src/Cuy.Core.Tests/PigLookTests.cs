@@ -25,7 +25,7 @@ namespace Cuy.Core.Tests
         [Fact]
         public void K1_StarterDiffersFromKukiAndNed()
         {
-            var starter = new PigProfile("Cuy", "smooth", "tricolor");
+            var starter = new PigProfile("Cuy", "smooth", "tricolor") { NamedId = "cuy" };
             var kuki = new PigProfile("Kuki", "rosette_normal", "two_tone.ginger") { NamedId = "kuki" };
             var ned = new PigProfile("Ned", "teddy_chubby", "bicolor_head.chocolate") { NamedId = "ned" };
 
@@ -36,7 +36,7 @@ namespace Cuy.Core.Tests
             Assert.NotEqual(kukiLook.SpriteKey, starterLook.SpriteKey);
             Assert.NotEqual(nedLook.SpriteKey, starterLook.SpriteKey);
             Assert.NotEqual(kukiLook.SpriteKey, nedLook.SpriteKey);
-            Assert.Null(starterLook.Named);
+            Assert.Equal("cuy", starterLook.Named);
             Assert.Equal("kuki", kukiLook.Named);
             Assert.Equal("ned", nedLook.Named);
         }

@@ -8,7 +8,7 @@ import coatgen
 
 STAGES = ['baby', 'junior', 'adult', 'senior', 'legend']
 PIGS = {'ned': ('teddy', 'chubby'), 'kuki': ('rosette', 'normal'), 'glen': ('rosette', 'lean'), 'james': ('teddy', 'normal'),
-        'racuch': ('smooth', 'chubby')}
+        'racuch': ('smooth', 'chubby'), 'cuy': ('smooth', 'normal')}
 
 
 def job(a):

@@ -111,7 +111,7 @@ namespace Cuy.Core.Tests
                 string json = JsonConvert.SerializeObject(state);
                 var back = JsonConvert.DeserializeObject<GameState>(json);
                 Assert.Equal(0, back.EnsurePigRooms(cfg, items, NextUid));
-                Assert.True(back.World.Rooms.ContainsKey(cfg.RoomId(state.Roster[0].Id)));
+                Assert.True(back.World.Rooms.ContainsKey(cfg.RoomId(state.Roster[0].NamedId ?? state.Roster[0].Id)));
             }
             finally
             {

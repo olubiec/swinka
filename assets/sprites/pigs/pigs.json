@@ -61,6 +61,18 @@
     "legend"
    ],
    "eye": "#211611"
+  },
+  "cuy": {
+   "breed": "smooth",
+   "build": "normal",
+   "stages": [
+    "baby",
+    "junior",
+    "adult",
+    "senior",
+    "legend"
+   ],
+   "eye": "#2b1712"
   }
  }
 }

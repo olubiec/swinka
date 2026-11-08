@@ -14,7 +14,7 @@
   // CuyLook: single source of truth for pig looks in the Home window
   root.CuyLook = root.CuyLook || {};
 
-  const KNOWN_NAMED_PIGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch']);
+  const KNOWN_NAMED_PIGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch', 'cuy']);
   const VALID_STAGES = new Set(['baby', 'junior', 'adult', 'senior', 'legend']);
 
   function normStage(stage) {
@@ -89,7 +89,7 @@
           named: clean
         };
       }
-      if (clean === 'starter' || clean === 'cuy' || clean === 'pig_default') {
+      if (clean === 'starter' || clean === 'pig_default') {
         const s = normStage(stageOverride);
         return {
           spriteKey: 'sprites/' + s + '/spritesheet.png',
