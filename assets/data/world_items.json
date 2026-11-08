@@ -512,19 +512,6 @@
    "icon": "pond_big"
   },
   {
-   "id": "tunnel_playground",
-   "name": "Play tunnel",
-   "place": [
-    "park"
-   ],
-   "w": 3,
-   "h": 2,
-   "price": 320,
-   "comfort": 6,
-   "layer": "floor",
-   "icon": "tunnel_playground"
-  },
-  {
    "id": "bench_park",
    "name": "Park bench",
    "place": [
@@ -948,19 +935,6 @@
     "comfort": 0,
     "layer": "wall",
     "icon": "memory_frame"
-  },
-  {
-    "id": "willow_tunnel",
-    "name": "Willow tunnel",
-    "place": [
-      "garden"
-    ],
-    "w": 3,
-    "h": 2,
-    "price": 110,
-    "comfort": 5,
-    "layer": "floor",
-    "icon": "willow_tunnel"
   },
   {
     "id": "torch",

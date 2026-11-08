@@ -324,6 +324,12 @@ namespace Cuy
             }
         }
 
+        protected override void OnDpiChanged(DpiChangedEventArgs e)
+        {
+            base.OnDpiChanged(e);
+            PositionNearTray();
+        }
+
         private async void SetupWebViewAsync()
         {
             try

@@ -36,9 +36,9 @@ namespace Cuy.Core.Tests
         {
             var catalog = LoadRealCatalog();
             Assert.NotNull(catalog);
-            // 45 base + 5 signature + 1 gate + 4 props = 55 items; +26 from the art handover (approved by owner, 5.11.2026) = 81
+            // 45 base + 5 signature + 1 gate = 51 items; +26 art handover - 2 tunnels = 75 (props/toys detached)
             Assert.True(catalog.Items.Count >= 50);
-            Assert.Equal(81, catalog.Items.Count);
+            Assert.Equal(75, catalog.Items.Count);
         }
 
         [Fact]

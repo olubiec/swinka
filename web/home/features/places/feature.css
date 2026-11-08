@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 32px;
+  height: 28px;
   background-color: var(--ui-wood-2, #9c6636);
   border-top: 2px solid var(--ui-wood-1, #c98d50);
   border-bottom: 2px solid var(--ui-wood-0, #6e4424);
@@ -19,15 +19,15 @@
 
 .places-bar .ui-arrow-left,
 .places-bar .ui-arrow-right {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  min-height: 32px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
   border: 0;
   padding: 0;
   background-color: transparent;
   background-position: center;
-  background-size: 32px 32px;
+  background-size: 24px 24px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   cursor: pointer;
@@ -73,8 +73,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 8px;
-  line-height: 32px;
-  height: 32px;
+  line-height: 24px;
+  height: 24px;
   box-sizing: border-box;
 }
 
