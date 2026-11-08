@@ -403,6 +403,38 @@
       ]
     },
     {
+      "id": "P45a",
+      "packages": [
+        "PK-P45a",
+        "PK-P45b",
+        "PK-P45c"
+      ]
+    },
+    {
+      "id": "P45b",
+      "packages": [
+        "PK-P45d"
+      ]
+    },
+    {
+      "id": "P45c",
+      "packages": [
+        "PK-P45e"
+      ]
+    },
+    {
+      "id": "P45d",
+      "packages": [
+        "PK-P45f"
+      ]
+    },
+    {
+      "id": "P45q",
+      "packages": [
+        "PK-P45q"
+      ]
+    },
+    {
       "id": "P40a",
       "packages": [
         "PK-P40a"
@@ -1372,6 +1404,62 @@
       "tier": "low",
       "title": "Windows checks after wave P39",
       "manual": "docs/prompts/PK-P39q-windows-checks-wave-p39.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P45a",
+      "tier": "mid",
+      "title": "Scene calibration overlay tool",
+      "manual": "docs/prompts/PK-P45a-scene-overlay-tool.md",
+      "verify": "node --check tools/qa/scene-overlay.js && node --check tools/qa/ux-p45-overlay.js && node tools/qa/ux-p45-overlay.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45b",
+      "tier": "mid",
+      "title": "Room geometry from the layout grid",
+      "manual": "docs/prompts/PK-P45b-room-geometry.md",
+      "verify": "node --check web/home/features/places/room-geometry.js && node --check tools/qa/ux-p45-room-geometry.js && node tools/qa/ux-p45-room-geometry.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45c",
+      "tier": "mid",
+      "title": "Room trim and floor-edge shadow art",
+      "manual": "docs/prompts/PK-P45c-room-trim-art.md",
+      "verify": "python3 tools/art/room_trim_art.py assets && node --check tools/qa/ux-p45-trim-art.js && node tools/qa/ux-p45-trim-art.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45d",
+      "tier": "high",
+      "title": "Calibrate walk bands and depth scale in the scene data",
+      "manual": "docs/prompts/PK-P45d-scene-data-calibration.md",
+      "verify": "node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45e",
+      "tier": "high",
+      "title": "Room scene drawn from the layout grid",
+      "manual": "docs/prompts/PK-P45e-room-scene-engine.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p34-pig-walk.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45f",
+      "tier": "high",
+      "title": "Pig depth in 1/16 steps and sprite shadow",
+      "manual": "docs/prompts/PK-P45f-pig-depth-steps-and-shadow.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js && node tools/qa/ux-p39-depth.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45q",
+      "tier": "low",
+      "title": "Windows checks after wave P45",
+      "manual": "docs/prompts/PK-P45q-windows-checks-wave-p45.md",
       "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
       "items": []
     },
