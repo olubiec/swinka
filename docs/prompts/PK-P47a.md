@@ -1,12 +1,12 @@
-# PK-P45a: Home window becomes landscape 640x400
-Zmieniaj: src/Cuy/dotNet/HomeWindow.cs, src/Cuy/dotNet/HomeWindow.Designer.cs, src/Cuy/dotNet/WebView2Probe.cs, docs/opt/log/PK-P45a.md
+# PK-P47a: Home window becomes landscape 640x400
+Zmieniaj: src/Cuy/dotNet/HomeWindow.cs, src/Cuy/dotNet/HomeWindow.Designer.cs, src/Cuy/dotNet/WebView2Probe.cs, docs/opt/log/PK-P47a.md
 Wymagane: src/Cuy/dotNet/HomeWindow.cs
 Weryfikacja: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
 Limity (twarde): maks. 45 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: The Home window is 640x400 instead of 420x640, still fits small screens and still sits at the bottom-right corner.
-Depends on: PK-P44b merged.
+Depends on: PK-P44b, all packages of wave P45 (perspective, `docs/opt/PERSPECTIVE_PLAN.md`) and PK-P39b merged.
 
 ## Kontekst (fakty zweryfikowane w repo 8.11.2026, nie szukaj ich drugi raz)
 - Problem właściciela: okno domku (420x640) przycina scenę: `.stage-viewport` ma 132 px wysokości, a `#pigCanvas` ma `object-fit: cover; object-position: 50% 100%`, więc góra tła i boki są ucięte (sceny mają 240x130, 256x144 i 384x192, `web/home/features/places/scenes.js`, `canvas-pig.js` 276 i 394). Pod sceną są: nagłówek, karta tożsamości, belka miejsc, potrzeby (`.needs-section`) i dolny pasek 6 przycisków (`.actions-grid`: `btnFeed btnClean btnCall btnShop btnMinigames btnMore`).
@@ -27,4 +27,4 @@ Depends on: PK-P44b merged.
 4. Run Weryfikacja.
 
 Prohibited: Nie dodawaj zabawek (piłka, tunel itp. zostały usunięte). Bez glifów/emoji w grafice, tylko paleta i sprite'y z biblioteki UI.
-Log: write `docs/opt/log/PK-P45a.md` (max 10 lines). Do not run git.
+Log: write `docs/opt/log/PK-P47a.md` (max 10 lines). Do not run git.
