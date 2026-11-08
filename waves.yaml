@@ -1509,6 +1509,94 @@ waves:
     test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
+- id: P45a
+  tasks:
+  - id: PK-P45a
+    title: 'PK-P45a: Scene calibration overlay tool'
+    prompt_file: docs/prompts/PK-P45a-scene-overlay-tool.md
+    files:
+    - tools/qa/scene-overlay.js
+    - tools/qa/ux-p45-overlay.js
+    - docs/qa/calibration/README.md
+    - docs/opt/log/PK-P45a.md
+    test_command: node --check tools/qa/scene-overlay.js && node --check tools/qa/ux-p45-overlay.js && node tools/qa/ux-p45-overlay.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P45b
+    title: 'PK-P45b: Room geometry from the layout grid'
+    prompt_file: docs/prompts/PK-P45b-room-geometry.md
+    files:
+    - web/home/features/places/room-geometry.js
+    - web/home/index.html
+    - tools/qa/ux-p45-room-geometry.js
+    - docs/opt/log/PK-P45b.md
+    test_command: node --check web/home/features/places/room-geometry.js && node --check tools/qa/ux-p45-room-geometry.js && node tools/qa/ux-p45-room-geometry.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P45c
+    title: 'PK-P45c: Room trim and floor-edge shadow art'
+    prompt_file: docs/prompts/PK-P45c-room-trim-art.md
+    files:
+    - tools/art/room_trim_art.py
+    - assets/world/house/trim_baseboard.png
+    - assets/world/house/trim_floor_shadow.png
+    - assets/world/tiles.json
+    - tools/qa/ux-p45-trim-art.js
+    - docs/opt/log/PK-P45c.md
+    test_command: python3 tools/art/room_trim_art.py assets && node --check tools/qa/ux-p45-trim-art.js && node tools/qa/ux-p45-trim-art.js && python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt && node tools/qa/check-assets.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P45b
+  tasks:
+  - id: PK-P45d
+    title: 'PK-P45d: Calibrate walk bands and depth scale in the scene data'
+    prompt_file: docs/prompts/PK-P45d-scene-data-calibration.md
+    files:
+    - assets/data/place_scenes.json
+    - tools/qa/place-scenes-check.js
+    - tools/qa/ux-p45-scene-data.js
+    - docs/opt/log/PK-P45d.md
+    test_command: node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P45c
+  tasks:
+  - id: PK-P45e
+    title: 'PK-P45e: Room scene drawn from the layout grid'
+    prompt_file: docs/prompts/PK-P45e-room-scene-engine.md
+    files:
+    - web/home/canvas-pig.js
+    - web/home/features/places/scenes.js
+    - tools/qa/ux-p45-room-scene.js
+    - docs/opt/log/PK-P45e.md
+    test_command: node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p34-pig-walk.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P45d
+  tasks:
+  - id: PK-P45f
+    title: 'PK-P45f: Pig depth in 1/16 steps and sprite shadow'
+    prompt_file: docs/prompts/PK-P45f-pig-depth-steps-and-shadow.md
+    files:
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p45-pig-depth.js
+    - docs/opt/log/PK-P45f.md
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js && node tools/qa/ux-p39-depth.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P45q
+  tasks:
+  - id: PK-P45q
+    title: 'PK-P45q: Windows checks after wave P45'
+    prompt_file: docs/prompts/PK-P45q-windows-checks-wave-p45.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/qa/shots
+    - tools/qa/ux-p45-shots.js
+    - docs/opt/log/PK-P45q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
 - id: P40a
   tasks:
   - id: PK-P40a
