@@ -5,7 +5,7 @@ Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje l
 Limity (twarde): maks. 20 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: Run the full Windows checks after wave P45 and record the result. A failing command is written in the log and makes the line fail.
-Depends on: All other packages of wave P45 merged.
+Depends on: All other packages of wave P45 merged (including PK-P45d3 and PK-P45q2, which runs one wave earlier so the gate sees the final tree and `ux-p45-shots.js` is not half-written while `ux-all` runs). `ux-all.js` runs every `tools/qa/ux-p<N>-*.js` automatically, so all `ux-p45-*` tests are part of the line. This stage gate also covers the overlaps with P39 (blockers, fit, grid, light, depth) because the older `ux-p39-*` tests run in the same `ux-all`.
 Produces (names other packages rely on): Result table in `docs/opt/log/PK-P45q1.md`.
 
 ## Steps

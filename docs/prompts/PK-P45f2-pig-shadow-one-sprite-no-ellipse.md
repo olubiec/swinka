@@ -1,13 +1,13 @@
-# PK-P45f2: Pig shadow: one sprite, no ellipse (wave P45e)
+# PK-P45f2: Pig shadow: one sprite, no ellipse; floorLine() (wave P45e)
 Zmieniaj: web/home/canvas-pig.js, tools/qa/ux-p45-pig-shadow.js, docs/opt/log/PK-P45f2.md
 Wymagane: tools/qa/ux-p45-pig-shadow.js
-Weryfikacja: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js
+Weryfikacja: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p34-pig-walk.js
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
 Limity (twarde): maks. 40 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
-Goal: One contact shadow for the pig: the existing `fx/shadow_pig_*.png` sprite at the same 1/16 step, no alpha ellipse and no hard-coded `119 - pigY`.
-Depends on: PK-P45e2 and PK-P45f1 merged.
-Produces (names other packages rely on): Shadow draw = sprite only; `debug().shadowDraws` counter (1 per frame).
+Goal: One contact shadow for the pig: the existing `fx/shadow_pig_*.png` sprite at the same 1/16 step, no alpha ellipse and no hard-coded `119` anywhere: `floorLine()` (bottom of the walk band) replaces it.
+Depends on: PK-P45e2 and PK-P45f1 merged. Overlap: P39d lights every scene (`setLightScene`), so in the app the sprite branch already runs; the ellipse branch only runs without a light scene (tests). `canvas-pig.js` is edited after this package by P40b, P43b, P44a, P47b: keep the diff local to the shadow, `floorLine`, `drawPoops` and `render()`'s `scene.floorY`.
+Produces (names other packages rely on): Shadow draw = sprite only; `debug().shadowDraws` (1 per frame with a visible pig) and `debug().shadowKey` (`baby|junior|adult`); `CanvasPig.floorLine()` (instance and static wrapper like `debug()`) = `walk[3]`, default 126 without a walk band.
 
 ## Kontekst perspektywy (fakty z pomiaru 8.11, nie szukaj ich drugi raz)
 - Jedna kamera dla całej gry: **rzut ukośny z góry bez punktu zbiegu** (jak tła garden/farm/park). Skala rzeczy NIE zależy od głębi: grządka na y~80 ma ~32 px, ta sama na y~125 ma ~31 px. Świnka (sprite 64x64, ciało ok. 46x29, stopy w y=59, widok z boku) ma więc tylko lekką skalę głębi: `depthScale` = `[0.9375, 1.0]` (kroki 1/16, bo 64*k/16 to zawsze liczba całkowita).
@@ -17,11 +17,12 @@ Produces (names other packages rely on): Shadow draw = sprite only; `debug().sha
 - Plan całości i tabela fal: `docs/opt/PERSPECTIVE_PLAN.md` (nie czytaj, jeśli ten prompt wystarcza).
 
 ## Steps
-1. grep `canvas-pig.js` for `ellipse`, `PIG_SHADOW_WIDTH`, `shadow_pig_`, `119`, `rgba(70` and read only those ranges.
-2. Today there are TWO shadows: an alpha `ctx.ellipse` with `rgba(70, 45, 30, a)` and a hard-coded `119 - this.pigY` (wrong in every scene except the old room), and a sprite shadow (`PIG_SHADOW_WIDTH[key] * scale`, `world/fx/shadow_pig_<stage>.png`) used in the lit branch. Remove the ellipse branch entirely.
-3. Always draw the sprite shadow: centred on the feet x, at feet y, scale from the same 1/16-quantised pig scale, whole pixels, BEFORE the pig and after the floor/flat things. If the image is not loaded yet draw nothing. Count draws in `debug().shadowDraws`. No new art.
-4. Tests FIRST, `tools/qa/ux-p45-pig-shadow.js` (Playwright via `ux.js`, mock `seven`, every scene; wrap `ctx.ellipse` to count calls): PS1 no `ellipse` call is made with a pig present in 10 s; PS2 exactly 1 shadow draw per frame; PS3 the shadow centre is within 1 px of the feet x; PS4 shadow width is an integer; PS5 baby, junior and adult stage pigs each draw their own `shadow_pig_<stage>.png` (check the loaded image URL list in `debug()`).
-5. Run Weryfikacja; fix until green. If `style_check.py` flags a `shadow_pig_*` file, only note it in the log (a later art package fixes it).
+1. grep `canvas-pig.js` for `ellipse`, `PIG_SHADOW_WIDTH`, `drawContactShadow`, `shadow_pig_`, `119`, `rgba(70`, `drawPoops`, `floorY` and read only those ranges (shadow code is in `drawPig` about lines 1284-1335 and `drawContactShadow` about 1357; `119` also appears in `this.pigY = 119` in the constructor, `scene.floorY: 119` in `render()`; `108` in `drawPoops`).
+2. Tests FIRST, `tools/qa/ux-p45-pig-shadow.js` (Playwright via `ux.js`, mock `seven`, every scene; wrap `ctx.ellipse` to count calls): PS1 no `ellipse` call is made with a pig present in 10 s; PS2 exactly 1 shadow draw per frame; PS3 the shadow centre is within 1 px of the feet x; PS4 shadow width is an integer; PS5 baby, junior and adult stage pigs each draw their own `shadow_pig_<stage>.png` (`debug().shadowKey`); PS6 `CanvasPig.floorLine()` equals `walk[3]` of the scene in room, garden and park; PS7 with `poopCount` 3 in the park the poops are drawn above `floorLine()` (spy `drawImage` y values <= floorLine).
+3. Today there are TWO shadows: an alpha `ctx.ellipse` with `rgba(70, 45, 30, a)` and a hard-coded `119 - this.pigY` (wrong in every scene except the old room), and a sprite shadow (`PIG_SHADOW_WIDTH[key] * scale`, `world/fx/shadow_pig_<stage>.png`) used in the lit branch. Remove the ellipse branch entirely.
+4. Always draw the sprite shadow: in `render()` call `drawContactShadow(ctx)` for every visible pig (today only when `lit`), still BEFORE `applySceneLight` and before `drawPig`, after the floor and flat things; keep its existing geometry (centred on feet x, `PIG_SHADOW_WIDTH[key] * scale` rounded) with the same 1/16-quantised `getDrawScale()`. If the image is not loaded yet draw nothing. Count draws in `debug().shadowDraws` and expose `debug().shadowKey`. No new art.
+5. Add `floorLine()` (= `this.walk[3]`, default 126 without a band). Replace the `119` in `render()` (`scene.floorY`) with it and move `drawPoops` rows from the fixed `108 + (i % 2) * 5` to `floorLine() - 11 + (i % 2) * 5` (same 11 px above the old 119 line, now relative to the band). The constructor's initial `this.pigY = 119` stays (setScene clamps it into the band).
+6. Run Weryfikacja; fix until green. If `style_check.py` flags a `shadow_pig_*` file, only note it in the log (a later art package fixes it).
 
 Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj", extra refactors, running git.
 Log: write `docs/opt/log/PK-P45f2.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.

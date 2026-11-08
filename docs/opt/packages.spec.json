@@ -430,7 +430,8 @@
     {
       "id": "P45d",
       "packages": [
-        "PK-P45e2"
+        "PK-P45e2",
+        "PK-P45d3"
       ]
     },
     {
@@ -442,8 +443,13 @@
     {
       "id": "P45q",
       "packages": [
-        "PK-P45q1",
         "PK-P45q2"
+      ]
+    },
+    {
+      "id": "P45q2",
+      "packages": [
+        "PK-P45q1"
       ]
     },
     {
@@ -468,6 +474,12 @@
       "id": "P40c",
       "packages": [
         "PK-P40c"
+      ]
+    },
+    {
+      "id": "P40c2",
+      "packages": [
+        "PK-P40c2"
       ]
     },
     {
@@ -547,15 +559,34 @@
       ]
     },
     {
+      "id": "P47b",
+      "packages": [
+        "PK-P47c1"
+      ]
+    },
+    {
       "id": "P47c",
       "packages": [
-        "PK-P47c"
+        "PK-P47c2"
       ]
     },
     {
       "id": "P47d",
       "packages": [
-        "PK-P47d"
+        "PK-P47d1",
+        "PK-P47c3"
+      ]
+    },
+    {
+      "id": "P47e",
+      "packages": [
+        "PK-P47d2"
+      ]
+    },
+    {
+      "id": "P47f",
+      "packages": [
+        "PK-P47d3"
       ]
     },
     {
@@ -1509,7 +1540,7 @@
       "tier": "high",
       "title": "Scene data: depth_scale, room size_from_layout, checker rules",
       "manual": "docs/prompts/PK-P45d1-scene-data-depth-scale-room-size-from-la.md",
-      "verify": "node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js",
+      "verify": "node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p32-scenes-data.js",
       "items": []
     },
     {
@@ -1517,7 +1548,15 @@
       "tier": "high",
       "title": "Scene data: calibrate walk bands from the overlay",
       "manual": "docs/prompts/PK-P45d2-scene-data-calibrate-walk-bands-from-the.md",
-      "verify": "node --check tools/qa/ux-p45-walk-bands.js && node tools/qa/ux-p45-walk-bands.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p45-scene-data.js",
+      "verify": "node --check tools/qa/ux-p45-walk-bands.js && node tools/qa/ux-p45-walk-bands.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p39-blockers.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45d3",
+      "tier": "low",
+      "title": "Calibration overlay PNGs",
+      "manual": "docs/prompts/PK-P45d3-calibration-overlay-pngs.md",
+      "verify": "node --check tools/qa/ux-p45-calibration.js && node tools/qa/scene-overlay.js && node tools/qa/ux-p45-calibration.js",
       "items": []
     },
     {
@@ -1525,7 +1564,7 @@
       "tier": "high",
       "title": "Room scene definition from the layout grid",
       "manual": "docs/prompts/PK-P45e1-room-scene-definition-from-the-layout-gr.md",
-      "verify": "node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js",
+      "verify": "node --check web/home/features/places/scenes.js && node --check web/home/features/places/feature.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p32-scenes-data.js",
       "items": []
     },
     {
@@ -1547,9 +1586,9 @@
     {
       "id": "PK-P45f2",
       "tier": "high",
-      "title": "Pig shadow: one sprite, no ellipse",
+      "title": "Pig shadow: one sprite, no ellipse; floorLine()",
       "manual": "docs/prompts/PK-P45f2-pig-shadow-one-sprite-no-ellipse.md",
-      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p34-pig-walk.js",
       "items": []
     },
     {
@@ -1587,9 +1626,17 @@
     {
       "id": "PK-P40c",
       "tier": "high",
-      "title": "Edit mode: move, flip and remove placed items",
+      "title": "Edit mode: select, toolbar, flip and remove",
       "manual": "docs/prompts/PK-P40c-edit-move-remove.md",
-      "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-move.js && node tools/qa/ux-p40-edit-move.js",
+      "verify": "node --check web/home/features/places/edit-panel.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p40-edit-move.js && node tools/qa/ux-p40-edit-move.js",
+      "items": []
+    },
+    {
+      "id": "PK-P40c2",
+      "tier": "high",
+      "title": "Edit mode: move placed items and drag them back to the drawer",
+      "manual": "docs/prompts/PK-P40c2-edit-move-drag.md",
+      "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-move-drag.js && node tools/qa/ux-p40-edit-move-drag.js",
       "items": []
     },
     {
@@ -1597,7 +1644,7 @@
       "tier": "high",
       "title": "Rooms and Garden windows retired",
       "manual": "docs/prompts/PK-P40d-retire-rooms-garden-windows.md",
-      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p40-retire.js && node tools/qa/ux-p40-retire.js",
+      "verify": "node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check tools/qa/ux-p40-retire.js && node tools/qa/ux-p40-retire.js",
       "items": []
     },
     {
@@ -1761,25 +1808,57 @@
       "items": []
     },
     {
-      "id": "PK-P47c",
-      "tier": "high",
-      "title": "Stage fills the window, HUD strip, bottom panel removed",
-      "manual": "docs/prompts/PK-P47c.md",
-      "verify": "node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p47-layout.js && node tools/qa/ux-p47-layout.js",
+      "id": "PK-P47c1",
+      "tier": "mid",
+      "title": "HUD strip: markup and CSS",
+      "manual": "docs/prompts/PK-P47c1-hud-strip.md",
+      "verify": "node --check tools/qa/ux-p47-hud.js && node tools/qa/ux-p47-hud.js",
       "items": []
     },
     {
-      "id": "PK-P47d",
+      "id": "PK-P47c2",
       "tier": "high",
-      "title": "Menu buttons open full-window panels",
-      "manual": "docs/prompts/PK-P47d.md",
-      "verify": "node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu.js && node tools/qa/ux-p47-menu.js",
+      "title": "Stage fills the window, bottom panel removed",
+      "manual": "docs/prompts/PK-P47c2-stage-fills-window.md",
+      "verify": "node --check tools/qa/ux-p47-layout.js && node tools/qa/ux-p47-layout.js",
+      "items": []
+    },
+    {
+      "id": "PK-P47c3",
+      "tier": "low",
+      "title": "QA tools use the 640x400 viewport",
+      "manual": "docs/prompts/PK-P47c3-qa-viewport.md",
+      "verify": "node --check tools/qa/lib/ux.js && node --check tools/qa/screen-matrix.js && node --check tools/qa/a11y-check.js && node tools/qa/a11y-check.js && node tools/qa/screen-matrix.js --quick && node tools/qa/ux-p47-hud.js && node tools/qa/ux-p47-layout.js && node tools/qa/ux-all.js p40 && node tools/qa/ux-all.js p43 && node tools/qa/ux-all.js p44",
+      "items": []
+    },
+    {
+      "id": "PK-P47d1",
+      "tier": "mid",
+      "title": "Menu panel container with pig and feed contents",
+      "manual": "docs/prompts/PK-P47d1-menu-panel-core.md",
+      "verify": "node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu-core.js && node tools/qa/ux-p47-menu-core.js",
+      "items": []
+    },
+    {
+      "id": "PK-P47d2",
+      "tier": "mid",
+      "title": "Feed and Pig buttons use the menu panel; HUD name and alert dot",
+      "manual": "docs/prompts/PK-P47d2-feed-and-pig-panels.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p47-menu-feed-pig.js && node tools/qa/ux-p47-menu-feed-pig.js",
+      "items": []
+    },
+    {
+      "id": "PK-P47d3",
+      "tier": "high",
+      "title": "Shop, Games, More and features open as full-stage panels",
+      "manual": "docs/prompts/PK-P47d3-modal-flows-in-panel.md",
+      "verify": "node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu-modals.js && node tools/qa/ux-p47-menu-modals.js && node tools/qa/ux-p47-menu-feed-pig.js && node tools/qa/ux-p47-menu-core.js",
       "items": []
     },
     {
       "id": "PK-P47q",
       "tier": "low",
-      "title": "Windows checks after wave P45",
+      "title": "Windows checks after wave P47",
       "manual": "docs/prompts/PK-P47q.md",
       "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/screen-matrix.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
       "items": []

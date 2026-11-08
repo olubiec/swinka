@@ -1,0 +1,27 @@
+# PK-P39c1: Walk grid and pathfinding around scene blockers
+Zmieniaj: web/home/canvas-pig.js, web/home/features/places/scenes.js, tools/qa/ux-p39-grid.js, docs/opt/log/PK-P39c1.md
+Wymagane: tools/qa/ux-p39-grid.js
+Weryfikacja: node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p39-grid.js && node tools/qa/ux-p39-grid.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 40 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
+Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
+## Kontekst (fakty zweryfikowane 8.11.2026, nie szukaj drugi raz)
+- Cel: każde miejsce to scena w głównym oknie Home (widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y). Dane scen: `assets/data/place_scenes.json` (słownik `scenes` z kluczami `room`, `garden`, `park`, `farm`, `market`; pola snake_case: `kind`, `size`, `walk` [x0,y0,x1,y1], `depth_scale`, `bg`, `exits`). Pokoje domku (salon, `pig:<id>`, dorm) używają szablonu `room` (240x130, bez `bg`). `features/places/scenes.js` `def(id,tod)` (linie 311-345) zwraca camelCase `{id,kind,title,size,walk,depthScale,bgUrl,exits}`. Płótno: `web/home/canvas-pig.js` (klasa `PigCanvas`, API `CanvasPig.*`, instancja `window.CuyPig.mainInstance`).
+- Test właściciela 7.11: świnka chodzi przez fontannę i inne elementy tła; skala świnki do sceny jest zła; scena jest przycięta (drzewa w parku, domek na farmie); tła nie mają światła.
+- Ruch świnki (canvas-pig.js): `setScene` 381-419 (czyta `def.walk`, `def.depthScale`, `def.exits`), `setTarget(x,y)` 483, `walkTo` 490, `pickRandomWalkTarget` 523-562 (z szansą 20% wybiera wyjście: `targetExit`, `targetX = exit.x` poza pasem), `fastForward(ms)` 513 (kroki 50 ms), `update(dt)` 876-975 (prosty ruch ku `targetX/targetY` z prędkością 70 px/s, linie 906-948), `debug()` 572 (pole `pig:{x,y,scale}`; API publiczne w `CanvasPig` linie 1596-1650).
+- Poprzednie logi: `docs/opt/log/PK-P34a.md`, `PK-P39a.md` (pola `blockers[].rect`, `occlude`, `behind_line`).
+Goal: Świnka nigdy nie wchodzi w `blockers` sceny; obchodzi je (siatka 4 px, A*). Stojące przedmioty gracza i przeciąganie robi PK-P39c2.
+Depends on: PK-P39a, PK-P34a merged.
+
+## Pliki i elementy
+- `web/home/features/places/scenes.js` `def()` (linia ~335-343): do zwracanego obiektu dodaj `blockers: (template.blockers || []).map(b => ({ id: b.id, rect: b.rect.slice(), occlude: b.occlude ? b.occlude.slice() : null }))` i `behindLine: typeof template.behind_line === 'number' ? template.behind_line : null`.
+- `web/home/canvas-pig.js`: pole `this.blockers`, `this.grid` ustawiane w `setScene`; metody `buildGrid()` (komórki 4 px nad `walk` bez prostokątów `blockers`, bufor `Uint8Array`), `isFree(x,y)`, `findPath(fx,fy,tx,ty)` (A*, 8 sąsiadów bez ścinania rogów, następnie wygładzenie: usuń punkty współliniowe i skróć tam, gdzie prosty odcinek jest wolny), `this.path` (lista punktów); `setTarget` planuje ścieżkę (brak ścieżki: cel odrzucony, `targetX=null`); `pickRandomWalkTarget` losuje tylko wolne komórki osiągalne z komórki świnki (do 12 prób, potem zostań); `update` jedzie po punktach `path` kolejno (ten sam ruch i animacja `walk`, `facing` z `dx`); `debug().grid = { cell: 4, w, h, free }`; publiczne `CanvasPig.isFree(x,y)`.
+- Wyjścia: gdy `targetExit`, ścieżka idzie do najbliższej komórki krawędzi pasa (`walk.x0` lub `walk.x1`), a ostatni odcinek do `exit.x` jest prosty (pas wejścia jest wolny z reguły B2).
+
+## Steps
+1. Testy najpierw `tools/qa/ux-p39-grid.js` (Playwright, `ux.js` `openHome`; scena przez `CanvasPig.setScene(CuyScenes.def(id,'day'))`, instancja `window.CuyPig.mainInstance`; `Math.random` podmień generatorem z ziarnem): W1 `never-in-blocker` (dla garden, park, farm, market: 60 s przez `fastForward` krokami 0,5 s, stopy `debug().pig` ani razu w żadnym `rect`); W2 `path-around` (scena syntetyczna 256x144, `walk [8,80,248,138]`, mur `rect [120,80,136,128]`; świnka w (60,110), `walkTo(200,110)`: cel osiągnięty (dystans < 4) w 25 s, ścieżka nie wchodzi w mur); W3 `blocked-target-rejected` (cel w murze: `walkTo` nie ustawia celu w murze, świnka zostaje wolna); W4 `exit-still-works` (`setExitsEnabled(true)`, scena bez blockerów: `onPigExit` nadal się wywołuje w 60 s); W5 `perf` (budowa siatki parku 384x192 < 20 ms, klatka z chodzącą świnką < 4 ms wg `performance.now`); W6 `def-passes-blockers` (`CuyScenes.def('park','day').blockers` ma te same `id` co dane).
+2. Zaimplementuj jak wyżej; nie zmieniaj istniejącego ruchu poza ścieżką.
+3. Uruchom Weryfikacja; popraw do zielonego.
+
+Prohibited: zmiana lub usuwanie istniejących asercji, nowe zależności, pliki spoza „Zmieniaj", dodatkowe refaktory, zabawki (piłka, tunel, siano, domek).
+Log: write `docs/opt/log/PK-P39c1.md` (max 10 linii: dokładne nazwy API (`isFree`, `debug().grid`, `findPath`, `path`), decyzje, różnice względem planu, BLOCKED jeśli dotyczy). Do not run git.
