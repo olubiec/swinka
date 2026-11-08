@@ -6,7 +6,7 @@ Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje l
 Limity (twarde): maks. 45 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: Farm and Market are played only in their scenes. Remove their More tiles and windows; level-up/unlock moved into the edit drawer already (P40e).
-Depends on: PK-P43c, PK-P43d merged.
+Depends on: PK-P43c, PK-P43d, PK-P43g merged.
 
 ## Kontekst (fakty, nie szukaj drugi raz)
 - Docelowa wizja: każde miejsce (pokoje domku, ogród, park, farma, targ) to scena w głównym oknie Home (pseudo-3D: widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, y-sort). Sceny: `assets/data/place_scenes.json` (`bg`, `walk` [x0,y0,x1,y1], `depthScale`, wyjścia), moduł `web/home/features/places/{feature,scenes}.js`, płótno `web/home/canvas-pig.js` (API w logach `docs/opt/log/PK-P33a.md`, `PK-P34a.md`, `PK-P36a.md`).
@@ -14,6 +14,11 @@ Depends on: PK-P43c, PK-P43d merged.
 
 - Wiadomości mostka (fakty): pokój/ogród `room_place {place,itemId,x,y}`, `room_move {place,uid,x,y}`, `room_remove {place,uid}`, `room_flip {place,uid}`, `place_upgrade {id}`, `place_unlock {id}`; targ `market_quote/market_buy/market_sell {itemId,count}`, `market_stall`; farma `farm_plant {plot,cropId}`, `farm_water {plot}`, `farm_harvest {plot}`, `farm_harvest_all`, `farm_buy {what}`, `orchard_plant/orchard_harvest {slot}`; świnka `places.pigMove {pigId,to}`, `places.pigPin {pigId,pinned}`, `take_out`. Pole `place` to id sceny (`salon`, `pig:<id>`, `dorm`, `garden`, `park`, `farm`, `market`).
 - Testy: Playwright przez `tools/qa/lib/ux.js` (helpery `openHome`, `openMore`, `openFromMore`), mock przeglądarkowy per funkcja (`features/<f>/mock.js`, `CuyScenesMock.state('seven')` daje 7 scen). Testy uruchamia `tools/qa/ux-all.js` (pliki `ux-pN-*.js`).
+
+## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
+- `web/home/app.js`: More tiles from `features/index.json` ids `farm` (line 15), `market` (16); `openFeature` at 786.
+- `web/home/features/places/feature.js`: `openPlace` (471) must switch scenes for `farm`/`market`.
+- Depends also on PK-P43g (farm extras in the scene).
 
 ## Steps
 1. grep entry points of the farm and market windows (tiles in `app.js`, `features/index.json`, `CuyPlaces.openPlace`). List them in the log.

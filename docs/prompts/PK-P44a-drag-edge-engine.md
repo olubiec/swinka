@@ -15,6 +15,10 @@ Depends on: PK-P39c merged.
 - Wiadomości mostka (fakty): pokój/ogród `room_place {place,itemId,x,y}`, `room_move {place,uid,x,y}`, `room_remove {place,uid}`, `room_flip {place,uid}`, `place_upgrade {id}`, `place_unlock {id}`; targ `market_quote/market_buy/market_sell {itemId,count}`, `market_stall`; farma `farm_plant {plot,cropId}`, `farm_water {plot}`, `farm_harvest {plot}`, `farm_harvest_all`, `farm_buy {what}`, `orchard_plant/orchard_harvest {slot}`; świnka `places.pigMove {pigId,to}`, `places.pigPin {pigId,pinned}`, `take_out`. Pole `place` to id sceny (`salon`, `pig:<id>`, `dorm`, `garden`, `park`, `farm`, `market`).
 - Testy: Playwright przez `tools/qa/lib/ux.js` (helpery `openHome`, `openMore`, `openFromMore`), mock przeglądarkowy per funkcja (`features/<f>/mock.js`, `CuyScenesMock.state('seven')` daje 7 scen). Testy uruchamia `tools/qa/ux-all.js` (pliki `ux-pN-*.js`).
 
+## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
+- `web/home/canvas-pig.js`: drag code lines 686-726 (`this.drag = {startX,startY,moved}`, `take_out` send at 706, `suppressClick` 702/725). New API: `onEdgeHold`, `continueDrag(def)`, `onDrop`, `setEdgeNeighbours`; add edge indicator to `debug()`.
+- Arrow indicator: sprite from `assets/ui/` (same arrows as the places bar).
+
 ## Steps
 1. grep `canvas-pig.js` drag code (lines ~530-575: `this.drag`, `take_out`, `suppressClick`).
 2. Edge zone: the outer 12 px of the canvas left/right. While the pointer is in the zone for 600 ms (show a growing 1 px arrow/chevron indicator from the library arrow sprite at that edge) call `CanvasPig.onEdgeHold({side:'left'|'right'})` once, then wait for `CanvasPig.continueDrag(newSceneDef)`: the pig sprite stays on the pointer, the new scene is set, the pointer is moved inside by 16 px visually (pig x = edge + 16) and drag state is kept (`drag.moved` stays true). Re-arm after the pointer leaves the zone.

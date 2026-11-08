@@ -12,6 +12,11 @@ Depends on: PK-P39a merged.
 - Docelowa wizja: każde miejsce (pokoje domku, ogród, park, farma, targ) to scena w głównym oknie Home (pseudo-3D: widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, y-sort). Sceny: `assets/data/place_scenes.json` (`bg`, `walk` [x0,y0,x1,y1], `depthScale`, wyjścia), moduł `web/home/features/places/{feature,scenes}.js`, płótno `web/home/canvas-pig.js` (API w logach `docs/opt/log/PK-P33a.md`, `PK-P34a.md`, `PK-P36a.md`).
 - Test właściciela 7.11 (P31-P37 wdrożone): świnka chodzi przez fontannę i inne elementy tła; skala świnki do sceny jest zła; belka miejsc przycina scenę (drzewa w parku, domek na farmie nie widać); tła scen nie mają światła/ambientu (`lib/lights.js`, `assets/data/lights.json`), który jest w oknach ogrodu i farmy.
 
+## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
+- `assets/data/place_scenes.json`: no `hotspots` key exists yet (0 matches). Backgrounds: `assets/world/bg/market.png`, `farm.png`, `garden_day.png` (open only these 3 PNG).
+- `tools/qa/place-scenes-check.js`: extend with H1-H5.
+- Plot count: `web/home/features/farm/feature.js` (grep `plots`) - read-only here.
+
 ## Steps
 1. View `assets/world/bg/market.png`, `farm.png`, `garden_day.png`. For each interactive object add `hotspots:[{id, kind, rect:[x0,y0,x1,y1], label}]` in scene pixels. Market: `stall:<n>` for each stall (kind `stall`, label = its goods e.g. `Veggies`) and one `stall:own` (the player's stall, `market_stall`). Farm: `plot:0..N-1` (kind `plot`, N from `farm/feature.js` plot count, grep `plots`), `orchard:0..k`, `shop` (the farm shop, `farm_buy`). Garden: `pond`, `flowerbed` (kind `decor`, label only). Rooms: none.
 2. Extend `place-scenes-check.js`: H1 ids unique per scene; H2 rect inside the scene; H3 rects do not overlap each other by more than 25%; H4 every `kind` in {stall, plot, orchard, shop, decor}; H5 farm has exactly the plot count the farm feature uses (read the number from `farm/feature.js` via regex, or a constant you add to the data as `plotCount`).

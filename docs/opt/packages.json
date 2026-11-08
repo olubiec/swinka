@@ -1609,19 +1609,33 @@
   },
   "PK-P40b": {
    "wave": "P40b",
-   "title": "Edit mode: drag from stash onto the scene",
+   "title": "Edit mode: canvas ghost, pick and cell check",
    "items": [],
    "files": [
-    "web/home/features/places/edit-panel.js",
     "web/home/canvas-pig.js",
-    "tools/qa/ux-p40-edit-place.js",
+    "tools/qa/ux-p40-edit-engine.js",
     "docs/opt/log/PK-P40b.md"
    ],
-   "verify": "node --check web/home/features/places/edit-panel.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p40-edit-place.js && node tools/qa/ux-p40-edit-place.js",
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p40-edit-engine.js && node tools/qa/ux-p40-edit-engine.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P40b-edit-place.md"
+   "prompt_file": "docs/prompts/PK-P40b-edit-place-engine.md"
+  },
+  "PK-P40b2": {
+   "wave": "P40b2",
+   "title": "Edit mode: drag from stash and drop on the scene",
+   "items": [],
+   "files": [
+    "web/home/features/places/edit-panel.js",
+    "tools/qa/ux-p40-edit-place.js",
+    "docs/opt/log/PK-P40b2.md"
+   ],
+   "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-place.js && node tools/qa/ux-p40-edit-place.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P40b2-edit-place-drag.md"
   },
   "PK-P40c": {
    "wave": "P40c",
@@ -1629,6 +1643,7 @@
    "items": [],
    "files": [
     "web/home/features/places/edit-panel.js",
+    "web/home/canvas-pig.js",
     "tools/qa/ux-p40-edit-move.js",
     "docs/opt/log/PK-P40c.md"
    ],
@@ -1645,6 +1660,7 @@
    "files": [
     "web/home/app.js",
     "web/home/features/index.json",
+    "web/home/features/places/feature.js",
     "tools/qa/ux-p40-retire.js",
     "docs/opt/log/PK-P40d.md"
    ],
@@ -1752,7 +1768,7 @@
   },
   "PK-P43e": {
    "wave": "P43b",
-   "title": "Rooms and garden: objects act in the scene",
+   "title": "Rooms and garden: lamps and gramophone act in the scene",
    "items": [],
    "files": [
     "web/home/features/places/feature.js",
@@ -1765,6 +1781,22 @@
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P43e-room-and-garden-objects.md"
+  },
+  "PK-P43g": {
+   "wave": "P43b2",
+   "title": "Farm: orchard slots, shop and bulk buttons in the scene",
+   "items": [],
+   "files": [
+    "web/home/features/farm/feature.js",
+    "web/home/features/farm/feature.css",
+    "tools/qa/ux-p43-farm-extras.js",
+    "docs/opt/log/PK-P43g.md"
+   ],
+   "verify": "node --check web/home/features/farm/feature.js && node --check tools/qa/ux-p43-farm-extras.js && node tools/qa/ux-p43-farm-extras.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P43g-farm-orchard-shop-bulk.md"
   },
   "PK-P43f": {
    "wave": "P43c",
@@ -1846,43 +1878,87 @@
   },
   "PK-P4a": {
    "wave": "P4a",
-   "title": "Core: adoption gate and one look source",
+   "title": "Core: adoption gate for Kuki and Ned",
    "items": [],
    "files": [
+    "assets/data/adoption_gate.json",
     "src/Cuy.Core/Pigs/AdoptionGate.cs",
     "src/Cuy.Core/GameState.Adoption.cs",
-    "assets/data/adoption_gate.json",
-    "src/Cuy.Core/Pigs/PigRoster.cs",
-    "src/Cuy/Graphics/PigLook.cs",
+    "src/Cuy.Core/Pet.Adoption.cs",
     "tests/Cuy.Core.Tests/AdoptionGateTests.cs",
     "docs/opt/log/PK-P4a.md"
    ],
-   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~Adoption|FullyQualifiedName~PigLook\"",
+   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~AdoptionGate|FullyQualifiedName~PetAdoption|FullyQualifiedName~OfferChecker\"",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P4a-core-adoption-gate.md"
   },
-  "PK-P4b": {
-   "wave": "P4b",
-   "title": "Adoption popup, hidden Kuki and Ned, same look everywhere",
+  "PK-P4a2": {
+   "wave": "P4a",
+   "title": "Core: starter pig has its own look (not Kuki)",
    "items": [],
    "files": [
-    "web/home/features/pigs/feature.js",
-    "web/home/features/pigs/adoption-popup.js",
-    "web/home/features/pigs/mock.js",
-    "web/home/canvas-pig.js",
-    "src/Cuy/dotNet/Features/PigsFeature.cs",
-    "src/Cuy/dotNet/Features/PigsMessages.cs",
-    "web/home/index.html",
-    "tools/qa/ux-p4-adoption.js",
-    "docs/opt/log/PK-P4b.md"
+    "src/Cuy.Core/Pigs/PigRoster.cs",
+    "src/Cuy/Graphics/PigLook.cs",
+    "tests/Cuy.Core.Tests/PigLookTests.cs",
+    "docs/opt/log/PK-P4a2.md"
    ],
-   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLook\"",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P4b-adoption-popup-and-list.md"
+   "prompt_file": "docs/prompts/PK-P4a2-starter-pig-own-look.md"
+  },
+  "PK-P4b1": {
+   "wave": "P4b",
+   "title": "C#: adoption state, accept message and desktop notification",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Input/Validation/PigsMessages.cs",
+    "src/Cuy/dotNet/Features/PigsFeature.cs",
+    "tests/Cuy.Core.Tests/PigsMessagesTests.cs",
+    "docs/contracts/pigs.md",
+    "docs/opt/log/PK-P4b1.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigsMessages|FullyQualifiedName~MessageValidator\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P4b1-adoption-csharp-messages.md"
+  },
+  "PK-P4b2": {
+   "wave": "P4c",
+   "title": "Web: adoption popup, grey silhouettes, countdown",
+   "items": [],
+   "files": [
+    "web/home/features/pigs/adoption-popup.js",
+    "web/home/features/pigs/feature.js",
+    "web/home/features/pigs/mock.js",
+    "web/home/index.html",
+    "tools/qa/ux-p4-adoption.js",
+    "docs/opt/log/PK-P4b2.md"
+   ],
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/features/pigs/mock.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P4b2-adoption-popup-web.md"
+  },
+  "PK-P4b3": {
+   "wave": "P4c",
+   "title": "Web: one look source in the room canvas",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p4-look.js",
+    "docs/opt/log/PK-P4b3.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-look.js && node tools/qa/ux-p4-look.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P4b3-one-look-in-canvas.md"
   },
   "PK-P4q": {
    "wave": "P4q",

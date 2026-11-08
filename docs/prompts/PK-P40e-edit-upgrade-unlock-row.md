@@ -15,6 +15,11 @@ Depends on: PK-P40d merged.
 - Wiadomości mostka (fakty): pokój/ogród `room_place {place,itemId,x,y}`, `room_move {place,uid,x,y}`, `room_remove {place,uid}`, `room_flip {place,uid}`, `place_upgrade {id}`, `place_unlock {id}`; targ `market_quote/market_buy/market_sell {itemId,count}`, `market_stall`; farma `farm_plant {plot,cropId}`, `farm_water {plot}`, `farm_harvest {plot}`, `farm_harvest_all`, `farm_buy {what}`, `orchard_plant/orchard_harvest {slot}`; świnka `places.pigMove {pigId,to}`, `places.pigPin {pigId,pinned}`, `take_out`. Pole `place` to id sceny (`salon`, `pig:<id>`, `dorm`, `garden`, `park`, `farm`, `market`).
 - Testy: Playwright przez `tools/qa/lib/ux.js` (helpery `openHome`, `openMore`, `openFromMore`), mock przeglądarkowy per funkcja (`features/<f>/mock.js`, `CuyScenesMock.state('seven')` daje 7 scen). Testy uruchamia `tools/qa/ux-all.js` (pliki `ux-pN-*.js`).
 
+## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
+- `web/home/features/places/edit-panel.js` + `.css`: drawer header row only.
+- `CuyPlaces.upgrade(id)` / `CuyPlaces.unlock(id)`: from PK-P40d (`places/feature.js`).
+- Cost/level fields: old `rooms/feature.js` and `garden/feature.js` (grep `nextCost`, `level`, `place_upgrade`); `state.world.places[*]`.
+
 ## Steps
 1. Read `docs/opt/log/PK-P40d.md`. grep `place_upgrade` costs in the state (`state.places`/`state.world.places[*].level|nextCost`) in the old rooms/garden feature to reuse the same fields.
 2. Drawer header row: scene title, `Level N`, button `Upgrade (cost)` (disabled with reason when not affordable or max), for locked scenes `Unlock (cost)`. Library button class, `--ui-*` colours, price with the coin icon from the library.

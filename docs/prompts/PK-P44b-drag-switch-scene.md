@@ -15,6 +15,10 @@ Depends on: PK-P44a, PK-P38a merged.
 - Wiadomości mostka (fakty): pokój/ogród `room_place {place,itemId,x,y}`, `room_move {place,uid,x,y}`, `room_remove {place,uid}`, `room_flip {place,uid}`, `place_upgrade {id}`, `place_unlock {id}`; targ `market_quote/market_buy/market_sell {itemId,count}`, `market_stall`; farma `farm_plant {plot,cropId}`, `farm_water {plot}`, `farm_harvest {plot}`, `farm_harvest_all`, `farm_buy {what}`, `orchard_plant/orchard_harvest {slot}`; świnka `places.pigMove {pigId,to}`, `places.pigPin {pigId,pinned}`, `take_out`. Pole `place` to id sceny (`salon`, `pig:<id>`, `dorm`, `garden`, `park`, `farm`, `market`).
 - Testy: Playwright przez `tools/qa/lib/ux.js` (helpery `openHome`, `openMore`, `openFromMore`), mock przeglądarkowy per funkcja (`features/<f>/mock.js`, `CuyScenesMock.state('seven')` daje 7 scen). Testy uruchamia `tools/qa/ux-all.js` (pliki `ux-pN-*.js`).
 
+## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
+- `web/home/features/places/feature.js`: `handlePigExit(ev)` (196, currently sends `places.pigMove` at 220), `bindCanvasExits()` (227), `computeNeighbourScene(current,dir,st)` (102), `applyScene` (275), `next/prev` (373/392). Reuse the existing toast helper.
+- `CuyScenes.neighbor(id, dir, state)` in `scenes.js` (271).
+
 ## Steps
 1. Read `docs/opt/log/PK-P44a.md` and `PK-P38a.md` (neighbour lookup, locked handling).
 2. In `places/feature.js`: set `CanvasPig.setEdgeNeighbours` on every scene change (neighbour exists and is unlocked). On `onEdgeHold({side})`: neighbour = `CuyScenes.neighbor(current, side)`; if locked or none -> a small toast (existing toast helper) `Locked: <hint>` and the drag simply continues in the same scene; else switch the scene (`applyScene`), call `CanvasPig.continueDrag(def)`.

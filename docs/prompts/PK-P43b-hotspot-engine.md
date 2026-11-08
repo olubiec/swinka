@@ -12,6 +12,11 @@ Depends on: PK-P40b merged (pickAt, edit mode).
 - Docelowa wizja: każde miejsce (pokoje domku, ogród, park, farma, targ) to scena w głównym oknie Home (pseudo-3D: widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, y-sort). Sceny: `assets/data/place_scenes.json` (`bg`, `walk` [x0,y0,x1,y1], `depthScale`, wyjścia), moduł `web/home/features/places/{feature,scenes}.js`, płótno `web/home/canvas-pig.js` (API w logach `docs/opt/log/PK-P33a.md`, `PK-P34a.md`, `PK-P36a.md`).
 - Test właściciela 7.11 (P31-P37 wdrożone): świnka chodzi przez fontannę i inne elementy tła; skala świnki do sceny jest zła; belka miejsc przycina scenę (drzewa w parku, domek na farmie nie widać); tła scen nie mają światła/ambientu (`lib/lights.js`, `assets/data/lights.json`), który jest w oknach ogrodu i farmy.
 
+## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
+- `web/home/canvas-pig.js`: pointer code at lines 662-740 (`toScene`, `suppressClick`, `this.drag`, `take_out` at 706). Add `setHotspots`, `onHotspot`, `debug().hover`; delegate in wrappers (~1596-1664).
+- `web/home/features/places/scenes.js`: `def(id,tod)` (line 311) returns the scene; add `hotspots` from data. Exports object `CuyScenes` at line 443.
+- Edit-mode flag from PK-P40a (`CuyEdit.isOpen()`); pig hit test already exists in the click handler.
+
 ## Steps
 1. `scenes.js` `def()` also returns `hotspots` from the data. grep in `canvas-pig.js` the click handler (`suppressClick`, `pointerup`) and cursor handling.
 2. API: `CanvasPig.setHotspots(list)`, `CanvasPig.onHotspot = fn({id,kind,rect})`. Hover: draw a 1 px outline in the palette highlight colour (dither-free) and a small label chip (library wood 9-slice, `--ui-font`) above the rect; `cursor: pointer` on the canvas. Click: if the pig is hit first (pig sprite) the pig's own click wins; in edit mode hotspots are inactive; a drag never fires a hotspot. Keyboard: Tab focuses hotspots in reading order (focus ring = same outline), Enter fires.

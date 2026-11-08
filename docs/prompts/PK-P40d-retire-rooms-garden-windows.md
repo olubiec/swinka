@@ -1,5 +1,5 @@
 # PK-P40d: Rooms and Garden windows retired
-Zmieniaj: web/home/app.js, web/home/features/index.json, tools/qa/ux-p40-retire.js, docs/opt/log/PK-P40d.md
+Zmieniaj: web/home/app.js, web/home/features/index.json, web/home/features/places/feature.js, tools/qa/ux-p40-retire.js, docs/opt/log/PK-P40d.md
 Wymagane: tools/qa/ux-p40-retire.js
 Weryfikacja: node --check web/home/app.js && node --check tools/qa/ux-p40-retire.js && node tools/qa/ux-p40-retire.js
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
@@ -14,6 +14,12 @@ Depends on: PK-P40c merged.
 
 - Wiadomości mostka (fakty): pokój/ogród `room_place {place,itemId,x,y}`, `room_move {place,uid,x,y}`, `room_remove {place,uid}`, `room_flip {place,uid}`, `place_upgrade {id}`, `place_unlock {id}`; targ `market_quote/market_buy/market_sell {itemId,count}`, `market_stall`; farma `farm_plant {plot,cropId}`, `farm_water {plot}`, `farm_harvest {plot}`, `farm_harvest_all`, `farm_buy {what}`, `orchard_plant/orchard_harvest {slot}`; świnka `places.pigMove {pigId,to}`, `places.pigPin {pigId,pinned}`, `take_out`. Pole `place` to id sceny (`salon`, `pig:<id>`, `dorm`, `garden`, `park`, `farm`, `market`).
 - Testy: Playwright przez `tools/qa/lib/ux.js` (helpery `openHome`, `openMore`, `openFromMore`), mock przeglądarkowy per funkcja (`features/<f>/mock.js`, `CuyScenesMock.state('seven')` daje 7 scen). Testy uruchamia `tools/qa/ux-all.js` (pliki `ux-pN-*.js`).
+
+## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
+- `web/home/app.js` (1221 lines): `openFeature(id,arg,opts)` (line 786); More tiles built from `data-open-feature` (line ~881) fed by `features/index.json` ids `rooms` and `garden`.
+- `web/home/features/index.json`: ids `rooms` (line 13) and `garden` (14): keep files, hide from More.
+- `web/home/features/places/feature.js`: `CuyPlaces.openPlace(placeId, roomArg)` (471) already calls `applyScene`; add `upgrade(id)` -> `place_upgrade {id}` and `unlock(id)` -> `place_unlock {id}` to the `CuyPlaces` object (line ~480) - this needs `places/feature.js` in Zmieniaj.
+- `web/home/features/farm/feature.js` line 150 sends `place_unlock {id:'farm'}`: reference for the message shape.
 
 ## Steps
 1. grep entry points: `openFeature('rooms')`, `'garden'`, tile definitions in `app.js` and `features/index.json`, `CuyPlaces.openPlace`, `roomPlanBtn` leftovers, `data-open="rooms"`. List all in the log.

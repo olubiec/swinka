@@ -15,6 +15,10 @@ Depends on: PK-P43a, PK-P43b merged.
 - Wiadomości mostka (fakty): pokój/ogród `room_place {place,itemId,x,y}`, `room_move {place,uid,x,y}`, `room_remove {place,uid}`, `room_flip {place,uid}`, `place_upgrade {id}`, `place_unlock {id}`; targ `market_quote/market_buy/market_sell {itemId,count}`, `market_stall`; farma `farm_plant {plot,cropId}`, `farm_water {plot}`, `farm_harvest {plot}`, `farm_harvest_all`, `farm_buy {what}`, `orchard_plant/orchard_harvest {slot}`; świnka `places.pigMove {pigId,to}`, `places.pigPin {pigId,pinned}`, `take_out`. Pole `place` to id sceny (`salon`, `pig:<id>`, `dorm`, `garden`, `park`, `farm`, `market`).
 - Testy: Playwright przez `tools/qa/lib/ux.js` (helpery `openHome`, `openMore`, `openFromMore`), mock przeglądarkowy per funkcja (`features/<f>/mock.js`, `CuyScenesMock.state('seven')` daje 7 scen). Testy uruchamia `tools/qa/ux-all.js` (pliki `ux-pN-*.js`).
 
+## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
+- `web/home/features/market/feature.js` (300 lines): `render()` (172), `buyRows` (134), `sellRows` (149), `stepper` (127), `requestQuote` (120), handlers at 244 (`market_buy`), 249 (`market_sell`), 254 (`market_stall`), `api.onMessage('market_quote_result')` (283). Add `CuyMarket.openPanel(stallId, anchorRect)`; keep the window render for now.
+- Hotspot ids `stall:<n>`, `stall:own` from PK-P43a; `CanvasPig.onHotspot` from PK-P43b.
+
 ## Steps
 1. Read `docs/opt/log/PK-P43a.md` (hotspot ids) and `PK-P43b.md` (API). grep in `market/feature.js` the render of goods, quote and buttons (lines ~100-260; messages in the context list below).
 2. Refactor `market/feature.js` into a panel component `CuyMarket.openPanel(stallId, anchorRect)` that reuses the existing buy/sell/quote rendering and messages, shown as a floating wood panel (9-slice, library close X) positioned beside the stall and clamped inside the window; one panel at a time; Esc/X/click outside closes. Stall -> goods mapping: by hotspot `label`/id; `stall:own` shows the player's stall (`market_stall`). Register with `CanvasPig.onHotspot` when the scene is `market` (subscribe in the feature, not in canvas).
