@@ -1516,31 +1516,31 @@
    "title": "Whole scene visible: layout below the places bar",
    "items": [],
    "files": [
-    "web/home/features/places/feature.css",
     "web/home/style.css",
     "tools/qa/ux-p39-layout.js",
     "docs/opt/log/PK-P39b.md"
    ],
-   "verify": "node --check web/home/app.js && node --check tools/qa/ux-p39-layout.js && node tools/qa/ux-p39-layout.js",
+   "verify": "node --check tools/qa/ux-p39-layout.js && node tools/qa/ux-p39-layout.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P39b-scene-layout-fit.md"
   },
-  "PK-P39c": {
+  "PK-P39c1": {
    "wave": "P39b",
-   "title": "Walk grid and pathfinding around blockers",
+   "title": "Walk grid and pathfinding around scene blockers",
    "items": [],
    "files": [
     "web/home/canvas-pig.js",
+    "web/home/features/places/scenes.js",
     "tools/qa/ux-p39-grid.js",
-    "docs/opt/log/PK-P39c.md"
+    "docs/opt/log/PK-P39c1.md"
    ],
-   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-grid.js && node tools/qa/ux-p39-grid.js",
+   "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p39-grid.js && node tools/qa/ux-p39-grid.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P39c-walk-grid-pathfinding.md"
+   "prompt_file": "docs/prompts/PK-P39c1-walk-grid-pathfinding.md"
   },
   "PK-P39d": {
    "wave": "P39b",
@@ -1548,18 +1548,33 @@
    "items": [],
    "files": [
     "web/home/features/places/feature.js",
-    "web/home/lib/lights.js",
+    "web/home/app.js",
     "tools/qa/ux-p39-light.js",
     "docs/opt/log/PK-P39d.md"
    ],
-   "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p39-light.js && node tools/qa/ux-p39-light.js",
+   "verify": "node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p39-light.js && node tools/qa/ux-p39-light.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P39d-scene-light.md"
   },
-  "PK-P39e": {
+  "PK-P39c2": {
    "wave": "P39c",
+   "title": "Placed items block, drag drop snaps, pointer mapping for contain",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p39-snap.js",
+    "docs/opt/log/PK-P39c2.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-snap.js && node tools/qa/ux-p39-snap.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P39c2-placed-items-block-and-drag-snap.md"
+  },
+  "PK-P39e": {
+   "wave": "P39d",
    "title": "Pig scale and passing behind objects",
    "items": [],
    "files": [
@@ -1568,7 +1583,7 @@
     "tools/qa/ux-p39-depth.js",
     "docs/opt/log/PK-P39e.md"
    ],
-   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-depth.js && node tools/qa/ux-p39-depth.js",
+   "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p39-depth.js && node tools/qa/ux-p39-depth.js && node tools/qa/ux-p34-pig-walk.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -1694,7 +1709,7 @@
     "tools/qa/ux-p45-scene-data.js",
     "docs/opt/log/PK-P45d1.md"
    ],
-   "verify": "node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js",
+   "verify": "node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p32-scenes-data.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -1708,14 +1723,9 @@
     "assets/data/place_scenes.json",
     "tools/qa/ux-p45-walk-bands.js",
     "docs/qa/calibration/MEASURED.md",
-    "docs/qa/calibration/garden.png",
-    "docs/qa/calibration/park.png",
-    "docs/qa/calibration/farm.png",
-    "docs/qa/calibration/market.png",
-    "docs/qa/calibration/room.png",
     "docs/opt/log/PK-P45d2.md"
    ],
-   "verify": "node --check tools/qa/ux-p45-walk-bands.js && node tools/qa/ux-p45-walk-bands.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p45-scene-data.js",
+   "verify": "node --check tools/qa/ux-p45-walk-bands.js && node tools/qa/ux-p45-walk-bands.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p39-blockers.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -1727,10 +1737,11 @@
    "items": [],
    "files": [
     "web/home/features/places/scenes.js",
+    "web/home/features/places/feature.js",
     "tools/qa/ux-p45-room-scene.js",
     "docs/opt/log/PK-P45e1.md"
    ],
-   "verify": "node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js",
+   "verify": "node --check web/home/features/places/scenes.js && node --check web/home/features/places/feature.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p32-scenes-data.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -1766,33 +1777,39 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P45e2-room-drawn-from-the-grid-with-trim-sprit.md"
   },
+  "PK-P45d3": {
+   "wave": "P45d",
+   "title": "Calibration overlay PNGs",
+   "items": [],
+   "files": [
+    "docs/qa/calibration/garden.png",
+    "docs/qa/calibration/park.png",
+    "docs/qa/calibration/farm.png",
+    "docs/qa/calibration/market.png",
+    "docs/qa/calibration/room.png",
+    "tools/qa/ux-p45-calibration.js",
+    "docs/opt/log/PK-P45d3.md"
+   ],
+   "verify": "node --check tools/qa/ux-p45-calibration.js && node tools/qa/scene-overlay.js && node tools/qa/ux-p45-calibration.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45d3-calibration-overlay-pngs.md"
+  },
   "PK-P45f2": {
    "wave": "P45e",
-   "title": "Pig shadow: one sprite, no ellipse",
+   "title": "Pig shadow: one sprite, no ellipse; floorLine()",
    "items": [],
    "files": [
     "web/home/canvas-pig.js",
     "tools/qa/ux-p45-pig-shadow.js",
     "docs/opt/log/PK-P45f2.md"
    ],
-   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js",
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p34-pig-walk.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P45f2-pig-shadow-one-sprite-no-ellipse.md"
-  },
-  "PK-P45q1": {
-   "wave": "P45q",
-   "title": "Stage gate for wave P45 (full checks)",
-   "items": [],
-   "files": [
-    "docs/opt/log/PK-P45q1.md"
-   ],
-   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
-   "gate": false,
-   "model": "gemini-3.8-flash-medium",
-   "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45q1-stage-gate-for-wave-p45-full-checks.md"
   },
   "PK-P45q2": {
    "wave": "P45q",
@@ -1810,6 +1827,19 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P45q2-owner-test-sheet-and-screenshots-for-wav.md"
   },
+  "PK-P45q1": {
+   "wave": "P45q2",
+   "title": "Stage gate for wave P45 (full checks)",
+   "items": [],
+   "files": [
+    "docs/opt/log/PK-P45q1.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45q1-stage-gate-for-wave-p45-full-checks.md"
+  },
   "PK-P40a": {
    "wave": "P40a",
    "title": "Edit mode: Edit button and stash drawer",
@@ -1817,7 +1847,7 @@
    "files": [
     "web/home/features/places/edit-panel.js",
     "web/home/features/places/edit-panel.css",
-    "web/home/features/index.json",
+    "web/home/index.html",
     "tools/qa/ux-p40-edit-drawer.js",
     "docs/opt/log/PK-P40a.md"
    ],
@@ -1859,7 +1889,7 @@
   },
   "PK-P40c": {
    "wave": "P40c",
-   "title": "Edit mode: move, flip and remove placed items",
+   "title": "Edit mode: select, toolbar, flip and remove",
    "items": [],
    "files": [
     "web/home/features/places/edit-panel.js",
@@ -1867,11 +1897,26 @@
     "tools/qa/ux-p40-edit-move.js",
     "docs/opt/log/PK-P40c.md"
    ],
-   "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-move.js && node tools/qa/ux-p40-edit-move.js",
+   "verify": "node --check web/home/features/places/edit-panel.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p40-edit-move.js && node tools/qa/ux-p40-edit-move.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P40c-edit-move-remove.md"
+  },
+  "PK-P40c2": {
+   "wave": "P40c2",
+   "title": "Edit mode: move placed items and drag them back to the drawer",
+   "items": [],
+   "files": [
+    "web/home/features/places/edit-panel.js",
+    "tools/qa/ux-p40-edit-move-drag.js",
+    "docs/opt/log/PK-P40c2.md"
+   ],
+   "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-move-drag.js && node tools/qa/ux-p40-edit-move-drag.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P40c2-edit-move-drag.md"
   },
   "PK-P40d": {
    "wave": "P40d",
@@ -1879,12 +1924,11 @@
    "items": [],
    "files": [
     "web/home/app.js",
-    "web/home/features/index.json",
     "web/home/features/places/feature.js",
     "tools/qa/ux-p40-retire.js",
     "docs/opt/log/PK-P40d.md"
    ],
-   "verify": "node --check web/home/app.js && node --check tools/qa/ux-p40-retire.js && node tools/qa/ux-p40-retire.js",
+   "verify": "node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check tools/qa/ux-p40-retire.js && node tools/qa/ux-p40-retire.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -1992,7 +2036,8 @@
    "items": [],
    "files": [
     "web/home/features/places/feature.js",
-    "web/home/features/garden/feature.js",
+    "web/home/features/places/scenes.js",
+    "web/home/features/music/player.js",
     "tools/qa/ux-p43-object-actions.js",
     "docs/opt/log/PK-P43e.md"
    ],
@@ -2127,44 +2172,106 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P47b.md"
   },
-  "PK-P47c": {
-   "wave": "P47c",
-   "title": "Stage fills the window, HUD strip, bottom panel removed",
+  "PK-P47c1": {
+   "wave": "P47b",
+   "title": "HUD strip: markup and CSS",
    "items": [],
    "files": [
     "web/home/index.html",
     "web/home/style.css",
-    "tools/qa/lib/ux.js",
-    "tools/qa/ux-p47-layout.js",
-    "docs/opt/log/PK-P47c.md"
+    "tools/qa/ux-p47-hud.js",
+    "docs/opt/log/PK-P47c1.md"
    ],
-   "verify": "node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p47-layout.js && node tools/qa/ux-p47-layout.js",
+   "verify": "node --check tools/qa/ux-p47-hud.js && node tools/qa/ux-p47-hud.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P47c.md"
+   "prompt_file": "docs/prompts/PK-P47c1-hud-strip.md"
   },
-  "PK-P47d": {
+  "PK-P47c2": {
+   "wave": "P47c",
+   "title": "Stage fills the window, bottom panel removed",
+   "items": [],
+   "files": [
+    "web/home/index.html",
+    "web/home/style.css",
+    "tools/qa/ux-p47-layout.js",
+    "docs/opt/log/PK-P47c2.md"
+   ],
+   "verify": "node --check tools/qa/ux-p47-layout.js && node tools/qa/ux-p47-layout.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P47c2-stage-fills-window.md"
+  },
+  "PK-P47d1": {
    "wave": "P47d",
-   "title": "Menu buttons open full-window panels",
+   "title": "Menu panel container with pig and feed contents",
+   "items": [],
+   "files": [
+    "web/home/menu-panel.js",
+    "web/home/menu-panel.css",
+    "web/home/index.html",
+    "tools/qa/ux-p47-menu-core.js",
+    "docs/opt/log/PK-P47d1.md"
+   ],
+   "verify": "node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu-core.js && node tools/qa/ux-p47-menu-core.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P47d1-menu-panel-core.md"
+  },
+  "PK-P47c3": {
+   "wave": "P47d",
+   "title": "QA tools use the 640x400 viewport",
+   "items": [],
+   "files": [
+    "tools/qa/lib/ux.js",
+    "tools/qa/screen-matrix.js",
+    "tools/qa/a11y-check.js",
+    "docs/opt/log/PK-P47c3.md"
+   ],
+   "verify": "node --check tools/qa/lib/ux.js && node --check tools/qa/screen-matrix.js && node --check tools/qa/a11y-check.js && node tools/qa/a11y-check.js && node tools/qa/screen-matrix.js --quick && node tools/qa/ux-p47-hud.js && node tools/qa/ux-p47-layout.js && node tools/qa/ux-all.js p40 && node tools/qa/ux-all.js p43 && node tools/qa/ux-all.js p44",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P47c3-qa-viewport.md"
+  },
+  "PK-P47d2": {
+   "wave": "P47e",
+   "title": "Feed and Pig buttons use the menu panel; HUD name and alert dot",
+   "items": [],
+   "files": [
+    "web/home/app.js",
+    "tools/qa/ux-p47-menu-feed-pig.js",
+    "docs/opt/log/PK-P47d2.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check tools/qa/ux-p47-menu-feed-pig.js && node tools/qa/ux-p47-menu-feed-pig.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P47d2-feed-and-pig-panels.md"
+  },
+  "PK-P47d3": {
+   "wave": "P47f",
+   "title": "Shop, Games, More and features open as full-stage panels",
    "items": [],
    "files": [
     "web/home/app.js",
     "web/home/menu-panel.js",
     "web/home/menu-panel.css",
-    "web/home/index.html",
-    "tools/qa/ux-p47-menu.js",
-    "docs/opt/log/PK-P47d.md"
+    "tools/qa/ux-p47-menu-modals.js",
+    "docs/opt/log/PK-P47d3.md"
    ],
-   "verify": "node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu.js && node tools/qa/ux-p47-menu.js",
+   "verify": "node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu-modals.js && node tools/qa/ux-p47-menu-modals.js && node tools/qa/ux-p47-menu-feed-pig.js && node tools/qa/ux-p47-menu-core.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P47d.md"
+   "prompt_file": "docs/prompts/PK-P47d3-modal-flows-in-panel.md"
   },
   "PK-P47q": {
    "wave": "P47q",
-   "title": "Windows checks after wave P45",
+   "title": "Windows checks after wave P47",
    "items": [],
    "files": [
     "docs/qa/UX_WAVE_CHECKS.md",
@@ -2197,15 +2304,14 @@
   },
   "PK-P4a2": {
    "wave": "P4a",
-   "title": "Core: starter pig has its own look (not Kuki)",
+   "title": "Core tests: starter pig keeps its own look (move PigLook tests into the test project)",
    "items": [],
    "files": [
-    "src/Cuy.Core/Pigs/PigRoster.cs",
-    "src/Cuy/Graphics/PigLook.cs",
     "tests/Cuy.Core.Tests/PigLookTests.cs",
+    "src/Cuy.Core.Tests/PigLookTests.cs",
     "docs/opt/log/PK-P4a2.md"
    ],
-   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLook\"",
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLook\"",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -2213,7 +2319,7 @@
   },
   "PK-P4b1": {
    "wave": "P4b",
-   "title": "C#: adoption state, accept message and desktop notification",
+   "title": "C#: adoption state, adopt_group validation and desktop notification",
    "items": [],
    "files": [
     "src/Cuy.Core/Input/Validation/PigsMessages.cs",
@@ -2228,38 +2334,37 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P4b1-adoption-csharp-messages.md"
   },
-  "PK-P4b2": {
+  "PK-P4b2a": {
    "wave": "P4c",
-   "title": "Web: adoption popup, grey silhouettes, countdown",
+   "title": "Web: adoption popup module and mock states",
    "items": [],
    "files": [
     "web/home/features/pigs/adoption-popup.js",
-    "web/home/features/pigs/feature.js",
     "web/home/features/pigs/mock.js",
     "web/home/index.html",
     "tools/qa/ux-p4-adoption.js",
-    "docs/opt/log/PK-P4b2.md"
+    "docs/opt/log/PK-P4b2a.md"
    ],
-   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/features/pigs/mock.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js",
+   "verify": "node --check web/home/features/pigs/adoption-popup.js && node --check web/home/features/pigs/mock.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P4b2-adoption-popup-web.md"
+   "prompt_file": "docs/prompts/PK-P4b2a-adoption-popup-web.md"
   },
-  "PK-P4b3": {
-   "wave": "P4c",
-   "title": "Web: one look source in the room canvas",
+  "PK-P4b2b": {
+   "wave": "P4d",
+   "title": "Web: My Pigs hides Kuki and Ned until adoption opens",
    "items": [],
    "files": [
-    "web/home/canvas-pig.js",
-    "tools/qa/ux-p4-look.js",
-    "docs/opt/log/PK-P4b3.md"
+    "web/home/features/pigs/feature.js",
+    "tools/qa/ux-p4-pigs-list.js",
+    "docs/opt/log/PK-P4b2b.md"
    ],
-   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-look.js && node tools/qa/ux-p4-look.js",
+   "verify": "node --check web/home/features/pigs/feature.js && node --check tools/qa/ux-p4-pigs-list.js && node tools/qa/ux-p4-pigs-list.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P4b3-one-look-in-canvas.md"
+   "prompt_file": "docs/prompts/PK-P4b2b-pigs-list-adoption-filter.md"
   },
   "PK-P4q": {
    "wave": "P4q",
@@ -2269,7 +2374,7 @@
     "docs/qa/UX_WAVE_CHECKS.md",
     "docs/opt/log/PK-P4q.md"
    ],
-   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-pigs-list.js && node tools/qa/ux-p42-web-look.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~AdoptionGate|FullyQualifiedName~PigLook|FullyQualifiedName~PigsMessages\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": false,
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,

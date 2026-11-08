@@ -1,0 +1,36 @@
+# PK-P43d: Farm: plots interact in the scene
+Zmieniaj: web/home/features/farm/feature.js, web/home/features/farm/feature.css, tools/qa/ux-p43-farm-scene.js, docs/opt/log/PK-P43d.md
+Wymagane: tools/qa/ux-p43-farm-scene.js
+Weryfikacja: node --check web/home/features/farm/feature.js && node --check tools/qa/ux-p43-farm-scene.js && node tools/qa/ux-p43-farm-scene.js
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 40 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
+Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
+Goal: Clicking a plot hotspot on the farm scene plants, waters or harvests it, with plot state shown as DOM markers over the plot; no farm window needed. Orchard, shop and bulk buttons are PK-P43g.
+Depends on: PK-P43a, PK-P43b (hotspot data and engine), PK-P43c (same pattern: scene panel without the window), PK-P40b, PK-P45f1, PK-P39e (scene geometry: rects, depth scale, window-pixel conversion). Merged before this package.
+
+## Kontekst (fakty, nie szukaj drugi raz)
+- Docelowa wizja: każde miejsce (pokoje domku, ogród, park, farma, targ) to scena w głównym oknie Home (pseudo-3D: widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, y-sort). Sceny: `assets/data/place_scenes.json` (`bg`, `walk` [x0,y0,x1,y1], `depth_scale`, wyjścia, `hotspots`), moduł `web/home/features/places/{feature,scenes}.js`, płótno `web/home/canvas-pig.js` (API w logach `docs/opt/log/PK-P33a.md`, `PK-P34a.md`, `PK-P36a.md`, `PK-P43b.md`).
+- Wiadomości mostka (fakty): farma `farm_plant {plot,cropId}`, `farm_water {plot}`, `farm_harvest {plot}`, `farm_harvest_all`, `farm_buy {what}`, `orchard_plant/orchard_harvest {slot}`. Pole `place` to id sceny (`farm`).
+- Testy: Playwright przez `tools/qa/lib/ux.js` (helpery `openHome`, `openMore`, `openFromMore`), mock przeglądarkowy per funkcja (`features/<f>/mock.js`, `CuyScenesMock.state('seven')` daje 7 scen). Testy uruchamia `tools/qa/ux-all.js` (pliki `ux-pN-*.js`).
+
+## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
+- `web/home/features/farm/feature.js` (345 lines, one IIFE, no global export: `window.CuyFarm` does not exist; it only calls `window.CuyHome.registerFeature({...})` at 322). `S.api` is set only in `open()` (329), so with the window never opened `S.api` is undefined: the scene code must use `window.CuyHome.api` (has `send`, `getState`, `onMessage`, `assetUrl`; defined in `app.js`) and set `S.api` to it when empty. Re-grep line numbers before editing.
+- Helpers: `drawPlot(canvas,plot,crop)` (60), `cropOf(st,id)` (85), `plotLabel(plot,crop)` (89), `fmt(sec)` (96), `tick()` (104), `send(msg)` (120, no-op without `S.api`), `render()` (122). Window handlers in `render()`: plot click 232-246 (empty -> toggles `S.menuPlot`; growing and not watered -> `farm_water {plot}` at 242; ripe -> `farm_harvest {plot}` at 244), crop buttons 248-253 (`farm_plant {plot, cropId}` at 251, `data-plant`), menu markup ~172-190. Reuse the same messages and crop list; do not duplicate the crop list.
+- Plot state (`st.farm.plots[i]`, mock `web/home/features/farm/mock.js`): `state` is `empty|growing|ripe`, plus `cropId`, `watered` (bool), `secondsLeft`. Not `ready`/`crop`. Max 12 plots (`MAX_PLOTS = 12`, mock.js:20), start 4 owned.
+- Hotspot ids (PK-P43a): `plot:0..11` (kind `plot`) and `orchard:0..4`, `shop`. Plots beyond the owned count and unowned orchard slots are inert: ignore the click, no marker. `CanvasPig.onHotspot(fn({id,kind,rect}))` and `CanvasPig.setHotspots` from PK-P43b; `rect` is in scene pixels, convert to window pixels with the helper named in `docs/opt/log/PK-P43b.md`.
+- Export `window.CuyFarm = { openPlot(index, anchorRect), closePanel() }` from `farm/feature.js` for the test and for PK-P43g. Register the `onHotspot` handler once the canvas exists (retry on `DOMContentLoaded`/first `onState`); handle only kind `plot` when `CuyPlaces.getCurrentPlace() === 'farm'`.
+- Markers: DOM `<img>` from the icon library (water drop, basket, crop icon; search `assets/icons/`), `pointer-events:none`, positioned over the hotspot rect, one per plot state (growing+dry: drop; growing+watered: none or small timer; ripe: basket). Remove on scene change; refresh on every `onState`.
+
+## Steps
+1. Tests FIRST, `tools/qa/ux-p43-farm-scene.js` (Playwright, mock `seven` + farm state): F1 `empty-plot-menu-plants` (click `plot:0` -> crop menu panel -> `farm_plant {plot:0,cropId}`), F2 `dry-plot-click-waters` (`farm_water {plot}`), F3 `ready-plot-click-harvests` (`farm_harvest {plot}`), F4 `growing-tooltip` (watered growing plot shows time left via `fmt`, sends nothing), F5 `markers-follow-state`, F6 `panels-inside-window` (both viewports), F7 `unowned-plot-inert` (e.g. `plot:11` with 4 owned sends nothing).
+2. Read `docs/opt/log/PK-P43b.md` (API) and `PK-P43c.md` (panel pattern, reuse it). grep the handlers in `farm/feature.js`.
+3. Implement click logic by state: `empty` -> floating crop menu anchored at the plot (9-slice wood panel, library close X, clamped inside the window, one at a time, Esc/X/click outside closes); `growing` and not `watered` -> `farm_water {plot}`; `ripe` -> `farm_harvest {plot}`; `growing` and `watered` -> tooltip with time left.
+4. Old farm window stays until PK-P43f; both must show the same data (if the window is open, save and restore `S.container`/`S.menuPlot` around the panel).
+5. Run Weryfikacja; fix until green.
+## Zasady grafiki i interfejsu (obowiązkowe)
+- Legenda stylu: `docs/STYL_SWIATA.md` (czytaj pkt 0-2 i 5, ok. 60 linii) i paleta `assets/data/style_palette.json` (42 kolory). Zakaz kolorów spoza palety, zakaz `#ffffff` i `#000000`, zakaz gradientów CSS, rozmycia i cieni z blur. `image-rendering: pixelated`, skala tylko całkowita, pozycje w pełnych pikselach.
+- Biblioteka pixel artów: najpierw szukaj gotowego w `assets/world/`, `assets/ui/`, `assets/icons/`, `assets/props/`. Nowy sprite tylko gdy go tam naprawdę nie ma: skrypt w `tools/art/` + `python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt` bez nowych błędów.
+- Interfejs jak reszta gry: drewniane ramki i 9-slice z `assets/ui/`, kolory `--ui-*`, czcionka `--ui-font`. Zakaz własnych SVG i glifów tekstowych (✕ ← →).
+
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj", extra refactors, doing steps of other packages (orchard, shop, bulk buttons = PK-P43g). No toys (ball, tunnel, hay ball, house) in this package.
+Log: write `docs/opt/log/PK-P43d.md` (max 10 lines: decisions, exact API/field/message names others will use, differences from the plan, BLOCKED reason if any). Do not run git.

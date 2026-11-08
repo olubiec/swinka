@@ -1,22 +1,22 @@
-# PK-P4a2: Core: starter pig has its own look (not Kuki)
-Zmieniaj: src/Cuy.Core/Pigs/PigRoster.cs, src/Cuy/Graphics/PigLook.cs, tests/Cuy.Core.Tests/PigLookTests.cs, docs/opt/log/PK-P4a2.md
+# PK-P4a2: Core tests: starter pig keeps its own look (move PigLook tests into the test project)
+Zmieniaj: tests/Cuy.Core.Tests/PigLookTests.cs, src/Cuy.Core.Tests/PigLookTests.cs, docs/opt/log/PK-P4a2.md
 Wymagane: tests/Cuy.Core.Tests/PigLookTests.cs
-Weryfikacja: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigLook"
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigLook"
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
 Limity (twarde): maks. 25 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
-Goal: One look source: the starter pig resolves to the default ordinary look on the desktop and in the house, never Kuki's skin. Task P4-01 (C# side) from docs/PLAN_POPRAWEK_UX.md.
-Depends on: P3 merged (independent of PK-P4a).
-
-## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
-- `src/Cuy.Core/Pigs/PigRoster.cs`: contains `PigLookResolver` (`Resolve(PigProfile, stageKey)`, `Resolve(breed, coat, stage, namedId)`). The starter pig has no `NamedId`; make sure it resolves to the default skin `blaze_only.ginger` (default coat in the web resolver too) and a null/unknown `namedId` never maps to `kuki`.
-- `src/Cuy/Graphics/PigLook.cs`: thin adapter over `PigLookResolver` (2 `Resolve` overloads). Change only if the desktop passes a wrong key for the starter (grep callers of `PigLook.Resolve` in `src/Cuy/dotNet`).
-- `web/home/canvas-pig.js`: `KNOWN_NAMED_PIGS` (line 17) includes `cuy`; the web side is done in PK-P4b3, do NOT edit it here.
-- `tests/Cuy.Core.Tests/PigLookTests.cs`: create or extend (grep for an existing PigLook test file first).
+## Kontekst (fakty zweryfikowane 8.11.2026, nie szukaj drugi raz)
+- Plan: `docs/PLAN_POPRAWEK_UX.md` zadania P4-01..P4-04 (tabela od linii ~202). Stan repo: wygląd świnki jest już ujednolicony przez P42 (`PigLookResolver` w `src/Cuy.Core/Pigs/PigRoster.cs`, `look` w stanie, web `CuyLook`), a świnka startowa to nazwana `cuy` z własną planszą `assets/sprites/pigs/cuy/<stage>/spritesheet.png` (`GameState.Pigs.cs:62` `NamedId = "cuy"`, migracja v3 w `SaveSystem.cs:347`). Zostaje: bramka adopcji Kuki i Neda.
+- Kuki i Ned: `assets/data/pigs_named.json` grupa `starter` (linia 8), oba wpisy `"offer": {"group":"starter","after_days":0,"cost":0}`; `OfferChecker.StatusFor` odblokowuje je od razu.
+- Znaleziona luka: testy K1-K5 z P42a leżą w `src/Cuy.Core.Tests/PigLookTests.cs` (133 linie, namespace `Cuy.Core.Tests`), a w katalogu `src/Cuy.Core.Tests` nie ma csproj; projekt testowy `tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj` (bez wpisów Compile, więc bierze tylko pliki ze swojego katalogu) ich NIE kompiluje. Wersja w `tests/` nie istnieje. `tools/qa/ux-p42-pig-look-core.js` (L4) akceptuje obie lokalizacje i szuka w pliku tekstów K1-K5.
+- Resolver: `PigLookResolver.Resolve(PigProfile pig, string stage = null)` i `Resolve(breed, coat, stage, namedId)` w `src/Cuy.Core/Pigs/PigRoster.cs:~100-140`; `KnownNamedPigs` zawiera `cuy`; nieznany `namedId` -> `Named = null`, klucz `sprites/<stage>/spritesheet.png` (dla `smooth`); klucz nazwanej: `sprites/pigs/<id>/<stage>/spritesheet.png`. Starter w `GameState.EnsureRosterInitialized`: `new PigProfile(Name ?? "Cuy","smooth","tricolor"){ NamedId = "cuy" }` (GameState.Pigs.cs:62). Adapter pulpitu `src/Cuy/Graphics/PigLook.cs` deleguje do resolvera (bez zmian tutaj).
+Goal: Testy wyglądu świnki naprawdę się uruchamiają (przeniesione do projektu testowego) i pilnują, że świnka startowa (`cuy`) ma własną planszę, a nie Kuki. Zadanie P4-01 (strona Core); kod produktowy bez zmian, chyba że nowy test wykaże błąd.
+Depends on: PK-P42a merged (independent of PK-P4a).
 
 ## Steps
-1. Tests first: L1 starter profile (no NamedId, default breed/coat) resolves to default ordinary look; L2 same profile at every `LifeStage` keeps the same coat; L3 Kuki (`NamedId=kuki`) resolves to Kuki sprite key `sprites/pigs/kuki/<stage>/spritesheet.png`, starter does not; L4 unknown namedId falls back to default, not Kuki; L5 desktop `PigLook.Resolve(profile)` equals `PigLookResolver.Resolve(profile)`.
-2. Fix `PigRoster.cs`/`PigLook.cs` minimally so the tests pass.
-3. Run Weryfikacja. Log: the resolver contract (inputs -> `spriteKey`, `coat`) that PK-P4b3 mirrors in JS.
-Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj", extra refactors, doing steps of other packages.
-Log: write `docs/opt/log/PK-P4a2.md` (max 10 lines: decisions, exact API/field/message names others will use, differences from the plan, BLOCKED reason if any). Do not run git.
+1. Utwórz `tests/Cuy.Core.Tests/PigLookTests.cs`: skopiuj klasę `PigLookTests` z `src/Cuy.Core.Tests/PigLookTests.cs` bez zmian asercji (K1-K5; `FindRepoRoot` szuka `Cuy.sln`), następnie usuń stary plik (`rm src/Cuy.Core.Tests/PigLookTests.cs`; to jedyna dozwolona operacja usunięcia; katalog zostaje pusty lub zniknie).
+2. Dopisz testy: L1 `starter-is-cuy` (świnka z `GameState.CreateNew("t", now)` po `EnsureRosterInitialized()`: `Roster[0].NamedId == "cuy"`, `Resolve(Roster[0], stage).SpriteKey == "sprites/pigs/cuy/<stage>/spritesheet.png"` dla każdego z 5 etapów, i nigdy nie zawiera `/kuki/` ani `/ned/`); L2 `cuy-sheet-exists` (plik `assets/sprites/pigs/cuy/<stage>/spritesheet.png` istnieje dla 5 etapów); L3 `unknown-named-not-kuki` (`NamedId = "nobody"` i `null` -> `Named == null`, klucz bez `/kuki/`); L4 `kuki-keeps-sheet` (`NamedId = "kuki"` -> `sprites/pigs/kuki/adult/spritesheet.png`); L5 `look-state-matches` (`PigRoster.BuildPigLook(profile, "adult")["spriteKey"]` równe `Resolve(...).SpriteKey`).
+3. Uruchom Weryfikacja. Jeśli test wykaże błąd resolvera, popraw minimalnie `src/Cuy.Core/Pigs/PigRoster.cs` i dopisz to w logu (plik dodaj do listy zmian w logu; to jedyny dozwolony wyjątek).
+
+Prohibited: zmiana lub usuwanie asercji K1-K5, nowe zależności, edycja `canvas-pig.js` i `PigLook.cs`, kroki innych paczek.
+Log: write `docs/opt/log/PK-P4a2.md` (max 10 linii: co przeniesiono, wyniki L1-L5, BLOCKED jeśli dotyczy). Do not run git.

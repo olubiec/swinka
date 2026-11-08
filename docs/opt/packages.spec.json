@@ -386,12 +386,18 @@
     {
       "id": "P39b",
       "packages": [
-        "PK-P39c",
+        "PK-P39c1",
         "PK-P39d"
       ]
     },
     {
       "id": "P39c",
+      "packages": [
+        "PK-P39c2"
+      ]
+    },
+    {
+      "id": "P39d",
       "packages": [
         "PK-P39e"
       ]
@@ -611,8 +617,13 @@
     {
       "id": "P4c",
       "packages": [
-        "PK-P4b2",
-        "PK-P4b3"
+        "PK-P4b2a"
+      ]
+    },
+    {
+      "id": "P4d",
+      "packages": [
+        "PK-P4b2b"
       ]
     },
     {
@@ -1196,7 +1207,7 @@
       "tier": "low",
       "title": "Windows checks after wave P4",
       "manual": "docs/prompts/PK-P4q-windows-checks-wave-p4.md",
-      "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-pigs-list.js && node tools/qa/ux-p42-web-look.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~AdoptionGate|FullyQualifiedName~PigLook|FullyQualifiedName~PigsMessages\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
       "items": []
     },
     {
@@ -1452,15 +1463,23 @@
       "tier": "high",
       "title": "Whole scene visible: layout below the places bar",
       "manual": "docs/prompts/PK-P39b-scene-layout-fit.md",
-      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p39-layout.js && node tools/qa/ux-p39-layout.js",
+      "verify": "node --check tools/qa/ux-p39-layout.js && node tools/qa/ux-p39-layout.js",
       "items": []
     },
     {
-      "id": "PK-P39c",
+      "id": "PK-P39c1",
       "tier": "high",
-      "title": "Walk grid and pathfinding around blockers",
-      "manual": "docs/prompts/PK-P39c-walk-grid-pathfinding.md",
-      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-grid.js && node tools/qa/ux-p39-grid.js",
+      "title": "Walk grid and pathfinding around scene blockers",
+      "manual": "docs/prompts/PK-P39c1-walk-grid-pathfinding.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p39-grid.js && node tools/qa/ux-p39-grid.js",
+      "items": []
+    },
+    {
+      "id": "PK-P39c2",
+      "tier": "high",
+      "title": "Placed items block, drag drop snaps, pointer mapping for contain",
+      "manual": "docs/prompts/PK-P39c2-placed-items-block-and-drag-snap.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-snap.js && node tools/qa/ux-p39-snap.js",
       "items": []
     },
     {
@@ -1468,7 +1487,7 @@
       "tier": "high",
       "title": "Scene light and ambient in all scenes",
       "manual": "docs/prompts/PK-P39d-scene-light.md",
-      "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p39-light.js && node tools/qa/ux-p39-light.js",
+      "verify": "node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p39-light.js && node tools/qa/ux-p39-light.js",
       "items": []
     },
     {
@@ -1476,7 +1495,7 @@
       "tier": "high",
       "title": "Pig scale and passing behind objects",
       "manual": "docs/prompts/PK-P39e-depth-sort-and-scale.md",
-      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-depth.js && node tools/qa/ux-p39-depth.js",
+      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p39-depth.js && node tools/qa/ux-p39-depth.js && node tools/qa/ux-p34-pig-walk.js",
       "items": []
     },
     {
@@ -1746,33 +1765,33 @@
     {
       "id": "PK-P4a2",
       "tier": "high",
-      "title": "Core: starter pig has its own look (not Kuki)",
+      "title": "Core tests: starter pig keeps its own look (move PigLook tests into the test project)",
       "manual": "docs/prompts/PK-P4a2-starter-pig-own-look.md",
-      "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLook\"",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigLook\"",
       "items": []
     },
     {
       "id": "PK-P4b1",
       "tier": "high",
-      "title": "C#: adoption state, accept message and desktop notification",
+      "title": "C#: adoption state, adopt_group validation and desktop notification",
       "manual": "docs/prompts/PK-P4b1-adoption-csharp-messages.md",
       "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigsMessages|FullyQualifiedName~MessageValidator\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
       "items": []
     },
     {
-      "id": "PK-P4b2",
+      "id": "PK-P4b2a",
       "tier": "high",
-      "title": "Web: adoption popup, grey silhouettes, countdown",
-      "manual": "docs/prompts/PK-P4b2-adoption-popup-web.md",
-      "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/features/pigs/mock.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js",
+      "title": "Web: adoption popup module and mock states",
+      "manual": "docs/prompts/PK-P4b2a-adoption-popup-web.md",
+      "verify": "node --check web/home/features/pigs/adoption-popup.js && node --check web/home/features/pigs/mock.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js",
       "items": []
     },
     {
-      "id": "PK-P4b3",
-      "tier": "mid",
-      "title": "Web: one look source in the room canvas",
-      "manual": "docs/prompts/PK-P4b3-one-look-in-canvas.md",
-      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-look.js && node tools/qa/ux-p4-look.js",
+      "id": "PK-P4b2b",
+      "tier": "high",
+      "title": "Web: My Pigs hides Kuki and Ned until adoption opens",
+      "manual": "docs/prompts/PK-P4b2b-pigs-list-adoption-filter.md",
+      "verify": "node --check web/home/features/pigs/feature.js && node --check tools/qa/ux-p4-pigs-list.js && node tools/qa/ux-p4-pigs-list.js",
       "items": []
     },
     {

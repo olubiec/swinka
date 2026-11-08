@@ -1,23 +1,30 @@
-# PK-P4b1: C#: adoption state, accept message and desktop notification
+# PK-P4b1: C#: adoption state, adopt_group validation and desktop notification
 Zmieniaj: src/Cuy.Core/Input/Validation/PigsMessages.cs, src/Cuy/dotNet/Features/PigsFeature.cs, tests/Cuy.Core.Tests/PigsMessagesTests.cs, docs/contracts/pigs.md, docs/opt/log/PK-P4b1.md
 Wymagane: tests/Cuy.Core.Tests/PigsMessagesTests.cs
 Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigsMessages|FullyQualifiedName~MessageValidator" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
-Limity (twarde): maks. 35 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
+Limity (twarde): maks. 40 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
-Goal: The page gets `state.adoption` and a one-shot event `adoption_available`; `adopt_group {groupId}` is validated and forwarded to Core; the desktop shows a notification. Tasks P4-03 (C#) and P4-04 (C#).
-Depends on: PK-P4a merged (Core API names in docs/opt/log/PK-P4a.md).
+## Kontekst (fakty zweryfikowane 8.11.2026, nie szukaj drugi raz)
+- Plan: `docs/PLAN_POPRAWEK_UX.md` zadania P4-01..P4-04 (tabela od linii ~202). Stan repo: wygląd świnki jest już ujednolicony przez P42 (`PigLookResolver` w `src/Cuy.Core/Pigs/PigRoster.cs`, `look` w stanie, web `CuyLook`), a świnka startowa to nazwana `cuy` z własną planszą `assets/sprites/pigs/cuy/<stage>/spritesheet.png` (`GameState.Pigs.cs:62` `NamedId = "cuy"`, migracja v3 w `SaveSystem.cs:347`). Zostaje: bramka adopcji Kuki i Neda.
+- Kuki i Ned: `assets/data/pigs_named.json` grupa `starter` (linia 8), oba wpisy `"offer": {"group":"starter","after_days":0,"cost":0}`; `OfferChecker.StatusFor` odblokowuje je od razu.
+- `src/Cuy.Core/Input/Validation/*.cs`: zestawy reguł `IMessageRuleSet` (wzór `DormMessages.cs`: `new MessageRule("type", FieldRule.Str("field", maxLen))`; `FieldRule.Str(name, maxLen, required: true)` w `src/Cuy.Core/Input/IMessageRuleSet.cs:58`), wykrywane refleksją przez `MessageValidator.DiscoverRules`, bez rejestracji. Wzór testów: `tests/Cuy.Core.Tests/DormMessageTests.cs` (`MessageValidator.Validate(type, JObject.Parse(json))`, `result.IsOk` / `IsInvalid`). Nic w `src/Cuy` nie wywołuje dziś `MessageValidator.Validate` (poza `HomesMessages.ValidatePigHome` w HomesFeature.cs:74); `PigsFeature` ma sam sprawdzić `adopt_group`.
+- Kontrakt wiadomości web: `adopt_group` ma pole `id` (kontrakt `docs/contracts/pigs.md:19` `{ id | groupId }`; web wysyła `id`, `features/pigs/feature.js:880`). Obie nazwy muszą pozostać przyjmowane.
+- `src/Cuy/dotNet/Features/PigsFeature.cs`: budowa stanu ok. linii 95-165 (`state["roster"]`, `state["offers"]` linia 165, `OfferChecker.StatusFor` linia 137), obsługa wiadomości: filtr typów linia 170, `adopt_group` linie 272-300 (czyta `id`/`groupId`, `pet.AdoptGroup(groupId, rng, nowUtc)` linia ~286, odpowiedzi `toast`). `pet.MaxRoster` ustawiane w handlerze (wzór ustawiania `pet.Gate`).
+- `HomeWindow.PostToPage(object)` (HomeWindow.cs:547), `HomeWindow.NotifyStateChanged()` (165). Dymek na pulpicie: `FormPet.ShowStatusMessage`-podobna metoda wywołująca `_statusBubble.ShowMessage(text, durationMs)` (FormPet.cs:~655-660, `FormPet.AllPets` linia 50); zacznij od `grep -n "ShowMessage" src/Cuy/dotNet/FormPet.cs`, użyj istniejącej metody publicznej, nie dodawaj nowego mechanizmu powiadomień.
+- API Core z PK-P4a (log `docs/opt/log/PK-P4a.md`): `AdoptionGate.Evaluate(state, balance, cfg, nowUtc, rng)`, `AdoptionStatus {Closed,Waiting,Open,Done}`, `Pet.Gate`.
+Goal: Strona dostaje `state.adoption` i jednorazowe zdarzenie `adoption_available`; `adopt_group` jest walidowane i przekazywane do Core; pulpit pokazuje dymek. Zadania P4-03 i P4-04 (C#).
+Depends on: PK-P4a merged.
 
-## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
-- `src/Cuy.Core/Input/Validation/PigsMessages.cs (NEW)`: `IMessageRuleSet` like `DormMessages.cs` (rules found by reflection in `MessageValidator.DiscoverRules`, nothing to register). Rules: `adopt_group` with `FieldRule.Str("groupId", 32)`. Note: the old prompt named `PigsMessages.cs` under `src/Cuy/dotNet/Features/`; the correct folder is `src/Cuy.Core/Input/Validation/`.
-- `src/Cuy/dotNet/Features/PigsFeature.cs`: handles `adopt_pig`, `adopt_named`, `adopt_group` (line 170 filter, 227-345). `adopt_group` calls `pet.AdoptGroup(groupId, rng, nowUtc)` (line ~286). State publishing near line 125-160 (`OfferChecker.StatusFor`). Add `state.adoption = { status: "closed"|"waiting"|"open", groupId: "starter", pigIds: ["kuki","ned"], opensAtUtc: ISO|null, remainingMs: int|null }` from `AdoptionGate.Evaluate`; hide Kuki/Ned from the offers list while status != open.
-- `src/Cuy/dotNet/HomeWindow.cs`: `HomeWindow.PostToPage(object)` (line 547) and `HomeWindow.NotifyStateChanged()`. Post `{ type: "adoption_available", groupId: "starter" }` once when the gate flips to open (persist a flag so it is not repeated at restart).
-- `desktop notification`: grep how `BrainController`/`StatusBubble` show a text bubble and reuse it with text "Two pigs are waiting for adoption". Do not add a new notification mechanism.
-- `docs/contracts/pigs.md`: add the `state.adoption` shape and the event; this is the contract PK-P4b2 mocks.
+## Pliki i elementy
+- `src/Cuy.Core/Input/Validation/PigsMessages.cs` (NOWY): `MessageRule("adopt_group", FieldRule.Str("id", 32, required: false), FieldRule.Str("groupId", 32, required: false))`.
+- `PigsFeature.cs`: (a) na początku obsługi i przy budowie stanu `pet.Gate = AdoptionGateConfig.Current` (patrz log P4a); (b) stan: `state["adoption"] = { status: "closed"|"waiting"|"open"|"done", groupId: "starter", pigIds: ["kuki","ned"], opensAtUtc: ISO|null, remainingMs: int|null }` z `AdoptionGate.Evaluate`; (c) lista `offers`: dopóki status != open usuń wpisy grupy `starter`; (d) w handlerze `adopt_group`: `MessageValidator.Validate("adopt_group", message)`, przy `IsInvalid` zwróć `true` bez zmian; (e) gdy status zmienił się na `open` i `State.AdoptionNotified` jest false: `HomeWindow.PostToPage(new { type = "adoption_available", groupId = "starter" })`, dymek "Two pigs are waiting for adoption" i zapamiętanie flagi, żeby nie powtarzać po restarcie. Flaga: `State.AdoptionNotified` (dodana przez PK-P4a w `GameState.Adoption.cs`).
+- `docs/contracts/pigs.md`: sekcje `state.adoption` i zdarzenie `adoption_available`; wiersz `adopt_group` bez zmian nazw pól.
 
 ## Steps
-1. Tests first (`PigsMessagesTests.cs`): M1 `adopt_group` with valid groupId passes; M2 missing/empty/too long groupId rejected; M3 unknown extra fields rejected as for other rule sets (mirror `DormMessagesTests`).
-2. Implement the rule set, then in `PigsFeature.cs`: publish `state.adoption`, filter offers, post `adoption_available` once, show the desktop bubble.
-3. Build + Weryfikacja. Log: final field names of `state.adoption` and the event (PK-P4b2 mock must match).
-Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj", extra refactors, doing steps of other packages.
-Log: write `docs/opt/log/PK-P4b1.md` (max 10 lines: decisions, exact API/field/message names others will use, differences from the plan, BLOCKED reason if any). Do not run git.
+1. Testy najpierw `tests/Cuy.Core.Tests/PigsMessagesTests.cs`: M1 `adopt_group` z `id` przechodzi, M2 z `groupId` przechodzi, M3 `id` za długie (33 znaki) odrzucone, M4 `id: 5` (zły typ) odrzucone.
+2. Zaimplementuj zestaw reguł, potem zmiany w `PigsFeature.cs` i kontrakt.
+3. Uruchom Weryfikacja (testy + build Windows-targeting). Log: dokładne nazwy pól `state.adoption` i zdarzenia (PK-P4b2a/b mockują dokładnie to).
+
+Prohibited: zmiana lub usuwanie istniejących asercji, nowe zależności, pliki spoza „Zmieniaj", dodatkowe refaktory, kroki innych paczek, nowy mechanizm powiadomień.
+Log: write `docs/opt/log/PK-P4b1.md` (max 10 linii: decyzje, dokładne nazwy pól, różnice względem planu, BLOCKED jeśli dotyczy). Do not run git.

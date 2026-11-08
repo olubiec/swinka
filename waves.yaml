@@ -1453,23 +1453,23 @@ waves:
     title: 'PK-P39b: Whole scene visible: layout below the places bar'
     prompt_file: docs/prompts/PK-P39b-scene-layout-fit.md
     files:
-    - web/home/features/places/feature.css
     - web/home/style.css
     - tools/qa/ux-p39-layout.js
     - docs/opt/log/PK-P39b.md
-    test_command: node --check web/home/app.js && node --check tools/qa/ux-p39-layout.js && node tools/qa/ux-p39-layout.js
+    test_command: node --check tools/qa/ux-p39-layout.js && node tools/qa/ux-p39-layout.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P39b
   tasks:
-  - id: PK-P39c
-    title: 'PK-P39c: Walk grid and pathfinding around blockers'
-    prompt_file: docs/prompts/PK-P39c-walk-grid-pathfinding.md
+  - id: PK-P39c1
+    title: 'PK-P39c1: Walk grid and pathfinding around scene blockers'
+    prompt_file: docs/prompts/PK-P39c1-walk-grid-pathfinding.md
     files:
     - web/home/canvas-pig.js
+    - web/home/features/places/scenes.js
     - tools/qa/ux-p39-grid.js
-    - docs/opt/log/PK-P39c.md
-    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-grid.js && node tools/qa/ux-p39-grid.js
+    - docs/opt/log/PK-P39c1.md
+    test_command: node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p39-grid.js && node tools/qa/ux-p39-grid.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
   - id: PK-P39d
@@ -1477,13 +1477,25 @@ waves:
     prompt_file: docs/prompts/PK-P39d-scene-light.md
     files:
     - web/home/features/places/feature.js
-    - web/home/lib/lights.js
+    - web/home/app.js
     - tools/qa/ux-p39-light.js
     - docs/opt/log/PK-P39d.md
-    test_command: node --check web/home/features/places/feature.js && node --check tools/qa/ux-p39-light.js && node tools/qa/ux-p39-light.js
+    test_command: node --check web/home/features/places/feature.js && node --check web/home/app.js && node --check tools/qa/ux-p39-light.js && node tools/qa/ux-p39-light.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P39c
+  tasks:
+  - id: PK-P39c2
+    title: 'PK-P39c2: Placed items block, drag drop snaps, pointer mapping for contain'
+    prompt_file: docs/prompts/PK-P39c2-placed-items-block-and-drag-snap.md
+    files:
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p39-snap.js
+    - docs/opt/log/PK-P39c2.md
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-snap.js && node tools/qa/ux-p39-snap.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P39d
   tasks:
   - id: PK-P39e
     title: 'PK-P39e: Pig scale and passing behind objects'
@@ -1493,7 +1505,7 @@ waves:
     - web/home/features/places/scenes.js
     - tools/qa/ux-p39-depth.js
     - docs/opt/log/PK-P39e.md
-    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p39-depth.js && node tools/qa/ux-p39-depth.js
+    test_command: node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p39-depth.js && node tools/qa/ux-p39-depth.js && node tools/qa/ux-p34-pig-walk.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P39q
@@ -1585,7 +1597,7 @@ waves:
     - tools/qa/place-scenes-check.js
     - tools/qa/ux-p45-scene-data.js
     - docs/opt/log/PK-P45d1.md
-    test_command: node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js
+    test_command: node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p32-scenes-data.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P45c
@@ -1597,13 +1609,8 @@ waves:
     - assets/data/place_scenes.json
     - tools/qa/ux-p45-walk-bands.js
     - docs/qa/calibration/MEASURED.md
-    - docs/qa/calibration/garden.png
-    - docs/qa/calibration/park.png
-    - docs/qa/calibration/farm.png
-    - docs/qa/calibration/market.png
-    - docs/qa/calibration/room.png
     - docs/opt/log/PK-P45d2.md
-    test_command: node --check tools/qa/ux-p45-walk-bands.js && node tools/qa/ux-p45-walk-bands.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p45-scene-data.js
+    test_command: node --check tools/qa/ux-p45-walk-bands.js && node tools/qa/ux-p45-walk-bands.js && node tools/qa/place-scenes-check.js && node tools/qa/ux-p45-scene-data.js && node tools/qa/ux-p39-blockers.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
   - id: PK-P45e1
@@ -1611,9 +1618,10 @@ waves:
     prompt_file: docs/prompts/PK-P45e1-room-scene-definition-from-the-layout-gr.md
     files:
     - web/home/features/places/scenes.js
+    - web/home/features/places/feature.js
     - tools/qa/ux-p45-room-scene.js
     - docs/opt/log/PK-P45e1.md
-    test_command: node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js
+    test_command: node --check web/home/features/places/scenes.js && node --check web/home/features/places/feature.js && node --check tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p45-room-scene.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p32-scenes-data.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
   - id: PK-P45f1
@@ -1638,28 +1646,34 @@ waves:
     test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p33-scene-draw.js && node tools/qa/ux-p34-pig-walk.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
+  - id: PK-P45d3
+    title: 'PK-P45d3: Calibration overlay PNGs'
+    prompt_file: docs/prompts/PK-P45d3-calibration-overlay-pngs.md
+    files:
+    - docs/qa/calibration/garden.png
+    - docs/qa/calibration/park.png
+    - docs/qa/calibration/farm.png
+    - docs/qa/calibration/market.png
+    - docs/qa/calibration/room.png
+    - tools/qa/ux-p45-calibration.js
+    - docs/opt/log/PK-P45d3.md
+    test_command: node --check tools/qa/ux-p45-calibration.js && node tools/qa/scene-overlay.js && node tools/qa/ux-p45-calibration.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
 - id: P45e
   tasks:
   - id: PK-P45f2
-    title: 'PK-P45f2: Pig shadow: one sprite, no ellipse'
+    title: 'PK-P45f2: Pig shadow: one sprite, no ellipse; floorLine()'
     prompt_file: docs/prompts/PK-P45f2-pig-shadow-one-sprite-no-ellipse.md
     files:
     - web/home/canvas-pig.js
     - tools/qa/ux-p45-pig-shadow.js
     - docs/opt/log/PK-P45f2.md
-    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-shadow.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p45-room-draw.js && node tools/qa/ux-p34-pig-walk.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P45q
   tasks:
-  - id: PK-P45q1
-    title: 'PK-P45q1: Stage gate for wave P45 (full checks)'
-    prompt_file: docs/prompts/PK-P45q1-stage-gate-for-wave-p45-full-checks.md
-    files:
-    - docs/opt/log/PK-P45q1.md
-    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
-    model: gemini-3.8-flash-medium
-    timeout_minutes: 44
   - id: PK-P45q2
     title: 'PK-P45q2: Owner test sheet and screenshots for wave P45'
     prompt_file: docs/prompts/PK-P45q2-owner-test-sheet-and-screenshots-for-wav.md
@@ -1671,6 +1685,16 @@ waves:
     test_command: node --check tools/qa/ux-p45-shots.js && node tools/qa/ux-p45-shots.js
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
+- id: P45q2
+  tasks:
+  - id: PK-P45q1
+    title: 'PK-P45q1: Stage gate for wave P45 (full checks)'
+    prompt_file: docs/prompts/PK-P45q1-stage-gate-for-wave-p45-full-checks.md
+    files:
+    - docs/opt/log/PK-P45q1.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
 - id: P40a
   tasks:
   - id: PK-P40a
@@ -1679,7 +1703,7 @@ waves:
     files:
     - web/home/features/places/edit-panel.js
     - web/home/features/places/edit-panel.css
-    - web/home/features/index.json
+    - web/home/index.html
     - tools/qa/ux-p40-edit-drawer.js
     - docs/opt/log/PK-P40a.md
     test_command: node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-drawer.js && node tools/qa/ux-p40-edit-drawer.js
@@ -1712,14 +1736,26 @@ waves:
 - id: P40c
   tasks:
   - id: PK-P40c
-    title: 'PK-P40c: Edit mode: move, flip and remove placed items'
+    title: 'PK-P40c: Edit mode: select, toolbar, flip and remove'
     prompt_file: docs/prompts/PK-P40c-edit-move-remove.md
     files:
     - web/home/features/places/edit-panel.js
     - web/home/canvas-pig.js
     - tools/qa/ux-p40-edit-move.js
     - docs/opt/log/PK-P40c.md
-    test_command: node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-move.js && node tools/qa/ux-p40-edit-move.js
+    test_command: node --check web/home/features/places/edit-panel.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p40-edit-move.js && node tools/qa/ux-p40-edit-move.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P40c2
+  tasks:
+  - id: PK-P40c2
+    title: 'PK-P40c2: Edit mode: move placed items and drag them back to the drawer'
+    prompt_file: docs/prompts/PK-P40c2-edit-move-drag.md
+    files:
+    - web/home/features/places/edit-panel.js
+    - tools/qa/ux-p40-edit-move-drag.js
+    - docs/opt/log/PK-P40c2.md
+    test_command: node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p40-edit-move-drag.js && node tools/qa/ux-p40-edit-move-drag.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P40d
@@ -1729,11 +1765,10 @@ waves:
     prompt_file: docs/prompts/PK-P40d-retire-rooms-garden-windows.md
     files:
     - web/home/app.js
-    - web/home/features/index.json
     - web/home/features/places/feature.js
     - tools/qa/ux-p40-retire.js
     - docs/opt/log/PK-P40d.md
-    test_command: node --check web/home/app.js && node --check tools/qa/ux-p40-retire.js && node tools/qa/ux-p40-retire.js
+    test_command: node --check web/home/app.js && node --check web/home/features/places/feature.js && node --check tools/qa/ux-p40-retire.js && node tools/qa/ux-p40-retire.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P40e
@@ -1815,7 +1850,8 @@ waves:
     prompt_file: docs/prompts/PK-P43e-room-and-garden-objects.md
     files:
     - web/home/features/places/feature.js
-    - web/home/features/garden/feature.js
+    - web/home/features/places/scenes.js
+    - web/home/features/music/player.js
     - tools/qa/ux-p43-object-actions.js
     - docs/opt/log/PK-P43e.md
     test_command: node --check web/home/features/places/feature.js && node --check web/home/features/garden/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js
@@ -1920,39 +1956,87 @@ waves:
     test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p47-fit.js && node tools/qa/ux-p47-fit.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
-- id: P47c
+- id: P47b
   tasks:
-  - id: PK-P47c
-    title: 'PK-P47c: Stage fills the window, HUD strip, bottom panel removed'
-    prompt_file: docs/prompts/PK-P47c.md
+  - id: PK-P47c1
+    title: 'PK-P47c1: HUD strip: markup and CSS'
+    prompt_file: docs/prompts/PK-P47c1-hud-strip.md
     files:
     - web/home/index.html
     - web/home/style.css
-    - tools/qa/lib/ux.js
+    - tools/qa/ux-p47-hud.js
+    - docs/opt/log/PK-P47c1.md
+    test_command: node --check tools/qa/ux-p47-hud.js && node tools/qa/ux-p47-hud.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P47c
+  tasks:
+  - id: PK-P47c2
+    title: 'PK-P47c2: Stage fills the window, bottom panel removed'
+    prompt_file: docs/prompts/PK-P47c2-stage-fills-window.md
+    files:
+    - web/home/index.html
+    - web/home/style.css
     - tools/qa/ux-p47-layout.js
-    - docs/opt/log/PK-P47c.md
-    test_command: node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p47-layout.js && node tools/qa/ux-p47-layout.js
+    - docs/opt/log/PK-P47c2.md
+    test_command: node --check tools/qa/ux-p47-layout.js && node tools/qa/ux-p47-layout.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P47d
   tasks:
-  - id: PK-P47d
-    title: 'PK-P47d: Menu buttons open full-window panels'
-    prompt_file: docs/prompts/PK-P47d.md
+  - id: PK-P47d1
+    title: 'PK-P47d1: Menu panel container with pig and feed contents'
+    prompt_file: docs/prompts/PK-P47d1-menu-panel-core.md
+    files:
+    - web/home/menu-panel.js
+    - web/home/menu-panel.css
+    - web/home/index.html
+    - tools/qa/ux-p47-menu-core.js
+    - docs/opt/log/PK-P47d1.md
+    test_command: node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu-core.js && node tools/qa/ux-p47-menu-core.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P47c3
+    title: 'PK-P47c3: QA tools use the 640x400 viewport'
+    prompt_file: docs/prompts/PK-P47c3-qa-viewport.md
+    files:
+    - tools/qa/lib/ux.js
+    - tools/qa/screen-matrix.js
+    - tools/qa/a11y-check.js
+    - docs/opt/log/PK-P47c3.md
+    test_command: node --check tools/qa/lib/ux.js && node --check tools/qa/screen-matrix.js && node --check tools/qa/a11y-check.js && node tools/qa/a11y-check.js && node tools/qa/screen-matrix.js --quick && node tools/qa/ux-p47-hud.js && node tools/qa/ux-p47-layout.js && node tools/qa/ux-all.js p40 && node tools/qa/ux-all.js p43 && node tools/qa/ux-all.js p44
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P47e
+  tasks:
+  - id: PK-P47d2
+    title: 'PK-P47d2: Feed and Pig buttons use the menu panel; HUD name and alert dot'
+    prompt_file: docs/prompts/PK-P47d2-feed-and-pig-panels.md
+    files:
+    - web/home/app.js
+    - tools/qa/ux-p47-menu-feed-pig.js
+    - docs/opt/log/PK-P47d2.md
+    test_command: node --check web/home/app.js && node --check tools/qa/ux-p47-menu-feed-pig.js && node tools/qa/ux-p47-menu-feed-pig.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P47f
+  tasks:
+  - id: PK-P47d3
+    title: 'PK-P47d3: Shop, Games, More and features open as full-stage panels'
+    prompt_file: docs/prompts/PK-P47d3-modal-flows-in-panel.md
     files:
     - web/home/app.js
     - web/home/menu-panel.js
     - web/home/menu-panel.css
-    - web/home/index.html
-    - tools/qa/ux-p47-menu.js
-    - docs/opt/log/PK-P47d.md
-    test_command: node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu.js && node tools/qa/ux-p47-menu.js
+    - tools/qa/ux-p47-menu-modals.js
+    - docs/opt/log/PK-P47d3.md
+    test_command: node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu-modals.js && node tools/qa/ux-p47-menu-modals.js && node tools/qa/ux-p47-menu-feed-pig.js && node tools/qa/ux-p47-menu-core.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P47q
   tasks:
   - id: PK-P47q
-    title: 'PK-P47q: Windows checks after wave P45'
+    title: 'PK-P47q: Windows checks after wave P47'
     prompt_file: docs/prompts/PK-P47q.md
     files:
     - docs/qa/UX_WAVE_CHECKS.md
@@ -1977,20 +2061,19 @@ waves:
     model: gemini-3.8-flash-high
     timeout_minutes: 44
   - id: PK-P4a2
-    title: 'PK-P4a2: Core: starter pig has its own look (not Kuki)'
+    title: 'PK-P4a2: Core tests: starter pig keeps its own look (move PigLook tests into the test project)'
     prompt_file: docs/prompts/PK-P4a2-starter-pig-own-look.md
     files:
-    - src/Cuy.Core/Pigs/PigRoster.cs
-    - src/Cuy/Graphics/PigLook.cs
     - tests/Cuy.Core.Tests/PigLookTests.cs
+    - src/Cuy.Core.Tests/PigLookTests.cs
     - docs/opt/log/PK-P4a2.md
-    test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigLook"
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~PigLook"
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P4b
   tasks:
   - id: PK-P4b1
-    title: 'PK-P4b1: C#: adoption state, accept message and desktop notification'
+    title: 'PK-P4b1: C#: adoption state, adopt_group validation and desktop notification'
     prompt_file: docs/prompts/PK-P4b1-adoption-csharp-messages.md
     files:
     - src/Cuy.Core/Input/Validation/PigsMessages.cs
@@ -2003,27 +2086,28 @@ waves:
     timeout_minutes: 44
 - id: P4c
   tasks:
-  - id: PK-P4b2
-    title: 'PK-P4b2: Web: adoption popup, grey silhouettes, countdown'
-    prompt_file: docs/prompts/PK-P4b2-adoption-popup-web.md
+  - id: PK-P4b2a
+    title: 'PK-P4b2a: Web: adoption popup module and mock states'
+    prompt_file: docs/prompts/PK-P4b2a-adoption-popup-web.md
     files:
     - web/home/features/pigs/adoption-popup.js
-    - web/home/features/pigs/feature.js
     - web/home/features/pigs/mock.js
     - web/home/index.html
     - tools/qa/ux-p4-adoption.js
-    - docs/opt/log/PK-P4b2.md
-    test_command: node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/features/pigs/mock.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js
+    - docs/opt/log/PK-P4b2a.md
+    test_command: node --check web/home/features/pigs/adoption-popup.js && node --check web/home/features/pigs/mock.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
-  - id: PK-P4b3
-    title: 'PK-P4b3: Web: one look source in the room canvas'
-    prompt_file: docs/prompts/PK-P4b3-one-look-in-canvas.md
+- id: P4d
+  tasks:
+  - id: PK-P4b2b
+    title: 'PK-P4b2b: Web: My Pigs hides Kuki and Ned until adoption opens'
+    prompt_file: docs/prompts/PK-P4b2b-pigs-list-adoption-filter.md
     files:
-    - web/home/canvas-pig.js
-    - tools/qa/ux-p4-look.js
-    - docs/opt/log/PK-P4b3.md
-    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-look.js && node tools/qa/ux-p4-look.js
+    - web/home/features/pigs/feature.js
+    - tools/qa/ux-p4-pigs-list.js
+    - docs/opt/log/PK-P4b2b.md
+    test_command: node --check web/home/features/pigs/feature.js && node --check tools/qa/ux-p4-pigs-list.js && node tools/qa/ux-p4-pigs-list.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P4q
@@ -2034,6 +2118,6 @@ waves:
     files:
     - docs/qa/UX_WAVE_CHECKS.md
     - docs/opt/log/PK-P4q.md
-    test_command: node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    test_command: node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-pigs-list.js && node tools/qa/ux-p42-web-look.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~AdoptionGate|FullyQualifiedName~PigLook|FullyQualifiedName~PigsMessages" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
