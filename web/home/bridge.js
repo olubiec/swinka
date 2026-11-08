@@ -911,7 +911,7 @@
         }
 
         case 'buy': {
-          const prices = { pellets: 5, cucumber: 5, parsley: 8, carrot: 8, kale: 10, bell_pepper: 12, chew_stick: 20, ball: 60, tunnel: 150, house: 250 };
+          const prices = { pellets: 5, cucumber: 5, parsley: 8, carrot: 8, kale: 10, bell_pepper: 12, chew_stick: 20 };
           const itemId = action.itemId;
           const cost = prices[itemId];
           if (cost && s.clovers >= cost) {

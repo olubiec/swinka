@@ -236,12 +236,6 @@
     come_called: { row: 45, frames: 10, fps: 10, loop: false, description: "Coming when called: ears up, looks at you and starts running" },
     spin: { row: 46, frames: 8, fps: 10, loop: true, description: "Trick: spins in place" },
     hurdle: { row: 47, frames: 9, fps: 12, loop: false, description: "Agility: jumps over an obstacle (the game moves the pig over it)" },
-    house_enter: { row: 48, frames: 13, fps: 10, loop: false, description: "Goes into the house (house on the right, pig disappears inside)" },
-    house_exit: { row: 49, frames: 13, fps: 10, loop: false, description: "Comes out of the house (house on the left)" },
-    tunnel_in: { row: 50, frames: 15, fps: 12, loop: false, description: "Runs into the tunnel (tunnel on the right), then the tunnel moves" },
-    tunnel_wiggle: { row: 51, frames: 8, fps: 10, loop: true, description: "Pig in the tunnel: a bulge moves along the tunnel" },
-    tunnel_out: { row: 52, frames: 10, fps: 12, loop: false, description: "Runs out of the tunnel (tunnel on the left)" },
-    ball_push: { row: 53, frames: 12, fps: 10, loop: false, description: "Pushes the ball with the nose and follows it" },
     nose_touch: { row: 54, frames: 8, fps: 8, loop: true, description: "Nose to nose with another pig (two pigs facing each other)" },
     groom_other: { row: 55, frames: 8, fps: 10, loop: true, description: "Grooming the other pig's fur" },
     follow: { row: 56, frames: 8, fps: 10, loop: true, description: "Following the other pig (same as walk)" },
@@ -251,7 +245,7 @@
   };
 
   // Senior and legend sheets play these slower (same factor as tools/art/sheets.py).
-  const SLOW_ANIMS = new Set(['walk', 'run', 'popcorn', 'follow', 'flee', 'greet', 'hurdle', 'spin', 'ball_push', 'tunnel_in', 'tunnel_out', 'house_enter', 'house_exit', 'come_called', 'dance']);
+  const SLOW_ANIMS = new Set(['walk', 'run', 'popcorn', 'follow', 'flee', 'greet', 'hurdle', 'spin', 'come_called', 'dance']);
 
   const FRAME_SIZE = 64;
 
@@ -302,7 +296,6 @@
       this.onPigExit = null;
       this.targetX = null;
       this.targetY = null;
-      this.targetToy = null;
       this.targetExit = null;
       this.currentAnim = 'idle';
       this.animTimer = 0;
@@ -332,10 +325,6 @@
       // Random idle behaviours
       this.idleBehaviorTimer = 4000;
 
-      this.inventory = {};
-      this.ballX = 150; // Initial ball position
-      this.toyPlaying = null;
-      this.targetToy = null;
       this.targetX = null;
 
       // Scene, things, and visibility
@@ -416,7 +405,6 @@
       if (this.pigY < y0 || this.pigY > y1) this.pigY = Math.round((y0 + y1) / 2);
       this.targetX = null;
       this.targetY = null;
-      this.targetToy = null;
       this.targetExit = null;
       this.idleTimer = 400;
       this.sceneBgUrl = def.bgUrl || null;
@@ -445,8 +433,6 @@
       if (!this.pigVisible) {
         this.pigDraws = 0;
         this.currentAnim = 'idle';
-        this.toyPlaying = null;
-        this.targetToy = null;
       }
     }
 
@@ -466,8 +452,6 @@
       const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
       this.setPigVisible(true);
       this.hasExited = false;
-      this.toyPlaying = null;
-      this.targetToy = null;
       this.targetExit = null;
 
       const leftX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.left && typeof this.currentScene.exits.left.x === 'number')
@@ -671,12 +655,6 @@
         return img;
       };
       this.iconsImg = loadImage(assetsBase + 'icons/icons_16.png');
-      // Toy sprites from assets/props (2x files, drawn 1:1 in scene pixels). Icons stay as fallback until they load.
-      this.propImgs = {
-        ball: loadImage(assetsBase + 'props/ball_x2.png'),
-        tunnel: loadImage(assetsBase + 'props/tunnel_x2.png'),
-        house: loadImage(assetsBase + 'props/house_x2.png'),
-      };
     }
 
     // Mouse position -> scene coordinates. The canvas is drawn with object-fit: cover,
@@ -758,23 +736,6 @@
       const p = this.toScene(e);
       const x = p.x;
       const y = p.y;
-
-      if (this.toyPlaying || this.targetToy) return;
-
-      const f = 119;
-      // Hit test toys
-      if (this.inventory.house && x >= 42 && x <= 42 + 48 && y >= f - 48 && y <= f) {
-        this.startToyWalk('house', 66);
-        return;
-      }
-      if (this.inventory.tunnel && x >= this.sceneWidth - 8 - 48 && x <= this.sceneWidth - 8 && y >= f - 48 && y <= f) {
-        this.startToyWalk('tunnel', this.sceneWidth - 32);
-        return;
-      }
-      if (this.inventory.ball && x >= this.ballX && x <= this.ballX + 32 && y >= f - 32 && y <= f) {
-        this.startToyWalk('ball', this.ballX + 16);
-        return;
-      }
 
       // If a poop was clicked, clean it up!
       if (y >= 105 && this.poopCount > 0 && Math.abs(x - (this.pigX - 25)) < 20) {
@@ -889,9 +850,6 @@
       if (typeof state.poops === 'number') {
         this.poopCount = state.poops;
       }
-      if (state.inventory) {
-        this.inventory = state.inventory;
-      }
 
       // React to an action from the state
       if (state.currentAction && state.currentAction !== this.currentAnim && this.animTimer <= 0) {
@@ -919,8 +877,6 @@
       if (this.pigVisible === false) {
         this.currentAnim = 'idle';
         this.currentFrame = 0;
-        this.toyPlaying = null;
-        this.targetToy = null;
         return;
       }
       // Update the animation frame
@@ -946,7 +902,7 @@
         }
       }
 
-      // Walking logic (toys, exits, or autonomous walk)
+      // Walking logic (exits or autonomous walk)
       if (this.targetX !== null && !this.drag) {
         const speed = (70 * dt) / 1000;
         const dx = this.targetX - this.pigX;
@@ -957,13 +913,7 @@
         if (dist <= speed || (this.targetExit && ((this.targetExit === 'right' && this.pigX >= this.targetX) || (this.targetExit === 'left' && this.pigX <= this.targetX)))) {
           this.pigX = this.targetX;
           this.pigY = ty;
-          if (this.targetToy) {
-            const toy = this.targetToy;
-            this.targetToy = null;
-            this.targetX = null;
-            this.targetY = null;
-            this.playToy(toy);
-          } else if (this.targetExit) {
+          if (this.targetExit) {
             const to = this.targetExit;
             this.callPigExit(to);
           } else if (this.exitsEnabled) {
@@ -1001,43 +951,8 @@
         }
       }
 
-      // Toy playing logic sequences
-      if (this.toyPlaying) {
-        this.toyTimer -= dt;
-        if (this.toyPlaying === 'ball') {
-          // Ball rolls away and back
-          const progress = 1 - (this.toyTimer / 2500); // 0 to 1
-          if (progress >= 0 && progress <= 1) {
-            // roll away 30px then back
-            const offset = Math.sin(progress * Math.PI) * 30;
-            this.ballX = 150 + offset * this.facing;
-          }
-        }
-        if (this.toyTimer <= 0) {
-          if (this.toyPlaying === 'tunnel_phase1') {
-            this.toyPlaying = 'tunnel_phase2';
-            this.playAnim('tunnel_out', (10 / 12) * 1000);
-            this.toyTimer = (10 / 12) * 1000;
-          } else if (this.toyPlaying === 'house_phase1') {
-            this.toyPlaying = 'house_phase2';
-            this.pigY = -1000; // hide pig
-            this.toyTimer = 2000;
-          } else if (this.toyPlaying === 'house_phase2') {
-            this.toyPlaying = 'house_phase3';
-            const [wx0, wy0, wx1, wy1] = this.walk || [10, 96, 230, 126]; this.pigY = Math.max(wy0, Math.min(wy1, 119));
-            this.playAnim('house_exit', (13 / 10) * 1000);
-            this.toyTimer = (13 / 10) * 1000;
-          } else {
-            this.toyPlaying = null;
-            this.currentAnim = 'idle';
-            this.animTimer = 0;
-            this.ballX = 150;
-          }
-        }
-      }
-
       // Timer of the current forced animation
-      if (this.animTimer > 0 && !this.targetToy && !this.toyPlaying) {
+      if (this.animTimer > 0) {
         this.animTimer -= dt;
         if (this.animTimer <= 0) {
           this.currentAnim = 'idle';
@@ -1045,13 +960,13 @@
         }
       }
 
-      if (this.targetX === null && this.currentAnim === 'walk' && !this.targetToy) {
+      if (this.targetX === null && this.currentAnim === 'walk') {
         this.currentAnim = 'idle';
         this.animTimer = 0;
       }
 
       // Autonomous idle behaviours and walk trigger
-      if (this.currentAnim === 'idle' && !this.targetToy && !this.toyPlaying && !this.drag && this.targetX === null) {
+      if (this.currentAnim === 'idle' && !this.drag && this.targetX === null) {
         this.idleTimer = (this.idleTimer || 0) - dt;
         if (this.idleTimer <= 0) {
           const r = Math.random();
@@ -1136,10 +1051,6 @@
 
       // --- 3. STANDING OBJECTS & GUINEA PIG (sorted by bottom edge y) ---
       const lit = !!this.lightScene;
-      const isSalon = !this.sceneId || this.sceneId === 'salon';
-      if (!isOutdoor && !lit && isSalon) {
-        this.drawToys(ctx);
-      }
 
       const standing = (this.things || []).filter(t => !t.flat).slice().sort((a, b) => (a.y || 0) - (b.y || 0));
       const isPigVisible = this.pigVisible !== false;
@@ -1155,7 +1066,6 @@
         if (lit) {
           this.drawContactShadow(ctx);
           this.applySceneLight(ctx, this.lightScene);
-          if (!isOutdoor && isSalon) this.drawToys(ctx);
         }
 
         // Draw Pig
@@ -1169,7 +1079,6 @@
         this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
         if (lit) {
           this.applySceneLight(ctx, this.lightScene);
-          if (!isOutdoor && isSalon) this.drawToys(ctx);
         }
       }
 
@@ -1289,30 +1198,6 @@
       }
     }
 
-    drawToys(ctx) {
-      if (!this.iconsImg || !this.iconsImg.naturalWidth) return;
-      const f = 119; // floor y
-      const ready = (img) => img && img.naturalWidth > 0;
-
-      // house: 64x64 prop, bottom centre at x 66 - hidden during house enter/exit animation because sprite contains the house
-      if (this.inventory.house && (!this.toyPlaying || !this.toyPlaying.startsWith('house'))) {
-        if (ready(this.propImgs.house)) ctx.drawImage(this.propImgs.house, 34, f - 64, 64, 64);
-        else ctx.drawImage(this.iconsImg, 8 * 16, 0, 16, 16, 42, f - 48, 48, 48);
-      }
-
-      // tunnel: 64x32 prop on the right - hidden during tunnel animation because sprite contains the tunnel
-      if (this.inventory.tunnel && (!this.toyPlaying || !this.toyPlaying.startsWith('tunnel'))) {
-        if (ready(this.propImgs.tunnel)) ctx.drawImage(this.propImgs.tunnel, this.sceneWidth - 8 - 56, f - 32, 64, 32);
-        else ctx.drawImage(this.iconsImg, 7 * 16, 0, 16, 16, this.sceneWidth - 8 - 48, f - 48, 48, 48);
-      }
-
-      // ball: 32x32 prop - hidden during ball push animation because sprite contains the pushed ball
-      if (this.inventory.ball && this.toyPlaying !== 'ball') {
-        if (ready(this.propImgs.ball)) ctx.drawImage(this.propImgs.ball, this.ballX, f - 32, 32, 32);
-        else ctx.drawImage(this.iconsImg, 6 * 16, 0, 16, 16, this.ballX, f - 32, 32, 32);
-      }
-    }
-
     drawProps(ctx) {
       // Wooden hay rack on the left with green and yellow hay
       ctx.fillStyle = '#6e4424';
@@ -1389,32 +1274,6 @@
         return Object.assign({}, def, { fps: Math.max(1, Math.round(def.fps * 0.8)) });
       }
       return def;
-    }
-
-    startToyWalk(toyName, targetX) {
-      this.targetToy = toyName;
-      this.targetX = targetX;
-      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
-      this.targetY = Math.max(y0, Math.min(y1, 119));
-    }
-
-    playToy(toy) {
-      if (root.bridge) root.bridge.send({ type: 'play_toy', item: toy });
-      if (toy === 'ball') {
-        this.toyPlaying = 'ball';
-        this.toyTimer = 2500;
-        this.playAnim('ball_push', 2500);
-      } else if (toy === 'tunnel') {
-        this.toyPlaying = 'tunnel_phase1';
-        const tInDur = (15 / 12) * 1000;
-        this.toyTimer = tInDur;
-        this.playAnim('tunnel_in', tInDur);
-      } else if (toy === 'house') {
-        this.toyPlaying = 'house_phase1';
-        const hEnterDur = (13 / 10) * 1000;
-        this.toyTimer = hEnterDur;
-        this.playAnim('house_enter', hEnterDur);
-      }
     }
 
     // Home scenes pass a light scene {ambient: {color, level} from lights.json, sources, origin} to light the scene and the pig; null = desktop look.

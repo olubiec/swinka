@@ -1042,8 +1042,6 @@
       { id: 'dance', name: 'Dancing', row: 16, frame: 2 },
       { id: 'flee', name: 'Running away', row: 43, frame: 2 },
       { id: 'hurdle', name: 'Jumping', row: 47, frame: 2 },
-      { id: 'ball_push', name: 'Playing ball', row: 53, frame: 2 },
-      { id: 'tunnel_in', name: 'Into the tunnel', row: 50, frame: 2 },
       { id: 'sleep_house', name: 'Napping in the house', row: 39, frame: 2 },
       { id: 'party', name: 'Birthday party', row: 58, frame: 2 }
   ];

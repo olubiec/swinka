@@ -30,6 +30,14 @@ namespace Cuy
         private static readonly object _syncLock = new object();
         private static Dictionary<string, CuyItemDef> _items;
 
+        /// <summary>True when the id is in the loaded catalog. Ids of removed items from old saves are not in it.</summary>
+        public static bool Exists(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return false;
+            EnsureLoaded();
+            return _items.ContainsKey(itemId);
+        }
+
         public static CuyItemDef GetItem(string itemId)
         {
             if (string.IsNullOrEmpty(itemId)) return null;
@@ -84,12 +92,6 @@ namespace Cuy
                     new Dictionary<string, double> { { "fullness", 8 }, { "mood", 10 }, { "vitamin_c", 3 } });
                 AddDefault(map, "chew_stick", "Chew stick", "chew", 20, false, "chew_stick", "chew_stick",
                     new Dictionary<string, double> { { "teeth", 40 }, { "mood", 5 } });
-                AddDefault(map, "ball", "Ball", "toy", 60, false, "ball", "ball_push",
-                    new Dictionary<string, double> { { "mood", 15 }, { "energy", -5 } });
-                AddDefault(map, "tunnel", "Tunnel", "toy", 150, false, "tunnel", "tunnel_in",
-                    new Dictionary<string, double> { { "mood", 20 }, { "energy", -8 } });
-                AddDefault(map, "house", "House", "furniture", 250, false, "house", "sleep_house",
-                    new Dictionary<string, double> { { "energy", 10 }, { "mood", 5 } });
                 AddDefault(map, "water_bottle", "Water bottle", "furniture", 40, false, "water_bottle", "drink",
                     new Dictionary<string, double> { { "mood", 2 }, { "fullness", 2 } });
                 AddDefault(map, "cake", "Celery cake", "special", null, false, "cake", "party",

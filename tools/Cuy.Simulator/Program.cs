@@ -118,7 +118,7 @@ namespace Cuy.Simulator
                         brain.Update(TimeSpan.FromSeconds(5));
                     }
 
-                    session.Pet.IsSleeping = (brain.CurrentAction != null && (brain.CurrentAction.ActionId == "sleep" || brain.CurrentAction.ActionId == "sleep_in_house" || brain.CurrentAction.ActionId == "nap")) || IsNight(before.Hour);
+                    session.Pet.IsSleeping = (brain.CurrentAction != null && (brain.CurrentAction.ActionId == "sleep" || brain.CurrentAction.ActionId == "nap")) || IsNight(before.Hour);
                     session.Tick();
                     if (o.Care && !session.Pet.IsSleeping) Care(session.Pet, now);
                 }

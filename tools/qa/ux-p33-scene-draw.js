@@ -92,8 +92,6 @@ function runScenarioChecks(CanvasPig, CuyScenes, inst) {
   CanvasPig.setScene(roomDef);
   if (inst) {
     inst.render();
-    assert(inst.propImgs && inst.propImgs.house && inst.propImgs.tunnel && inst.propImgs.ball,
-      'Toy prop images must still exist and be defined');
     if (inst.ctx && inst.ctx.getImageData) {
       const wallPixel = inst.ctx.getImageData(50, 20, 1, 1).data;
       assert(wallPixel[3] > 0, 'Wall pixel must not be transparent');
@@ -242,9 +240,6 @@ async function runBrowserTests() {
       const inst = window.CanvasPig.instance || (window.CuyPig && window.CuyPig.mainInstance);
       if (inst) {
         inst.render();
-        if (!inst.propImgs || !inst.propImgs.house || !inst.propImgs.tunnel || !inst.propImgs.ball) {
-          throw new Error('Prop images missing');
-        }
         const wall = inst.ctx.getImageData(50, 20, 1, 1).data;
         if (wall[3] === 0) throw new Error('Wall pixel is transparent');
         const floor = inst.ctx.getImageData(50, 110, 1, 1).data;
@@ -478,8 +473,6 @@ function runNodeTests() {
     const roomDef = CuyScenes.def('salon');
     CanvasPig.setScene(roomDef);
     inst.render();
-    assert(inst.propImgs && inst.propImgs.house && inst.propImgs.tunnel && inst.propImgs.ball,
-      'Toy prop images must still exist and be defined');
     const wallPixel = inst.ctx.getImageData(50, 20, 1, 1).data;
     assert(wallPixel[3] > 0, 'Wall pixel must not be transparent');
     const floorPixel = inst.ctx.getImageData(50, 110, 1, 1).data;

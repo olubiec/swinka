@@ -145,7 +145,6 @@ namespace Cuy.Core.Tests
             Assert.Contains("siano", code);
             Assert.Contains("papryka", code);
             Assert.Contains("granulat", code);
-            Assert.Contains("domek", code);
             Assert.Contains("Swinka", code);
         }
 

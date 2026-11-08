@@ -31,9 +31,6 @@ namespace Cuy.Core.Tests
             "cucumber",
             "carrot",
             "chew_stick",
-            "ball",
-            "tunnel",
-            "house",
             "water_bottle",
             "cake"
         };

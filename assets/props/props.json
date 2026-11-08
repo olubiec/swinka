@@ -1,57 +1,5 @@
 {
  "note": "rekwizyty okna Pulpit; swiatlo swiata nie dotyczy; kotwica dol-srodek",
  "items": {
-  "ball": {
-   "file": "props/ball.png",
-   "file_x2": "props/ball_x2.png",
-   "size": [
-    16,
-    16
-   ],
-   "anchor": [
-    8,
-    16
-   ],
-   "source": "prop_ball"
-  },
-  "tunnel": {
-   "file": "props/tunnel.png",
-   "file_x2": "props/tunnel_x2.png",
-   "size": [
-    32,
-    16
-   ],
-   "anchor": [
-    16,
-    16
-   ],
-   "source": "prop_tunnel"
-  },
-  "hay_ball": {
-   "file": "props/hay_ball.png",
-   "file_x2": "props/hay_ball_x2.png",
-   "size": [
-    16,
-    16
-   ],
-   "anchor": [
-    8,
-    16
-   ],
-   "source": "prop_hay_ball"
-  },
-  "house": {
-   "file": "props/house.png",
-   "file_x2": "props/house_x2.png",
-   "size": [
-    32,
-    32
-   ],
-   "anchor": [
-    16,
-    32
-   ],
-   "source": "prop_house"
-  }
  }
 }

@@ -362,27 +362,6 @@
    ],
    "fps": 0
   },
-  "hide_willow_tunnel": {
-   "slot": "hide",
-   "layer": "front",
-   "size": [
-    72,
-    32
-   ],
-   "anchor": [
-    36,
-    32
-   ],
-   "frames": [
-    [
-     539,
-     229,
-     72,
-     32
-    ]
-   ],
-   "fps": 0
-  },
   "hide_cardboard_box": {
    "slot": "hide",
    "layer": "front",
@@ -442,27 +421,6 @@
      97,
      56,
      40
-    ]
-   ],
-   "fps": 0
-  },
-  "hide_wooden_house": {
-   "slot": "hide",
-   "layer": "front",
-   "size": [
-    72,
-    44
-   ],
-   "anchor": [
-    36,
-    44
-   ],
-   "frames": [
-    [
-     555,
-     97,
-     72,
-     44
     ]
    ],
    "fps": 0

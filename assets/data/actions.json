@@ -265,26 +265,6 @@
    ]
   },
   {
-   "id": "sleep_in_house",
-   "animation": "sleep_house",
-   "duration_s": 300,
-   "enter": "house_enter",
-   "exit": "house_exit",
-   "effects": {
-    "energy": 45
-   },
-   "conditions": {
-    "energy_max": 40,
-    "item": "house"
-   },
-   "time_multiplier": {
-    "23-7": 2.0
-   },
-   "satisfies": [
-    "energy"
-   ]
-  },
-  {
    "id": "wheeking",
    "animation": "wheek",
    "duration_s": 1,
@@ -327,60 +307,6 @@
    },
    "cooldown_s": 120,
    "signal": true
-  },
-  {
-   "id": "hay_ball_play",
-   "animation": "ball_push",
-   "duration_s": 1.2,
-   "effects": {
-    "mood": 10,
-    "teeth": 5
-   },
-   "conditions": {
-    "item": "hay_ball",
-    "energy_min": 25
-   },
-   "cooldown_s": 900,
-   "satisfies": [
-    "mood"
-   ]
-  },
-  {
-   "id": "ball_play",
-   "animation": "ball_push",
-   "duration_s": 1.2,
-   "effects": {
-    "mood": 15,
-    "energy": -5
-   },
-   "conditions": {
-    "item": "ball",
-    "energy_min": 30
-   },
-   "cooldown_s": 900,
-   "satisfies": [
-    "mood"
-   ],
-   "base_weight": 0.045
-  },
-  {
-   "id": "tunnel",
-   "animation": "tunnel_in",
-   "exit": "tunnel_out",
-   "duration_s": 4,
-   "effects": {
-    "mood": 20,
-    "energy": -8
-   },
-   "conditions": {
-    "item": "tunnel",
-    "energy_min": 30
-   },
-   "cooldown_s": 1200,
-   "satisfies": [
-    "mood"
-   ],
-   "base_weight": 0.06
   },
   {
    "id": "rumblestrut",

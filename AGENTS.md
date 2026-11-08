@@ -57,7 +57,7 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 - Browser mock: `web/home/features/<id>/mock.js` calls `bridge.registerMockHandler(type, fn)` / `bridge.registerMockState(id, fn)`. Do not add cases to the `switch` in `bridge.js`.
 
 ## Canonical ids
-- items: hay pellets bell_pepper parsley kale cucumber carrot chew_stick ball tunnel house water_bottle cake (+ ids added in `assets/data/items_*.json`)
+- items: hay pellets bell_pepper parsley kale cucumber carrot chew_stick water_bottle cake (+ ids added in `assets/data/items_*.json`)
 - icons: keys of `assets/icons/icons.json`
 - needs: fullness vitamin_c energy mood cleanliness teeth (C# enum `Need.Satiety` = fullness)
 - stages: baby junior adult senior legend; currency: clovers (icon `clover`)

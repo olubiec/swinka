@@ -799,8 +799,6 @@ body.webview-mode .game-device {
 .icon-carrot { --i: 3; }
 .icon-pellets { --i: 4; }
 .icon-chew-stick { --i: 5; }
-.icon-ball { --i: 6; }
-.icon-tunnel { --i: 7; }
 .icon-house { --i: 8; }
 .icon-water-bottle { --i: 9; }
 .icon-poop { --i: 10; }
@@ -910,10 +908,6 @@ body.webview-mode .game-device {
 .icon-sig-glen-knit-bed { --i: 222; }
 .icon-sig-racuch-hop-pad { --i: 223; }
 .icon-gate-garden { --i: 224; }
-.icon-prop-ball { --i: 225; }
-.icon-prop-tunnel { --i: 226; }
-.icon-prop-hay-ball { --i: 227; }
-.icon-prop-house { --i: 228; }
 .icon-fireplace { --i: 229; }
 .icon-lamp-mushroom { --i: 230; }
 .icon-lamp-floor { --i: 231; }
@@ -976,7 +970,6 @@ body.webview-mode .game-device {
 .icon-color-lock { --i: 173; }
 .icon-dandelion { --i: 25; }
 .icon-apple { --i: 26; }
-.icon-hay-ball { --i: 27; }
 .icon-chew-bridge { --i: 28; }
 .icon-hammock { --i: 29; }
 .icon-cuddle-cup { --i: 30; }

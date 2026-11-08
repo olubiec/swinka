@@ -907,7 +907,7 @@ namespace Cuy
             }
 
             // The pig is asleep: update the flag in Pet so energy rises
-            bool isSleeping = (action.ActionId == "sleep" || action.ActionId == "sleep_in_house" || action.ActionId == "nap");
+            bool isSleeping = (action.ActionId == "sleep" || action.ActionId == "nap");
             _session.Pet.IsSleeping = isSleeping;
             if (!isSleeping)
             {
@@ -931,7 +931,7 @@ namespace Cuy
             if (_session?.Pet != null && _session.Pet.IsSleeping) return true;
             var action = _brain.CurrentAction;
             if (action == null) return false;
-            return (action.ActionId == "sleep" || action.ActionId == "sleep_in_house" || action.ActionId == "nap");
+            return (action.ActionId == "sleep" || action.ActionId == "nap");
         }
 
         public void TriggerWakeUp()

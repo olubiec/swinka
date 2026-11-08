@@ -18,7 +18,7 @@
     { frame: 3, name: 'carrot' },
     { frame: 4, name: 'pellets' },
     { frame: 5, name: 'chew_stick' },
-    { frame: 6, name: 'ball' },
+    { frame: 26, name: 'apple' },
     { frame: 12, name: 'hay' },
     { frame: 14, name: 'kale' },
     { frame: 15, name: 'strawberry' }

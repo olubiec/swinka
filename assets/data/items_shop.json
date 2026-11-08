@@ -57,20 +57,6 @@
       "description": "Added into the water."
     },
     {
-      "id": "hay_ball",
-      "name": "Hay ball",
-      "category": "toy",
-      "price": 80,
-      "icon": "hay_ball",
-      "animation": "hay_ball_play",
-      "one_time": true,
-      "effects": {
-        "mood": 10,
-        "teeth": 5
-      },
-      "description": "Unlocks playing with a hay ball."
-    },
-    {
       "id": "chew_bridge",
       "name": "Chew bridge",
       "category": "toy",

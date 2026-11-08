@@ -61,10 +61,8 @@ State key `decor`: `{ "equipped": { "wallpaper": "wallpaper_mint", "floor": null
 `"slot": "<slot>"`, `"look": { ... }` (colours/pattern used by the renderer). Messages: `decor_equip { slot, itemId }`
 (`itemId` null = remove; only owned items).
 
-## toys – task F2-07
-State key `toys`: `{ "ball": { "owned": true, "readyIn": 0 }, "tunnel": { ... }, "hay_ball": { ... }, "house": { ... } }` (`readyIn` = seconds
-until the cooldown ends). Message: `play_toy { item }` → mood/energy effects from the matching action in
-`assets/data/actions.json` (`ball_play`, `tunnel`, `hay_ball_play`), respecting its `cooldown_s`; house = short rest, no cooldown.
+## toys – removed
+Ball, tunnel, hay ball and house toys (and their play_toy message and `toys` state key) were removed from the game. Their graphics stay in `assets/`.
 
 ## daily (daily gift) – Core: `Pet.Economy.cs` (task F1-06)
 State key `daily`: `{ "available": true, "amount": 20, "streak": 3 }`. Message: `daily_claim` → `Pet.ClaimDailyGift()`;

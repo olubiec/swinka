@@ -116,48 +116,6 @@
    "description": "Wears down the teeth. Lasts 5 uses."
   },
   {
-   "id": "ball",
-   "name": "Ball",
-   "category": "toy",
-   "price": 60,
-   "permanent": true,
-   "icon": "ball",
-   "animation": "ball_push",
-   "effects": {
-    "mood": 15,
-    "energy": -5
-   },
-   "description": "Unlocks playing with the ball."
-  },
-  {
-   "id": "tunnel",
-   "name": "Tunnel",
-   "category": "toy",
-   "price": 150,
-   "permanent": true,
-   "icon": "tunnel",
-   "animation": "tunnel_in",
-   "effects": {
-    "mood": 20,
-    "energy": -8
-   },
-   "description": "Unlocks running through the tunnel."
-  },
-  {
-   "id": "house",
-   "name": "House",
-   "category": "equipment",
-   "price": 250,
-   "permanent": true,
-   "icon": "house",
-   "animation": "sleep_house",
-   "effects": {
-    "energy": 10,
-    "mood": 5
-   },
-   "description": "Sleeping in the house restores energy 1.5x faster."
-  },
-  {
    "id": "water_bottle",
    "name": "Water bottle",
    "category": "equipment",
