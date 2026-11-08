@@ -1989,56 +1989,56 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P44q-windows-checks-wave-p44.md"
   },
-  "PK-P45a": {
-   "wave": "P45a",
+  "PK-P47a": {
+   "wave": "P47a",
    "title": "Home window becomes landscape 640x400",
    "items": [],
    "files": [
     "src/Cuy/dotNet/HomeWindow.cs",
     "src/Cuy/dotNet/HomeWindow.Designer.cs",
     "src/Cuy/dotNet/WebView2Probe.cs",
-    "docs/opt/log/PK-P45a.md"
+    "docs/opt/log/PK-P47a.md"
    ],
    "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
    "gate": false,
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45a.md"
+   "prompt_file": "docs/prompts/PK-P47a.md"
   },
-  "PK-P45b": {
-   "wave": "P45a",
+  "PK-P47b": {
+   "wave": "P47a",
    "title": "Canvas shows the whole scene (fit, not crop)",
    "items": [],
    "files": [
     "web/home/canvas-pig.js",
-    "tools/qa/ux-p45-fit.js",
-    "docs/opt/log/PK-P45b.md"
+    "tools/qa/ux-p47-fit.js",
+    "docs/opt/log/PK-P47b.md"
    ],
-   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-fit.js && node tools/qa/ux-p45-fit.js",
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p47-fit.js && node tools/qa/ux-p47-fit.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45b.md"
+   "prompt_file": "docs/prompts/PK-P47b.md"
   },
-  "PK-P45c": {
-   "wave": "P45c",
+  "PK-P47c": {
+   "wave": "P47c",
    "title": "Stage fills the window, HUD strip, bottom panel removed",
    "items": [],
    "files": [
     "web/home/index.html",
     "web/home/style.css",
     "tools/qa/lib/ux.js",
-    "tools/qa/ux-p45-layout.js",
-    "docs/opt/log/PK-P45c.md"
+    "tools/qa/ux-p47-layout.js",
+    "docs/opt/log/PK-P47c.md"
    ],
-   "verify": "node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p45-layout.js && node tools/qa/ux-p45-layout.js",
+   "verify": "node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p47-layout.js && node tools/qa/ux-p47-layout.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45c.md"
+   "prompt_file": "docs/prompts/PK-P47c.md"
   },
-  "PK-P45d": {
-   "wave": "P45d",
+  "PK-P47d": {
+   "wave": "P47d",
    "title": "Menu buttons open full-window panels",
    "items": [],
    "files": [
@@ -2046,29 +2046,29 @@
     "web/home/menu-panel.js",
     "web/home/menu-panel.css",
     "web/home/index.html",
-    "tools/qa/ux-p45-menu.js",
-    "docs/opt/log/PK-P45d.md"
+    "tools/qa/ux-p47-menu.js",
+    "docs/opt/log/PK-P47d.md"
    ],
-   "verify": "node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p45-menu.js && node tools/qa/ux-p45-menu.js",
+   "verify": "node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p47-menu.js && node tools/qa/ux-p47-menu.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45d.md"
+   "prompt_file": "docs/prompts/PK-P47d.md"
   },
-  "PK-P45q": {
-   "wave": "P45q",
+  "PK-P47q": {
+   "wave": "P47q",
    "title": "Windows checks after wave P45",
    "items": [],
    "files": [
     "docs/qa/UX_WAVE_CHECKS.md",
-    "tools/qa/ux-p45-shots.js",
-    "docs/opt/log/PK-P45q.md"
+    "tools/qa/ux-p47-shots.js",
+    "docs/opt/log/PK-P47q.md"
    ],
    "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/screen-matrix.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
    "gate": false,
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P45q.md"
+   "prompt_file": "docs/prompts/PK-P47q.md"
   },
   "PK-P4a": {
    "wave": "P4a",
