@@ -10,7 +10,7 @@ namespace Cuy.Core
     public sealed partial class GameState
     {
         /// <summary>Current save format version. Bump it when the format changes and add a migration in SaveSystem.</summary>
-        public const int CurrentVersion = 2;
+        public const int CurrentVersion = 3;
 
         public int Version { get; set; } = CurrentVersion;
 
