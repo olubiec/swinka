@@ -1876,6 +1876,87 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P44q-windows-checks-wave-p44.md"
   },
+  "PK-P45a": {
+   "wave": "P45a",
+   "title": "Home window becomes landscape 640x400",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/HomeWindow.cs",
+    "src/Cuy/dotNet/HomeWindow.Designer.cs",
+    "src/Cuy/dotNet/WebView2Probe.cs",
+    "docs/opt/log/PK-P45a.md"
+   ],
+   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45a.md"
+  },
+  "PK-P45b": {
+   "wave": "P45a",
+   "title": "Canvas shows the whole scene (fit, not crop)",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p45-fit.js",
+    "docs/opt/log/PK-P45b.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-fit.js && node tools/qa/ux-p45-fit.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45b.md"
+  },
+  "PK-P45c": {
+   "wave": "P45c",
+   "title": "Stage fills the window, HUD strip, bottom panel removed",
+   "items": [],
+   "files": [
+    "web/home/index.html",
+    "web/home/style.css",
+    "tools/qa/lib/ux.js",
+    "tools/qa/ux-p45-layout.js",
+    "docs/opt/log/PK-P45c.md"
+   ],
+   "verify": "node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p45-layout.js && node tools/qa/ux-p45-layout.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45c.md"
+  },
+  "PK-P45d": {
+   "wave": "P45d",
+   "title": "Menu buttons open full-window panels",
+   "items": [],
+   "files": [
+    "web/home/app.js",
+    "web/home/menu-panel.js",
+    "web/home/menu-panel.css",
+    "web/home/index.html",
+    "tools/qa/ux-p45-menu.js",
+    "docs/opt/log/PK-P45d.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p45-menu.js && node tools/qa/ux-p45-menu.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45d.md"
+  },
+  "PK-P45q": {
+   "wave": "P45q",
+   "title": "Windows checks after wave P45",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "tools/qa/ux-p45-shots.js",
+    "docs/opt/log/PK-P45q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/screen-matrix.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P45q.md"
+  },
   "PK-P4a": {
    "wave": "P4a",
    "title": "Core: adoption gate for Kuki and Ned",

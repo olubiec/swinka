@@ -496,6 +496,31 @@
       ]
     },
     {
+      "id": "P45a",
+      "packages": [
+        "PK-P45a",
+        "PK-P45b"
+      ]
+    },
+    {
+      "id": "P45c",
+      "packages": [
+        "PK-P45c"
+      ]
+    },
+    {
+      "id": "P45d",
+      "packages": [
+        "PK-P45d"
+      ]
+    },
+    {
+      "id": "P45q",
+      "packages": [
+        "PK-P45q"
+      ]
+    },
+    {
       "id": "P4a",
       "packages": [
         "PK-P4a",
@@ -1561,6 +1586,46 @@
       "title": "Farm: orchard slots, shop and bulk buttons in the scene",
       "manual": "docs/prompts/PK-P43g-farm-orchard-shop-bulk.md",
       "verify": "node --check web/home/features/farm/feature.js && node --check tools/qa/ux-p43-farm-extras.js && node tools/qa/ux-p43-farm-extras.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45a",
+      "tier": "low",
+      "title": "Home window becomes landscape 640x400",
+      "manual": "docs/prompts/PK-P45a.md",
+      "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": []
+    },
+    {
+      "id": "PK-P45b",
+      "tier": "mid",
+      "title": "Canvas shows the whole scene (fit, not crop)",
+      "manual": "docs/prompts/PK-P45b.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p45-fit.js && node tools/qa/ux-p45-fit.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45c",
+      "tier": "high",
+      "title": "Stage fills the window, HUD strip, bottom panel removed",
+      "manual": "docs/prompts/PK-P45c.md",
+      "verify": "node --check tools/qa/lib/ux.js && node --check tools/qa/ux-p45-layout.js && node tools/qa/ux-p45-layout.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45d",
+      "tier": "high",
+      "title": "Menu buttons open full-window panels",
+      "manual": "docs/prompts/PK-P45d.md",
+      "verify": "node --check web/home/app.js && node --check web/home/menu-panel.js && node --check tools/qa/ux-p45-menu.js && node tools/qa/ux-p45-menu.js",
+      "items": []
+    },
+    {
+      "id": "PK-P45q",
+      "tier": "low",
+      "title": "Windows checks after wave P45",
+      "manual": "docs/prompts/PK-P45q.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/screen-matrix.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
       "items": []
     }
   ]
