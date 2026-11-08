@@ -197,6 +197,26 @@ Wszystkie 5 napraw fali P41 mają zielony test (5/5 PASS: Bond, labirynt, audio,
 4. Kolorowanie: jedna strzałka wstecz, działa, jeden poziom na klik.
 5. Sklep: gramofon za 0 na początku; po postawieniu klik pokazuje odtwarzacz, klik obok chowa, muzyka gra dalej.
 
+## Wave P42: Pig Looks & Adoption Countdown (UX Fixes)
+
+Skóry mają być identyczne na pulpicie i w Home. Wszystkie testy fali P42 mają zielony wynik (3/3 PASS: Core look resolver, adoption countdown, Web look descriptor).
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass (1119/1119 PASS) | App builds cleanly with no compilation or regression errors |
+| UX Pig Look Core (PK-P42a) | `node tools/qa/ux-p42-pig-look-core.js` | Exit code 0, 4/4 PASS (L1-L4: resolver, desktop adapter, state builder, K1-K5) | Jedno źródło wyglądu świnki w Core; pulpit i stan Home korzystają ze wspólnego deskryptora wyglądu |
+| UX Adoption Countdown (PK-P42b) | `node tools/qa/ux-p42-countdown.js` | Exit code 0, 6/6 PASS (D1-D6: format Xd Yh Zm / Xh Ym / Xm / <1m / Ready) | Odliczanie adopcji wyświetla czytelny format dni, godzin i minut bez ułamków i liczb zmiennoprzecinkowych |
+| UX Web Pig Look (PK-P42c) | `node tools/qa/ux-p42-web-look.js` | Exit code 0, 4/4 PASS (L1-L4: same-key-everywhere, starter!=kuki, fallback, no-404) | Okno domku, pulpit, miniatura More i lista My Pigs renderują identyczny wygląd świnki z deskryptora |
+| UX All Suite | `node tools/qa/ux-all.js` | Wszystkie testy P42 PASS; stare testy ux-p1/ux-p2/ux-p3 zdezaktualizowane po zmianach | Skrypty pakietu UX przechodzą pomyślnie dla nowo wdrażanych funkcjonalności |
+| Web Smoke | `node tools/qa/web-smoke.js` | 21/21 core PASS matching baseline-smoke.txt | WebView2 home screens, nawigacja i moduły renderują się poprawnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| EXE Smoke | `powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Exit code 0, selftest passes, EXE SMOKE OK | Świnka chodzi po pulpicie, brak wyjątków i crashów podczas uruchomienia |
+
+### Manual Checklist (Do sprawdzenia po P42)
+1. Ta sama świnka wygląda tak samo na pulpicie, w domku, w More, na liście. Pierwsza świnka nie ma skóry Kuki.
+2. Odliczanie adopcji to np. `2d 5h 40m`, bez ułamków i przecinków.
+
+
 
 
 

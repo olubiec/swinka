@@ -1,9 +1,240 @@
 (function (root) {
   'use strict';
-  if (!root.CuyHome) return;
+
+  function formatRemaining(ms) {
+    let num;
+    try {
+      num = Number(ms);
+    } catch (e) {
+      return 'Ready';
+    }
+    if (!Number.isFinite(num) || num <= 0) {
+      return 'Ready';
+    }
+    const totalMs = Math.floor(num);
+    const totalMinutes = Math.floor(totalMs / 60000);
+    if (totalMinutes < 1) {
+      return '<1m';
+    }
+    const totalHours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (totalHours < 1) {
+      return `${minutes}m`;
+    }
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    if (days < 1) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${days}d ${hours}h ${minutes}m`;
+  }
+
+  if (root) {
+    root.CuyPigs = root.CuyPigs || {};
+    root.CuyPigs.formatRemaining = formatRemaining;
+  }
+
+  // Ensure CuyLook is defined if loaded before canvas-pig.js
+  root.CuyLook = root.CuyLook || {};
+  if (typeof root.CuyLook.spriteFor !== 'function') {
+    const KNOWN_NAMED_PIGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch']);
+    const VALID_STAGES = new Set(['baby', 'junior', 'adult', 'senior', 'legend']);
+
+    function normStage(stage) {
+      if (!stage || typeof stage !== 'string') return 'adult';
+      stage = stage.trim().toLowerCase();
+      return VALID_STAGES.has(stage) ? stage : 'adult';
+    }
+
+    function normBreed(breed) {
+      if (!breed || typeof breed !== 'string') return 'smooth';
+      breed = breed.trim().toLowerCase();
+      switch (breed) {
+        case 'smooth':
+        case 'smooth_normal':
+          return 'smooth';
+        case 'chubby':
+        case 'smooth_chubby':
+          return 'smooth_chubby';
+        case 'skinny':
+        case 'smooth_lean':
+          return 'smooth_lean';
+        case 'rosette':
+        case 'rosette_normal':
+          return 'rosette_normal';
+        case 'rosette_lean':
+          return 'rosette_lean';
+        case 'peruvian':
+        case 'peruvian_normal':
+          return 'peruvian_normal';
+        case 'teddy':
+        case 'teddy_normal':
+          return 'teddy_normal';
+        case 'teddy_chubby':
+          return 'teddy_chubby';
+        default:
+          return 'smooth';
+      }
+    }
+
+    function resolveLook(pig, stageOverride) {
+      if (!pig) {
+        const s = normStage(stageOverride);
+        return {
+          spriteKey: 'sprites/' + s + '/spritesheet.png',
+          breed: 'smooth',
+          coat: 'tricolor',
+          stage: s,
+          named: null
+        };
+      }
+
+      if (typeof pig === 'string') {
+        const clean = pig.replace(/^pig:/, '').trim().toLowerCase();
+        if (clean === 'more' || clean === 'more-tile') {
+          const state = (root.bridge && root.bridge.currentState) || (root.bridge && typeof root.bridge.getState === 'function' && root.bridge.getState());
+          const active = (state && state.roster && (state.roster.find(p => p && (p.id === (state.activePigIds && state.activePigIds[0]))) || state.roster[0])) || null;
+          return resolveLook(active, stageOverride);
+        }
+        if (KNOWN_NAMED_PIGS.has(clean)) {
+          let b = 'smooth', c = 'tricolor';
+          if (clean === 'kuki') { b = 'rosette_normal'; c = 'two_tone.ginger'; }
+          else if (clean === 'ned') { b = 'teddy_chubby'; c = 'bicolor_head.chocolate'; }
+          else if (clean === 'james') { b = 'teddy_normal'; c = 'roan.slate'; }
+          else if (clean === 'glen') { b = 'rosette_lean'; c = 'self.black'; }
+          else if (clean === 'racuch') { b = 'smooth_chubby'; c = 'saddle.ginger'; }
+          const s = normStage(stageOverride);
+          return {
+            spriteKey: 'sprites/pigs/' + clean + '/' + s + '/spritesheet.png',
+            breed: b,
+            coat: c,
+            stage: s,
+            named: clean
+          };
+        }
+        if (clean === 'starter' || clean === 'cuy' || clean === 'pig_default') {
+          const s = normStage(stageOverride);
+          return {
+            spriteKey: 'sprites/' + s + '/spritesheet.png',
+            breed: 'smooth',
+            coat: 'tricolor',
+            stage: s,
+            named: null
+          };
+        }
+        const b = normBreed(clean);
+        const s = normStage(stageOverride);
+        return {
+          spriteKey: b === 'smooth' ? 'sprites/' + s + '/spritesheet.png' : 'sprites/breeds/' + b + '/' + s + '/spritesheet.png',
+          breed: b,
+          coat: 'tricolor',
+          stage: s,
+          named: null
+        };
+      }
+
+      if (pig.nodeType === 1) {
+        if (pig.dataset) {
+          if (pig.dataset.spriteKey) return { spriteKey: pig.dataset.spriteKey };
+          if (pig.dataset.room) return resolveLook(pig.dataset.room, stageOverride);
+          if (pig.dataset.pigId) return resolveLook(pig.dataset.pigId, stageOverride);
+          if (pig.dataset.openFeature === 'pigs') return resolveLook('more', stageOverride);
+        }
+      }
+
+      if (pig.look && pig.look.spriteKey) {
+        const s = normStage(stageOverride || pig.look.stage || pig.stage);
+        const named = pig.look.named || (pig.look.spriteKey.includes('sprites/pigs/') ? pig.look.spriteKey.split('/')[2] : null);
+        return {
+          spriteKey: pig.look.spriteKey,
+          breed: pig.look.breed || normBreed(pig.breed),
+          coat: pig.look.coat || pig.look.paletteId || pig.paletteId || 'tricolor',
+          stage: s,
+          named: named
+        };
+      }
+
+      if (pig.spriteKey) {
+        return {
+          spriteKey: pig.spriteKey,
+          breed: pig.breed || 'smooth',
+          coat: pig.coat || pig.paletteId || 'tricolor',
+          stage: normStage(stageOverride || pig.stage),
+          named: pig.named || null
+        };
+      }
+
+      // Fallback for old state without look
+      const s = normStage(stageOverride || pig.stage || (pig.look && pig.look.stage));
+      const b = normBreed(pig.breed || (pig.look && pig.look.breed));
+      const coat = pig.paletteId || (pig.look && pig.look.paletteId) || pig.coat || 'tricolor';
+
+      let rawNamed = pig.namedId || (pig.look && pig.look.namedId);
+      if (!rawNamed && pig.id && KNOWN_NAMED_PIGS.has(String(pig.id).toLowerCase())) {
+        rawNamed = String(pig.id).toLowerCase();
+      }
+      const named = (rawNamed && KNOWN_NAMED_PIGS.has(String(rawNamed).toLowerCase())) ? String(rawNamed).toLowerCase() : null;
+
+      let spriteKey;
+      if (named) {
+        spriteKey = 'sprites/pigs/' + named + '/' + s + '/spritesheet.png';
+      } else if (b === 'smooth') {
+        spriteKey = 'sprites/' + s + '/spritesheet.png';
+      } else {
+        spriteKey = 'sprites/breeds/' + b + '/' + s + '/spritesheet.png';
+      }
+
+      return {
+        spriteKey: spriteKey,
+        breed: b,
+        coat: coat,
+        stage: s,
+        named: named
+      };
+    }
+
+    function spriteFor(pig, stageOverride) {
+      const desc = resolveLook(pig, stageOverride);
+      return desc ? desc.spriteKey : null;
+    }
+
+    root.CuyLook.resolve = resolveLook;
+    root.CuyLook.spriteFor = spriteFor;
+    if (typeof window !== 'undefined') {
+      window.CuyLook = root.CuyLook;
+    }
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = formatRemaining;
+    module.exports.formatRemaining = formatRemaining;
+    module.exports.CuyLook = root.CuyLook;
+    module.exports.spriteFor = root.CuyLook.spriteFor;
+  }
+
+  if (!root || !root.CuyHome) return;
 
   let activeContainer = null;
   let activeApi = null;
+  let refreshTimer = null;
+  let lastState = null;
+
+  function getOfferRemainingMs(offer) {
+    if (!offer) return 0;
+    let baseMs = 0;
+    if (typeof offer.remainingMs === 'number') {
+      baseMs = offer.remainingMs;
+    } else if (typeof offer.daysLeft === 'number') {
+      baseMs = offer.daysLeft * 86400000;
+    } else {
+      return 0;
+    }
+    if (!offer._receivedAt) {
+      offer._receivedAt = Date.now();
+    }
+    const elapsed = Math.max(0, Date.now() - offer._receivedAt);
+    return Math.max(0, baseMs - elapsed);
+  }
 
   const KNOWN_NAMED_PNGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch']);
 
@@ -13,25 +244,42 @@
       return `<span class="pixel-icon icon-pig-head"></span>`;
     }
 
+    const spriteKey = (root.CuyLook && root.CuyLook.spriteFor) ? root.CuyLook.spriteFor(pig) : null;
     let look = null;
     let stage = 'adult';
     let id = null;
 
-    if (typeof pig === 'string') {
-      id = pig;
-      const offers = getFallbackOffers();
-      const match = offers.find(o => o.id === pig);
-      if (match) {
-        look = match.look;
-        stage = match.stage || 'adult';
+    if (root.CuyLook && root.CuyLook.resolve) {
+      const desc = root.CuyLook.resolve(pig, (pig && pig.stage) || 'adult');
+      if (desc) {
+        look = {
+          spriteKey: desc.spriteKey,
+          breed: desc.breed,
+          paletteId: desc.coat,
+          coat: desc.coat,
+          namedId: desc.named,
+          stage: desc.stage
+        };
+        stage = desc.stage;
+        id = desc.named;
       }
-    } else if (typeof pig === 'object') {
-      id = pig.namedId || pig.id;
-      stage = pig.stage || 'adult';
-      if (pig.look && (pig.look.breed || pig.look.paletteId)) {
-        look = pig.look;
-      } else if (pig.breed || pig.paletteId) {
-        look = { breed: pig.breed, paletteId: pig.paletteId };
+    } else {
+      if (typeof pig === 'string') {
+        id = pig;
+        const offers = getFallbackOffers();
+        const match = offers.find(o => o.id === pig);
+        if (match) {
+          look = match.look;
+          stage = match.stage || 'adult';
+        }
+      } else if (typeof pig === 'object') {
+        id = pig.namedId || pig.id;
+        stage = pig.stage || 'adult';
+        if (pig.look && (pig.look.breed || pig.look.paletteId)) {
+          look = pig.look;
+        } else if (pig.breed || pig.paletteId) {
+          look = { breed: pig.breed, paletteId: pig.paletteId };
+        }
       }
     }
 
@@ -44,12 +292,14 @@
           const el = document.getElementById(portraitId);
           if (el) el.src = c.toDataURL();
         };
-        return `<img id="${portraitId}" class="pig-portrait${sz === 64 ? ' size-64' : ''}" src="${dataUrl}" width="${sz}" height="${sz}" alt="">`;
+        const attrSpriteKey = spriteKey ? ` data-sprite-key="${spriteKey}"` : '';
+        return `<img id="${portraitId}" class="pig-portrait${sz === 64 ? ' size-64' : ''}"${attrSpriteKey} src="${dataUrl}" width="${sz}" height="${sz}" alt="">`;
       }
     }
 
     if (id && KNOWN_NAMED_PNGS.has(id)) {
-      return `<img class="pig-portrait${sz === 64 ? ' size-64' : ''}" src="../../assets/sprites/portraits/${id}.png" width="${sz}" height="${sz}" alt="" onerror="this.onerror=null; this.outerHTML='<span class=\\'pixel-icon icon-pig-head\\'></span>';">`;
+      const attrSpriteKey = spriteKey ? ` data-sprite-key="${spriteKey}"` : '';
+      return `<img class="pig-portrait${sz === 64 ? ' size-64' : ''}"${attrSpriteKey} src="../../assets/sprites/portraits/${id}.png" width="${sz}" height="${sz}" alt="" onerror="this.onerror=null; this.outerHTML='<span class=\\'pixel-icon icon-pig-head\\'></span>';">`;
     }
 
     return `<span class="pixel-icon icon-pig-head"></span>`;
@@ -236,8 +486,9 @@
         ? `<button type="button" class="game-btn btn-visit-room" data-room-id="${escAttr(room.roomId)}" aria-label="${isMemorial || room.memorial ? 'Visit the memory room of ' : 'Visit the room of '}${escAttr(pig.name)}">${isMemorial || room.memorial ? 'Visit the memory room' : 'Visit my room'}</button>`
         : '';
 
+      const pigSpriteKey = (root.CuyLook && root.CuyLook.spriteFor) ? root.CuyLook.spriteFor(pig) : '';
       html += `
-        <div class="pig-card ${isActive ? 'pig-active' : ''} ${isMemorial ? 'pig-memorial' : ''}" data-pig-id="${pig.id}">
+        <div class="pig-card ${isActive ? 'pig-active' : ''} ${isMemorial ? 'pig-memorial' : ''}" data-pig-id="${pig.id}" data-sprite-key="${pigSpriteKey}">
           <div class="pig-card-header">
             <span class="pig-card-name">${pig.name}</span>
             <div class="pig-card-meta">
@@ -246,7 +497,7 @@
             </div>
             ${pig.breed ? `<span class="pig-card-breed">${pig.breed}</span>` : ''}
           </div>
-          <div class="pig-card-portrait">
+          <div class="pig-card-portrait" data-sprite-key="${pigSpriteKey}">
             ${renderPigPortrait(pig)}
           </div>
           ${traitsOrBlurbHtml}
@@ -357,6 +608,8 @@
           </div>
         `;
       } else {
+        const remainingMs = getOfferRemainingMs(offer);
+        const remainingText = formatRemaining(remainingMs);
         html += `
           <div class="pig-card pig-offer-card offer-locked" data-offer-id="${offer.id}">
             <div class="pig-card-header">
@@ -368,10 +621,10 @@
             <div class="pig-card-blurb">${offer.blurb || ''}</div>
             <div class="offer-locked-info">
               <span class="pixel-icon icon-padlock"></span>
-              <span>${offer.daysLeft} days left</span>
+              <span>${remainingText}</span>
             </div>
             <div class="pig-card-actions">
-              <button type="button" class="game-btn btn-locked" disabled aria-label="Locked: ${offer.daysLeft} days left">
+              <button type="button" class="game-btn btn-locked" disabled aria-label="Locked: ${remainingText}">
                 <span class="pixel-icon icon-padlock"></span> Locked
               </button>
             </div>
@@ -653,25 +906,102 @@
     });
   }
 
-  root.CuyHome.registerFeature({
+  function startRefreshTimer() {
+    stopRefreshTimer();
+    refreshTimer = setInterval(() => {
+      if (activeContainer && activeApi && activeContainer.offsetParent !== null) {
+        const st = (activeApi.getState ? activeApi.getState() : null) || lastState;
+        render(activeContainer, activeApi, st);
+      }
+    }, 30000);
+  }
+
+  function stopRefreshTimer() {
+    if (refreshTimer) {
+      clearInterval(refreshTimer);
+      refreshTimer = null;
+    }
+  }
+
+  const pigsFeatureDef = {
     id: 'pigs',
     title: 'My Pigs',
     icon: 'icon-pair-pigs',
     order: 4,
+    get spriteKey() {
+      const active = (lastState && lastState.roster && (lastState.roster.find(p => p && (p.id === (lastState.activePigIds && lastState.activePigIds[0]))) || lastState.roster[0])) || null;
+      return (root.CuyLook && root.CuyLook.spriteFor) ? root.CuyLook.spriteFor(active) : null;
+    },
     open(container, api) {
       activeContainer = container;
       activeApi = api;
-      render(container, api, api.getState());
+      lastState = api && api.getState ? api.getState() : null;
+      if (lastState && Array.isArray(lastState.offers)) {
+        lastState.offers.forEach(o => {
+          if (o) o._receivedAt = Date.now();
+        });
+      }
+      render(container, api, lastState);
+      startRefreshTimer();
     },
     close() {
+      stopRefreshTimer();
       activeContainer = null;
       activeApi = null;
     },
     onState(state) {
+      lastState = state;
+      if (state && Array.isArray(state.offers)) {
+        state.offers.forEach(o => {
+          if (o) o._receivedAt = Date.now();
+        });
+      }
+      const active = (state && state.roster && (state.roster.find(p => p && (p.id === (state.activePigIds && state.activePigIds[0]))) || state.roster[0])) || null;
+      if (root.CuyLook && root.CuyLook.spriteFor && active) {
+        this.spriteKey = root.CuyLook.spriteFor(active);
+      }
       if (activeContainer && activeApi && activeContainer.offsetParent !== null) {
         render(activeContainer, activeApi, state);
       }
+      if (typeof document !== 'undefined') {
+        const moreBtn = document.querySelector('button[data-open-feature="pigs"]');
+        if (moreBtn && this.spriteKey) {
+          moreBtn.dataset.spriteKey = this.spriteKey;
+        }
+      }
     }
-  });
+  };
+
+  root.CuyHome.registerFeature(pigsFeatureDef);
+
+  if (typeof document !== 'undefined') {
+    if (typeof MutationObserver !== 'undefined') {
+      const observer = new MutationObserver(() => {
+        const tile = document.querySelector('#modalBody button[data-open-feature="pigs"]');
+        if (tile && pigsFeatureDef.spriteKey && tile.dataset.spriteKey !== pigsFeatureDef.spriteKey) {
+          tile.dataset.spriteKey = pigsFeatureDef.spriteKey;
+        }
+      });
+      if (document.body) {
+        observer.observe(document.body, { childList: true, subtree: true });
+      } else {
+        document.addEventListener('DOMContentLoaded', () => {
+          observer.observe(document.body, { childList: true, subtree: true });
+        });
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target && (target.id === 'btnMore' || target.closest('#btnMore'))) {
+        setTimeout(() => {
+          const tile = document.querySelector('button[data-open-feature="pigs"]');
+          if (tile && pigsFeatureDef.spriteKey) {
+            tile.dataset.spriteKey = pigsFeatureDef.spriteKey;
+          }
+        }, 50);
+      }
+    });
+  }
 
 })(typeof window !== 'undefined' ? window : this);

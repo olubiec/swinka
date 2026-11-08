@@ -11,6 +11,176 @@
 (function (root) {
   'use strict';
 
+  // CuyLook: single source of truth for pig looks in the Home window
+  root.CuyLook = root.CuyLook || {};
+
+  const KNOWN_NAMED_PIGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch']);
+  const VALID_STAGES = new Set(['baby', 'junior', 'adult', 'senior', 'legend']);
+
+  function normStage(stage) {
+    if (!stage || typeof stage !== 'string') return 'adult';
+    stage = stage.trim().toLowerCase();
+    return VALID_STAGES.has(stage) ? stage : 'adult';
+  }
+
+  function normBreed(breed) {
+    if (!breed || typeof breed !== 'string') return 'smooth';
+    breed = breed.trim().toLowerCase();
+    switch (breed) {
+      case 'smooth':
+      case 'smooth_normal':
+        return 'smooth';
+      case 'chubby':
+      case 'smooth_chubby':
+        return 'smooth_chubby';
+      case 'skinny':
+      case 'smooth_lean':
+        return 'smooth_lean';
+      case 'rosette':
+      case 'rosette_normal':
+        return 'rosette_normal';
+      case 'rosette_lean':
+        return 'rosette_lean';
+      case 'peruvian':
+      case 'peruvian_normal':
+        return 'peruvian_normal';
+      case 'teddy':
+      case 'teddy_normal':
+        return 'teddy_normal';
+      case 'teddy_chubby':
+        return 'teddy_chubby';
+      default:
+        return 'smooth';
+    }
+  }
+
+  function resolveLook(pig, stageOverride) {
+    if (!pig) {
+      const s = normStage(stageOverride);
+      return {
+        spriteKey: 'sprites/' + s + '/spritesheet.png',
+        breed: 'smooth',
+        coat: 'tricolor',
+        stage: s,
+        named: null
+      };
+    }
+
+    if (typeof pig === 'string') {
+      const clean = pig.replace(/^pig:/, '').trim().toLowerCase();
+      if (clean === 'more' || clean === 'more-tile') {
+        const state = (root.bridge && root.bridge.currentState) || (root.bridge && typeof root.bridge.getState === 'function' && root.bridge.getState());
+        const active = (state && state.roster && (state.roster.find(p => p && (p.id === (state.activePigIds && state.activePigIds[0]))) || state.roster[0])) || null;
+        return resolveLook(active, stageOverride);
+      }
+      if (KNOWN_NAMED_PIGS.has(clean)) {
+        let b = 'smooth', c = 'tricolor';
+        if (clean === 'kuki') { b = 'rosette_normal'; c = 'two_tone.ginger'; }
+        else if (clean === 'ned') { b = 'teddy_chubby'; c = 'bicolor_head.chocolate'; }
+        else if (clean === 'james') { b = 'teddy_normal'; c = 'roan.slate'; }
+        else if (clean === 'glen') { b = 'rosette_lean'; c = 'self.black'; }
+        else if (clean === 'racuch') { b = 'smooth_chubby'; c = 'saddle.ginger'; }
+        const s = normStage(stageOverride);
+        return {
+          spriteKey: 'sprites/pigs/' + clean + '/' + s + '/spritesheet.png',
+          breed: b,
+          coat: c,
+          stage: s,
+          named: clean
+        };
+      }
+      if (clean === 'starter' || clean === 'cuy' || clean === 'pig_default') {
+        const s = normStage(stageOverride);
+        return {
+          spriteKey: 'sprites/' + s + '/spritesheet.png',
+          breed: 'smooth',
+          coat: 'tricolor',
+          stage: s,
+          named: null
+        };
+      }
+      const b = normBreed(clean);
+      const s = normStage(stageOverride);
+      return {
+        spriteKey: b === 'smooth' ? 'sprites/' + s + '/spritesheet.png' : 'sprites/breeds/' + b + '/' + s + '/spritesheet.png',
+        breed: b,
+        coat: 'tricolor',
+        stage: s,
+        named: null
+      };
+    }
+
+    if (pig.nodeType === 1) {
+      if (pig.dataset) {
+        if (pig.dataset.spriteKey) return { spriteKey: pig.dataset.spriteKey };
+        if (pig.dataset.room) return resolveLook(pig.dataset.room, stageOverride);
+        if (pig.dataset.pigId) return resolveLook(pig.dataset.pigId, stageOverride);
+        if (pig.dataset.openFeature === 'pigs') return resolveLook('more', stageOverride);
+      }
+    }
+
+    if (pig.look && pig.look.spriteKey) {
+      const s = normStage(stageOverride || pig.look.stage || pig.stage);
+      const named = pig.look.named || (pig.look.spriteKey.includes('sprites/pigs/') ? pig.look.spriteKey.split('/')[2] : null);
+      return {
+        spriteKey: pig.look.spriteKey,
+        breed: pig.look.breed || normBreed(pig.breed),
+        coat: pig.look.coat || pig.look.paletteId || pig.paletteId || 'tricolor',
+        stage: s,
+        named: named
+      };
+    }
+
+    if (pig.spriteKey) {
+      return {
+        spriteKey: pig.spriteKey,
+        breed: pig.breed || 'smooth',
+        coat: pig.coat || pig.paletteId || 'tricolor',
+        stage: normStage(stageOverride || pig.stage),
+        named: pig.named || null
+      };
+    }
+
+    // Fallback for old state without look
+    const s = normStage(stageOverride || pig.stage || (pig.look && pig.look.stage));
+    const b = normBreed(pig.breed || (pig.look && pig.look.breed));
+    const coat = pig.paletteId || (pig.look && pig.look.paletteId) || pig.coat || 'tricolor';
+
+    let rawNamed = pig.namedId || (pig.look && pig.look.namedId);
+    if (!rawNamed && pig.id && KNOWN_NAMED_PIGS.has(String(pig.id).toLowerCase())) {
+      rawNamed = String(pig.id).toLowerCase();
+    }
+    const named = (rawNamed && KNOWN_NAMED_PIGS.has(String(rawNamed).toLowerCase())) ? String(rawNamed).toLowerCase() : null;
+
+    let spriteKey;
+    if (named) {
+      spriteKey = 'sprites/pigs/' + named + '/' + s + '/spritesheet.png';
+    } else if (b === 'smooth') {
+      spriteKey = 'sprites/' + s + '/spritesheet.png';
+    } else {
+      spriteKey = 'sprites/breeds/' + b + '/' + s + '/spritesheet.png';
+    }
+
+    return {
+      spriteKey: spriteKey,
+      breed: b,
+      coat: coat,
+      stage: s,
+      named: named
+    };
+  }
+
+  function spriteFor(pig, stageOverride) {
+    const desc = resolveLook(pig, stageOverride);
+    return desc ? desc.spriteKey : null;
+  }
+
+  root.CuyLook.resolve = resolveLook;
+  root.CuyLook.spriteFor = spriteFor;
+  if (typeof window !== 'undefined') {
+    window.CuyLook = root.CuyLook;
+  }
+
   // Animation definitions (all 60 rows of animations.json, identical for every stage and breed)
   const ANIM_DEFS = {
     idle: { row: 0, frames: 16, fps: 8, loop: true, description: "Sitting calmly: breathing, twitching nose, ear flick" },
@@ -689,10 +859,28 @@
       }
       // The active pig decides breed and coat palette.
       const active = (state.roster || []).find(p => p && (p.id === (state.activePigIds && state.activePigIds[0]))) || (state.roster && state.roster[0]);
-      const look = (active && active.look) || (window.CuySprites ? window.CuySprites.activePig(state) : { breed: 'smooth', paletteId: 'tricolor' });
-      this.breed = look.breed || (window.CuySprites ? window.CuySprites.normBreed(look.breed) : 'smooth');
-      this.paletteId = look.paletteId || 'tricolor';
-      this.activePig = look;
+      this.activePig = active || (active && active.look) || (window.CuySprites ? window.CuySprites.activePig(state) : { breed: 'smooth', paletteId: 'tricolor' });
+      if (root.CuyLook && root.CuyLook.resolve) {
+        const desc = root.CuyLook.resolve(this.activePig, this.stageKey);
+        this.breed = desc.breed;
+        this.paletteId = desc.coat;
+        this.stageKey = desc.stage;
+        this.spriteKey = desc.spriteKey;
+      } else {
+        const look = (active && active.look) || this.activePig;
+        this.breed = look.breed || (window.CuySprites ? window.CuySprites.normBreed(look.breed) : 'smooth');
+        this.paletteId = look.paletteId || 'tricolor';
+        this.spriteKey = (root.CuyLook && root.CuyLook.spriteFor) ? root.CuyLook.spriteFor(this.activePig, this.stageKey) : null;
+      }
+      if (this.canvas && this.spriteKey) {
+        this.canvas.dataset.spriteKey = this.spriteKey;
+      }
+      if (typeof document !== 'undefined' && root.CuyLook && root.CuyLook.spriteFor) {
+        const tabs = document.querySelectorAll('.room-tab[data-room]');
+        tabs.forEach(tab => {
+          if (tab.dataset.room) tab.dataset.spriteKey = root.CuyLook.spriteFor(tab.dataset.room);
+        });
+      }
       if (typeof state.poops === 'number') {
         this.poopCount = state.poops;
       }
@@ -1181,7 +1369,12 @@
 
     // Sheet (palette applied) for the active pig's breed and stage; falls back to smooth, then to baby while loading.
     usableSheet() {
-      return resolveSheet(this.breed, this.stageKey, this.paletteId);
+      const desc = (root.CuyLook && root.CuyLook.resolve) ? root.CuyLook.resolve(this.activePig, this.stageKey) : null;
+      const namedId = desc ? desc.named : (this.activePig && (this.activePig.namedId || this.activePig.named));
+      const breed = desc ? desc.breed : this.breed;
+      const coat = desc ? desc.coat : this.paletteId;
+      const stage = desc ? desc.stage : this.stageKey;
+      return resolveSheet(breed, stage, coat, namedId);
     }
 
     // Animation definition with the senior/legend slowdown applied.
@@ -1471,16 +1664,18 @@
     const S = root.CuySprites || (typeof window !== 'undefined' ? window.CuySprites : null);
     const P = root.CuyPalette || (typeof window !== 'undefined' ? window.CuyPalette : null);
 
-    const rawBreed = (look && (look.breed || (look.look && look.look.breed))) || 'smooth';
-    const rawPalette = (look && (look.paletteId || (look.look && look.look.paletteId))) || (P ? P.normalize(null) : 'tricolor');
-    const namedId = look && (look.namedId || (look.look && look.look.namedId));
+    const desc = (root.CuyLook && root.CuyLook.resolve) ? root.CuyLook.resolve(look, stage) : null;
+    const rawBreed = desc ? desc.breed : ((look && (look.breed || (look.look && look.look.breed))) || 'smooth');
+    const rawPalette = desc ? desc.coat : ((look && (look.paletteId || (look.look && look.look.paletteId))) || (P ? P.normalize(null) : 'tricolor'));
+    const namedId = desc ? desc.named : (look && (look.namedId || (look.look && look.look.namedId)));
+    const spriteKey = desc ? desc.spriteKey : ((root.CuyLook && root.CuyLook.spriteFor) ? root.CuyLook.spriteFor(look, stage) : null);
 
     const normB = S ? S.normBreed(rawBreed) : rawBreed;
     const normP = P ? P.normalize(rawPalette) : rawPalette;
-    const normS = S ? S.normStage(stage || (look && look.stage) || 'adult') : (stage || 'adult');
+    const normS = S ? S.normStage(desc ? desc.stage : (stage || (look && look.stage) || 'adult')) : (stage || 'adult');
     const sz = size === 64 ? 64 : 32;
 
-    const cacheKey = `${normB}|${normP}|${normS}|${sz}`;
+    const cacheKey = `${namedId || ''}|${normB}|${normP}|${normS}|${sz}`;
     if (portraitCache[cacheKey]) {
       return portraitCache[cacheKey];
     }
@@ -1489,6 +1684,7 @@
     if (!canvas) return null;
     canvas.width = sz;
     canvas.height = sz;
+    if (spriteKey) canvas.dataset.spriteKey = spriteKey;
     const ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
 
@@ -1513,8 +1709,8 @@
     }
 
     // If underlying image isn't loaded yet or we used a fallback, listen for load to update
-    if (S && typeof S.image === 'function') {
-      const img = S.image(normB, normS);
+    if (S) {
+      const img = namedId && typeof S.namedImage === 'function' ? S.namedImage(namedId, normS) : (typeof S.image === 'function' ? S.image(normB, normS) : null);
       if (img && !S.loaded(img)) {
         img.addEventListener('load', function () {
           const freshSheet = resolveSheet(normB, normS, normP, namedId);
