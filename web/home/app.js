@@ -428,40 +428,6 @@
     if (canvasPig) {
       canvasPig.updateState(state);
     }
-
-    checkGramophoneClaimBanner(state);
-  }
-
-  function checkGramophoneClaimBanner(state) {
-    const banner = document.getElementById('gramophoneClaimBanner');
-    if (!banner || !state) return;
-
-    let dismissed = false;
-    try {
-      dismissed = sessionStorage.getItem('cuy_gramophone_dismissed') === 'true';
-    } catch (e) {}
-
-    const hasInInventory = !!(state.inventory && (state.inventory.gramophone > 0 || state.inventory.player_gramophone > 0));
-    const hasInShop = Array.isArray(state.shop?.items) && state.shop.items.some(i => (i.id === 'gramophone' || i.id === 'player_gramophone') && i.owned > 0);
-    const hasInMusic = Array.isArray(state.music?.playerOwned) && state.music.playerOwned.some(id => id === 'gramophone' || id === 'player_gramophone');
-    const hasInPlaced = state.music?.playerPlaced && Object.values(state.music.playerPlaced).some(id => id === 'gramophone' || id === 'player_gramophone');
-    let hasInRooms = false;
-    if (state.rooms?.layouts) {
-      for (const r of Object.values(state.rooms.layouts)) {
-        if (r && Array.isArray(r.items) && r.items.some(it => it.itemId === 'gramophone' || it.itemId === 'player_gramophone')) {
-          hasInRooms = true;
-          break;
-        }
-      }
-    }
-    if (state.rooms?.catalog) {
-      if (state.rooms.catalog.some(c => (c.id === 'gramophone' || c.id === 'player_gramophone') && (c.owned > 0 || c.placed > 0))) {
-        hasInRooms = true;
-      }
-    }
-
-    const alreadyOwned = hasInInventory || hasInShop || hasInMusic || hasInPlaced || hasInRooms;
-    banner.hidden = Boolean(alreadyOwned || dismissed);
   }
 
   function getStageIcon(key) {
@@ -553,30 +519,6 @@
 
   // UI button handlers
   function bindButtons() {
-    // Claim starter gramophone banner
-    document.getElementById('btnClaimGramophone')?.addEventListener('click', () => {
-      if (window.Sound) window.Sound.click();
-      if (window.bridge) {
-        window.bridge.send({ type: 'buy', itemId: 'gramophone' });
-        setTimeout(() => {
-          window.bridge.send({ type: 'room_place', place: 'salon', itemId: 'gramophone', x: 4, y: 3 });
-        }, 150);
-      }
-      const banner = document.getElementById('gramophoneClaimBanner');
-      if (banner) banner.hidden = true;
-      showToast('Gramophone claimed and added to living room!');
-    });
-
-    document.getElementById('btnCloseClaimGramophone')?.addEventListener('click', () => {
-      if (window.Sound) window.Sound.click();
-      try {
-        sessionStorage.setItem('cuy_gramophone_dismissed', 'true');
-      } catch (e) {}
-      const banner = document.getElementById('gramophoneClaimBanner');
-      if (banner) banner.hidden = true;
-      showToast('Available in Shop (Decor) for free!');
-    });
-
     // 1. FEED — opens the food drawer above the buttons (× / Feed again / Esc closes it)
     elements.btnFeed?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();

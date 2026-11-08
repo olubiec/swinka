@@ -249,57 +249,34 @@
     return { el: panel, engine, render, destroy, show, hide, toggle, isVisible };
   }
 
-  // Browser start: the panel goes to the identity card (the free strip between name and badges).
+  // Browser start: player panel and badges disabled per UX layout request.
   let autoMounted = null;
   function autoMount() {
-    if (typeof document === 'undefined' || !window.CuyMusicEngine) return null;
-    const host = document.querySelector('.pet-identity-card');
-    if (!host || host.querySelector('.mp_panel')) return null;
-    // Titles come from the manifest (economy.js), not the raw record id. Read on each poll, so it may load late.
-    const nameOf = (id) => (window.CuyMusicEconomy ? window.CuyMusicEconomy.recordName(id) : null);
-    autoMounted = mount(host, { nameOf });
-    return autoMounted;
+    return null;
   }
   // The engine of the auto-mounted panel (null until it is mounted); world.js feeds its queue from the save.
   function autoEngine() {
-    return autoMounted ? autoMounted.engine : null;
+    return null;
   }
   function show() {
-    return autoMounted ? autoMounted.show() : false;
+    return false;
   }
   function hide() {
-    return autoMounted ? autoMounted.hide() : false;
+    return false;
   }
   function toggle() {
-    return autoMounted ? autoMounted.toggle() : false;
+    return false;
   }
   function isVisible() {
-    return autoMounted ? autoMounted.isVisible() : false;
+    return false;
   }
 
   function updateGramophoneButton() {
     if (typeof document === 'undefined') return;
-    let btn = document.getElementById('btnGramophoneToggle');
-    const owned = hasGramophone();
-    if (!btn && owned) {
-      const badges = document.querySelector('.identity-badges');
-      if (badges) {
-        btn = document.createElement('button');
-        btn.id = 'btnGramophoneToggle';
-        btn.type = 'button';
-        btn.className = 'gramophone-toggle-badge';
-        btn.title = 'Music Player';
-        btn.setAttribute('aria-label', 'Music Player');
-        btn.innerHTML = '<span class="pixel-icon icon-gramophone"></span> Player';
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          toggle();
-        });
-        badges.appendChild(btn);
-      }
-    } else if (btn) {
-      btn.style.display = owned ? 'inline-flex' : 'none';
-    }
+    const btn = document.getElementById('btnGramophoneToggle');
+    if (btn) btn.remove();
+    const panel = document.querySelector('.mp_panel');
+    if (panel) panel.remove();
   }
 
   if (typeof window !== 'undefined') {
@@ -307,9 +284,6 @@
       if (window.bridge && typeof window.bridge.onState === 'function') {
         window.bridge.onState(() => {
           updateGramophoneButton();
-          if (autoMounted && autoMounted.isVisible() && !hasGramophone()) {
-            autoMounted.hide();
-          }
         });
       }
     };
@@ -319,11 +293,9 @@
 
   if (typeof document !== 'undefined') {
     if (document.readyState !== 'loading') {
-      autoMount();
       updateGramophoneButton();
     } else {
       document.addEventListener('DOMContentLoaded', () => {
-        autoMount();
         updateGramophoneButton();
       });
     }

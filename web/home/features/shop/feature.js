@@ -213,11 +213,7 @@
       `;
     }
 
-    // Music items (A6, features/music/economy.js) join the list; they are bought through CuyMusicEconomy.buy.
-    const musicItems = window.CuyMusicEconomy && window.CuyMusicWorld
-      ? window.CuyMusicEconomy.shopItems(currentState, window.CuyMusicWorld.getPlayers())
-      : [];
-    const items = shopState.items.concat(musicItems).filter(it => it.category === currentTab);
+    const items = (shopState.items || []).filter(it => it.category === currentTab);
 
     if (items.length === 0) {
       html += `<div class="feature-shop-empty">Nothing here right now.</div>`;
@@ -248,13 +244,8 @@
       html += `</div>`;
     }
 
-    // Toys tab: the record shelf and the player button (features/music/shelf.js) go under the grid.
-    if (currentTab === 'toy') html += `<div class="music-shelf-host"></div>`;
-
     html += `</div>`;
     container.innerHTML = html;
-    const shelfHost = container.querySelector('.music-shelf-host');
-    if (shelfHost && window.CuyMusicShelf) window.CuyMusicShelf.mountShop(shelfHost);
 
     // Attach events
     container.querySelectorAll('.feature-shop-tab').forEach(btn => {
@@ -268,17 +259,8 @@
     container.querySelectorAll('button[data-buy]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const itemId = e.target.dataset.buy;
-        const musicItem = items.find(it => it.id === itemId && it.music);
-        if (apiRef && musicItem) {
-          window.CuyMusicEconomy.buy(musicItem);
-          if (apiRef.sound) apiRef.sound.fanfare();
-        } else if (apiRef) {
+        if (apiRef) {
           apiRef.send({ type: 'buy', itemId: itemId });
-          if (itemId === 'gramophone') {
-            setTimeout(() => {
-              apiRef.send({ type: 'room_place', place: 'salon', itemId: 'gramophone', x: 4, y: 3 });
-            }, 150);
-          }
           if (apiRef.sound) apiRef.sound.fanfare();
         }
       });
