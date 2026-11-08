@@ -2,7 +2,7 @@
 import os, sys
 import numpy as np
 from PIL import Image
-BG = {'ned': (240, 214, 180), 'kuki': (226, 214, 240), 'glen': (200, 214, 232), 'james': (214, 232, 214), 'racuch': (246, 226, 190)}
+BG = {'ned': (240, 214, 180), 'kuki': (226, 214, 240), 'glen': (200, 214, 232), 'james': (214, 232, 214), 'racuch': (246, 226, 190), 'cuy': (246, 205, 160)}
 def main(assets):
     out = os.path.join(assets, 'sprites', 'portraits'); os.makedirs(out, exist_ok=True)
     yy, xx = np.mgrid[0:128, 0:128]

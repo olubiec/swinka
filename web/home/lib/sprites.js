@@ -30,18 +30,18 @@
   function loadNamedPigs() {
     if (namedPigsCache) return Promise.resolve(namedPigsCache);
     if (typeof fetch === 'undefined') {
-      namedPigsCache = { kuki: true, ned: true, glen: true, james: true, racuch: true };
+      namedPigsCache = { kuki: true, ned: true, glen: true, james: true, racuch: true, cuy: true };
       return Promise.resolve(namedPigsCache);
     }
     var url = assetsBase() + 'sprites/pigs/pigs.json';
     return fetch(url)
       .then(function (r) { return r.json(); })
       .then(function (data) {
-        namedPigsCache = (data && data.pigs) || { kuki: true, ned: true, glen: true, james: true, racuch: true };
+        namedPigsCache = (data && data.pigs) || { kuki: true, ned: true, glen: true, james: true, racuch: true, cuy: true };
         return namedPigsCache;
       })
       .catch(function () {
-        namedPigsCache = { kuki: true, ned: true, glen: true, james: true, racuch: true };
+        namedPigsCache = { kuki: true, ned: true, glen: true, james: true, racuch: true, cuy: true };
         return namedPigsCache;
       });
   }

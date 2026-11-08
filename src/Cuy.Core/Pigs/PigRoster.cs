@@ -51,7 +51,7 @@ namespace Cuy.Core.Pigs
     {
         private static readonly HashSet<string> KnownNamedPigs = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "kuki", "ned", "glen", "james", "racuch"
+            "kuki", "ned", "glen", "james", "racuch", "cuy"
         };
 
         private static readonly HashSet<string> ValidStages = new HashSet<string>(StringComparer.OrdinalIgnoreCase)

@@ -95,9 +95,14 @@ RAMPS = {
                rp('544f5a', '39353f', '262329', '151418'),  # 1 black saddle
                rp('fffdf8', 'f6ece0', 'dfcfbf', 'bfa89a'),  # 2 white
                rp('f7ac52', 'e18c32', 'bf6b23', '8f4a17')],
+    # starter pig: the original ginger skin (orange body, cream shoulder band, rust rump patch, white blaze) rebuilt in the named-pig engine
+    'cuy': [rp('f7b46e', 'e98c42', 'dc7445', 'c8692f'),     # 0 orange
+            rp('bb552e', '984721', '923c21', '6c2a17'),     # 1 rust (rump patch, ears)
+            rp('fffdf8', 'f8eddd', 'e4cfb5', 'c7aa8a'),     # 2 cream-white
+            rp('f7b46e', 'e98c42', 'dc7445', 'c8692f')],
 }
 FEET = {'glen': rp('3c3f47', '2b2d34', '1c1d22', '111216')}   # Glen has black paws (the others keep pink feet)
-EYES = {'ned': '2b1712', 'kuki': '24140f', 'glen': '17161a', 'james': '23201e', 'racuch': '211611'}
+EYES = {'ned': '2b1712', 'kuki': '24140f', 'glen': '17161a', 'james': '23201e', 'racuch': '211611', 'cuy': '2b1712'}
 # what every unconverted zone material becomes in a named coat (legs, ears, back views ...)
 NZ = {
     'ned': dict(ZC=1, ZH=1, ZN1=0, ZN2=0, ZL=0, ZS=0, ZM=0, ZR=0, ZT=0, ZB=0, ZX1=2, ZX2=0, ZX3=1),
@@ -105,6 +110,7 @@ NZ = {
     'glen': dict(ZC=0, ZH=0, ZN1=0, ZN2=0, ZL=0, ZS=0, ZM=0, ZR=0, ZT=0, ZB=0, ZX1=0, ZX2=0, ZX3=1),
     'james': dict(ZC=0, ZH=0, ZN1=0, ZN2=0, ZL=0, ZS=0, ZM=0, ZR=0, ZT=0, ZB=0, ZX1=0, ZX2=0, ZX3=0),
     'racuch': dict(ZC=1, ZH=0, ZN1=2, ZN2=2, ZL=0, ZS=0, ZM=1, ZR=0, ZT=2, ZB=0, ZX1=1, ZX2=1, ZX3=1),
+    'cuy': dict(ZC=1, ZH=0, ZN1=2, ZN2=2, ZL=0, ZS=1, ZM=1, ZR=1, ZT=1, ZB=2, ZX1=1, ZX2=1, ZX3=1),
 }
 
 
@@ -123,7 +129,7 @@ def heart_mask(u, v, w, centre=(-0.48, 0.78), size=5.6, angle=40.0):
 
 def body_slots(pid, u, v, w):
     s, phi = surf(u, v, w)
-    sw, pw = warp(s, phi, {'ned': 11, 'kuki': 23, 'glen': 31, 'james': 47, 'racuch': 59}[pid])
+    sw, pw = warp(s, phi, {'ned': 11, 'kuki': 23, 'glen': 31, 'james': 47, 'racuch': 59, 'cuy': 67}[pid])
     out = np.zeros(np.shape(s), int)
     if pid == 'ned':
         # chocolate shoulder cap behind the head (dark on top, fading down the flank) and a small low-contrast heart on the rump
@@ -152,6 +158,12 @@ def body_slots(pid, u, v, w):
         out = pick(saddle, s, phi, 1, 0)
         tip = (sw < -0.76 + 0.07 * fbm(w * 4.0, v * 4.0, u * 2.0, 8)) & (v < 0.45)      # rump tip: no phi (it is undefined at the pole)
         out = np.where(tip, 2, out)
+    elif pid == 'cuy':
+        band = sm(0.10, 0.16, sw) * (1 - sm(0.42, 0.48, sw)) * (1 - sm(1.75, 2.05, pw))      # wide cream band at the shoulder
+        rump = 1 - sm(0.85, 1.15, np.hypot((sw + 0.44) / 0.36, (pw - 0.60) / 1.15))           # rounded rust patch on the rump
+        out = np.where(rump > 0.5, 1, 0)
+        out = np.where(band > 0.5, 2, out)
+        out = np.where(sm(2.10, 2.30, pw) > 0.5, 2, out)                                      # cream belly only low down
     return out
 
 
@@ -179,4 +191,8 @@ def head_slots(pid, xh, yh, zh):
         blaze = ((zh < 1.2 + 0.18 * (xh + 4)) & (yh < 2.2) & (xh > 1.0 + n)) | ((xh + n > 3.2 - 0.4 * yh) & (yh < 0.5) & (zh < 3.2))
         chin = (xh + n > 4.0) & (yh > 2.4)
         out = np.where(blaze | chin, 2, np.where(patch, 1, 0))
+    elif pid == 'cuy':
+        blaze = ((zh < 1.3 + 0.18 * (xh + 4)) & (yh < 2.4) & (xh > 0.5 + n)) | ((xh + n > 3.6 - 0.4 * yh) & (yh < 0.8) & (zh < 3.0))
+        chin = (xh + n > 4.0) & (yh > 2.4)
+        out = np.where(blaze | chin, 2, 0)
     return out

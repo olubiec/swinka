@@ -521,7 +521,7 @@ namespace Cuy.Core.Tests
                 Assert.NotNull(state.Roster);
                 Assert.Single(state.Roster);
                 Assert.Equal("Chrupka", state.Roster[0].Name);
-                Assert.Null(state.Roster[0].NamedId);
+                Assert.Equal("cuy", state.Roster[0].NamedId);
                 Assert.Null(state.Roster[0].BornAtUtc);
                 Assert.Null(state.Roster[0].ArrivedAtUtc);
                 Assert.Null(state.Roster[0].LegendAtYears);
@@ -542,7 +542,7 @@ namespace Cuy.Core.Tests
 
                 Assert.Single(state.Roster);
                 Assert.Equal("Chrupka", state.Roster[0].Name);
-                Assert.Null(state.Roster[0].NamedId);
+                Assert.Equal("cuy", state.Roster[0].NamedId);
                 Assert.Equal(nowUtc, state.OffersStartUtc);
             }
             finally

@@ -37,7 +37,7 @@
   // Ensure CuyLook is defined if loaded before canvas-pig.js
   root.CuyLook = root.CuyLook || {};
   if (typeof root.CuyLook.spriteFor !== 'function') {
-    const KNOWN_NAMED_PIGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch']);
+    const KNOWN_NAMED_PIGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch', 'cuy']);
     const VALID_STAGES = new Set(['baby', 'junior', 'adult', 'senior', 'legend']);
 
     function normStage(stage) {
@@ -112,7 +112,7 @@
             named: clean
           };
         }
-        if (clean === 'starter' || clean === 'cuy' || clean === 'pig_default') {
+        if (clean === 'starter' || clean === 'pig_default') {
           const s = normStage(stageOverride);
           return {
             spriteKey: 'sprites/' + s + '/spritesheet.png',
@@ -241,7 +241,7 @@
     return Math.max(0, baseMs - elapsed);
   }
 
-  const KNOWN_NAMED_PNGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch']);
+  const KNOWN_NAMED_PNGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch', 'cuy']);
 
   function renderPigPortrait(pig, size) {
     const sz = size === 64 ? 64 : 32;

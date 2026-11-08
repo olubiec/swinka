@@ -153,7 +153,7 @@ namespace Cuy.Core.Tests
 
             Assert.Single(state.Roster);
             Assert.Equal("CustomName", state.Roster[0].Name);
-            Assert.Null(state.Roster[0].NamedId);
+            Assert.Equal("cuy", state.Roster[0].NamedId);
             Assert.Contains("cuddly", state.Roster[0].Traits);
             Assert.True(state.Roster[0].IsTraitDiscovered("cuddly"));
             Assert.Single(state.ActivePigIds);
