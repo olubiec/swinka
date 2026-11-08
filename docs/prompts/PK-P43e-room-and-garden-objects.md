@@ -1,12 +1,12 @@
 # PK-P43e: Rooms and garden: lamps and gramophone act in the scene
-Zmieniaj: web/home/features/places/feature.js, web/home/features/garden/feature.js, tools/qa/ux-p43-object-actions.js, docs/opt/log/PK-P43e.md
+Zmieniaj: web/home/features/places/feature.js, web/home/features/places/scenes.js, web/home/features/music/player.js, tools/qa/ux-p43-object-actions.js, docs/opt/log/PK-P43e.md
 Wymagane: tools/qa/ux-p43-object-actions.js
-Weryfikacja: node --check web/home/features/places/feature.js && node --check web/home/features/garden/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js
+Weryfikacja: node --check web/home/features/places/feature.js && node --check web/home/features/places/scenes.js && node --check web/home/features/music/player.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
 Limity (twarde): maks. 40 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: Clicking a placed lamp toggles its light and clicking the gramophone shows the player. Toys, tunnel, house and hay ball no longer exist (removed 8.11, PR #91): do not add any toy code.
-Depends on: PK-P43b merged.
+Depends on: PK-P43b, PK-P39d (scene light, `CuyLight.build` and the toggle map in places/feature.js), PK-P41e (gramophone free and placeable), PK-P40d (places/feature.js edited earlier), PK-P45e1 (scenes.js) merged. Disjoint from P43c/P43d (market/farm files). Garden window (`garden/feature.js`) is NOT touched: after PK-P40d nothing opens it, so its `toggleLamp` (needs `S.layout`) is unusable.
 
 ## Kontekst (fakty, nie szukaj drugi raz)
 - Docelowa wizja: każde miejsce (pokoje domku, ogród, park, farma, targ) to scena w głównym oknie Home (pseudo-3D: widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, y-sort). Sceny: `assets/data/place_scenes.json` (`bg`, `walk` [x0,y0,x1,y1], `depthScale`, wyjścia), moduł `web/home/features/places/{feature,scenes}.js`, płótno `web/home/canvas-pig.js` (API w logach `docs/opt/log/PK-P33a.md`, `PK-P34a.md`, `PK-P36a.md`).
@@ -17,16 +17,17 @@ Depends on: PK-P43b merged.
 
 
 ## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
-- `assets/data/world_items.json`: items have NO `action` field. Map by id: `lamp_*` (lamp_post, lamp_mushroom, lamp_floor, lamp_arc, lamp_salt, lamp_lava, lamp_oil) -> toggle; `gramophone` -> player. There is no placed food bowl or bed with an action: do not invent them.
-- `web/home/features/garden/feature.js`: `S.lampToggles` (line 43: placed uid -> on/off), click-toggle logic at line ~230, light sources at ~149 (`Lights.activeSources(..., S.lampToggles)`). Expose `CuyGarden.toggleLamp(uid)` (small wrapper of the existing logic) so `places` can call it for any scene.
-- `web/home/features/music/player.js`: gramophone detection at lines 86-94 (`gramophone`, `player_gramophone`); find the existing function that shows the player (grep `openPlayer|show|toggle` in this file); call it, do not rewrite.
-- `web/home/features/places/feature.js`: `applyScene(sceneId, st)` (line 275): after drawing, build hotspots for placed `lamp_*`/`gramophone` things (rect from sprite size) and call `CanvasPig.setHotspots` merged with the scene data hotspots; `CanvasPig.onHotspot` dispatches by kind `object`.
-- `web/home/canvas-pig.js`: read-only. It no longer contains toy code (`targetToy`/`walkToToy` do not exist).
+- `assets/data/world_items.json`: items have NO `action` field. Map by id: `lamp_*` (lamp_post, lamp_mushroom, lamp_floor, lamp_arc, lamp_salt, lamp_lava, lamp_oil) -> toggle; `gramophone` and `player_gramophone` -> player. There is no placed food bowl or bed with an action: do not invent them.
+- `web/home/features/places/scenes.js`: `placedThings(state, sceneId)` (364-441) returns items `{id (= uid), itemId, url, img, x, y (feet), anchorX, anchorY, flat, flip}`; sprite size `sw`/`sh` is computed (~line 414) but not returned: add `w: sw, h: sh` to the pushed object (nothing else in this file changes).
+- `web/home/features/places/feature.js` (488 lines, `CuyPlaces` object at 456, exported as `window.CuyPlaces` at 488): `applyScene(sceneId, st)` (275) already calls `CanvasPig.setThings(things, true)` (~line 314). After it, build object hotspots: for each thing whose `itemId` starts with `lamp_` or is a gramophone id, `{id:'obj:'+thing.id, kind:'object', rect:[x-anchorX, y-anchorY, x-anchorX+w, y-anchorY+h], label}`; call `CanvasPig.setHotspots(sceneData.hotspots concat these)` (scene data hotspots come from `CuyScenes.def().hotspots`, PK-P43b). Register one `CanvasPig.onHotspot(fn)` handler (PK-P43b; kind `object` only). Add `CuyPlaces.toggleLamp(uid)`: flips the lamp toggle in the map that PK-P39d introduced in this file (read `docs/opt/log/PK-P39d.md` for its name; do not create a second map) and re-applies the light scene. The garden's old `S.lampToggles` (garden/feature.js:43) is a different, window-only map: ignore it.
+- `web/home/features/music/player.js`: the auto panel is disabled: `show()` (261), `hide()`, `toggle()`, `isVisible()` return false and `updateGramophoneButton()` removes `.mp_panel`; `mount(host, opts)` is at 105 and the API object (last line) exports `show, hide, toggle, isVisible, mount, hasGramophone`. Implement `show()/hide()/toggle()/isVisible()` for real: a floating wood-framed host div (above the canvas, clamped inside the window, one instance) into which `mount(host, opts)` draws the panel; click outside or Esc hides it; music keeps playing. Check `docs/opt/log/PK-P41e.md` first: if P41e already restored these, only call them. Re-grep line numbers.
+- `web/home/canvas-pig.js`: read-only. It contains no toy code (`targetToy`/`walkToToy` do not exist).
 
 ## Steps
-1. Tests FIRST (`ux-p43-object-actions.js`, Playwright, mock): O1 `lamp-click-toggles-light`, O2 `gramophone-click-shows-player`, O3 `object-without-action-no-hotspot` (e.g. a sofa), O4 `hotspots-update-after-place-and-remove`, O5 `no-toy-code` (grep: no `toy` identifier in the three changed files).
-2. Implement as above.
-3. Run Weryfikacja; fix until green.
+1. Read `docs/opt/log/PK-P43b.md`, `PK-P39d.md`, `PK-P41e.md` (API names).
+2. Tests FIRST (`ux-p43-object-actions.js`, Playwright, mock `seven`; place a lamp and a gramophone in the salon layout via the mock state): O1 `lamp-click-toggles-light` (`CanvasPig.debug().lightScene` source for that lamp flips), O2 `gramophone-click-shows-player` (`.mp_panel` visible, click aside hides it), O3 `object-without-action-no-hotspot` (e.g. a sofa), O4 `hotspots-update-after-place-and-remove`, O5 `no-toy-code` (grep: no `toy` identifier in the four changed product files), O6 `scene-hotspots-kept` (market stall hotspots still present after objects are merged in).
+3. Implement as above.
+4. Run Weryfikacja; fix until green.
 ## Zasady grafiki i interfejsu (obowiązkowe)
 - Legenda stylu: `docs/STYL_SWIATA.md` (czytaj pkt 0-2 i 5, ok. 60 linii) i paleta `assets/data/style_palette.json` (42 kolory). Zakaz kolorów spoza palety, zakaz `#ffffff` i `#000000`, zakaz gradientów CSS, rozmycia i cieni z blur. `image-rendering: pixelated`, skala tylko całkowita, pozycje w pełnych pikselach.
 - Biblioteka pixel artów: najpierw szukaj gotowego w `assets/world/`, `assets/ui/`, `assets/icons/`, `assets/props/`. Nowy sprite tylko gdy go tam naprawdę nie ma: skrypt w `tools/art/` + `python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt` bez nowych błędów.

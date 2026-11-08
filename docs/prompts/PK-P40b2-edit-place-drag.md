@@ -17,15 +17,19 @@ Depends on: PK-P40a and PK-P40b merged (logs: drawer API `CuyEdit.*`; canvas `se
 
 
 ## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
-- `web/home/features/places/edit-panel.js`: created by PK-P40a: `window.CuyEdit` (`toggle`, `isOpen`, `render`, `itemsFor`). Add pointer handling on the cards; document-level `pointermove/pointerup`; DOM ghost only until the pointer enters the canvas, then `CanvasPig.setGhost`.
-- `web/home/canvas-pig.js`: read-only here: `toScene(e)`, `setGhost`, `cellValid` (PK-P40b). Do NOT edit.
-- `message`: `bridge.send({type:"room_place", place:<scene id>, itemId, x, y})` - field names as in the Kontekst list.
+- Line numbers below are from 8.11.2026, BEFORE waves P39 and P45 (they edit `canvas-pig.js`, `scenes.js`, `places/feature.js`, `index.html`). Find every function by name with grep, never by line.
+- `web/home/features/places/edit-panel.js`: created by PK-P40a (`window.CuyEdit`: `open/close/toggle/isOpen/render/itemsFor`, cards `.edit-card[data-item]`, dimmed `is-empty`). Add pointer handling on the cards; document-level `pointermove/pointerup`; a DOM ghost (`.edit-drag-ghost`, library icon) only until the pointer enters the canvas `#pigCanvas`, then `CanvasPig.setGhost`.
+- `web/home/canvas-pig.js`: read-only here: `CanvasPig.instance.toScene(e)` (pointer -> scene px), `setGhost({itemId,cx,cy,valid}|null)`, `cellValid(itemId,cx,cy)` (PK-P40b, CELL coordinates, cell = 16 px). Do NOT edit.
+- Message: `bridge.send({type:"room_place", place:<scene id>, itemId, x:cx, y:cy})` where x,y are INTEGER CELLS of the footprint top-left (server contract, `RoomsFeature.cs` 350-372, `RoomsMessages.cs` range -1..200). NOT pixels and NOT 4 px. Conversion: with pointer = centre of the footprint, `cx = Math.round(px/16 - w/2)`, `cy = Math.round(py/16 - h/2)`, `w,h` from `state.rooms.catalog`. `place` = `CuyPlaces.getCurrentPlace()`; house scenes (`salon`, `dorm`, `pig:*`) use their own scene id as `place` (as `rooms/feature.js` `S.place`).
+- Mock: `web/home/features/rooms/mock.js` handler `room_place` (~359) mutates `st.rooms.layouts[place].items` and raises `owned`/`placed`; the P6 test relies on it, so the test must call the real handler (no stub).
 - `tools/qa/ux-p40-edit-place.js (NEW)`: Playwright, `page.mouse`, mock `seven`.
 
 ## Steps
-1. Tests FIRST: P1 `drop-valid-sends` (one `room_place` with place/itemId and x,y snapped to 4); P2 `drop-on-blocker-cancels` (garden fountain: nothing sent); P3 `drop-outside-cancels`; P4 `ghost-shown-and-cleared`; P5 `zero-owned-not-draggable` (card dimmed); P6 `placed-appears-and-blocks` (mock applies the place: `CanvasPig.cellValid` false at the footprint); P7 `indoor-cannot-drop-in-garden`.
-2. Implement; snap = `Math.round(v/4)*4`; invalid ghost tinted red.
-3. Run Weryfikacja; fix until green.
+1. Read `docs/opt/log/PK-P40a.md` and `PK-P40b.md` (exact API) first.
+2. Tests FIRST: P1 `drop-valid-sends` (one `room_place` with place/itemId and integer cell x,y matching the drop point), P2 `drop-on-blocker-cancels` (garden fountain: nothing sent), P3 `drop-outside-cancels` (released over the drawer or outside canvas), P4 `ghost-shown-and-cleared` (`CanvasPig.debug().ghost` set while over canvas, null after), P5 `zero-owned-not-draggable` (card dimmed, no drag starts), P6 `placed-appears-and-blocks` (after the mock applies the place: `CanvasPig.cellValid` false at the footprint), P7 `indoor-cannot-drop-in-garden` (garden drawer has no indoor card; `cellValid` result irrelevant). Choose items from the mock catalog, never toys.
+3. Implement; ghost `valid` from `CanvasPig.cellValid`; invalid ghost tinted red by the canvas.
+4. Run Weryfikacja; fix until green.
+
 ## Zasady grafiki i interfejsu (obowiązkowe)
 - Legenda stylu: `docs/STYL_SWIATA.md` (czytaj pkt 0-2 i 5, ok. 60 linii) i paleta `assets/data/style_palette.json` (42 kolory). Zakaz kolorów spoza palety, zakaz `#ffffff` i `#000000`, zakaz gradientów CSS, rozmycia i cieni z blur. `image-rendering: pixelated`, skala tylko całkowita, pozycje w pełnych pikselach.
 - Biblioteka pixel artów: najpierw szukaj gotowego w `assets/world/`, `assets/ui/`, `assets/icons/`, `assets/props/`. Nowy sprite tylko gdy go tam naprawdę nie ma: skrypt w `tools/art/` + `python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt` bez nowych błędów.

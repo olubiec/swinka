@@ -6,11 +6,11 @@ Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje l
 Limity (twarde): maks. 30 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: On the farm scene: `Harvest all` and `Water all` buttons, orchard slot hotspots and the shop hotspot panel.
-Depends on: PK-P43d merged (same file, so a later wave).
+Depends on: PK-P43d merged (same files farm/feature.js and feature.css, hence the later wave P43b2), PK-P43b, PK-P43a. Must finish before PK-P43f.
 
 ## Pliki i elementy (zweryfikowane w repo 8.11.2026; nie szukaj ich drugi raz)
-- `web/home/features/farm/feature.js`: handlers already at lines 258 (`farm_harvest_all`), 265 (water all = loop of `farm_water`), 269 (`farm_buy {what}`), 272 (`orchard_plant {slot, cropId:"apple"}`), 275 (`orchard_harvest {slot}`). Reuse them; hotspots `orchard:<n>` and `shop` from PK-P43a.
-- `bulk strip`: two library buttons in a strip under the scene bar, visible only when the scene is `farm`.
+- `web/home/features/farm/feature.js` (line numbers before PK-P43d edits; re-grep): window handlers at 258 (`farm_harvest_all`), 259-267 (water all = one `farm_water {plot}` per growing, unwatered plot, capped by `tools.plotsPerWater`), 268-270 (`farm_buy {what}`, `what` comes from `data-buy`; the buy buttons are built at ~186-190 as plot pack / orchard slot upgrades with `can` and price), 271-273 (`orchard_plant {slot, cropId:"apple"}`), 274-276 (`orchard_harvest {slot}`). Orchard markup at ~195-210: slot objects `st.farm.orchard[i]` have `cropId`, `stock`, `nextAt`; owned count `st.farm.orchardSlots` (start 1, max 5). Reuse the same messages; hotspots `orchard:0..4` and `shop` from PK-P43a (unowned orchard slots inert). Use `window.CuyFarm` and `S.api = window.CuyHome.api` fallback created by PK-P43d (read `docs/opt/log/PK-P43d.md`).
+- `bulk strip`: two library buttons (`Harvest all` -> `farm_harvest_all`, `Water all` -> the loop above) in a strip under the scene bar (`#placesBarTitle` area, grep `placesBar` in `web/home/index.html`, read-only), created by the farm module, visible only when the scene is `farm`; disabled when nothing to do. Shop panel: floating panel anchored at the `shop` hotspot listing the `farm_buy` upgrades (price, disabled when not affordable).
 
 ## Steps
 1. Read PK-P43d log.
