@@ -40,7 +40,7 @@ namespace Cuy.Core.Tests
 
             Assert.Equal(LoadSource.Main, result.Source);
             var state = result.State;
-            Assert.Equal(2, state.Version);
+            Assert.Equal(GameState.CurrentVersion, state.Version);
             Assert.Equal(3, state.Inventory["bell_pepper"]);
             Assert.Equal(2, state.Inventory["hay"]);
             Assert.Equal(4, state.Stats.Counters["bell_pepper"]);

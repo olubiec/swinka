@@ -336,6 +336,40 @@ namespace Cuy.Core.Save
                 state.Version = 2;
             }
             state.EnsureRosterInitialized();
+            if (state.Version < 3)
+            {
+                MigrateStarterLook(state);
+                state.Version = 3;
+            }
+        }
+
+        /// <summary>
+        /// Version 3: the starter pig is the named "cuy" sheet. An old starter (roster index 0: unnamed, smooth, tricolor)
+        /// gets the id, and its room moves to the new key so the room is not created a second time.
+        /// </summary>
+        private static void MigrateStarterLook(GameState state)
+        {
+            if (state.Roster == null || state.Roster.Count == 0) return;
+            var starter = state.Roster[0];
+            if (starter == null || !string.IsNullOrEmpty(starter.NamedId) || starter.Memorial) return;
+            if (!string.Equals(starter.Breed, "smooth", StringComparison.OrdinalIgnoreCase)) return;
+            if (!string.Equals(starter.PaletteId, "tricolor", StringComparison.OrdinalIgnoreCase)) return;
+
+            string oldKey = starter.Id;
+            starter.NamedId = "cuy";
+            if (string.IsNullOrEmpty(oldKey) || state.World == null) return;
+
+            // Pig rooms are keyed by NamedId ?? Id (GameState.EnsurePigRooms): move the room to the new key.
+            var world = state.World;
+            foreach (var roomKey in new System.Collections.Generic.List<string>(world.Rooms.Keys))
+            {
+                if (roomKey.Length <= oldKey.Length || !roomKey.EndsWith(oldKey, StringComparison.Ordinal)) continue;
+                string newKey = roomKey.Substring(0, roomKey.Length - oldKey.Length) + "cuy";
+                if (world.Rooms.ContainsKey(newKey)) continue;
+                world.Rooms[newKey] = world.Rooms[roomKey];
+                world.Rooms.Remove(roomKey);
+            }
+            if (world.PigRoomsEnsured.Remove(oldKey)) world.PigRoomsEnsured.Add("cuy");
         }
 
         /// <summary>Version 1 used Polish item ids; this is the only place they may appear in code.</summary>

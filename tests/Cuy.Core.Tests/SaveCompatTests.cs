@@ -231,7 +231,7 @@ namespace Cuy.Core.Tests
             var state = result.State;
             Assert.NotNull(state);
 
-            Assert.Equal(2, state.Version);
+            Assert.Equal(GameState.CurrentVersion, state.Version);
             Assert.Equal("Kropka", state.Name);
             Assert.Equal(80, state.Clovers);
             Assert.Equal(LifeStage.Junior, state.Stage);
