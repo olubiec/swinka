@@ -7,24 +7,24 @@ Limity (twarde): maks. 30 wywołań narzędzi. Linię Weryfikacja uruchom maks. 
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: Replace the alpha shadow under the wall trim (`rgba(0,0,0,0.15)`) with a 16x4 dithered palette sprite that sits right under the baseboard.
 Depends on: Nothing (art only; wired in by PK-P45e2).
-Produces (names other packages rely on): `assets/world/house/trim_floor_shadow.png` 16x4, tile repeats on x. Key `trim.floor_shadow` is added to `tiles.json` by PK-P45c3.
+Produces (names other packages rely on): `assets/world/house/trim_floor_shadow.png` 16x4, tile repeats on x. Tile id `trim_floor_shadow` (group `tiles`) is added to `tiles.json` by PK-P45c3.
 
 ## Kontekst perspektywy (fakty z pomiaru 8.11, nie szukaj ich drugi raz)
 - Jedna kamera dla całej gry: **rzut ukośny z góry bez punktu zbiegu** (jak tła garden/farm/park). Skala rzeczy NIE zależy od głębi: grządka na y~80 ma ~32 px, ta sama na y~125 ma ~31 px. Świnka (sprite 64x64, ciało ok. 46x29, stopy w y=59, widok z boku) ma więc tylko lekką skalę głębi: `depthScale` = `[0.9375, 1.0]` (kroki 1/16, bo 64*k/16 to zawsze liczba całkowita).
 - Pokój ma dziś dwa niezgodne układy: edytor i Core używają siatki `layout.cols x layout.rows` po 16 px (12x7 = 192x112, `wallRows` 2 = ściana 32 px), a płótno rysuje 240x130 ze ścianą 96 px (`drawHabitat`, `wallH=96`). `CuyScenes.placedThings` liczy y jako `y*16`. Zmieniamy płótno, NIE Core (`wallRows` jest stałą w C# i testach, nie ruszać).
-- Okno Home pokazuje scenę przez `object-fit: cover` zakotwiczone do dołu; P39b przechodzi na całą scenę w całkowitej skali (`--scene-k`).
+- Okno Home pokazuje scenę przez `object-fit: cover` zakotwiczone do dołu; P39b przechodzi na całą scenę w całkowitej skali (`--scene-k`). Po P45 fala P47 zmienia okno na 640x400 i dopasowanie `contain` w `canvas-pig.js` (mapowanie wskaźnika `toScene`): tu go nie ruszaj i nie zakładaj szerokości okna 370 px.
 - Kolejność: te pakiety biegną PO fali P39 (blockers, layout, grid, depth) i PRZED P40. Dane `blockers`, `behindLine`, `pigWidthFrac` pochodzą z P39; nie dubluj ich. Jeśli log P39 podaje inną nazwę, użyj prawdziwej i zapisz różnicę w logu.
 - Plan całości i tabela fal: `docs/opt/PERSPECTIVE_PLAN.md` (nie czytaj, jeśli ten prompt wystarcza).
 
 ## Steps
 1. View `assets/world/house/house_frame.png` and one floor tile in `assets/world/tiles/`, and grep `Shadow under wall trim` in `web/home/canvas-pig.js` to see what is replaced. Do not edit canvas-pig.js.
-2. `tools/art/room_trim_shadow.py <assets dir>` (Python 3 + Pillow, same style as `tools/art/tiles_art.py`). Draw EXACTLY this 16x4 tile with plum A `#382538` and plum B `#54394f`; everything else is fully transparent (alpha 0), painted pixels alpha 255, NO partial alpha:
+2. `tools/art/room_trim_shadow.py <assets dir>` (Python 3 + Pillow). Use `tools/art/handart.py` (`from handart import put, save_png`; `put(im,x,y,'plum.1')`; `save_png(im, Path(assets)/'world/house/trim_floor_shadow.png')`; do NOT call `register_tile`). Draw EXACTLY this 16x4 tile on an `Image.new('RGBA',(16,4),(0,0,0,0))` with plum A = `plum.1` `#382538` and plum B = `plum.2` `#54394f`; everything else is fully transparent (alpha 0), painted pixels alpha 255, NO partial alpha:
    - row 0: all 16 pixels opaque, x even = A, x odd = B.
    - row 1: x odd = A, x even transparent.
    - row 2: only x in {2,6,10,14} = A, rest transparent.
    - row 3: fully transparent.
    (All patterns have a period dividing 16, so the tile repeats on x without a seam.) Output `assets/world/house/trim_floor_shadow.png`. Idempotent.
-3. Test `tools/qa/ux-p45-trim-shadow.js`: S1 file exists and is 16x4; S2 every non-transparent pixel colour is A or B; S3 no pixel has alpha strictly between 0 and 255; S4 row 3 is fully transparent and opaque-pixel count per row is 16, 8, 4, 0; S5 script twice = identical bytes. PNG w teście czytaj małym czytnikiem w samym teście (`zlib.inflateSync`, filtry 0-4, RGBA 8-bit); najpierw `grep -l inflateSync tools/qa/*.js` i skopiuj istniejący, jeśli jest.
+3. Test `tools/qa/ux-p45-trim-shadow.js`: S1 file exists and is 16x4; S2 every non-transparent pixel colour is A or B; S3 no pixel has alpha strictly between 0 and 255; S4 row 3 is fully transparent and opaque-pixel count per row is 16, 8, 4, 0; S5 script twice = identical bytes. Pixels in the test: `save_png` writes an indexed PNG with transparency (bit depth < 8), so do NOT hand-roll a zlib reader; decode with `child_process.execFileSync('python3', ['-c', ...])` using Pillow (`convert('RGBA')`) and print the pixels as JSON.
 4. Run Weryfikacja; fix until green. View the 8x enlargement over a floor tile colour (scratchpad copy) and write one sentence in the log.
 
 ## Zasady grafiki (obowiązkowe)
