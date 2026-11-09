@@ -10,6 +10,7 @@
       size: [240, 130],
       walk: [10, 96, 230, 126],
       depth_scale: [0.88, 1.0],
+      pigWidthFrac: 0.20,
       bg: null
     },
     garden: {
@@ -18,6 +19,8 @@
       size: [256, 144],
       walk: [8, 80, 248, 138],
       depth_scale: [0.82, 1.0],
+      pigWidthFrac: 0.17,
+      behindLine: 74,
       bg: {
         morning: 'world/bg/garden_morning.png',
         day: 'world/bg/garden_day.png',
@@ -35,6 +38,8 @@
       size: [384, 192],
       walk: [10, 110, 374, 186],
       depth_scale: [0.78, 1.0],
+      pigWidthFrac: 0.17,
+      behindLine: 106,
       bg: {
         morning: 'world/bg/park_morning.png',
         day: 'world/bg/park_day.png',
@@ -52,6 +57,8 @@
       size: [256, 144],
       walk: [8, 80, 248, 138],
       depth_scale: [0.82, 1.0],
+      pigWidthFrac: 0.17,
+      behindLine: 76,
       bg: {
         morning: 'world/bg/farm.png',
         day: 'world/bg/farm.png',
@@ -69,6 +76,8 @@
       size: [256, 144],
       walk: [8, 120, 248, 140],
       depth_scale: [0.92, 1.0],
+      pigWidthFrac: 0.17,
+      behindLine: 120,
       bg: {
         morning: 'world/bg/market.png',
         day: 'world/bg/market.png',
@@ -328,8 +337,27 @@
       }
     }
 
-    const ds = template.depthScale || template.depth_scale || [0.88, 1.0];
+    const rawDs = template.depthScale || template.depth_scale || [0.88, 1.0];
     const exits = template.exits ? JSON.parse(JSON.stringify(template.exits)) : null;
+    const isRoom = template.kind === 'room' || isHouseRoom(effectiveId);
+    const pigWidthFrac = (typeof template.pigWidthFrac === 'number')
+      ? template.pigWidthFrac
+      : (isRoom ? 0.20 : 0.17);
+
+    const sw = (template.size && template.size[0]) || 240;
+    const bodySourceWidth = 46;
+    const targetBottomPx = pigWidthFrac * sw;
+    const rawBottomScale = targetBottomPx / bodySourceWidth;
+    const bottomScale = Math.round(rawBottomScale * 8) / 8;
+
+    const ratio = (rawDs[1] && rawDs[1] > 0) ? (rawDs[0] / rawDs[1]) : 0.88;
+    const rawTopScale = bottomScale * ratio;
+    let topScale = Math.round(rawTopScale * 8) / 8;
+    if (topScale >= bottomScale) {
+      topScale = Math.max(0.125, bottomScale - 0.125);
+    }
+
+    const computedDs = [topScale, bottomScale];
 
     return {
       id: effectiveId,
@@ -337,9 +365,12 @@
       title: getTitle(effectiveId, template),
       size: [template.size[0], template.size[1]],
       walk: [template.walk[0], template.walk[1], template.walk[2], template.walk[3]],
-      depthScale: [ds[0], ds[1]],
+      depthScale: computedDs,
+      pigWidthFrac: pigWidthFrac,
       bgUrl: bgUrl,
-      exits: exits
+      exits: exits,
+      blockers: template.blockers ? JSON.parse(JSON.stringify(template.blockers)) : null,
+      behindLine: (typeof template.behindLine === 'number') ? template.behindLine : null
     };
   }
 

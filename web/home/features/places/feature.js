@@ -8,6 +8,277 @@
   let previousPigLocations = null;
   let exitDisabledUntil = 0;
 
+  // Scene light and ambient state
+  let lightsData = null;
+  let lightsLoaded = false;
+  let lightsLoading = false;
+  const sceneLampToggles = {};
+  let dustImageCache = null;
+
+  function getLightsNow() {
+    if (typeof window !== 'undefined' && window.__cuyNow != null) {
+      const n = window.__cuyNow;
+      if (typeof n === 'number' || typeof n === 'string' || n instanceof Date) return n;
+    }
+    return new Date();
+  }
+
+  function getPlaceKind(sceneId) {
+    if (['garden', 'park', 'farm', 'market'].includes(sceneId)) {
+      return 'outdoor';
+    }
+    return 'indoor';
+  }
+
+  function getDustImage(file) {
+    if (!file) return null;
+    if (dustImageCache) return dustImageCache;
+    const isWebView = !!(typeof window !== 'undefined' && window.chrome && window.chrome.webview);
+    const prefix = file.startsWith('world/') ? '' : 'world/';
+    const url = isWebView ? ('https://cuy.assets/' + prefix + file) : ('../../assets/' + prefix + file);
+    const img = new Image();
+    img.src = url;
+    dustImageCache = img;
+    return dustImageCache;
+  }
+
+  function ensureLights(onReady) {
+    if (!window.Lights && typeof document !== 'undefined' && !document.querySelector('script[data-cuy-lights]')) {
+      const s = document.createElement('script');
+      s.src = 'lib/lights.js';
+      s.dataset.cuyLights = '1';
+      s.onload = () => { if (onReady) onReady(); };
+      s.onerror = () => { /* missing lib is safe */ };
+      document.head.appendChild(s);
+    }
+    if (lightsLoaded) {
+      if (onReady) onReady();
+      return;
+    }
+    if (lightsLoading) return;
+    lightsLoading = true;
+    const isWebView = !!(typeof window !== 'undefined' && window.chrome && window.chrome.webview);
+    const url = isWebView ? 'https://cuy.assets/data/lights.json' : '../../assets/data/lights.json';
+    fetch(url)
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => {
+        lightsData = j;
+        lightsLoaded = true;
+        lightsLoading = false;
+        if (onReady) onReady();
+      })
+      .catch(() => {
+        lightsData = null;
+        lightsLoaded = true;
+        lightsLoading = false;
+        if (onReady) onReady();
+      });
+  }
+
+  // Pre-load lights lazily
+  ensureLights();
+
+  const CuyLight = {
+    build(sceneId, placed, toggles) {
+      const sId = sceneId || currentSceneId || 'salon';
+      if (!window.Lights || !lightsData) return null;
+      const period = window.Lights.periodOf(getLightsNow());
+      const kind = getPlaceKind(sId);
+      const amb = window.Lights.ambientFor(lightsData, period);
+
+      let items = placed;
+      if (!items) {
+        const st = getState();
+        items = (window.CuyScenes && typeof window.CuyScenes.placedThings === 'function')
+          ? window.CuyScenes.placedThings(st, sId)
+          : [];
+        if ((!items || items.length === 0) && st) {
+          let layout = null;
+          if (st.rooms && st.rooms.layouts) layout = st.rooms.layouts[sId];
+          if (!layout && st[sId] && st[sId].layout) layout = st[sId].layout;
+          if (!layout && st.places && st.places.layouts) layout = st.places.layouts[sId];
+          if (layout && Array.isArray(layout.items)) items = layout.items;
+        }
+      }
+
+      const activeToggles = toggles || (sceneLampToggles && sceneLampToggles[sId]) || {};
+      const sourcesMap = lightsData.sources || {};
+      const placedForLights = [];
+
+      (items || []).forEach(it => {
+        if (!it) return;
+        const itemId = it.itemId || it.id;
+        const key = Object.keys(sourcesMap).find(k => k === itemId || sourcesMap[k].item === itemId);
+        if (!key) return;
+        const srcDef = sourcesMap[key];
+        const uid = it.uid || it.id || key;
+
+        let gx, gy;
+        const cell = 16;
+        if (it.x != null && it.y != null) {
+          if (it.isPixel || it.x > 15 || it.y > 8) {
+            const ax = it.anchorX != null ? it.anchorX : 8;
+            const ay = it.anchorY != null ? it.anchorY : 16;
+            if (srcDef.glow && Array.isArray(srcDef.glow)) {
+              gx = it.x - ax + srcDef.glow[0];
+              gy = it.y - ay + srcDef.glow[1];
+            } else {
+              gx = it.x;
+              gy = it.y - ay / 2;
+            }
+          } else {
+            if (srcDef.glow && Array.isArray(srcDef.glow)) {
+              gx = it.x * cell + srcDef.glow[0];
+              gy = it.y * cell + srcDef.glow[1];
+            } else {
+              gx = Math.round((it.x + 0.5) * cell);
+              gy = Math.round((it.y + 0.5) * cell);
+            }
+          }
+        } else {
+          gx = 120;
+          gy = 65;
+        }
+
+        placedForLights.push({
+          id: uid,
+          uid: uid,
+          itemId: key,
+          x: gx,
+          y: gy,
+          rawItem: it
+        });
+      });
+
+      const active = window.Lights.activeSources(lightsData, kind, placedForLights, period, activeToggles);
+
+      if (!amb) return null;
+      return {
+        ambient: amb,
+        sources: active || [],
+        dust: lightsData.dust || null,
+        period: period,
+        kind: kind
+      };
+    }
+  };
+  window.CuyLight = CuyLight;
+
+  // Extend CanvasPig and PigCanvas to support lightScene and lamp glow
+  if (typeof window !== 'undefined') {
+    if (window.CanvasPig) {
+      window.CanvasPig.setLightScene = function(scene) {
+        const inst = (window.CuyPig && window.CuyPig.mainInstance) || (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance);
+        if (inst && typeof inst.setLightScene === 'function') {
+          inst.setLightScene(scene);
+          if (typeof inst.render === 'function') {
+            try { inst.render(); } catch (e) {}
+          }
+        }
+      };
+
+      const origCpDebug = window.CanvasPig.debug;
+      window.CanvasPig.debug = function() {
+        const res = origCpDebug ? origCpDebug.apply(this, arguments) : {};
+        if (res) {
+          const inst = (window.CuyPig && window.CuyPig.mainInstance) || (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance);
+          if (inst && res.lightScene === undefined) {
+            res.lightScene = inst.lightScene || null;
+          }
+        }
+        return res;
+      };
+    }
+
+    if (window.PigCanvas && window.PigCanvas.prototype) {
+      const origDebug = window.PigCanvas.prototype.debug;
+      window.PigCanvas.prototype.debug = function() {
+        const res = origDebug ? origDebug.apply(this, arguments) : {};
+        if (res && res.lightScene === undefined) {
+          res.lightScene = this.lightScene || null;
+        }
+        return res;
+      };
+
+      const origSetLightScene = window.PigCanvas.prototype.setLightScene;
+      window.PigCanvas.prototype.setLightScene = function(scene) {
+        if (scene && (!scene.sources || scene.sources.length === 0) && window.CuyPlaces && window.CuyLight) {
+          const curScene = window.CuyPlaces.getCurrentPlace();
+          const built = window.CuyLight.build(curScene);
+          if (built && built.sources && built.sources.length > 0) {
+            scene = built;
+          }
+        }
+        if (origSetLightScene) {
+          origSetLightScene.call(this, scene);
+        } else {
+          this.lightScene = scene || null;
+        }
+        if (typeof this.render === 'function') {
+          try { this.render(); } catch (e) {}
+        }
+      };
+
+      const origApply = window.PigCanvas.prototype.applySceneLight;
+      window.PigCanvas.prototype.applySceneLight = function(ctx, scene) {
+        if (origApply) origApply.call(this, ctx, scene);
+        if (!scene) return;
+
+        // Lamp glow
+        const sources = scene.sources || [];
+        const now = Date.now();
+        const lit = [];
+
+        sources.forEach((src, idx) => {
+          if (!src || !src.on) return;
+          const cx = src.x;
+          const cy = src.y;
+          const r = src.radius || (src.radiusCells ? src.radiusCells * 16 : 40);
+          lit.push({ cx, cy });
+
+          let strength = src.strength != null ? src.strength : (src.intensity != null ? src.intensity : 0.8);
+          if (src.flicker) {
+            strength *= (0.85 + 0.15 * Math.sin(now / 160 + idx));
+          }
+          const col = src.color || [1, 0.85, 0.6];
+          const rgb = Array.isArray(col) && col[0] <= 1 && col[1] <= 1 && col[2] <= 1
+            ? [Math.round(col[0] * 255), Math.round(col[1] * 255), Math.round(col[2] * 255)]
+            : (Array.isArray(col) ? col : [255, 220, 160]);
+
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+          g.addColorStop(0, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${strength})`);
+          g.addColorStop(1, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0)`);
+          ctx.fillStyle = g;
+          ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+          ctx.restore();
+        });
+
+        // Dust motes around lit lamps
+        if (scene.dust && lit.length && typeof document !== 'undefined') {
+          const dust = scene.dust;
+          const dustImg = getDustImage(dust.file);
+          if (dustImg && dustImg.complete && dustImg.naturalWidth > 0) {
+            const frames = dust.frames || 1;
+            const fw = Math.floor(dustImg.naturalWidth / frames);
+            const fh = dustImg.naturalHeight;
+            if (fw > 0) {
+              const frameIdx = Math.floor((now / 1000) * (dust.fps || 1)) % frames;
+              ctx.save();
+              ctx.globalCompositeOperation = 'lighter';
+              ctx.globalAlpha = 0.28;
+              lit.forEach(pt => {
+                ctx.drawImage(dustImg, frameIdx * fw, 0, fw, fh, pt.cx - fw / 2, pt.cy - fh / 2, fw, fh);
+              });
+              ctx.restore();
+            }
+          }
+        }
+      };
+    }
+  }
+
   function getState() {
     return (window.CuyHome && window.CuyHome.api && window.CuyHome.api.getState()) ||
       (window.bridge && window.bridge.getState && window.bridge.getState()) || null;
@@ -288,6 +559,7 @@
 
   function applyScene(sceneId, st) {
     if (!st) st = getState();
+    if (!sceneId) sceneId = currentSceneId;
     if (!sceneId) {
       const firstPig = getFirstPigId(st);
       sceneId = (window.CuyScenes && typeof window.CuyScenes.pigScene === 'function')
@@ -326,6 +598,20 @@
       : [];
     if (window.CanvasPig && typeof window.CanvasPig.setThings === 'function') {
       window.CanvasPig.setThings(things, true);
+    }
+
+    // Light scene
+    const sceneLight = CuyLight.build(currentSceneId);
+    if (window.CanvasPig && typeof window.CanvasPig.setLightScene === 'function') {
+      window.CanvasPig.setLightScene(sceneLight);
+    }
+    if (!lightsLoaded) {
+      ensureLights(() => {
+        const sl = CuyLight.build(currentSceneId);
+        if (window.CanvasPig && typeof window.CanvasPig.setLightScene === 'function') {
+          window.CanvasPig.setLightScene(sl);
+        }
+      });
     }
 
     // 3. Pig visibility and exits
@@ -468,6 +754,54 @@
     return rooms;
   }
 
+  function toggleLamp(uid) {
+    if (!currentSceneId) currentSceneId = 'salon';
+    if (!sceneLampToggles[currentSceneId]) sceneLampToggles[currentSceneId] = {};
+    const light = CuyLight.build(currentSceneId);
+    const src = light && light.sources && light.sources.find(s => s.id === uid || s.uid === uid || s.itemId === uid);
+    const currentlyOn = src ? src.on : true;
+    sceneLampToggles[currentSceneId][uid] = !currentlyOn;
+    applyScene(currentSceneId, getState());
+  }
+
+  function setLampToggle(uid, on) {
+    if (!currentSceneId) currentSceneId = 'salon';
+    if (!sceneLampToggles[currentSceneId]) sceneLampToggles[currentSceneId] = {};
+    sceneLampToggles[currentSceneId][uid] = !!on;
+    applyScene(currentSceneId, getState());
+  }
+
+  function initCanvasLampClick() {
+    if (typeof document === 'undefined') return;
+    const canvas = document.getElementById('pigCanvas');
+    if (!canvas || canvas._cuyLampClick) return;
+    canvas._cuyLampClick = true;
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const clickX = (e.clientX - rect.left) * scaleX;
+      const clickY = (e.clientY - rect.top) * scaleY;
+
+      const inst = (window.CuyPig && window.CuyPig.mainInstance) || (window.CanvasPig && window.CanvasPig.instance);
+      const light = inst && inst.lightScene;
+      if (!light || !light.sources) return;
+
+      const hit = light.sources.find(s => Math.hypot(s.x - clickX, s.y - clickY) <= Math.max(16, (s.radius || 40) * 0.4));
+      if (hit) {
+        toggleLamp(hit.id);
+      }
+    });
+  }
+
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCanvasLampClick);
+    } else {
+      initCanvasLampClick();
+    }
+  }
+
   const CuyPlaces = {
     getCurrentPlace() {
       return currentSceneId || 'salon';
@@ -497,7 +831,16 @@
       applyScene(currentSceneId, st || getState());
       checkArrivals(st);
     },
-    applyScene
+    applyScene,
+    toggleLamp,
+    setLampToggle,
+    applyLight(sceneId) {
+      const sId = sceneId || currentSceneId || 'salon';
+      const sceneLight = CuyLight.build(sId);
+      if (window.CanvasPig && typeof window.CanvasPig.setLightScene === 'function') {
+        window.CanvasPig.setLightScene(sceneLight);
+      }
+    }
   };
 
   window.CuyPlaces = CuyPlaces;

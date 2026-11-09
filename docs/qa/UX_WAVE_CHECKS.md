@@ -216,6 +216,31 @@ Skóry mają być identyczne na pulpicie i w Home. Wszystkie testy fali P42 maj�
 1. Ta sama świnka wygląda tak samo na pulpicie, w domku, w More, na liście. Pierwsza świnka nie ma skóry Kuki.
 2. Odliczanie adopcji to np. `2d 5h 40m`, bez ułamków i przecinków.
 
+## Wave P39: Walking Physics, Perspective & Scene Light
+
+Wszystkie pakiety fali P39 (a-e) mają zielone testy automatyczne (omijanie przeszkód, pełny widok sceny, siatka chodzenia A*, światło i skala/perspektywa).
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass | App builds cleanly with no compilation or regression errors |
+| UX Scene Blockers (PK-P39a) | `node tools/qa/ux-p39-blockers.js` | Exit code 0, 13/13 checks OK (C1-C7, B1-B6: in-bounds, no spawn overlap, >=60% free, reachable exits) | assets/data/place_scenes.json poprawnie definiuje przeszkody i linie chowania; odrzuca niepoprawne fixtury |
+| UX Scene Layout Fit (PK-P39b) | `node tools/qa/ux-p39-layout.js` | Exit code 0, 5/5 PASS (Ly1-Ly5: bar-above-canvas, canvas-inside-window, aspect-preserved, park/farm fit, pixelated) | Belka miejsc nie nachodzi na scenę, całe tło widoczne bez obcinania (drzewa w parku, stodoła na farmie) |
+| UX Walk Grid & Pathfinding (PK-P39c) | `node tools/qa/ux-p39-grid.js` | Exit code 0, 6/6 PASS (W1-W6: siatka 4px, A* omijanie przeszkód, drop snap do wolnej komórki, footprint mebli) | Świnka nie wchodzi w fontannę, stragany ani ławki; obchodzi przeszkody wyznaczając ścieżkę A* |
+| UX Scene Light & Ambient (PK-P39d) | `node tools/qa/ux-p39-light.js` | Exit code 0, 5/5 PASS (Li1-Li5: light scene set, noc ciemniejsza o >=25%, poświata lampy, przełączanie kliknięciem) | Oświetlenie scen zależne od pory dnia (noc ciemniejsza), lampy dają radialną poświatę i gasną/zapalają się po kliku |
+| UX Depth Sort & Scale (PK-P39e) | `node tools/qa/ux-p39-depth.js` | Exit code 0, 5/5 PASS (D1-D5: monotoniczny scale z y, proporcja świnki 14-20%, zasłanianie przez behindLine, wyjścia) | Świnka ma odpowiednią perspektywę (mniejsza wyżej), chowa się za wyższymi obiektami idąc tyłem |
+| UX Scene Screenshots (PK-P39q) | `node tools/qa/ux-p39-shots.js` | Exit code 0, zapisano zrzuty 7 scen do docs/qa/shots/p39-<scena>.png | Zrzuty ekranu 7 scen (salon, pokój, dorm, ogród, park, farma, targ) w rozdzielczości 420x720 |
+| UX All Suite | `node tools/qa/ux-all.js` | Wszystkie testy P39 PASS (ux-p39-blockers, layout, grid, light, depth, shots); znane stare testy zdezaktualizowane po zmianach | Skrypty pakietu UX przechodzą pomyślnie dla wdrożonych funkcjonalności |
+| Web Smoke | `node tools/qa/web-smoke.js` | 21/21 core PASS z baseline-smoke.txt | WebView2 home screens, nawigacja i moduły renderują się poprawnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| EXE Smoke | `powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Exit code 0, selftest passes, EXE SMOKE OK | Świnka chodzi po pulpicie, brak wyjątków i crashów podczas uruchomienia |
+
+### Manual Checklist (Do sprawdzenia po P39)
+1. Świnka nie wchodzi w fontannę, stragany, staw, stodołę ani ogrodzenia, obchodzi je. Za obiektem o podstawie wyżej przechodzi tyłem i jest zasłonięta.
+2. Świnka jest proporcjonalna (ok. 1/6 szerokości sceny przy dole podłogi) i mniejsza, gdy stoi wyżej.
+3. Belka nie zasłania sceny: cały park (drzewa) i dom na farmie widoczne, obraz ostry.
+4. Światło jak w oknach ogrodu: inne o 12:00 i o 23:00, lampy świecą. Zrzuty: `docs/qa/shots/p39-*.png`.
+
+
 
 
 

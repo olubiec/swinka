@@ -14,6 +14,25 @@
   // CuyLook: single source of truth for pig looks in the Home window
   root.CuyLook = root.CuyLook || {};
 
+  let cachedPlaceScenesData = null;
+  if (typeof require !== 'undefined') {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const candidates = [
+        path.resolve(__dirname, '../../assets/data/place_scenes.json'),
+        path.resolve(__dirname, '../../../assets/data/place_scenes.json'),
+        path.resolve(process.cwd(), 'assets/data/place_scenes.json')
+      ];
+      for (const p of candidates) {
+        if (fs.existsSync(p)) {
+          cachedPlaceScenesData = JSON.parse(fs.readFileSync(p, 'utf8'));
+          break;
+        }
+      }
+    } catch (e) {}
+  }
+
   const KNOWN_NAMED_PIGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch', 'cuy']);
   const VALID_STAGES = new Set(['baby', 'junior', 'adult', 'senior', 'legend']);
 
@@ -338,6 +357,14 @@
       this.sceneBgUrl = null;
       this.sceneBgImg = null;
       this.explicitThings = false;
+      this.path = [];
+      this.grid = null;
+      this.gridW = 0;
+      this.gridH = 0;
+      this.gridFreeCount = 0;
+      this.blockers = null;
+      this.blockerRects = [];
+      this.standingFootprints = [];
       CanvasPig.instance = this;
       PigCanvas.instance = this;
 
@@ -378,6 +405,411 @@
       return { src: url, naturalWidth: 32, naturalHeight: 32, width: 32, height: 32, complete: true };
     }
 
+    lookupSceneBlockers(sceneId) {
+      if (!sceneId) return [];
+      if (cachedPlaceScenesData && cachedPlaceScenesData.scenes && cachedPlaceScenesData.scenes[sceneId]) {
+        return cachedPlaceScenesData.scenes[sceneId].blockers || [];
+      }
+      if (typeof window !== 'undefined') {
+        if (window.__placeScenesData && window.__placeScenesData.scenes && window.__placeScenesData.scenes[sceneId]) {
+          return window.__placeScenesData.scenes[sceneId].blockers || [];
+        }
+        if (window.CuyScenes && window.CuyScenes._data && window.CuyScenes._data.scenes && window.CuyScenes._data.scenes[sceneId]) {
+          return window.CuyScenes._data.scenes[sceneId].blockers || [];
+        }
+      }
+      if (typeof require !== 'undefined') {
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const candidates = [
+            path.resolve(__dirname, '../../assets/data/place_scenes.json'),
+            path.resolve(__dirname, '../../../assets/data/place_scenes.json'),
+            path.resolve(process.cwd(), 'assets/data/place_scenes.json')
+          ];
+          for (const p of candidates) {
+            if (fs.existsSync(p)) {
+              cachedPlaceScenesData = JSON.parse(fs.readFileSync(p, 'utf8'));
+              if (cachedPlaceScenesData && cachedPlaceScenesData.scenes && cachedPlaceScenesData.scenes[sceneId]) {
+                return cachedPlaceScenesData.scenes[sceneId].blockers || [];
+              }
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+      return [];
+    }
+
+    rebuildGrid() {
+      const sw = this.sceneWidth || 240;
+      const sh = this.sceneHeight || 130;
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+
+      const cols = Math.ceil(sw / 4);
+      const rows = Math.ceil(sh / 4);
+      this.gridW = cols;
+      this.gridH = rows;
+
+      // Extract blocker rects
+      const blockerRects = [];
+      const rawBlockers = (this.blockers && Array.isArray(this.blockers))
+        ? this.blockers
+        : this.lookupSceneBlockers(this.sceneId);
+      if (Array.isArray(rawBlockers)) {
+        for (let i = 0; i < rawBlockers.length; i++) {
+          const b = rawBlockers[i];
+          const r = Array.isArray(b) ? b : (b && b.rect);
+          if (Array.isArray(r) && r.length === 4) {
+            blockerRects.push(r);
+          }
+        }
+      }
+      this.blockerRects = blockerRects;
+
+      // Extract standing item footprints
+      // width of its sprite x its bottom 4 px; flat things like rugs do not block
+      const standingFootprints = [];
+      const things = this.things || [];
+      for (let i = 0; i < things.length; i++) {
+        const t = things[i];
+        if (!t || t.flat) continue;
+        if (t.footprint && Array.isArray(t.footprint) && t.footprint.length === 4) {
+          standingFootprints.push(t.footprint);
+          continue;
+        }
+        const img = t.img || (t.url ? this.loadCachedImage(t.url) : null);
+        const spw = t.w || t.width || (img && (img.naturalWidth || img.width)) || (t.anchorX ? t.anchorX * 2 : 32);
+        const sph = t.h || t.height || (img && (img.naturalHeight || img.height)) || (t.anchorY ? t.anchorY : 32);
+        const ax = t.anchorX !== undefined ? t.anchorX : Math.round(spw / 2);
+        const ay = t.anchorY !== undefined ? t.anchorY : sph;
+        const dx = Math.round((t.x || 0) - ax);
+        const dy = Math.round((t.y || 0) - ay);
+        const fx0 = dx;
+        const fx1 = dx + spw;
+        const fy1 = dy + sph;
+        const fy0 = fy1 - 4;
+        standingFootprints.push([fx0, fy0, fx1, fy1]);
+      }
+      this.standingFootprints = standingFootprints;
+
+      // Build grid cells (4 px per cell)
+      this.grid = new Uint8Array(cols * rows);
+      let freeCount = 0;
+
+      for (let r = 0; r < rows; r++) {
+        const cellY0 = r * 4;
+        const cellY1 = cellY0 + 4;
+        if (cellY1 <= y0 || cellY0 >= y1) continue;
+
+        for (let c = 0; c < cols; c++) {
+          const cellX0 = c * 4;
+          const cellX1 = cellX0 + 4;
+          if (cellX1 <= x0 || cellX0 >= x1) continue;
+
+          let blocked = false;
+          for (let bi = 0; bi < blockerRects.length; bi++) {
+            const br = blockerRects[bi];
+            if (cellX0 < br[2] && cellX1 > br[0] && cellY0 < br[3] && cellY1 > br[1]) {
+              blocked = true;
+              break;
+            }
+          }
+          if (blocked) continue;
+
+          for (let fi = 0; fi < standingFootprints.length; fi++) {
+            const fr = standingFootprints[fi];
+            if (cellX0 < fr[2] && cellX1 > fr[0] && cellY0 < fr[3] && cellY1 > fr[1]) {
+              blocked = true;
+              break;
+            }
+          }
+          if (blocked) continue;
+
+          this.grid[r * cols + c] = 1;
+          freeCount++;
+        }
+      }
+
+      this.gridFreeCount = freeCount;
+    }
+
+    isFree(x, y) {
+      if (typeof x !== 'number' || typeof y !== 'number') return false;
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      if (x < x0 || x > x1 || y < y0 || y > y1) return false;
+
+      const brs = this.blockerRects || [];
+      for (let i = 0; i < brs.length; i++) {
+        const b = brs[i];
+        if (x >= b[0] && x <= b[2] && y >= b[1] && y <= b[3]) return false;
+      }
+
+      const fps = this.standingFootprints || [];
+      for (let i = 0; i < fps.length; i++) {
+        const f = fps[i];
+        if (x >= f[0] && x <= f[2] && y >= f[1] && y <= f[3]) return false;
+      }
+
+      if (!this.grid) return true;
+      const c = Math.floor(x >= x1 ? (x1 - 1) / 4 : x / 4);
+      const r = Math.floor(y >= y1 ? (y1 - 1) / 4 : y / 4);
+      if (c < 0 || c >= this.gridW || r < 0 || r >= this.gridH) return false;
+      return this.grid[r * this.gridW + c] === 1;
+    }
+
+    snapToFreeCell(x, y) {
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      const clampedX = Math.max(x0, Math.min(x1, x));
+      const clampedY = Math.max(y0, Math.min(y1, y));
+      if (this.isFree(clampedX, clampedY)) {
+        return { x: clampedX, y: clampedY };
+      }
+
+      const cols = this.gridW || 1;
+      const rows = this.gridH || 1;
+      if (!this.grid || cols <= 0 || rows <= 0) {
+        return { x: clampedX, y: clampedY };
+      }
+
+      const c0 = Math.floor(clampedX / 4);
+      const r0 = Math.floor(clampedY / 4);
+      const maxRadius = Math.max(cols, rows);
+
+      let bestDist = Infinity;
+      let bestPoint = null;
+
+      for (let d = 1; d <= maxRadius; d++) {
+        let foundInRadius = false;
+        for (let dr = -d; dr <= d; dr++) {
+          const r = r0 + dr;
+          if (r < 0 || r >= rows) continue;
+          for (let dc = -d; dc <= d; dc++) {
+            if (Math.abs(dr) !== d && Math.abs(dc) !== d) continue;
+            const c = c0 + dc;
+            if (c < 0 || c >= cols) continue;
+            if (this.grid[r * cols + c] === 1) {
+              const px = Math.max(x0, Math.min(x1, c * 4 + 2));
+              const py = Math.max(y0, Math.min(y1, r * 4 + 2));
+              if (this.isFree(px, py)) {
+                const dist = Math.hypot(px - x, py - y);
+                if (dist < bestDist) {
+                  bestDist = dist;
+                  bestPoint = { x: px, y: py };
+                  foundInRadius = true;
+                }
+              }
+            }
+          }
+        }
+        if (foundInRadius) break;
+      }
+
+      return bestPoint || { x: clampedX, y: clampedY };
+    }
+
+    isSegmentFree(x1, y1, x2, y2) {
+      if (!this.isFree(x2, y2)) return false;
+      const dist = Math.hypot(x2 - x1, y2 - y1);
+      if (dist < 1) return this.isFree(x2, y2);
+      const steps = Math.ceil(dist / 2);
+      for (let s = 1; s <= steps; s++) {
+        const t = s / steps;
+        const sx = x1 + (x2 - x1) * t;
+        const sy = y1 + (y2 - y1) * t;
+        if (!this.isFree(sx, sy)) return false;
+      }
+      return true;
+    }
+
+    findPath(sx, sy, tx, ty) {
+      let startSnapped = { x: sx, y: sy };
+      if (!this.isFree(sx, sy)) {
+        startSnapped = this.snapToFreeCell(sx, sy);
+      }
+      const cols = this.gridW || 1;
+      const rows = this.gridH || 1;
+      if (!this.grid || cols <= 0 || rows <= 0) return null;
+
+      let sc = Math.floor(startSnapped.x / 4);
+      let sr = Math.floor(startSnapped.y / 4);
+      let tc = Math.floor(tx / 4);
+      let tr = Math.floor(ty / 4);
+
+      sc = Math.max(0, Math.min(cols - 1, sc));
+      sr = Math.max(0, Math.min(rows - 1, sr));
+      tc = Math.max(0, Math.min(cols - 1, tc));
+      tr = Math.max(0, Math.min(rows - 1, tr));
+
+      if (this.grid[sr * cols + sc] !== 1 || this.grid[tr * cols + tc] !== 1) {
+        return null;
+      }
+
+      if (sc === tc && sr === tr) {
+        return [{ x: tx, y: ty }];
+      }
+
+      const size = cols * rows;
+      const gScore = new Float32Array(size);
+      gScore.fill(Infinity);
+      const fScore = new Float32Array(size);
+      fScore.fill(Infinity);
+      const cameFrom = new Int32Array(size);
+      cameFrom.fill(-1);
+      const closed = new Uint8Array(size);
+
+      const startIndex = sr * cols + sc;
+      const targetIndex = tr * cols + tc;
+
+      function h(c, r) {
+        const dx = Math.abs(c - tc);
+        const dy = Math.abs(r - tr);
+        return (dx + dy) + (1.41421356 - 2) * Math.min(dx, dy);
+      }
+
+      gScore[startIndex] = 0;
+      fScore[startIndex] = h(sc, sr);
+
+      const heap = [startIndex];
+
+      function pushHeap(idx) {
+        heap.push(idx);
+        let i = heap.length - 1;
+        while (i > 0) {
+          const parent = (i - 1) >> 1;
+          if (fScore[heap[parent]] <= fScore[heap[i]]) break;
+          const tmp = heap[parent]; heap[parent] = heap[i]; heap[i] = tmp;
+          i = parent;
+        }
+      }
+
+      function popHeap() {
+        if (heap.length === 0) return -1;
+        const top = heap[0];
+        const last = heap.pop();
+        if (heap.length > 0) {
+          heap[0] = last;
+          let i = 0;
+          while (true) {
+            const left = (i << 1) + 1;
+            const right = left + 1;
+            let smallest = i;
+            if (left < heap.length && fScore[heap[left]] < fScore[heap[smallest]]) smallest = left;
+            if (right < heap.length && fScore[heap[right]] < fScore[heap[smallest]]) smallest = right;
+            if (smallest === i) break;
+            const tmp = heap[smallest]; heap[smallest] = heap[i]; heap[i] = tmp;
+            i = smallest;
+          }
+        }
+        return top;
+      }
+
+      let reached = false;
+      const NEIGHBORS = [
+        [1, 0, 1, 0, 0, 0, 0],
+        [-1, 0, 1, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 0, 0],
+        [0, -1, 1, 0, 0, 0, 0],
+        [1, 1, 1.41421356, 1, 0, 0, 1],
+        [1, -1, 1.41421356, 1, 0, 0, -1],
+        [-1, 1, 1.41421356, -1, 0, 0, 1],
+        [-1, -1, 1.41421356, -1, 0, 0, -1]
+      ];
+
+      while (heap.length > 0) {
+        const current = popHeap();
+        if (current === targetIndex) {
+          reached = true;
+          break;
+        }
+        if (closed[current]) continue;
+        closed[current] = 1;
+
+        const cc = current % cols;
+        const cr = Math.floor(current / cols);
+        const curG = gScore[current];
+
+        for (let i = 0; i < 8; i++) {
+          const [dc, dr, cost, c1dc, c1dr, c2dc, c2dr] = NEIGHBORS[i];
+          const nc = cc + dc;
+          const nr = cr + dr;
+          if (nc < 0 || nc >= cols || nr < 0 || nr >= rows) continue;
+          const neighborIdx = nr * cols + nc;
+          if (this.grid[neighborIdx] !== 1) continue;
+          if (closed[neighborIdx]) continue;
+
+          // Corner cutting check
+          if (c1dc !== 0 || c1dr !== 0) {
+            const ortho1Idx = (cr + c1dr) * cols + (cc + c1dc);
+            const ortho2Idx = (cr + c2dr) * cols + (cc + c2dc);
+            if (this.grid[ortho1Idx] !== 1 || this.grid[ortho2Idx] !== 1) {
+              continue;
+            }
+          }
+
+          const tentG = curG + cost;
+          if (tentG < gScore[neighborIdx]) {
+            cameFrom[neighborIdx] = current;
+            gScore[neighborIdx] = tentG;
+            fScore[neighborIdx] = tentG + h(nc, nr);
+            pushHeap(neighborIdx);
+          }
+        }
+      }
+
+      if (!reached) return null;
+
+      let curr = targetIndex;
+      const cellPath = [];
+      while (curr !== -1) {
+        cellPath.push({
+          c: curr % cols,
+          r: Math.floor(curr / cols)
+        });
+        curr = cameFrom[curr];
+      }
+      cellPath.reverse();
+
+      // Smooth path: drop collinear points
+      const smoothedCells = [];
+      if (cellPath.length > 0) {
+        smoothedCells.push(cellPath[0]);
+        for (let i = 1; i < cellPath.length - 1; i++) {
+          const prev = cellPath[i - 1];
+          const curCell = cellPath[i];
+          const next = cellPath[i + 1];
+          const d1c = curCell.c - prev.c;
+          const d1r = curCell.r - prev.r;
+          const d2c = next.c - curCell.c;
+          const d2r = next.r - curCell.r;
+          if (d1c === d2c && d1r === d2r) {
+            continue;
+          }
+          smoothedCells.push(curCell);
+        }
+        if (cellPath.length > 1) {
+          smoothedCells.push(cellPath[cellPath.length - 1]);
+        }
+      }
+
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      const waypoints = [];
+      const startIndexInSmoothed = (smoothedCells.length > 1 && smoothedCells[0].c === sc && smoothedCells[0].r === sr) ? 1 : 0;
+      for (let i = startIndexInSmoothed; i < smoothedCells.length; i++) {
+        const cell = smoothedCells[i];
+        if (i === smoothedCells.length - 1) {
+          waypoints.push({ x: tx, y: ty });
+        } else {
+          waypoints.push({
+            x: Math.max(x0, Math.min(x1, cell.c * 4 + 2)),
+            y: Math.max(y0, Math.min(y1, cell.r * 4 + 2))
+          });
+        }
+      }
+
+      return waypoints;
+    }
+
     setScene(def) {
       if (!def) return;
       if (typeof def === 'string') {
@@ -399,14 +831,36 @@
       }
       this.walk = def.walk || null;
       this.depthScale = def.depthScale || null;
+      this.pigWidthFrac = (typeof def.pigWidthFrac === 'number') ? def.pigWidthFrac : null;
       this.exits = def.exits || null;
-      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
-      if (this.pigX < x0 || this.pigX > x1) this.pigX = Math.round((x0 + x1) / 2);
-      if (this.pigY < y0 || this.pigY > y1) this.pigY = Math.round((y0 + y1) / 2);
+      this.blockers = def.blockers || this.lookupSceneBlockers(this.sceneId);
+      this.behindLine = (typeof def.behindLine === 'number') ? def.behindLine : null;
+      this.path = [];
       this.targetX = null;
       this.targetY = null;
       this.targetExit = null;
       this.idleTimer = 400;
+
+      if (!this.depthScale) {
+        const isRoom = this.sceneKind === 'room';
+        const frac = (typeof this.pigWidthFrac === 'number') ? this.pigWidthFrac : (isRoom ? 0.20 : 0.17);
+        const sw = this.sceneWidth || 240;
+        const bScale = Math.round((frac * sw / 46) * 8) / 8;
+        const tScale = Math.max(0.125, Math.round((bScale * 0.88) * 8) / 8);
+        this.depthScale = [tScale < bScale ? tScale : Math.max(0.125, bScale - 0.125), bScale];
+      }
+
+      this.rebuildGrid();
+
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      if (this.pigX < x0 || this.pigX > x1) this.pigX = Math.round((x0 + x1) / 2);
+      if (this.pigY < y0 || this.pigY > y1) this.pigY = Math.round((y0 + y1) / 2);
+      if (!this.isFree(this.pigX, this.pigY)) {
+        const snapped = this.snapToFreeCell(this.pigX, this.pigY);
+        this.pigX = snapped.x;
+        this.pigY = snapped.y;
+      }
+
       this.sceneBgUrl = def.bgUrl || null;
       if (this.sceneBgUrl) {
         this.sceneBgImg = this.loadCachedImage(this.sceneBgUrl);
@@ -426,6 +880,7 @@
           t.img = this.loadCachedImage(t.url);
         }
       });
+      this.rebuildGrid();
     }
 
     setPigVisible(visible) {
@@ -436,12 +891,16 @@
       }
     }
 
-    getDrawScale() {
+    scaleAt(y) {
       const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
       const ds = this.depthScale || [0.88, 1.0];
-      const t = (y1 > y0) ? Math.max(0, Math.min(1, (this.pigY - y0) / (y1 - y0))) : 0;
+      const t = (y1 > y0) ? Math.max(0, Math.min(1, (y - y0) / (y1 - y0))) : 0;
       const raw = ds[0] + (ds[1] - ds[0]) * t;
       return Math.round(raw * 8) / 8;
+    }
+
+    getDrawScale() {
+      return this.scaleAt(this.pigY);
     }
 
     setExitsEnabled(enabled) {
@@ -453,6 +912,7 @@
       this.setPigVisible(true);
       this.hasExited = false;
       this.targetExit = null;
+      this.path = [];
 
       const leftX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.left && typeof this.currentScene.exits.left.x === 'number')
         ? this.currentScene.exits.left.x
@@ -481,14 +941,71 @@
     }
 
     setTarget(x, y) {
-      this.targetX = x;
-      this.targetY = (typeof y === 'number') ? y : this.pigY;
+      if (typeof x !== 'number') return false;
+      const targetY = (typeof y === 'number') ? y : this.pigY;
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      const isExitTarget = this.exitsEnabled && (x < x0 || x > x1);
+      const clampedX = isExitTarget ? Math.round(x) : Math.round(Math.max(x0, Math.min(x1, x)));
+      const clampedY = Math.round(Math.max(y0, Math.min(y1, targetY)));
+
+      if (!isExitTarget && !this.isFree(clampedX, clampedY)) {
+        return false;
+      }
+
+      if (isExitTarget) {
+        const edgeX = clampedX > x1 ? x1 : x0;
+        if (this.isSegmentFree(this.pigX, this.pigY, edgeX, clampedY)) {
+          this.path = [{ x: edgeX, y: clampedY }, { x: clampedX, y: clampedY }];
+          this.targetX = edgeX;
+          this.targetY = clampedY;
+          this.facing = clampedX >= this.pigX ? 1 : -1;
+          this.currentAnim = 'walk';
+          return true;
+        }
+        const waypoints = this.findPath(this.pigX, this.pigY, edgeX, clampedY);
+        if (waypoints && waypoints.length > 0) {
+          waypoints.push({ x: clampedX, y: clampedY });
+          this.path = waypoints;
+          const next = this.path.shift();
+          this.targetX = next.x;
+          this.targetY = next.y;
+          this.facing = this.targetX >= this.pigX ? 1 : -1;
+          this.currentAnim = 'walk';
+          return true;
+        }
+        this.path = [{ x: clampedX, y: clampedY }];
+        this.targetX = clampedX;
+        this.targetY = clampedY;
+        this.facing = clampedX >= this.pigX ? 1 : -1;
+        this.currentAnim = 'walk';
+        return true;
+      }
+
+      if (this.isSegmentFree(this.pigX, this.pigY, clampedX, clampedY)) {
+        this.path = [];
+        this.targetX = clampedX;
+        this.targetY = clampedY;
+        this.facing = this.targetX >= this.pigX ? 1 : -1;
+        this.currentAnim = 'walk';
+        return true;
+      }
+
+      const waypoints = this.findPath(this.pigX, this.pigY, clampedX, clampedY);
+      if (!waypoints || waypoints.length === 0) {
+        return false;
+      }
+
+      this.path = waypoints;
+      const first = this.path.shift();
+      this.targetX = first.x;
+      this.targetY = first.y;
       this.facing = this.targetX >= this.pigX ? 1 : -1;
       this.currentAnim = 'walk';
+      return true;
     }
 
     walkTo(x, y) {
-      this.setTarget(x, y);
+      return this.setTarget(x, y);
     }
 
     callPigExit(to) {
@@ -497,16 +1014,16 @@
       this.targetExit = null;
       this.targetX = null;
       this.targetY = null;
+      this.path = [];
       this.setPigVisible(false);
       const ev = { to: to || 'right' };
-      if (typeof this.onPigExit === 'function') {
-        try { this.onPigExit(ev); } catch (e) { console.error(e); }
-      }
-      if (typeof CanvasPig.onPigExit === 'function') {
-        try { CanvasPig.onPigExit(ev); } catch (e) { console.error(e); }
-      }
-      if (typeof window !== 'undefined' && typeof window.onPigExit === 'function') {
-        try { window.onPigExit(ev); } catch (e) { console.error(e); }
+      const fn = (typeof this.onPigExit === 'function')
+        ? this.onPigExit
+        : ((typeof CanvasPig.onPigExit === 'function')
+          ? CanvasPig.onPigExit
+          : ((typeof window !== 'undefined' && typeof window.onPigExit === 'function') ? window.onPigExit : null));
+      if (fn) {
+        try { fn(ev); } catch (e) { console.error(e); }
       }
     }
 
@@ -533,33 +1050,91 @@
         const rightX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.right && typeof this.currentScene.exits.right.x === 'number')
           ? this.currentScene.exits.right.x
           : x1;
-        this.targetExit = side;
-        this.targetX = side === 'left' ? leftX : rightX;
-        this.targetY = Math.max(y0, Math.min(y1, this.pigY));
-        this.facing = this.targetX >= this.pigX ? 1 : -1;
-        this.currentAnim = 'walk';
-        return;
+        const exTargetX = side === 'left' ? leftX : rightX;
+        const exTargetY = Math.max(y0, Math.min(y1, this.pigY));
+        if (this.isFree(exTargetX, exTargetY) && this.setTarget(exTargetX, exTargetY)) {
+          this.targetExit = side;
+          return;
+        }
       }
 
-      let tx;
-      if (this.pigX < x0 + w * 0.5) {
-        tx = x0 + w * 0.7 + Math.random() * (w * 0.28);
-      } else {
-        tx = x0 + 4 + Math.random() * (w * 0.28);
-      }
-
-      let ty;
-      if (this.pigY < y0 + h * 0.5) {
-        ty = y0 + h * 0.7 + Math.random() * (h * 0.28);
-      } else {
-        ty = y0 + 2 + Math.random() * (h * 0.28);
-      }
-
-      this.targetX = Math.round(Math.max(x0, Math.min(x1, tx)));
-      this.targetY = Math.round(Math.max(y0, Math.min(y1, ty)));
       this.targetExit = null;
-      this.facing = this.targetX >= this.pigX ? 1 : -1;
-      this.currentAnim = 'walk';
+
+      for (let attempt = 0; attempt < 30; attempt++) {
+        let tx;
+        if (attempt < 15) {
+          if (this.pigX < x0 + w * 0.5) {
+            tx = x0 + w * 0.7 + Math.random() * (w * 0.28);
+          } else {
+            tx = x0 + 4 + Math.random() * (w * 0.28);
+          }
+        } else {
+          tx = x0 + Math.random() * w;
+        }
+
+        let ty;
+        if (attempt < 15) {
+          if (this.pigY < y0 + h * 0.5) {
+            ty = y0 + h * 0.7 + Math.random() * (h * 0.28);
+          } else {
+            ty = y0 + 2 + Math.random() * (h * 0.28);
+          }
+        } else {
+          ty = y0 + Math.random() * h;
+        }
+
+        tx = Math.round(Math.max(x0, Math.min(x1, tx)));
+        ty = Math.round(Math.max(y0, Math.min(y1, ty)));
+
+        if (!this.isFree(tx, ty)) continue;
+
+        if (this.setTarget(tx, ty)) {
+          return;
+        }
+      }
+
+      // BFS fallback if random attempts fail:
+      const cols = this.gridW || 1;
+      const rows = this.gridH || 1;
+      if (this.grid && cols > 0 && rows > 0) {
+        const sc = Math.max(0, Math.min(cols - 1, Math.floor(this.pigX / 4)));
+        const sr = Math.max(0, Math.min(rows - 1, Math.floor(this.pigY / 4)));
+        const q = [sr * cols + sc];
+        const visited = new Uint8Array(cols * rows);
+        visited[sr * cols + sc] = 1;
+        const candidates = [];
+        while (q.length > 0 && candidates.length < 30) {
+          const curr = q.shift();
+          const cc = curr % cols;
+          const cr = Math.floor(curr / cols);
+          const px = Math.max(x0, Math.min(x1, cc * 4 + 2));
+          const py = Math.max(y0, Math.min(y1, cr * 4 + 2));
+          if (this.isFree(px, py) && (cc !== sc || cr !== sr)) {
+            candidates.push({ x: px, y: py });
+          }
+          const dirs = [[1,0], [-1,0], [0,1], [0,-1]];
+          for (let di = 0; di < 4; di++) {
+            const nc = cc + dirs[di][0];
+            const nr = cr + dirs[di][1];
+            if (nc >= 0 && nc < cols && nr >= 0 && nr < rows) {
+              const idx = nr * cols + nc;
+              if (this.grid[idx] === 1 && !visited[idx]) {
+                visited[idx] = 1;
+                q.push(idx);
+              }
+            }
+          }
+        }
+        if (candidates.length > 0) {
+          const pick = candidates[Math.floor(Math.random() * candidates.length)];
+          if (this.setTarget(pick.x, pick.y)) {
+            return;
+          }
+        }
+      }
+
+      this.currentAnim = 'idle';
+      this.idleTimer = 400 + Math.random() * 400;
     }
 
     getOrderedThings() {
@@ -596,9 +1171,18 @@
         smoothing: this.ctx ? this.ctx.imageSmoothingEnabled : false,
         pigDraws: this.pigDraws || 0,
         pig: {
-          x: this.pigX,
-          y: this.pigY,
-          scale: this.getDrawScale()
+          x: Math.round(this.pigX),
+          y: Math.round(this.pigY),
+          scale: this.getDrawScale(),
+          drawnWidth: Math.round(46 * this.getDrawScale()),
+          bodyWidth: Math.round(46 * this.getDrawScale()),
+          frameWidth: Math.round(FRAME_SIZE * this.getDrawScale()),
+          frameHeight: Math.round(FRAME_SIZE * this.getDrawScale())
+        },
+        grid: {
+          w: this.gridW || 0,
+          h: this.gridH || 0,
+          free: this.gridFreeCount || 0
         }
       };
     }
@@ -627,9 +1211,27 @@
     }
 
     initAssets() {
-      const isWebView = window.chrome && window.chrome.webview;
+      const isWebView = typeof window !== 'undefined' && window.chrome && window.chrome.webview;
       const assetsBase = isWebView ? 'https://cuy.assets/' : '../../assets/';
       this.assetsBase = assetsBase;
+
+      if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
+        const scenesUrl = assetsBase + 'data/place_scenes.json';
+        window.fetch(scenesUrl)
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data && data.scenes) {
+              cachedPlaceScenesData = data;
+              if (this.currentScene) {
+                if (!this.blockers || this.blockers.length === 0) {
+                  this.blockers = this.lookupSceneBlockers(this.sceneId);
+                  this.rebuildGrid();
+                }
+              }
+            }
+          })
+          .catch(() => {});
+      }
 
       // Sheets come from CuySprites (breed + stage, palette remap). Start with the current look and baby as fallback.
       this.breed = 'smooth';
@@ -727,6 +1329,14 @@
         const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
         this.pigX = Math.max(x0, Math.min(x1, this.pigX));
         this.pigY = Math.max(y0, Math.min(y1, this.pigY));
+        if (!this.isFree(this.pigX, this.pigY)) {
+          const snapped = this.snapToFreeCell(this.pigX, this.pigY);
+          this.pigX = snapped.x;
+          this.pigY = snapped.y;
+        }
+        this.path = [];
+        this.targetX = null;
+        this.targetY = null;
       };
       this.canvas.addEventListener('pointerup', endDrag);
       this.canvas.addEventListener('pointercancel', endDrag);
@@ -913,7 +1523,12 @@
         if (dist <= speed || (this.targetExit && ((this.targetExit === 'right' && this.pigX >= this.targetX) || (this.targetExit === 'left' && this.pigX <= this.targetX)))) {
           this.pigX = this.targetX;
           this.pigY = ty;
-          if (this.targetExit) {
+          if (this.path && this.path.length > 0) {
+            const next = this.path.shift();
+            this.targetX = next.x;
+            this.targetY = next.y;
+            this.facing = this.targetX >= this.pigX ? 1 : -1;
+          } else if (this.targetExit) {
             const to = this.targetExit;
             this.callPigExit(to);
           } else if (this.exitsEnabled) {
@@ -1071,6 +1686,9 @@
         // Draw Pig
         this.drawPig(ctx, this.lightScene);
         this.pigDraws = (this.pigDraws || 0) + 1;
+
+        // Background blockers in front of pig (pig walks behind them)
+        this.drawBackgroundBlockersOverPig(ctx);
 
         // Standing objects in front of pig
         standing.filter(t => (t.y || 0) > pigFeetY).forEach(t => this.drawThing(ctx, t));
@@ -1341,6 +1959,46 @@
       }
 
       ctx.restore();
+    }
+
+    drawBackgroundBlockersOverPig(ctx) {
+      if (!this.sceneBgImg) return;
+      if (!this.sceneBgImg.complete && !this.sceneBgImg.naturalWidth) return;
+      const pigFeetY = this.pigY;
+      const rawBlockers = (this.blockers && Array.isArray(this.blockers))
+        ? this.blockers
+        : this.lookupSceneBlockers(this.sceneId);
+      if (!Array.isArray(rawBlockers)) return;
+
+      const lit = !!this.lightScene;
+
+      for (let i = 0; i < rawBlockers.length; i++) {
+        const b = rawBlockers[i];
+        const r = Array.isArray(b) ? b : (b && b.rect);
+        if (!Array.isArray(r) || r.length !== 4) continue;
+        const [rx0, ry0, rx1, ry1] = r;
+        const base = (b && typeof b.behindLine === 'number') ? b.behindLine : ry1;
+        if (pigFeetY < base) {
+          const h = (b && typeof b.height === 'number') ? b.height : 40;
+          const sx = Math.max(0, rx0);
+          const sy = Math.max(0, ry0 - h);
+          const ex = Math.min(this.sceneWidth, rx1);
+          const ey = Math.min(this.sceneHeight, ry1);
+          const sw = ex - sx;
+          const sh = ey - sy;
+          if (sw > 0 && sh > 0) {
+            ctx.drawImage(this.sceneBgImg, sx, sy, sw, sh, sx, sy, sw, sh);
+            if (lit) {
+              const a = sceneAmbient(this.lightScene);
+              ctx.save();
+              ctx.globalCompositeOperation = 'multiply';
+              ctx.fillStyle = `rgb(${Math.round(255 * Math.min(1, a[0]))}, ${Math.round(255 * Math.min(1, a[1]))}, ${Math.round(255 * Math.min(1, a[2]))})`;
+              ctx.fillRect(sx, sy, sw, sh);
+              ctx.restore();
+            }
+          }
+        }
+      }
     }
 
     // Scene light for the background, furniture and shadow: multiply by the ambient colour (lights.json), no dither.
@@ -1625,7 +2283,16 @@
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst) return inst.fastForward(ms);
     },
-    onPigExit: null,
+    _onPigExit: null,
+    get onPigExit() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      return inst ? inst.onPigExit : this._onPigExit;
+    },
+    set onPigExit(fn) {
+      this._onPigExit = fn;
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) inst.onPigExit = fn;
+    },
     get pigY() {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       return inst ? inst.pigY : 0;
@@ -1646,6 +2313,21 @@
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst) return inst.debug();
       return null;
+    },
+    isFree(x, y) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.isFree === 'function') return inst.isFree(x, y);
+      return false;
+    },
+    snapToFreeCell(x, y) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.snapToFreeCell === 'function') return inst.snapToFreeCell(x, y);
+      return { x, y };
+    },
+    scaleAt(y) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.scaleAt === 'function') return inst.scaleAt(y);
+      return 1;
     }
   };
 
@@ -1661,6 +2343,9 @@
   PigCanvas.setTarget = (x, y) => CanvasPig.setTarget(x, y);
   PigCanvas.walkTo = (x, y) => CanvasPig.walkTo(x, y);
   PigCanvas.fastForward = (ms) => CanvasPig.fastForward(ms);
+  PigCanvas.isFree = (x, y) => CanvasPig.isFree(x, y);
+  PigCanvas.snapToFreeCell = (x, y) => CanvasPig.snapToFreeCell(x, y);
+  PigCanvas.scaleAt = (y) => CanvasPig.scaleAt(y);
   PigCanvas.debug = () => CanvasPig.debug();
   if (typeof window !== 'undefined') {
     window.CanvasPig = CanvasPig;

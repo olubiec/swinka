@@ -1,4 +1,8 @@
-/* Places feature styles (PK-P36a) */
+/* Places feature styles (PK-P36a, PK-P39b) */
+:root {
+  --scene-k: 1;
+}
+
 .places-bar {
   display: flex;
   align-items: center;
@@ -15,6 +19,35 @@
   user-select: none;
   position: relative;
   z-index: 5;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* Scene layout fit below places bar (PK-P39b) */
+.stage-viewport {
+  position: relative;
+  width: 100%;
+  background-color: var(--ui-wood-0);
+  border-bottom: 3px solid var(--ui-wood-0);
+  overflow: hidden;
+  line-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  height: auto;
+  --scene-k: 1;
+}
+
+.stage-viewport #pigCanvas {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: center center;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
 .places-bar .ui-arrow-left,

@@ -15,9 +15,28 @@
   var DEFAULT_PERIOD = 'day';
   var PLACE_KINDS = ['indoor', 'outdoor'];
 
-  // date: a Date, or an hour number 0-23.
+  // date: a Date, an hour number 0-23, or a string like "12:00".
   function periodOf(date) {
-    var hour = typeof date === 'number' ? date : date.getHours();
+    if (typeof window !== 'undefined' && window.__cuyNow != null) {
+      date = window.__cuyNow;
+    } else if (date == null) {
+      date = new Date();
+    }
+    var hour;
+    if (typeof date === 'number') {
+      hour = date;
+    } else if (typeof date === 'string') {
+      if (/^\d{1,2}:\d{2}/.test(date)) {
+        hour = parseInt(date.split(':')[0], 10);
+      } else {
+        var d = new Date(date);
+        hour = !isNaN(d.getTime()) ? d.getHours() : parseInt(date, 10);
+      }
+    } else if (date instanceof Date || (date && typeof date.getHours === 'function')) {
+      hour = date.getHours();
+    } else {
+      hour = 12;
+    }
     var period = 'night';
     for (var i = 0; i < PERIOD_STARTS.length; i++) {
       if (hour >= PERIOD_STARTS[i].hour) period = PERIOD_STARTS[i].period;
@@ -47,11 +66,13 @@
   }
 
   // A source belongs to a placed item when its key or its `item` atlas id equals the item id.
-  function findSource(sources, id) {
-    if (Object.prototype.hasOwnProperty.call(sources, id)) return sources[id];
+  function findSource(sources, id, itemId) {
+    if (id && Object.prototype.hasOwnProperty.call(sources, id)) return sources[id];
+    if (itemId && Object.prototype.hasOwnProperty.call(sources, itemId)) return sources[itemId];
     var keys = Object.keys(sources);
     for (var i = 0; i < keys.length; i++) {
-      if (sources[keys[i]].item === id) return sources[keys[i]];
+      var s = sources[keys[i]];
+      if (s.item === id || (itemId && s.item === itemId)) return s;
     }
     return null;
   }
@@ -72,18 +93,29 @@
     var manual = toggles || {};
     for (var i = 0; i < list.length; i++) {
       var placed = list[i];
-      var src = findSource(sources, placed.id);
+      var src = findSource(sources, placed.id, placed.itemId);
       if (!src) continue;
       if (src.place !== 'both' && src.place !== place) continue;
-      var on = typeof manual[placed.id] === 'boolean' ? manual[placed.id] : autoOn(src, period);
+      var key = placed.uid || placed.id;
+      var on = typeof manual[key] === 'boolean'
+        ? manual[key]
+        : (typeof manual[placed.id] === 'boolean'
+          ? manual[placed.id]
+          : (placed.itemId && typeof manual[placed.itemId] === 'boolean'
+            ? manual[placed.itemId]
+            : (typeof placed.on === 'boolean' ? placed.on : autoOn(src, period))));
       result.push({
-        id: placed.id,
+        id: key,
+        uid: key,
+        itemId: placed.itemId || placed.id,
         x: placed.x,
         y: placed.y,
         on: on,
         color: src.color,
         radiusCells: src.radius_cells,
+        radius: (src.radius_cells || 2.5) * 16,
         strength: src.strength,
+        intensity: src.strength,
         flicker: src.flicker,
         frames: src.frames,
         fps: src.fps,

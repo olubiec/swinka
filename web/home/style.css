@@ -22,6 +22,9 @@
 }
 
 :root {
+  /* Scene integer scale factor (PK-P39b) */
+  --scene-k: 1;
+
   /* 16x16 icon sheet from assets */
   --icons-sheet: url('../../assets/icons/icons_16.png');
   /* bg:menu image; index.html overrides it in WebView2 (https://cuy.assets/) */
@@ -87,8 +90,8 @@ body.webview-mode {
 body.webview-mode .game-device {
   width: 100%;
   height: 100%;
-  max-width: 400px;
-  max-height: 620px;
+  max-width: 420px;
+  max-height: 100%;
   min-height: 0;
   margin: 0 auto;
 }
@@ -374,22 +377,21 @@ body.webview-mode .game-device {
   border-bottom: 3px solid var(--ui-wood-0);
   overflow: hidden;
   line-height: 0;
-  /* Fixed height, never shrunk by the flex column: otherwise the floor and the pig get cropped. */
-  flex: 0 0 132px;
-  height: 132px;
+  flex: 0 0 auto;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
+  --scene-k: 1;
 }
 
 #pigCanvas {
   display: block;
   max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: 100%;
+  width: 100%;
+  height: auto;
   object-fit: contain;
-  object-position: center bottom;
+  object-position: center center;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }

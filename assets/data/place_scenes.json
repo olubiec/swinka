@@ -13,7 +13,8 @@
       "size": [240, 130],
       "walk": [10, 96, 230, 126],
       "depth_scale": [0.88, 1.0],
-      "bg": null
+      "bg": null,
+      "blockers": []
     },
     "garden": {
       "kind": "outdoor",
@@ -21,6 +22,7 @@
       "size": [256, 144],
       "walk": [8, 80, 248, 138],
       "depth_scale": [0.82, 1.0],
+      "behindLine": 74,
       "bg": {
         "morning": "world/bg/garden_morning.png",
         "day": "world/bg/garden_day.png",
@@ -30,7 +32,17 @@
       "exits": {
         "left": { "to": "house", "x": 2 },
         "right": { "to": "park", "x": 253 }
-      }
+      },
+      "blockers": [
+        { "id": "fountain", "rect": [62, 126, 76, 132] },
+        { "id": "bench", "rect": [150, 106, 178, 114] },
+        { "id": "flower_bed_left", "rect": [10, 118, 42, 124] },
+        { "id": "flower_bed_right", "rect": [200, 130, 235, 136] },
+        { "id": "tree_trunk_left", "rect": [202, 56, 218, 66] },
+        { "id": "tree_trunk_right", "rect": [238, 56, 254, 66] },
+        { "id": "burrow", "rect": [22, 94, 72, 104] },
+        { "id": "hedge", "rect": [184, 80, 218, 88] }
+      ]
     },
     "park": {
       "kind": "outdoor",
@@ -38,6 +50,7 @@
       "size": [384, 192],
       "walk": [10, 110, 374, 186],
       "depth_scale": [0.78, 1.0],
+      "behindLine": 106,
       "bg": {
         "morning": "world/bg/park_morning.png",
         "day": "world/bg/park_day.png",
@@ -47,7 +60,23 @@
       "exits": {
         "left": { "to": "garden", "x": 4 },
         "right": { "to": "farm", "x": 380 }
-      }
+      },
+      "blockers": [
+        { "id": "tree_trunk_1", "rect": [20, 68, 36, 80] },
+        { "id": "gazebo", "rect": [70, 70, 130, 84] },
+        { "id": "tree_trunk_2", "rect": [225, 68, 241, 80] },
+        { "id": "tree_trunk_3", "rect": [275, 68, 291, 80] },
+        { "id": "tree_trunk_4", "rect": [330, 68, 346, 80] },
+        { "id": "river_bank_left", "rect": [0, 94, 168, 106] },
+        { "id": "river_bank_right", "rect": [198, 94, 384, 106] },
+        { "id": "bridge_post_left", "rect": [156, 110, 170, 122] },
+        { "id": "bridge_post_right", "rect": [196, 110, 210, 122] },
+        { "id": "bench_left", "rect": [112, 134, 144, 144] },
+        { "id": "bench_right", "rect": [340, 156, 370, 166] },
+        { "id": "lantern_left", "rect": [32, 122, 38, 130] },
+        { "id": "lantern_mid", "rect": [284, 122, 290, 130] },
+        { "id": "lantern_right", "rect": [348, 178, 356, 186] }
+      ]
     },
     "farm": {
       "kind": "outdoor",
@@ -55,6 +84,7 @@
       "size": [256, 144],
       "walk": [8, 80, 248, 138],
       "depth_scale": [0.82, 1.0],
+      "behindLine": 76,
       "bg": {
         "morning": "world/bg/farm.png",
         "day": "world/bg/farm.png",
@@ -64,7 +94,12 @@
       "exits": {
         "left": { "to": "park", "x": 3 },
         "right": { "to": "market", "x": 252 }
-      }
+      },
+      "blockers": [
+        { "id": "fence_left", "rect": [0, 62, 170, 74] },
+        { "id": "barn_base", "rect": [170, 60, 242, 76] },
+        { "id": "fence_right", "rect": [242, 62, 256, 74] }
+      ]
     },
     "market": {
       "kind": "outdoor",
@@ -72,6 +107,7 @@
       "size": [256, 144],
       "walk": [8, 120, 248, 140],
       "depth_scale": [0.92, 1.0],
+      "behindLine": 120,
       "bg": {
         "morning": "world/bg/market.png",
         "day": "world/bg/market.png",
@@ -81,7 +117,15 @@
       "exits": {
         "left": { "to": "farm", "x": 3 },
         "right": { "to": "house", "x": 252 }
-      }
+      },
+      "blockers": [
+        { "id": "stall_left", "rect": [14, 112, 62, 120] },
+        { "id": "notice_board", "rect": [64, 112, 94, 120] },
+        { "id": "stall_center", "rect": [96, 110, 162, 120] },
+        { "id": "crates_barrels", "rect": [166, 112, 188, 120] },
+        { "id": "stall_right", "rect": [190, 110, 238, 120] },
+        { "id": "sign_right", "rect": [240, 112, 252, 120] }
+      ]
     }
   },
   "house_exits": {
