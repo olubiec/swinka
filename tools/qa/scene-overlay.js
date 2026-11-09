@@ -11,7 +11,7 @@ const { chromium } = require('playwright');
 const ux = require('./lib/ux.js');
 
 const LAYERS = ['walk', 'blockers', 'exits', 'grid', 'crop', 'pig'];
-const DEFAULT_LAYERS = ['walk', 'blockers', 'exits'];
+const DEFAULT_LAYERS = ['walk', 'blockers', 'exits', 'crop', 'pig'];
 const DEFAULT_SCENES = ['garden', 'park', 'farm', 'market', 'room'];
 const DEFAULT_OUT_DIR = path.resolve(__dirname, '../../docs/qa/calibration');
 
@@ -22,7 +22,9 @@ let PALETTE = {
   rose1: '#d98a86',
   flame1: '#ff9f45',
   dusk4: '#b9c9c4',
-  linen1: '#d9c096'
+  linen1: '#d9c096',
+  plum0: '#241824',
+  plum1: '#382538'
 };
 
 try {
@@ -34,7 +36,9 @@ try {
       rose1: paletteData.ramps.rose[1],
       flame1: paletteData.ramps.flame[1],
       dusk4: paletteData.ramps.dusk[4],
-      linen1: paletteData.ramps.linen[1]
+      linen1: paletteData.ramps.linen[1],
+      plum0: (paletteData.ramps.plum && paletteData.ramps.plum[0]) || '#241824',
+      plum1: (paletteData.ramps.plum && paletteData.ramps.plum[1]) || '#382538'
     };
   }
 } catch (e) {}
@@ -85,7 +89,11 @@ async function renderOverlay(sceneId, outPath, opts = {}) {
         throw new Error('Scene definition not found for: ' + sceneId);
       }
 
-      const [sw, sh] = def.size;
+      let [sw, sh] = def.size;
+      if ((sceneId === 'room' || lookupId === 'salon') && sw === 192 && sh === 112) {
+        sw = 240;
+        sh = 130;
+      }
       const canvas = document.createElement('canvas');
       canvas.width = sw * 4;
       canvas.height = sh * 4;
@@ -170,6 +178,58 @@ async function renderOverlay(sceneId, outPath, opts = {}) {
             const Y = y * 4;
             for (let X = 0; X < sw * 4; X += 8) {
               ctx.fillRect(X, Y, 4, 4);
+            }
+          }
+        } else if (layer === 'crop') {
+          let k = Math.floor(370 / sw);
+          if (k < 1) k = 1;
+          const cropW = Math.min(sw, Math.floor(370 / k));
+          const cropH = sh;
+          const cropX = Math.floor((sw - cropW) / 2);
+          const cropY = 0;
+
+          if (cropW < sw || cropH < sh) {
+            for (let x = 0; x < sw; x++) {
+              for (let y = 0; y < sh; y++) {
+                if (x < cropX || x >= cropX + cropW || y < cropY || y >= cropY + cropH) {
+                  ctx.fillStyle = ((x + y) % 2 === 0) ? palette.plum0 : palette.plum1;
+                  ctx.fillRect(x * 4, y * 4, 4, 4);
+                }
+              }
+            }
+            drawOutline(cropX, cropY, cropX + cropW, cropY + cropH, palette.flame1);
+          }
+        } else if (layer === 'pig') {
+          if (def.walk && Array.isArray(def.walk) && def.walk.length === 4) {
+            const [wx0, wy0, wx1, wy1] = def.walk;
+            const bandCenterX = (wx0 + wx1) / 2;
+            const ds = (Array.isArray(def.depthScale) && def.depthScale.length >= 2)
+              ? def.depthScale
+              : [0.9375, 1.0];
+
+            const edges = [
+              { y: wy0, scale: ds[0] },
+              { y: wy1, scale: ds[1] }
+            ];
+
+            for (const edge of edges) {
+              const s = Math.round(edge.scale * 16) / 16;
+              const w = Math.round(46 * s);
+              const h = Math.round(29 * s);
+
+              const x0 = Math.round(bandCenterX - w / 2);
+              const x1 = x0 + w;
+              const y0 = edge.y - h;
+              const y1 = edge.y;
+
+              drawOutline(x0, y0, x1, y1, palette.rose1);
+
+              const tick1X = Math.round(x0 + w * 0.25);
+              const tick2X = Math.round(x0 + w * 0.75);
+              const tickY = Math.max(0, y0 * 4 - 4);
+              ctx.fillStyle = palette.rose1;
+              ctx.fillRect(tick1X * 4, tickY, 4, 4);
+              ctx.fillRect(tick2X * 4, tickY, 4, 4);
             }
           }
         }

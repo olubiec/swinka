@@ -240,6 +240,35 @@ Wszystkie pakiety fali P39 (a-e) mają zielone testy automatyczne (omijanie prze
 3. Belka nie zasłania sceny: cały park (drzewa) i dom na farmie widoczne, obraz ostry.
 4. Światło jak w oknach ogrodu: inne o 12:00 i o 23:00, lampy świecą. Zrzuty: `docs/qa/shots/p39-*.png`.
 
+## Wave P45: Room Geometry, Trim Art, Shadows & Perspective Bands
+
+Wszystkie pakiety fali P45 (a-d, q1, q2) mają komplet testów automatycznych dla geometrii pokoju, rysowania listwy przypodłogowej, pasów chodzenia, kwantyzacji głębi, sprite'ów cienia i listwy oraz inspekcji overlay i zrzutów ekranu.
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Stage Gate Wave P45 (PK-P45q1) | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | 1120/1120 Core tests PASS, 12/12 P45 UX PASS, assets OK, EXE smoke OK (host Playwright missing chromium in env) | Zbudowana aplikacja, silnik Core i desktopowy EXE działają bez regresji; assety i ikony kompletne |
+| UX Scene Data (PK-P45a1) | `node tools/qa/ux-p45-scene-data.js` | Exit code 0, 7/7 PASS (SD1-SD7) | assets/data/place_scenes.json poprawnie definiuje schemat scen, pasy walk i skalę głębi; odrzuca błędne fixtury |
+| UX Room Geometry (PK-P45a2) | `node tools/qa/ux-p45-room-geometry.js` | Exit code 0, 6/6 PASS (G1-G6) | Moduł room-geometry.js poprawnie wylicza rozmiar sceny, wysokość ściany wallH i konwersję komórek siatki cellToPx |
+| UX Room Scene Integration (PK-P45a3) | `node tools/qa/ux-p45-room-scene.js` | Exit code 0, 5/5 PASS (RS1-RS5) | scenes.js integruje geometrię pokoi dla salonu (12x7) i pokoju świnek (10x6), meble stoją na podłodze (y >= wallH) |
+| UX Room Drawing & Baseboard (PK-P45a4) | `node tools/qa/ux-p45-room-draw.js` | Exit code 0, 6/6 PASS (RD1-RD6) | CanvasPig poprawnie rysuje pokój: tapetę na ścianie, listwę z tiles.json, podłogę drewnianą i meble na podłodze |
+| UX Walk Bands (PK-P45b1) | `node tools/qa/ux-p45-walk-bands.js` | Exit code 0, 3/3 PASS (WB1-WB3) | Pasy podłogi we wszystkich scenach outdoorowych mieszczą się w rozmiarze sceny, wysokość >= 12 px, dół <= H - 4 |
+| UX Pig Depth Quantisation (PK-P45b2) | `node tools/qa/ux-p45-pig-depth.js` | Exit code 0, 4/4 PASS (PD1-PD4) | Brak drżenia pikseli: skala świnki jest kwantowana (scale*16 i 64*scale to liczby całkowite) i monotoniczna |
+| UX Pig Shadow Sprite (PK-P45b3) | `node tools/qa/ux-p45-pig-shadow.js` | Exit code 0, 4/4 PASS (PS1-PS4) | Cień świnki rysowany ze sprite'a shadow_*.png (brak wywołań ctx.ellipse), wycentrowany pod łapkami |
+| UX Baseboard Sprite (PK-P45c1) | `node tools/qa/ux-p45-trim-baseboard.js` | Exit code 0, 5/5 PASS (B1-B5) | Sprite listwy przypodłogowej 16x8 w assets/world/trim/baseboard.png, bez czystej bieli (#ffffff) i czerni (#000000) |
+| UX Shadow Sprite (PK-P45c2) | `node tools/qa/ux-p45-trim-shadow.js` | Exit code 0, 4/4 PASS (S1-S4) | Sprite cienia 16x4 w assets/world/trim/shadow_strip.png, przezroczystości 1-bitowe, poprawna paleta plum |
+| UX Trim Tiles Registration (PK-P45c3) | `node tools/qa/ux-p45-trim-art.js` | Exit code 0, 3/3 PASS (TA1-TA3) | Klucze trim zarejestrowane w assets/world/tiles.json, rozmiary IHDR zgodne z deklaracjami, check-assets przechodzi |
+| UX Scene Overlay Tool (PK-P45d1) | `node tools/qa/ux-p45-overlay.js` | Exit code 0, 5/5 PASS (O1-O5) | Narzędzie scen overlay generuje podglądy PNG 4x dla scen z warstwami blockers, walk, exits, grid |
+| UX Overlay Pig & Crop (PK-P45d2) | `node tools/qa/ux-p45-overlay-pig.js` | Exit code 0, 4/4 PASS (OP1-OP4) | Narzędzie overlay poprawnie rysuje świnkę ze skalowaniem w siatce oraz obsługuje kadr okna domku |
+| UX P45 Scene Screenshots (PK-P45q2) | `node tools/qa/ux-p45-shots.js` | Exit code 0, zapisano zrzuty 5 scen (top/bottom) do docs/qa/shots/p45-*.png | Zrzuty ekranu 5 scen (room, garden, park, farm, market) w widoku 420x720 ze świnką na górze i dole pasu |
+
+### Manual Checklist (Do sprawdzenia po P45)
+1. Salon w oknie głównym: meble stoją NA podłodze, a nie na ścianie, i wyglądają tak samo jak w szufladzie edycji.
+2. Pokój świnki 10x6 mieści się w oknie w całości.
+3. Świnka w ogrodzie, parku, na farmie i na targu nie jest ani olbrzymem, ani mrówką przy ławce czy straganie i ma sprite cienia.
+4. Listwa przypodłogowa nie ma białej ani czarnej linii.
+5. Świnka nie drży (brak skoków rozmiaru o 1 piksel) podczas chodzenia z góry na dół.
+
+
 
 
 

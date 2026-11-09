@@ -420,6 +420,69 @@ function checkPlaceScenes(data, options = {}) {
     if (!passed) allPassed = false;
   }
 
+  // R1: depth_scale far >= 0.9 and far < near <= 1.0 for every scene
+  let r1Ok = true;
+  const r1Failures = [];
+  for (const [name, scene] of Object.entries(data.scenes || {})) {
+    if (!scene || !Array.isArray(scene.depth_scale) || scene.depth_scale.length !== 2) {
+      r1Ok = false;
+      r1Failures.push(`${name} depth_scale invalid`);
+      continue;
+    }
+    const [far, near] = scene.depth_scale;
+    if (typeof far !== 'number' || typeof near !== 'number' || far < 0.9 || far >= near || near > 1.0) {
+      r1Ok = false;
+      r1Failures.push(`${name} invalid depth_scale [${far}, ${near}] (expected 0.9 <= far < near <= 1.0)`);
+    }
+  }
+  results.R1 = r1Ok;
+  failures.R1 = r1Failures;
+  if (!r1Ok) allPassed = false;
+
+  // R2: walk height >= 12 and bottom edge <= size height - 2
+  let r2Ok = true;
+  const r2Failures = [];
+  for (const [name, scene] of Object.entries(data.scenes || {})) {
+    if (!scene || !Array.isArray(scene.walk) || scene.walk.length !== 4) {
+      r2Ok = false;
+      r2Failures.push(`${name} invalid walk format`);
+      continue;
+    }
+    const [x0, y0, x1, y1] = scene.walk;
+    const [sw, sh] = scene.size || [];
+    const h = y1 - y0;
+    if (h < 12) {
+      r2Ok = false;
+      r2Failures.push(`${name} walk height ${h} < 12`);
+    }
+    if (sh != null && y1 > sh - 2) {
+      r2Ok = false;
+      r2Failures.push(`${name} walk bottom ${y1} > size height - 2 (${sh - 2})`);
+    }
+  }
+  results.R2 = r2Ok;
+  failures.R2 = r2Failures;
+  if (!r2Ok) allPassed = false;
+
+  // R3: a scene with size_from_layout has fallback size and walk
+  let r3Ok = true;
+  const r3Failures = [];
+  for (const [name, scene] of Object.entries(data.scenes || {})) {
+    if (scene && scene.size_from_layout) {
+      const hasSize = Array.isArray(scene.size) && scene.size.length === 2 &&
+        typeof scene.size[0] === 'number' && typeof scene.size[1] === 'number';
+      const hasWalk = Array.isArray(scene.walk) && scene.walk.length === 4 &&
+        scene.walk.every(v => typeof v === 'number');
+      if (!hasSize || !hasWalk) {
+        r3Ok = false;
+        r3Failures.push(`${name} size_from_layout missing fallback ${!hasSize ? 'size' : ''}${!hasSize && !hasWalk ? ' and ' : ''}${!hasWalk ? 'walk' : ''}`);
+      }
+    }
+  }
+  results.R3 = r3Ok;
+  failures.R3 = r3Failures;
+  if (!r3Ok) allPassed = false;
+
   return { allPassed, results, failures };
 }
 
@@ -452,7 +515,10 @@ function runCli() {
     B3: '>= 60% of each walk band stays free',
     B4: 'the free area is ONE connected region and both exits are reachable',
     B5: 'ids unique per scene',
-    B6: 'rect order x0<x1, y0<y1'
+    B6: 'rect order x0<x1, y0<y1',
+    R1: 'depth_scale far >= 0.9 and far < near <= 1.0 for every scene',
+    R2: 'walk height >= 12 and bottom edge <= size height - 2',
+    R3: 'a scene with size_from_layout has fallback size and walk'
   };
 
   for (const [code, desc] of Object.entries(descriptions)) {

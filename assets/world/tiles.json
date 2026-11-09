@@ -628,5 +628,21 @@
     32
    ]
   }
+ },
+ "trim": {
+  "baseboard": {
+   "file": "house/trim_baseboard.png",
+   "size": [
+    16,
+    8
+   ]
+  },
+  "floor_shadow": {
+   "file": "house/trim_floor_shadow.png",
+   "size": [
+    16,
+    4
+   ]
+  }
  }
 }

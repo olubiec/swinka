@@ -294,6 +294,7 @@
       // Virtual pixel art scene size (a wide shot of the pig's room)
       this.sceneWidth = 240;
       this.sceneHeight = 130;
+      this.wallH = 32;
       this.canvas.width = this.sceneWidth;
       this.canvas.height = this.sceneHeight;
 
@@ -307,7 +308,7 @@
 
       // Pig position in the scene (feet coordinates)
       this.pigX = 120;
-      this.pigY = 119;
+      this.pigY = this.floorLine();
       this.walk = null;
       this.depthScale = null;
       this.exits = null;
@@ -320,6 +321,7 @@
       this.animTimer = 0;
       this.idleTimer = 400;
       this.hasExited = false;
+      this.scaleFallbackCount = 0;
 
       // Bubble / notification
       this.bubbleText = 'Wheek!';
@@ -332,6 +334,8 @@
       // Sprite sheets for the variants
       this.sheets = {};
       this.pigShadows = {};
+      this.shadowDraws = 0;
+      this.lastShadow = null;
       this.litCanvas = null;
       this.litCtx = null;
       this.lightScene = null;
@@ -403,6 +407,50 @@
         return img;
       }
       return { src: url, naturalWidth: 32, naturalHeight: 32, width: 32, height: 32, complete: true };
+    }
+
+    floorLine() {
+      if (this.walk && typeof this.walk[3] === 'number') {
+        return this.walk[3];
+      }
+      return 119;
+    }
+
+    getTrimUrl(trimKey) {
+      let td = null;
+      if (typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.getTiles === 'function') {
+        td = window.CuyScenes.getTiles();
+      }
+      if (!td && typeof CuyScenes !== 'undefined' && typeof CuyScenes.getTiles === 'function') {
+        td = CuyScenes.getTiles();
+      }
+      if (!td && typeof require !== 'undefined') {
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const candidates = [
+            path.resolve(__dirname, '../../assets/world/tiles.json'),
+            path.resolve(__dirname, '../../../assets/world/tiles.json'),
+            path.resolve(process.cwd(), 'assets/world/tiles.json')
+          ];
+          for (const p of candidates) {
+            if (fs.existsSync(p)) {
+              td = JSON.parse(fs.readFileSync(p, 'utf8'));
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+      const entry = td && td.trim && td.trim[trimKey];
+      const rel = (entry && entry.file) ? ('world/' + entry.file) : (
+        trimKey === 'baseboard' ? 'world/house/trim_baseboard.png' : (
+          trimKey === 'floor_shadow' ? 'world/house/trim_floor_shadow.png' : null
+        )
+      );
+      if (!rel) return null;
+      const isWebView = typeof window !== 'undefined' && window.chrome && window.chrome.webview;
+      const base = this.assetsBase || (isWebView ? 'https://cuy.assets/' : '../../assets/');
+      return base + rel;
     }
 
     lookupSceneBlockers(sceneId) {
@@ -822,6 +870,17 @@
       this.currentScene = def;
       this.sceneId = def.id || 'salon';
       this.sceneKind = def.kind || 'room';
+      if (typeof def.wallH === 'number') {
+        this.wallH = def.wallH;
+      } else if (this.sceneKind === 'room') {
+        this.wallH = 32;
+      }
+      if (this.sceneKind === 'room') {
+        const bbUrl = this.getTrimUrl('baseboard');
+        if (bbUrl) this.loadCachedImage(bbUrl);
+        const fsUrl = this.getTrimUrl('floor_shadow');
+        if (fsUrl) this.loadCachedImage(fsUrl);
+      }
       if (def.size && Array.isArray(def.size) && def.size.length >= 2) {
         this.sceneWidth = def.size[0];
         this.sceneHeight = def.size[1];
@@ -896,11 +955,21 @@
       const ds = this.depthScale || [0.88, 1.0];
       const t = (y1 > y0) ? Math.max(0, Math.min(1, (y - y0) / (y1 - y0))) : 0;
       const raw = ds[0] + (ds[1] - ds[0]) * t;
-      return Math.round(raw * 8) / 8;
+      return Math.round(raw * 16) / 16;
     }
 
     getDrawScale() {
       return this.scaleAt(this.pigY);
+    }
+
+    getDrawnSize(scale) {
+      const s = (typeof scale === 'number') ? scale : this.getDrawScale();
+      const raw = FRAME_SIZE * s;
+      if (Number.isInteger(raw) || Math.abs(raw - Math.round(raw)) < 1e-6) {
+        return Math.round(raw);
+      }
+      this.scaleFallbackCount = (this.scaleFallbackCount || 0) + 1;
+      return Math.round(raw);
     }
 
     setExitsEnabled(enabled) {
@@ -1160,9 +1229,22 @@
         standing.forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
       }
 
+      const scale = this.getDrawScale();
+      const key = PIG_SHADOW_BY_STAGE[this.stageKey] || 'adult';
+      const sw = Math.round(PIG_SHADOW_WIDTH[key] * scale);
+      const sh = Math.round(6 * scale);
+      const sx = Math.round(this.pigX - sw / 2);
+      const sy = Math.round(this.pigY - 2 * scale);
+      const shadowUrls = Object.values(this.pigShadows || {})
+        .map(img => img && img.src)
+        .filter(Boolean);
+      const cacheUrls = Object.keys(this.imageCache || {});
+      const allLoadedUrls = Array.from(new Set(shadowUrls.concat(cacheUrls)));
+
       return {
         sceneId: this.sceneId || (this.currentScene && this.currentScene.id) || 'salon',
         sceneSize: [this.sceneWidth, this.sceneHeight],
+        wallH: (typeof this.wallH === 'number') ? this.wallH : 32,
         bgUrl: this.sceneBgUrl || null,
         things: ordered.map(t => ({ id: t.id, y: t.y })),
         renderList: renderList.map(t => ({ id: t.id, y: t.y })),
@@ -1170,6 +1252,25 @@
         pigVisible: this.pigVisible !== false,
         smoothing: this.ctx ? this.ctx.imageSmoothingEnabled : false,
         pigDraws: this.pigDraws || 0,
+        shadowDraws: this.shadowDraws || 0,
+        shadow: {
+          key,
+          url: (this.lastShadow && this.lastShadow.url) || (this.pigShadows[key] && this.pigShadows[key].src) || null,
+          x: this.lastShadow ? this.lastShadow.x : sx,
+          y: this.lastShadow ? this.lastShadow.y : sy,
+          width: this.lastShadow ? this.lastShadow.width : sw,
+          height: this.lastShadow ? this.lastShadow.height : sh,
+          centerX: this.lastShadow ? this.lastShadow.centerX : (sx + sw / 2),
+          feetX: Math.round(this.pigX),
+          feetY: Math.round(this.pigY),
+          scale,
+          draws: this.shadowDraws || 0
+        },
+        loadedImageUrls: allLoadedUrls,
+        loadedImages: allLoadedUrls,
+        loadedShadowUrls: shadowUrls,
+        scaleFallbackCount: this.scaleFallbackCount || 0,
+        scaleFallbacks: this.scaleFallbackCount || 0,
         pig: {
           x: Math.round(this.pigX),
           y: Math.round(this.pigY),
@@ -1177,7 +1278,9 @@
           drawnWidth: Math.round(46 * this.getDrawScale()),
           bodyWidth: Math.round(46 * this.getDrawScale()),
           frameWidth: Math.round(FRAME_SIZE * this.getDrawScale()),
-          frameHeight: Math.round(FRAME_SIZE * this.getDrawScale())
+          frameHeight: Math.round(FRAME_SIZE * this.getDrawScale()),
+          scaleFallbackCount: this.scaleFallbackCount || 0,
+          scaleFallbacks: this.scaleFallbackCount || 0
         },
         grid: {
           w: this.gridW || 0,
@@ -1627,7 +1730,7 @@
       const scene = {
         width: this.sceneWidth,
         height: this.sceneHeight,
-        floorY: 119,
+        floorY: this.floorLine(),
         state: this.lastState || {},
         time: (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(),
         skipDefaultWall: false,
@@ -1678,8 +1781,10 @@
         // Layers 0 <= z < 10
         this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
 
+        // Contact shadow sprite under pig feet (drawn before pig, multiplied by scene light if lit)
+        this.drawContactShadow(ctx);
+
         if (lit) {
-          this.drawContactShadow(ctx);
           this.applySceneLight(ctx, this.lightScene);
         }
 
@@ -1758,7 +1863,7 @@
         floorUrl = window.CuyScenes.getTileUrl('floor_wood_light');
       }
 
-      const wallH = 96;
+      const wallH = (typeof this.wallH === 'number') ? this.wallH : 32;
       const w = this.sceneWidth;
 
       // 1. Wall rendering (pixel art tiles)
@@ -1780,11 +1885,34 @@
           ctx.fillRect(0, 0, w, wallH);
         }
 
-        // Horizontal wall trim
-        ctx.fillStyle = '#c98d50';
-        ctx.fillRect(0, wallH - 2, w, 2);
-        ctx.fillStyle = '#6e4424';
-        ctx.fillRect(0, wallH, w, 1);
+        // Baseboard trim sprite (repeat along x at y = wallH - 8)
+        const baseboardUrl = this.getTrimUrl('baseboard');
+        const baseboardImg = baseboardUrl ? this.loadCachedImage(baseboardUrl) : null;
+        if (baseboardImg && !baseboardImg.failed && ((baseboardImg.naturalWidth && baseboardImg.naturalWidth > 0) || (baseboardImg.width && baseboardImg.width > 0))) {
+          const bw = baseboardImg.naturalWidth || baseboardImg.width || 16;
+          const bh = baseboardImg.naturalHeight || baseboardImg.height || 8;
+          const trimY = Math.round(wallH - 8);
+          try {
+            ctx.save();
+            ctx.translate(0, trimY);
+            const ptrn = ctx.createPattern(baseboardImg, 'repeat');
+            if (ptrn) {
+              ctx.fillStyle = ptrn;
+              ctx.fillRect(0, 0, w, bh);
+            } else {
+              for (let x = 0; x < w; x += bw) {
+                ctx.drawImage(baseboardImg, x, 0);
+              }
+            }
+            ctx.restore();
+          } catch (e) {
+            try {
+              for (let x = 0; x < w; x += bw) {
+                ctx.drawImage(baseboardImg, x, trimY);
+              }
+            } catch (e2) {}
+          }
+        }
       }
 
       // 2. Floor rendering (pixel art tiles)
@@ -1810,15 +1938,40 @@
           ctx.fillRect(0, wallH, w, floorH);
         }
 
-        // Shadow under wall trim
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-        ctx.fillRect(0, wallH + 1, w, 3);
+        // Floor shadow trim sprite (repeat along x at y = wallH)
+        const shadowUrl = this.getTrimUrl('floor_shadow');
+        const shadowImg = shadowUrl ? this.loadCachedImage(shadowUrl) : null;
+        if (shadowImg && !shadowImg.failed && ((shadowImg.naturalWidth && shadowImg.naturalWidth > 0) || (shadowImg.width && shadowImg.width > 0))) {
+          const sw = shadowImg.naturalWidth || shadowImg.width || 16;
+          const sh = shadowImg.naturalHeight || shadowImg.height || 4;
+          const shadowY = Math.round(wallH);
+          try {
+            ctx.save();
+            ctx.translate(0, shadowY);
+            const ptrn = ctx.createPattern(shadowImg, 'repeat');
+            if (ptrn) {
+              ctx.fillStyle = ptrn;
+              ctx.fillRect(0, 0, w, sh);
+            } else {
+              for (let x = 0; x < w; x += sw) {
+                ctx.drawImage(shadowImg, x, 0);
+              }
+            }
+            ctx.restore();
+          } catch (e) {
+            try {
+              for (let x = 0; x < w; x += sw) {
+                ctx.drawImage(shadowImg, x, shadowY);
+              }
+            } catch (e2) {}
+          }
+        }
       }
     }
 
     drawProps(ctx) {
       // Wooden hay rack on the left with green and yellow hay
-      ctx.fillStyle = '#6e4424';
+      ctx.fillStyle = '#6f4328';
       ctx.fillRect(8, 48, 28, 52);
       ctx.fillStyle = '#9c6636';
       ctx.fillRect(10, 50, 24, 48);
@@ -1899,14 +2052,14 @@
       this.lightScene = scene || null;
     }
 
-    // lightScene is optional: without it the frame and the desktop shadow ellipse are drawn exactly as before.
+    // lightScene is optional: without it the frame is drawn unlit.
     drawPig(ctx, lightScene) {
       if (this.pigVisible === false) return;
       if (this.pigY < -100) return; // Hidden
 
       const scale = this.getDrawScale();
-      const dw = Math.round(FRAME_SIZE * scale);
-      const dh = Math.round(FRAME_SIZE * scale);
+      const dw = this.getDrawnSize(scale);
+      const dh = dw;
       const anchorX = Math.round(32 * scale);
       const anchorY = Math.round(59 * scale);
       const drawX = Math.round(this.pigX - anchorX);
@@ -1937,16 +2090,6 @@
           fx = 0;
           fy = 0;
         }
-      } else {
-        // Shadow under the pig
-        const h = Math.max(0, 119 - this.pigY);
-        const factor = Math.max(0.4, Math.min(1, 1 - h / 80));
-        const shadowAlpha = 0.45 * Math.max(0.2, Math.min(1, 1 - h / 80));
-
-        ctx.fillStyle = `rgba(70, 45, 30, ${shadowAlpha})`;
-        ctx.beginPath();
-        ctx.ellipse(Math.round(this.pigX), Math.round(this.pigY), Math.round(22 * factor * scale), Math.round(6 * factor * scale), 0, 0, Math.PI * 2);
-        ctx.fill();
       }
 
       // Draw the pig frame, mirrored if needed
@@ -2013,20 +2156,53 @@
 
     // Contact shadow sprite at (32 - width/2, 57) inside the pig frame.
     drawContactShadow(ctx) {
+      if (this.pigVisible === false) return;
+      if (this.pigY < -100) return; // Hidden
       const scale = this.getDrawScale();
       const key = PIG_SHADOW_BY_STAGE[this.stageKey] || 'adult';
       const img = this.pigShadowImage(key);
-      if (!img.complete || !img.naturalWidth) return; // not loaded yet
+      if (!img || !img.complete || !img.naturalWidth) return; // not loaded yet
       const sw = Math.round(PIG_SHADOW_WIDTH[key] * scale);
-      const sh = Math.round((img.naturalHeight || 8) * scale);
-      ctx.drawImage(img, Math.round(this.pigX - sw / 2), Math.round(this.pigY - 2 * scale), sw, sh);
+      const sh = Math.round((img.naturalHeight || 6) * scale);
+      const sx = Math.round(this.pigX - sw / 2);
+      const sy = Math.round(this.pigY - 2 * scale);
+      ctx.drawImage(img, sx, sy, sw, sh);
+      this.shadowDraws = (this.shadowDraws || 0) + 1;
+      this.lastShadow = {
+        key,
+        url: img.src,
+        x: sx,
+        y: sy,
+        width: sw,
+        height: sh,
+        centerX: sx + sw / 2,
+        feetX: this.pigX,
+        feetY: this.pigY,
+        scale
+      };
+    }
+
+    setStage(stage) {
+      this.stageKey = normStage(stage);
     }
 
     pigShadowImage(key) {
       if (!this.pigShadows[key]) {
-        const img = new Image();
-        img.onerror = () => { console.error('[canvas-pig] Failed to load image: ' + img.src); };
-        img.src = this.assetsBase + 'world/fx/shadow_pig_' + key + '.png';
+        const isWebView = typeof window !== 'undefined' && window.chrome && window.chrome.webview;
+        const assetsBase = this.assetsBase || (isWebView ? 'https://cuy.assets/' : '../../assets/');
+        let img;
+        if (typeof Image !== 'undefined') {
+          img = new Image();
+          img.onerror = () => { console.error('[canvas-pig] Failed to load image: ' + img.src); };
+        } else {
+          img = {
+            src: '',
+            complete: true,
+            naturalWidth: PIG_SHADOW_WIDTH[key] || 46,
+            naturalHeight: 6
+          };
+        }
+        img.src = assetsBase + 'world/fx/shadow_pig_' + key + '.png';
         this.pigShadows[key] = img;
       }
       return this.pigShadows[key];
@@ -2328,6 +2504,34 @@
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst && typeof inst.scaleAt === 'function') return inst.scaleAt(y);
       return 1;
+    },
+    getDrawnSize(scale) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.getDrawnSize === 'function') return inst.getDrawnSize(scale);
+      const s = (typeof scale === 'number') ? scale : 1;
+      return Math.round(FRAME_SIZE * s);
+    },
+    floorLine() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.floorLine === 'function') return inst.floorLine();
+      return 119;
+    },
+    setStage(stage) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.setStage === 'function') inst.setStage(stage);
+      else if (inst) inst.stageKey = normStage(stage);
+    },
+    get stageKey() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      return inst ? inst.stageKey : 'adult';
+    },
+    set stageKey(val) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) inst.stageKey = normStage(val);
+    },
+    get wallH() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      return inst ? inst.wallH : 32;
     }
   };
 
@@ -2346,7 +2550,14 @@
   PigCanvas.isFree = (x, y) => CanvasPig.isFree(x, y);
   PigCanvas.snapToFreeCell = (x, y) => CanvasPig.snapToFreeCell(x, y);
   PigCanvas.scaleAt = (y) => CanvasPig.scaleAt(y);
+  PigCanvas.getDrawnSize = (s) => CanvasPig.getDrawnSize(s);
+  PigCanvas.floorLine = () => CanvasPig.floorLine();
   PigCanvas.debug = () => CanvasPig.debug();
+  PigCanvas.setStage = (s) => CanvasPig.setStage(s);
+  CanvasPig.PIG_SHADOW_WIDTH = PIG_SHADOW_WIDTH;
+  PigCanvas.PIG_SHADOW_WIDTH = PIG_SHADOW_WIDTH;
+  CanvasPig.PIG_SHADOW_BY_STAGE = PIG_SHADOW_BY_STAGE;
+  PigCanvas.PIG_SHADOW_BY_STAGE = PIG_SHADOW_BY_STAGE;
   if (typeof window !== 'undefined') {
     window.CanvasPig = CanvasPig;
   }

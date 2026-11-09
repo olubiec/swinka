@@ -7,9 +7,10 @@
     room: {
       kind: 'room',
       title: 'Room',
-      size: [240, 130],
-      walk: [10, 96, 230, 126],
-      depth_scale: [0.88, 1.0],
+      size: [192, 112],
+      walk: [8, 40, 184, 110],
+      depth_scale: [0.9375, 1.0],
+      size_from_layout: true,
       pigWidthFrac: 0.20,
       bg: null
     },
@@ -18,7 +19,7 @@
       title: 'Garden',
       size: [256, 144],
       walk: [8, 80, 248, 138],
-      depth_scale: [0.82, 1.0],
+      depth_scale: [0.9375, 1.0],
       pigWidthFrac: 0.17,
       behindLine: 74,
       bg: {
@@ -37,7 +38,7 @@
       title: 'Park',
       size: [384, 192],
       walk: [10, 110, 374, 186],
-      depth_scale: [0.78, 1.0],
+      depth_scale: [0.9375, 1.0],
       pigWidthFrac: 0.17,
       behindLine: 106,
       bg: {
@@ -56,7 +57,7 @@
       title: 'Farm',
       size: [256, 144],
       walk: [8, 80, 248, 138],
-      depth_scale: [0.82, 1.0],
+      depth_scale: [0.9375, 1.0],
       pigWidthFrac: 0.17,
       behindLine: 76,
       bg: {
@@ -75,7 +76,7 @@
       title: 'Market',
       size: [256, 144],
       walk: [8, 120, 248, 140],
-      depth_scale: [0.92, 1.0],
+      depth_scale: [0.9375, 1.0],
       pigWidthFrac: 0.17,
       behindLine: 120,
       bg: {
@@ -256,6 +257,23 @@
   }
 
   function getScenesDict() {
+    if (!scenesData && typeof require !== 'undefined') {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const candidates = [
+          path.resolve(__dirname, '../../../assets/data/place_scenes.json'),
+          path.resolve(__dirname, '../../../../assets/data/place_scenes.json'),
+          path.resolve(process.cwd(), 'assets/data/place_scenes.json')
+        ];
+        for (const p of candidates) {
+          if (fs.existsSync(p)) {
+            scenesData = JSON.parse(fs.readFileSync(p, 'utf8'));
+            break;
+          }
+        }
+      } catch (e) {}
+    }
     return (scenesData && scenesData.scenes) || DEFAULT_SCENES;
   }
 
@@ -317,7 +335,85 @@
     return template.title || (typeof id === 'string' ? id.charAt(0).toUpperCase() + id.slice(1) : 'Room');
   }
 
-  function def(id, tod) {
+  function getRoomGeometry() {
+    if (typeof window !== 'undefined' && window.CuyRoomGeometry) {
+      return window.CuyRoomGeometry;
+    }
+    if (typeof CuyRoomGeometry !== 'undefined') {
+      return CuyRoomGeometry;
+    }
+    if (typeof require !== 'undefined') {
+      try {
+        return require('./room-geometry.js');
+      } catch (e) {
+        try {
+          const path = require('path');
+          return require(path.resolve(__dirname, 'room-geometry.js'));
+        } catch (e2) {}
+      }
+    }
+    return null;
+  }
+
+  function layoutFor(sceneId, state) {
+    let sid = sceneId;
+    let st = state;
+    if (typeof sid === 'object' && sid !== null && typeof st === 'string') {
+      sid = state;
+      st = sceneId;
+    }
+    const effectiveId = sid || 'salon';
+    let layout = null;
+    if (st) {
+      if (st.rooms && st.rooms.layouts) {
+        layout = st.rooms.layouts[effectiveId];
+        if (!layout && (effectiveId === 'room' || effectiveId === 'salon')) {
+          layout = st.rooms.layouts.salon || st.rooms.layouts.room;
+        }
+        if (!layout && effectiveId.startsWith('pig:')) {
+          const rawName = effectiveId.slice(4);
+          layout = st.rooms.layouts[rawName];
+        }
+        if (!layout && Array.isArray(st.rooms.pigRooms)) {
+          const pr = st.rooms.pigRooms.find(r => r && (
+            r.roomId === effectiveId ||
+            r.pigId === effectiveId ||
+            ('pig:' + r.pigId) === effectiveId ||
+            r.name === effectiveId ||
+            ('pig:' + r.name) === effectiveId
+          ));
+          if (pr) {
+            layout = st.rooms.layouts[pr.roomId] || st.rooms.layouts['pig:' + pr.pigId] || st.rooms.layouts[pr.pigId];
+          }
+        }
+      }
+      if (!layout && st[effectiveId] && st[effectiveId].layout) {
+        layout = st[effectiveId].layout;
+      }
+      if (!layout && st.places && st.places.layouts) {
+        layout = st.places.layouts[effectiveId];
+      }
+      if (!layout && st.layouts && st.layouts[effectiveId]) {
+        layout = st.layouts[effectiveId];
+      }
+      if (!layout && st.layout && typeof st.layout === 'object') {
+        layout = st.layout;
+      }
+      if (!layout && (st.cols || st.rows) && Array.isArray(st.items)) {
+        layout = st;
+      }
+    }
+    return layout || null;
+  }
+
+  function def(id, tod, state) {
+    let effectiveTod = tod;
+    let effectiveState = state;
+    if (tod && typeof tod === 'object' && state === undefined) {
+      effectiveState = tod;
+      effectiveTod = null;
+    }
+
     const scenes = getScenesDict();
     const effectiveId = id || 'salon';
 
@@ -328,7 +424,7 @@
       template = scenes[effectiveId];
     }
 
-    const t = (tod && typeof tod === 'string') ? tod.toLowerCase() : timeOfDay();
+    const t = (effectiveTod && typeof effectiveTod === 'string') ? effectiveTod.toLowerCase() : timeOfDay();
     let bgUrl = null;
     if (template.bg && typeof template.bg === 'object') {
       const rel = template.bg[t] || template.bg.day || Object.values(template.bg)[0];
@@ -344,7 +440,31 @@
       ? template.pigWidthFrac
       : (isRoom ? 0.20 : 0.17);
 
-    const sw = (template.size && template.size[0]) || 240;
+    const hasSizeFromLayout = !!(template.size_from_layout || template.sizeFromLayout);
+
+    let size;
+    let wallH = undefined;
+    let walk;
+
+    if (hasSizeFromLayout) {
+      const layout = layoutFor(effectiveId, effectiveState);
+      const roomGeom = getRoomGeometry();
+      if (layout && roomGeom) {
+        const geom = roomGeom.geometry(layout);
+        size = [geom.size[0], geom.size[1]];
+        wallH = geom.wallH;
+        walk = [geom.walk[0], geom.walk[1], geom.walk[2], geom.walk[3]];
+      } else {
+        size = [template.size[0], template.size[1]];
+        wallH = 32;
+        walk = [template.walk[0], template.walk[1], template.walk[2], template.walk[3]];
+      }
+    } else {
+      size = [template.size[0], template.size[1]];
+      walk = [template.walk[0], template.walk[1], template.walk[2], template.walk[3]];
+    }
+
+    const sw = (size && size[0]) || (template.size && template.size[0]) || 240;
     const bodySourceWidth = 46;
     const targetBottomPx = pigWidthFrac * sw;
     const rawBottomScale = targetBottomPx / bodySourceWidth;
@@ -359,19 +479,26 @@
 
     const computedDs = [topScale, bottomScale];
 
-    return {
+    const res = {
       id: effectiveId,
       kind: template.kind,
       title: getTitle(effectiveId, template),
-      size: [template.size[0], template.size[1]],
-      walk: [template.walk[0], template.walk[1], template.walk[2], template.walk[3]],
+      size: size,
+      walk: walk,
       depthScale: computedDs,
+      depth_scale: template.depth_scale || template.depthScale || computedDs,
       pigWidthFrac: pigWidthFrac,
       bgUrl: bgUrl,
       exits: exits,
       blockers: template.blockers ? JSON.parse(JSON.stringify(template.blockers)) : null,
       behindLine: (typeof template.behindLine === 'number') ? template.behindLine : null
     };
+
+    if (wallH !== undefined) {
+      res.wallH = wallH;
+    }
+
+    return res;
   }
 
   function pigScene(state, pigId) {
@@ -393,40 +520,14 @@
   }
 
   function placedThings(state, sceneId) {
-    const effectiveId = sceneId || 'salon';
-    let layout = null;
-    if (state) {
-      if (state.rooms && state.rooms.layouts) {
-        layout = state.rooms.layouts[effectiveId];
-        if (!layout && (effectiveId === 'room' || effectiveId === 'salon')) {
-          layout = state.rooms.layouts.salon || state.rooms.layouts.room;
-        }
-        if (!layout && Array.isArray(state.rooms.pigRooms)) {
-          const pr = state.rooms.pigRooms.find(r => r && (
-            r.roomId === effectiveId ||
-            r.pigId === effectiveId ||
-            ('pig:' + r.pigId) === effectiveId ||
-            r.name === effectiveId ||
-            ('pig:' + r.name) === effectiveId
-          ));
-          if (pr) {
-            layout = state.rooms.layouts[pr.roomId] || state.rooms.layouts['pig:' + pr.pigId] || state.rooms.layouts[pr.pigId];
-          }
-        }
-      }
-      if (!layout && state[effectiveId] && state[effectiveId].layout) {
-        layout = state[effectiveId].layout;
-      }
-      if (!layout && state.places && state.places.layouts) {
-        layout = state.places.layouts[effectiveId];
-      }
-    }
+    const layout = layoutFor(sceneId, state);
 
     if (!layout || !Array.isArray(layout.items)) {
       return [];
     }
 
     const atlas = getAtlas();
+    const roomGeom = getRoomGeometry();
     const items = [];
 
     for (const it of layout.items) {
@@ -441,6 +542,10 @@
       if (it.isPixel) {
         x = it.x;
         y = it.y;
+      } else if (roomGeom && typeof roomGeom.cellToPx === 'function') {
+        const pt = roomGeom.cellToPx(layout, it.x || 0, it.y || 0, cw, ch);
+        x = pt.x;
+        y = pt.y;
       } else {
         x = Math.round((it.x || 0) * 16 + (cw * 16) / 2);
         y = Math.round(((it.y || 0) + ch) * 16);
@@ -479,6 +584,7 @@
     order: order,
     neighbor: neighbor,
     def: def,
+    layoutFor: layoutFor,
     timeOfDay: timeOfDay,
     pigScene: pigScene,
     placedThings: placedThings,
