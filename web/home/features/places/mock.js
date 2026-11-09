@@ -89,13 +89,13 @@
           return;
         }
 
-        let loc = st.places.pigLocations.find(p => p.pigId === pigId);
+        let loc = st.places.pigLocations.find(p => (p.pigId || p.PigId) === pigId);
         if (!loc) {
           loc = { pigId: pigId, scene: 'salon', pinned: false };
           st.places.pigLocations.push(loc);
         }
 
-        const fromScene = loc.scene || 'salon';
+        const fromScene = loc.scene || loc.Scene || 'salon';
         const idxA = ring.findIndex(s => s.id === fromScene);
         const idxB = ring.findIndex(s => s.id === to);
 
@@ -107,6 +107,14 @@
         }
 
         loc.scene = to;
+        if (loc.Scene !== undefined) loc.Scene = to;
+        if (Array.isArray(st.pigLocations)) {
+          let locRoot = st.pigLocations.find(p => (p.pigId || p.PigId) === pigId);
+          if (locRoot) {
+            locRoot.scene = to;
+            if (locRoot.Scene !== undefined) locRoot.Scene = to;
+          }
+        }
       };
 
       window.bridge.registerMockHandler('places.pigMove', handlePigMove);

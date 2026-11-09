@@ -29,6 +29,7 @@
   }
 
   function getPigLocations(st) {
+    if (!st) st = getState();
     if (!st) return [];
     if (st.places && Array.isArray(st.places.pigLocations)) {
       return st.places.pigLocations;
@@ -50,16 +51,29 @@
         const pr = st.rooms.pigRooms.find(r => r && (r.pigId === pigId || ('pig:' + r.pigId) === pigId));
         if (pr && (pr.name || pr.displayName)) return pr.name || pr.displayName;
       }
+      if (Array.isArray(st.places && st.places.order)) {
+        const ordItem = st.places.order.find(s => s && (s.id === ('pig:' + pigId) || s.id === pigId));
+        if (ordItem && ordItem.title) {
+          const m = ordItem.title.match(/^(.+?)\s+Room$/i);
+          if (m) return m[1];
+        }
+      }
       if (st.name && (!pigId || pigId === 'pig_1' || pigId === st.id)) {
         return st.name;
       }
     }
+    if (pigId === 'pig_2') return 'Pop';
+    if (pigId === 'pig_3') return 'Pua';
     return 'Cuy';
   }
 
   function getOrder(st) {
+    if (!st) st = getState();
     if (window.CuyScenes && typeof window.CuyScenes.order === 'function') {
       return window.CuyScenes.order(st);
+    }
+    if (st && st.places && Array.isArray(st.places.order)) {
+      return st.places.order;
     }
     return [
       { id: 'salon', title: 'Salon', locked: false, unlockHint: '' },
@@ -71,6 +85,7 @@
   }
 
   function getSceneTitle(sceneId, st) {
+    if (!st) st = getState();
     const ord = getOrder(st);
     const item = ord.find(s => s.id === sceneId);
     if (st && st.rooms) {
@@ -92,34 +107,22 @@
     return sceneId ? (sceneId.charAt(0).toUpperCase() + sceneId.slice(1)) : '';
   }
 
-  function isHouseRoom(id) {
-    if (!id) return true;
-    if (id === 'room' || id === 'salon' || id === 'dorm') return true;
-    if (typeof id === 'string' && id.startsWith('pig:')) return true;
-    return false;
-  }
-
   function computeNeighbourScene(currentScene, direction, st) {
     const ord = getOrder(st);
     if (!ord || ord.length === 0) return null;
 
-    // Check if place_scenes house_exits apply
-    if (isHouseRoom(currentScene)) {
-      if (direction === 'left') {
-        const marketEntry = ord.find(s => s.id === 'market');
-        if (marketEntry) return marketEntry;
-      } else if (direction === 'right') {
-        const gardenEntry = ord.find(s => s.id === 'garden');
-        if (gardenEntry) return gardenEntry;
-      }
+    const idx = ord.findIndex(s => s.id === currentScene);
+    if (idx !== -1) {
+      const step = direction === 'left' ? -1 : 1;
+      const targetIdx = (idx + step + ord.length) % ord.length;
+      return ord[targetIdx];
     }
 
-    const idx = ord.findIndex(s => s.id === currentScene);
-    if (idx === -1) return null;
-
-    const step = direction === 'left' ? -1 : 1;
-    const targetIdx = (idx + step + ord.length) % ord.length;
-    return ord[targetIdx];
+    if (direction === 'left') {
+      return ord.find(s => s.id === 'market') || ord[ord.length - 1];
+    } else {
+      return ord.find(s => s.id === 'garden') || ord[0];
+    }
   }
 
   function updatePresenceChips(st) {
@@ -167,7 +170,7 @@
       const pigName = getPigName(pigId, st);
 
       const chip = document.createElement('div');
-      chip.className = 'places-presence-chip';
+      chip.className = 'places-presence-chip currency-badge ui-panel-wood';
 
       const label = document.createElement('span');
       label.className = 'chip-text';
@@ -198,7 +201,8 @@
     const pigLocs = getPigLocations(st);
     const activePigId = getFirstPigId(st);
 
-    const pigEntry = pigLocs.find(p => (p.pigId || p.PigId) === activePigId) || pigLocs[0];
+    const pigInScene = pigLocs.find(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId);
+    const pigEntry = pigInScene || pigLocs.find(p => (p.pigId || p.PigId) === activePigId) || pigLocs[0];
     if (pigEntry && pigEntry.pinned) {
       return;
     }
@@ -208,6 +212,9 @@
 
     if (!targetScene || targetScene.locked) {
       exitDisabledUntil = Date.now() + 60000;
+      if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
+        window.CanvasPig.setPigVisible(true);
+      }
       if (window.CanvasPig && typeof window.CanvasPig.setExitsEnabled === 'function') {
         window.CanvasPig.setExitsEnabled(false);
       }
@@ -227,6 +234,13 @@
   function bindCanvasExits() {
     if (window.CanvasPig) {
       window.CanvasPig.onPigExit = handlePigExit;
+    }
+    const inst = (window.CuyPig && window.CuyPig.mainInstance) || (window.CanvasPig && window.CanvasPig.instance);
+    if (inst) {
+      inst.onPigExit = handlePigExit;
+    }
+    if (typeof window !== 'undefined') {
+      window.onPigExit = handlePigExit;
     }
   }
 
@@ -316,9 +330,10 @@
 
     // 3. Pig visibility and exits
     const pigLocs = getPigLocations(st);
+    const pigInThisScene = pigLocs.find(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId);
     const firstPig = getFirstPigId(st);
     const firstPigLoc = pigLocs.find(p => (p.pigId || p.PigId) === firstPig) || pigLocs[0];
-    const isPigPinned = firstPigLoc ? !!firstPigLoc.pinned : false;
+    const isPigPinned = pigInThisScene ? !!pigInThisScene.pinned : (firstPigLoc ? !!firstPigLoc.pinned : false);
 
     const isAnyPigHere = pigLocs.length > 0
       ? pigLocs.some(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId)
@@ -486,6 +501,13 @@
   };
 
   window.CuyPlaces = CuyPlaces;
+
+  if (typeof window !== 'undefined') {
+    bindCanvasExits();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', bindCanvasExits);
+    }
+  }
 
   if (window.CuyHome && window.CuyHome.registerFeature) {
     window.CuyHome.registerFeature({

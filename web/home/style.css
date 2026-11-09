@@ -1511,11 +1511,11 @@ body.webview-mode .game-device {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 32px;
+  height: 24px;
   background-color: var(--ui-wood-2);
   background-image: var(--ui-header_banner, url('../../assets/ui/header_banner.png'));
   background-repeat: repeat-x;
-  background-size: auto 32px;
+  background-size: auto 24px;
   box-sizing: border-box;
   padding: 0 4px;
   font-family: var(--ui-font, 'Pixelify Sans', monospace);

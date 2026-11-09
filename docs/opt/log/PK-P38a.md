@@ -1,7 +1,7 @@
-# PK-P38a — Pig presence chip and exits
-
-- Decisions: Rendered wood-panel badge chip `Cuy is in <place>` with a `Go there` button when viewing an empty scene; multi-pig mode shows `<Name> is in <place>`. Clicking `Go there` jumps to that scene.
-- Exits: Hooked `CanvasPig.onPigExit` to dispatch `places.pigMove { pigId, to }` along the scene ring, respecting locked destinations (disabling exits for 60s) and pinned pigs.
-- Transitions: Guarded `CanvasPig.setScene` from resetting pig positioning when scene is unchanged, and invoked `CanvasPig.enterFrom(side)` upon detecting arrivals in `checkArrivals`.
-- Differences from planned: None; adheres strictly to the contracts and scene ordering.
+# PK-P38a: Where the pig is: presence chip and exits
 - Status: DONE
+- Chip: #placesPresenceChips (.places-presence-chips), .places-presence-chip with text "Cuy is in <scene>" (or "<name> is in <scene>" for 2+ pigs) and button "Go there" (.chip-go-btn.ui-btn).
+- Exits: bindCanvasExits binds CanvasPig.onPigExit to send places.pigMove {pigId, to}; disabled when pinned or locked (60s penalty).
+- Arrivals: checkArrivals detects pig entering viewed scene and calls CanvasPig.enterFrom(oppositeSide).
+- Mock: mock.js handles places.pigMove verifying adjacency and lock status, updating places.pigLocations.
+- Differences from plan: None. All Pr1-Pr7 tests green.

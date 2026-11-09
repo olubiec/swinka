@@ -161,7 +161,7 @@
 |---|---|---|---|
 | Build + Core Tests | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release` | Build exit code 0, all Core xUnit tests pass | App builds cleanly with no compilation or regression errors |
 | UX Presence & Exits | `node tools/qa/ux-p38-presence.js` | Exit code 0, 7/7 PASS (Pr1-Pr7) | Chip informujący o lokacji świnki, przycisk "Go there" przenoszący do sceny świnki, wyjścia zmieniające lokację, zablokowane lokacje blokujące wyjście, przypięta świnka nie wychodzi |
-| UX All Suite | `node tools/qa/ux-all.js` | 13/15 PASS (ux-p38-presence oraz p32-p36 PASS; stare ux-p1/ux-p3 zdezaktualizowane przez rework P35/P37) | Skrypty pakietu UX dla fali P38 przechodzą pomyślnie |
+| UX All Suite | `node tools/qa/ux-all.js` | 16/23 PASS (ux-p38-presence oraz p32-p36 PASS; stare/zdezaktualizowane testy zgłaszają błędy obecne w baseline) | Skrypty pakietu UX dla fali P38 przechodzą pomyślnie |
 | Web Smoke | `node tools/qa/web-smoke.js` | 21/21 core PASS z baseline | WebView2 home screens, nawigacja i moduły renderują się poprawnie |
 | Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
 | EXE Smoke | `powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Exit code 0, selftest passes, EXE SMOKE OK | Świnka chodzi po pulpicie, brak wyjątków i crashów podczas uruchomienia |

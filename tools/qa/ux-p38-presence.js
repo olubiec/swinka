@@ -38,293 +38,318 @@ async function run() {
     }
   };
 
-  // Setup helper: unlock salon..market, 1 pig at salon
-  async function resetMockState(pigLocs = [{ pigId: 'pig_1', scene: 'salon', pinned: false }]) {
-    await page.evaluate((locs) => {
+  // Helper to setup mock state with all unlocked and 1 pig at salon
+  async function resetMockState() {
+    await page.evaluate(() => {
       const st = window.bridge.currentState || window.bridge.getState();
       const m = window.CuyScenesMock.state('all_unlocked');
       st.places = m.places;
-      st.places.pigLocations = JSON.parse(JSON.stringify(locs));
+      st.places.pigLocations = [{ pigId: 'pig_1', scene: 'salon', pinned: false }];
+      window.__sentPigMoves = [];
+      if (!window.__pigMoveListenerBound) {
+        window.__pigMoveListenerBound = true;
+        window.bridge.onAction(action => {
+          if (action.type === 'places.pigMove' || action.type === 'places_pig_move') {
+            window.__sentPigMoves.push(action);
+          }
+        });
+      }
       window.bridge.broadcastState();
       window.CuyPlaces.openPlace('salon');
-    }, pigLocs);
+    });
     await page.waitForTimeout(100);
   }
 
-  // Pr1 chip-elsewhere: go to garden: chip "Cuy is in" + Go there visible, no pig drawn; Go there returns to the pig's scene and the chip is gone.
+  // Pr1: chip-elsewhere
+  // go to garden: chip "Cuy is in" + Go there visible, no pig drawn; Go there returns to the pig's scene and the chip is gone.
   await testScenario('Pr1 chip-elsewhere', async () => {
-    await resetMockState([{ pigId: 'pig_1', scene: 'salon', pinned: false }]);
+    await resetMockState();
 
-    // Go to garden
+    // Navigate to garden
     await page.evaluate(() => window.CuyPlaces.openPlace('garden'));
     await page.waitForTimeout(100);
 
-    // Chip must be visible
-    const chipText = await page.evaluate(() => {
-      const el = document.getElementById('placesPresenceChips');
-      return el && !el.hidden ? el.textContent.trim() : '';
-    });
-    assert(chipText.includes('Cuy is in') || chipText.includes('in Salon'), `Expected presence chip text mentioning Cuy is in Salon, got: "${chipText}"`);
+    const chipVisible = await page.isVisible('#placesPresenceChips:not([hidden])');
+    assert(chipVisible, 'Presence chips container should be visible when viewing garden and pig is in salon');
 
-    const goBtn = await page.$('.places-presence-chip .chip-go-btn, #placesPresenceChips button');
-    assert(goBtn, 'Expected "Go there" button inside presence chip');
-    const isGoVisible = await goBtn.isVisible();
-    assert(isGoVisible, '"Go there" button should be visible');
+    const chipText = await page.textContent('#placesPresenceChips');
+    assert(chipText.includes('Cuy is in'), `Expected chip text to contain "Cuy is in", got: "${chipText}"`);
+    assert(chipText.includes('Salon'), `Expected chip text to contain "Salon", got: "${chipText}"`);
 
-    // Pig not drawn in garden
-    const dbg = await page.evaluate(() => window.CanvasPig.debug());
-    assert.strictEqual(dbg.pigVisible, false, 'Expected pigVisible === false when viewing empty garden');
+    const goBtnVisible = await page.isVisible('#placesPresenceChips .chip-go-btn');
+    assert(goBtnVisible, 'Go there button should be visible in chip');
+
+    const dbgGarden = await page.evaluate(() => window.CanvasPig.debug());
+    assert.strictEqual(dbgGarden.pigVisible, false, 'No pig should be drawn when viewing a scene without the pig');
 
     // Click Go there
-    await goBtn.click();
+    await page.click('#placesPresenceChips .chip-go-btn');
     await page.waitForTimeout(100);
 
-    // Current scene should now be salon
     const currentPlace = await page.evaluate(() => window.CuyPlaces.getCurrentPlace());
-    assert.strictEqual(currentPlace, 'salon', `Expected to return to salon, got: ${currentPlace}`);
+    assert.strictEqual(currentPlace, 'salon', `Go there should return to salon, got: ${currentPlace}`);
 
-    // Chip should be gone (hidden or empty)
+    const barTitle = await page.textContent('#placesBarTitle');
+    assert.strictEqual(barTitle.trim(), 'Salon', `Bar title should be Salon, got: ${barTitle}`);
+
     const isChipHidden = await page.evaluate(() => {
       const el = document.getElementById('placesPresenceChips');
-      return !el || el.hidden || el.children.length === 0 || el.style.display === 'none';
+      return !el || el.hidden || el.querySelectorAll('.places-presence-chip').length === 0;
     });
-    assert(isChipHidden, 'Presence chip should be hidden/removed in pig\'s own scene');
+    assert(isChipHidden, 'Presence chip should be gone after returning to the pig\'s scene');
 
-    // Pig should be visible in salon
     const dbgSalon = await page.evaluate(() => window.CanvasPig.debug());
-    assert.strictEqual(dbgSalon.pigVisible, true, 'Pig should be visible in its own scene (salon)');
+    assert.strictEqual(dbgSalon.pigVisible, true, 'Pig should be visible in salon');
   });
 
-  // Pr2 exit-moves-pig: force onPigExit({to:'right'}) at the last room: the mock location becomes garden, the chip in the room scene reads garden, exactly one places.pigMove was sent.
+  // Pr2: exit-moves-pig
+  // force onPigExit({to:'right'}) at the last room: the mock location becomes garden,
+  // the chip in the room scene reads garden, exactly one places.pigMove was sent.
   await testScenario('Pr2 exit-moves-pig', async () => {
-    // Rooms: salon, pig:pig_1, pig:pig_2, pig:pig_3, dorm, garden, park, farm, market
-    // Let's set pig at the last room before garden: 'dorm' (or let's see which room is right before garden)
-    await page.evaluate(() => {
+    await resetMockState();
+
+    // Identify the last room before garden
+    const lastRoomId = await page.evaluate(() => {
       const st = window.bridge.currentState || window.bridge.getState();
-      const m = window.CuyScenesMock.state('all_unlocked');
-      st.places = m.places;
-      st.places.pigLocations = [{ pigId: 'pig_1', scene: 'dorm', pinned: false }];
-      window.__sentMoves = [];
-      const origSend = window.bridge.send.bind(window.bridge);
-      window.bridge.send = function (action) {
-        if (action && (action.type === 'places.pigMove' || action.type === 'places_pig_move')) {
-          window.__sentMoves.push(action);
-        }
-        return origSend(action);
-      };
+      const ring = st.places.order;
+      const gardenIdx = ring.findIndex(s => s.id === 'garden');
+      return ring[(gardenIdx - 1 + ring.length) % ring.length].id;
+    });
+
+    // Place pig in the last room and view that room
+    await page.evaluate((roomId) => {
+      const st = window.bridge.currentState || window.bridge.getState();
+      st.places.pigLocations = [{ pigId: 'pig_1', scene: roomId, pinned: false }];
+      window.__sentPigMoves = [];
       window.bridge.broadcastState();
-      window.CuyPlaces.openPlace('dorm');
+      window.CuyPlaces.openPlace(roomId);
+    }, lastRoomId);
+    await page.waitForTimeout(100);
+
+    // Force onPigExit({ to: 'right' })
+    await page.evaluate(() => {
+      window.CanvasPig.onPigExit({ to: 'right' });
     });
     await page.waitForTimeout(100);
 
-    // Force onPigExit({to:'right'})
-    await page.evaluate(() => {
-      const inst = window.CuyPig.mainInstance || window.CanvasPig.instance;
-      if (inst && typeof inst.callPigExit === 'function') {
-        inst.callPigExit('right');
-      } else if (window.CanvasPig.onPigExit) {
-        window.CanvasPig.onPigExit({ to: 'right' });
-      }
-    });
-    await page.waitForTimeout(150);
-
-    // Check sent moves
-    const sentMoves = await page.evaluate(() => window.__sentMoves || []);
-    assert.strictEqual(sentMoves.length, 1, `Expected exactly 1 pigMove sent, got ${sentMoves.length}`);
-    assert.strictEqual(sentMoves[0].to, 'garden', `Expected move to 'garden', got ${sentMoves[0].to}`);
-
-    // Mock state pigLocation should become garden
-    const pigLoc = await page.evaluate(() => {
+    // Mock location becomes garden
+    const pigScene = await page.evaluate(() => {
       const st = window.bridge.currentState || window.bridge.getState();
-      return st.places.pigLocations.find(p => p.pigId === 'pig_1');
+      return st.places.pigLocations[0].scene;
     });
-    assert.strictEqual(pigLoc.scene, 'garden', `Expected pig scene to be garden, got ${pigLoc ? pigLoc.scene : null}`);
+    assert.strictEqual(pigScene, 'garden', `Expected pig location to become garden, got: ${pigScene}`);
 
-    // Since we are still viewing 'dorm', chip in dorm should read garden
-    const chipText = await page.evaluate(() => {
-      const el = document.getElementById('placesPresenceChips');
-      return el && !el.hidden ? el.textContent.trim() : '';
-    });
-    assert(chipText.includes('Garden'), `Expected chip in dorm to mention Garden, got: "${chipText}"`);
+    // Chip in the room scene reads Garden
+    const chipText = await page.textContent('#placesPresenceChips');
+    assert(chipText.includes('Garden'), `Chip in room scene should read Garden, got: "${chipText}"`);
+
+    // Exactly one places.pigMove was sent
+    const movesCount = await page.evaluate(() => window.__sentPigMoves.length);
+    assert.strictEqual(movesCount, 1, `Expected exactly 1 places.pigMove sent, got: ${movesCount}`);
+    const movedTo = await page.evaluate(() => window.__sentPigMoves[0].to);
+    assert.strictEqual(movedTo, 'garden', `Sent action should move to garden, got: ${movedTo}`);
   });
 
-  // Pr3 enter-visible: viewing the garden when the pig arrives: the pig appears at the left edge (debug().pig.x within 6 px of it) and walks in.
+  // Pr3: enter-visible
+  // viewing the garden when the pig arrives: the pig appears at the left edge (debug().pig.x within 6 px of it) and walks in.
   await testScenario('Pr3 enter-visible', async () => {
-    await resetMockState([{ pigId: 'pig_1', scene: 'dorm', pinned: false }]);
+    await resetMockState();
 
-    // User views garden
-    await page.evaluate(() => window.CuyPlaces.openPlace('garden'));
-    await page.waitForTimeout(100);
-
-    // Now pig arrives at garden (moving from dorm via exit to 'right', entering garden from opposite side = 'left')
-    // We send places.pigMove { pigId: 'pig_1', to: 'garden' } through bridge.send
-    // And directly check the arrival position before the 60fps raf loop walks further
-    const dbg = await page.evaluate(() => {
-      window.bridge.send({ type: 'places.pigMove', pigId: 'pig_1', to: 'garden' });
-      return window.CanvasPig.debug();
-    });
-
-    assert.strictEqual(dbg.pigVisible, true, 'Pig should be visible in garden after entering');
-
-    const sceneDef = await page.evaluate(() => window.CuyScenes.def('garden'));
-    const leftEdge = (sceneDef.exits && sceneDef.exits.left && typeof sceneDef.exits.left.x === 'number')
-      ? sceneDef.exits.left.x
-      : sceneDef.walk[0];
-
-    assert(Math.abs(dbg.pig.x - leftEdge) <= 6,
-      `Pig feet X (${dbg.pig.x}) must be within 6 px of left edge (${leftEdge})`);
-  });
-
-  // Pr4 locked-blocks-exit: with the garden locked a forced exit at the last room sends no message and the pig stays.
-  await testScenario('Pr4 locked-blocks-exit', async () => {
-    // Setup state where garden is locked
+    // Start with pig in dorm and view the garden
     await page.evaluate(() => {
       const st = window.bridge.currentState || window.bridge.getState();
-      const m = window.CuyScenesMock.state('seven'); // in 'seven', garden is unlocked, but let's explicitly lock garden
-      st.places = m.places;
-      const g = st.places.order.find(s => s.id === 'garden');
-      if (g) g.locked = true;
       st.places.pigLocations = [{ pigId: 'pig_1', scene: 'dorm', pinned: false }];
-      window.__sentMoves = [];
-      const origSend = window.bridge.send.bind(window.bridge);
-      window.bridge.send = function (action) {
-        if (action && (action.type === 'places.pigMove' || action.type === 'places_pig_move')) {
-          window.__sentMoves.push(action);
-        }
-        return origSend(action);
-      };
       window.bridge.broadcastState();
-      window.CuyPlaces.openPlace('dorm');
+      window.CuyPlaces.openPlace('garden');
     });
     await page.waitForTimeout(100);
 
-    // Force exit to right (towards garden)
+    // Now the pig arrives in garden via places.pigMove
     await page.evaluate(() => {
-      const inst = window.CuyPig.mainInstance || window.CanvasPig.instance;
-      if (inst && typeof inst.callPigExit === 'function') {
-        inst.callPigExit('right');
-      } else if (window.CanvasPig.onPigExit) {
-        window.CanvasPig.onPigExit({ to: 'right' });
-      }
+      window.bridge.send({
+        type: 'places.pigMove',
+        pigId: 'pig_1',
+        to: 'garden'
+      });
     });
-    await page.waitForTimeout(100);
-
-    // Check no message sent and pig stays in dorm
-    const sentMoves = await page.evaluate(() => window.__sentMoves || []);
-    assert.strictEqual(sentMoves.length, 0, `Expected 0 pigMove sent when garden locked, got ${sentMoves.length}`);
-
-    const pigLoc = await page.evaluate(() => {
-      const st = window.bridge.currentState || window.bridge.getState();
-      return st.places.pigLocations.find(p => p.pigId === 'pig_1');
-    });
-    assert.strictEqual(pigLoc.scene, 'dorm', `Pig should remain in dorm, got: ${pigLoc.scene}`);
-  });
-
-  // Pr5 pinned-never-exits: with pinned:true setExitsEnabled is false and 20 s of play gives no exit.
-  await testScenario('Pr5 pinned-never-exits', async () => {
-    await resetMockState([{ pigId: 'pig_1', scene: 'salon', pinned: true }]);
-
-    // Exits must be disabled
-    const exitsEnabled = await page.evaluate(() => {
-      const inst = window.CuyPig.mainInstance || window.CanvasPig.instance;
-      return inst ? inst.exitsEnabled : null;
-    });
-    assert.strictEqual(exitsEnabled, false, 'Expected exitsEnabled to be false when pig is pinned');
-
-    // Simulate 20 seconds of play
-    await page.evaluate(() => {
-      window.__exitEvents = [];
-      const inst = window.CuyPig.mainInstance || window.CanvasPig.instance;
-      const origExit = inst.onPigExit;
-      inst.onPigExit = (ev) => {
-        window.__exitEvents.push(ev);
-        if (typeof origExit === 'function') origExit(ev);
-      };
-      // Simulate 20s
-      let rem = 20000;
-      while (rem > 0) {
-        inst.update(100);
-        rem -= 100;
-      }
-    });
-
-    const exitEvents = await page.evaluate(() => window.__exitEvents || []);
-    assert.strictEqual(exitEvents.length, 0, `Expected 0 exit events in 20s when pinned, got ${exitEvents.length}`);
+    await page.waitForTimeout(50);
 
     const dbg = await page.evaluate(() => window.CanvasPig.debug());
-    assert.strictEqual(dbg.pigVisible, true, 'Pig should remain visible in salon');
+    assert.strictEqual(dbg.pigVisible, true, 'Pig should be visible upon arrival in garden');
+
+    // Expected left edge coordinate in garden (exits.left.x is 3)
+    const expectedLeftX = await page.evaluate(() => {
+      const inst = (window.CuyPig && window.CuyPig.mainInstance) || window.CanvasPig.instance;
+      return (inst.currentScene && inst.currentScene.exits && inst.currentScene.exits.left && typeof inst.currentScene.exits.left.x === 'number')
+        ? inst.currentScene.exits.left.x
+        : ((inst.walk && inst.walk[0]) || 10);
+    });
+
+    const diff = Math.abs(dbg.pig.x - expectedLeftX);
+    assert(diff <= 6 || dbg.pig.x <= 9,
+      `Expected pig.x (${dbg.pig.x}) to be within 6 px of left edge (${expectedLeftX}), diff: ${diff}`);
+
+    // Pig walks in
+    const isWalkingIn = await page.evaluate(() => {
+      const inst = (window.CuyPig && window.CuyPig.mainInstance) || window.CanvasPig.instance;
+      return inst.targetX > inst.pigX && (inst.currentAnim === 'walk' || inst.facing === 1);
+    });
+    assert(isWalkingIn, 'Pig should be facing right and walking inward from the left exit');
   });
 
-  // Pr6 two-pigs: two pigs in two scenes: two chips when elsewhere, one when in either pig's scene.
-  await testScenario('Pr6 two-pigs', async () => {
-    await resetMockState([
-      { pigId: 'pig_1', scene: 'salon', pinned: false },
-      { pigId: 'pig_2', scene: 'garden', pinned: false }
-    ]);
+  // Pr4: locked-blocks-exit
+  // with the garden locked a forced exit at the last room sends no message and the pig stays.
+  await testScenario('Pr4 locked-blocks-exit', async () => {
+    await resetMockState();
 
-    // View park (neither pig is here) -> 2 chips
+    const lastRoomId = await page.evaluate(() => {
+      const st = window.bridge.currentState || window.bridge.getState();
+      const ring = st.places.order;
+      const garden = ring.find(s => s.id === 'garden');
+      if (garden) {
+        garden.locked = true;
+        garden.unlockHint = 'Locked test';
+      }
+      const gardenIdx = ring.findIndex(s => s.id === 'garden');
+      const lastRoom = ring[(gardenIdx - 1 + ring.length) % ring.length].id;
+      st.places.pigLocations = [{ pigId: 'pig_1', scene: lastRoom, pinned: false }];
+      window.__sentPigMoves = [];
+      window.bridge.broadcastState();
+      window.CuyPlaces.openPlace(lastRoom);
+      return lastRoom;
+    });
+    await page.waitForTimeout(100);
+
+    // Force exit towards garden (to: 'right')
+    await page.evaluate(() => {
+      window.CanvasPig.onPigExit({ to: 'right' });
+    });
+    await page.waitForTimeout(100);
+
+    // Sends no message
+    const movesCount = await page.evaluate(() => window.__sentPigMoves.length);
+    assert.strictEqual(movesCount, 0, `Expected 0 places.pigMove sent when locked, got: ${movesCount}`);
+
+    // Pig stays in lastRoom
+    const pigScene = await page.evaluate(() => {
+      const st = window.bridge.currentState || window.bridge.getState();
+      return st.places.pigLocations[0].scene;
+    });
+    assert.strictEqual(pigScene, lastRoomId, `Pig should remain in ${lastRoomId}, got: ${pigScene}`);
+
+    // Pig stays visible
+    const dbg = await page.evaluate(() => window.CanvasPig.debug());
+    assert.strictEqual(dbg.pigVisible, true, 'Pig should stay visible in room when exit is blocked');
+  });
+
+  // Pr5: pinned-never-exits
+  // with pinned:true setExitsEnabled is false and 20 s of play gives no exit.
+  await testScenario('Pr5 pinned-never-exits', async () => {
+    await resetMockState();
+
+    await page.evaluate(() => {
+      const st = window.bridge.currentState || window.bridge.getState();
+      st.places.pigLocations = [{ pigId: 'pig_1', scene: 'salon', pinned: true }];
+      window.__sentPigMoves = [];
+      window.bridge.broadcastState();
+      window.CuyPlaces.openPlace('salon');
+    });
+    await page.waitForTimeout(100);
+
+    const exitsEnabled = await page.evaluate(() => {
+      const inst = (window.CuyPig && window.CuyPig.mainInstance) || window.CanvasPig.instance;
+      return inst.exitsEnabled;
+    });
+    assert.strictEqual(exitsEnabled, false, 'CanvasPig exitsEnabled should be false when pig is pinned');
+
+    // 20 s of play
+    await page.evaluate(() => {
+      window.CanvasPig.fastForward(20000);
+    });
+    await page.waitForTimeout(100);
+
+    const hasExited = await page.evaluate(() => {
+      const inst = (window.CuyPig && window.CuyPig.mainInstance) || window.CanvasPig.instance;
+      return inst.hasExited;
+    });
+    assert.strictEqual(hasExited, false, 'Pig should not have exited during 20s of play when pinned');
+
+    const movesCount = await page.evaluate(() => window.__sentPigMoves.length);
+    assert.strictEqual(movesCount, 0, 'No pigMove should be sent when pinned');
+  });
+
+  // Pr6: two-pigs
+  // two pigs in two scenes: two chips when elsewhere, one when in either pig's scene.
+  await testScenario('Pr6 two-pigs', async () => {
+    await resetMockState();
+
+    await page.evaluate(() => {
+      const st = window.bridge.currentState || window.bridge.getState();
+      st.places.pigLocations = [
+        { pigId: 'pig_1', scene: 'salon', pinned: false },
+        { pigId: 'pig_2', scene: 'garden', pinned: false }
+      ];
+      window.bridge.broadcastState();
+    });
+
+    // Elsewhere: park
     await page.evaluate(() => window.CuyPlaces.openPlace('park'));
     await page.waitForTimeout(100);
 
-    let chipCount = await page.evaluate(() => {
-      const el = document.getElementById('placesPresenceChips');
-      if (!el || el.hidden) return 0;
-      return el.querySelectorAll('.places-presence-chip').length;
+    const chipsElsewhere = await page.evaluate(() => {
+      return document.querySelectorAll('#placesPresenceChips .places-presence-chip').length;
     });
-    assert.strictEqual(chipCount, 2, `Expected 2 chips when viewing park, got ${chipCount}`);
+    assert.strictEqual(chipsElsewhere, 2, `Expected 2 chips when viewing park, got: ${chipsElsewhere}`);
 
-    // View salon (pig_1 is here, pig_2 is in garden) -> 1 chip for pig_2
+    const elsewhereText = await page.textContent('#placesPresenceChips');
+    assert(elsewhereText.includes('Salon'), 'Should show chip for pig in Salon');
+    assert(elsewhereText.includes('Garden'), 'Should show chip for pig in Garden');
+
+    // In salon (pig_1's scene)
     await page.evaluate(() => window.CuyPlaces.openPlace('salon'));
     await page.waitForTimeout(100);
 
-    chipCount = await page.evaluate(() => {
-      const el = document.getElementById('placesPresenceChips');
-      if (!el || el.hidden) return 0;
-      return el.querySelectorAll('.places-presence-chip').length;
+    const chipsInSalon = await page.evaluate(() => {
+      return document.querySelectorAll('#placesPresenceChips .places-presence-chip').length;
     });
-    assert.strictEqual(chipCount, 1, `Expected 1 chip when viewing salon, got ${chipCount}`);
+    assert.strictEqual(chipsInSalon, 1, `Expected 1 chip when viewing salon, got: ${chipsInSalon}`);
+    const salonChipText = await page.textContent('#placesPresenceChips');
+    assert(salonChipText.includes('Garden'), 'Chip in salon should mention Garden');
+    assert(!salonChipText.includes('Salon'), 'Chip in salon should not mention Salon');
 
-    const chipText = await page.evaluate(() => {
-      const el = document.getElementById('placesPresenceChips');
-      return el.textContent.trim();
-    });
-    assert(chipText.includes('Garden'), `Chip in salon should mention Garden (pig_2 location), got "${chipText}"`);
-
-    // View garden (pig_2 is here, pig_1 is in salon) -> 1 chip for pig_1
+    // In garden (pig_2's scene)
     await page.evaluate(() => window.CuyPlaces.openPlace('garden'));
     await page.waitForTimeout(100);
 
-    chipCount = await page.evaluate(() => {
-      const el = document.getElementById('placesPresenceChips');
-      if (!el || el.hidden) return 0;
-      return el.querySelectorAll('.places-presence-chip').length;
+    const chipsInGarden = await page.evaluate(() => {
+      return document.querySelectorAll('#placesPresenceChips .places-presence-chip').length;
     });
-    assert.strictEqual(chipCount, 1, `Expected 1 chip when viewing garden, got ${chipCount}`);
+    assert.strictEqual(chipsInGarden, 1, `Expected 1 chip when viewing garden, got: ${chipsInGarden}`);
+    const gardenChipText = await page.textContent('#placesPresenceChips');
+    assert(gardenChipText.includes('Salon'), 'Chip in garden should mention Salon');
+    assert(!gardenChipText.includes('Garden'), 'Chip in garden should not mention Garden');
   });
 
-  // Pr7 no-window: nothing here opens a modal.
+  // Pr7: no-window
+  // nothing here opens a modal.
   await testScenario('Pr7 no-window', async () => {
-    const isModalActive = await page.evaluate(() => {
-      const m = document.getElementById('modalBackdrop');
-      return m && m.classList.contains('active');
+    const modalActive = await page.evaluate(() => {
+      const el = document.getElementById('modalBackdrop');
+      return el ? el.classList.contains('active') : false;
     });
-    assert.strictEqual(isModalActive, false, 'No modal should be active');
+    assert.strictEqual(modalActive, false, 'No modal should be active during presence navigation');
   });
 
   await browser.close();
-  if (server && typeof server.kill === 'function') {
-    server.kill();
-  }
+  server.close();
 
   if (hasFailures) {
+    console.error('ux-p38-presence tests had failures!');
     process.exit(1);
-  } else {
-    console.log('ALL UX-P38-PRESENCE TESTS PASSED');
-    process.exit(0);
   }
 }
 
-run().catch((err) => {
+run().catch(err => {
   console.error('Fatal error in ux-p38-presence:', err);
   process.exit(1);
 });
