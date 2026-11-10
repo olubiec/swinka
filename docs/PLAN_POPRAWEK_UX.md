@@ -218,7 +218,7 @@ Uwaga ryzyka: pulpit (`BrainController`) dziś obsługuje jedną świnkę; P5-04
 | ID | Zadanie | Pliki | Akceptacja |
 |---|---|---|---|
 | P5-01 | (zrobione w P3c) Core: lokalizacja świnki (pokój, przypięta tak/nie), wędrówka między pokojami co losowy czas z JSON | `src/Cuy.Core/Pigs/PigLocation.cs`, `assets/data/pig_roaming.json` | testy z `ManualClock`: wędrówka, przypięta zostaje |
-| P5-02 | Widok pokoju pokazuje wszystkie świnki, które w nim są; przejście między pokojami widoczne (wejście przy drzwiach) | `web/home/features/rooms/feature.js`, `canvas-pig.js` | smoke: 2 świnki w 2 pokojach, po czasie zmieniają pokój |
+| P5-02 | Widok pokoju pokazuje wszystkie świnki, które w nim są (pokój danej świnki i scena w której przebywa rysują jej własną skórkę ze stanu/rostera, nie tylko activePigIds[0]); przejście między pokojami widoczne (wejście przy drzwiach) | `web/home/features/rooms/feature.js`, `canvas-pig.js` | smoke: 2 świnki w 2 pokojach z właściwymi skórkami, po czasie zmieniają pokój |
 | P5-03 | Menu świnki: „Zostań w tym pokoju" (przypięcie) i „Chodź swobodnie" | `web/home/features/pigs/feature.js`, walidacja `PigsMessages.cs` | smoke: przypięta zostaje po czasie |
 | P5-04 | Przełącznik „pokaż na pulpicie" (max 2); drugie okno świnki na pulpicie | `src/Cuy/dotNet/*`, `HomeWindow` | ręcznie na Windowsie: dwie świnki chodzą po pulpicie |
 
@@ -240,9 +240,11 @@ Cel: kupione rzeczy trafiają do schowka; z niego wyciągasz je do pokoju lub og
 
 | P6-04 | Zapis pozycji dekoracji (miejsce, obrót, pokój) w stanie gry; odczyt po restarcie | `src/Cuy.Core/Decor/*`, `GameState.Decor.cs`, `web/home/features/decor/feature.js` | testy: ustaw → zapis → wczytanie, ta sama pozycja |
 | P6-05 | Główne okno pokazuje wybrany design pokoju (lampka, meble z zapisanych pozycji); świnka porusza się po całej podłodze pokoju | `web/home/features/rooms/feature.js`, `web/home/canvas-pig.js` | smoke: lampka postawiona w edytorze jest w głównym oknie; świnka dochodzi do obu końców pokoju |
+| P6-06 | Poprawka włączników lamp i okien na canvasie: okno nie wyłącza światła (`toggle: false`), kliknięcie lampki na canvasie mapowane przez `CanvasPig.toScene(e)` przy `object-fit: cover` (np. `lamp_mushroom`) | `web/home/features/places/feature.js`, `assets/data/lights.json` | smoke: klik w lampkę grzybka włącza/wyłącza światło, klik w okno nie wyłącza słońca |
+| P6-07 | (Do dopracowania) Spójność oświetlenia i cieni sceny: wyeliminowanie fałszywych plam światła w strefach bez okien/lamp; cieniowanie obiektów/mebli w świetle ogólnym pokoju | `web/home/canvas-pig.js`, `web/home/features/places/scenes.js`, `assets/data/lights.json` | weryfikacja wizualna: brak nienaturalnych plam światła bez źródła, obecność cieni mebli przy świetle otoczenia |
 
 ### Do sprawdzenia po P6
-0. Postaw lampkę w edytorze: po restarcie stoi w tym samym miejscu i widać ją w głównym oknie; świnka chodzi po całym pokoju.
+0. Postaw lampkę w edytorze: po restarcie stoi w tym samym miejscu i widać ją w głównym oknie; świnka chodzi po całym pokoju; kliknięcie w lampkę włącza/wyłącza jej blask, kliknięcie w okno nie gasi słońca.
 1. Kup przedmiot: otwiera się edytor, stawiasz gdzie chcesz.
 2. Schowek: odkładasz i wyciągasz mebel, zabawkę i rzecz do ogrodu.
 3. Po restarcie układ pokoju się zgadza.
@@ -256,7 +258,7 @@ Cel: przedmioty nie nakładają się, świnka ich nie przechodzi; jedna grafika 
 |---|---|---|---|
 | P7-01 | Core: siatka zajętości pokoju (stopa przedmiotu z `world_items.json`), walidacja ustawienia bez nakładania, wyjątek dla wiszących (obrazy) | `src/Cuy.Core/Decor/RoomOccupancy.cs`, `assets/data/world_items.json` | testy: kolizja odrzucona, wiszące OK |
 | P7-02 | Edytor używa siatki: czerwone pole przy kolizji, przyciąganie do kratki | `web/home/features/decor/feature.js` | smoke: nakładanie niemożliwe |
-| P7-03 | Pathfinding świnki po wolnych kratkach; cele zabawy (tunel, piłka) tylko osiągalne | `src/Cuy.Core/Pigs/*`, `canvas-pig.js` | testy: ścieżka omija meble, brak ścieżki → inny cel |
+| P7-03 | Pathfinding świnki po wolnych kratkach; cele zabawy (tunel, piłka) tylko osiągalne; meble/lampki blokują przejście i chowają świnkę gdy stoi za nimi (Z-sort) | `src/Cuy.Core/Pigs/*`, `canvas-pig.js` | testy: ścieżka omija meble, brak ścieżki → inny cel; świnka nie nakłada się na lampkę/mebel |
 | P7-04 | Animacje zabawy rysują przedmioty tym samym spritem i skalą co pokój (koniec starej grafiki i skoków rozmiaru) | `web/home/canvas-pig.js`, animacje w `Graphics/*` | smoke: zrzut przed/po zabawie, przedmiot tej samej wielkości |
 
 ### Do sprawdzenia po P7
