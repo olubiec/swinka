@@ -781,12 +781,20 @@
       this.features.sort((a, b) => (a.order || 99) - (b.order || 99));
     },
     listFeatures() {
-      return this.features;
+      return this.features.filter(f => f && f.id !== 'rooms' && f.id !== 'garden');
     },
     openFeature(id, arg, opts) {
       if (arg && typeof arg === 'object' && !opts && ('from' in arg)) {
         opts = arg;
         arg = undefined;
+      }
+      if (id === 'rooms' || id === 'garden') {
+        this.closeFeature();
+        if (typeof closeModal === 'function') closeModal();
+        if (window.CuyPlaces && typeof window.CuyPlaces.openPlace === 'function') {
+          window.CuyPlaces.openPlace(id === 'rooms' ? (arg || 'salon') : 'garden');
+        }
+        return;
       }
       this.closeFeature({ keepBackdrop: true });
       const feat = this.features.find(f => f.id === id);
@@ -839,6 +847,67 @@
     }
   };
 
+  // --- RETIRE ROOMS / GARDEN (PK-P40d) ---
+  function upgradePlace(id) {
+    if (window.bridge && typeof window.bridge.send === 'function') {
+      window.bridge.send({ type: 'place_upgrade', id: id });
+    }
+  }
+
+  function unlockPlace(id) {
+    if (window.bridge && typeof window.bridge.send === 'function') {
+      window.bridge.send({ type: 'place_unlock', id: id });
+    }
+  }
+
+  function wrapCuyPlaces(target) {
+    if (!target || typeof target !== 'object') target = {};
+    if (!target.upgrade) target.upgrade = upgradePlace;
+    if (!target.unlock) target.unlock = unlockPlace;
+    if (target.openPlace) {
+      if (!target.openPlace._retireWrapped) {
+        const origOpen = target.openPlace;
+        target.openPlace = function (placeId, roomArg) {
+          if (window.CuyHome && typeof window.CuyHome.closeFeature === 'function') {
+            window.CuyHome.closeFeature();
+          }
+          if (typeof closeModal === 'function') {
+            closeModal();
+          }
+          return origOpen.apply(this, arguments);
+        };
+        target.openPlace._retireWrapped = true;
+      }
+    } else {
+      target.openPlace = function (placeId, roomArg) {
+        if (window.CuyHome && typeof window.CuyHome.closeFeature === 'function') {
+          window.CuyHome.closeFeature();
+        }
+        if (typeof closeModal === 'function') {
+          closeModal();
+        }
+      };
+      target.openPlace._retireWrapped = true;
+    }
+    return target;
+  }
+
+  let _cuyPlacesInstance = wrapCuyPlaces(window.CuyPlaces || {});
+  try {
+    Object.defineProperty(window, 'CuyPlaces', {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return _cuyPlacesInstance;
+      },
+      set(val) {
+        _cuyPlacesInstance = wrapCuyPlaces(val);
+      }
+    });
+  } catch (e) {
+    window.CuyPlaces = _cuyPlacesInstance;
+  }
+
   function openMoreModal() {
     removeBackBtn();
     if (window.CuyHome) window.CuyHome.closeFeature({ keepBackdrop: true });
@@ -855,6 +924,7 @@
 
     // Then registered features
     window.CuyHome.listFeatures().forEach(feat => {
+      if (!feat || feat.id === 'rooms' || feat.id === 'garden') return;
       let iconHtml = '';
       if (feat.icon) {
         if (feat.icon.startsWith('icon-')) {

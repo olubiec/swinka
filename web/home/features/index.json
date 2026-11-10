@@ -10,10 +10,9 @@
   "diary",
   "achievements",
   "settings",
-  "rooms",
-  "garden",
   "farm",
   "market",
   "store",
-  "places"
+  "places",
+  "places/edit-panel"
 ]

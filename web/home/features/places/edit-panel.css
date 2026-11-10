@@ -1,0 +1,297 @@
+/* Edit mode panel & stash drawer (PK-P40a) */
+/* Colors strictly from style_palette.json (cuy-hay-house): wood, hay, linen */
+/* No gradients, no blur, no box-shadow blur, pixelated rendering */
+
+.places-edit-btn {
+  height: 20px;
+  min-height: 20px;
+  line-height: 14px;
+  font-size: 11px;
+  font-family: var(--ui-font, 'Pixelify Sans', monospace);
+  padding: 0 6px;
+  margin-right: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  background: var(--ui-wood-4, #e3b27a);
+  color: var(--ui-wood-0, #47281c);
+  border: 3px solid var(--ui-wood-0, #47281c);
+  border-image: var(--ui-btn_normal) 6 fill / 6px;
+  image-rendering: pixelated;
+}
+
+.places-edit-btn:hover:not([disabled]) {
+  background: var(--ui-hay-2, #e9c871);
+  border-image: var(--ui-btn_hover) 6 fill / 6px;
+}
+
+.places-edit-btn:active:not([disabled]),
+.places-edit-btn[aria-pressed="true"] {
+  background: var(--ui-hay-2, #e9c871);
+  border-image: var(--ui-btn_pressed) 6 fill / 6px;
+}
+
+.places-edit-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.places-edit-btn:focus-visible {
+  outline: 2px solid var(--ui-hay-2, #e9c871);
+  outline-offset: 1px;
+}
+
+/* Stash drawer (1/3 height of window, slides from bottom, 9-slice wood panel) */
+.edit-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 33.333%;
+  max-height: 220px;
+  min-height: 140px;
+  box-sizing: border-box;
+  background-color: var(--ui-wood-3, #c58a52);
+  border: 4px solid var(--ui-wood-1, #6f4328);
+  border-image: var(--ui-panel_wood) 8 fill / 8px;
+  image-rendering: pixelated;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 6px;
+  color: var(--ui-wood-0, #47281c);
+  font-family: var(--ui-font, 'Pixelify Sans', monospace);
+}
+
+.edit-drawer[hidden] {
+  display: none !important;
+}
+
+.edit-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 26px;
+  min-height: 26px;
+  padding: 0 4px;
+  gap: 6px;
+  border-bottom: 2px solid var(--ui-wood-1, #6f4328);
+}
+
+.edit-drawer-header-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.edit-drawer-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--ui-wood-0, #47281c);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edit-drawer-level {
+  font-size: 10px;
+  line-height: 12px;
+  color: var(--ui-wood-0, #47281c);
+  background: var(--ui-hay-1, #f2dc9b);
+  padding: 1px 4px;
+  border: 1px solid var(--ui-wood-1, #6f4328);
+  white-space: nowrap;
+}
+
+.edit-drawer-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.edit-upgrade-btn,
+.edit-unlock-btn {
+  height: 20px;
+  min-height: 20px;
+  line-height: 14px;
+  font-size: 11px;
+  font-family: var(--ui-font, 'Pixelify Sans', monospace);
+  padding: 0 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+  background: var(--ui-wood-4, #e3b27a);
+  color: var(--ui-wood-0, #47281c);
+  border: 3px solid var(--ui-wood-0, #47281c);
+  border-image: var(--ui-btn_normal) 6 fill / 6px;
+  image-rendering: pixelated;
+}
+
+.edit-upgrade-btn:hover:not([disabled]),
+.edit-unlock-btn:hover:not([disabled]) {
+  background: var(--ui-hay-2, #e9c871);
+  border-image: var(--ui-btn_hover) 6 fill / 6px;
+}
+
+.edit-upgrade-btn:active:not([disabled]),
+.edit-unlock-btn:active:not([disabled]) {
+  background: var(--ui-hay-2, #e9c871);
+  border-image: var(--ui-btn_pressed) 6 fill / 6px;
+}
+
+.edit-upgrade-btn[disabled],
+.edit-unlock-btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.edit-upgrade-btn:focus-visible,
+.edit-unlock-btn:focus-visible {
+  outline: 2px solid var(--ui-hay-2, #e9c871);
+  outline-offset: 1px;
+}
+
+.edit-upgrade-btn .pixel-icon,
+.edit-unlock-btn .pixel-icon {
+  display: inline-block;
+  vertical-align: middle;
+  pointer-events: none;
+}
+
+.edit-drawer-close {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  border: 0;
+  cursor: pointer;
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-image: var(--ui-close_btn, url('../../../assets/ui/close_btn.png'));
+  image-rendering: pixelated;
+}
+
+.edit-drawer-close:hover {
+  background-image: var(--ui-close_btn, url('../../../assets/ui/close_btn.png'));
+}
+
+.edit-drawer-close:active {
+  background-image: var(--ui-close_btn_pressed, url('../../../assets/ui/close_btn_pressed.png'));
+}
+
+.edit-drawer-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.edit-drawer-strip {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  height: 100%;
+  padding: 4px 2px;
+  box-sizing: border-box;
+}
+
+/* Item cards in the drawer */
+.edit-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 76px;
+  min-width: 76px;
+  height: 92px;
+  min-height: 92px;
+  padding: 4px;
+  box-sizing: border-box;
+  background: var(--ui-wood-2, #9b6238);
+  border: 2px solid var(--ui-wood-0, #47281c);
+  cursor: pointer;
+  user-select: none;
+  image-rendering: pixelated;
+}
+
+.edit-card:hover {
+  background: var(--ui-wood-3, #c58a52);
+}
+
+.edit-card:focus-visible {
+  outline: 2px solid var(--ui-hay-2, #e9c871);
+  outline-offset: 1px;
+}
+
+.edit-card.is-dimmed {
+  opacity: 0.6;
+}
+
+.edit-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.edit-card-icon {
+  max-width: 40px;
+  max-height: 40px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.edit-card-name {
+  font-size: 10px;
+  line-height: 12px;
+  text-align: center;
+  color: var(--ui-wood-0, #47281c);
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.edit-card-owned {
+  font-size: 9px;
+  line-height: 11px;
+  text-align: center;
+  color: var(--ui-linen-3, #fbf0d9);
+  background: var(--ui-wood-0, #47281c);
+  padding: 1px 4px;
+  width: calc(100% - 8px);
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.edit-drawer-empty {
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ui-wood-0, #47281c);
+  padding: 16px;
+  font-weight: bold;
+}

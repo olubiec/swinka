@@ -369,6 +369,9 @@
       this.blockers = null;
       this.blockerRects = [];
       this.standingFootprints = [];
+      this.ghost = null;
+      this._ghostCanvas = null;
+      this._checkerPattern = null;
       CanvasPig.instance = this;
       PigCanvas.instance = this;
 
@@ -868,6 +871,7 @@
         }
       }
       this.currentScene = def;
+      this.ghost = null;
       this.sceneId = def.id || 'salon';
       this.sceneKind = def.kind || 'room';
       if (typeof def.wallH === 'number') {
@@ -935,7 +939,17 @@
       if (explicit) this.explicitThings = true;
       this.things = Array.isArray(list) ? list.slice() : [];
       this.things.forEach(t => {
-        if (t && t.url && !t.img) {
+        if (!t) return;
+        if (!t.w || !t.h) {
+          const def = this.getItemDef(t.itemId || t.id);
+          if (def) {
+            if (!t.w) t.w = def.w;
+            if (!t.h) t.h = def.h;
+            if (t.anchorX === undefined) t.anchorX = def.anchorX;
+            if (t.anchorY === undefined) t.anchorY = def.anchorY;
+          }
+        }
+        if (t.url && !t.img) {
           t.img = this.loadCachedImage(t.url);
         }
       });
@@ -1246,6 +1260,12 @@
         sceneSize: [this.sceneWidth, this.sceneHeight],
         wallH: (typeof this.wallH === 'number') ? this.wallH : 32,
         bgUrl: this.sceneBgUrl || null,
+        ghost: this.ghost ? {
+          itemId: this.ghost.itemId,
+          x: this.ghost.x,
+          y: this.ghost.y,
+          valid: this.ghost.valid !== false
+        } : null,
         things: ordered.map(t => ({ id: t.id, y: t.y })),
         renderList: renderList.map(t => ({ id: t.id, y: t.y })),
         renderOrder: renderList.map(t => t.id),
@@ -1369,7 +1389,280 @@
       const s = Math.max(rect.width / this.sceneWidth, rect.height / this.sceneHeight);
       const offX = (rect.width - this.sceneWidth * s) / 2;
       const offY = rect.height - this.sceneHeight * s;
-      return { x: (e.clientX - rect.left - offX) / s, y: (e.clientY - rect.top - offY) / s };
+      const cx = (e && typeof e.clientX === 'number') ? e.clientX : (e && typeof e.x === 'number' ? e.x : 0);
+      const cy = (e && typeof e.clientY === 'number') ? e.clientY : (e && typeof e.y === 'number' ? e.y : 0);
+      return { x: (cx - rect.left - offX) / s, y: (cy - rect.top - offY) / s };
+    }
+
+    toClient(x, y) {
+      const rect = this.canvas.getBoundingClientRect();
+      const s = Math.max(rect.width / this.sceneWidth, rect.height / this.sceneHeight);
+      const offX = (rect.width - this.sceneWidth * s) / 2;
+      const offY = rect.height - this.sceneHeight * s;
+      return {
+        clientX: rect.left + offX + x * s,
+        clientY: rect.top + offY + y * s
+      };
+    }
+
+    getAssetUrl(rel) {
+      if (!rel) return null;
+      if (typeof window !== 'undefined') {
+        if (window.CuyHome && window.CuyHome.api && typeof window.CuyHome.api.assetUrl === 'function') {
+          return window.CuyHome.api.assetUrl(rel);
+        }
+        const isWebView = !!(window.chrome && window.chrome.webview);
+        const base = this.assetsBase || (isWebView ? 'https://cuy.assets/' : '../../assets/');
+        return base + rel.replace(/^\/+/, '');
+      }
+      return 'assets/' + rel.replace(/^\/+/, '');
+    }
+
+    getItemDef(itemId) {
+      if (!itemId) return null;
+      if (typeof itemId === 'object') return itemId;
+      let atlas = null;
+      if (typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.getAtlas === 'function') {
+        atlas = window.CuyScenes.getAtlas();
+      }
+      if (!atlas && this.atlasData) atlas = this.atlasData;
+      if (!atlas && typeof require !== 'undefined') {
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const candidates = [
+            path.resolve(__dirname, '../../assets/world/atlas.json'),
+            path.resolve(__dirname, '../../../assets/world/atlas.json'),
+            path.resolve(process.cwd(), 'assets/world/atlas.json')
+          ];
+          for (const p of candidates) {
+            if (fs.existsSync(p)) {
+              this.atlasData = JSON.parse(fs.readFileSync(p, 'utf8'));
+              atlas = this.atlasData;
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+      const entry = (atlas && atlas.items) ? atlas.items[itemId] : null;
+      if (entry) {
+        const sw = entry.size ? entry.size[0] : ((entry.cells ? entry.cells[0] * 16 : 32));
+        const sh = entry.size ? entry.size[1] : ((entry.cells ? entry.cells[1] * 16 : 32));
+        const ax = entry.anchor ? entry.anchor[0] : Math.round(sw / 2);
+        const ay = entry.anchor ? entry.anchor[1] : sh;
+        const url = entry.file ? this.getAssetUrl('world/' + entry.file) : null;
+        const isFlat = !!(entry.flat || itemId.startsWith('rug_') || itemId.startsWith('mat_') || itemId.includes('carpet'));
+        const kind = (entry.place === 'garden' || entry.place === 'park' || entry.place === 'farm' || entry.place === 'market' || entry.place === 'outdoor') ? 'outdoor' : 'indoor';
+        return {
+          itemId: itemId,
+          w: sw,
+          h: sh,
+          anchorX: ax,
+          anchorY: ay,
+          url: url,
+          flat: isFlat,
+          place: entry.place,
+          kind: kind
+        };
+      }
+      return {
+        itemId: itemId,
+        w: 32,
+        h: 32,
+        anchorX: 16,
+        anchorY: 32,
+        url: null,
+        flat: false,
+        place: 'house',
+        kind: 'indoor'
+      };
+    }
+
+    setGhost(ghost) {
+      if (!ghost) {
+        this.ghost = null;
+      } else {
+        this.ghost = {
+          itemId: ghost.itemId,
+          x: ghost.x,
+          y: ghost.y,
+          valid: ghost.valid !== false
+        };
+      }
+    }
+
+    cellValid(itemId, x, y) {
+      if (!itemId || typeof x !== 'number' || typeof y !== 'number') return false;
+
+      const def = this.getItemDef(itemId);
+      if (!def) return false;
+
+      const curScene = this.sceneId || (this.currentScene && this.currentScene.id) || 'salon';
+      const isOutdoor = this.sceneKind === 'outdoor' || ['garden', 'park', 'farm', 'market'].includes(curScene);
+      const sceneKind = isOutdoor ? 'outdoor' : 'indoor';
+      const itemKind = def.kind || 'indoor';
+      if (itemKind !== sceneKind) {
+        return false;
+      }
+
+      const isFlat = !!def.flat;
+      const sw = def.w || 32;
+      const sph = def.h || 32;
+      const ax = def.anchorX !== undefined ? def.anchorX : Math.round(sw / 2);
+      const ay = def.anchorY !== undefined ? def.anchorY : sph;
+
+      const dx = Math.round(x - ax);
+      const dy = Math.round(y - ay);
+
+      const fx0 = dx;
+      const fx1 = dx + sw;
+      const fy1 = dy + sph;
+      const fy0 = fy1 - 4;
+
+      // Inside walk band
+      const [wx0, wy0, wx1, wy1] = this.walk || [10, 96, 230, 126];
+      if (fx0 < wx0 || fx1 > wx1 || fy0 < wy0 || fy1 > wy1) {
+        return false;
+      }
+
+      // Not on blockers
+      const blockers = this.blockerRects || [];
+      for (let i = 0; i < blockers.length; i++) {
+        const b = blockers[i];
+        if (fx0 < b[2] && fx1 > b[0] && fy0 < b[3] && fy1 > b[1]) {
+          return false;
+        }
+      }
+
+      // Not overlapping other standing things (flat items may overlap)
+      if (!isFlat) {
+        const footprints = this.standingFootprints || [];
+        for (let i = 0; i < footprints.length; i++) {
+          const sf = footprints[i];
+          if (fx0 < sf[2] && fx1 > sf[0] && fy0 < sf[3] && fy1 > sf[1]) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
+    pickAt(x, y) {
+      if (typeof x !== 'number' || typeof y !== 'number') return null;
+      const things = this.things || [];
+      if (things.length === 0) return null;
+
+      const standing = things.filter(t => !t.flat).slice().sort((a, b) => (b.y || 0) - (a.y || 0));
+      const flats = things.filter(t => !!t.flat).slice().reverse();
+      const candidates = standing.concat(flats);
+
+      for (let i = 0; i < candidates.length; i++) {
+        const t = candidates[i];
+        if (!t) continue;
+        const img = t.img || (t.url ? this.loadCachedImage(t.url) : null);
+        const spw = t.w || t.width || (img && (img.naturalWidth || img.width)) || (t.anchorX ? t.anchorX * 2 : 32);
+        const sph = t.h || t.height || (img && (img.naturalHeight || img.height)) || (t.anchorY ? t.anchorY : 32);
+        const ax = t.anchorX !== undefined ? t.anchorX : Math.round(spw / 2);
+        const ay = t.anchorY !== undefined ? t.anchorY : sph;
+        const dx = Math.round((t.x || 0) - ax);
+        const dy = Math.round((t.y || 0) - ay);
+
+        if (x >= dx && x <= dx + spw && y >= dy && y <= dy + sph) {
+          let localX = Math.max(0, Math.min(spw - 1, Math.floor(x - dx)));
+          let localY = Math.max(0, Math.min(sph - 1, Math.floor(y - dy)));
+          if (t.flip) {
+            localX = spw - 1 - localX;
+          }
+          if (img && (img.naturalWidth || img.width)) {
+            try {
+              let offscreen = img._cuyOffscreen;
+              if (!offscreen) {
+                offscreen = document.createElement('canvas');
+                offscreen.width = img.naturalWidth || img.width;
+                offscreen.height = img.naturalHeight || img.height;
+                const octx = offscreen.getContext('2d');
+                octx.drawImage(img, 0, 0);
+                img._cuyOffscreen = offscreen;
+              }
+              if (offscreen) {
+                const octx = offscreen.getContext('2d');
+                const pixel = octx.getImageData(localX, localY, 1, 1).data;
+                if (pixel[3] === 0) {
+                  continue;
+                }
+              }
+            } catch (err) {}
+          }
+          return t;
+        }
+      }
+      return null;
+    }
+
+    drawGhost(ctx, ghost) {
+      if (!ghost || !ghost.itemId) return;
+      const def = this.getItemDef(ghost.itemId);
+      const img = (def && def.url) ? this.loadCachedImage(def.url) : (def && def.img);
+      if (!img) return;
+      const ready = (img.naturalWidth && img.naturalWidth > 0) || (img.width && img.width > 0);
+      if (!ready) return;
+
+      const sw = img.naturalWidth || img.width;
+      const sh = img.naturalHeight || img.height;
+      const ax = (def && def.anchorX !== undefined) ? def.anchorX : Math.round(sw / 2);
+      const ay = (def && def.anchorY !== undefined) ? def.anchorY : sh;
+      const dx = Math.round((ghost.x || 0) - ax);
+      const dy = Math.round((ghost.y || 0) - ay);
+
+      if (!this._ghostCanvas) {
+        this._ghostCanvas = (typeof document !== 'undefined') ? document.createElement('canvas') : null;
+      }
+      if (!this._ghostCanvas) return;
+
+      const gc = this._ghostCanvas;
+      if (gc.width !== sw || gc.height !== sh) {
+        gc.width = sw;
+        gc.height = sh;
+      }
+      const gctx = gc.getContext('2d');
+      gctx.clearRect(0, 0, sw, sh);
+
+      gctx.drawImage(img, 0, 0);
+
+      if (!ghost.valid) {
+        gctx.save();
+        gctx.globalCompositeOperation = 'source-atop';
+        gctx.fillStyle = 'rgba(184, 96, 74, 0.75)';
+        gctx.fillRect(0, 0, sw, sh);
+        gctx.restore();
+      }
+
+      if (!this._checkerPattern && typeof document !== 'undefined') {
+        const pc = document.createElement('canvas');
+        pc.width = 2;
+        pc.height = 2;
+        const pctx = pc.getContext('2d');
+        pctx.fillStyle = '#000000';
+        pctx.fillRect(0, 0, 1, 1);
+        pctx.fillRect(1, 1, 1, 1);
+        this._checkerPattern = gctx.createPattern(pc, 'repeat');
+      }
+
+      if (this._checkerPattern) {
+        gctx.save();
+        gctx.globalCompositeOperation = 'destination-out';
+        gctx.fillStyle = this._checkerPattern;
+        const shiftX = ((dx % 2) + 2) % 2;
+        const shiftY = ((dy % 2) + 2) % 2;
+        gctx.translate(-shiftX, -shiftY);
+        gctx.fillRect(shiftX, shiftY, sw, sh);
+        gctx.restore();
+      }
+
+      ctx.save();
+      ctx.drawImage(gc, dx, dy);
+      ctx.restore();
     }
 
     isOverPig(x, y) {
@@ -1530,7 +1823,7 @@
     updateState(state) {
       if (!state) return;
       this.lastState = state;
-      if (!this.explicitThings && typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.placedThings === 'function') {
+      if (typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.placedThings === 'function') {
         this.setThings(window.CuyScenes.placedThings(state, this.sceneId || 'salon'), false);
       }
       if (state.stageKey && window.CuySprites) {
@@ -1770,13 +2063,20 @@
       // --- 3. STANDING OBJECTS & GUINEA PIG (sorted by bottom edge y) ---
       const lit = !!this.lightScene;
 
-      const standing = (this.things || []).filter(t => !t.flat).slice().sort((a, b) => (a.y || 0) - (b.y || 0));
+      const standing = (this.things || []).filter(t => !t.flat).slice();
+      const ghostObj = this.ghost ? { isGhost: true, y: this.ghost.y, ghost: this.ghost } : null;
+      const allStanding = ghostObj ? standing.concat([ghostObj]) : standing;
+      allStanding.sort((a, b) => (a.y || 0) - (b.y || 0));
+
       const isPigVisible = this.pigVisible !== false;
       const pigFeetY = this.pigY;
 
       if (isPigVisible) {
         // Standing objects behind pig
-        standing.filter(t => (t.y || 0) <= pigFeetY).forEach(t => this.drawThing(ctx, t));
+        allStanding.filter(t => (t.y || 0) <= pigFeetY).forEach(t => {
+          if (t.isGhost) this.drawGhost(ctx, t.ghost);
+          else this.drawThing(ctx, t);
+        });
 
         // Layers 0 <= z < 10
         this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
@@ -1796,9 +2096,15 @@
         this.drawBackgroundBlockersOverPig(ctx);
 
         // Standing objects in front of pig
-        standing.filter(t => (t.y || 0) > pigFeetY).forEach(t => this.drawThing(ctx, t));
+        allStanding.filter(t => (t.y || 0) > pigFeetY).forEach(t => {
+          if (t.isGhost) this.drawGhost(ctx, t.ghost);
+          else this.drawThing(ctx, t);
+        });
       } else {
-        standing.forEach(t => this.drawThing(ctx, t));
+        allStanding.forEach(t => {
+          if (t.isGhost) this.drawGhost(ctx, t.ghost);
+          else this.drawThing(ctx, t);
+        });
         this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
         if (lit) {
           this.applySceneLight(ctx, this.lightScene);
@@ -2495,6 +2801,30 @@
       if (inst && typeof inst.isFree === 'function') return inst.isFree(x, y);
       return false;
     },
+    setGhost(ghost) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.setGhost === 'function') inst.setGhost(ghost);
+    },
+    pickAt(x, y) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.pickAt === 'function') return inst.pickAt(x, y);
+      return null;
+    },
+    cellValid(itemId, x, y) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.cellValid === 'function') return inst.cellValid(itemId, x, y);
+      return false;
+    },
+    toClient(x, y) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.toClient === 'function') return inst.toClient(x, y);
+      return { clientX: 0, clientY: 0 };
+    },
+    toScene(e) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.toScene === 'function') return inst.toScene(e);
+      return { x: 0, y: 0 };
+    },
     snapToFreeCell(x, y) {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst && typeof inst.snapToFreeCell === 'function') return inst.snapToFreeCell(x, y);
@@ -2548,6 +2878,11 @@
   PigCanvas.walkTo = (x, y) => CanvasPig.walkTo(x, y);
   PigCanvas.fastForward = (ms) => CanvasPig.fastForward(ms);
   PigCanvas.isFree = (x, y) => CanvasPig.isFree(x, y);
+  PigCanvas.setGhost = (g) => CanvasPig.setGhost(g);
+  PigCanvas.pickAt = (x, y) => CanvasPig.pickAt(x, y);
+  PigCanvas.cellValid = (itemId, x, y) => CanvasPig.cellValid(itemId, x, y);
+  PigCanvas.toClient = (x, y) => CanvasPig.toClient(x, y);
+  PigCanvas.toScene = (e) => CanvasPig.toScene(e);
   PigCanvas.snapToFreeCell = (x, y) => CanvasPig.snapToFreeCell(x, y);
   PigCanvas.scaleAt = (y) => CanvasPig.scaleAt(y);
   PigCanvas.getDrawnSize = (s) => CanvasPig.getDrawnSize(s);

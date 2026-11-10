@@ -268,6 +268,31 @@ Wszystkie pakiety fali P45 (a-d, q1, q2) mają komplet testów automatycznych dl
 4. Listwa przypodłogowa nie ma białej ani czarnej linii.
 5. Świnka nie drży (brak skoków rozmiaru o 1 piksel) podczas chodzenia z góry na dół.
 
+## Wave P40: In-Scene Room & Garden Editing
+
+Wszystkie pakiety fali P40 (a-e, q) mają komplet testów automatycznych dla trybu edycji na scenie: przycisk Edit i szuflada ze schowkiem, przeciąganie przedmiotu na scenę z duchem i walidacją, zaznaczanie/przesuwanie/obracanie/usuwanie postawionych mebli, wycofanie osobnych okien Pokoje i Ogród, nagłówek szuflady z poziomem i odblokowaniem oraz zrzuty ekranu.
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Stage Gate Wave P40 (PK-P40q) | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Build exit code 0, all Core xUnit tests pass, UX suite PASS, assets OK, icons OK, EXE smoke OK | Zbudowana aplikacja, silnik Core i desktopowy EXE działają bez regresji; assety i ikony kompletne |
+| UX Edit Drawer (PK-P40a) | `node tools/qa/ux-p40-edit-drawer.js` | Exit code 0, 6/6 PASS (E1-E6: button-toggles, indoor/outdoor partitioning, empty-state, esc-closes, no-modal, library-icons) | Przycisk Edit otwiera i zamyka wysuwaną szufladę ze schowkiem, meble podzielone na pokój/ogród, brak modalnego okna |
+| UX Edit Place (PK-P40b) | `node tools/qa/ux-p40-edit-place.js` | Exit code 0, 7/7 PASS (P1-P7: drop-valid-sends, drop-on-blocker-cancels, drop-outside-cancels, ghost-shown-and-cleared, zero-owned-not-draggable, placed-item-appears-and-blocks-pig, scene-kinds) | Przeciąganie przedmiotu z szuflady na scenę: widoczny duch ze snapem 4px, czerwony przy kolizji/poza pasem; postawienie wysyła room_place i blokuje komórkę |
+| UX Edit Move & Remove (PK-P40c) | `node tools/qa/ux-p40-edit-move.js` | Exit code 0, 8/8 PASS (M1-M8: select-shows-toolbar, move-valid-sends-move, move-invalid-returns, drag-to-drawer-removes, flip-sends, delete-key-removes, esc-deselects, only-in-edit-mode) | W trybie edycji kliknięcie zaznacza postawiony mebel, pasek narzędzi Flip/Remove, przesuwanie ze snapem, przeciągnięcie do szuflady usuwa |
+| UX Retire Rooms & Garden (PK-P40d) | `node tools/qa/ux-p40-retire.js` | Exit code 0, 5/5 PASS (R1-R5: no-more-tile-for-rooms-garden, openPlace-switches-scene, no-feature-rooms-or-garden-modal, upgrade-unlock-api, no-console-errors) | Wycofanie osobnych okien Pokoje i Ogród: usunięte kafelki z More, openFeature przełącza scenę bez otwierania modali |
+| UX Edit Upgrade & Unlock (PK-P40e) | `node tools/qa/ux-p40-edit-upgrade.js` | Exit code 0, 5/5 PASS (U1-U5: row-shows-level-and-cost, upgrade-sends, disabled-when-poor, max-level-hides-upgrade, locked-scene-shows-unlock-and-sends) | Nagłówek szuflady edycji wyświetla nazwę sceny, poziom, przyciski Upgrade i Unlock z kosztem koniczynek, blokada przy braku środków |
+| UX P40 Screenshots (PK-P40q) | `node tools/qa/ux-p40-shots.js` | Exit code 0, zapisano zrzuty do docs/qa/shots/p40-*.png | Zrzuty ekranu salonu z otwartą szufladą Edit i ogrodu z duchem przedmiotu w widoku 420x720 |
+| UX All Suite | `node tools/qa/ux-all.js` | Wszystkie testy P40 PASS (ux-p40-edit-drawer, edit-place, edit-move, retire, edit-upgrade, shots) | Skrypty pakietu UX przechodzą pomyślnie dla wdrożonych funkcjonalności |
+| Web Smoke | `node tools/qa/web-smoke.js` | Wyniki zgodne z baseline-smoke.txt | WebView2 home screens, nawigacja i moduły renderują się poprawnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| EXE Smoke | `powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Exit code 0, selftest passes, EXE SMOKE OK | Świnka chodzi po pulpicie, brak wyjątków i crashów podczas uruchomienia |
+
+### Manual Checklist (Do sprawdzenia po P40)
+1. Przycisk Edit otwiera szufladę ze schowkiem, w ogrodzie rzeczy zewnętrzne, w pokoju wnętrzowe.
+2. Przeciągnij przedmiot na scenę: widać duch, na złym miejscu czerwony i nic się nie stawia.
+3. Kliknij postawiony przedmiot: przesuń, obróć, usuń (też przeciągnięciem na szufladę).
+4. W More nie ma już Pokoi ani Ogrodu. Poziom i odblokowanie miejsca są w nagłówku szuflady.
+
+
 
 
 
