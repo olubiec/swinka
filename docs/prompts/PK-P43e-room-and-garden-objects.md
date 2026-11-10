@@ -17,7 +17,7 @@ Depends on: PK-P43b merged.
 
 ## Steps
 1. grep the old per-item actions: lamp toggles (`lampToggles` in `garden/feature.js`), toy handling (`targetToy`, `toy` in `canvas-pig.js`), gramophone (`music/player.js`), food (`food-drawer`). List each in the log.
-2. Placed things get hotspots automatically: `places/feature.js` converts each standing/flat placed thing with an action (`lamp`, `toy`, `gramophone`, `food`, `bed`) into a hotspot (rect from its sprite) via `CanvasPig.setHotspots` merged with the scene's data hotspots. Click behaviour: lamp -> toggle (existing function), toy -> `CanvasPig.walkToToy(uid)` (use the existing toy API), gramophone -> show player (existing function), food bowl -> open food drawer.
+2. Placed things get hotspots automatically: `places/feature.js` converts each standing/flat placed thing with an action (`lamp`, `toy`, `gramophone`, `food`, `bed`) into a hotspot (rect from its sprite) via `CanvasPig.setHotspots` merged with the scene's data hotspots. Click behaviour: lamp -> toggle (existing function), toy -> `CanvasPig.walkToToy(uid)` (use the existing toy API), gramophone -> show player (existing function), food bowl -> open food drawer. Uwaga: w ogrodzie/parku/farmie wycofaj lewitujące domowe lampki/grzybki ze scen zewnętrznych (na dworze na razie nie ma lampek, w nocy ciemno, w przyszłości dojdą pochodnie/latarnie).
 3. Tests FIRST, `tools/qa/ux-p43-object-actions.js` (Playwright, mock): O1 `lamp-click-toggles-light` (ambient glow on/off), O2 `toy-click-pig-walks-there`, O3 `gramophone-click-shows-player`, O4 `food-click-opens-drawer`, O5 `object-without-action-no-hotspot`, O6 `hotspots-update-after-place-and-remove`.
 4. Run Weryfikacja; fix until green.
 

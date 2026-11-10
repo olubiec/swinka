@@ -377,7 +377,8 @@ body.webview-mode .game-device {
   border-bottom: 3px solid var(--ui-wood-0);
   overflow: hidden;
   line-height: 0;
-  flex: 0 0 auto;
+  flex: 1 1 0;
+  min-height: 80px;
   height: auto;
   display: flex;
   align-items: center;
@@ -388,8 +389,9 @@ body.webview-mode .game-device {
 #pigCanvas {
   display: block;
   max-width: 100%;
-  width: 100%;
-  height: auto;
+  max-height: 100%;
+  width: auto;
+  height: 100%;
   object-fit: contain;
   object-position: center center;
   image-rendering: pixelated;
