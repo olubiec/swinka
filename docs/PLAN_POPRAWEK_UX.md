@@ -112,8 +112,35 @@ Mapa uwag właściciela (10.11 po teście P40) do wdrożenia w falach P43 / P44 
 Mapa uwag właściciela (11.11 po teście pokoi świnek i oświetlenia):
 - **Fizyka światła (czarna sylwetka świnki w świetle okna)**: naprawiono w `canvas-pig.js` (obsługa `src.color === 'ambient'` i zabezpieczenie przed `NaN`, przez które piksele futerka świnki stawały się czarne w promieniu światła z okna) -> **naprawione natychmiast 11.11**.
 - **Baner "Go there" bez tła jako mały dymek**: usunięto pełnowymiarowy brązowy pasek rozcinający okno, zastąpiono go przezroczystym kontenerem i lekkim dymkiem `.places-presence-chip` -> **naprawione natychmiast 11.11**.
+- **Pokoje świnek (`pig:*`), błąd "Not ready yet" przy gramofonie i podłoga pod meble**: naprawiono walidację przedmiotów z przypisaniem `house` w pokojach świnek, uzdrowiono pokoje sieroce `pig:<guid>` oraz skorygowano rysowanie podłogi i tapety pod meble -> **naprawione natychmiast 11.11**.
+- **Ucięta góra sceny (okno i ściana) przy wypełnianiu na szerokość**: naprawiono w `web/home/style.css` i `web/home/features/places/feature.css`. Usunięto sztywne `object-fit: cover` z kotwiczeniem do dołu (`50% 100%`) oraz nadmierne rozciąganie dolnego panelu akcji. Zastosowano `width: 100%; height: auto; max-height: 252px; object-fit: contain;`, dzięki czemu pokój wypełnia całą szerokość, a górna ściana i okno są w 100% widoczne bez jakichkolwiek ucięć, przy zachowaniu precyzji kliknięć 1:1 -> **naprawione natychmiast 11.11**.
 - **Kolizyjność z przedmiotami w pokojach**: świnka ma poprawne sortowanie głębokości (przód/tył), ale przenika przez bryłę mebli, bo 4-pikselowa stopa pozwala stawiać kroki tuż obok krawędzi, przez co ciało świnki nachodzi na meble. Pełna siatka brył mebli i blokowanie przenikania przypisane do **Fali P7** (`P7-01` i `P7-03` – `RoomOccupancy` i fizyka poruszania się w pokoju).
-- **Pokoje świnek (`pig:*`), błąd "Not ready yet" przy gramofonie i podłoga pod meble**: naprawiono walidację przedmiotów z przypisaniem `house` w pokojach świnek, uzdrowiono pokoje sieroce `pig:<guid>` oraz skorygowano rysowanie podłogi i tapety pod meble -> **naprawione 11.11**.
+
+### Stan wdrożenia i podział zadań na fale (aktualizacja 11.11):
+- **Zrobione natychmiast (gotowe w kodzie i skompilowane)**:
+  1. Fizyka światła z okna: świnka jest jasna w świetle okna, usunięto czarną plamę/artefakt.
+  2. Dymek "Go there": jest lekkim dymkiem bez rozcinającego tła.
+  3. Błąd "Not ready yet" przy gramofonie w pokoju świnki: naprawiona obsługa `house` w pokojach dedykowanych.
+  4. Rysowanie pokoi: pełna tapeta i podłoga pod meblami w pokojach świnek.
+  5. Skalowanie i proporcje: scena ma 100% szerokości, brak ucięć u góry (okno i ściana w pełni widoczne).
+- **Najbliższe kolejne fale (zaplanowane)**:
+  - **Fala P43 (Interakcja w scenie)**:
+    - PK-P43a..f: klikalne punkty bez otwierania osobnych okien (stragany na targu, grządki/sad na farmie).
+    - Usunięcie lampek nocnych ze scen zewnętrznych (ogród, park, farma).
+    - Sterowanie gramofonem i włączanie/gaszenie lampek kliknięciem bezpośrednio w scenie.
+    - Wyróżnienie / dymek podpowiedzi przesuwania obiektów w trybie Edit.
+  - **Fala P44 (Przenoszenie świnki)**:
+    - Przeciąganie świnki do krawędzi ekranu zmieniające scenę (przechodzenie między pokojami i dworem).
+  - **Fala P5 (Wielość świnek)**:
+    - Druga świnka na pulpicie i jednoczesna obecność świnek w pokojach.
+  - **Fala P6 (Zaawansowany edytor i schowek)**:
+    - Kategorie w szufladzie, wyszukiwanie, zapis gotowych szablonów pokoi.
+  - **Fala P7 (Fizyka, kolizje, cienie i pogoda)**:
+    - **Fizyka kolizji mebli (P7-01, P7-03)**: pełne bryły kolizyjne przedmiotów uniemożliwiające śwince wchodzenie w meble.
+    - Zewnętrzne latarnie/pochodnie dla nocnych spacerów na dworze.
+    - Zaawansowane cienie rzucane przez obiekty i świnkę.
+  - **Fala P8 (Kalendarz opieki)**:
+    - Zintegrowany kalendarz wag, przypomnień i wizyt u weterynarza.
 
 Dalej (prompty powstaną po teście P44, bo zależą od realnego API): P5 druga świnka na pulpicie (5a okno-świnka, 5b stan wielu świnek, 5c przeciąganie między pulpitem a Home); P6 rozbudowany schowek i edytor (6a kategorie i wyszukiwanie, 6b zapis układów, 6c cofnij i ponów); P7 fizyka i grafika (7a cienie, 7b animacje wejścia i wyjścia, 7c efekty pogody); P8 kalendarz opieki (8a dane, 8b widok miesiąca, 8c przypomnienia).
 

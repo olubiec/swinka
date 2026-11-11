@@ -377,8 +377,9 @@ body.webview-mode .game-device {
   border-bottom: 3px solid var(--ui-wood-0);
   overflow: hidden;
   line-height: 0;
-  flex: 1 1 0;
+  flex: 0 1 auto;
   min-height: 80px;
+  max-height: 252px;
   height: auto;
   display: flex;
   align-items: center;
@@ -389,9 +390,9 @@ body.webview-mode .game-device {
 #pigCanvas {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
@@ -558,7 +559,7 @@ body.webview-mode .game-device {
   /* bg:menu (assets/world/bg/menu.png, 256x144) at 3x, centred behind the menu buttons */
   background: var(--ui-linen-1) var(--menu-bg) center / 768px 432px no-repeat;
   image-rendering: pixelated;
-  flex: 1;
+  flex: 1 0 auto;
   min-height: 110px;
   display: flex;
   flex-direction: column;
