@@ -716,11 +716,11 @@
       hint.innerHTML = '<span class="pixel-icon icon-padlock" aria-hidden="true"></span><span class="places-hint-text" id="placesHintText"></span>';
       stage.parentNode.insertBefore(hint, stage);
 
-      const chips = document.createElement('div');
+      const chips = document.getElementById('placesPresenceChips') || document.createElement('div');
       chips.id = 'placesPresenceChips';
       chips.className = 'places-presence-chips';
       chips.hidden = true;
-      stage.parentNode.insertBefore(chips, stage);
+      if (chips.parentNode !== stage) stage.appendChild(chips);
     }
 
     const prevBtn = document.getElementById('placesPrevBtn');

@@ -402,15 +402,15 @@
 
   function updatePresenceChips(st) {
     if (!st) st = getState();
+    const stage = document.querySelector('.stage-viewport');
     let container = document.getElementById('placesPresenceChips');
-    if (!container) {
-      const stage = document.querySelector('.stage-viewport');
-      if (stage && stage.parentNode) {
-        container = document.createElement('div');
-        container.id = 'placesPresenceChips';
-        container.className = 'places-presence-chips';
-        stage.parentNode.insertBefore(container, stage);
-      }
+    if (!container && stage) {
+      container = document.createElement('div');
+      container.id = 'placesPresenceChips';
+      container.className = 'places-presence-chips';
+      stage.appendChild(container);
+    } else if (container && stage && container.parentNode !== stage) {
+      stage.appendChild(container);
     }
     if (!container) return;
 
@@ -445,7 +445,7 @@
       const pigName = getPigName(pigId, st);
 
       const chip = document.createElement('div');
-      chip.className = 'places-presence-chip currency-badge ui-panel-wood';
+      chip.className = 'places-presence-chip';
 
       const label = document.createElement('span');
       label.className = 'chip-text';
