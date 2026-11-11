@@ -73,3 +73,16 @@ Fale idą kolejno (wpisy w `waves.yaml`: `R1`, `P4a`, `P4b`, `P4q`, `P44a`, `P44
 1. Zmerguj/commituj te zmiany (są lokalne: nic nie wypchnięto; `git status` pokazuje pliki), potem sesja dla fali **R1** wg `docs/prompts/START_FALA.md` (FALA = R1; po niej czytasz trzy pliki `docs/opt/foundations/R46.md`, `R43.md`, `R47.md`).
 2. W osobnej sesji można równolegle puścić **P4** (pliki rozłączne z badaniami).
 3. Po R1 wróć do czatu planującego: zastosuje „Prompt fixes”, dopisze P47 i poprawki P43, wygeneruje paczki; potem **P44**, **P46**, **P43**.
+
+## Fale 1-4 (scalony układ, numeracja od 1; R1 zrobione i pominięte)
+
+Fala = zbiór zadań startowany jednym promptem (`docs/prompts/START_FALA.md`, `FALA = <numer>`). Wpisy w `waves.yaml` mają prefiks `F<numer>-`; wpisy jednej fali idą po kolei, paczki w jednym wpisie równolegle.
+
+| Fala | Zadania | Grafik |
+|---|---|---|
+| **1** | P44 (a, b, q), P4 (a, b, q), badania R5, R6, R7, R8; do dopisania P8 | przed falą: **zamów D2** |
+| **2** | P46 (a, b, c, t1, t2, q1, q2); do dopisania P5, P6, P47a (tła), P47c (pasek miejsc) | **odbiór D3** w P47c; po odbiorze D2 **zamów D4**; D1 robimy sami |
+| **3** | P43 (a-f, q); do dopisania P47b (sprite'y z D2), P7 bez latarni | **D2 odebrane przed falą**; D4 w toku |
+| **4** | do dopisania: P47d (ognisko i światło), P7 (latarnie i noc), bramka końcowa | **D4 odebrane przed falą** |
+
+Kolejność wymuszają tylko zależności: P44 przed P46, P46c przed P43c/d, D2 przed P47b, D4 przed P47d i latarniami P7. W fali 1 P44b i P4b idą po P44a i P4a, bo P44a i P4b zmieniają ten sam `canvas-pig.js`.

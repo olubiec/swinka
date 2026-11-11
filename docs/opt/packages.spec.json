@@ -491,82 +491,76 @@
       ]
     },
     {
-      "id": "P4a",
+      "id": "F1-1",
       "packages": [
-        "PK-P4a"
+        "PK-P44a",
+        "PK-P4a",
+        "PK-R5",
+        "PK-R6",
+        "PK-R7",
+        "PK-R8"
       ]
     },
     {
-      "id": "P4b",
+      "id": "F1-2",
       "packages": [
+        "PK-P44b",
         "PK-P4b"
       ]
     },
     {
-      "id": "P4q",
+      "id": "F1-3",
       "packages": [
         "PK-P4q"
       ]
     },
     {
-      "id": "P44a",
-      "packages": [
-        "PK-P44a"
-      ]
-    },
-    {
-      "id": "P44b",
-      "packages": [
-        "PK-P44b"
-      ]
-    },
-    {
-      "id": "P44q",
+      "id": "F1-4",
       "packages": [
         "PK-P44q"
       ]
     },
     {
-      "id": "P46a",
+      "id": "F2-1",
       "packages": [
         "PK-P46a"
       ]
     },
     {
-      "id": "P46b",
+      "id": "F2-2",
       "packages": [
         "PK-P46b"
       ]
     },
     {
-      "id": "P46c",
+      "id": "F2-3",
       "packages": [
         "PK-P46c"
       ]
     },
     {
-      "id": "P46t",
+      "id": "F2-4",
       "packages": [
         "PK-P46t1",
         "PK-P46t2"
       ]
     },
     {
-      "id": "P46q",
+      "id": "F2-5",
       "packages": [
         "PK-P46q1",
         "PK-P46q2"
       ]
     },
     {
-      "id": "P43a",
+      "id": "F3-1",
       "packages": [
         "PK-P43a",
         "PK-P43b"
       ]
     },
     {
-      "id": "P43b",
+      "id": "F3-2",
       "packages": [
         "PK-P43c",
         "PK-P43d",
@@ -574,13 +568,13 @@
       ]
     },
     {
-      "id": "P43c",
+      "id": "F3-3",
       "packages": [
         "PK-P43f"
       ]
     },
     {
-      "id": "P43q",
+      "id": "F3-4",
       "packages": [
         "PK-P43q"
       ]
@@ -1777,6 +1771,38 @@
       "title": "Owner test sheet and screenshots for wave P46",
       "manual": "docs/prompts/PK-P46q2-owner-test-sheet-wave-p46.md",
       "verify": "node --check tools/qa/ux-p46-shots.js && node tools/qa/ux-p46-shots.js",
+      "items": []
+    },
+    {
+      "id": "PK-R5",
+      "tier": "high",
+      "title": "Research: multiple pigs on screen (P5)",
+      "manual": "docs/prompts/PK-R5-research-multi-pig.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R5.md 5",
+      "items": []
+    },
+    {
+      "id": "PK-R6",
+      "tier": "high",
+      "title": "Research: stash, room templates, lamps and light (P6)",
+      "manual": "docs/prompts/PK-R6-research-stash-light.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R6.md 5",
+      "items": []
+    },
+    {
+      "id": "PK-R7",
+      "tier": "high",
+      "title": "Research: collisions, night lamps, shadows (P7)",
+      "manual": "docs/prompts/PK-R7-research-collisions-night.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R7.md 5",
+      "items": []
+    },
+    {
+      "id": "PK-R8",
+      "tier": "high",
+      "title": "Research: care calendar (P8)",
+      "manual": "docs/prompts/PK-R8-research-care-calendar.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R8.md 5",
       "items": []
     }
   ]

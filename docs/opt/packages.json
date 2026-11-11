@@ -1948,8 +1948,23 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-R47-research-art-pipeline.md"
   },
+  "PK-P44a": {
+   "wave": "F1-1",
+   "title": "Drag the pig to the screen edge",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p44-drag-edge.js",
+    "docs/opt/log/PK-P44a.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p44-drag-edge.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P44a-drag-edge-engine.md"
+  },
   "PK-P4a": {
-   "wave": "P4a",
+   "wave": "F1-1",
    "title": "Core: adoption gate and one look source",
    "items": [],
    "files": [
@@ -1967,8 +1982,79 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P4a-core-adoption-gate.md"
   },
+  "PK-R5": {
+   "wave": "F1-1",
+   "title": "Research: multiple pigs on screen (P5)",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R5.md",
+    "docs/opt/log/PK-R5.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R5.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R5-research-multi-pig.md"
+  },
+  "PK-R6": {
+   "wave": "F1-1",
+   "title": "Research: stash, room templates, lamps and light (P6)",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R6.md",
+    "docs/opt/log/PK-R6.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R6.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R6-research-stash-light.md"
+  },
+  "PK-R7": {
+   "wave": "F1-1",
+   "title": "Research: collisions, night lamps, shadows (P7)",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R7.md",
+    "docs/opt/log/PK-R7.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R7.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R7-research-collisions-night.md"
+  },
+  "PK-R8": {
+   "wave": "F1-1",
+   "title": "Research: care calendar (P8)",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R8.md",
+    "docs/opt/log/PK-R8.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R8.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R8-research-care-calendar.md"
+  },
+  "PK-P44b": {
+   "wave": "F1-2",
+   "title": "Drag switches the scene and moves the pig",
+   "items": [],
+   "files": [
+    "web/home/features/places/feature.js",
+    "tools/qa/ux-p44-drag-switch.js",
+    "docs/opt/log/PK-P44b.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p44-drag-switch.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P44b-drag-switch-scene.md"
+  },
   "PK-P4b": {
-   "wave": "P4b",
+   "wave": "F1-2",
    "title": "Adoption popup, hidden Kuki and Ned, same look everywhere",
    "items": [],
    "files": [
@@ -1989,7 +2075,7 @@
    "prompt_file": "docs/prompts/PK-P4b-adoption-popup-and-list.md"
   },
   "PK-P4q": {
-   "wave": "P4q",
+   "wave": "F1-3",
    "title": "Windows checks after wave P4",
    "items": [],
    "files": [
@@ -2002,38 +2088,8 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P4q-windows-checks-wave-p4.md"
   },
-  "PK-P44a": {
-   "wave": "P44a",
-   "title": "Drag the pig to the screen edge",
-   "items": [],
-   "files": [
-    "web/home/canvas-pig.js",
-    "tools/qa/ux-p44-drag-edge.js",
-    "docs/opt/log/PK-P44a.md"
-   ],
-   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p44-drag-edge.js",
-   "gate": false,
-   "model": "gemini-3.8-flash-high",
-   "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P44a-drag-edge-engine.md"
-  },
-  "PK-P44b": {
-   "wave": "P44b",
-   "title": "Drag switches the scene and moves the pig",
-   "items": [],
-   "files": [
-    "web/home/features/places/feature.js",
-    "tools/qa/ux-p44-drag-switch.js",
-    "docs/opt/log/PK-P44b.md"
-   ],
-   "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p44-drag-switch.js",
-   "gate": false,
-   "model": "gemini-3.8-flash-high",
-   "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P44b-drag-switch-scene.md"
-  },
   "PK-P44q": {
-   "wave": "P44q",
+   "wave": "F1-4",
    "title": "Windows checks after wave P44",
    "items": [],
    "files": [
@@ -2049,7 +2105,7 @@
    "prompt_file": "docs/prompts/PK-P44q-windows-checks-wave-p44.md"
   },
   "PK-P46a": {
-   "wave": "P46a",
+   "wave": "F2-1",
    "title": "Core: outdoor fixtures become saved instances",
    "items": [],
    "files": [
@@ -2074,7 +2130,7 @@
    "prompt_file": "docs/prompts/PK-P46a-core-outdoor-instances.md"
   },
   "PK-P46b": {
-   "wave": "P46b",
+   "wave": "F2-2",
    "title": "Scenes draw outdoor instances and walk around them",
    "items": [],
    "files": [
@@ -2092,7 +2148,7 @@
    "prompt_file": "docs/prompts/PK-P46b-render-outdoor-instances.md"
   },
   "PK-P46c": {
-   "wave": "P46c",
+   "wave": "F2-3",
    "title": "Edit mode moves, rotates and stashes outdoor objects",
    "items": [],
    "files": [
@@ -2110,7 +2166,7 @@
    "prompt_file": "docs/prompts/PK-P46c-edit-mode-outdoor-fixtures.md"
   },
   "PK-P46t1": {
-   "wave": "P46t",
+   "wave": "F2-4",
    "title": "Test agent: adversarial Core tests for outdoor instances",
    "items": [],
    "files": [
@@ -2124,7 +2180,7 @@
    "prompt_file": "docs/prompts/PK-P46t1-core-adversarial-tests.md"
   },
   "PK-P46t2": {
-   "wave": "P46t",
+   "wave": "F2-4",
    "title": "Test agent: browser regression across all scenes",
    "items": [],
    "files": [
@@ -2138,7 +2194,7 @@
    "prompt_file": "docs/prompts/PK-P46t2-browser-regression-tests.md"
   },
   "PK-P46q1": {
-   "wave": "P46q",
+   "wave": "F2-5",
    "title": "Stage gate for wave P46 (full checks)",
    "items": [],
    "files": [
@@ -2151,7 +2207,7 @@
    "prompt_file": "docs/prompts/PK-P46q1-windows-checks-wave-p46.md"
   },
   "PK-P46q2": {
-   "wave": "P46q",
+   "wave": "F2-5",
    "title": "Owner test sheet and screenshots for wave P46",
    "items": [],
    "files": [
@@ -2167,7 +2223,7 @@
    "prompt_file": "docs/prompts/PK-P46q2-owner-test-sheet-wave-p46.md"
   },
   "PK-P43a": {
-   "wave": "P43a",
+   "wave": "F3-1",
    "title": "Scene hotspots data",
    "items": [],
    "files": [
@@ -2183,7 +2239,7 @@
    "prompt_file": "docs/prompts/PK-P43a-hotspot-data.md"
   },
   "PK-P43b": {
-   "wave": "P43a",
+   "wave": "F3-1",
    "title": "Hotspots in the canvas",
    "items": [],
    "files": [
@@ -2199,7 +2255,7 @@
    "prompt_file": "docs/prompts/PK-P43b-hotspot-engine.md"
   },
   "PK-P43c": {
-   "wave": "P43b",
+   "wave": "F3-2",
    "title": "Market: stalls interact in the scene",
    "items": [],
    "files": [
@@ -2215,7 +2271,7 @@
    "prompt_file": "docs/prompts/PK-P43c-market-stalls-in-scene.md"
   },
   "PK-P43d": {
-   "wave": "P43b",
+   "wave": "F3-2",
    "title": "Farm: plots interact in the scene",
    "items": [],
    "files": [
@@ -2231,7 +2287,7 @@
    "prompt_file": "docs/prompts/PK-P43d-farm-plots-in-scene.md"
   },
   "PK-P43e": {
-   "wave": "P43b",
+   "wave": "F3-2",
    "title": "Rooms and garden: objects act in the scene",
    "items": [],
    "files": [
@@ -2246,7 +2302,7 @@
    "prompt_file": "docs/prompts/PK-P43e-room-and-garden-objects.md"
   },
   "PK-P43f": {
-   "wave": "P43c",
+   "wave": "F3-3",
    "title": "Farm and Market windows retired",
    "items": [],
    "files": [
@@ -2261,7 +2317,7 @@
    "prompt_file": "docs/prompts/PK-P43f-retire-farm-market-windows.md"
   },
   "PK-P43q": {
-   "wave": "P43q",
+   "wave": "F3-4",
    "title": "Windows checks after wave P43",
    "items": [],
    "files": [
