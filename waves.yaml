@@ -1749,6 +1749,208 @@ waves:
     test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
+- id: R1
+  tasks:
+  - id: PK-R46
+    title: 'PK-R46: Research: outdoor objects as movable instances'
+    prompt_file: docs/prompts/PK-R46-research-outdoor-instances.md
+    files:
+    - docs/opt/foundations/R46.md
+    - docs/opt/log/PK-R46.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R46.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R43
+    title: 'PK-R43: Research: re-ground wave P43'
+    prompt_file: docs/prompts/PK-R43-research-hotspots-reground.md
+    files:
+    - docs/opt/foundations/R43.md
+    - docs/opt/log/PK-R43.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R43.md 5
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R47
+    title: 'PK-R47: Research: art pipeline, clean backgrounds, room 16x9, nav bar'
+    prompt_file: docs/prompts/PK-R47-research-art-pipeline.md
+    files:
+    - docs/opt/foundations/R47.md
+    - docs/opt/log/PK-R47.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R47.md 7
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P4a
+  tasks:
+  - id: PK-P4a
+    title: 'PK-P4a: Core: adoption gate and one look source'
+    prompt_file: docs/prompts/PK-P4a-core-adoption-gate.md
+    files:
+    - src/Cuy.Core/Pigs/AdoptionGate.cs
+    - src/Cuy.Core/GameState.Adoption.cs
+    - assets/data/adoption_gate.json
+    - src/Cuy.Core/Pigs/PigRoster.cs
+    - src/Cuy/Graphics/PigLook.cs
+    - tests/Cuy.Core.Tests/AdoptionGateTests.cs
+    - docs/opt/log/PK-P4a.md
+    test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~Adoption|FullyQualifiedName~PigLook"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P4b
+  tasks:
+  - id: PK-P4b
+    title: 'PK-P4b: Adoption popup, hidden Kuki and Ned, same look everywhere'
+    prompt_file: docs/prompts/PK-P4b-adoption-popup-and-list.md
+    files:
+    - web/home/features/pigs/feature.js
+    - web/home/features/pigs/adoption-popup.js
+    - web/home/features/pigs/mock.js
+    - web/home/canvas-pig.js
+    - src/Cuy/dotNet/Features/PigsFeature.cs
+    - src/Cuy/dotNet/Features/PigsMessages.cs
+    - web/home/index.html
+    - tools/qa/ux-p4-adoption.js
+    - docs/opt/log/PK-P4b.md
+    test_command: node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P4q
+  tasks:
+  - id: PK-P4q
+    title: 'PK-P4q: Windows checks after wave P4'
+    prompt_file: docs/prompts/PK-P4q-windows-checks-wave-p4.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P4q.md
+    test_command: node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P44a
+  tasks:
+  - id: PK-P44a
+    title: 'PK-P44a: Drag the pig to the screen edge'
+    prompt_file: docs/prompts/PK-P44a-drag-edge-engine.md
+    files:
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p44-drag-edge.js
+    - docs/opt/log/PK-P44a.md
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p44-drag-edge.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P44b
+  tasks:
+  - id: PK-P44b
+    title: 'PK-P44b: Drag switches the scene and moves the pig'
+    prompt_file: docs/prompts/PK-P44b-drag-switch-scene.md
+    files:
+    - web/home/features/places/feature.js
+    - tools/qa/ux-p44-drag-switch.js
+    - docs/opt/log/PK-P44b.md
+    test_command: node --check web/home/features/places/feature.js && node --check tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p44-drag-switch.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P44q
+  tasks:
+  - id: PK-P44q
+    title: 'PK-P44q: Windows checks after wave P44'
+    prompt_file: docs/prompts/PK-P44q-windows-checks-wave-p44.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/qa/shots
+    - tools/qa/ux-p44-shots.js
+    - docs/opt/log/PK-P44q.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: P46a
+  tasks:
+  - id: PK-P46a
+    title: 'PK-P46a: Core: outdoor fixtures become saved instances'
+    prompt_file: docs/prompts/PK-P46a-core-outdoor-instances.md
+    files:
+    - assets/data/outdoor_defaults.json
+    - src/Cuy.Core/World/OutdoorDefaults.cs
+    - src/Cuy.Core/World/OutdoorSeed.cs
+    - src/Cuy.Core/World/WorldState.cs
+    - src/Cuy.Core/World/RoomLayoutOps.cs
+    - src/Cuy.Core/Balance.cs
+    - src/Cuy.Core/GameSession.cs
+    - assets/data/world_items.json
+    - assets/world/atlas.json
+    - tests/Cuy.Core.Tests/OutdoorSeedTests.cs
+    - docs/opt/log/PK-P46a.md
+    test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~OutdoorSeed|FullyQualifiedName~RoomLayoutOps|FullyQualifiedName~WorldMigration|FullyQualifiedName~WorldAssets|FullyQualifiedName~WorldItemCatalog"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P46b
+  tasks:
+  - id: PK-P46b
+    title: 'PK-P46b: Scenes draw outdoor instances and walk around them'
+    prompt_file: docs/prompts/PK-P46b-render-outdoor-instances.md
+    files:
+    - web/home/features/places/scenes.js
+    - web/home/features/places/mock.js
+    - assets/data/place_scenes.json
+    - tools/qa/place-scenes-check.js
+    - tools/qa/ux-p46-render.js
+    - docs/opt/log/PK-P46b.md
+    test_command: node --check web/home/features/places/scenes.js && node --check web/home/features/places/mock.js && node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p46-render.js && node tools/qa/ux-p46-render.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P46c
+  tasks:
+  - id: PK-P46c
+    title: 'PK-P46c: Edit mode moves, rotates and stashes outdoor objects'
+    prompt_file: docs/prompts/PK-P46c-edit-mode-outdoor-fixtures.md
+    files:
+    - web/home/features/places/edit-panel.js
+    - web/home/features/places/edit-panel.css
+    - src/Cuy/dotNet/Features/RoomsFeature.cs
+    - src/Cuy.Core/Input/Validation/RoomsMessages.cs
+    - tools/qa/ux-p46-edit.js
+    - docs/opt/log/PK-P46c.md
+    test_command: node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p46-edit.js && node tools/qa/ux-p46-edit.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P46t
+  tasks:
+  - id: PK-P46t1
+    title: 'PK-P46t1: Test agent: adversarial Core tests for outdoor instances'
+    prompt_file: docs/prompts/PK-P46t1-core-adversarial-tests.md
+    files:
+    - tests/Cuy.Core.Tests/OutdoorSeedAdversarialTests.cs
+    - docs/opt/log/PK-P46t1.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~OutdoorSeedAdversarial"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P46t2
+    title: 'PK-P46t2: Test agent: browser regression across all scenes'
+    prompt_file: docs/prompts/PK-P46t2-browser-regression-tests.md
+    files:
+    - tools/qa/ux-p46-regress.js
+    - docs/opt/log/PK-P46t2.md
+    test_command: node --check tools/qa/ux-p46-regress.js && node tools/qa/ux-p46-regress.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: P46q
+  tasks:
+  - id: PK-P46q1
+    title: 'PK-P46q1: Stage gate for wave P46 (full checks)'
+    prompt_file: docs/prompts/PK-P46q1-windows-checks-wave-p46.md
+    files:
+    - docs/opt/log/PK-P46q1.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+  - id: PK-P46q2
+    title: 'PK-P46q2: Owner test sheet and screenshots for wave P46'
+    prompt_file: docs/prompts/PK-P46q2-owner-test-sheet-wave-p46.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - tools/qa/ux-p46-shots.js
+    - docs/qa/shots
+    - docs/opt/log/PK-P46q2.md
+    test_command: node --check tools/qa/ux-p46-shots.js && node tools/qa/ux-p46-shots.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
 - id: P43a
   tasks:
   - id: PK-P43a
@@ -1832,87 +2034,5 @@ waves:
     - tools/qa/ux-p43-shots.js
     - docs/opt/log/PK-P43q.md
     test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
-    model: gemini-3.8-flash-medium
-    timeout_minutes: 44
-- id: P44a
-  tasks:
-  - id: PK-P44a
-    title: 'PK-P44a: Drag the pig to the screen edge'
-    prompt_file: docs/prompts/PK-P44a-drag-edge-engine.md
-    files:
-    - web/home/canvas-pig.js
-    - tools/qa/ux-p44-drag-edge.js
-    - docs/opt/log/PK-P44a.md
-    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p44-drag-edge.js
-    model: gemini-3.8-flash-high
-    timeout_minutes: 44
-- id: P44b
-  tasks:
-  - id: PK-P44b
-    title: 'PK-P44b: Drag switches the scene and moves the pig'
-    prompt_file: docs/prompts/PK-P44b-drag-switch-scene.md
-    files:
-    - web/home/features/places/feature.js
-    - tools/qa/ux-p44-drag-switch.js
-    - docs/opt/log/PK-P44b.md
-    test_command: node --check web/home/features/places/feature.js && node --check tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p44-drag-switch.js
-    model: gemini-3.8-flash-high
-    timeout_minutes: 44
-- id: P44q
-  tasks:
-  - id: PK-P44q
-    title: 'PK-P44q: Windows checks after wave P44'
-    prompt_file: docs/prompts/PK-P44q-windows-checks-wave-p44.md
-    files:
-    - docs/qa/UX_WAVE_CHECKS.md
-    - docs/qa/shots
-    - tools/qa/ux-p44-shots.js
-    - docs/opt/log/PK-P44q.md
-    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
-    model: gemini-3.8-flash-medium
-    timeout_minutes: 44
-- id: P4a
-  tasks:
-  - id: PK-P4a
-    title: 'PK-P4a: Core: adoption gate and one look source'
-    prompt_file: docs/prompts/PK-P4a-core-adoption-gate.md
-    files:
-    - src/Cuy.Core/Pigs/AdoptionGate.cs
-    - src/Cuy.Core/GameState.Adoption.cs
-    - assets/data/adoption_gate.json
-    - src/Cuy.Core/Pigs/PigRoster.cs
-    - src/Cuy/Graphics/PigLook.cs
-    - tests/Cuy.Core.Tests/AdoptionGateTests.cs
-    - docs/opt/log/PK-P4a.md
-    test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~Adoption|FullyQualifiedName~PigLook"
-    model: gemini-3.8-flash-high
-    timeout_minutes: 44
-- id: P4b
-  tasks:
-  - id: PK-P4b
-    title: 'PK-P4b: Adoption popup, hidden Kuki and Ned, same look everywhere'
-    prompt_file: docs/prompts/PK-P4b-adoption-popup-and-list.md
-    files:
-    - web/home/features/pigs/feature.js
-    - web/home/features/pigs/adoption-popup.js
-    - web/home/features/pigs/mock.js
-    - web/home/canvas-pig.js
-    - src/Cuy/dotNet/Features/PigsFeature.cs
-    - src/Cuy/dotNet/Features/PigsMessages.cs
-    - web/home/index.html
-    - tools/qa/ux-p4-adoption.js
-    - docs/opt/log/PK-P4b.md
-    test_command: node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
-    model: gemini-3.8-flash-high
-    timeout_minutes: 44
-- id: P4q
-  tasks:
-  - id: PK-P4q
-    title: 'PK-P4q: Windows checks after wave P4'
-    prompt_file: docs/prompts/PK-P4q-windows-checks-wave-p4.md
-    files:
-    - docs/qa/UX_WAVE_CHECKS.md
-    - docs/opt/log/PK-P4q.md
-    test_command: node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-medium
     timeout_minutes: 44

@@ -30,3 +30,5 @@ RAPORT (po polsku, maks. 12 linii):
 ```
 
 Kolejność sesji: 31-37 (zrobione), potem 41, 42, 38, 39, 40, 43, 44, na końcu 4 (adopcja, wpisy P4a, P4b, P4q po kolei).
+
+Od 11.11 (przebudowa, `docs/PLAN_FAL_PRZEBUDOWA_11_11.md`): kolejność sesji to R1, 4, 44, 46 (wpisy P46a, P46b, P46c, P46t, P46q), potem 43. Wpis `R1` i `P46t`: paczki badawcze lub testowe, wszystkie równolegle, bez kodu produkcyjnego (R tylko dokument w `docs/opt/foundations/`, t tylko nowe testy). Po R1 nie uruchamiaj dalej: czat planujący najpierw stosuje „Prompt fixes” z `R46.md`, `R43.md`, `R47.md`. Raport po R1: tylko lista decyzji z domyślnymi odpowiedziami (maks. 12 linii).

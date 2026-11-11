@@ -142,3 +142,4 @@ Poprzedni pasek bazował na rozciągniętych żółtych przeszyciach (`header_ba
 2. **Kąt światła**: Źródło światła konsekwentnie z lewej-góry.
 3. **Spójność skali**: Sprawdzenie obok oficjalnego sprite'a świnki morskiej (32 × 24 px). Proporcje mebli i roślin muszą naturalnie pasować do zwierzątka.
 4. **Czyste tła**: Żaden interaktywny obiekt nie może być "namalowany na stałe" w pliku tła.
+

@@ -483,6 +483,82 @@
       ]
     },
     {
+      "id": "R1",
+      "packages": [
+        "PK-R46",
+        "PK-R43",
+        "PK-R47"
+      ]
+    },
+    {
+      "id": "P4a",
+      "packages": [
+        "PK-P4a"
+      ]
+    },
+    {
+      "id": "P4b",
+      "packages": [
+        "PK-P4b"
+      ]
+    },
+    {
+      "id": "P4q",
+      "packages": [
+        "PK-P4q"
+      ]
+    },
+    {
+      "id": "P44a",
+      "packages": [
+        "PK-P44a"
+      ]
+    },
+    {
+      "id": "P44b",
+      "packages": [
+        "PK-P44b"
+      ]
+    },
+    {
+      "id": "P44q",
+      "packages": [
+        "PK-P44q"
+      ]
+    },
+    {
+      "id": "P46a",
+      "packages": [
+        "PK-P46a"
+      ]
+    },
+    {
+      "id": "P46b",
+      "packages": [
+        "PK-P46b"
+      ]
+    },
+    {
+      "id": "P46c",
+      "packages": [
+        "PK-P46c"
+      ]
+    },
+    {
+      "id": "P46t",
+      "packages": [
+        "PK-P46t1",
+        "PK-P46t2"
+      ]
+    },
+    {
+      "id": "P46q",
+      "packages": [
+        "PK-P46q1",
+        "PK-P46q2"
+      ]
+    },
+    {
       "id": "P43a",
       "packages": [
         "PK-P43a",
@@ -507,42 +583,6 @@
       "id": "P43q",
       "packages": [
         "PK-P43q"
-      ]
-    },
-    {
-      "id": "P44a",
-      "packages": [
-        "PK-P44a"
-      ]
-    },
-    {
-      "id": "P44b",
-      "packages": [
-        "PK-P44b"
-      ]
-    },
-    {
-      "id": "P44q",
-      "packages": [
-        "PK-P44q"
-      ]
-    },
-    {
-      "id": "P4a",
-      "packages": [
-        "PK-P4a"
-      ]
-    },
-    {
-      "id": "P4b",
-      "packages": [
-        "PK-P4b"
-      ]
-    },
-    {
-      "id": "P4q",
-      "packages": [
-        "PK-P4q"
       ]
     }
   ],
@@ -1657,6 +1697,86 @@
       "title": "Windows checks after wave P44",
       "manual": "docs/prompts/PK-P44q-windows-checks-wave-p44.md",
       "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-R46",
+      "tier": "high",
+      "title": "Research: outdoor objects as movable instances",
+      "manual": "docs/prompts/PK-R46-research-outdoor-instances.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R46.md 6",
+      "items": []
+    },
+    {
+      "id": "PK-R43",
+      "tier": "high",
+      "title": "Research: re-ground wave P43",
+      "manual": "docs/prompts/PK-R43-research-hotspots-reground.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R43.md 5",
+      "items": []
+    },
+    {
+      "id": "PK-R47",
+      "tier": "high",
+      "title": "Research: art pipeline, clean backgrounds, room 16x9, nav bar",
+      "manual": "docs/prompts/PK-R47-research-art-pipeline.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R47.md 7",
+      "items": []
+    },
+    {
+      "id": "PK-P46a",
+      "tier": "high",
+      "title": "Core: outdoor fixtures become saved instances",
+      "manual": "docs/prompts/PK-P46a-core-outdoor-instances.md",
+      "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~OutdoorSeed|FullyQualifiedName~RoomLayoutOps|FullyQualifiedName~WorldMigration|FullyQualifiedName~WorldAssets|FullyQualifiedName~WorldItemCatalog\"",
+      "items": []
+    },
+    {
+      "id": "PK-P46b",
+      "tier": "high",
+      "title": "Scenes draw outdoor instances and walk around them",
+      "manual": "docs/prompts/PK-P46b-render-outdoor-instances.md",
+      "verify": "node --check web/home/features/places/scenes.js && node --check web/home/features/places/mock.js && node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p46-render.js && node tools/qa/ux-p46-render.js",
+      "items": []
+    },
+    {
+      "id": "PK-P46c",
+      "tier": "high",
+      "title": "Edit mode moves, rotates and stashes outdoor objects",
+      "manual": "docs/prompts/PK-P46c-edit-mode-outdoor-fixtures.md",
+      "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p46-edit.js && node tools/qa/ux-p46-edit.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": []
+    },
+    {
+      "id": "PK-P46t1",
+      "tier": "mid",
+      "title": "Test agent: adversarial Core tests for outdoor instances",
+      "manual": "docs/prompts/PK-P46t1-core-adversarial-tests.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~OutdoorSeedAdversarial\"",
+      "items": []
+    },
+    {
+      "id": "PK-P46t2",
+      "tier": "mid",
+      "title": "Test agent: browser regression across all scenes",
+      "manual": "docs/prompts/PK-P46t2-browser-regression-tests.md",
+      "verify": "node --check tools/qa/ux-p46-regress.js && node tools/qa/ux-p46-regress.js",
+      "items": []
+    },
+    {
+      "id": "PK-P46q1",
+      "tier": "low",
+      "title": "Stage gate for wave P46 (full checks)",
+      "manual": "docs/prompts/PK-P46q1-windows-checks-wave-p46.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": []
+    },
+    {
+      "id": "PK-P46q2",
+      "tier": "low",
+      "title": "Owner test sheet and screenshots for wave P46",
+      "manual": "docs/prompts/PK-P46q2-owner-test-sheet-wave-p46.md",
+      "verify": "node --check tools/qa/ux-p46-shots.js && node tools/qa/ux-p46-shots.js",
       "items": []
     }
   ]

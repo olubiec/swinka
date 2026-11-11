@@ -1906,6 +1906,264 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P40q-windows-checks-wave-p40.md"
   },
+  "PK-R46": {
+   "wave": "R1",
+   "title": "Research: outdoor objects as movable instances",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R46.md",
+    "docs/opt/log/PK-R46.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R46.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R46-research-outdoor-instances.md"
+  },
+  "PK-R43": {
+   "wave": "R1",
+   "title": "Research: re-ground wave P43",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R43.md",
+    "docs/opt/log/PK-R43.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R43.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R43-research-hotspots-reground.md"
+  },
+  "PK-R47": {
+   "wave": "R1",
+   "title": "Research: art pipeline, clean backgrounds, room 16x9, nav bar",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R47.md",
+    "docs/opt/log/PK-R47.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R47.md 7",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R47-research-art-pipeline.md"
+  },
+  "PK-P4a": {
+   "wave": "P4a",
+   "title": "Core: adoption gate and one look source",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Pigs/AdoptionGate.cs",
+    "src/Cuy.Core/GameState.Adoption.cs",
+    "assets/data/adoption_gate.json",
+    "src/Cuy.Core/Pigs/PigRoster.cs",
+    "src/Cuy/Graphics/PigLook.cs",
+    "tests/Cuy.Core.Tests/AdoptionGateTests.cs",
+    "docs/opt/log/PK-P4a.md"
+   ],
+   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~Adoption|FullyQualifiedName~PigLook\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P4a-core-adoption-gate.md"
+  },
+  "PK-P4b": {
+   "wave": "P4b",
+   "title": "Adoption popup, hidden Kuki and Ned, same look everywhere",
+   "items": [],
+   "files": [
+    "web/home/features/pigs/feature.js",
+    "web/home/features/pigs/adoption-popup.js",
+    "web/home/features/pigs/mock.js",
+    "web/home/canvas-pig.js",
+    "src/Cuy/dotNet/Features/PigsFeature.cs",
+    "src/Cuy/dotNet/Features/PigsMessages.cs",
+    "web/home/index.html",
+    "tools/qa/ux-p4-adoption.js",
+    "docs/opt/log/PK-P4b.md"
+   ],
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P4b-adoption-popup-and-list.md"
+  },
+  "PK-P4q": {
+   "wave": "P4q",
+   "title": "Windows checks after wave P4",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P4q.md"
+   ],
+   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P4q-windows-checks-wave-p4.md"
+  },
+  "PK-P44a": {
+   "wave": "P44a",
+   "title": "Drag the pig to the screen edge",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p44-drag-edge.js",
+    "docs/opt/log/PK-P44a.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p44-drag-edge.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P44a-drag-edge-engine.md"
+  },
+  "PK-P44b": {
+   "wave": "P44b",
+   "title": "Drag switches the scene and moves the pig",
+   "items": [],
+   "files": [
+    "web/home/features/places/feature.js",
+    "tools/qa/ux-p44-drag-switch.js",
+    "docs/opt/log/PK-P44b.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p44-drag-switch.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P44b-drag-switch-scene.md"
+  },
+  "PK-P44q": {
+   "wave": "P44q",
+   "title": "Windows checks after wave P44",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/qa/shots",
+    "tools/qa/ux-p44-shots.js",
+    "docs/opt/log/PK-P44q.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P44q-windows-checks-wave-p44.md"
+  },
+  "PK-P46a": {
+   "wave": "P46a",
+   "title": "Core: outdoor fixtures become saved instances",
+   "items": [],
+   "files": [
+    "assets/data/outdoor_defaults.json",
+    "src/Cuy.Core/World/OutdoorDefaults.cs",
+    "src/Cuy.Core/World/OutdoorSeed.cs",
+    "src/Cuy.Core/World/WorldState.cs",
+    "src/Cuy.Core/World/RoomLayoutOps.cs",
+    "src/Cuy.Core/Balance.cs",
+    "src/Cuy.Core/GameSession.cs",
+    "assets/data/world_items.json",
+    "assets/world/atlas.json",
+    "tests/Cuy.Core.Tests/OutdoorSeedTests.cs",
+    "docs/opt/log/PK-P46a.md"
+   ],
+   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~OutdoorSeed|FullyQualifiedName~RoomLayoutOps|FullyQualifiedName~WorldMigration|FullyQualifiedName~WorldAssets|FullyQualifiedName~WorldItemCatalog\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P46a-core-outdoor-instances.md"
+  },
+  "PK-P46b": {
+   "wave": "P46b",
+   "title": "Scenes draw outdoor instances and walk around them",
+   "items": [],
+   "files": [
+    "web/home/features/places/scenes.js",
+    "web/home/features/places/mock.js",
+    "assets/data/place_scenes.json",
+    "tools/qa/place-scenes-check.js",
+    "tools/qa/ux-p46-render.js",
+    "docs/opt/log/PK-P46b.md"
+   ],
+   "verify": "node --check web/home/features/places/scenes.js && node --check web/home/features/places/mock.js && node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p46-render.js && node tools/qa/ux-p46-render.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P46b-render-outdoor-instances.md"
+  },
+  "PK-P46c": {
+   "wave": "P46c",
+   "title": "Edit mode moves, rotates and stashes outdoor objects",
+   "items": [],
+   "files": [
+    "web/home/features/places/edit-panel.js",
+    "web/home/features/places/edit-panel.css",
+    "src/Cuy/dotNet/Features/RoomsFeature.cs",
+    "src/Cuy.Core/Input/Validation/RoomsMessages.cs",
+    "tools/qa/ux-p46-edit.js",
+    "docs/opt/log/PK-P46c.md"
+   ],
+   "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p46-edit.js && node tools/qa/ux-p46-edit.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P46c-edit-mode-outdoor-fixtures.md"
+  },
+  "PK-P46t1": {
+   "wave": "P46t",
+   "title": "Test agent: adversarial Core tests for outdoor instances",
+   "items": [],
+   "files": [
+    "tests/Cuy.Core.Tests/OutdoorSeedAdversarialTests.cs",
+    "docs/opt/log/PK-P46t1.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~OutdoorSeedAdversarial\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P46t1-core-adversarial-tests.md"
+  },
+  "PK-P46t2": {
+   "wave": "P46t",
+   "title": "Test agent: browser regression across all scenes",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p46-regress.js",
+    "docs/opt/log/PK-P46t2.md"
+   ],
+   "verify": "node --check tools/qa/ux-p46-regress.js && node tools/qa/ux-p46-regress.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P46t2-browser-regression-tests.md"
+  },
+  "PK-P46q1": {
+   "wave": "P46q",
+   "title": "Stage gate for wave P46 (full checks)",
+   "items": [],
+   "files": [
+    "docs/opt/log/PK-P46q1.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P46q1-windows-checks-wave-p46.md"
+  },
+  "PK-P46q2": {
+   "wave": "P46q",
+   "title": "Owner test sheet and screenshots for wave P46",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "tools/qa/ux-p46-shots.js",
+    "docs/qa/shots",
+    "docs/opt/log/PK-P46q2.md"
+   ],
+   "verify": "node --check tools/qa/ux-p46-shots.js && node tools/qa/ux-p46-shots.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P46q2-owner-test-sheet-wave-p46.md"
+  },
   "PK-P43a": {
    "wave": "P43a",
    "title": "Scene hotspots data",
@@ -2017,106 +2275,6 @@
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P43q-windows-checks-wave-p43.md"
-  },
-  "PK-P44a": {
-   "wave": "P44a",
-   "title": "Drag the pig to the screen edge",
-   "items": [],
-   "files": [
-    "web/home/canvas-pig.js",
-    "tools/qa/ux-p44-drag-edge.js",
-    "docs/opt/log/PK-P44a.md"
-   ],
-   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p44-drag-edge.js",
-   "gate": false,
-   "model": "gemini-3.8-flash-high",
-   "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P44a-drag-edge-engine.md"
-  },
-  "PK-P44b": {
-   "wave": "P44b",
-   "title": "Drag switches the scene and moves the pig",
-   "items": [],
-   "files": [
-    "web/home/features/places/feature.js",
-    "tools/qa/ux-p44-drag-switch.js",
-    "docs/opt/log/PK-P44b.md"
-   ],
-   "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p44-drag-switch.js",
-   "gate": false,
-   "model": "gemini-3.8-flash-high",
-   "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P44b-drag-switch-scene.md"
-  },
-  "PK-P44q": {
-   "wave": "P44q",
-   "title": "Windows checks after wave P44",
-   "items": [],
-   "files": [
-    "docs/qa/UX_WAVE_CHECKS.md",
-    "docs/qa/shots",
-    "tools/qa/ux-p44-shots.js",
-    "docs/opt/log/PK-P44q.md"
-   ],
-   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
-   "gate": false,
-   "model": "gemini-3.8-flash-medium",
-   "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P44q-windows-checks-wave-p44.md"
-  },
-  "PK-P4a": {
-   "wave": "P4a",
-   "title": "Core: adoption gate and one look source",
-   "items": [],
-   "files": [
-    "src/Cuy.Core/Pigs/AdoptionGate.cs",
-    "src/Cuy.Core/GameState.Adoption.cs",
-    "assets/data/adoption_gate.json",
-    "src/Cuy.Core/Pigs/PigRoster.cs",
-    "src/Cuy/Graphics/PigLook.cs",
-    "tests/Cuy.Core.Tests/AdoptionGateTests.cs",
-    "docs/opt/log/PK-P4a.md"
-   ],
-   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~Adoption|FullyQualifiedName~PigLook\"",
-   "gate": false,
-   "model": "gemini-3.8-flash-high",
-   "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P4a-core-adoption-gate.md"
-  },
-  "PK-P4b": {
-   "wave": "P4b",
-   "title": "Adoption popup, hidden Kuki and Ned, same look everywhere",
-   "items": [],
-   "files": [
-    "web/home/features/pigs/feature.js",
-    "web/home/features/pigs/adoption-popup.js",
-    "web/home/features/pigs/mock.js",
-    "web/home/canvas-pig.js",
-    "src/Cuy/dotNet/Features/PigsFeature.cs",
-    "src/Cuy/dotNet/Features/PigsMessages.cs",
-    "web/home/index.html",
-    "tools/qa/ux-p4-adoption.js",
-    "docs/opt/log/PK-P4b.md"
-   ],
-   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
-   "gate": false,
-   "model": "gemini-3.8-flash-high",
-   "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P4b-adoption-popup-and-list.md"
-  },
-  "PK-P4q": {
-   "wave": "P4q",
-   "title": "Windows checks after wave P4",
-   "items": [],
-   "files": [
-    "docs/qa/UX_WAVE_CHECKS.md",
-    "docs/opt/log/PK-P4q.md"
-   ],
-   "verify": "node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
-   "gate": false,
-   "model": "gemini-3.8-flash-medium",
-   "timeout_minutes": 44,
-   "prompt_file": "docs/prompts/PK-P4q-windows-checks-wave-p4.md"
   }
  }
 }

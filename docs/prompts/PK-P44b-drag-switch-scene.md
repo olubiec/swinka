@@ -18,7 +18,7 @@ Depends on: PK-P44a, PK-P38a merged.
 ## Steps
 1. Read `docs/opt/log/PK-P44a.md` and `PK-P38a.md` (neighbour lookup, locked handling).
 2. In `places/feature.js`: set `CanvasPig.setEdgeNeighbours` on every scene change (neighbour exists and is unlocked). On `onEdgeHold({side})`: neighbour = `CuyScenes.neighbor(current, side)`; if locked or none -> a small toast (existing toast helper) `Locked: <hint>` and the drag simply continues in the same scene; else switch the scene (`applyScene`), call `CanvasPig.continueDrag(def)`.
-3. On `CanvasPig.onDrop` (from PK-P44a) send `places.pigMove {pigId, to}` once. Pinned pigs: dragging still allowed, location updated and stays pinned there.
+3. On `CanvasPig.onDrop({x,y})` (from PK-P44a) add the current scene id from `places/feature.js` and send `places.pigMove {pigId, to}` once. Pinned pigs: dragging still allowed, location updated and stays pinned there.
 4. Cancel: if the drag is released outside the canvas (take_out) nothing is sent.
 5. Tests FIRST, `tools/qa/ux-p44-drag-switch.js` (Playwright, mock with all scenes unlocked): T1 `edge-hold-switches-bar-title`, T2 `drop-sends-pigMove-once` (right pigId/to), T3 `locked-neighbour-toast-no-switch`, T4 `drag-across-three-scenes` (hold twice, drop: only one pigMove with the final scene), T5 `chip-consistent` (P38 chip not shown in the pig's new scene), T6 `pinned-stays-pinned`, T7 `take-out-sends-nothing-else`.
 6. Run Weryfikacja; fix until green.

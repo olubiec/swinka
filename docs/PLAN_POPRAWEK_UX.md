@@ -1,6 +1,7 @@
 # Plan poprawek UX po teście na Windowsie (6.11.2026)
 
 Źródło: lista błędów od człowieka (zrzut kalendarza opieki + 16 uwag). Fale `P1`-`P8` idą kolejno; po każdej fali człowiek sprawdza w grze krótką listę „Do sprawdzenia" i dopiero wtedy startuje następną.
+**Przebudowa planu 11.11: aktualny stan, kolejność i gotowość wszystkich fal: `docs/PLAN_FAL_PRZEBUDOWA_11_11.md`.**
 Zadania w fali mają rozłączne pliki (mogą iść równolegle); wspólne pliki edytuje jedno zadanie naraz. Prompty zadań powstaną w następnym kroku (wg `docs/opt/README.md`: edycja `docs/opt/packages.spec.json` + `python3 tools/opt/gen_packages.py`, nie ręcznie).
 Zasady z `AGENTS.md` obowiązują: liczby w `assets/data/*.json`, nowe pola zapisu tylko z bezpiecznymi domyślnymi, per-feature pliki (kontrakt, walidacja, mock), JS nigdy nie liczy cen.
 
@@ -250,13 +251,18 @@ Dalej: prompty powstaną po teście P44, bo zależą od realnego API. Zależnoś
 ---
 
 ## Fala P46: Edytor scen plenerowych (usuwalność i przestawianie obiektów na dworze)
-Cel: każdy element na dworze (ławki, fontanna, latarnie, drzewka, stragany, ognisko, grządki) jest usuwalny i przestawialny dokładnie tak jak meble w pokojach. Koniec z obiektami wklejonymi na stałe.
+Cel: każdy element na dworze jest zapisaną instancją, którą można przesunąć, obrócić i (jeśli to dekoracja) schować, dokładnie jak meble w pokojach. Przebudowa 11.11: pełny opis, kolejność i powody w `docs/PLAN_FAL_PRZEBUDOWA_11_11.md`. Poprawka względem pierwszej wersji: model zapisu to `WorldState.Rooms[<scena>]` + `RoomLayoutOps` (nie `src/Cuy.Core/Decor/*`, to stary system slotów), a stałe obiekty to dziś wpisy `blockers` namalowane w tle.
 
-| ID | Zadanie | Pliki | Akceptacja |
+| Paczka | Zadanie | Pliki (skrót) | Akceptacja |
 |---|---|---|---|
-| P46-01 | Model obiektów plenerowych w Core i `place_scenes.json`: przeniesienie stałych obiektów (ławka, fontanna, altana, stragany) do listy instancji dekoracji plenerowych (`outdoor_decor`), powiązanych z zapisem stanu | `src/Cuy.Core/Decor/*`, `GameState.Decor.cs`, `assets/data/place_scenes.json` | testy Core: zapis i odczyt pozycji obiektów plenerowych; stary zapis ładuje domyślne pozycje |
-| P46-02 | Integracja trybu Edit w scenach plenerowych (ogród, park, farma, targ): kliknięcie obiektu pozwala go przemieścić po dozwolonym pasie gruntu, obrócić lub schować do magazynu/schowka | `web/home/features/decor/feature.js`, `web/home/features/places/feature.js`, `web/home/canvas-pig.js` | smoke: wejdź w Edit w Ogrodzie/Parku → przesuń ławkę lub fontannę → nowa pozycja widoczna i zachowana po restarcie |
-| P46-03 | Szuflada schowka dla pleneru: zakładka „Outdoor" zawierająca rekwizyty ogrodowe, parkowe i farmerskie | `web/home/features/store/feature.js`, `web/home/features/decor/feature.js` | smoke: schowanie ławki przenosi ją do szuflady; wyciągnięcie stawia ją na scenie |
+| PK-R46 (badanie, przed P46a) | Inwentarz namalowanych obiektów, potok stawiania, model danych, plan plików | `docs/opt/foundations/R46.md` | `foundation-check.js` OK; lista poprawek promptów |
+| PK-P46a (stare P46-01) | Core: `outdoor_defaults.json`, `OutdoorSeed`, zapis `OutdoorSeeded`, blokada `fixture_locked`, flaga `Balance.OutdoorInstancesActive` | `src/Cuy.Core/World/*`, `assets/data/outdoor_defaults.json`, testy Core | zapis i odczyt pozycji, stary zapis się ładuje, usunięta dekoracja nie wraca |
+| PK-P46b | Sceny z `bg_clean:true` rysują instancje (y-sort) i liczą blokady z ich stóp; inne sceny bez zmian | `places/scenes.js`, `places/mock.js`, `place_scenes.json` | `ux-p46-render.js` D1-D8 |
+| PK-P46c (stare P46-02 i P46-03) | Tryb Edit na dworze: przesuń, obróć, schowaj; zakładka Outdoor w szufladzie; podpowiedź | `places/edit-panel.js/.css`, `RoomsFeature.cs`, `RoomsMessages.cs` | `ux-p46-edit.js` E1-E8 |
+| PK-P46t1, PK-P46t2 (agenci testowi) | Niezależne testy: Core (zepsuj model) i przeglądarka (regresja wszystkich scen) | `OutdoorSeedAdversarialTests.cs`, `ux-p46-regress.js` | defekty w logu, kod bez zmian |
+| PK-P46q1, PK-P46q2 | Bramka pełnych testów i arkusz testowy z zrzutami | log, `UX_WAVE_CHECKS.md`, `ux-p46-shots.js` | log PASS; 3 zrzuty |
+
+Widoczny efekt dla właściciela pojawia się dopiero po P47a (czyste tła), bo do tego czasu sceny mają `bg_clean:false` i wyglądają jak dotąd. Po P46 można testować Edit na scenach ustawionych na `bg_clean:true` w zrzutach.
 
 ### Do sprawdzenia po P46
 1. W Ogrodzie, Parku, Farmie i na Targu kliknij Edit: każdy element otoczenia (ławka, stragan, ognisko) podświetla się i pozwala się przesunąć.
@@ -265,15 +271,16 @@ Cel: każdy element na dworze (ławki, fontanna, latarnie, drzewka, stragany, og
 
 ---
 
-## Fala P47: Asset Overhaul — Nowa grafika, jednolite tła i pasek nawigacji
-Cel: integracja spójnych assetów od grafika według specyfikacji `docs/BRIEF_DLA_GRAFIKA_SCENY_I_OBIEKTY.md`. Jednolity rozmiar teł 256×144, czyste wycięcia, kompletne ognisko z animacją, poprawna trawa, spójna skala pikseli (1:1 bez mixeli) i nowy drewniany pasek nawigacji.
+## Fala P47: Nowa grafika, jednolite tła i pasek nawigacji
+Cel: wdrożyć wytyczne `docs/BRIEF_DLA_GRAFIKA_SCENY_I_OBIEKTY.md`. Przebudowa 11.11: fala jest dzielona na część robioną u nas (generatory w `tools/art`) i część zamawianą u grafika; decyzję i dokładne listy daje badanie PK-R47. Prompty P47 powstają po R47 (zależą od jego wyniku).
 
-| ID | Zadanie | Pliki | Akceptacja |
+| Paczka (plan) | Zadanie | Kto | Uwaga |
 |---|---|---|---|
-| P47-01 | Jednolity rozmiar wszystkich teł 256×144 px: konwersja Parku z 384×192 do zunifikowanego 256×144 px (16:9); podmiana teł na wersje „Clean Canvas" bez wklejonych mebli i obiektów | `assets/world/bg/*`, `assets/data/place_scenes.json`, `web/home/canvas-pig.js` | weryfikacja wizualna: przełączanie między wszystkimi 5 lokacjami nie powoduje ani 1 px skoku wysokości ani bocznych kolumn; ostry obraz 1:1 |
-| P47-02 | Wdrożenie nowych sprite'ów z kanałem alfa: kępki trawy (koniec ucinania świnki), krzewy, drzewa, stragany, ławki, w skali 1:1 dopasowanej do dorosłej świnki (32×24 px) | `assets/world/*`, `assets/world/atlas.json`, `web/home/canvas-pig.js` | test wizualny: świnka w Parku ma takie same proporcje jak w Pokoju; obiekty w parku nie są miniaturowe |
-| P47-03 | Kompletne ognisko i źródła światła: kamienna podstawa + sekwencja animacji płomieni i żaru z przezroczystością; dynamiczne ciepłe światło ogniska | `assets/world/*`, `web/home/features/places/feature.js`, `assets/data/lights.json` | smoke: ognisko ma płonący, animowany ogień; świnka stojąc obok jest oświetlona ciepłym blaskiem |
-| P47-04 | Nowy pasek nawigacji miejsc: wdrożenie dedykowanego zestawu graficznego (belka z ciepłego drewna 9-slice, strzałki normal/hover/pressed, czytelna tabliczka na nazwę bez żółtych szwów, przycisk Edit) | `web/home/style.css`, `web/home/features/places/feature.css`, `web/home/features/places/feature.js`, `assets/ui/*` | test wizualny: pasek wygląda integralnie i estetycznie, zero żółtych pasków przecinających litery, wyraźne stany kliknięcia strzałek |
+| PK-P47a (stare P47-01) | Czyste tła 256x144 bez namalowanych obiektów, scena po scenie (flaga `bg_clean` z P46b) | agent, generatory | rozmiar pokoju i parku wg decyzji R47 (sekcje 3 i 4) |
+| PK-P47b (stare P47-02) | Sprite'y z alfą, których brakuje (lista z R47 sekcja 2): trawa, krzewy, drzewo, stragany, grządka (4 stany) | grafik albo generator | wiele plików już jest w `assets/world/` |
+| PK-P47c (stare P47-04) | Pasek miejsc: 9-slice, strzałki normal/hover/pressed, tabliczka, przycisk Edit | agent + brakujące PNG | dziś są `arrow_*`, `header_banner`, bez stanu hover |
+| PK-P47d (stare P47-03) | Ognisko z animacją płomienia i ciepłym światłem, pochodnie i latarnie | grafik (klatki), agent (kod, `lights.json`) | wspólne z P7 (zachowanie nocy) |
+| testy | po jednym agencie testowym na paczkę (obraz: nakładka `scene-overlay.js`, skala świnki) i bramka `P47q` | agenci testowi | wzorzec jak P46 |
 
 ### Do sprawdzenia po P47
 1. Przełączaj sceny strzałkami: przejście jest idealnie płynne, zero skakania proporcji czy wysokości okna.
