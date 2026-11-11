@@ -505,19 +505,32 @@
       "id": "F1-2",
       "packages": [
         "PK-P44b",
-        "PK-P4b"
+        "PK-P4b",
+        "PK-P8a"
       ]
     },
     {
       "id": "F1-3",
       "packages": [
-        "PK-P4q"
+        "PK-P8b"
       ]
     },
     {
       "id": "F1-4",
       "packages": [
+        "PK-P4q"
+      ]
+    },
+    {
+      "id": "F1-5",
+      "packages": [
         "PK-P44q"
+      ]
+    },
+    {
+      "id": "F1-6",
+      "packages": [
+        "PK-P8q"
       ]
     },
     {
@@ -541,15 +554,29 @@
     {
       "id": "F2-4",
       "packages": [
-        "PK-P46t1",
-        "PK-P46t2"
+        "PK-P47a",
+        "PK-P47r",
+        "PK-P47c"
       ]
     },
     {
       "id": "F2-5",
       "packages": [
+        "PK-P46t1",
+        "PK-P46t2"
+      ]
+    },
+    {
+      "id": "F2-6",
+      "packages": [
         "PK-P46q1",
         "PK-P46q2"
+      ]
+    },
+    {
+      "id": "F2-7",
+      "packages": [
+        "PK-P47q"
       ]
     },
     {
@@ -1803,6 +1830,62 @@
       "title": "Research: care calendar (P8)",
       "manual": "docs/prompts/PK-R8-research-care-calendar.md",
       "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R8.md 5",
+      "items": []
+    },
+    {
+      "id": "PK-P8a",
+      "tier": "high",
+      "title": "Core: pig profiles and manual reminders",
+      "manual": "docs/prompts/PK-P8a-core-pig-profiles-reminders.md",
+      "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~Care\"",
+      "items": []
+    },
+    {
+      "id": "PK-P8b",
+      "tier": "high",
+      "title": "Calendar UI: pig data, manual reminders, weight table, tabs",
+      "manual": "docs/prompts/PK-P8b-calendar-ui-profiles-settings-weight.md",
+      "verify": "node --check web/home/features/calendar/feature.js && node --check tools/qa/ux-p8-calendar.js && node tools/qa/ux-p8-calendar.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": []
+    },
+    {
+      "id": "PK-P8q",
+      "tier": "low",
+      "title": "Windows checks after wave P8",
+      "manual": "docs/prompts/PK-P8q-windows-checks-wave-p8.md",
+      "verify": "node --check web/home/features/calendar/feature.js && node --check tools/qa/ux-p8-calendar.js && node tools/qa/ux-p8-calendar.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~Care\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": []
+    },
+    {
+      "id": "PK-P47a",
+      "tier": "high",
+      "title": "Clean 256x144 backgrounds without painted fixtures",
+      "manual": "docs/prompts/PK-P47a-clean-backgrounds.md",
+      "verify": "node --check tools/qa/ux-p47-bg.js && node tools/qa/ux-p47-bg.js && node tools/qa/place-scenes-check.js && node tools/qa/check-assets.js",
+      "items": []
+    },
+    {
+      "id": "PK-P47r",
+      "tier": "high",
+      "title": "Room fixed 256x144 viewport",
+      "manual": "docs/prompts/PK-P47r-room-fixed-viewport.md",
+      "verify": "node --check web/home/features/places/room-geometry.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p47-room.js && node tools/qa/ux-p47-room.js",
+      "items": []
+    },
+    {
+      "id": "PK-P47c",
+      "tier": "high",
+      "title": "Places bar with the new nav art",
+      "manual": "docs/prompts/PK-P47c-places-bar-ui.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-bar.js && node tools/qa/check-assets.js",
+      "items": []
+    },
+    {
+      "id": "PK-P47q",
+      "tier": "low",
+      "title": "Windows checks after wave P47 part 1",
+      "manual": "docs/prompts/PK-P47q-windows-checks-wave-p47.md",
+      "verify": "node --check tools/qa/ux-p47-bg.js && node --check tools/qa/ux-p47-room.js && node --check tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-bg.js && node tools/qa/ux-p47-room.js && node tools/qa/ux-p47-bar.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js",
       "items": []
     }
   ]

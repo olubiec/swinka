@@ -1868,7 +1868,34 @@ waves:
     test_command: node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-high
     timeout_minutes: 44
+  - id: PK-P8a
+    title: 'PK-P8a: Core: pig profiles and manual reminders'
+    prompt_file: docs/prompts/PK-P8a-core-pig-profiles-reminders.md
+    files:
+    - src/Cuy.Core/Care/CareState.cs
+    - src/Cuy.Core/Care/CareInput.cs
+    - src/Cuy.Core/Care/CareSchedule.cs
+    - src/Cuy.Core/Pet.Care.cs
+    - tests/Cuy.Core.Tests/CareProfileTests.cs
+    - docs/opt/log/PK-P8a.md
+    test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~Care"
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
 - id: F1-3
+  tasks:
+  - id: PK-P8b
+    title: 'PK-P8b: Calendar UI: pig data, manual reminders, weight table, tabs'
+    prompt_file: docs/prompts/PK-P8b-calendar-ui-profiles-settings-weight.md
+    files:
+    - src/Cuy/dotNet/Features/CalendarFeature.cs
+    - web/home/features/calendar/feature.js
+    - web/home/features/calendar/feature.css
+    - tools/qa/ux-p8-calendar.js
+    - docs/opt/log/PK-P8b.md
+    test_command: node --check web/home/features/calendar/feature.js && node --check tools/qa/ux-p8-calendar.js && node tools/qa/ux-p8-calendar.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: F1-4
   tasks:
   - id: PK-P4q
     title: 'PK-P4q: Windows checks after wave P4'
@@ -1879,7 +1906,7 @@ waves:
     test_command: node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/adoption-popup.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p4-adoption.js && node tools/qa/ux-p4-adoption.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
-- id: F1-4
+- id: F1-5
   tasks:
   - id: PK-P44q
     title: 'PK-P44q: Windows checks after wave P44'
@@ -1890,6 +1917,17 @@ waves:
     - tools/qa/ux-p44-shots.js
     - docs/opt/log/PK-P44q.md
     test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: F1-6
+  tasks:
+  - id: PK-P8q
+    title: 'PK-P8q: Windows checks after wave P8'
+    prompt_file: docs/prompts/PK-P8q-windows-checks-wave-p8.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P8q.md
+    test_command: node --check web/home/features/calendar/feature.js && node --check tools/qa/ux-p8-calendar.js && node tools/qa/ux-p8-calendar.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~Care" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
 - id: F2-1
@@ -1946,6 +1984,56 @@ waves:
     timeout_minutes: 44
 - id: F2-4
   tasks:
+  - id: PK-P47a
+    title: 'PK-P47a: Clean 256x144 backgrounds without painted fixtures'
+    prompt_file: docs/prompts/PK-P47a-clean-backgrounds.md
+    files:
+    - tools/art/world/garden_bg.py
+    - tools/art/world/park_bg.py
+    - tools/art/world/farm_bg.py
+    - tools/art/world/market_bg.py
+    - assets/world/bg/garden_morning.png
+    - assets/world/bg/garden_day.png
+    - assets/world/bg/garden_evening.png
+    - assets/world/bg/garden_night.png
+    - assets/world/bg/park_morning.png
+    - assets/world/bg/park_day.png
+    - assets/world/bg/park_evening.png
+    - assets/world/bg/park_night.png
+    - assets/world/bg/farm.png
+    - assets/world/bg/market.png
+    - assets/data/place_scenes.json
+    - tools/qa/ux-p47-bg.js
+    - docs/opt/log/PK-P47a.md
+    test_command: node --check tools/qa/ux-p47-bg.js && node tools/qa/ux-p47-bg.js && node tools/qa/place-scenes-check.js && node tools/qa/check-assets.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P47r
+    title: 'PK-P47r: Room fixed 256x144 viewport'
+    prompt_file: docs/prompts/PK-P47r-room-fixed-viewport.md
+    files:
+    - web/home/features/places/room-geometry.js
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p47-room.js
+    - docs/opt/log/PK-P47r.md
+    test_command: node --check web/home/features/places/room-geometry.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p47-room.js && node tools/qa/ux-p47-room.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-P47c
+    title: 'PK-P47c: Places bar with the new nav art'
+    prompt_file: docs/prompts/PK-P47c-places-bar-ui.md
+    files:
+    - web/home/index.html
+    - web/home/style.css
+    - web/home/features/places/feature.css
+    - web/home/features/places/feature.js
+    - tools/qa/ux-p47-bar.js
+    - docs/opt/log/PK-P47c.md
+    test_command: node --check web/home/features/places/feature.js && node --check tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-bar.js && node tools/qa/check-assets.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: F2-5
+  tasks:
   - id: PK-P46t1
     title: 'PK-P46t1: Test agent: adversarial Core tests for outdoor instances'
     prompt_file: docs/prompts/PK-P46t1-core-adversarial-tests.md
@@ -1964,7 +2052,7 @@ waves:
     test_command: node --check tools/qa/ux-p46-regress.js && node tools/qa/ux-p46-regress.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
-- id: F2-5
+- id: F2-6
   tasks:
   - id: PK-P46q1
     title: 'PK-P46q1: Stage gate for wave P46 (full checks)'
@@ -1983,6 +2071,17 @@ waves:
     - docs/qa/shots
     - docs/opt/log/PK-P46q2.md
     test_command: node --check tools/qa/ux-p46-shots.js && node tools/qa/ux-p46-shots.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: F2-7
+  tasks:
+  - id: PK-P47q
+    title: 'PK-P47q: Windows checks after wave P47 part 1'
+    prompt_file: docs/prompts/PK-P47q-windows-checks-wave-p47.md
+    files:
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-P47q.md
+    test_command: node --check tools/qa/ux-p47-bg.js && node --check tools/qa/ux-p47-room.js && node --check tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-bg.js && node tools/qa/ux-p47-room.js && node tools/qa/ux-p47-bar.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
 - id: F3-1

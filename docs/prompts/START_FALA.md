@@ -40,8 +40,8 @@ RAPORT (po polsku, maks. 12 linii):
 
 | Fala | Wpisy w waves.yaml | Zadania (równolegle w obrębie wpisu) | Warunek startu |
 |---|---|---|---|
-| **1** | F1-1, F1-2, F1-3, F1-4 | F1-1: P44a, P4a, R5, R6, R7, R8; F1-2: P44b, P4b; F1-3: P4q; F1-4: P44q | brak. Do dopisania: P8 (po R8) |
-| **2** | F2-1 .. F2-5 | P46a, P46b, P46c, P46t1+t2, P46q1+q2 | fala 1 zakończona; plik `foundations/R46.md` jest. Do dopisania: P5, P6, P47a, P47c (po R5, R6) |
+| **1** | F1-1 .. F1-6 | F1-1: P44a, P4a, R5, R6, R7, R8; F1-2: P44b, P4b, P8a; F1-3: P8b; F1-4: P4q; F1-5: P44q; F1-6: P8q | brak (R8 ma wynik przed P8a w F1-2) |
+| **2** | F2-1 .. F2-7 | F2-1: P46a; F2-2: P46b; F2-3: P46c; F2-4: P47a, P47r, P47c; F2-5: P46t1, P46t2; F2-6: P46q1, P46q2; F2-7: P47q | fala 1 zakończona; plik `foundations/R46.md` jest. Do dopisania po R5, R6: P5, P6 |
 | **3** | F3-1 .. F3-4 | P43a+b, P43c+d+e, P43f, P43q | fala 2 zakończona (P46c). Do dopisania: P47b (po D2), P7 bez latarni (po R7) |
 | **4** | (jeszcze brak) | P47d (ognisko i światło), P7 (latarnie i noc), bramka końcowa | fala 3 zakończona i dostawa D4 odebrana |
 

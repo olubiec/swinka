@@ -80,8 +80,8 @@ Fala = zbiór zadań startowany jednym promptem (`docs/prompts/START_FALA.md`, `
 
 | Fala | Zadania | Grafik |
 |---|---|---|
-| **1** | P44 (a, b, q), P4 (a, b, q), badania R5, R6, R7, R8; do dopisania P8 | przed falą: **zamów D2** |
-| **2** | P46 (a, b, c, t1, t2, q1, q2); do dopisania P5, P6, P47a (tła), P47c (pasek miejsc) | **odbiór D3** w P47c; po odbiorze D2 **zamów D4**; D1 robimy sami |
+| **1** | P44 (a, b, q), P4 (a, b, q), badania R5, R6, R7, R8, P8 (a, b, q) | przed falą: **zamów D2** |
+| **2** | P46 (a, b, c, t1, t2, q1, q2), P47a (tła), P47r (stały kadr pokoju 256x144), P47c (pasek miejsc), P47q; do dopisania P5, P6 po R5, R6 | **odbiór D3** w P47c; po odbiorze D2 **zamów D4**; D1 robimy sami |
 | **3** | P43 (a-f, q); do dopisania P47b (sprite'y z D2), P7 bez latarni | **D2 odebrane przed falą**; D4 w toku |
 | **4** | do dopisania: P47d (ognisko i światło), P7 (latarnie i noc), bramka końcowa | **D4 odebrane przed falą** |
 

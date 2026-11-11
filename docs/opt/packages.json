@@ -2074,8 +2074,43 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P4b-adoption-popup-and-list.md"
   },
-  "PK-P4q": {
+  "PK-P8a": {
+   "wave": "F1-2",
+   "title": "Core: pig profiles and manual reminders",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Care/CareState.cs",
+    "src/Cuy.Core/Care/CareInput.cs",
+    "src/Cuy.Core/Care/CareSchedule.cs",
+    "src/Cuy.Core/Pet.Care.cs",
+    "tests/Cuy.Core.Tests/CareProfileTests.cs",
+    "docs/opt/log/PK-P8a.md"
+   ],
+   "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~Care\"",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P8a-core-pig-profiles-reminders.md"
+  },
+  "PK-P8b": {
    "wave": "F1-3",
+   "title": "Calendar UI: pig data, manual reminders, weight table, tabs",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/Features/CalendarFeature.cs",
+    "web/home/features/calendar/feature.js",
+    "web/home/features/calendar/feature.css",
+    "tools/qa/ux-p8-calendar.js",
+    "docs/opt/log/PK-P8b.md"
+   ],
+   "verify": "node --check web/home/features/calendar/feature.js && node --check tools/qa/ux-p8-calendar.js && node tools/qa/ux-p8-calendar.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P8b-calendar-ui-profiles-settings-weight.md"
+  },
+  "PK-P4q": {
+   "wave": "F1-4",
    "title": "Windows checks after wave P4",
    "items": [],
    "files": [
@@ -2089,7 +2124,7 @@
    "prompt_file": "docs/prompts/PK-P4q-windows-checks-wave-p4.md"
   },
   "PK-P44q": {
-   "wave": "F1-4",
+   "wave": "F1-5",
    "title": "Windows checks after wave P44",
    "items": [],
    "files": [
@@ -2103,6 +2138,20 @@
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P44q-windows-checks-wave-p44.md"
+  },
+  "PK-P8q": {
+   "wave": "F1-6",
+   "title": "Windows checks after wave P8",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P8q.md"
+   ],
+   "verify": "node --check web/home/features/calendar/feature.js && node --check tools/qa/ux-p8-calendar.js && node tools/qa/ux-p8-calendar.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~Care\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P8q-windows-checks-wave-p8.md"
   },
   "PK-P46a": {
    "wave": "F2-1",
@@ -2165,8 +2214,71 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P46c-edit-mode-outdoor-fixtures.md"
   },
-  "PK-P46t1": {
+  "PK-P47a": {
    "wave": "F2-4",
+   "title": "Clean 256x144 backgrounds without painted fixtures",
+   "items": [],
+   "files": [
+    "tools/art/world/garden_bg.py",
+    "tools/art/world/park_bg.py",
+    "tools/art/world/farm_bg.py",
+    "tools/art/world/market_bg.py",
+    "assets/world/bg/garden_morning.png",
+    "assets/world/bg/garden_day.png",
+    "assets/world/bg/garden_evening.png",
+    "assets/world/bg/garden_night.png",
+    "assets/world/bg/park_morning.png",
+    "assets/world/bg/park_day.png",
+    "assets/world/bg/park_evening.png",
+    "assets/world/bg/park_night.png",
+    "assets/world/bg/farm.png",
+    "assets/world/bg/market.png",
+    "assets/data/place_scenes.json",
+    "tools/qa/ux-p47-bg.js",
+    "docs/opt/log/PK-P47a.md"
+   ],
+   "verify": "node --check tools/qa/ux-p47-bg.js && node tools/qa/ux-p47-bg.js && node tools/qa/place-scenes-check.js && node tools/qa/check-assets.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P47a-clean-backgrounds.md"
+  },
+  "PK-P47r": {
+   "wave": "F2-4",
+   "title": "Room fixed 256x144 viewport",
+   "items": [],
+   "files": [
+    "web/home/features/places/room-geometry.js",
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p47-room.js",
+    "docs/opt/log/PK-P47r.md"
+   ],
+   "verify": "node --check web/home/features/places/room-geometry.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p47-room.js && node tools/qa/ux-p47-room.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P47r-room-fixed-viewport.md"
+  },
+  "PK-P47c": {
+   "wave": "F2-4",
+   "title": "Places bar with the new nav art",
+   "items": [],
+   "files": [
+    "web/home/index.html",
+    "web/home/style.css",
+    "web/home/features/places/feature.css",
+    "web/home/features/places/feature.js",
+    "tools/qa/ux-p47-bar.js",
+    "docs/opt/log/PK-P47c.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-bar.js && node tools/qa/check-assets.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P47c-places-bar-ui.md"
+  },
+  "PK-P46t1": {
+   "wave": "F2-5",
    "title": "Test agent: adversarial Core tests for outdoor instances",
    "items": [],
    "files": [
@@ -2180,7 +2292,7 @@
    "prompt_file": "docs/prompts/PK-P46t1-core-adversarial-tests.md"
   },
   "PK-P46t2": {
-   "wave": "F2-4",
+   "wave": "F2-5",
    "title": "Test agent: browser regression across all scenes",
    "items": [],
    "files": [
@@ -2194,7 +2306,7 @@
    "prompt_file": "docs/prompts/PK-P46t2-browser-regression-tests.md"
   },
   "PK-P46q1": {
-   "wave": "F2-5",
+   "wave": "F2-6",
    "title": "Stage gate for wave P46 (full checks)",
    "items": [],
    "files": [
@@ -2207,7 +2319,7 @@
    "prompt_file": "docs/prompts/PK-P46q1-windows-checks-wave-p46.md"
   },
   "PK-P46q2": {
-   "wave": "F2-5",
+   "wave": "F2-6",
    "title": "Owner test sheet and screenshots for wave P46",
    "items": [],
    "files": [
@@ -2221,6 +2333,20 @@
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-P46q2-owner-test-sheet-wave-p46.md"
+  },
+  "PK-P47q": {
+   "wave": "F2-7",
+   "title": "Windows checks after wave P47 part 1",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "docs/opt/log/PK-P47q.md"
+   ],
+   "verify": "node --check tools/qa/ux-p47-bg.js && node --check tools/qa/ux-p47-room.js && node --check tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-bg.js && node tools/qa/ux-p47-room.js && node tools/qa/ux-p47-bar.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-P47q-windows-checks-wave-p47.md"
   },
   "PK-P43a": {
    "wave": "F3-1",
