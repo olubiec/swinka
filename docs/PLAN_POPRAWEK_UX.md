@@ -25,6 +25,11 @@ Zasady z `AGENTS.md` obowiązują: liczby w `assets/data/*.json`, nowe pola zapi
 | 17 | Strzałka cofania i krzyżyk zamknięcia w More nie pasują do designu | P3-04 |
 | 18 | Plan domu ma być widziany od góry, albo zrezygnować z planu i zostawić samo przełączanie pokoi | P3-05 |
 | 15 | Brak sposobu, by dwie świnki były na ekranie; każda chodzi między pokojami, albo przypięta na stałe | P5-01..P5-04 |
+| 19 | Elementy źle wycięte (trawa ucięta ostro, ognisko bez ognia), obiekty wklejone w tło zamiast osobnych | P47-01..P47-03 |
+| 20 | Błędna skala obiektów w parku (za małe piksele/elementy) względem pokoju i świnki | P47-02 |
+| 21 | Nowy piksel-artowy pasek przełączania miejsc (dedykowana grafika zamiast żółtych szwów) | P47-04 |
+| 22 | Każdy element na dworze (ławki, fontanna, stragany, ognisko) usuwalny i przestawialny jak meble | P46-01..P46-03 |
+| 23 | Tła muszą mieć identyczny rozmiar (256x144), by okno nie skakało między lokacjami | P47-01 |
 
 Podejrzenie wspólnej przyczyny uwag 5, 11, 12, 13 (przyciski w funkcjach „nic nie robią", a panel pojawia się po powrocie): cykl życia okna funkcji (`openFeature` / modal w `web/home/app.js`, `openMoreModal` ok. linii 783). Zadanie P1-01 ma najpierw to zdiagnozować; P1-02..P1-04 dopiero po nim.
 
@@ -119,9 +124,16 @@ Mapa uwag właściciela (11.11 po teście pokoi świnek i oświetlenia):
 - **Fizyka światła i wygląd świnki**: w `web/home/features/places/feature.js` wyregulowano addytywne źródła światła (zmniejszono współczynnik blasku `lighter` z oślepiającego 1.0 do subtelnego 0.32), dzięki czemu scena nie jest wypalana do czystej bieli, a świnka wkraczając w światło zachowuje naturalne kolory futerka zamiast wyglądać jak czarny cień/plama -> **naprawione natychmiast 11.11**.
 - **Kolizyjność z przedmiotami w pokojach**: świnka ma poprawne sortowanie głębokości (przód/tył), ale przenika przez bryłę mebli, bo 4-pikselowa stopa pozwala stawiać kroki tuż obok krawędzi, przez co ciało świnki nachodzi na meble. Pełna siatka brył mebli i blokowanie przenikania przypisane do **Fali P7** (`P7-01` i `P7-03` – `RoomOccupancy` i fizyka poruszania się w pokoju).
 
+Mapa uwag właściciela (11.11 druga tura - jakość assetów, wycinanie, skala i pasek nawigacji):
+- **Jakość wycięć i elementy wklejone w tło**: wiele elementów jest uciętych nieprawidłowo (np. ognisko bez płomieni, trawa z ostrymi maskami chowającymi świnkę w nienaturalny sposób). Wszystkie obiekty interaktywne i dekoracyjne muszą być osobnymi plikami PNG z przezroczystością (RGBA), a tła muszą być całkowicie "czyste" (bez wklejonych na stałe ławek, fontann, straganów czy drzew).
+- **Zła skala i zróżnicowane rozmiary teł**: Park w rozdzielczości 384x192 wymuszał miniaturyzację pikseli i obiektów, przez co świnka i rekwizyty wyglądały nienaturalnie, a okno skakało przy przełączaniu lokacji. Wszystkie tła muszą mieć **jednolity rozmiar 256×144 px (16:9)**, stałą perspektywę i tę samą gęstość pikseli (1:1 pixel art, bez mixeli).
+- **Usuwalność i przestawialność każdego obiektu na dworze**: każdy obiekt plenerowy (ławki, fontanna, latarnie, drzewa, stragany, grządki, ognisko) ma być osobną dekoracją ze stanem zapisu, którą gracz w trybie Edit może przesunąć, obrócić lub schować do magazynu.
+- **Nowy pasek przełączania miejsc**: zaprojektowanie dedykowanego, piksel-artowego paska nawigacji (ramka z ciepłego drewna, stylowe strzałki lewo/prawo z 3 stanami, ciemna tabliczka pod nazwę miejsca bez żółtych szwów tnących litery, spójny przycisk [Edit]).
+- **Kompletny brief dla grafika**: szczegółowe wymiary, specyfikacje techniczne i wytyczne rozpisano w dedykowanym dokumencie: `docs/BRIEF_DLA_GRAFIKA_SCENY_I_OBIEKTY.md`.
+
 ### Stan wdrożenia i podział zadań na fale (aktualizacja 11.11):
 - **Zrobione natychmiast (gotowe w kodzie i skompilowane)**:
-  1. Pasek przełączania miejsc: nazwa miejsca na eleganckiej, ciemnej drewnianej tabliczce z wyraźnym obrysem; żółte pasy nie nachodzą na tekst.
+  1. Pasek przełączania miejsc (poprawka tymczasowa): nazwa miejsca na eleganckiej, ciemnej drewnianej tabliczce z wyraźnym obrysem; żółte pasy nie nachodzą na tekst.
   2. Usunięcie bocznych kolumn: kontener sceny `flex: 0 0 auto` + `width: 100%; height: auto` – scena wypełnia pełną szerokość bez kolumn i bez obcinania góry.
   3. Skalowanie dymków: dymki mowy świnki oraz pigułka "Go there" mają zwarty, retro-pikselowy rozmiar.
   4. Fizyka światła i wygląd świnki: zbalansowano blask lamp i okna w trybie `lighter` (koniec z wypalaniem tła do bieli i czarną sylwetką świnki); zabezpieczono `litFrame` przed NaN.
@@ -134,20 +146,28 @@ Mapa uwag właściciela (11.11 po teście pokoi świnek i oświetlenia):
     - Wyróżnienie / dymek podpowiedzi przesuwania obiektów w trybie Edit.
   - **Fala P44 (Przenoszenie świnki)**:
     - Przeciąganie świnki do krawędzi ekranu zmieniające scenę (przechodzenie między pokojami i dworem).
+  - **Fala P46 (Edytor scen plenerowych — usuwalność i przestawianie obiektów na dworze)**:
+    - Rozszerzenie mechanizmu dekoracji pokoju na ogród, park, farmę i targ.
+    - Każdy element zewnętrzny (ławki, fontanna, latarnie, drzewka, stragany, ognisko) staje się obiektem instancyjnym: można go chwycić, przesunąć, obrócić lub schować do schowka.
+    - Zapis układu pleneru w stanie gry (`GameState.Decor.cs` / `place_scenes.json`).
+  - **Fala P47 (Asset Overhaul — integracja nowej grafiki od grafika)**:
+    - Wdrożenie czystych teł w jednolitej rozdzielczości 256×144 px dla wszystkich scen (unifikacja Parku do 256×144).
+    - Wdrożenie nowych, czysto wyciętych sprite'ów PNG z kanałem alfa: kępki trawy, krzaki, drzewa, stragany, grządki.
+    - Wdrożenie kompletnego ogniska: kamienna baza + klatkowa animacja ognia/żaru/dymu z przezroczystością.
+    - Wdrożenie nowego piksel-artowego paska nawigacji (drewniana belka 9-slice, strzałki normal/hover/pressed, tabliczka tekstowa, przycisk Edit).
+    - Pełna spójność skali (texel density 1:1, likwidacja miniaturyzacji obiektów parkowych).
   - **Fala P5 (Wielość świnek)**:
     - Druga świnka na pulpicie i jednoczesna obecność świnek w pokojach.
   - **Fala P6 (Zaawansowany edytor i schowek)**:
     - Kategorie w szufladzie, wyszukiwanie, zapis gotowych szablonów pokoi.
   - **Fala P7 (Fizyka, kolizje, cienie i pogoda)**:
-    - **Fizyka kolizji mebli (P7-01, P7-03)**: pełne bryły kolizyjne przedmiotów uniemożliwiające śwince wchodzenie w meble.
+    - **Fizyka kolizji mebli (P7-01, P7-03)**: pełne bryły kolizyjne przedmiotów uniemożliwiające śwince wchodzenie w meble i obiekty plenerowe.
     - Zewnętrzne latarnie/pochodnie dla nocnych spacerów na dworze.
     - Zaawansowane cienie rzucane przez obiekty i świnkę.
   - **Fala P8 (Kalendarz opieki)**:
     - Zintegrowany kalendarz wag, przypomnień i wizyt u weterynarza.
 
-Dalej (prompty powstaną po teście P44, bo zależą od realnego API): P5 druga świnka na pulpicie (5a okno-świnka, 5b stan wielu świnek, 5c przeciąganie między pulpitem a Home); P6 rozbudowany schowek i edytor (6a kategorie i wyszukiwanie, 6b zapis układów, 6c cofnij i ponów); P7 fizyka i grafika (7a cienie, 7b animacje wejścia i wyjścia, 7c efekty pogody); P8 kalendarz opieki (8a dane, 8b widok miesiąca, 8c przypomnienia).
-
-Kolejność sesji: 31-37 (zrobione), potem 41, 42, 38, 39, 40, 43, 44, a po nich 4 (adopcja). Zależności są między falami, więc nie zmieniaj kolejności.
+Dalej: prompty powstaną po teście P44, bo zależą od realnego API. Zależności między falami są zachowane.
 
 ### Do sprawdzenia po P31 (Core i dane, nic jeszcze nie widać)
 1. Testy Core `PigLocation` i `place-scenes-check` zielone w logu `PK-P31q`.
@@ -226,6 +246,41 @@ Kolejność sesji: 31-37 (zrobione), potem 41, 42, 38, 39, 40, 43, 44, a po nich
 1. Przeciągnij świnkę do prawej krawędzi i przytrzymaj chwilę: pojawia się strzałka, scena przełącza się na sąsiednią, świnka dalej w ręce. Puść: została tam.
 2. Zablokowane miejsce: komunikat z podpowiedzią, scena się nie zmienia.
 3. Po restarcie gry świnka jest w nowym miejscu. Przeciągnięcie poza okno nadal wyprowadza ją na pulpit.
+
+---
+
+## Fala P46: Edytor scen plenerowych (usuwalność i przestawianie obiektów na dworze)
+Cel: każdy element na dworze (ławki, fontanna, latarnie, drzewka, stragany, ognisko, grządki) jest usuwalny i przestawialny dokładnie tak jak meble w pokojach. Koniec z obiektami wklejonymi na stałe.
+
+| ID | Zadanie | Pliki | Akceptacja |
+|---|---|---|---|
+| P46-01 | Model obiektów plenerowych w Core i `place_scenes.json`: przeniesienie stałych obiektów (ławka, fontanna, altana, stragany) do listy instancji dekoracji plenerowych (`outdoor_decor`), powiązanych z zapisem stanu | `src/Cuy.Core/Decor/*`, `GameState.Decor.cs`, `assets/data/place_scenes.json` | testy Core: zapis i odczyt pozycji obiektów plenerowych; stary zapis ładuje domyślne pozycje |
+| P46-02 | Integracja trybu Edit w scenach plenerowych (ogród, park, farma, targ): kliknięcie obiektu pozwala go przemieścić po dozwolonym pasie gruntu, obrócić lub schować do magazynu/schowka | `web/home/features/decor/feature.js`, `web/home/features/places/feature.js`, `web/home/canvas-pig.js` | smoke: wejdź w Edit w Ogrodzie/Parku → przesuń ławkę lub fontannę → nowa pozycja widoczna i zachowana po restarcie |
+| P46-03 | Szuflada schowka dla pleneru: zakładka „Outdoor" zawierająca rekwizyty ogrodowe, parkowe i farmerskie | `web/home/features/store/feature.js`, `web/home/features/decor/feature.js` | smoke: schowanie ławki przenosi ją do szuflady; wyciągnięcie stawia ją na scenie |
+
+### Do sprawdzenia po P46
+1. W Ogrodzie, Parku, Farmie i na Targu kliknij Edit: każdy element otoczenia (ławka, stragan, ognisko) podświetla się i pozwala się przesunąć.
+2. Schowaj fontannę do schowka: znika ze sceny, pojawia się w magazynie.
+3. Przestaw ławkę w Parku: po przełączeniu scen i powrocie stoi w nowym miejscu.
+
+---
+
+## Fala P47: Asset Overhaul — Nowa grafika, jednolite tła i pasek nawigacji
+Cel: integracja spójnych assetów od grafika według specyfikacji `docs/BRIEF_DLA_GRAFIKA_SCENY_I_OBIEKTY.md`. Jednolity rozmiar teł 256×144, czyste wycięcia, kompletne ognisko z animacją, poprawna trawa, spójna skala pikseli (1:1 bez mixeli) i nowy drewniany pasek nawigacji.
+
+| ID | Zadanie | Pliki | Akceptacja |
+|---|---|---|---|
+| P47-01 | Jednolity rozmiar wszystkich teł 256×144 px: konwersja Parku z 384×192 do zunifikowanego 256×144 px (16:9); podmiana teł na wersje „Clean Canvas" bez wklejonych mebli i obiektów | `assets/world/bg/*`, `assets/data/place_scenes.json`, `web/home/canvas-pig.js` | weryfikacja wizualna: przełączanie między wszystkimi 5 lokacjami nie powoduje ani 1 px skoku wysokości ani bocznych kolumn; ostry obraz 1:1 |
+| P47-02 | Wdrożenie nowych sprite'ów z kanałem alfa: kępki trawy (koniec ucinania świnki), krzewy, drzewa, stragany, ławki, w skali 1:1 dopasowanej do dorosłej świnki (32×24 px) | `assets/world/*`, `assets/world/atlas.json`, `web/home/canvas-pig.js` | test wizualny: świnka w Parku ma takie same proporcje jak w Pokoju; obiekty w parku nie są miniaturowe |
+| P47-03 | Kompletne ognisko i źródła światła: kamienna podstawa + sekwencja animacji płomieni i żaru z przezroczystością; dynamiczne ciepłe światło ogniska | `assets/world/*`, `web/home/features/places/feature.js`, `assets/data/lights.json` | smoke: ognisko ma płonący, animowany ogień; świnka stojąc obok jest oświetlona ciepłym blaskiem |
+| P47-04 | Nowy pasek nawigacji miejsc: wdrożenie dedykowanego zestawu graficznego (belka z ciepłego drewna 9-slice, strzałki normal/hover/pressed, czytelna tabliczka na nazwę bez żółtych szwów, przycisk Edit) | `web/home/style.css`, `web/home/features/places/feature.css`, `web/home/features/places/feature.js`, `assets/ui/*` | test wizualny: pasek wygląda integralnie i estetycznie, zero żółtych pasków przecinających litery, wyraźne stany kliknięcia strzałek |
+
+### Do sprawdzenia po P47
+1. Przełączaj sceny strzałkami: przejście jest idealnie płynne, zero skakania proporcji czy wysokości okna.
+2. Park: elementy i świnka mają naturalną, spójną skalę piksela (brak miniaturowych mebli i mixeli).
+3. Ognisko: żywy ogień z płomieniami i żarem, czyste krawędzie bez obcięć.
+4. Trawa i roślinność: świnka przemieszcza się naturalnie przed i za kępkami trawy bez ucinania jej modelu w nienaturalny sposób.
+5. Pasek nawigacji: estetyczny, drewniany design w stylu gry z czytelnym tytułem i dopasowanym przyciskiem Edit.
 
 ### Do sprawdzenia po P3 (pierwsza wersja, nieaktualna)
 1. Strzałki po bokach przechodzą: dom (pokoje) → ogród → park → farma → targ.
