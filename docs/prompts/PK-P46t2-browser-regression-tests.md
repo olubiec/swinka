@@ -22,5 +22,8 @@ Produces (names other packages rely on): `tools/qa/ux-p46-regress.js` (picked up
 3. Tests that cannot run because an API does not exist yet are skipped with a printed reason `SKIP <name>: <why>`; they must never pass silently.
 4. Run the Weryfikacja line once. Log defects with a 3-line repro each; do not change production code.
 
+## Poprawki po R1 (obowiązują, mają pierwszeństwo nad krokami wyżej)
+- `ux-p46-regress.js` ma sprawdzać roundtrip Edit (przesuń, przełącz scenę, wróć) oraz wyznaczanie ścieżki w scenach z `bg_clean: true`.
+
 Prohibited: changing or deleting existing test assertions (poza wskazanymi w krokach), new dependencies, touching files outside "Zmieniaj", extra refactors, running git.
 Log: write `docs/opt/log/PK-P46t2.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.

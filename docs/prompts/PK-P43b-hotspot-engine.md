@@ -6,7 +6,7 @@ Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje l
 Limity (twarde): maks. 45 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: The canvas highlights hotspots on hover and reports clicks, without interfering with pig click, drag and edit mode.
-Depends on: PK-P40b merged (pickAt, edit mode).
+Depends on: PK-P44a merged (drag edge w canvas-pig.js), PK-P46b merged (instancje plenerowe w scenes.js).
 
 ## Kontekst (fakty, nie szukaj drugi raz)
 - Docelowa wizja: każde miejsce (pokoje domku, ogród, park, farma, targ) to scena w głównym oknie Home (pseudo-3D: widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, y-sort). Sceny: `assets/data/place_scenes.json` (`bg`, `walk` [x0,y0,x1,y1], `depthScale`, wyjścia), moduł `web/home/features/places/{feature,scenes}.js`, płótno `web/home/canvas-pig.js` (API w logach `docs/opt/log/PK-P33a.md`, `PK-P34a.md`, `PK-P36a.md`).
@@ -21,6 +21,11 @@ Depends on: PK-P40b merged (pickAt, edit mode).
 - Legenda stylu: `docs/STYL_SWIATA.md` (czytaj pkt 0-2 i 5, ok. 60 linii) i paleta `assets/data/style_palette.json` (42 kolory). Zakaz kolorów spoza palety, zakaz `#ffffff` i `#000000`, zakaz gradientów CSS, rozmycia i cieni z blur. `image-rendering: pixelated`, skala tylko całkowita, pozycje w pełnych pikselach.
 - Biblioteka pixel artów: najpierw szukaj gotowego w `assets/world/`, `assets/ui/`, `assets/icons/`, `assets/props/`. Nowy sprite tylko gdy go tam naprawdę nie ma: skrypt w `tools/art/` + `python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt` bez nowych błędów.
 - Interfejs jak reszta gry: drewniane ramki i 9-slice z `assets/ui/`, kolory `--ui-*`, czcionka `--ui-font`. Zakaz własnych SVG i glifów tekstowych (✕ ← →).
+
+## Poprawki po R1 (obowiązują, mają pierwszeństwo nad krokami wyżej)
+- `scenes.js`: `CuyScenes.hotspotsFor(sceneId, state)` zwraca hotspoty scalone (instancje + statyczne fallbacki).
+- API: `CanvasPig.setHotspots(list)`, `CanvasPig.getHotspots()`, `CanvasPig.onHotspot(fn)` (rejestruje słuchacza).
+- W trybie Edit hotspoty są wyłączone (wybieranie i przeciąganie obiektów bez przeszkód). Jeśli trafiono świnkę (isOverPig), interakcja ze świnką wygrywa.
 
 Prohibited: changing or deleting existing test assertions (poza wskazanymi w krokach), new dependencies, touching files outside "Zmieniaj", extra refactors.
 Log: write `docs/opt/log/PK-P43b.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.

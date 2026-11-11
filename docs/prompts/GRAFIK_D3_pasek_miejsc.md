@@ -1,5 +1,7 @@
 # Zlecenie dla grafika: dostawa D3, pasek zmiany miejsca
 
+> **Status: zrealizowane.** Pliki `nav_*` są w `assets/ui/` (commit `00573a3`). Zostaje odbiór w fali P47c.
+
 Gra: **Cuy**, pixel-artowa świnka morska na pulpicie Windows. Pełne zasady stylu: `docs/BRIEF_DLA_GRAFIKA_SCENY_I_OBIEKTY.md` (rozdz. 1, 5, 7, 10). Ten plik to samodzielne zlecenie na jedną dostawę.
 
 ## Cel

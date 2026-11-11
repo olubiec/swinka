@@ -1,5 +1,5 @@
 # PK-P46a: Core: outdoor fixtures become saved instances (wave P46a)
-Zmieniaj: assets/data/outdoor_defaults.json, src/Cuy.Core/World/OutdoorDefaults.cs, src/Cuy.Core/World/OutdoorSeed.cs, src/Cuy.Core/World/WorldState.cs, src/Cuy.Core/World/RoomLayoutOps.cs, src/Cuy.Core/Balance.cs, src/Cuy.Core/GameSession.cs, assets/data/world_items.json, assets/world/atlas.json, tests/Cuy.Core.Tests/OutdoorSeedTests.cs, docs/opt/log/PK-P46a.md
+Zmieniaj: assets/data/outdoor_defaults.json, src/Cuy.Core/World/OutdoorDefaults.cs, src/Cuy.Core/World/OutdoorSeed.cs, src/Cuy.Core/World/WorldState.cs, src/Cuy.Core/World/RoomLayoutOps.cs, src/Cuy.Core/Balance.cs, src/Cuy.Core/GameSession.cs, assets/data/world_items.json, assets/world/atlas.json, assets/data/places.json, tests/Cuy.Core.Tests/WorldAssetsTests.cs, tests/Cuy.Core.Tests/OutdoorSeedTests.cs, docs/opt/log/PK-P46a.md
 Wymagane: tests/Cuy.Core.Tests/OutdoorSeedTests.cs
 Weryfikacja: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~OutdoorSeed|FullyQualifiedName~RoomLayoutOps|FullyQualifiedName~WorldMigration|FullyQualifiedName~WorldAssets|FullyQualifiedName~WorldItemCatalog"
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
@@ -24,6 +24,11 @@ Produces (names other packages rely on): `OutdoorDefaults.Current/Load/LoadDefau
 5. `RoomLayoutOps.Remove`: if the item is a fixture with `removable:false` return the `fixture_locked` error (add it to the existing result type the way other errors are done); everything else unchanged. `Move` of fixtures stays allowed.
 6. Flag: `Balance.OutdoorInstancesActive` default false, set true in `GameSession.Open` next to the other world flags; call `OutdoorSeed.Seed` for garden, park, farm, market where the world state is created or loaded (grep where `LegacyDecorMigration` is invoked and call it beside, only when the flag is on).
 7. Run the Weryfikacja line; fix until green. Log: the item mapping used, the list of ids with `art: missing`, the exact `fixture_locked` error shape.
+
+## Poprawki po R1 (obowiązują, mają pierwszeństwo nad krokami wyżej)
+- `assets/data/places.json`: dodaj farmie i targowi poziom siatki `levels: [{ "level": 1, "cols": 16, "rows": 9 }]` (decyzja 4 z R46.md; pokój 256x144 = stały viewport, kafelkowanie 16x9, współrzędne i zapisy bez zmian).
+- `tests/Cuy.Core.Tests/WorldAssetsTests.cs`: dopuść wysokość sprite'a <= cells*16 i pomijaj wpisy z `art: missing`.
+- Obiekty-fixture (stragany, stodoła, grządki, nora): `movable:true`, `removable:false`; usunięcie zwraca `fixture_locked`.
 
 Prohibited: changing or deleting existing test assertions (poza wskazanymi w krokach), new dependencies, touching files outside "Zmieniaj", extra refactors, running git.
 Log: write `docs/opt/log/PK-P46a.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.

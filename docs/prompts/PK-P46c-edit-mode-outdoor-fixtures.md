@@ -28,5 +28,9 @@ Produces (names other packages rely on): Edit-mode hint `.edit-hint`; toast text
 - Biblioteka pixel artów: najpierw szukaj gotowego w `assets/world/`, `assets/ui/`, `assets/icons/`, `assets/props/`. Nowy sprite tylko gdy go tam naprawdę nie ma: skrypt w `tools/art/` + `python3 tools/art/style_check.py --baseline docs/album/stylbook/lint_baseline.txt` bez nowych błędów.
 - Interfejs jak reszta gry: drewniane ramki i 9-slice z `assets/ui/`, kolory `--ui-*`, czcionka `--ui-font`. Zakaz własnych SVG i glifów tekstowych.
 
+## Poprawki po R1 (obowiązują, mają pierwszeństwo nad krokami wyżej)
+- Upewnij się, że przedmioty plenerowe w `world_items.json` mają `places` ze scenami plenerowymi lub `kind: outdoor` (tak, by szuflada Edit je pokazała).
+- Błąd `fixture_locked` mapuj na toast dla gracza (tekst po polsku, krótki), a nie na ciche odrzucenie.
+
 Prohibited: changing or deleting existing test assertions (poza wskazanymi w krokach), new dependencies, touching files outside "Zmieniaj", extra refactors, running git.
 Log: write `docs/opt/log/PK-P46c.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.

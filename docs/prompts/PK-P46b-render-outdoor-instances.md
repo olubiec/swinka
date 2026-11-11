@@ -24,5 +24,9 @@ Produces (names other packages rely on): `place_scenes.json` key `bg_clean` (boo
 5. `mock.js`: extend the `seven` state with outdoor layouts for garden, park, farm, market copied from `assets/data/outdoor_defaults.json` (read it in the mock with a fetch-free copy of the few fields; do not duplicate more than ids and positions).
 6. Run the Weryfikacja line; fix until green. Log: which canvas function draws the sprites, any canvas gap left for a later package.
 
+## Poprawki po R1 (obowiązują, mają pierwszeństwo nad krokami wyżej)
+- `def()` w `scenes.js` buduje blokery ze stóp instancji (footprint) z `behindLine: -9999`, gdy scena ma `bg_clean: true`. Dzięki temu nie ruszasz `canvas-pig.js` i tło nie jest krojone na warstwy.
+- Zapisz w logu, gdy czegoś nie da się zrobić publicznym `addLayer`.
+
 Prohibited: changing or deleting existing test assertions (poza wskazanymi w krokach), new dependencies, touching files outside "Zmieniaj", extra refactors, running git.
 Log: write `docs/opt/log/PK-P46b.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.

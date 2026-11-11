@@ -120,11 +120,11 @@ Tekst na pasku to czcionka z gry (nie rysujesz liter). Zostaw pole na napis o sz
 
 | Dostawa | Zawartość | Dla fali | Gotowość zamówienia |
 |---|---|---|---|
-| **D0 (już u nas)** | audyt istniejących sprite'ów względem sekcji 1 (skala, perspektywa, paleta) | R47 | R47 w trakcie; wynik: lista „poprawić/zastąpić/OK” |
-| **D1: tła** | czyste tła `bg` w 4 porach dnia: ogród, park, farma, targ, plus pokój według decyzji o rozmiarze | P47a | czeka na R47 (część generowana u nas) |
-| **D2: obiekty** | brakujące sprite'y z rozdz. 6: grządki (stany), stragany (3 + `_sold_out`), fontanna (animacja), drzewo owocowe (2 stany), kępki trawy (`grass_tuft_1..4`, 16×12), kępa kwiatów, krzak mały | P47b, P43c, P43d | czeka na R47 sekcja 7 (lista pliku po pliku) |
-| **D3: pasek** | komplet z rozdz. 7 | P47c | gotowe do zamówienia po R47 sekcja 5 |
-| **D4: ognisko i światło** | `campfire_base`, `campfire_flame` (6 kl.), `campfire_flame_small` (4 kl.), poprawione latarnie i pochodnie z `_on` | P47d, P7 | częściowo gotowe (latarnie i pochodnie istnieją) |
+| **D0 (już u nas)** | audyt istniejących sprite'ów względem sekcji 1 (skala, perspektywa, paleta) | R47 | R47 zakończone (`docs/opt/foundations/R47.md`) |
+| **D1: tła** | czyste tła `bg` w 4 porach dnia: ogród, park, farma, targ, plus pokój według decyzji o rozmiarze | P47a | robione u nas skryptami (in-house, PK-P47a); grafik tylko poprawia, jeśli poprosimy |
+| **D2: obiekty** | brakujące sprite'y z rozdz. 6: grządki (stany), stragany (3 + `_sold_out`), fontanna (animacja), drzewo owocowe (2 stany), kępki trawy (`grass_tuft_1..4`, 16×12), kępa kwiatów, krzak mały | P47b, P43c, P43d | **do zamówienia teraz**, lista plików w `docs/opt/foundations/R47.md` sekcja 7 (grządki 32×24, stragany 48×44, drzewo 40×64, fontanna 192×48) |
+| **D3: pasek** | komplet z rozdz. 7 | P47c | **dostarczone** (pliki `nav_*` w `assets/ui/`, commit `00573a3`); odbiór `check-assets.js` w P47c |
+| **D4: ognisko i światło** | `campfire_base`, `campfire_flame` (6 kl.), `campfire_flame_small` (4 kl.), poprawione latarnie i pochodnie z `_on` | P47d, P7 | do zamówienia po D2 (latarnie i pochodnie istnieją) |
 
 **Kolejność prac grafika:** D3 (najmniej zależy od innych, widoczny efekt) → D2 (odblokowuje P43c/d) → D4 → D1 (największy, ale część robimy skryptem). Zleceniodawca potwierdzi tę kolejność po R47.
 

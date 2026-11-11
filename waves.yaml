@@ -1875,6 +1875,8 @@ waves:
     - src/Cuy.Core/GameSession.cs
     - assets/data/world_items.json
     - assets/world/atlas.json
+    - assets/data/places.json
+    - tests/Cuy.Core.Tests/WorldAssetsTests.cs
     - tests/Cuy.Core.Tests/OutdoorSeedTests.cs
     - docs/opt/log/PK-P46a.md
     test_command: dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~OutdoorSeed|FullyQualifiedName~RoomLayoutOps|FullyQualifiedName~WorldMigration|FullyQualifiedName~WorldAssets|FullyQualifiedName~WorldItemCatalog"
@@ -2004,10 +2006,9 @@ waves:
     prompt_file: docs/prompts/PK-P43e-room-and-garden-objects.md
     files:
     - web/home/features/places/feature.js
-    - web/home/features/garden/feature.js
     - tools/qa/ux-p43-object-actions.js
     - docs/opt/log/PK-P43e.md
-    test_command: node --check web/home/features/places/feature.js && node --check web/home/features/garden/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js
+    test_command: node --check web/home/features/places/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js
     model: gemini-3.8-flash-high
     timeout_minutes: 44
 - id: P43c
@@ -2017,7 +2018,6 @@ waves:
     prompt_file: docs/prompts/PK-P43f-retire-farm-market-windows.md
     files:
     - web/home/app.js
-    - web/home/features/index.json
     - tools/qa/ux-p43-retire-fm.js
     - docs/opt/log/PK-P43f.md
     test_command: node --check web/home/app.js && node --check tools/qa/ux-p43-retire-fm.js && node tools/qa/ux-p43-retire-fm.js

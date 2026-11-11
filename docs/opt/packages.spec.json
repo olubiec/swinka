@@ -1656,7 +1656,7 @@
       "tier": "mid",
       "title": "Rooms and garden: objects act in the scene",
       "manual": "docs/prompts/PK-P43e-room-and-garden-objects.md",
-      "verify": "node --check web/home/features/places/feature.js && node --check web/home/features/garden/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js",
+      "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js",
       "items": []
     },
     {

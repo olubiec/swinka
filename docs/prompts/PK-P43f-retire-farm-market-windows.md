@@ -1,5 +1,5 @@
 # PK-P43f: Farm and Market windows retired
-Zmieniaj: web/home/app.js, web/home/features/index.json, tools/qa/ux-p43-retire-fm.js, docs/opt/log/PK-P43f.md
+Zmieniaj: web/home/app.js, tools/qa/ux-p43-retire-fm.js, docs/opt/log/PK-P43f.md
 Wymagane: tools/qa/ux-p43-retire-fm.js
 Weryfikacja: node --check web/home/app.js && node --check tools/qa/ux-p43-retire-fm.js && node tools/qa/ux-p43-retire-fm.js
 Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
@@ -21,6 +21,9 @@ Depends on: PK-P43c, PK-P43d merged.
 3. If the farm is locked, its scene shows the locked overlay (P36) and the unlock row in the edit drawer (P40e): check this still works.
 4. Tests FIRST, `tools/qa/ux-p43-retire-fm.js` (Playwright, mock `seven`): V1 `no-farm-market-tile`, V2 `no-window-anywhere` (walk all More tiles + places bar: no modal with farm/market class), V3 `farm-playable-in-scene` (plant a crop through the scene), V4 `market-playable-in-scene` (buy through the stall panel), V5 `locked-farm-unlock-path`.
 5. Run Weryfikacja; fix until green.
+
+## Poprawki po R1 (obowiązują, mają pierwszeństwo nad krokami wyżej)
+- Ukryj kafelki Farma i Targ w `web/home/app.js` (okolice linii 927) warunkiem `feat.id === 'farm' || feat.id === 'market'`. NIE edytuj `features/index.json`: moduły zostają zarejestrowane.
 
 Prohibited: changing or deleting existing test assertions (poza wskazanymi w krokach), new dependencies, touching files outside "Zmieniaj", extra refactors.
 Log: write `docs/opt/log/PK-P43f.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.

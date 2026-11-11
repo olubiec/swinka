@@ -22,5 +22,8 @@ Produces (names other packages rely on): Test class `OutdoorSeedAdversarialTests
 3. If a test exposes a defect: keep the test, mark it `[Fact(Skip = "DEFECT: <one line>")]` so the build stays green, and list each defect with a 3-line repro in the log. Do not change production code.
 4. Run the Weryfikacja line once.
 
+## Poprawki po R1 (obowiązują, mają pierwszeństwo nad krokami wyżej)
+- Dodaj przypadki: zasiew farmy i targu z siatką 16x9 oraz niezmienność fixture (próba usunięcia -> `fixture_locked`, przesunięcie dozwolone).
+
 Prohibited: changing or deleting existing test assertions (poza wskazanymi w krokach), new dependencies, touching files outside "Zmieniaj", extra refactors, running git.
 Log: write `docs/opt/log/PK-P46t1.md` (max 10 lines: decisions, exact API/field names others will use, differences from the plan, BLOCKED reason if any). Do not run git.

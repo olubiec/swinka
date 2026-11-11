@@ -2062,6 +2062,8 @@
     "src/Cuy.Core/GameSession.cs",
     "assets/data/world_items.json",
     "assets/world/atlas.json",
+    "assets/data/places.json",
+    "tests/Cuy.Core.Tests/WorldAssetsTests.cs",
     "tests/Cuy.Core.Tests/OutdoorSeedTests.cs",
     "docs/opt/log/PK-P46a.md"
    ],
@@ -2234,11 +2236,10 @@
    "items": [],
    "files": [
     "web/home/features/places/feature.js",
-    "web/home/features/garden/feature.js",
     "tools/qa/ux-p43-object-actions.js",
     "docs/opt/log/PK-P43e.md"
    ],
-   "verify": "node --check web/home/features/places/feature.js && node --check web/home/features/garden/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js",
+   "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js",
    "gate": false,
    "model": "gemini-3.8-flash-high",
    "timeout_minutes": 44,
@@ -2250,7 +2251,6 @@
    "items": [],
    "files": [
     "web/home/app.js",
-    "web/home/features/index.json",
     "tools/qa/ux-p43-retire-fm.js",
     "docs/opt/log/PK-P43f.md"
    ],
