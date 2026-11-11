@@ -170,5 +170,17 @@ namespace Cuy.Core.Tests
             // One cell further Y=6 -> OutOfBounds
             Assert.Equal(PlaceResult.OutOfBounds, RoomLayoutOps.CanPlace(room, 12, 7, 2, sofa, "salon", 9, 6));
         }
+
+        [Fact]
+        public void HouseItemsAreAllowedInDormAndRooms()
+        {
+            var room = new RoomLayout();
+            var houseItem = CreateItem("chair", 1, 1, "floor", "house");
+
+            Assert.Equal(PlaceResult.Ok, RoomLayoutOps.CanPlace(room, 12, 7, 2, houseItem, "salon", 0, 2));
+            Assert.Equal(PlaceResult.Ok, RoomLayoutOps.CanPlace(room, 12, 7, 2, houseItem, "bedroom", 0, 2));
+            Assert.Equal(PlaceResult.Ok, RoomLayoutOps.CanPlace(room, 12, 7, 2, houseItem, "playroom", 0, 2));
+            Assert.Equal(PlaceResult.Ok, RoomLayoutOps.CanPlace(room, 12, 7, 2, houseItem, "dorm", 0, 2));
+        }
     }
 }

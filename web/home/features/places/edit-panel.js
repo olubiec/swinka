@@ -752,21 +752,77 @@
       return getItemKind(item) === sceneKind;
     });
 
+    const placedCounts = {};
+    if (state && state.rooms && state.rooms.layouts) {
+      const layouts = state.rooms.layouts;
+      const orphanKeys = {};
+      const pigRooms = (state.rooms && Array.isArray(state.rooms.pigRooms)) ? state.rooms.pigRooms : [];
+      const roster = (state && Array.isArray(state.roster)) ? state.roster : [];
+
+      pigRooms.forEach(function (pr) {
+        if (!pr) return;
+        const canonical = pr.roomId || (pr.namedId ? ('pig:' + pr.namedId) : null);
+        const guidRoom = (pr.pigGuid && ('pig:' + pr.pigGuid)) ||
+                         (pr.guid && ('pig:' + pr.guid)) ||
+                         (pr.pigId && canonical && ('pig:' + pr.pigId) !== canonical ? ('pig:' + pr.pigId) : null);
+        if (canonical && guidRoom && layouts[canonical] && layouts[guidRoom]) {
+          orphanKeys[guidRoom] = true;
+        }
+
+        if (roster.length > 0) {
+          const pig = roster.find(function (p) {
+            return p && (p.id === pr.pigId || p.namedId === pr.pigId || ('pig:' + p.namedId) === pr.roomId || ('pig:' + p.id) === pr.roomId);
+          });
+          if (pig && pig.id && pig.namedId && pig.id !== pig.namedId) {
+            const cKey = 'pig:' + pig.namedId;
+            const gKey = 'pig:' + pig.id;
+            if (layouts[cKey] && layouts[gKey]) {
+              orphanKeys[gKey] = true;
+            }
+          }
+        }
+      });
+
+      roster.forEach(function (pig) {
+        if (pig && pig.id && pig.namedId && pig.id !== pig.namedId) {
+          const cKey = 'pig:' + pig.namedId;
+          const gKey = 'pig:' + pig.id;
+          if (layouts[cKey] && layouts[gKey]) {
+            orphanKeys[gKey] = true;
+          }
+        }
+      });
+
+      Object.keys(layouts).forEach(function (k) {
+        if (orphanKeys[k]) return;
+        const lay = layouts[k];
+        if (lay && Array.isArray(lay.items)) {
+          lay.items.forEach(function (it) {
+            if (it && (it.itemId || it.id)) {
+              const id = it.itemId || it.id;
+              placedCounts[id] = (placedCounts[id] || 0) + 1;
+            }
+          });
+        }
+      });
+    }
+
     return filtered.map(function (item) {
+      const itemId = item.id || item.itemId;
       let owned = 0;
       if (typeof item.owned === 'number') owned = item.owned;
       else if (item.owned === true) owned = 1;
 
       if (state) {
-        if (state.inventory && typeof state.inventory[item.id] === 'number') {
-          owned = Math.max(owned, state.inventory[item.id]);
+        if (state.inventory && typeof state.inventory[itemId] === 'number') {
+          owned = Math.max(owned, state.inventory[itemId]);
         }
         if (state.rooms) {
-          if (state.rooms.owned && typeof state.rooms.owned[item.id] === 'number') {
-            owned = Math.max(owned, state.rooms.owned[item.id]);
+          if (state.rooms.owned && typeof state.rooms.owned[itemId] === 'number') {
+            owned = Math.max(owned, state.rooms.owned[itemId]);
           }
           if (Array.isArray(state.rooms.catalog)) {
-            const cat = state.rooms.catalog.find(function (c) { return c && c.id === item.id; });
+            const cat = state.rooms.catalog.find(function (c) { return c && (c.id === itemId || c.itemId === itemId); });
             if (cat) {
               if (typeof cat.owned === 'number') owned = Math.max(owned, cat.owned);
               else if (cat.owned === true) owned = Math.max(owned, 1);
@@ -774,18 +830,24 @@
           }
         }
         if (state.world) {
-          if (state.world.owned && typeof state.world.owned[item.id] === 'number') {
-            owned = Math.max(owned, state.world.owned[item.id]);
+          if (state.world.owned && typeof state.world.owned[itemId] === 'number') {
+            owned = Math.max(owned, state.world.owned[itemId]);
           }
-          if (state.world.ownedItems && typeof state.world.ownedItems[item.id] === 'number') {
-            owned = Math.max(owned, state.world.ownedItems[item.id]);
+          if (state.world.ownedItems && typeof state.world.ownedItems[itemId] === 'number') {
+            owned = Math.max(owned, state.world.ownedItems[itemId]);
           }
         }
       }
 
+      const isRepeatable = !!(item.repeatable || (item.places && item.places.indexOf && item.places.indexOf('repeatable') >= 0));
+      let available = owned;
+      if (!isRepeatable && placedCounts[itemId]) {
+        available = Math.max(0, owned - placedCounts[itemId]);
+      }
+
       return Object.assign({}, item, {
         kind: getItemKind(item),
-        owned: owned
+        owned: available
       });
     });
   }
@@ -1153,6 +1215,7 @@
       drawer.className = 'edit-drawer ui-panel-wood';
       drawer.setAttribute('role', 'region');
       drawer.setAttribute('aria-label', 'Item stash');
+      drawer.setAttribute('data-allow-clip', 'true');
       drawer.hidden = true;
       drawer.innerHTML =
         '<div class="edit-drawer-header">' +
@@ -1226,6 +1289,7 @@
       toolbar.className = 'edit-item-toolbar ui-panel-wood';
       toolbar.setAttribute('role', 'toolbar');
       toolbar.setAttribute('aria-label', 'Item actions');
+      toolbar.setAttribute('data-allow-clip', 'true');
       toolbar.style.cssText = 'position:fixed;z-index:10000;display:none;align-items:center;gap:4px;padding:4px 6px;pointer-events:auto;image-rendering:pixelated;user-select:none;';
       toolbar.innerHTML =
         '<button type="button" class="ui-btn edit-toolbar-btn edit-toolbar-flip" id="editItemFlipBtn" data-action="flip" aria-label="Flip" title="Flip" style="height:22px;min-height:22px;padding:0 6px;display:inline-flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;">' +

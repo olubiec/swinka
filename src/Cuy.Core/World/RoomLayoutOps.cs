@@ -295,7 +295,8 @@ namespace Cuy.Core.World
 
             if (string.Equals(placeId, "salon", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(placeId, "bedroom", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(placeId, "playroom", StringComparison.OrdinalIgnoreCase))
+                string.Equals(placeId, "playroom", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(placeId, "dorm", StringComparison.OrdinalIgnoreCase))
             {
                 if (places.Any(p => string.Equals(p, "house", StringComparison.OrdinalIgnoreCase)))
                 {

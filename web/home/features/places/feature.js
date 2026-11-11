@@ -240,7 +240,11 @@
           if (src.flicker) {
             strength *= (0.85 + 0.15 * Math.sin(now / 160 + idx));
           }
-          const col = src.color || [1, 0.85, 0.6];
+          let col = src.color || [1, 0.85, 0.6];
+          if (col === 'ambient') {
+            const amb = scene.ambient || {};
+            col = amb.color || [1, 0.95, 0.85];
+          }
           const rgb = Array.isArray(col) && col[0] <= 1 && col[1] <= 1 && col[2] <= 1
             ? [Math.round(col[0] * 255), Math.round(col[1] * 255), Math.round(col[2] * 255)]
             : (Array.isArray(col) ? col : [255, 220, 160]);
@@ -584,10 +588,13 @@
       ? window.CuyScenes.timeOfDay()
       : 'day';
     const sceneDef = (window.CuyScenes && typeof window.CuyScenes.def === 'function')
-      ? window.CuyScenes.def(currentSceneId, tod)
+      ? window.CuyScenes.def(currentSceneId, tod, st)
       : { id: currentSceneId, size: [240, 130], walk: [10, 80, 230, 125] };
 
-    if (currentInstScene !== currentSceneId) {
+    const inst = (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance) || (window.CuyPig && window.CuyPig.mainInstance);
+    const sizeChanged = inst && sceneDef.size && (inst.sceneWidth !== sceneDef.size[0] || inst.sceneHeight !== sceneDef.size[1]);
+
+    if (currentInstScene !== currentSceneId || sizeChanged) {
       if (window.CanvasPig && typeof window.CanvasPig.setScene === 'function') {
         window.CanvasPig.setScene(sceneDef);
       }

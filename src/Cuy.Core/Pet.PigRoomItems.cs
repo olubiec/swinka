@@ -117,16 +117,16 @@ namespace Cuy.Core
             var def = WorldItemCatalog.Find(placed.ItemId);
             if (def == null) return PlaceResult.UnknownItem;
 
-            var grid = IsPigRoomId(toRoom) ? PigRoomGrid() : PlaceUnlock.GridSize(world, PlaceCatalog, toRoom);
+            var grid = GetRoomGridSize(toRoom);
             int wallRows = PlaceCatalog != null ? PlaceCatalog.WallRows : 2;
 
             if (string.Equals(fromRoom, toRoom, StringComparison.OrdinalIgnoreCase))
             {
-                return RoomLayoutOps.Move(from, grid.Item1, grid.Item2, wallRows, WorldItemCatalog, toRoom, placed.Uid, x, y);
+                return RoomLayoutOps.Move(from, grid.cols, grid.rows, wallRows, WorldItemCatalog, EffectivePlaceForValidation(toRoom), placed.Uid, x, y);
             }
 
             string keepUid = placed.Uid;
-            var result = RoomLayoutOps.Place(to, grid.Item1, grid.Item2, wallRows, def, toRoom, x, y, () => keepUid, WorldItemCatalog);
+            var result = RoomLayoutOps.Place(to, grid.cols, grid.rows, wallRows, def, EffectivePlaceForValidation(toRoom), x, y, () => keepUid, WorldItemCatalog);
             if (result != PlaceResult.Ok) return result;
 
             var moved = to.Items[to.Items.Count - 1];

@@ -28,6 +28,8 @@ namespace Cuy.Features
             if (pet == null) return;
 
             pet.Balance.PlacesActive = true;
+            pet.EnsurePigRooms();
+            HealOrphanPigRooms(pet);
             var world = pet.EnsureWorld();
             var catalog = pet.PlaceCatalog ?? PlaceCatalog.Current;
             var gameState = pet.State;
@@ -109,12 +111,67 @@ namespace Cuy.Features
             var orderList = new List<object>();
             foreach (var entry in ring)
             {
+                int entryLevel = 1;
+                int entryMaxLevel = 1;
+                int entryNextCost = -1;
+
+                if (entry.Id.StartsWith("pig:", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (world.PlaceLevels != null && world.PlaceLevels.TryGetValue(entry.Id, out int lv) && lv > 0)
+                        entryLevel = lv;
+                    else
+                        entryLevel = 1;
+
+                    var pLevels = pet.PigRooms?.Levels;
+                    entryMaxLevel = pLevels != null ? pLevels.Count : 1;
+                    if (pLevels != null && entryLevel < pLevels.Count)
+                    {
+                        entryNextCost = pLevels[entryLevel].Cost;
+                    }
+                }
+                else if (string.Equals(entry.Id, SceneOrder.DormId, StringComparison.OrdinalIgnoreCase))
+                {
+                    entryLevel = SharedRoomOps.DormLevel(world);
+                    var dLevels = pet.PigRooms?.Dorm?.Levels;
+                    entryMaxLevel = dLevels != null ? dLevels.Count : 1;
+                    if (dLevels != null && entryLevel < dLevels.Count)
+                    {
+                        entryNextCost = dLevels[entryLevel].Cost;
+                    }
+                }
+                else
+                {
+                    entryLevel = PlaceUnlock.GetLevel(world, catalog, entry.Id);
+                    var pDef = catalog?.Find(entry.Id);
+                    if (pDef != null)
+                    {
+                        entryMaxLevel = pDef.Levels != null && pDef.Levels.Count > 0 ? pDef.Levels.Count : 1;
+                        entryNextCost = PlaceUnlock.NextLevelCost(world, catalog, entry.Id);
+                    }
+                    else
+                    {
+                        var rDef = catalog?.FindRoom(entry.Id);
+                        if (rDef != null)
+                        {
+                            entryMaxLevel = rDef.Levels != null && rDef.Levels.Count > 0 ? rDef.Levels.Count : 1;
+                            entryNextCost = PlaceUnlock.NextLevelCost(world, catalog, entry.Id);
+                        }
+                    }
+                }
+
+                string sceneTitle = GetSceneTitle(pet, entry.Id);
+                if (string.IsNullOrEmpty(sceneTitle)) sceneTitle = entry.Title;
+
                 orderList.Add(new
                 {
                     id = entry.Id,
-                    title = entry.Title,
+                    title = sceneTitle,
                     locked = entry.Locked,
-                    unlockHint = entry.UnlockHint
+                    unlockHint = entry.UnlockHint,
+                    level = entryLevel,
+                    maxLevel = entryMaxLevel,
+                    nextLevelCost = entryNextCost,
+                    nextCost = entryNextCost
                 });
             }
 
@@ -298,6 +355,84 @@ namespace Cuy.Features
             }
         }
 
+        private static void HealOrphanPigRooms(Pet pet)
+        {
+            if (pet?.State?.Roster == null) return;
+
+            foreach (var pig in pet.State.Roster)
+            {
+                if (pig == null) continue;
+                if (!string.IsNullOrEmpty(pig.NamedId) && !string.IsNullOrEmpty(pig.Id) &&
+                    !string.Equals(pig.NamedId, pig.Id, StringComparison.Ordinal))
+                {
+                    string canonicalId = "pig:" + pig.NamedId;
+                    string guidRoomId = "pig:" + pig.Id;
+
+                    if (pet.State.World?.Rooms != null && pet.State.World.Rooms.TryGetValue(guidRoomId, out var orphanRoom) && orphanRoom != null)
+                    {
+                        if (!pet.State.World.Rooms.TryGetValue(canonicalId, out var canonicalRoom) || canonicalRoom == null)
+                        {
+                            pet.State.World.Rooms[canonicalId] = orphanRoom;
+                        }
+                        else if (orphanRoom.Items != null && orphanRoom.Items.Count > 0 &&
+                                 (canonicalRoom.Items == null || canonicalRoom.Items.Count == 0))
+                        {
+                            canonicalRoom.Items = orphanRoom.Items;
+                        }
+                        pet.State.World.Rooms.Remove(guidRoomId);
+                    }
+
+                    if (pet.State.PigLocations != null && pet.State.PigLocations.TryGetValue(pig.Id, out var loc) && loc != null)
+                    {
+                        if (string.Equals(loc.SceneId, guidRoomId, StringComparison.OrdinalIgnoreCase))
+                        {
+                            loc.SceneId = canonicalId;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static string Capitalize(string str)
+        {
+            if (string.IsNullOrEmpty(str)) return str;
+            return char.ToUpperInvariant(str[0]) + str.Substring(1);
+        }
+
+        private static string GetSceneTitle(Pet pet, string sceneId)
+        {
+            if (string.IsNullOrEmpty(sceneId)) return string.Empty;
+            if (sceneId.StartsWith("pig:", StringComparison.OrdinalIgnoreCase))
+            {
+                string raw = sceneId.Substring(4);
+                var pig = pet?.State?.Roster?.FirstOrDefault(p =>
+                    p != null && (string.Equals(p.Id, raw, StringComparison.OrdinalIgnoreCase) ||
+                                  string.Equals(p.NamedId, raw, StringComparison.OrdinalIgnoreCase)));
+                if (pig != null && !string.IsNullOrWhiteSpace(pig.Name))
+                {
+                    return Capitalize(pig.Name) + "'s Room";
+                }
+                if (!string.IsNullOrEmpty(raw))
+                {
+                    return Capitalize(raw) + "'s Room";
+                }
+                return "Pig's Room";
+            }
+            if (string.Equals(sceneId, SceneOrder.DormId, StringComparison.OrdinalIgnoreCase))
+            {
+                return "Shared Bedroom";
+            }
+            if (string.Equals(sceneId, SceneOrder.SalonId, StringComparison.OrdinalIgnoreCase))
+            {
+                return "Living room";
+            }
+            var def = pet?.PlaceCatalog?.Find(sceneId);
+            if (def != null && !string.IsNullOrEmpty(def.Name)) return def.Name;
+            var rDef = pet?.PlaceCatalog?.FindRoom(sceneId);
+            if (rDef != null && !string.IsNullOrEmpty(rDef.Name)) return rDef.Name;
+            return Capitalize(sceneId);
+        }
+
         private static List<string> GetRoomIds(GameState state, WorldState world)
         {
             var list = new List<string>();
@@ -306,7 +441,9 @@ namespace Cuy.Features
                 foreach (var pig in state.Roster)
                 {
                     if (pig == null || pig.Memorial) continue;
-                    string id = "pig:" + pig.Id;
+                    string key = !string.IsNullOrEmpty(pig.NamedId) ? pig.NamedId : pig.Id;
+                    if (string.IsNullOrEmpty(key)) continue;
+                    string id = "pig:" + key;
                     if (!list.Contains(id)) list.Add(id);
                 }
             }

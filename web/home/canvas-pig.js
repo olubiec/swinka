@@ -1382,13 +1382,22 @@
       this.iconsImg = loadImage(assetsBase + 'icons/icons_16.png');
     }
 
-    // Mouse position -> scene coordinates. The canvas is drawn with object-fit: cover,
-    // aligned to the bottom (see style.css), so the scale is uniform and the top may be cropped.
+    // Mouse position -> scene coordinates. The canvas is drawn with object-fit: contain
     toScene(e) {
       const rect = this.canvas.getBoundingClientRect();
-      const s = Math.max(rect.width / this.sceneWidth, rect.height / this.sceneHeight);
-      const offX = (rect.width - this.sceneWidth * s) / 2;
-      const offY = rect.height - this.sceneHeight * s;
+      const rw = rect.width || this.sceneWidth;
+      const rh = rect.height || this.sceneHeight;
+      const fit = (typeof window !== 'undefined' && window.getComputedStyle && typeof Element !== 'undefined' && this.canvas instanceof Element)
+        ? window.getComputedStyle(this.canvas).objectFit
+        : 'contain';
+      const isContain = fit !== 'cover';
+      const s = isContain
+        ? Math.min(rw / this.sceneWidth, rh / this.sceneHeight)
+        : Math.max(rw / this.sceneWidth, rh / this.sceneHeight);
+      const offX = (rw - this.sceneWidth * s) / 2;
+      const offY = isContain
+        ? (rh - this.sceneHeight * s) / 2
+        : (rh - this.sceneHeight * s);
       const cx = (e && typeof e.clientX === 'number') ? e.clientX : (e && typeof e.x === 'number' ? e.x : 0);
       const cy = (e && typeof e.clientY === 'number') ? e.clientY : (e && typeof e.y === 'number' ? e.y : 0);
       return { x: (cx - rect.left - offX) / s, y: (cy - rect.top - offY) / s };
@@ -1396,9 +1405,19 @@
 
     toClient(x, y) {
       const rect = this.canvas.getBoundingClientRect();
-      const s = Math.max(rect.width / this.sceneWidth, rect.height / this.sceneHeight);
-      const offX = (rect.width - this.sceneWidth * s) / 2;
-      const offY = rect.height - this.sceneHeight * s;
+      const rw = rect.width || this.sceneWidth;
+      const rh = rect.height || this.sceneHeight;
+      const fit = (typeof window !== 'undefined' && window.getComputedStyle && typeof Element !== 'undefined' && this.canvas instanceof Element)
+        ? window.getComputedStyle(this.canvas).objectFit
+        : 'contain';
+      const isContain = fit !== 'cover';
+      const s = isContain
+        ? Math.min(rw / this.sceneWidth, rh / this.sceneHeight)
+        : Math.max(rw / this.sceneWidth, rh / this.sceneHeight);
+      const offX = (rw - this.sceneWidth * s) / 2;
+      const offY = isContain
+        ? (rh - this.sceneHeight * s) / 2
+        : (rh - this.sceneHeight * s);
       return {
         clientX: rect.left + offX + x * s,
         clientY: rect.top + offY + y * s
@@ -1420,7 +1439,18 @@
 
     getItemDef(itemId) {
       if (!itemId) return null;
-      if (typeof itemId === 'object') return itemId;
+      if (typeof itemId === 'object') {
+        if (!itemId.layer) {
+          const id = itemId.itemId || itemId.id;
+          const wallPrefixes = ['window_', 'picture_', 'shelf_', 'fairy_lights', 'bunting', 'hanging_ivy', 'wall_clock', 'clock_cuckoo', 'lace_curtain'];
+          if (typeof id === 'string' && wallPrefixes.some(p => id.startsWith(p) || id === p)) {
+            itemId.layer = 'wall';
+          } else {
+            itemId.layer = 'floor';
+          }
+        }
+        return itemId;
+      }
       let atlas = null;
       if (typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.getAtlas === 'function') {
         atlas = window.CuyScenes.getAtlas();
@@ -1445,6 +1475,25 @@
         } catch (e) {}
       }
       const entry = (atlas && atlas.items) ? atlas.items[itemId] : null;
+
+      let layer = null;
+      if (this.lastState && this.lastState.rooms && Array.isArray(this.lastState.rooms.catalog)) {
+        const catItem = this.lastState.rooms.catalog.find(c => c && (c.id === itemId || c.itemId === itemId));
+        if (catItem && catItem.layer) {
+          layer = catItem.layer;
+        }
+      }
+      if (!layer && entry && entry.layer) {
+        layer = entry.layer;
+      }
+      const wallPrefixes = ['window_', 'picture_', 'shelf_', 'fairy_lights', 'bunting', 'hanging_ivy', 'wall_clock', 'clock_cuckoo', 'lace_curtain'];
+      if (!layer || layer === 'floor') {
+        if (typeof itemId === 'string' && wallPrefixes.some(p => itemId.startsWith(p) || itemId === p)) {
+          layer = 'wall';
+        }
+      }
+      if (!layer) layer = 'floor';
+
       if (entry) {
         const sw = entry.size ? entry.size[0] : ((entry.cells ? entry.cells[0] * 16 : 32));
         const sh = entry.size ? entry.size[1] : ((entry.cells ? entry.cells[1] * 16 : 32));
@@ -1462,7 +1511,8 @@
           url: url,
           flat: isFlat,
           place: entry.place,
-          kind: kind
+          kind: kind,
+          layer: layer
         };
       }
       return {
@@ -1474,7 +1524,8 @@
         url: null,
         flat: false,
         place: 'house',
-        kind: 'indoor'
+        kind: 'indoor',
+        layer: layer
       };
     }
 
@@ -1519,10 +1570,21 @@
       const fy1 = dy + sph;
       const fy0 = fy1 - 4;
 
-      // Inside walk band
-      const [wx0, wy0, wx1, wy1] = this.walk || [10, 96, 230, 126];
-      if (fx0 < wx0 || fx1 > wx1 || fy0 < wy0 || fy1 > wy1) {
-        return false;
+      if (isOutdoor || typeof this.wallH !== 'number') {
+        const [wx0, wy0, wx1, wy1] = this.walk || [10, 96, 230, 126];
+        if (fx0 < wx0 || fx1 > wx1 || fy0 < wy0 || fy1 > wy1) {
+          return false;
+        }
+      } else {
+        if (def.layer === 'wall') {
+          if (fx0 < 0 || fx1 > this.sceneWidth || dy < 0 || fy1 > this.wallH + 8) {
+            return false;
+          }
+        } else {
+          if (fx0 < 0 || fx1 > this.sceneWidth || fy0 < this.wallH || fy1 > this.sceneHeight) {
+            return false;
+          }
+        }
       }
 
       // Not on blockers
@@ -2023,6 +2085,7 @@
       const scene = {
         width: this.sceneWidth,
         height: this.sceneHeight,
+        wallH: this.wallH,
         floorY: this.floorLine(),
         state: this.lastState || {},
         time: (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(),
@@ -2042,17 +2105,21 @@
       } else {
         const zNegLayers = this.layers.filter(l => l.z < 0);
         const equipped = (this.lastState && this.lastState.decor && this.lastState.decor.equipped) || {};
-        zNegLayers.forEach(l => {
-          if (l.name === 'wallpaper' && equipped.wallpaper) scene.skipDefaultWall = true;
-          if (l.name === 'floor' && equipped.floor) scene.skipDefaultFloor = true;
-        });
+        if (typeof this.wallH !== 'number') {
+          zNegLayers.forEach(l => {
+            if (l.name === 'wallpaper' && equipped.wallpaper) scene.skipDefaultWall = true;
+            if (l.name === 'floor' && equipped.floor) scene.skipDefaultFloor = true;
+          });
+        }
 
         this.drawHabitat(ctx, scene);
         zNegLayers.forEach(l => l.drawFn(ctx, scene));
         const isSalon = !this.sceneId || this.sceneId === 'salon';
         if (isSalon) {
           this.drawPoops(ctx);
-          this.drawProps(ctx);
+          if (scene && scene.legacyProps) {
+            this.drawProps(ctx);
+          }
         }
       }
 
@@ -2559,12 +2626,21 @@
             const dist = Math.hypot(src.x - wx, src.y - wy);
             if (dist >= r) return;
             const k = (src.intensity ?? 1) * (1 - dist / r);
-            const col = src.color || [1, 1, 1];
-            for (let ch = 0; ch < 3; ch++) light[ch] += k * col[ch];
+            let col = src.color || [1, 1, 1];
+            if (col === 'ambient') {
+              col = ambient;
+            } else if (!Array.isArray(col)) {
+              col = [1, 1, 1];
+            }
+            for (let ch = 0; ch < 3; ch++) {
+              const val = typeof col[ch] === 'number' && !isNaN(col[ch]) ? col[ch] : 1;
+              light[ch] += k * val;
+            }
           });
           // Multiply only, with a cap and a soft knee: the coat darkens or tints but never burns out to white.
           for (let ch = 0; ch < 3; ch++) {
-            const l = Math.min(PIG_LIGHT_MAX, light[ch]);
+            const rawLight = isNaN(light[ch]) ? 1 : light[ch];
+            const l = Math.min(PIG_LIGHT_MAX, rawLight);
             const v = data[i + ch] * (1 - PIG_LIGHT_STRENGTH + PIG_LIGHT_STRENGTH * l);
             data[i + ch] = v <= PIG_KNEE ? v : PIG_KNEE + (v - PIG_KNEE) * 0.5;
           }

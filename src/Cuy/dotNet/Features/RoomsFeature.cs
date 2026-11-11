@@ -73,7 +73,7 @@ namespace Cuy.Features
             {
                 world.Rooms.TryGetValue(id, out var roomLayout);
 
-                var (cols, rows) = PlaceUnlock.GridSize(world, placeCatalog, id);
+                var (cols, rows) = pet.GetRoomGridSize(id);
                 if (cols <= 0)
                 {
                     var pDef = placeCatalog?.Find(id);
@@ -202,8 +202,25 @@ namespace Cuy.Features
                 {
                     if (pig == null) continue;
                     string roomId = pet.RoomIdOf(pig.Id);
-                    int roomLevel = PlaceUnlock.GetLevel(world, placeCatalog, roomId);
-                    var (pigCols, pigRows) = gridSizes.TryGetValue(roomId, out var grid) ? grid : (12, 7);
+                    int roomLevel = 1;
+                    if (world.PlaceLevels != null && world.PlaceLevels.TryGetValue(roomId, out int lv) && lv > 0)
+                        roomLevel = lv;
+                    else
+                    {
+                        int plv = PlaceUnlock.GetLevel(world, placeCatalog, roomId);
+                        if (plv > 0) roomLevel = plv;
+                    }
+                    var (pigCols, pigRows) = pet.GetRoomGridSize(roomId);
+                    if (pigCols <= 0 || pigRows <= 0)
+                    {
+                        (pigCols, pigRows) = gridSizes.TryGetValue(roomId, out var grid) ? grid : (10, 6);
+                    }
+                    int maxLevel = pet.PigRooms?.Levels != null ? pet.PigRooms.Levels.Count : 0;
+                    int nextCost = -1;
+                    if (pet.PigRooms?.Levels != null && roomLevel < pet.PigRooms.Levels.Count)
+                    {
+                        nextCost = pet.PigRooms.Levels[roomLevel].Cost;
+                    }
 
                     pigRooms.Add(new
                     {
@@ -212,8 +229,8 @@ namespace Cuy.Features
                         roomId = roomId,
                         displayName = pet.RoomDisplayName(pig.Id),
                         level = roomLevel,
-                        maxLevel = pet.PigRooms.Levels != null ? pet.PigRooms.Levels.Count : 0,
-                        nextLevelCost = PlaceUnlock.NextLevelCost(world, placeCatalog, roomId),
+                        maxLevel = maxLevel,
+                        nextLevelCost = nextCost,
                         cols = pigCols,
                         rows = pigRows,
                         memorial = pig.Memorial,
@@ -232,7 +249,7 @@ namespace Cuy.Features
 
                 foreach (var s in pet.StorageList())
                 {
-                    storageList.Add(new { itemId = s.itemId, free = s.free });
+                    storageList.Add(new { itemId = s.itemId, free = s.free, count = s.free });
                 }
 
                 if (itemCatalog?.All != null)
@@ -351,11 +368,14 @@ namespace Cuy.Features
             {
                 string place = message?.Value<string>("place") ?? "salon";
                 string itemId = message?.Value<string>("itemId");
-                int x = message?.Value<int?>("x") ?? 0;
-                int y = message?.Value<int?>("y") ?? 0;
+                int rawX = message?.Value<int?>("x") ?? 0;
+                int rawY = message?.Value<int?>("y") ?? 0;
                 bool flip = message?.Value<bool?>("flip") ?? false;
 
                 if (string.IsNullOrEmpty(itemId)) return true;
+
+                var def = pet.WorldItemCatalog?.Find(itemId);
+                var (x, y) = ResolveGridCoordinates(pet, place, def, rawX, rawY);
 
                 var res = pet.PlaceItem(place, itemId, x, y, flip);
                 if (res == PlaceResult.UnknownItem)
@@ -383,10 +403,23 @@ namespace Cuy.Features
             {
                 string place = message?.Value<string>("place") ?? "salon";
                 string uid = message?.Value<string>("uid");
-                int x = message?.Value<int?>("x") ?? 0;
-                int y = message?.Value<int?>("y") ?? 0;
+                int rawX = message?.Value<int?>("x") ?? 0;
+                int rawY = message?.Value<int?>("y") ?? 0;
 
                 if (string.IsNullOrEmpty(uid)) return true;
+
+                WorldItemDefinition def = null;
+                var world = pet.State.World;
+                if (world?.Rooms != null && world.Rooms.TryGetValue(place, out var rLayout) && rLayout?.Items != null)
+                {
+                    var placedItem = rLayout.Items.FirstOrDefault(i => i != null && string.Equals(i.Uid, uid, StringComparison.OrdinalIgnoreCase));
+                    if (placedItem != null)
+                    {
+                        def = pet.WorldItemCatalog?.Find(placedItem.ItemId);
+                    }
+                }
+
+                var (x, y) = ResolveGridCoordinates(pet, place, def, rawX, rawY, ignoreUid: uid);
 
                 var res = pet.MoveItem(place, uid, x, y);
                 if (res == PlaceResult.UnknownItem)
@@ -550,6 +583,112 @@ namespace Cuy.Features
             try { brain.Session.AutoSaver.SaveNow(); } catch (Exception ex) { BrainController.Log("[WARN] RoomsFeature save: " + ex.Message); }
             HomeWindow.NotifyStateChanged();
             return true;
+        }
+
+        private static (int x, int y) ResolveGridCoordinates(
+            Pet pet,
+            string place,
+            WorldItemDefinition def,
+            int rawX,
+            int rawY,
+            string ignoreUid = null)
+        {
+            if (pet == null || def == null) return (rawX, rawY);
+
+            var world = pet.State.World ?? new WorldState();
+            var (cols, rows) = pet.GetRoomGridSize(place);
+            if (cols <= 0 || rows <= 0)
+            {
+                (cols, rows) = PlaceUnlock.GridSize(world, pet.PlaceCatalog, place);
+            }
+            if (cols <= 0) cols = 12;
+            if (rows <= 0) rows = 7;
+            int wallRows = pet.PlaceCatalog != null ? pet.PlaceCatalog.WallRows : 2;
+
+            int w = def.W > 0 ? def.W : 1;
+            int h = def.H > 0 ? def.H : 1;
+
+            RoomLayout room = null;
+            if (world.Rooms != null)
+            {
+                world.Rooms.TryGetValue(place, out room);
+            }
+
+            string effPlace = Pet.EffectivePlaceForValidation(place);
+
+            // 1. Auto-place for negative coords (e.g. from customize panel stash)
+            if (rawX < 0 || rawY < 0)
+            {
+                int startY = string.Equals(def.Layer, "wall", StringComparison.OrdinalIgnoreCase) ? 0 : wallRows;
+                int endY = string.Equals(def.Layer, "wall", StringComparison.OrdinalIgnoreCase) ? wallRows : rows;
+
+                for (int cy = startY; cy + h <= endY; cy++)
+                {
+                    for (int cx = 0; cx + w <= cols; cx++)
+                    {
+                        if (RoomLayoutOps.CanPlace(room, cols, rows, wallRows, def, effPlace, cx, cy, ignoreUid, pet.WorldItemCatalog) == PlaceResult.Ok)
+                        {
+                            return (cx, cy);
+                        }
+                    }
+                }
+                return (rawX, rawY);
+            }
+
+            // 2. Pixel coordinates conversion (rawX or rawY beyond cell bounds)
+            if (rawX >= cols || rawY >= rows)
+            {
+                int targetX = (int)Math.Round(rawX / 16.0 - w / 2.0);
+                int targetY = (int)Math.Round(rawY / 16.0 - h);
+
+                targetX = Math.Max(0, Math.Min(cols - w, targetX));
+                targetY = Math.Max(0, Math.Min(rows - h, targetY));
+
+                if (RoomLayoutOps.CanPlace(room, cols, rows, wallRows, def, effPlace, targetX, targetY, ignoreUid, pet.WorldItemCatalog) == PlaceResult.Ok)
+                {
+                    return (targetX, targetY);
+                }
+
+                // If collision / snapping issue, find nearest valid neighbor by Manhattan distance
+                int bestDist = int.MaxValue;
+                int bestX = targetX;
+                int bestY = targetY;
+                bool found = false;
+
+                int searchRadius = 3;
+                int minX = Math.Max(0, targetX - searchRadius);
+                int maxX = Math.Min(cols - w, targetX + searchRadius);
+                int minY = Math.Max(0, targetY - searchRadius);
+                int maxY = Math.Min(rows - h, targetY + searchRadius);
+
+                for (int cy = minY; cy <= maxY; cy++)
+                {
+                    for (int cx = minX; cx <= maxX; cx++)
+                    {
+                        if (RoomLayoutOps.CanPlace(room, cols, rows, wallRows, def, effPlace, cx, cy, ignoreUid, pet.WorldItemCatalog) == PlaceResult.Ok)
+                        {
+                            int dist = Math.Abs(cx - targetX) + Math.Abs(cy - targetY);
+                            if (dist < bestDist)
+                            {
+                                bestDist = dist;
+                                bestX = cx;
+                                bestY = cy;
+                                found = true;
+                            }
+                        }
+                    }
+                }
+
+                if (found)
+                {
+                    return (bestX, bestY);
+                }
+
+                return (targetX, targetY);
+            }
+
+            // 3. Already cell coordinates
+            return (rawX, rawY);
         }
     }
 }

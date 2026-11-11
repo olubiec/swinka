@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Cuy.Core.Pigs;
 using Cuy.Core.Time;
 using Cuy.Core.World;
@@ -180,6 +182,74 @@ namespace Cuy.Core.Tests
             }
             double decayOn = 100.0 - petOn.State.Needs.Mood;
             Assert.Equal(decayOff * 0.85, decayOn, precision: 2);
+        }
+
+        [Fact]
+        public void PlaceItem_InPigRoom_AllowsHouseItemLikeGramophone()
+        {
+            var pet = CreatePet(initialClovers: 1000, decorActive: true);
+            pet.Balance.PigRoomsActive = true;
+            pet.State.Roster.Add(new PigProfile("Gryzli", "peruvian", "pal_01") { Id = "cuy", NamedId = "cuy" });
+            pet.EnsurePigRooms();
+
+            var catalogItems = new List<WorldItemDefinition>(pet.WorldItemCatalog.All)
+            {
+                new WorldItemDefinition("gramophone", "Gramophone", new[] { "house" }, 1, 1, price: 0, comfort: 0, layer: "floor", icon: "gramophone", repeatable: false)
+            };
+            pet.WorldItemCatalog = new WorldItemCatalog(catalogItems);
+
+            var world = pet.EnsureWorld();
+            world.OwnedItems["gramophone"] = 1;
+
+            var result = pet.PlaceItem("pig:cuy", "gramophone", 4, 3, false);
+            Assert.Equal(PlaceResult.Ok, result);
+        }
+
+        [Fact]
+        public void MoveItem_InPigRoom_MovesHouseItem()
+        {
+            var pet = CreatePet(initialClovers: 1000, decorActive: true);
+            pet.Balance.PigRoomsActive = true;
+            pet.State.Roster.Add(new PigProfile("Gryzli", "peruvian", "pal_01") { Id = "cuy", NamedId = "cuy" });
+            pet.EnsurePigRooms();
+
+            var catalogItems = new List<WorldItemDefinition>(pet.WorldItemCatalog.All)
+            {
+                new WorldItemDefinition("gramophone", "Gramophone", new[] { "house" }, 1, 1, price: 0, comfort: 0, layer: "floor", icon: "gramophone", repeatable: false)
+            };
+            pet.WorldItemCatalog = new WorldItemCatalog(catalogItems);
+
+            var world = pet.EnsureWorld();
+            world.OwnedItems["gramophone"] = 1;
+
+            var placeRes = pet.PlaceItem("pig:cuy", "gramophone", 4, 3, false);
+            Assert.Equal(PlaceResult.Ok, placeRes);
+
+            var uid = world.Rooms["pig:cuy"].Items.First(i => i.ItemId == "gramophone").Uid;
+            var moveRes = pet.MoveItem("pig:cuy", uid, 5, 3);
+            Assert.Equal(PlaceResult.Ok, moveRes);
+        }
+
+        [Fact]
+        public void GetRoomGridSize_ReturnsPigRoomAndDormDimensions()
+        {
+            var pet = CreatePet(initialClovers: 1000, decorActive: true);
+            pet.Balance.PigRoomsActive = true;
+            pet.Balance.PlacesActive = true;
+            pet.State.Roster.Add(new PigProfile("Gryzli", "peruvian", "pal_01") { Id = "cuy", NamedId = "cuy" });
+            pet.EnsurePigRooms();
+
+            var sizeLevel1 = pet.GetRoomGridSize("pig:cuy");
+            Assert.Equal((10, 6), sizeLevel1);
+
+            var upgradeRes = pet.UpgradePlace("pig:cuy");
+            Assert.Equal(WorldResult.Ok, upgradeRes);
+
+            var sizeLevel2 = pet.GetRoomGridSize("pig:cuy");
+            Assert.Equal((12, 7), sizeLevel2);
+
+            var dormSize = pet.GetRoomGridSize("dorm");
+            Assert.Equal((16, 8), dormSize);
         }
     }
 }

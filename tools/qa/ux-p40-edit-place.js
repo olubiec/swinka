@@ -1,5 +1,6 @@
 'use strict';
 const path = require('path');
+const fs = require('fs');
 const assert = require('assert');
 
 // Ensure module resolution finds node_modules under tools/qa
@@ -13,7 +14,9 @@ const ux = require('./lib/ux.js');
 
 async function run() {
   const server = await ux.startServer();
-  const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
+  const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+  const executablePath = process.env.CHROMIUM_PATH || (fs.existsSync(edgePath) ? edgePath : undefined);
+  const browser = await chromium.launch(executablePath ? { executablePath } : {});
   const page = await ux.openHome(browser);
   page.setDefaultTimeout(5000);
 
@@ -331,6 +334,64 @@ async function run() {
     assert.strictEqual(ghost.valid, false, 'Ghost for indoor item in garden must have valid: false');
 
     await page.evaluate(() => window.CanvasPig.setGhost(null));
+  });
+
+  // P8: drop-gramophone-in-pig-room
+  await testScenario('P8 drop-gramophone-in-pig-room', async () => {
+    await page.evaluate(() => {
+      const st = window.bridge.currentState || window.bridge.getState();
+      const m = window.CuyScenesMock.state('seven');
+      st.places = m.places;
+      if (!st.places.order) st.places.order = [];
+      const cuyPlace = { id: 'pig:cuy', title: "Gryzli's Room", kind: 'indoor', locked: false };
+      const idx = st.places.order.findIndex(p => p.id === 'pig:cuy');
+      if (idx >= 0) st.places.order[idx] = cuyPlace;
+      else st.places.order.push(cuyPlace);
+
+      if (!st.rooms) st.rooms = {};
+      if (!st.rooms.layouts) st.rooms.layouts = {};
+      st.rooms.layouts['pig:cuy'] = { cols: 10, rows: 6, wallRows: 2, items: [] };
+
+      if (!st.world) st.world = {};
+      st.world.ownedItems = { gramophone: 1 };
+
+      if (!st.rooms.owned) st.rooms.owned = {};
+      st.rooms.owned = { gramophone: 1 };
+
+      delete st.emptyEdit;
+      delete st.items;
+
+      window.bridge.broadcastState();
+      window.CuyPlaces.openPlace('pig:cuy');
+      if (window.CuyEdit) {
+        if (!window.CuyEdit.isOpen()) window.CuyEdit.toggle();
+        window.CuyEdit.render(st);
+      }
+      window.__sentPlaceMessages = [];
+    });
+    await page.waitForTimeout(100);
+
+    const card = page.locator('#editDrawer .edit-card[data-id="gramophone"]:not(.is-dimmed)');
+    await card.waitFor({ state: 'visible', timeout: 3000 });
+    await card.scrollIntoViewIfNeeded();
+    const box = await card.boundingBox();
+    assert(box, 'Gramophone item card must have bounding box');
+
+    const target = await page.evaluate(() => window.CanvasPig.toClient(80, 64));
+
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(target.clientX, target.clientY, { steps: 5 });
+    await page.mouse.up();
+    await page.waitForTimeout(100);
+
+    const sent = await page.evaluate(() => window.__sentPlaceMessages);
+    assert.strictEqual(sent.length, 1, `Expected exactly 1 room_place message, got ${sent.length}`);
+    assert.strictEqual(sent[0].type, 'room_place');
+    assert.strictEqual(sent[0].place, 'pig:cuy');
+    assert.strictEqual(sent[0].itemId, 'gramophone');
+    assert.strictEqual(sent[0].x, 80);
+    assert.strictEqual(sent[0].y, 64);
   });
 
   await browser.close();

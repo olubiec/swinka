@@ -65,6 +65,67 @@ namespace Cuy.Core
             return BuyResult.Ok;
         }
 
+        public (int cols, int rows) GetRoomGridSize(string placeOrRoomId)
+        {
+            if (string.IsNullOrEmpty(placeOrRoomId)) return (0, 0);
+            var world = EnsureWorld();
+            if (IsPigRoomId(placeOrRoomId))
+            {
+                int level = 1;
+                if (world.PlaceLevels != null && world.PlaceLevels.TryGetValue(placeOrRoomId, out int lv) && lv > 0)
+                    level = lv;
+                var levels = PigRooms?.Levels;
+                if (levels != null && levels.Count > 0)
+                {
+                    int index = Math.Min(level - 1, levels.Count - 1);
+                    if (index >= 0)
+                        return (levels[index].Cols, levels[index].Rows);
+                    return (levels[0].Cols, levels[0].Rows);
+                }
+                return (10, 6);
+            }
+            if (string.Equals(placeOrRoomId, SharedRoomOps.DormId, StringComparison.OrdinalIgnoreCase))
+            {
+                int level = SharedRoomOps.DormLevel(world);
+                var levels = PigRooms?.Dorm?.Levels;
+                if (levels != null && levels.Count > 0)
+                {
+                    int index = Math.Min(level - 1, levels.Count - 1);
+                    if (index >= 0)
+                        return (levels[index].Cols, levels[index].Rows);
+                    return (levels[0].Cols, levels[0].Rows);
+                }
+                return (16, 8);
+            }
+            var size = PlaceUnlock.GridSize(world, PlaceCatalog, placeOrRoomId);
+            if (size.cols <= 0 || size.rows <= 0)
+            {
+                var pDef = PlaceCatalog.Find(placeOrRoomId);
+                if (pDef?.Levels != null && pDef.Levels.Count > 0)
+                    return (pDef.Levels[0].Cols, pDef.Levels[0].Rows);
+                var rDef = PlaceCatalog.FindRoom(placeOrRoomId);
+                if (rDef?.Levels != null && rDef.Levels.Count > 0)
+                    return (rDef.Levels[0].Cols, rDef.Levels[0].Rows);
+            }
+            return size;
+        }
+
+        public static string EffectivePlaceForValidation(string placeOrRoomId)
+        {
+            if (string.IsNullOrEmpty(placeOrRoomId)) return placeOrRoomId;
+            if (placeOrRoomId.StartsWith("pig:", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(placeOrRoomId, SharedRoomOps.DormId, StringComparison.OrdinalIgnoreCase))
+            {
+                return "house";
+            }
+            return placeOrRoomId;
+        }
+
+        public PlaceResult PlaceItem(string placeOrRoomId, string itemId, int x, int y)
+        {
+            return PlaceItem(placeOrRoomId, itemId, x, y, false);
+        }
+
         public PlaceResult PlaceItem(string placeOrRoomId, string itemId, int x, int y, bool flip)
         {
             if (!Balance.WorldDecorActive) return PlaceResult.NotAllowedHere;
@@ -118,10 +179,10 @@ namespace Cuy.Core
                 world.Rooms[placeOrRoomId] = roomLayout;
             }
 
-            var (cols, rows) = PlaceUnlock.GridSize(world, PlaceCatalog, placeOrRoomId);
+            var (cols, rows) = GetRoomGridSize(placeOrRoomId);
             int wallRows = PlaceCatalog != null ? PlaceCatalog.WallRows : 2;
 
-            var result = RoomLayoutOps.Place(roomLayout, cols, rows, wallRows, def, placeOrRoomId, x, y, catalog: WorldItemCatalog);
+            var result = RoomLayoutOps.Place(roomLayout, cols, rows, wallRows, def, EffectivePlaceForValidation(placeOrRoomId), x, y, catalog: WorldItemCatalog);
             if (result == PlaceResult.Ok)
             {
                 if (flip && roomLayout.Items.Count > 0)
@@ -142,10 +203,10 @@ namespace Cuy.Core
             var world = EnsureWorld();
             if (!world.Rooms.TryGetValue(place, out var room) || room == null) return PlaceResult.UnknownItem;
 
-            var (cols, rows) = PlaceUnlock.GridSize(world, PlaceCatalog, place);
+            var (cols, rows) = GetRoomGridSize(place);
             int wallRows = PlaceCatalog != null ? PlaceCatalog.WallRows : 2;
 
-            return RoomLayoutOps.Move(room, cols, rows, wallRows, WorldItemCatalog, place, uid, x, y);
+            return RoomLayoutOps.Move(room, cols, rows, wallRows, WorldItemCatalog, EffectivePlaceForValidation(place), uid, x, y);
         }
 
         public bool FlipItem(string place, string uid, bool flip)

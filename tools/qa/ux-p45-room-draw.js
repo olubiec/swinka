@@ -154,6 +154,46 @@ function runScenarioChecks(CanvasPig, CuyScenes, inst) {
       `RD6: floor item ${t.id} feet y=${t.y} must be >= wallH=${dbgThings.wallH}`);
   }
   console.log('PASS RD6 placed floor items feet are at y >= wallH in debug things list');
+
+  // RD7: legacy decor wallpaper/floor layers do not overwrite calibrated rooms (scene.wallH present)
+  let legacyLayerRan = false;
+  if (inst && Array.isArray(inst.layers)) {
+    const wallLayer = inst.layers.find(l => l.name === 'wallpaper');
+    if (wallLayer && typeof wallLayer.drawFn === 'function') {
+      const dummyCtx = { fillRect: () => { legacyLayerRan = true; }, fillStyle: '' };
+      wallLayer.drawFn(dummyCtx, salonDef);
+      assert.strictEqual(legacyLayerRan, false, 'RD7: legacy decor wallpaper layer must not run on calibrated scene');
+    }
+  }
+  console.log('PASS RD7 legacy decor layers skip calibrated rooms');
+
+  // RD7: pig:cuy (10x6) with equipped wallpaper_mint does not paint 96px wall over floor
+  const stateCuy = {
+    decor: { equipped: { wallpaper: 'wallpaper_mint', floor: 'floor_wood_light', plant: 'plant_fern' } },
+    rooms: {
+      pigRooms: [{ pigId: '1572a1ccd7444517bc878292894d8bda', name: 'gryzli', roomId: 'pig:cuy', displayName: "gryzli's room", cols: 10, rows: 6 }],
+      layouts: {
+        'pig:cuy': { cols: 10, rows: 6, wallRows: 2, wallpaper: 'wallpaper_mint', floor: 'floor_wood_light', items: [{ uid: 'g1', itemId: 'gramophone', x: 4, y: 3 }] }
+      }
+    }
+  };
+  const cuyDef = CuyScenes.def('pig:cuy', 'day', stateCuy);
+  CanvasPig.setScene(cuyDef);
+  if (inst) {
+    if (typeof inst.updateState === 'function') inst.updateState(stateCuy);
+    if (typeof inst.setThings === 'function') inst.setThings(CuyScenes.placedThings(stateCuy, 'pig:cuy'), true);
+    if (typeof inst.render === 'function') inst.render();
+  }
+  assert.deepStrictEqual(cuyDef.size, [160, 96], `RD7: pig:cuy size expected [160, 96], got ${JSON.stringify(cuyDef.size)}`);
+  assert.strictEqual(cuyDef.wallH, 32, `RD7: pig:cuy wallH expected 32, got ${cuyDef.wallH}`);
+  if (typeof CanvasPig.cellValid === 'function') {
+    assert.strictEqual(CanvasPig.cellValid('gramophone', 120, 80), true, 'RD7: gramophone at (120, 80) must be valid');
+  }
+  if (typeof CanvasPig.toClient === 'function' && typeof CanvasPig.toScene === 'function') {
+    const pt = CanvasPig.toScene(CanvasPig.toClient(80, 64));
+    assert(Math.abs(pt.x - 80) < 0.5 && Math.abs(pt.y - 64) < 0.5, 'RD7: toClient/toScene round-trip mismatch');
+  }
+  console.log('PASS RD7 pig:cuy (10x6) with equipped wallpaper_mint does not paint 96px wall over floor');
 }
 
 async function runBrowserTests() {
@@ -403,6 +443,59 @@ async function runBrowserTests() {
     });
   });
 
+  await testScenario('RD7: pig:cuy (10x6) with equipped wallpaper_mint does not paint 96px wall over floor', async () => {
+    await page.evaluate(async () => {
+      const st = window.bridge.currentState || window.bridge.getState();
+      st.decor = { equipped: { wallpaper: 'wallpaper_mint', floor: 'floor_wood_light', plant: 'plant_fern' } };
+      if (!st.rooms) st.rooms = {};
+      st.rooms.pigRooms = [{ pigId: '1572a1ccd7444517bc878292894d8bda', name: 'gryzli', roomId: 'pig:cuy', displayName: "gryzli's room", cols: 10, rows: 6 }];
+      if (!st.rooms.layouts) st.rooms.layouts = {};
+      st.rooms.layouts['pig:cuy'] = { cols: 10, rows: 6, wallRows: 2, wallpaper: 'wallpaper_mint', floor: 'floor_wood_light', items: [{ uid: 'g1', itemId: 'gramophone', x: 4, y: 3 }] };
+
+      if (window.CuyDecorRenderer && typeof window.CuyDecorRenderer.setC === 'function') {
+        window.CuyDecorRenderer.setC(st);
+      }
+
+      const inst = window.CanvasPig.instance || (window.CuyPig && window.CuyPig.mainInstance);
+      const def = window.CuyScenes.def('pig:cuy', 'day', st);
+      window.CanvasPig.setScene(def);
+      if (inst) {
+        if (typeof inst.setLightScene === 'function') inst.setLightScene(null);
+        if (typeof inst.updateState === 'function') inst.updateState(st);
+        inst.setThings(window.CuyScenes.placedThings(st, 'pig:cuy'), true);
+        inst.render();
+      }
+
+      if (!def.size || def.size[0] !== 160 || def.size[1] !== 96) {
+        throw new Error(`def.size expected [160, 96], got ${JSON.stringify(def.size)}`);
+      }
+      if (def.wallH !== 32) {
+        throw new Error(`def.wallH expected 32, got ${def.wallH}`);
+      }
+
+      if (inst && inst.ctx) {
+        const p = inst.ctx.getImageData(80, 70, 1, 1).data;
+        const r = p[0], g = p[1], b = p[2];
+        const isMintStripe = (r === 191 && g === 227 && b === 201) || (r === 167 && g === 212 && b === 181);
+        if (isMintStripe) {
+          throw new Error(`Pixel at (80, 70) is legacy mint stripe color: [${r}, ${g}, ${b}]`);
+        }
+        if (!(r > g && g > b)) {
+          throw new Error(`Pixel at (80, 70) is not wood floor color (expected r > g && g > b): [${r}, ${g}, ${b}]`);
+        }
+      }
+
+      if (!window.CanvasPig.cellValid('gramophone', 120, 80)) {
+        throw new Error("window.CanvasPig.cellValid('gramophone', 120, 80) expected true, got false");
+      }
+
+      const pt = window.CanvasPig.toScene(window.CanvasPig.toClient(80, 64));
+      if (!(Math.abs(pt.x - 80) < 0.5 && Math.abs(pt.y - 64) < 0.5)) {
+        throw new Error(`toClient/toScene round-trip mismatch: got (${pt.x}, ${pt.y}) for (80, 64)`);
+      }
+    });
+  });
+
   await browser.close();
   await server.close();
 }
@@ -453,6 +546,10 @@ function runNodeFallback() {
     getContext: () => mockCtx,
     width: 192,
     height: 112,
+    dataset: {},
+    style: {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
     getBoundingClientRect: () => ({ left: 0, top: 0, width: 192, height: 112, right: 192, bottom: 112 })
   };
 
@@ -461,6 +558,15 @@ function runNodeFallback() {
     location: { href: 'http://localhost' },
     addEventListener: () => {},
     removeEventListener: () => {}
+  };
+  global.Image = global.Image || class Image {
+    constructor() {
+      this.naturalWidth = 64;
+      this.naturalHeight = 64;
+      this.width = 64;
+      this.height = 64;
+      this.complete = true;
+    }
   };
 
   const CuyScenes = require('../../web/home/features/places/scenes.js');
@@ -480,6 +586,8 @@ function runNodeFallback() {
 
   runScenarioChecks(CanvasPig, CuyScenes, inst);
 }
+
+const runNodeTests = runNodeFallback;
 
 async function main() {
   if (playwright) {

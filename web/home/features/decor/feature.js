@@ -74,6 +74,7 @@
     if (!window.CuyRoom) return;
 
     window.CuyRoom.addLayer('wallpaper', -20, (ctx, scene) => {
+      if (scene && typeof scene.wallH === 'number') return;
       const eq = currentState?.decor?.equipped?.wallpaper;
       if (!eq) return;
       scene.skipDefaultWall = true;
@@ -143,6 +144,7 @@
     });
 
     window.CuyRoom.addLayer('floor', -10, (ctx, scene) => {
+      if (scene && typeof scene.wallH === 'number') return;
       const eq = currentState?.decor?.equipped?.floor;
       if (!eq) return;
       scene.skipDefaultFloor = true;
@@ -199,6 +201,7 @@
     });
 
     window.CuyRoom.addLayer('rug', -5, (ctx, scene) => {
+      if (scene && typeof scene.wallH === 'number') return;
       const eq = currentState?.decor?.equipped?.rug;
       if (!eq) return;
       const look = getLook(eq);
@@ -251,6 +254,7 @@
     });
 
     window.CuyRoom.addLayer('picture', -15, (ctx, scene) => {
+      if (scene && typeof scene.wallH === 'number') return;
       const eq = currentState?.decor?.equipped?.picture;
       if (!eq) return;
       const look = getLook(eq);
@@ -296,6 +300,7 @@
     });
 
     window.CuyRoom.addLayer('plant', 5, (ctx, scene) => {
+      if (scene && typeof scene.wallH === 'number') return;
       const eq = currentState?.decor?.equipped?.plant;
       if (!eq) return;
       const look = getLook(eq);
@@ -350,6 +355,7 @@
     });
 
     window.CuyRoom.addLayer('lamp', 6, (ctx, scene) => {
+      if (scene && typeof scene.wallH === 'number') return;
       const eq = currentState?.decor?.equipped?.lamp;
       if (!eq) return;
       const look = getLook(eq);
@@ -539,6 +545,7 @@
 
         if (window.PigCanvas) {
           this.mini = new window.PigCanvas(cvs, st);
+          this.mini.wallH = null;
           this.mini.updateState(st);
           this.mini.render();
         } else {

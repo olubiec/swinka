@@ -150,7 +150,42 @@ namespace Cuy.Core
             if (!Balance.PlacesActive) return WorldResult.Disabled;
             if (string.IsNullOrEmpty(id)) return WorldResult.Unknown;
 
+            if (string.Equals(id, SharedRoomOps.DormId, StringComparison.OrdinalIgnoreCase))
+            {
+                return UpgradeDorm();
+            }
+
             var world = EnsureWorld();
+
+            if (IsPigRoomId(id))
+            {
+                EnsurePigRooms();
+                if (world.Rooms == null || !world.Rooms.ContainsKey(id)) return WorldResult.Unknown;
+
+                int current = 1;
+                if (world.PlaceLevels != null && world.PlaceLevels.TryGetValue(id, out int lv) && lv > 0)
+                    current = lv;
+
+                var levels = PigRooms?.Levels;
+                if (levels == null || current >= levels.Count)
+                    return WorldResult.MaxLevel;
+
+                var nextDef = levels[current];
+                if (State.Clovers < nextDef.Cost)
+                    return WorldResult.NotEnoughClovers;
+
+                if (nextDef.Cost > 0 && !TrySpendClovers(nextDef.Cost))
+                    return WorldResult.NotEnoughClovers;
+
+                if (world.PlaceLevels == null)
+                    world.PlaceLevels = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+                int nextLevel = current + 1;
+                world.PlaceLevels[id] = nextLevel;
+                Raise(PlaceUpgraded, new PlaceUpgradedEventArgs(id, nextLevel));
+                return WorldResult.Ok;
+            }
+
             var placeDef = PlaceCatalog.Find(id);
             var roomDef = PlaceCatalog.FindRoom(id);
             if (placeDef == null && roomDef == null) return WorldResult.Unknown;

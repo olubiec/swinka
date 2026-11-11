@@ -371,6 +371,9 @@
       const cell = findFreeCell(st, layout, def);
       if (!cell) { this.dispatchMessage({ type: 'toast', text: 'No room for that here' }); return; }
       x = cell.x; y = cell.y;
+    } else if (x >= layout.cols || y >= layout.rows) {
+      x = Math.max(0, Math.min(layout.cols - def.w, Math.round(x / 16 - def.w / 2)));
+      y = Math.max(0, Math.min(layout.rows - def.h, Math.round(y / 16 - def.h)));
     }
     const err = checkSpot(st, layout, def, x, y, null);
     if (err) { this.dispatchMessage({ type: 'toast', text: err }); return; }
@@ -389,9 +392,15 @@
     const it = layout.items.find((i) => i.uid === action.uid);
     const def = it && findDef(it.itemId);
     if (!def) return;
-    const err = checkSpot(st, layout, def, action.x | 0, action.y | 0, it.uid);
+    let x = action.x | 0;
+    let y = action.y | 0;
+    if (x >= layout.cols || y >= layout.rows) {
+      x = Math.max(0, Math.min(layout.cols - def.w, Math.round(x / 16 - def.w / 2)));
+      y = Math.max(0, Math.min(layout.rows - def.h, Math.round(y / 16 - def.h)));
+    }
+    const err = checkSpot(st, layout, def, x, y, it.uid);
     if (err) { this.dispatchMessage({ type: 'toast', text: err }); return; }
-    it.x = action.x | 0; it.y = action.y | 0;
+    it.x = x; it.y = y;
   });
 
   bridge.registerMockHandler('room_flip', function (st, action) {

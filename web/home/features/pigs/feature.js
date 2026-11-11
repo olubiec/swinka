@@ -934,8 +934,12 @@
     icon: 'icon-pair-pigs',
     order: 4,
     get spriteKey() {
+      if (this._spriteKey) return this._spriteKey;
       const active = (lastState && lastState.roster && (lastState.roster.find(p => p && (p.id === (lastState.activePigIds && lastState.activePigIds[0]))) || lastState.roster[0])) || null;
       return (root.CuyLook && root.CuyLook.spriteFor) ? root.CuyLook.spriteFor(active) : null;
+    },
+    set spriteKey(val) {
+      this._spriteKey = val;
     },
     open(container, api) {
       activeContainer = container;
