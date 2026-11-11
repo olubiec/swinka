@@ -113,16 +113,19 @@ Mapa uwag właściciela (11.11 po teście pokoi świnek i oświetlenia):
 - **Fizyka światła (czarna sylwetka świnki w świetle okna)**: naprawiono w `canvas-pig.js` (obsługa `src.color === 'ambient'` i zabezpieczenie przed `NaN`, przez które piksele futerka świnki stawały się czarne w promieniu światła z okna) -> **naprawione natychmiast 11.11**.
 - **Baner "Go there" bez tła jako mały dymek**: usunięto pełnowymiarowy brązowy pasek rozcinający okno, zastąpiono go przezroczystym kontenerem i lekkim dymkiem `.places-presence-chip` -> **naprawione natychmiast 11.11**.
 - **Pokoje świnek (`pig:*`), błąd "Not ready yet" przy gramofonie i podłoga pod meble**: naprawiono walidację przedmiotów z przypisaniem `house` w pokojach świnek, uzdrowiono pokoje sieroce `pig:<guid>` oraz skorygowano rysowanie podłogi i tapety pod meble -> **naprawione natychmiast 11.11**.
-- **Ucięta góra sceny (okno i ściana) przy wypełnianiu na szerokość**: naprawiono w `web/home/style.css` i `web/home/features/places/feature.css`. Usunięto sztywne `object-fit: cover` z kotwiczeniem do dołu (`50% 100%`) oraz nadmierne rozciąganie dolnego panelu akcji. Zastosowano `width: 100%; height: auto; max-height: 252px; object-fit: contain;`, dzięki czemu pokój wypełnia całą szerokość, a górna ściana i okno są w 100% widoczne bez jakichkolwiek ucięć, przy zachowaniu precyzji kliknięć 1:1 -> **naprawione natychmiast 11.11**.
+- **Ucięta góra sceny (okno i ściana) oraz brak bocznych kolumn**: naprawiono w `web/home/style.css` i `web/home/features/places/feature.css`. Ustawiono `.stage-viewport` jako sztywny kontener `flex: 0 0 auto`, dzięki czemu flexbox nie ściska sceny w pionie. Scena (`#pigCanvas`) ma `width: 100%; height: auto;` bez wymuszania `object-fit: contain` ściskającego boki, co całkowicie wyeliminowało czarne/jasne kolumny po bokach w scenach oraz ucięcia okna u góry -> **naprawione natychmiast 11.11**.
+- **Pasek przełączania miejsc (tekst zlewający się z żółtymi pasami)**: naprawiono w `web/home/style.css` i `web/home/features/places/feature.css`. Tytuł miejsca (`.places-bar-title`) otrzymał estetyczną, ciemną tabliczkę z drewna (`var(--ui-wood-4)` z delikatnym obramowaniem `1px solid var(--ui-wood-0)` i cieniem). Żółte przeszycia banera dochodzą do tabliczki po bokach i nie przechodzą już przez litery, dzięki czemu tekst jest w 100% czytelny i kontrastowy -> **naprawione natychmiast 11.11**.
+- **Wielkość dymków rozmowy i pigułki obecności**: w `web/home/canvas-pig.js` dopasowano dymek wypowiedzi świnki (`drawSpeechBubble`: zmniejszono czcionkę z 11px do pikselowego 9px, wysokość z 22px do 15px, zwarty ogonek) oraz w CSS zmniejszono pigułkę obecności świnki (`.places-presence-chip`), dzięki czemu nie przysłaniają pokoju -> **naprawione natychmiast 11.11**.
+- **Fizyka światła i wygląd świnki**: w `web/home/features/places/feature.js` wyregulowano addytywne źródła światła (zmniejszono współczynnik blasku `lighter` z oślepiającego 1.0 do subtelnego 0.32), dzięki czemu scena nie jest wypalana do czystej bieli, a świnka wkraczając w światło zachowuje naturalne kolory futerka zamiast wyglądać jak czarny cień/plama -> **naprawione natychmiast 11.11**.
 - **Kolizyjność z przedmiotami w pokojach**: świnka ma poprawne sortowanie głębokości (przód/tył), ale przenika przez bryłę mebli, bo 4-pikselowa stopa pozwala stawiać kroki tuż obok krawędzi, przez co ciało świnki nachodzi na meble. Pełna siatka brył mebli i blokowanie przenikania przypisane do **Fali P7** (`P7-01` i `P7-03` – `RoomOccupancy` i fizyka poruszania się w pokoju).
 
 ### Stan wdrożenia i podział zadań na fale (aktualizacja 11.11):
 - **Zrobione natychmiast (gotowe w kodzie i skompilowane)**:
-  1. Fizyka światła z okna: świnka jest jasna w świetle okna, usunięto czarną plamę/artefakt.
-  2. Dymek "Go there": jest lekkim dymkiem bez rozcinającego tła.
-  3. Błąd "Not ready yet" przy gramofonie w pokoju świnki: naprawiona obsługa `house` w pokojach dedykowanych.
-  4. Rysowanie pokoi: pełna tapeta i podłoga pod meblami w pokojach świnek.
-  5. Skalowanie i proporcje: scena ma 100% szerokości, brak ucięć u góry (okno i ściana w pełni widoczne).
+  1. Pasek przełączania miejsc: nazwa miejsca na eleganckiej, ciemnej drewnianej tabliczce z wyraźnym obrysem; żółte pasy nie nachodzą na tekst.
+  2. Usunięcie bocznych kolumn: kontener sceny `flex: 0 0 auto` + `width: 100%; height: auto` – scena wypełnia pełną szerokość bez kolumn i bez obcinania góry.
+  3. Skalowanie dymków: dymki mowy świnki oraz pigułka "Go there" mają zwarty, retro-pikselowy rozmiar.
+  4. Fizyka światła i wygląd świnki: zbalansowano blask lamp i okna w trybie `lighter` (koniec z wypalaniem tła do bieli i czarną sylwetką świnki); zabezpieczono `litFrame` przed NaN.
+  5. Pokoje świnek: obsługa mebli `house`, brak błędu "Not ready yet", pełne tło i podłoga pod meblami.
 - **Najbliższe kolejne fale (zaplanowane)**:
   - **Fala P43 (Interakcja w scenie)**:
     - PK-P43a..f: klikalne punkty bez otwierania osobnych okien (stragany na targu, grządki/sad na farmie).

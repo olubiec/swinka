@@ -251,8 +251,9 @@
 
           ctx.save();
           ctx.globalCompositeOperation = 'lighter';
+          const glowAlpha = Math.min(0.32, (strength || 0.8) * 0.32);
           const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-          g.addColorStop(0, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${strength})`);
+          g.addColorStop(0, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${glowAlpha})`);
           g.addColorStop(1, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0)`);
           ctx.fillStyle = g;
           ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r);

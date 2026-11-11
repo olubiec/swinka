@@ -2639,10 +2639,11 @@
           });
           // Multiply only, with a cap and a soft knee: the coat darkens or tints but never burns out to white.
           for (let ch = 0; ch < 3; ch++) {
-            const rawLight = isNaN(light[ch]) ? 1 : light[ch];
-            const l = Math.min(PIG_LIGHT_MAX, rawLight);
+            const rawLight = (typeof light[ch] === 'number' && !isNaN(light[ch])) ? light[ch] : 1;
+            const l = Math.max(0.4, Math.min(PIG_LIGHT_MAX, rawLight));
             const v = data[i + ch] * (1 - PIG_LIGHT_STRENGTH + PIG_LIGHT_STRENGTH * l);
-            data[i + ch] = v <= PIG_KNEE ? v : PIG_KNEE + (v - PIG_KNEE) * 0.5;
+            const clampedV = (typeof v === 'number' && !isNaN(v)) ? v : data[i + ch];
+            data[i + ch] = clampedV <= PIG_KNEE ? clampedV : PIG_KNEE + (clampedV - PIG_KNEE) * 0.5;
           }
         }
       }
@@ -2671,13 +2672,14 @@
 
     drawSpeechBubble(ctx) {
       const text = this.bubbleText;
-      const bx = Math.max(16, Math.min(this.sceneWidth - 110, this.pigX - 30));
-      const by = Math.max(16, this.pigY - 60);
+      if (!text) return;
 
-      ctx.font = 'bold 11px "Pixelify Sans", monospace';
+      ctx.font = 'bold 9px "Pixelify Sans", monospace';
       const textWidth = ctx.measureText(text).width;
-      const bw = Math.max(60, textWidth + 14);
-      const bh = 22;
+      const bw = Math.max(42, Math.round(textWidth + 10));
+      const bh = 15;
+      const bx = Math.max(8, Math.min(this.sceneWidth - bw - 8, Math.round(this.pigX - bw / 2)));
+      const by = Math.max(8, Math.round(this.pigY - 44));
 
       // Bubble shadow
       ctx.fillStyle = '#2b1712';
@@ -2690,14 +2692,15 @@
       ctx.strokeRect(bx + 0.5, by + 0.5, bw - 1, bh - 1);
 
       // Bubble tail
+      const tailX = Math.round(bx + Math.min(bw - 10, Math.max(8, this.pigX - bx - 2)));
       ctx.fillStyle = '#fffdf8';
-      ctx.fillRect(bx + 20, by + bh - 1, 6, 4);
+      ctx.fillRect(tailX, by + bh - 1, 4, 3);
       ctx.fillStyle = '#3a1d17';
-      ctx.fillRect(bx + 19, by + bh + 3, 2, 2);
+      ctx.fillRect(tailX, by + bh + 2, 2, 1);
 
       // Bubble text
       ctx.fillStyle = '#2b1712';
-      ctx.fillText(text, bx + 7, by + 15);
+      ctx.fillText(text, bx + 5, by + 11);
     }
   }
 
