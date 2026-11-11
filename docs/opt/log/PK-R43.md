@@ -1,0 +1,7 @@
+- Re-grounded wave P43 against P40, P45 and P46 outdoor-instance model.
+- Decisions: execution order P44 -> P46 -> P43; hotspots bind dynamically to instances via CuyScenes.hotspotsFor; static place_scenes.json hotspots are fallback only.
+- Farm plots map 1:1 to fx:farm:plot:<i> and FarmState.Plots; market stalls map to categories seeds/home/pantry/sell. Moving them in Edit mode preserves all state.
+- In P43e: toys, food drawer and gramophone are dropped (code absent); only lamps toggle via places/feature.js (garden/feature.js removed from scope).
+- In P43f: features/index.json is kept intact; app.js filters out More tiles.
+- APIs produced: CuyScenes.hotspotsFor(sceneId, state), CanvasPig.setHotspots(list), CanvasPig.getHotspots(), CanvasPig.onHotspot(fn), CuyMarket.openPanel(cat, rect).
+- Verification: node tools/qa/foundation-check.js docs/opt/foundations/R43.md 5 passed.
