@@ -287,6 +287,9 @@
         }
       }
     }
+    if (pig && pig.silhouette && look) {
+      look.silhouette = true;
+    }
 
     if (look && root.CuyPig && typeof root.CuyPig.renderPortrait === 'function') {
       const cvs = root.CuyPig.renderPortrait(look, stage, sz);
@@ -618,10 +621,10 @@
         html += `
           <div class="pig-card pig-offer-card offer-locked" data-offer-id="${offer.id}">
             <div class="pig-card-header">
-              <span class="pig-card-name">${offer.name}</span>
+              <span class="pig-card-name">???</span>
             </div>
             <div class="pig-card-portrait">
-              ${renderPigPortrait(offer)}
+              ${renderPigPortrait(Object.assign({}, offer, { silhouette: true, look: Object.assign({}, offer.look, { silhouette: true }) }))}
             </div>
             <div class="pig-card-blurb">${offer.blurb || ''}</div>
             <div class="offer-locked-info">
@@ -933,6 +936,7 @@
     title: 'My Pigs',
     icon: 'icon-pair-pigs',
     order: 4,
+    alwaysOnState: true,
     get spriteKey() {
       if (this._spriteKey) return this._spriteKey;
       const active = (lastState && lastState.roster && (lastState.roster.find(p => p && (p.id === (lastState.activePigIds && lastState.activePigIds[0]))) || lastState.roster[0])) || null;
@@ -976,6 +980,24 @@
         const moreBtn = document.querySelector('button[data-open-feature="pigs"]');
         if (moreBtn && this.spriteKey) {
           moreBtn.dataset.spriteKey = this.spriteKey;
+        }
+
+        const elPetName = document.getElementById('petName');
+        if (elPetName) {
+          const isNamed = active && (active.namedId || active.id === 'kuki' || active.id === 'ned');
+          if (isNamed) {
+            elPetName.removeAttribute('role');
+            elPetName.removeAttribute('tabindex');
+            elPetName.removeAttribute('title');
+            elPetName.style.cursor = 'default';
+            elPetName.style.pointerEvents = 'none';
+          } else {
+            elPetName.setAttribute('role', 'button');
+            elPetName.setAttribute('tabindex', '0');
+            elPetName.setAttribute('title', 'Click to rename');
+            elPetName.style.cursor = '';
+            elPetName.style.pointerEvents = '';
+          }
         }
       }
     }

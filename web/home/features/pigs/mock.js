@@ -115,7 +115,11 @@
         }
       };
 
-      const mockPigs = [starterPig, kukiPig, nedPig, jamesPig];
+      const mockPigs = st.adoptionGateOpen ? [starterPig, kukiPig, nedPig, jamesPig] : [starterPig, jamesPig];
+
+      if (!st.adoptionGateOpen) {
+        st.roster = st.roster.filter(p => p && p.id !== 'kuki' && p.namedId !== 'kuki' && p.id !== 'ned' && p.namedId !== 'ned');
+      }
 
       // Update or insert mock pigs into roster
       mockPigs.forEach(p => {
@@ -139,8 +143,8 @@
         }
       });
 
-      if (!Array.isArray(st.activePigIds) || st.activePigIds.length === 0) {
-        st.activePigIds = ['starter', 'kuki'];
+      if (!Array.isArray(st.activePigIds) || st.activePigIds.length === 0 || (!st.adoptionGateOpen && st.activePigIds.includes('kuki'))) {
+        st.activePigIds = ['starter'];
       }
 
       // Also ensure offers have look
@@ -162,5 +166,66 @@
         });
       }
     });
+  }
+
+  if (bridge.registerMockHandler) {
+    function handleAdoptStarterPair(st) {
+      if (!st) return;
+      st.adoptionGateOpen = true;
+      st.adoptionOfferAccepted = true;
+      if (!Array.isArray(st.roster)) st.roster = [];
+      const kuki = {
+        id: 'kuki',
+        name: 'Kuki',
+        breed: 'rosette_normal',
+        paletteId: 'two_tone.ginger',
+        namedId: 'kuki',
+        stage: 'adult',
+        ageYears: 1.5,
+        memorial: false,
+        blurb: 'Friendly and calm. Gets along with everybody.',
+        traits: [],
+        look: {
+          spriteKey: 'sprites/pigs/kuki/adult/spritesheet.png',
+          breed: 'rosette_normal',
+          coat: 'two_tone.ginger',
+          stage: 'adult',
+          named: 'kuki'
+        }
+      };
+      const ned = {
+        id: 'ned',
+        name: 'Ned',
+        breed: 'teddy_chubby',
+        paletteId: 'bicolor_head.chocolate',
+        namedId: 'ned',
+        stage: 'adult',
+        ageYears: 0.3,
+        memorial: false,
+        blurb: 'Lazy, curious and always hungry.',
+        traits: ['sleepyhead', 'glutton', 'explorer'],
+        look: {
+          spriteKey: 'sprites/pigs/ned/adult/spritesheet.png',
+          breed: 'teddy_chubby',
+          coat: 'bicolor_head.chocolate',
+          stage: 'adult',
+          named: 'ned'
+        }
+      };
+      if (!st.roster.some(p => p && (p.id === 'kuki' || p.namedId === 'kuki'))) {
+        st.roster.push(kuki);
+      }
+      if (!st.roster.some(p => p && (p.id === 'ned' || p.namedId === 'ned'))) {
+        st.roster.push(ned);
+      }
+      if (Array.isArray(st.offers)) {
+        st.offers.forEach(o => {
+          if (o && (o.id === 'kuki' || o.id === 'ned')) o.adopted = true;
+        });
+      }
+    }
+
+    bridge.registerMockHandler('adopt_starter_pair', handleAdoptStarterPair);
+    bridge.registerMockHandler('accept_adoption_offer', handleAdoptStarterPair);
   }
 })(typeof window !== 'undefined' ? window : this);

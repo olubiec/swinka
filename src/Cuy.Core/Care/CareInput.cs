@@ -113,5 +113,45 @@ namespace Cuy.Core.Care
 
             return false;
         }
+
+        public static bool TryProfile(string name, string birth, string adopted, int? baselineGrams, DateTime todayLocal, out CarePigProfile profile)
+        {
+            profile = null;
+            if (!TryPigName(name, out var cleanName)) return false;
+
+            string birthDate = null;
+            if (!string.IsNullOrWhiteSpace(birth))
+            {
+                if (!TryDate(birth, todayLocal, out birthDate)) return false;
+            }
+
+            string adoptedDate = null;
+            if (!string.IsNullOrWhiteSpace(adopted))
+            {
+                if (!TryDate(adopted, todayLocal, out adoptedDate)) return false;
+            }
+
+            if (birthDate != null && adoptedDate != null)
+            {
+                if (string.Compare(adoptedDate, birthDate, StringComparison.Ordinal) < 0)
+                    return false;
+            }
+
+            int? validBaseline = null;
+            if (baselineGrams.HasValue && baselineGrams.Value != 0)
+            {
+                if (!TryGrams(baselineGrams.Value)) return false;
+                validBaseline = baselineGrams.Value;
+            }
+
+            profile = new CarePigProfile
+            {
+                Name = cleanName,
+                BirthDate = birthDate,
+                AdoptedDate = adoptedDate,
+                BaselineGrams = validBaseline
+            };
+            return true;
+        }
     }
 }

@@ -56,6 +56,10 @@ namespace Cuy.Features
                 {
                     enabled = over.Enabled;
                 }
+                else if (settings.ManualOptIn == true)
+                {
+                    enabled = false;
+                }
 
                 DateTime? lastDone = null;
                 if (careState.LastDoneUtc.TryGetValue(task.Id, out var ld))
@@ -108,12 +112,24 @@ namespace Cuy.Features
 
             var alerts = pet.WeightAlerts().ToList();
 
+            var profilesObj = settings.Pigs
+                .Select(p => new
+                {
+                    name = p.Name,
+                    birthDate = p.BirthDate,
+                    adoptedDate = p.AdoptedDate,
+                    baselineGrams = p.BaselineGrams
+                })
+                .ToList();
+
             // Default snooze minutes if missing
             var snoozeMinutes = CareData.Current.SnoozeMinutes ?? new List<int> { 15, 60, 180 };
 
             state[Id] = new
             {
                 pigs = pigsList,
+                profiles = profilesObj,
+                manualOptIn = settings.ManualOptIn ?? false,
                 tasks = taskObjects,
                 history = historyObj,
                 weights = weightsObj,
@@ -193,6 +209,34 @@ namespace Cuy.Features
                             _currentReminder.Close();
                             _currentReminder = null;
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log($"[Calendar] handler error: {ex.Message}");
+                    }
+                    return true;
+
+                case "calendar_profile":
+                    try
+                    {
+                        string pig = (string)message["pig"] ?? (string)message["name"];
+                        string birthDate = (string)message["birthDate"];
+                        string adoptedDate = (string)message["adoptedDate"];
+                        int? baselineGrams = (int?)message["baselineGrams"];
+
+                        if (string.IsNullOrWhiteSpace(pig))
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: pig missing");
+                            return true;
+                        }
+
+                        if (!pet.SetPigProfile(pig, birthDate, adoptedDate, baselineGrams))
+                        {
+                            BrainController.Log($"[Calendar] ignored {type}: profile invalid");
+                            return true;
+                        }
+
+                        brain.Session.AutoSaver.SaveNow();
                     }
                     catch (Exception ex)
                     {
@@ -303,6 +347,13 @@ namespace Cuy.Features
                         {
                             pet.AddWeight(pig, grams.Value, cleanDate);
                             brain.Session.AutoSaver.SaveNow();
+
+                            if (_currentReminder != null && !_currentReminder.IsDisposed && (_currentReminder.Task.Id == "weigh" || _currentReminder.Task.WeightLog == true))
+                            {
+                                _currentReminder.CloseReason = "done";
+                                _currentReminder.Close();
+                                _currentReminder = null;
+                            }
                         }
                         else
                         {

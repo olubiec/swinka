@@ -64,18 +64,25 @@ namespace Cuy.Core.Care
 
         public static bool IsDue(CareTaskDefinition task, CareSettings settings, CareState state, DateTime nowUtc, IClock clock)
         {
-            if (settings != null && settings.TaskOverrides != null && settings.TaskOverrides.TryGetValue(task.Id, out var over))
+            if (settings != null && settings.ManualOptIn == true)
+            {
+                if (settings.TaskOverrides == null || !settings.TaskOverrides.TryGetValue(task.Id, out var over) || !over.Enabled)
+                {
+                    return false;
+                }
+            }
+            else if (settings != null && settings.TaskOverrides != null && settings.TaskOverrides.TryGetValue(task.Id, out var over))
             {
                 if (!over.Enabled) return false;
             }
 
-            if (state.SnoozedUntilUtc != null && state.SnoozedUntilUtc.TryGetValue(task.Id, out var snoozeUtc))
+            if (state != null && state.SnoozedUntilUtc != null && state.SnoozedUntilUtc.TryGetValue(task.Id, out var snoozeUtc))
             {
                 if (nowUtc < snoozeUtc) return false;
             }
 
             DateTime? lastDone = null;
-            if (state.LastDoneUtc != null && state.LastDoneUtc.TryGetValue(task.Id, out var ld))
+            if (state != null && state.LastDoneUtc != null && state.LastDoneUtc.TryGetValue(task.Id, out var ld))
             {
                 lastDone = ld;
             }

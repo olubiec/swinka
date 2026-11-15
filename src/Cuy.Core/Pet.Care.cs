@@ -115,6 +115,38 @@ namespace Cuy.Core
             State.Care.Settings = settings;
         }
 
+        public void EnableManualReminders()
+        {
+            State.Care.Normalize();
+            State.Care.Settings.ManualOptIn = true;
+        }
+
+        public bool SetPigProfile(CarePigProfile profile)
+        {
+            if (profile == null) return false;
+            return SetPigProfile(profile.Name, profile.BirthDate, profile.AdoptedDate, profile.BaselineGrams);
+        }
+
+        public bool SetPigProfile(string name, string birthDate = null, string adoptedDate = null, int? baselineGrams = null)
+        {
+            State.Care.Normalize();
+            var nowLocal = Clock.LocalNow();
+
+            if (!CareInput.TryProfile(name, birthDate, adoptedDate, baselineGrams, nowLocal, out var validated))
+            {
+                return false;
+            }
+
+            if (!State.Care.Settings.PigNames.Any(p => string.Equals(p, validated.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                State.Care.Settings.PigNames.Add(validated.Name);
+            }
+
+            State.Care.Settings.Pigs.RemoveAll(p => string.Equals(p.Name, validated.Name, StringComparison.OrdinalIgnoreCase));
+            State.Care.Settings.Pigs.Add(validated);
+            return true;
+        }
+
         public void AddWeight(string pig, int grams, string localDate = null)
         {
             if (string.IsNullOrWhiteSpace(pig)) return;
@@ -128,7 +160,97 @@ namespace Cuy.Core
             State.Care.Weights.RemoveAll(w => w.Pig == pig && w.LocalDate == localDate);
             State.Care.Weights.Add(new WeightEntry { Pig = pig, Grams = grams, LocalDate = localDate });
 
+            var pigWeights = State.Care.Weights.Where(w => w.Pig == pig).OrderBy(w => w.LocalDate).ToList();
+            if (pigWeights.Count > 365)
+            {
+                var toRemove = pigWeights.Take(pigWeights.Count - 365).ToList();
+                State.Care.Weights.RemoveAll(w => toRemove.Contains(w));
+            }
+
             State.Care.Weights.Sort((a, b) => string.Compare(a.LocalDate, b.LocalDate, StringComparison.Ordinal));
+
+            var weightTasks = _careTasks.Where(t => t.WeightLog == true || string.Equals(t.Id, "weigh", StringComparison.OrdinalIgnoreCase)).ToList();
+            var nowUtc = Clock.UtcNow;
+            var nowLocalStr = Clock.LocalNow().ToString("yyyy-MM-dd");
+            bool isCurrentDay = string.Equals(localDate, nowLocalStr, StringComparison.Ordinal);
+
+            if (weightTasks.Count > 0)
+            {
+                foreach (var task in weightTasks)
+                {
+                    CloseWeightReminderTask(task, localDate, nowUtc, isCurrentDay);
+                }
+            }
+            else if (isCurrentDay)
+            {
+                if (!State.Care.History.Any(h => h.TaskId == "weigh" && h.LocalDate == localDate))
+                {
+                    State.Care.History.Add(new CareHistoryEntry { LocalDate = localDate, TaskId = "weigh" });
+                    int currentStreak = 0;
+                    State.Care.Streaks.TryGetValue("weigh", out currentStreak);
+                    State.Care.Streaks["weigh"] = currentStreak + 1;
+                }
+                State.Care.LastDoneUtc["weigh"] = nowUtc;
+                State.Care.SnoozedUntilUtc.Remove("weigh");
+            }
+        }
+
+        private void CloseWeightReminderTask(CareTaskDefinition task, string localDate, DateTime nowUtc, bool isCurrentDay)
+        {
+            bool alreadyRecordedForDay = State.Care.History.Any(h => h.TaskId == task.Id && h.LocalDate == localDate);
+
+            if (!alreadyRecordedForDay)
+            {
+                bool wasDue = CareSchedule.IsDue(task, State.Care.Settings, State.Care, nowUtc, Clock);
+                if (wasDue)
+                {
+                    int currentStreak = 0;
+                    State.Care.Streaks.TryGetValue(task.Id, out currentStreak);
+
+                    if (State.Care.LastDoneUtc.TryGetValue(task.Id, out var lastDone))
+                    {
+                        var lastDoneLocal = lastDone.ToLocalTime();
+                        var nowLocal = Clock.LocalNow();
+                        bool missedWindow = false;
+
+                        if (task.Schedule == "daily")
+                        {
+                            missedWindow = (nowLocal.Date - lastDoneLocal.Date).TotalDays > 1;
+                        }
+                        else if (task.Schedule == "weekly")
+                        {
+                            var startOfWeekNow = nowLocal.Date.AddDays(-(int)nowLocal.DayOfWeek);
+                            var startOfWeekLastDone = lastDoneLocal.Date.AddDays(-(int)lastDoneLocal.DayOfWeek);
+                            missedWindow = (startOfWeekNow - startOfWeekLastDone).TotalDays > 7;
+                        }
+                        else if (task.Schedule == "every_n_days")
+                        {
+                            int everyDays = task.EveryDays ?? 1;
+                            if (State.Care.Settings?.TaskOverrides?.TryGetValue(task.Id, out var over) == true && over.EveryDays.HasValue)
+                                everyDays = over.EveryDays.Value;
+
+                            var expectedDue = lastDoneLocal.Date.AddDays(everyDays);
+                            missedWindow = (nowLocal.Date - expectedDue).TotalDays > everyDays;
+                        }
+
+                        State.Care.Streaks[task.Id] = missedWindow ? 1 : (currentStreak + 1);
+                    }
+                    else
+                    {
+                        State.Care.Streaks[task.Id] = 1;
+                    }
+                }
+
+                State.Care.History.Add(new CareHistoryEntry { LocalDate = localDate, TaskId = task.Id });
+                var cutoffDate = Clock.LocalNow().Date.AddDays(-120).ToString("yyyy-MM-dd");
+                State.Care.History.RemoveAll(h => string.Compare(h.LocalDate, cutoffDate, StringComparison.Ordinal) < 0);
+            }
+
+            if (isCurrentDay)
+            {
+                State.Care.LastDoneUtc[task.Id] = nowUtc;
+                State.Care.SnoozedUntilUtc.Remove(task.Id);
+            }
         }
 
         public void DeleteWeight(string pig, string localDate)

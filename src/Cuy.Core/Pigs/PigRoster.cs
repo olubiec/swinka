@@ -178,4 +178,25 @@ namespace Cuy.Core.Pigs
             pigMap["look"] = BuildPigLook(pig, stage);
         }
     }
+
+    /// <summary>
+    /// Unified look resolver adapter for Cuy.Core.
+    /// </summary>
+    public static class PigLook
+    {
+        public static PigLookDescriptor Resolve(PigProfile pig, string stageKey = null)
+        {
+            return PigLookResolver.Resolve(pig, stageKey);
+        }
+
+        public static PigLookDescriptor Resolve(string breed, string coat, string stage = null, string namedId = null)
+        {
+            return PigLookResolver.Resolve(breed, coat, stage, namedId);
+        }
+
+        public static PigLookDescriptor StarterLook(string stage = null)
+        {
+            return PigLookResolver.Resolve((PigProfile)null, stage);
+        }
+    }
 }

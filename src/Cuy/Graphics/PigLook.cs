@@ -17,5 +17,10 @@ namespace Cuy.Look
         {
             return PigLookResolver.Resolve(breed, coat, stage, namedId);
         }
+
+        public static PigLookDescriptor StarterLook(string stage = null)
+        {
+            return PigLookResolver.Resolve((PigProfile)null, stage);
+        }
     }
 }

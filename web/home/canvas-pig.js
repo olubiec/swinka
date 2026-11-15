@@ -372,6 +372,14 @@
       this.ghost = null;
       this._ghostCanvas = null;
       this._checkerPattern = null;
+      this.onEdgeHold = (CanvasPig && CanvasPig._onEdgeHold) || null;
+      this.onDrop = (CanvasPig && CanvasPig._onDrop) || null;
+      this.edgeNeighbours = (CanvasPig && CanvasPig._edgeNeighbours)
+        ? { left: CanvasPig._edgeNeighbours.left !== false, right: CanvasPig._edgeNeighbours.right !== false }
+        : { left: true, right: true };
+      this.edgeHold = null;
+      this.edgeHoldRearmed = true;
+      this.lastHoldSide = null;
       CanvasPig.instance = this;
       PigCanvas.instance = this;
 
@@ -1306,7 +1314,13 @@
           w: this.gridW || 0,
           h: this.gridH || 0,
           free: this.gridFreeCount || 0
-        }
+        },
+        edgeNeighbours: this.edgeNeighbours ? { left: this.edgeNeighbours.left !== false, right: this.edgeNeighbours.right !== false } : { left: true, right: true },
+        edgeIndicator: this.edgeHold ? {
+          side: this.edgeHold.side,
+          progress: Math.min(1, Math.max(0, (((typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()) - this.edgeHold.startTime) / 600)),
+          visible: true
+        } : null
       };
     }
 
@@ -1380,6 +1394,8 @@
         return img;
       };
       this.iconsImg = loadImage(assetsBase + 'icons/icons_16.png');
+      this.edgeArrowLeftImg = this.loadCachedImage(assetsBase + 'ui/arrow_left.png');
+      this.edgeArrowRightImg = this.loadCachedImage(assetsBase + 'ui/arrow_right.png');
     }
 
     // Mouse position -> scene coordinates. The canvas is drawn with object-fit: contain
@@ -1736,6 +1752,101 @@
              y >= this.pigY - th && y <= this.pigY + bh;
     }
 
+    setEdgeNeighbours(neighbours) {
+      if (!neighbours) {
+        this.edgeNeighbours = { left: true, right: true };
+      } else {
+        this.edgeNeighbours = {
+          left: neighbours.left !== false,
+          right: neighbours.right !== false
+        };
+      }
+    }
+
+    clearEdgeHold() {
+      if (this.edgeHold && this.edgeHold.timer) {
+        clearTimeout(this.edgeHold.timer);
+      }
+      this.edgeHold = null;
+    }
+
+    triggerEdgeHold(side) {
+      if (!this.edgeHold || this.edgeHold.fired) return;
+      this.edgeHold.fired = true;
+      this.lastHoldSide = side;
+      const ev = { side };
+      const fn = (typeof this.onEdgeHold === 'function')
+        ? this.onEdgeHold
+        : ((typeof CanvasPig.onEdgeHold === 'function')
+          ? CanvasPig.onEdgeHold
+          : ((typeof window !== 'undefined' && typeof window.onEdgeHold === 'function') ? window.onEdgeHold : null));
+      if (fn) {
+        try { fn(ev); } catch (err) { console.error(err); }
+      }
+    }
+
+    continueDrag(newSceneDef) {
+      if (newSceneDef) {
+        this.setScene(newSceneDef);
+      }
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      if (this.lastHoldSide === 'right') {
+        this.pigX = Math.max(x0, Math.min(x1, this.sceneWidth - 16));
+      } else {
+        this.pigX = Math.max(x0, Math.min(x1, 16));
+      }
+      this.pigY = Math.max(y0, Math.min(y1, this.pigY));
+      if (!this.drag) {
+        this.drag = { startX: 0, startY: 0, moved: true };
+      } else {
+        this.drag.moved = true;
+      }
+      this.clearEdgeHold();
+      this.edgeHoldRearmed = false;
+    }
+
+    drawEdgeIndicator(ctx) {
+      if (!this.edgeHold) return;
+      const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+      const elapsed = Math.max(0, now - this.edgeHold.startTime);
+      const progress = Math.min(1, elapsed / 600);
+      const side = this.edgeHold.side;
+
+      ctx.save();
+      ctx.imageSmoothingEnabled = false;
+
+      const img = side === 'left' ? this.edgeArrowLeftImg : this.edgeArrowRightImg;
+      const hasImg = img && (img.complete || (img.naturalWidth && img.naturalWidth > 0));
+
+      const centerY = Math.round(Math.max(20, Math.min(this.sceneHeight - 20, this.pigY - 14)));
+      const maxSz = 16;
+      const currentSz = Math.max(2, Math.round(maxSz * Math.max(0.2, progress)));
+
+      if (hasImg) {
+        ctx.globalAlpha = Math.max(0.3, progress);
+        if (side === 'left') {
+          ctx.drawImage(img, 2, centerY - Math.round(currentSz / 2), currentSz, currentSz);
+        } else {
+          ctx.drawImage(img, this.sceneWidth - currentSz - 2, centerY - Math.round(currentSz / 2), currentSz, currentSz);
+        }
+      } else {
+        ctx.fillStyle = '#ffffff';
+        const stepCount = Math.max(1, Math.round(6 * progress));
+        if (side === 'left') {
+          for (let i = 0; i < stepCount; i++) {
+            ctx.fillRect(2 + (stepCount - 1 - i), centerY - i, 1, 1);
+            ctx.fillRect(2 + (stepCount - 1 - i), centerY + i, 1, 1);
+          }
+        } else {
+          for (let i = 0; i < stepCount; i++) {
+            ctx.fillRect(this.sceneWidth - 3 - (stepCount - 1 - i), centerY - i, 1, 1);
+            ctx.fillRect(this.sceneWidth - 3 - (stepCount - 1 - i), centerY + i, 1, 1);
+          }
+        }
+      }
+      ctx.restore();
+    }
+
     bindEvents() {
       // Petting or clicking the pig
       this.canvas.addEventListener('click', (e) => {
@@ -1749,16 +1860,28 @@
         const p = this.toScene(e);
         if (!this.isOverPig(p.x, p.y)) return;
         this.drag = { startX: e.clientX, startY: e.clientY, moved: false };
+        this.edgeHoldRearmed = true;
+        this.clearEdgeHold();
         try { this.canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
       });
       this.canvas.addEventListener('pointermove', (e) => {
         if (this.drag) {
-          if (Math.abs(e.clientX - this.drag.startX) + Math.abs(e.clientY - this.drag.startY) > 6) this.drag.moved = true;
+          if (Math.abs(e.clientX - this.drag.startX) + Math.abs(e.clientY - this.drag.startY) > 6) {
+            this.drag.moved = true;
+          }
           if (!this.drag.moved) return;
+
           const rect = this.canvas.getBoundingClientRect();
-          const out = e.clientX < rect.left - 12 || e.clientX > rect.right + 12 || e.clientY < rect.top - 12 || e.clientY > rect.bottom + 12;
-          if (out) {
+          const hasLeft = !this.edgeNeighbours || this.edgeNeighbours.left !== false;
+          const hasRight = !this.edgeNeighbours || this.edgeNeighbours.right !== false;
+
+          const outY = e.clientY < rect.top - 12 || e.clientY > rect.bottom + 12;
+          const outLeft = !hasLeft && (e.clientX < rect.left - 40);
+          const outRight = !hasRight && (e.clientX > rect.right + 40);
+
+          if (outY || outLeft || outRight) {
             this.drag = null;
+            this.clearEdgeHold();
             this.suppressClick = true;
             try { this.canvas.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
             const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
@@ -1774,16 +1897,61 @@
           this.animTimer = 1000;
           this.targetX = null;
           this.targetY = null;
+
+          // Edge zone check: outer 12 px left/right
+          const inLeftZone = e.clientX <= rect.left + 12;
+          const inRightZone = e.clientX >= rect.right - 12;
+
+          if (inLeftZone && hasLeft) {
+            if (!this.edgeHold || this.edgeHold.side !== 'left') {
+              if (this.edgeHoldRearmed) {
+                this.clearEdgeHold();
+                const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+                this.edgeHold = {
+                  side: 'left',
+                  startTime: now,
+                  fired: false,
+                  timer: setTimeout(() => this.triggerEdgeHold('left'), 600)
+                };
+              }
+            }
+          } else if (inRightZone && hasRight) {
+            if (!this.edgeHold || this.edgeHold.side !== 'right') {
+              if (this.edgeHoldRearmed) {
+                this.clearEdgeHold();
+                const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+                this.edgeHold = {
+                  side: 'right',
+                  startTime: now,
+                  fired: false,
+                  timer: setTimeout(() => this.triggerEdgeHold('right'), 600)
+                };
+              }
+            }
+          } else {
+            if (this.edgeHold) {
+              this.clearEdgeHold();
+            }
+            this.edgeHoldRearmed = true;
+          }
           return;
         }
         // Change the cursor over the pig
         const p = this.toScene(e);
         this.canvas.style.cursor = this.isOverPig(p.x, p.y) ? 'grab' : 'default';
       });
-      const endDrag = () => {
+      const endDrag = (e) => {
         if (!this.drag) return;
-        if (this.drag.moved) this.suppressClick = true;
+        const hadMoved = this.drag.moved;
+        if (hadMoved) this.suppressClick = true;
         this.drag = null;
+        this.clearEdgeHold();
+        this.edgeHoldRearmed = true;
+        try {
+          if (e && e.pointerId && this.canvas.hasPointerCapture && this.canvas.hasPointerCapture(e.pointerId)) {
+            this.canvas.releasePointerCapture(e.pointerId);
+          }
+        } catch (err) { /* ignore */ }
         const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
         this.pigX = Math.max(x0, Math.min(x1, this.pigX));
         this.pigY = Math.max(y0, Math.min(y1, this.pigY));
@@ -1795,6 +1963,18 @@
         this.path = [];
         this.targetX = null;
         this.targetY = null;
+
+        if (hadMoved) {
+          const dropEv = { x: this.pigX, y: this.pigY };
+          const dropFn = (typeof this.onDrop === 'function')
+            ? this.onDrop
+            : ((typeof CanvasPig.onDrop === 'function')
+              ? CanvasPig.onDrop
+              : ((typeof window !== 'undefined' && typeof window.onDrop === 'function') ? window.onDrop : null));
+          if (dropFn) {
+            try { dropFn(dropEv); } catch (err) { console.error(err); }
+          }
+        }
       };
       this.canvas.addEventListener('pointerup', endDrag);
       this.canvas.addEventListener('pointercancel', endDrag);
@@ -1942,6 +2122,12 @@
     }
 
     update(dt) {
+      if (this.edgeHold && !this.edgeHold.fired) {
+        const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+        if (now - this.edgeHold.startTime >= 600) {
+          this.triggerEdgeHold(this.edgeHold.side);
+        }
+      }
       if (this.pigVisible === false) {
         this.currentAnim = 'idle';
         this.currentFrame = 0;
@@ -2187,6 +2373,10 @@
         if (this.bubbleVisible) {
           this.drawSpeechBubble(ctx);
         }
+      }
+
+      if (this.edgeHold) {
+        this.drawEdgeIndicator(ctx);
       }
     }
 
@@ -2757,8 +2947,9 @@
     const normP = P ? P.normalize(rawPalette) : rawPalette;
     const normS = S ? S.normStage(desc ? desc.stage : (stage || (look && look.stage) || 'adult')) : (stage || 'adult');
     const sz = size === 64 ? 64 : 32;
+    const isSilhouette = !!(look && (look.silhouette || (look.look && look.look.silhouette)));
 
-    const cacheKey = `${namedId || ''}|${normB}|${normP}|${normS}|${sz}`;
+    const cacheKey = `${namedId || ''}|${normB}|${normP}|${normS}|${sz}|${isSilhouette ? 'sil' : 'clr'}`;
     if (portraitCache[cacheKey]) {
       return portraitCache[cacheKey];
     }
@@ -2781,6 +2972,12 @@
       if (!sh) return false;
       ctx.clearRect(0, 0, sz, sz);
       ctx.drawImage(sh, CROP_X, CROP_Y, CROP_W, CROP_H, 0, 0, sz, sz);
+      if (isSilhouette) {
+        ctx.globalCompositeOperation = 'source-in';
+        ctx.fillStyle = '#8da9a8';
+        ctx.fillRect(0, 0, sz, sz);
+        ctx.globalCompositeOperation = 'source-over';
+      }
       return true;
     }
 
@@ -2941,6 +3138,44 @@
     get wallH() {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       return inst ? inst.wallH : 32;
+    },
+    _onEdgeHold: null,
+    get onEdgeHold() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      return inst ? inst.onEdgeHold : this._onEdgeHold;
+    },
+    set onEdgeHold(fn) {
+      this._onEdgeHold = fn;
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) inst.onEdgeHold = fn;
+    },
+    _onDrop: null,
+    get onDrop() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      return inst ? inst.onDrop : this._onDrop;
+    },
+    set onDrop(fn) {
+      this._onDrop = fn;
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst) inst.onDrop = fn;
+    },
+    continueDrag(newSceneDef) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.continueDrag === 'function') return inst.continueDrag(newSceneDef);
+    },
+    clearEdgeHold() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.clearEdgeHold === 'function') return inst.clearEdgeHold();
+    },
+    _edgeNeighbours: null,
+    setEdgeNeighbours(neighbours) {
+      this._edgeNeighbours = neighbours;
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.setEdgeNeighbours === 'function') return inst.setEdgeNeighbours(neighbours);
+    },
+    get edgeNeighbours() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      return inst ? inst.edgeNeighbours : this._edgeNeighbours;
     }
   };
 
@@ -2968,6 +3203,20 @@
   PigCanvas.floorLine = () => CanvasPig.floorLine();
   PigCanvas.debug = () => CanvasPig.debug();
   PigCanvas.setStage = (s) => CanvasPig.setStage(s);
+  PigCanvas.continueDrag = (def) => CanvasPig.continueDrag(def);
+  PigCanvas.setEdgeNeighbours = (n) => CanvasPig.setEdgeNeighbours(n);
+  Object.defineProperty(PigCanvas, 'onEdgeHold', {
+    get: () => CanvasPig.onEdgeHold,
+    set: (fn) => { CanvasPig.onEdgeHold = fn; }
+  });
+  Object.defineProperty(PigCanvas, 'onDrop', {
+    get: () => CanvasPig.onDrop,
+    set: (fn) => { CanvasPig.onDrop = fn; }
+  });
+  Object.defineProperty(PigCanvas, 'edgeNeighbours', {
+    get: () => CanvasPig.edgeNeighbours,
+    set: (n) => { CanvasPig.setEdgeNeighbours(n); }
+  });
   CanvasPig.PIG_SHADOW_WIDTH = PIG_SHADOW_WIDTH;
   PigCanvas.PIG_SHADOW_WIDTH = PIG_SHADOW_WIDTH;
   CanvasPig.PIG_SHADOW_BY_STAGE = PIG_SHADOW_BY_STAGE;

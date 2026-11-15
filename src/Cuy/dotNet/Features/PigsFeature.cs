@@ -12,6 +12,7 @@ namespace Cuy.Features
     public class PigsFeature : HomeFeatureBase
     {
         private static readonly string[] DefaultNames = { "Piko", "Milo", "Luna", "Koko", "Buba", "Zuzu" };
+        private bool _offerNotified;
 
         public override string Id { get { return "pigs"; } }
 
@@ -53,6 +54,22 @@ namespace Cuy.Features
             {
                 var nowUtc = pet.Clock != null ? pet.Clock.UtcNow : DateTime.UtcNow;
                 pet.CheckOffers(nowUtc);
+
+                var gs = pet.State;
+                if (gs != null && !_offerNotified && !AdoptionGate.IsOpen(gs) && AdoptionGate.IsOfferAvailable(gs, nowUtc))
+                {
+                    _offerNotified = true;
+                    try
+                    {
+                        var petForm = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                        petForm?.ShowStatusMessage("Two pigs are waiting for adoption!");
+                        HomeWindow.PostToPage(new { type = "adoption_available" });
+                    }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log("[WARN] PigsFeature.Tick notify: " + ex.Message);
+                    }
+                }
             }
         }
 
@@ -163,11 +180,17 @@ namespace Cuy.Features
                 }
             }
             state["offers"] = offersList;
+
+            bool gateOpen = AdoptionGate.IsOpen(gs);
+            bool offerAvailable = AdoptionGate.IsOfferAvailable(gs, nowUtc);
+            state["adoptionGateOpen"] = gateOpen;
+            state["adoptionOfferAvailable"] = offerAvailable;
+            state["adoptionOfferAccepted"] = gs.AdoptionOfferAccepted;
         }
 
         public override bool HandleMessage(string type, JObject message, BrainController brain)
         {
-            if (type != "adopt_pig" && type != "toggle_pig_active" && type != "adopt_named" && type != "adopt_group" && type != "set_memorial")
+            if (type != "adopt_pig" && type != "toggle_pig_active" && type != "adopt_named" && type != "adopt_group" && type != "set_memorial" && type != "adopt_starter_pair" && type != "accept_adoption_offer")
             {
                 return false;
             }
@@ -179,7 +202,25 @@ namespace Cuy.Features
 
             DateTime nowUtc = pet.Clock != null ? pet.Clock.UtcNow : DateTime.UtcNow;
 
-            if (type == "adopt_pig")
+            if (type == "adopt_starter_pair" || type == "accept_adoption_offer" || (type == "adopt_group" && (message?.Value<string>("id") == "starter" || message?.Value<string>("groupId") == "starter")))
+            {
+                var catalog = pet.NamedPigs ?? NamedPigCatalog.Current;
+                bool accepted = AdoptionGate.AcceptOffer(gs, catalog, nowUtc);
+                if (accepted)
+                {
+                    try
+                    {
+                        var petForm = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                        petForm?.ShowStatusMessage("Welcome Kuki and Ned to the family!");
+                        HomeWindow.PostToPage(new { type = "toast", text = "Welcome Kuki and Ned to the family!" });
+                    }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log("[WARN] PigsFeature accept notify: " + ex.Message);
+                    }
+                }
+            }
+            else if (type == "adopt_pig")
             {
                 var cfg = LoadConfig();
                 int cost = (int?)cfg["adopt_cost"] ?? 80;

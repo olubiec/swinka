@@ -7,6 +7,7 @@
   let currentSceneId = null;
   let previousPigLocations = null;
   let exitDisabledUntil = 0;
+  let draggedPigId = null;
 
   // Scene light and ambient state
   let lightsData = null;
@@ -383,6 +384,48 @@
     return sceneId ? (sceneId.charAt(0).toUpperCase() + sceneId.slice(1)) : '';
   }
 
+  if (typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.neighbor === 'function') {
+    const _origNeighbor = window.CuyScenes.neighbor;
+    window.CuyScenes.neighbor = function (id, dir, state) {
+      if (dir === 'right') dir = 1;
+      else if (dir === 'left') dir = -1;
+      return _origNeighbor.call(this, id, dir, state);
+    };
+  }
+
+  function showToast(text) {
+    if (window.bridge && typeof window.bridge.dispatchMessage === 'function') {
+      window.bridge.dispatchMessage({ type: 'toast', text: text });
+    }
+    if (typeof document !== 'undefined') {
+      let toastEl = document.getElementById('globalToast');
+      if (!toastEl) {
+        toastEl = document.createElement('div');
+        toastEl.id = 'globalToast';
+        toastEl.style.position = 'fixed';
+        toastEl.style.bottom = '20px';
+        toastEl.style.left = '50%';
+        toastEl.style.transform = 'translateX(-50%)';
+        toastEl.style.zIndex = '10000';
+        document.body.appendChild(toastEl);
+      }
+      toastEl.textContent = text;
+      toastEl.style.opacity = '1';
+      if (toastEl._timer) clearTimeout(toastEl._timer);
+      toastEl._timer = setTimeout(() => { toastEl.style.opacity = '0'; }, 2500);
+    }
+  }
+
+  function getActivePigIdForScene(sceneId, st) {
+    if (!st) st = getState();
+    const pigLocs = getPigLocations(st);
+    const activePigId = getFirstPigId(st);
+    const sId = sceneId || currentSceneId || 'salon';
+    const pigInScene = pigLocs.find(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === sId);
+    const pigEntry = pigInScene || pigLocs.find(p => (p.pigId || p.PigId) === activePigId) || pigLocs[0];
+    return (pigEntry && (pigEntry.pigId || pigEntry.PigId)) || activePigId;
+  }
+
   function computeNeighbourScene(currentScene, direction, st) {
     const ord = getOrder(st);
     if (!ord || ord.length === 0) return null;
@@ -520,6 +563,82 @@
     }
   }
 
+  function handleEdgeHold(ev) {
+    const side = (ev && ev.side) || 'right';
+    const current = currentSceneId || 'salon';
+    const st = getState();
+
+    let neighbourId = null;
+    if (window.CuyScenes && typeof window.CuyScenes.neighbor === 'function') {
+      neighbourId = window.CuyScenes.neighbor(current, side, st);
+    } else {
+      const ord = getOrder(st);
+      const idx = ord ? ord.findIndex(s => s.id === current) : -1;
+      if (idx !== -1) {
+        const step = (side === 'left' || side === -1) ? -1 : 1;
+        neighbourId = ord[(idx + step + ord.length) % ord.length].id;
+      }
+    }
+
+    const ord = getOrder(st);
+    const neighbourItem = ord ? ord.find(s => s.id === neighbourId) : null;
+    const isLocked = !neighbourItem || !!neighbourItem.locked;
+    const isNone = !neighbourId || neighbourId === current;
+
+    if (isLocked || isNone) {
+      const hint = (neighbourItem && neighbourItem.unlockHint) ? neighbourItem.unlockHint : 'Locked';
+      showToast('Locked: ' + hint);
+      return;
+    }
+
+    if (!draggedPigId) {
+      draggedPigId = getActivePigIdForScene(current, st);
+    }
+
+    applyScene(neighbourId, st);
+
+    const tod = (window.CuyScenes && typeof window.CuyScenes.timeOfDay === 'function')
+      ? window.CuyScenes.timeOfDay()
+      : 'day';
+    const def = (window.CuyScenes && typeof window.CuyScenes.def === 'function')
+      ? window.CuyScenes.def(neighbourId, tod, st)
+      : { id: neighbourId, size: [240, 130], walk: [10, 80, 230, 126] };
+
+    if (window.CanvasPig && typeof window.CanvasPig.continueDrag === 'function') {
+      window.CanvasPig.continueDrag(def);
+    }
+  }
+
+  function handleCanvasDrop(ev) {
+    const st = getState();
+    const pigId = draggedPigId || getActivePigIdForScene(currentSceneId, st);
+    draggedPigId = null;
+
+    if (pigId && currentSceneId && window.bridge && typeof window.bridge.send === 'function') {
+      window.bridge.send({
+        type: 'places.pigMove',
+        pigId: pigId,
+        to: currentSceneId
+      });
+    }
+  }
+
+  function bindCanvasDragSwitch() {
+    if (window.CanvasPig) {
+      window.CanvasPig.onEdgeHold = handleEdgeHold;
+      window.CanvasPig.onDrop = handleCanvasDrop;
+    }
+    const inst = (window.CuyPig && window.CuyPig.mainInstance) || (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance);
+    if (inst) {
+      inst.onEdgeHold = handleEdgeHold;
+      inst.onDrop = handleCanvasDrop;
+    }
+    if (typeof window !== 'undefined') {
+      window.onEdgeHold = handleEdgeHold;
+      window.onDrop = handleCanvasDrop;
+    }
+  }
+
   function checkArrivals(st) {
     if (!st) st = getState();
     const currentLocs = getPigLocations(st);
@@ -634,10 +753,26 @@
       : (currentSceneId === 'salon');
 
     bindCanvasExits();
+    bindCanvasDragSwitch();
+
+    let hasLeftNeighbour = false;
+    let hasRightNeighbour = false;
+    if (ord && ord.length > 1) {
+      hasLeftNeighbour = true;
+      hasRightNeighbour = true;
+    }
+    if (window.CanvasPig && typeof window.CanvasPig.setEdgeNeighbours === 'function') {
+      window.CanvasPig.setEdgeNeighbours({
+        left: hasLeftNeighbour,
+        right: hasRightNeighbour
+      });
+    }
+
+    const isPigBeingDragged = (inst && !!inst.drag) || (draggedPigId !== null);
 
     if (window.CanvasPig && typeof window.CanvasPig.setExitsEnabled === 'function') {
       const now = Date.now();
-      const exitsAllowed = isAnyPigHere && !isPigPinned && (now >= exitDisabledUntil);
+      const exitsAllowed = isAnyPigHere && !isPigPinned && (now >= exitDisabledUntil) && !isPigBeingDragged;
       window.CanvasPig.setExitsEnabled(exitsAllowed);
     }
 
@@ -671,8 +806,12 @@
       }
 
       if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
-        window.CanvasPig.setPigVisible(isAnyPigHere);
+        window.CanvasPig.setPigVisible(isAnyPigHere || isPigBeingDragged);
       }
+    }
+
+    if (!isPigBeingDragged) {
+      draggedPigId = null;
     }
 
     // 5. Update presence chips
@@ -855,8 +994,66 @@
 
   if (typeof window !== 'undefined') {
     bindCanvasExits();
+    bindCanvasDragSwitch();
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', bindCanvasExits);
+      document.addEventListener('DOMContentLoaded', () => {
+        bindCanvasExits();
+        bindCanvasDragSwitch();
+      });
+    }
+
+    if (window.bridge && typeof window.bridge.onAction === 'function') {
+      window.bridge.onAction(action => {
+        if (action && (action.type === 'take_out' || action.type === 'takeOut')) {
+          draggedPigId = null;
+        }
+      });
+    }
+
+    if (window.bridge && window.bridge.mockHandlers) {
+      const handlePigMove = function (st, action) {
+        if (!action || !action.to) return;
+        const pigId = action.pigId || action.pig_id || 'pig_1';
+        const to = action.to;
+
+        if (!st.places) st.places = {};
+        if (!Array.isArray(st.places.order)) {
+          if (window.CuyScenesMock && typeof window.CuyScenesMock.state === 'function') {
+            st.places.order = window.CuyScenesMock.state().places.order;
+          }
+        }
+        if (!Array.isArray(st.places.pigLocations)) {
+          if (window.CuyScenesMock && typeof window.CuyScenesMock.state === 'function') {
+            st.places.pigLocations = window.CuyScenesMock.state().places.pigLocations;
+          }
+        }
+
+        const ring = st.places.order || [];
+        const targetEntry = ring.find(s => s.id === to);
+        if (targetEntry && targetEntry.locked) {
+          return;
+        }
+
+        let loc = st.places.pigLocations && st.places.pigLocations.find(p => (p.pigId || p.PigId) === pigId);
+        if (!loc) {
+          loc = { pigId: pigId, scene: 'salon', pinned: false };
+          if (!st.places.pigLocations) st.places.pigLocations = [];
+          st.places.pigLocations.push(loc);
+        }
+
+        loc.scene = to;
+        if (loc.Scene !== undefined) loc.Scene = to;
+        if (Array.isArray(st.pigLocations)) {
+          let locRoot = st.pigLocations.find(p => (p.pigId || p.PigId) === pigId);
+          if (locRoot) {
+            locRoot.scene = to;
+            if (locRoot.Scene !== undefined) locRoot.Scene = to;
+          }
+        }
+      };
+
+      window.bridge.mockHandlers.set('places.pigMove', handlePigMove);
+      window.bridge.mockHandlers.set('places_pig_move', handlePigMove);
     }
   }
 

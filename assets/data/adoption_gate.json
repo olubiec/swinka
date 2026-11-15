@@ -1,0 +1,9 @@
+{
+  "stage_threshold": "junior",
+  "delay_days_min": 1,
+  "delay_days_max": 3,
+  "pigs": [
+    "kuki",
+    "ned"
+  ]
+}

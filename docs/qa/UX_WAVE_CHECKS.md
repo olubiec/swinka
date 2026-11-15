@@ -292,13 +292,52 @@ Wszystkie pakiety fali P40 (a-e, q) mają komplet testów automatycznych dla try
 3. Kliknij postawiony przedmiot: przesuń, obróć, usuń (też przeciągnięciem na szufladę).
 4. W More nie ma już Pokoi ani Ogrodu. Poziom i odblokowanie miejsca są w nagłówku szuflady.
 
+## Wave P4: Pig Identity & Adoption Gate (Kuki & Ned)
 
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| UX Adoption (PK-P4b) | `node tools/qa/ux-p4-adoption.js` | Exit code 0, 6/6 PASS (D1-D6: hidden-before, popup-shows, accept, no-rename, same-look, random-adoption) | Kuki i Ned ukryci przed osiągnięciem wieku junior, pop-up adopcji z portretami, przyjęcie dodaje obie świnki do domku, blokada zmiany imion, spójny wygląd startowej świnki |
+| Core Adoption Gate | `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~Adoption"` | Exit code 0, 22/22 tests PASS | Logika bramki adopcyjnej w Core, oferta Kuki i Neda po osiągnięciu progu, odrzucenie zmiany imion świnek startowych |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| Build Cuy.csproj | `dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true` | Build exit code 0, 0 errors, 0 warnings | Aplikacja Cuy.exe i biblioteka Cuy.Core kompilują się bez błędów |
 
+### Manual Checklist (Do sprawdzenia po P4)
+1. Nowa gra: świnka na pulpicie i w domku wygląda tak samo, nie jak Kuki.
+2. Kuki i Ned niewidoczni na liście. Po osiągnięciu wieku: okno adopcji.
+3. Przyjmij: obie świnki w domku, nazw nie da się zmienić.
 
+## Wave P44: Pig Drag Between Scenes & Edge Hold
 
+Wszystkie testy fali P44 mają zielony wynik (przeciąganie świnki do krawędzi ze wskaźnikiem chevron, zmiana sceny po przytrzymaniu 600ms, upuszczenie i wysłanie `places.pigMove`, zachowanie przypięcia oraz zrzuty ekranu).
 
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| Stage Gate Wave P44 (PK-P44q) | `powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Build exit code 0, all Core xUnit tests pass, UX suite PASS, assets OK, icons OK, EXE smoke OK | Zbudowana aplikacja, silnik Core i desktopowy EXE działają bez regresji; assety i ikony kompletne |
+| UX Drag to Edge (PK-P44a) | `node tools/qa/ux-p44-drag-edge.js` | Exit code 0, 7/7 PASS (G1-G7: hold-fires-once, short-pass-no-fire, continue-keeps-drag, no-neighbour-take-out, indicator-visible-while-holding, rearm-after-leave, drop-snaps-free-cell) | Przeciągnięcie świnki do strefy krawędzi (12px) i przytrzymanie 600ms wyzwala wskaźnik krawędzi (chevron); kontynuacja przeciągania na nowej scenie; upuszczenie na wolną komórkę ze snapem; wyrzucenie na pulpit (`take_out`) przy braku sąsiada |
+| UX Drag Scene Switch & Move (PK-P44b) | `node tools/qa/ux-p44-drag-switch.js` | Exit code 0, 7/7 PASS (T1-T7: edge-hold-switches-bar-title, drop-sends-pigMove-once, locked-neighbour-toast-no-switch, drag-across-three-scenes, chip-consistent, pinned-stays-pinned, take-out-sends-nothing-else) | Przytrzymanie krawędzi przełącza scenę na sąsiednią, toast przy zablokowanej scenie, upuszczenie świnki wysyła `places.pigMove`, przypięcie zostaje zachowane, take_out anuluje ruch |
+| UX P44 Screenshots (PK-P44q) | `node tools/qa/ux-p44-shots.js` | Exit code 0, zapisano zrzuty do docs/qa/shots/p44-*.png | Zrzuty ekranu przeciągania świnki ze wskaźnikiem krawędzi (chevron) i po przełączeniu sceny w widoku 420x720 |
+| UX All Suite | `node tools/qa/ux-all.js` | Wszystkie testy P44 PASS (ux-p44-drag-edge, ux-p44-drag-switch, ux-p44-shots) | Skrypty pakietu UX przechodzą pomyślnie dla wdrożonych funkcjonalności |
+| Web Smoke | `node tools/qa/web-smoke.js` | Wyniki zgodne z baseline-smoke.txt | WebView2 home screens, nawigacja i moduły renderują się poprawnie |
+| Check Assets & Icons | `node tools/qa/check-assets.js && node tools/qa/check-icons.js` | Exit code 0, ASSETS OK, ICONS OK | Brak brakujących assetów i ikon w projekcie |
+| EXE Smoke | `powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25` | Exit code 0, selftest passes, EXE SMOKE OK | Świnka chodzi po pulpicie, brak wyjątków i crashów podczas uruchomienia |
 
+### Manual Checklist (Do sprawdzenia po P44)
+1. Przeciągnij świnkę do prawej krawędzi i przytrzymaj chwilę: pojawia się strzałka, scena przełącza się na sąsiednią, świnka dalej w ręce. Puść: została tam.
+2. Zablokowane miejsce: komunikat z podpowiedzią, scena się nie zmienia.
+3. Po restarcie gry świnka jest w nowym miejscu. Przeciągnięcie poza okno nadal wyprowadza ją na pulpit.
 
+## Wave P8: Care Calendar & Player Tools
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| UX Calendar (PK-P8b) | `node tools/qa/ux-p8-calendar.js` | Exit code 0, 8/8 PASS (T1-T8: tabs styling, manual opt-in, enable reminder, profile, weight entry, complete reminder, validation, no errors) | Kalendarz opieki w stylu gry (ramki papier/drewno), zakładka Settings z ręcznym włączaniem przypomnień i profilem świnek, zakładka Weight dodaje wpis do tabeli i odznacza zadanie |
+| Core Care Tests (PK-P8a) | `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~Care"` | Exit code 0, 75/75 tests PASS | Logika opieki i przypomnień w Core, walidacja profili świnek, ręczne opt-in w CareSettings, odznaczanie zadań ważenia i historia pomiarów |
+| Build Cuy.csproj | `dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true` | Build exit code 0, 0 errors, 0 warnings | Aplikacja Cuy.exe i biblioteka Cuy.Core kompilują się bez błędów |
+
+### Manual Checklist (Do sprawdzenia po P8)
+1. Settings: żadne przypomnienie nie jest włączone, dopóki go nie włączysz; ustawiasz dzień i porę.
+2. Weight: wpisujesz wagę, wiersz pojawia się w tabeli, przypomnienie znika z Today.
+3. Zakładki wyglądają jak reszta gry, nie jak przyciski przeglądarki.
 
 
 
