@@ -274,8 +274,73 @@ async function run() {
     assert.strictEqual(weightSent, false, 'Entering text for weight must not send calendar_weight');
   });
 
-  // T8: No console errors
-  await testScenario('T8 no console errors', async () => {
+  // T8: F1-fix: onState tick does not wipe #fcNewPigName (even after blur), Polish pig name Pączek succeeds, Pixelify Sans + .retro-toggle, and #set-open-pig-profiles shortcut
+  await testScenario('T8 F1-fix pig profiles, typing stability, Polish name, retro styling, settings shortcut', async () => {
+    await page.evaluate(() => {
+      window.__lastActions = [];
+      window.bridge.onAction(a => window.__lastActions.push(a));
+      if (window.CuyHome) window.CuyHome.openFeature('settings');
+    });
+    await page.waitForSelector('#set-open-pig-profiles', { timeout: 3000 });
+
+    // Click #set-open-pig-profiles in Settings and verify it opens Care Calendar on the Settings tab
+    await page.click('#set-open-pig-profiles');
+    await page.waitForSelector('.feature-calendar .fc-tab.active[data-tab="settings"]', { timeout: 3000 });
+    await page.waitForSelector('#fcNewPigName', { timeout: 3000 });
+
+    // Verify computed font-family on .fc-input and .fc-btn includes Pixelify Sans, and .retro-toggle is rendered in Task Overrides
+    const styleCheck = await page.evaluate(() => {
+      const inp = document.querySelector('.fc-input');
+      const btn = document.querySelector('.fc-btn');
+      const toggle = document.querySelector('.fc-override-row .retro-toggle, .fc-setting-row .retro-toggle');
+      return {
+        inputFont: inp ? window.getComputedStyle(inp).fontFamily : '',
+        btnFont: btn ? window.getComputedStyle(btn).fontFamily : '',
+        hasRetroToggle: !!toggle
+      };
+    });
+    assert.ok(styleCheck.inputFont.includes('Pixelify Sans'), `Expected .fc-input font-family to include Pixelify Sans, got: ${styleCheck.inputFont}`);
+    assert.ok(styleCheck.btnFont.includes('Pixelify Sans'), `Expected .fc-btn font-family to include Pixelify Sans, got: ${styleCheck.btnFont}`);
+    assert.strictEqual(styleCheck.hasRetroToggle, true, 'Expected .retro-toggle to be rendered in Task Overrides');
+
+    // Type Polish name Pączek in #fcNewPigName, blur to <select> or button, simulate 1s onState tick
+    await page.fill('#fcNewPigName', 'Pączek');
+    await page.fill('#fcNewPigBaseline', '920');
+
+    // Blur input by focusing a <select> in reminders or #fcBtnAddPig
+    await page.evaluate(() => {
+      const sel = document.querySelector('select.fc-input') || document.getElementById('fcBtnAddPig');
+      if (sel) sel.focus();
+    });
+
+    // Simulate 1-second onState broadcasts (both unchanged calendar state and changed cloversToday)
+    await page.evaluate(() => {
+      window.bridge.broadcastState();
+      const s = window.bridge.currentState;
+      if (s && s.calendar) {
+        s.calendar.cloversToday = (s.calendar.cloversToday || 0) + 1;
+      }
+      window.bridge.broadcastState();
+    });
+    await page.waitForTimeout(150);
+
+    const typedNameAfterTick = await page.$eval('#fcNewPigName', el => el.value);
+    assert.strictEqual(typedNameAfterTick, 'Pączek', `Expected typed name Pączek to survive 1s onState tick, got: "${typedNameAfterTick}"`);
+
+    // Click + Add Pig and verify Pączek is added to Pig Profiles
+    await page.click('#fcBtnAddPig');
+    await page.waitForTimeout(200);
+
+    const paczekCardCount = await page.locator('.fc-profile-card[data-pig="Pączek"]').count();
+    assert.strictEqual(paczekCardCount, 1, 'Expected Pączek card to appear in Pig Profiles');
+
+    const actions = await page.evaluate(() => window.__lastActions);
+    const addAction = actions.find(a => a.type === 'calendar_profile' && a.pig === 'Pączek');
+    assert.ok(addAction, 'Expected calendar_profile message to be sent for Pączek');
+  });
+
+  // T9: No console errors
+  await testScenario('T9 no console errors', async () => {
     assert.strictEqual(page.__errors.length, 0, 'Expected no console or page errors: ' + page.__errors.join('; '));
   });
 

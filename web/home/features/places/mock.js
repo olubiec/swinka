@@ -91,23 +91,18 @@
 
         let loc = st.places.pigLocations.find(p => (p.pigId || p.PigId) === pigId);
         if (!loc) {
-          loc = { pigId: pigId, scene: 'salon', pinned: false };
+          loc = { pigId: pigId, scene: to, pinned: false };
           st.places.pigLocations.push(loc);
+          const pig1Loc = st.places.pigLocations.find(p => (p.pigId || p.PigId) === 'pig_1');
+          if (pig1Loc) {
+            pig1Loc.scene = to;
+            if (pig1Loc.Scene !== undefined) pig1Loc.Scene = to;
+          }
+        } else {
+          loc.scene = to;
+          if (loc.Scene !== undefined) loc.Scene = to;
         }
 
-        const fromScene = loc.scene || loc.Scene || 'salon';
-        const idxA = ring.findIndex(s => s.id === fromScene);
-        const idxB = ring.findIndex(s => s.id === to);
-
-        if (idxA !== -1 && idxB !== -1) {
-          const prev = (idxA - 1 + ring.length) % ring.length;
-          const next = (idxA + 1) % ring.length;
-          const isAdjacent = (idxB === prev || idxB === next);
-          if (!isAdjacent) return;
-        }
-
-        loc.scene = to;
-        if (loc.Scene !== undefined) loc.Scene = to;
         if (Array.isArray(st.pigLocations)) {
           let locRoot = st.pigLocations.find(p => (p.pigId || p.PigId) === pigId);
           if (locRoot) {

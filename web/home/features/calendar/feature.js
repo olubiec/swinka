@@ -151,10 +151,110 @@
   }
 
   let currentState = null;
+  let lastCalendarSig = null;
   let activeTab = 'today';
   let containerNode = null;
   let featureApi = null;
   let monthOffset = 0; // 0 = current month, -1 = last month, -2 = 2 months ago
+  let formDrafts = {
+    newPig: {},
+    profiles: {},
+    weights: {}
+  };
+
+  function captureFormDrafts() {
+    if (!containerNode) return;
+    const nameEl = containerNode.querySelector('#fcNewPigName, #fc-new-pig-name');
+    const birthEl = containerNode.querySelector('#fcNewPigBirth, #fc-new-pig-bday');
+    const adoptedEl = containerNode.querySelector('#fcNewPigAdopted');
+    const baseEl = containerNode.querySelector('#fcNewPigBaseline');
+    const breedEl = containerNode.querySelector('#fc-new-pig-breed');
+    if (nameEl || birthEl || adoptedEl || baseEl || breedEl) {
+      formDrafts.newPig = {
+        name: nameEl ? nameEl.value : (formDrafts.newPig.name || ''),
+        birth: birthEl ? birthEl.value : (formDrafts.newPig.birth || ''),
+        adopted: adoptedEl ? adoptedEl.value : (formDrafts.newPig.adopted || ''),
+        baseline: baseEl ? baseEl.value : (formDrafts.newPig.baseline || ''),
+        breed: breedEl ? breedEl.value : (formDrafts.newPig.breed || '')
+      };
+    }
+
+    containerNode.querySelectorAll('.fc-profile-card[data-pig]').forEach(card => {
+      const pig = card.dataset.pig;
+      if (!pig) return;
+      const b = card.querySelector('.fc-pig-birth');
+      const a = card.querySelector('.fc-pig-adopted');
+      const g = card.querySelector('.fc-pig-baseline');
+      formDrafts.profiles[pig] = {
+        birth: b ? b.value : '',
+        adopted: a ? a.value : '',
+        baseline: g ? g.value : ''
+      };
+    });
+
+    containerNode.querySelectorAll('.fc-weight-pig-section[data-pig]').forEach(sec => {
+      const pig = sec.dataset.pig;
+      if (!pig) return;
+      const g = sec.querySelector('.fc-input-weight-grams');
+      const d = sec.querySelector('.fc-input-weight-date');
+      formDrafts.weights[pig] = {
+        grams: g ? g.value : '',
+        date: d ? d.value : ''
+      };
+    });
+
+    const singleWeightPig = containerNode.querySelector('#fc-weight-pig');
+    const singleWeightGrams = containerNode.querySelector('#fc-weight-grams');
+    if (singleWeightPig) formDrafts.singleWeightPig = singleWeightPig.value;
+    if (singleWeightGrams) formDrafts.singleWeightGrams = singleWeightGrams.value;
+  }
+
+  function restoreFormDrafts() {
+    if (!containerNode) return;
+    if (formDrafts.newPig) {
+      const nameEl = containerNode.querySelector('#fcNewPigName, #fc-new-pig-name');
+      const birthEl = containerNode.querySelector('#fcNewPigBirth, #fc-new-pig-bday');
+      const adoptedEl = containerNode.querySelector('#fcNewPigAdopted');
+      const baseEl = containerNode.querySelector('#fcNewPigBaseline');
+      const breedEl = containerNode.querySelector('#fc-new-pig-breed');
+      if (nameEl && formDrafts.newPig.name) nameEl.value = formDrafts.newPig.name;
+      if (birthEl && formDrafts.newPig.birth) birthEl.value = formDrafts.newPig.birth;
+      if (adoptedEl && formDrafts.newPig.adopted) adoptedEl.value = formDrafts.newPig.adopted;
+      if (baseEl && formDrafts.newPig.baseline) baseEl.value = formDrafts.newPig.baseline;
+      if (breedEl && formDrafts.newPig.breed) breedEl.value = formDrafts.newPig.breed;
+    }
+
+    if (formDrafts.profiles) {
+      containerNode.querySelectorAll('.fc-profile-card[data-pig]').forEach(card => {
+        const pig = card.dataset.pig;
+        const draft = pig && formDrafts.profiles[pig];
+        if (!draft) return;
+        const b = card.querySelector('.fc-pig-birth');
+        const a = card.querySelector('.fc-pig-adopted');
+        const g = card.querySelector('.fc-pig-baseline');
+        if (b && draft.birth) b.value = draft.birth;
+        if (a && draft.adopted) a.value = draft.adopted;
+        if (g && draft.baseline) g.value = draft.baseline;
+      });
+    }
+
+    if (formDrafts.weights) {
+      containerNode.querySelectorAll('.fc-weight-pig-section[data-pig]').forEach(sec => {
+        const pig = sec.dataset.pig;
+        const draft = pig && formDrafts.weights[pig];
+        if (!draft) return;
+        const g = sec.querySelector('.fc-input-weight-grams');
+        const d = sec.querySelector('.fc-input-weight-date');
+        if (g && draft.grams) g.value = draft.grams;
+        if (d && draft.date) d.value = draft.date;
+      });
+    }
+
+    const singleWeightPig = containerNode.querySelector('#fc-weight-pig');
+    const singleWeightGrams = containerNode.querySelector('#fc-weight-grams');
+    if (singleWeightPig && formDrafts.singleWeightPig) singleWeightPig.value = formDrafts.singleWeightPig;
+    if (singleWeightGrams && formDrafts.singleWeightGrams) singleWeightGrams.value = formDrafts.singleWeightGrams;
+  }
 
   function renderTabs() {
     const tabs = [
@@ -166,7 +266,7 @@
 
     let html = `<div class="fc-tabs">`;
     for (const t of tabs) {
-      html += `<button class="fc-tab ${activeTab === t.id ? 'active' : ''}" data-tab="${t.id}">${t.label}</button>`;
+      html += `<button class="fc-tab room-tab ${activeTab === t.id ? 'active' : ''}" data-tab="${t.id}">${t.label}</button>`;
     }
     html += `</div>`;
     return html;
@@ -238,7 +338,7 @@
       }
 
       html += `
-        <div class="fc-task ${task.due ? 'due' : ''}" data-id="${task.id}">
+        <div class="fc-task fc-task-row fc-card ui-panel-paper ${task.due ? 'due' : ''}" data-id="${task.id}">
           <div class="fc-task-top">
             <span class="pixel-icon x1_5 ${icon}"></span>
             <div class="fc-task-info">
@@ -250,9 +350,9 @@
           <div class="fc-task-text">${task.text || ''}</div>
           ${task.due ? `
           <div class="fc-task-actions">
-            <button class="fc-btn fc-btn-primary fc-btn-done" data-id="${task.id}" data-weigh="${task.weightLog}">Done</button>
+            <button class="fc-btn ui-btn fc-btn-primary fc-btn-done" data-id="${task.id}" data-weigh="${task.weightLog}">Done</button>
             <div class="fc-snooze-menu">
-              <button class="fc-btn fc-btn-later">Later ▾</button>
+              <button class="fc-btn ui-btn fc-btn-later">Later ▾</button>
               <div class="fc-snooze-dropdown">
                 ${(state.snoozeMinutes || []).map(m => {
                   let label = `${m} min`;
@@ -293,9 +393,9 @@
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     html += `
       <div class="fc-month-header">
-        <button class="fc-btn" id="fcBtnPrevMonth" ${monthOffset <= -2 ? 'disabled' : ''}>&lt;</button>
+        <button class="fc-btn ui-btn" id="fcBtnPrevMonth" ${monthOffset <= -2 ? 'disabled' : ''}>&lt;</button>
         <span>${monthNames[month]} ${year}</span>
-        <button class="fc-btn" id="fcBtnNextMonth" ${monthOffset >= 0 ? 'disabled' : ''}>&gt;</button>
+        <button class="fc-btn ui-btn" id="fcBtnNextMonth" ${monthOffset >= 0 ? 'disabled' : ''}>&gt;</button>
       </div>
     `;
 
@@ -349,7 +449,7 @@
     }
 
     html += `</div>`; // end grid
-    html += `<div id="fcMonthDetail" style="margin-top: 12px; display:none; background: var(--ui-linen-1); padding: 8px; border-radius: 6px;"></div>`;
+    html += `<div id="fcMonthDetail" class="fc-card ui-panel-paper" style="margin-top: 12px; display:none; padding: 8px;"></div>`;
     html += `</div>`; // end content
     return html;
   }
@@ -386,15 +486,15 @@
               ${baseline ? `<span style="font-size:11px; font-weight:normal; color:var(--ui-wood-1);">(baseline: ${baseline} g)</span>` : ''}
             </div>
 
-            <div class="fc-weight-form" style="margin-bottom: 8px;">
+            <div class="fc-weight-form fc-card ui-panel-paper" style="margin-bottom: 8px;">
               <div class="fc-weight-inputs">
                 <input type="number" id="fcWgGram_${pIdx}" class="fc-input fc-input-weight-grams" placeholder="Grams (50-3000)" min="50" max="3000">
                 <input type="date" id="fcWgDate_${pIdx}" class="fc-input fc-input-weight-date" value="${new Date().toISOString().split('T')[0]}">
               </div>
-              <button class="fc-btn fc-btn-primary fc-btn-save-weight" data-pig="${pig}" data-idx="${pIdx}">Save</button>
+              <button class="fc-btn ui-btn fc-btn-primary fc-btn-save-weight" data-pig="${pig}" data-idx="${pIdx}">Save</button>
             </div>
 
-            <div class="fc-chart-container" style="margin-bottom: 8px;">
+            <div class="fc-chart-container fc-card ui-panel-paper" style="margin-bottom: 8px;">
               <canvas id="fcChart_${pIdx}" width="330" height="130" style="width: 100%; height: 100%; image-rendering: pixelated;"></canvas>
             </div>
 
@@ -438,7 +538,7 @@
                         <td>${diffPrevHtml}</td>
                         <td>${diffBaseHtml}</td>
                         <td style="text-align:right;">
-                          <button class="fc-btn fc-btn-delete-weight" data-pig="${pig}" data-date="${w.date}" style="padding: 1px 6px; font-size:10px;">Del</button>
+                          <button class="fc-btn ui-btn fc-btn-delete-weight" data-pig="${pig}" data-date="${w.date}" style="padding: 1px 6px; font-size:10px;">Del</button>
                         </td>
                       </tr>
                     `;
@@ -458,21 +558,58 @@
   function renderSettings() {
     const isMock = !currentState || !currentState.tasks;
     const state = isMock ? demoState : currentState;
+    const pigs = state.pigs || [];
 
     let html = `<div class="fc-content" id="fcContent" style="gap: 12px;">`;
 
-    // 1. Pigs section: edit profiles
-    html += `<div class="fc-section-title">Your Pigs</div>`;
+    // 1. Pigs section: Pig Profiles & Add Pig at top
+    html += `
+      <div class="fc-section-title fc-section-header">
+        <span>Pig Profiles &amp; Add Pig</span>
+        ${pigs.length < 6 ? `<button type="button" class="fc-btn ui-btn fc-btn-primary" id="fcBtnFocusAddPig" style="padding: 2px 8px; font-size: 11px;">+ Add Pig</button>` : ''}
+      </div>
+    `;
     html += `<div class="fc-profiles-list" id="fcProfilesList">`;
 
-    const pigs = state.pigs || [];
+    if (pigs.length < 6) {
+      html += `
+        <div class="fc-profile-card fc-pig-card fc-card ui-panel-paper" id="fcAddPigCard">
+          <div class="fc-profile-card-top">
+            <span>Add a new pig</span>
+          </div>
+          <div class="fc-profile-grid">
+            <div class="fc-profile-field" style="grid-column: 1 / -1;">
+              <label for="fcNewPigName">Name</label>
+              <input type="text" id="fcNewPigName" class="fc-input" placeholder="e.g. Gucio, Świnka" maxlength="20">
+            </div>
+            <div class="fc-profile-field">
+              <label for="fcNewPigBirth">Birth date</label>
+              <input type="date" id="fcNewPigBirth" class="fc-input">
+            </div>
+            <div class="fc-profile-field">
+              <label for="fcNewPigAdopted">Adopted date</label>
+              <input type="date" id="fcNewPigAdopted" class="fc-input">
+            </div>
+            <div class="fc-profile-field" style="grid-column: 1 / -1;">
+              <label for="fcNewPigBaseline">Initial weight (g)</label>
+              <input type="number" id="fcNewPigBaseline" class="fc-input" placeholder="e.g. 950" min="50" max="3000">
+            </div>
+          </div>
+          <div id="fc-pig-error" class="fc-pig-error" style="display:none;"></div>
+          <div style="text-align:right; margin-top: 4px;">
+            <button type="button" class="fc-btn ui-btn fc-btn-primary" id="fcBtnAddPig">+ Add Pig</button>
+          </div>
+        </div>
+      `;
+    }
+
     pigs.forEach(pig => {
       const prof = (state.profiles || []).find(p => p.name === pig) || {};
       html += `
-        <div class="fc-profile-card" data-pig="${pig}">
+        <div class="fc-profile-card fc-pig-card fc-card ui-panel-paper" data-pig="${pig}">
           <div class="fc-profile-card-top">
             <span>${pig}</span>
-            <button class="fc-btn fc-btn-remove-pig" data-pig="${pig}" style="padding: 1px 6px; font-size:11px;">Remove</button>
+            <button type="button" class="fc-btn ui-btn fc-btn-remove-pig" data-pig="${pig}" style="padding: 1px 6px; font-size:11px;">Remove</button>
           </div>
           <div class="fc-profile-grid">
             <div class="fc-profile-field">
@@ -489,42 +626,12 @@
             </div>
           </div>
           <div style="text-align:right; margin-top: 4px;">
-            <button class="fc-btn fc-btn-primary fc-btn-save-profile" data-pig="${pig}">Save Profile</button>
+            <button type="button" class="fc-btn ui-btn fc-btn-primary fc-btn-save-profile" data-pig="${pig}">Save Profile</button>
           </div>
         </div>
       `;
     });
 
-    if (pigs.length < 6) {
-      html += `
-        <div class="fc-profile-card" style="border-style: dashed; background: var(--ui-linen-2);">
-          <div class="fc-profile-card-top">
-            <span>Add a new pig</span>
-          </div>
-          <div class="fc-profile-grid">
-            <div class="fc-profile-field" style="grid-column: 1 / -1;">
-              <label>Name</label>
-              <input type="text" id="fcNewPigName" class="fc-input" placeholder="Pig name" maxlength="16">
-            </div>
-            <div class="fc-profile-field">
-              <label>Birth date</label>
-              <input type="date" id="fcNewPigBirth" class="fc-input">
-            </div>
-            <div class="fc-profile-field">
-              <label>Adopted date</label>
-              <input type="date" id="fcNewPigAdopted" class="fc-input">
-            </div>
-            <div class="fc-profile-field" style="grid-column: 1 / -1;">
-              <label>Initial weight (g)</label>
-              <input type="number" id="fcNewPigBaseline" class="fc-input" placeholder="e.g. 950" min="50" max="3000">
-            </div>
-          </div>
-          <div style="text-align:right; margin-top: 4px;">
-            <button class="fc-btn fc-btn-primary" id="fcBtnAddPig">Add Pig</button>
-          </div>
-        </div>
-      `;
-    }
     html += `</div>`; // end profiles list
 
     // 2. Tasks / Reminders section
@@ -533,11 +640,11 @@
       // In manualOptIn mode, reminders default to unchecked unless explicitly enabled
       const isChecked = state.manualOptIn ? (t.enabled === true && t.optedIn !== false) : !!t.enabled;
 
-      html += `<div class="fc-setting-row" data-id="${t.id}">`;
+      html += `<div class="fc-setting-row fc-override-row fc-card ui-panel-paper" data-id="${t.id}">`;
       html += `
         <div class="fc-setting-top">
           <span>${t.title}</span>
-          <input type="checkbox" class="fc-toggle fc-task-enabled" ${isChecked ? 'checked' : ''}>
+          <button type="button" class="retro-toggle fc-task-enabled ${isChecked ? 'on' : ''}" data-action="toggle-override" data-task-id="${t.id}" aria-pressed="${isChecked ? 'true' : 'false'}" aria-label="Toggle ${t.title} reminder"></button>
         </div>
       `;
       html += `<div class="fc-setting-controls">`;
@@ -557,7 +664,7 @@
       html += `</div>`; // row
     });
 
-    html += `<button class="fc-btn fc-btn-primary" id="fcBtnSaveSettings" style="margin-top: 12px;">Save Reminders</button>`;
+    html += `<button type="button" class="fc-btn ui-btn fc-btn-primary" id="fcBtnSaveSettings" style="margin-top: 12px;">Save Reminders</button>`;
     html += `</div>`;
     return html;
   }
@@ -566,7 +673,10 @@
     const tabs = containerNode.querySelectorAll('.fc-tab');
     tabs.forEach(t => {
       t.addEventListener('click', (e) => {
-        activeTab = e.target.dataset.tab;
+        if (activeTab === 'settings' || activeTab === 'weight') {
+          captureFormDrafts();
+        }
+        activeTab = e.currentTarget.dataset.tab;
         render();
       });
     });
@@ -678,6 +788,17 @@
       const state = isMock ? demoState : currentState;
       let currentPigs = [...(state.pigs || [])];
 
+      const btnFocusAddPig = content.querySelector('#fcBtnFocusAddPig');
+      if (btnFocusAddPig) {
+        btnFocusAddPig.addEventListener('click', () => {
+          const inputName = content.querySelector('#fcNewPigName');
+          if (inputName) {
+            inputName.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            inputName.focus();
+          }
+        });
+      }
+
       // Save Profile buttons for existing pigs
       content.querySelectorAll('.fc-btn-save-profile').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -688,6 +809,8 @@
           const adopted = card.querySelector('.fc-pig-adopted').value.trim() || null;
           const baseRaw = card.querySelector('.fc-pig-baseline').value.trim();
           const baseline = baseRaw ? parseInt(baseRaw, 10) : null;
+
+          if (formDrafts.profiles) delete formDrafts.profiles[pig];
 
           if (featureApi) {
             featureApi.send({
@@ -718,16 +841,21 @@
         btn.addEventListener('click', () => {
           const pig = btn.dataset.pig;
           currentPigs = currentPigs.filter(p => p !== pig);
+          if (formDrafts.profiles) delete formDrafts.profiles[pig];
           if (featureApi) {
             featureApi.send({
               type: 'calendar_settings',
               pigs: currentPigs
             });
           }
+          if (currentState && Array.isArray(currentState.pigs)) {
+            currentState.pigs = currentPigs;
+            lastCalendarSig = JSON.stringify(currentState);
+          }
           if (isMock) {
             demoState.pigs = currentPigs;
-            render();
           }
+          render();
         });
       });
 
@@ -739,41 +867,83 @@
           const inputBirth = content.querySelector('#fcNewPigBirth');
           const inputAdopted = content.querySelector('#fcNewPigAdopted');
           const inputBaseline = content.querySelector('#fcNewPigBaseline');
+          const errNode = content.querySelector('#fc-pig-error');
+
+          const showPigError = (msg) => {
+            if (errNode) {
+              errNode.textContent = msg;
+              errNode.style.display = 'block';
+            }
+          };
 
           const name = inputName ? inputName.value.trim() : '';
-          if (name && name.length <= 16 && /^[a-zA-Z0-9\s]+$/.test(name)) {
-            const birth = inputBirth && inputBirth.value.trim() ? inputBirth.value.trim() : null;
-            const adopted = inputAdopted && inputAdopted.value.trim() ? inputAdopted.value.trim() : null;
-            const baseRaw = inputBaseline ? inputBaseline.value.trim() : '';
-            const baseline = baseRaw ? parseInt(baseRaw, 10) : null;
-
-            if (!currentPigs.includes(name)) {
-              currentPigs.push(name);
-            }
-
-            if (featureApi) {
-              featureApi.send({
-                type: 'calendar_profile',
-                pig: name,
-                birthDate: birth,
-                adoptedDate: adopted,
-                baselineGrams: baseline
-              });
-            }
-
-            if (isMock) {
-              demoState.pigs = currentPigs;
-              if (!demoState.profiles) demoState.profiles = [];
-              demoState.profiles = demoState.profiles.filter(p => p.name !== name);
-              demoState.profiles.push({
-                name: name,
-                birthDate: birth,
-                adoptedDate: adopted,
-                baselineGrams: baseline
-              });
-              render();
-            }
+          if (!name || name.length < 1 || name.length > 20 || !/^[\p{L}\p{N}\s\-]+$/u.test(name)) {
+            showPigError('Enter a valid name (1-20 letters, numbers, spaces, or hyphens).');
+            return;
           }
+
+          const birth = inputBirth && inputBirth.value.trim() ? inputBirth.value.trim() : null;
+          const adopted = inputAdopted && inputAdopted.value.trim() ? inputAdopted.value.trim() : null;
+          if (birth && adopted && adopted < birth) {
+            showPigError('Adopted date cannot be earlier than birth date.');
+            return;
+          }
+
+          const baseRaw = inputBaseline ? inputBaseline.value.trim() : '';
+          const baseline = baseRaw ? parseInt(baseRaw, 10) : null;
+          if (baseRaw && (isNaN(baseline) || baseline < 50 || baseline > 3000)) {
+            showPigError('Initial weight must be between 50 and 3000 g.');
+            return;
+          }
+
+          if (errNode) {
+            errNode.textContent = '';
+            errNode.style.display = 'none';
+          }
+
+          formDrafts.newPig = {};
+
+          if (!currentPigs.includes(name)) {
+            currentPigs.push(name);
+          }
+
+          if (featureApi) {
+            featureApi.send({
+              type: 'calendar_profile',
+              pig: name,
+              birthDate: birth,
+              adoptedDate: adopted,
+              baselineGrams: baseline
+            });
+          }
+
+          if (currentState) {
+            if (!Array.isArray(currentState.pigs)) currentState.pigs = [];
+            if (!currentState.pigs.includes(name)) currentState.pigs.push(name);
+            if (!Array.isArray(currentState.profiles)) currentState.profiles = [];
+            currentState.profiles = currentState.profiles.filter(p => p.name !== name);
+            currentState.profiles.push({
+              name: name,
+              birthDate: birth,
+              adoptedDate: adopted,
+              baselineGrams: baseline
+            });
+            lastCalendarSig = JSON.stringify(currentState);
+          }
+
+          if (isMock) {
+            demoState.pigs = currentPigs;
+            if (!demoState.profiles) demoState.profiles = [];
+            demoState.profiles = demoState.profiles.filter(p => p.name !== name);
+            demoState.profiles.push({
+              name: name,
+              birthDate: birth,
+              adoptedDate: adopted,
+              baselineGrams: baseline
+            });
+          }
+
+          render();
         });
       }
 
@@ -782,7 +952,8 @@
         const newTasks = [];
         content.querySelectorAll('.fc-setting-row').forEach(row => {
           const id = row.dataset.id;
-          const enabled = row.querySelector('.fc-task-enabled').checked;
+          const toggleEl = row.querySelector('.fc-task-enabled');
+          const enabled = toggleEl ? (toggleEl.classList.contains('on') || !!toggleEl.checked) : false;
           const timeInput = row.querySelector('.fc-task-time');
           const time = timeInput ? timeInput.value : undefined;
           const taskUpdate = { id, enabled };
@@ -821,7 +992,12 @@
 
       // Toggling any reminder switch triggers auto-send of calendar_settings
       content.querySelectorAll('.fc-task-enabled').forEach(toggle => {
-        toggle.addEventListener('change', () => {
+        toggle.checked = toggle.classList.contains('on');
+        toggle.addEventListener('click', () => {
+          const next = !toggle.classList.contains('on');
+          toggle.classList.toggle('on', next);
+          toggle.checked = next;
+          toggle.setAttribute('aria-pressed', next ? 'true' : 'false');
           saveReminders();
         });
       });
@@ -857,6 +1033,9 @@
 
           // Reject invalid grams (0, negative, outside 50..3000) or missing date
           if (Number.isInteger(grams) && grams >= 50 && grams <= 3000 && date) {
+            if (formDrafts.weights && formDrafts.weights[pig]) {
+              delete formDrafts.weights[pig].grams;
+            }
             if (currentState && Array.isArray(currentState.tasks)) {
               currentState.tasks.forEach(t => {
                 if (t.id === 'weigh' || t.weightLog) {
@@ -1007,7 +1186,25 @@
     }
 
     containerNode.innerHTML = headerHtml + renderTabs() + renderTabContent();
+    if (activeTab === 'settings' || activeTab === 'weight') {
+      restoreFormDrafts();
+    }
     bindEvents();
+  }
+
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('cuy:open-calendar-tab', (e) => {
+      const tab = (e && e.detail && e.detail.tab) || window.__cuyOpenCalendarTab || 'settings';
+      window.__cuyOpenCalendarTab = null;
+      if (containerNode) {
+        activeTab = tab;
+        render();
+        if (activeTab === 'settings') {
+          const nameInput = containerNode.querySelector('#fcNewPigName');
+          if (nameInput) nameInput.focus();
+        }
+      }
+    });
   }
 
   window.CuyHome.registerFeature({
@@ -1017,24 +1214,50 @@
     order: 10,
     open(container, api) {
       containerNode = container;
+      if (containerNode && containerNode.classList) {
+        containerNode.classList.add('fc-container');
+      }
       featureApi = api;
       currentState = api.getState()?.calendar || null;
-      activeTab = 'today';
+      lastCalendarSig = JSON.stringify(currentState);
+      if (typeof window !== 'undefined' && window.__cuyOpenCalendarTab) {
+        activeTab = window.__cuyOpenCalendarTab;
+        window.__cuyOpenCalendarTab = null;
+      } else {
+        activeTab = 'today';
+      }
       monthOffset = 0;
+      formDrafts = { newPig: {}, profiles: {}, weights: {} };
       render();
+      if (activeTab === 'settings' && containerNode) {
+        const nameInput = containerNode.querySelector('#fcNewPigName');
+        if (nameInput) nameInput.focus();
+      }
     },
     close() {
       containerNode = null;
       featureApi = null;
+      lastCalendarSig = null;
     },
     onState(state) {
       if (!containerNode) return;
-      currentState = state?.calendar || null;
+      const nextCal = state?.calendar || null;
+      const newSig = JSON.stringify(nextCal);
+      if (newSig === lastCalendarSig) {
+        currentState = nextCal;
+        return;
+      }
+      lastCalendarSig = newSig;
+      currentState = nextCal;
 
       const contentNode = containerNode.querySelector('#fcContent');
       if (!contentNode) {
         render();
         return;
+      }
+
+      if (activeTab === 'settings' || activeTab === 'weight') {
+        captureFormDrafts();
       }
 
       if (activeTab === 'today') {
@@ -1045,13 +1268,12 @@
         bindEvents();
       } else if (activeTab === 'weight') {
         contentNode.outerHTML = renderWeight();
+        restoreFormDrafts();
         bindEvents();
       } else if (activeTab === 'settings') {
-        const hasFocus = containerNode.querySelector('input:focus');
-        if (!hasFocus) {
-          contentNode.outerHTML = renderSettings();
-          bindEvents();
-        }
+        contentNode.outerHTML = renderSettings();
+        restoreFormDrafts();
+        bindEvents();
       }
     }
   });

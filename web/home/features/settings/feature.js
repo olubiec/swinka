@@ -10,7 +10,16 @@
 
       <div class="settings-panel">
 
-        <div class="settings-group">
+        <div class="settings-group ui-panel-paper">
+          <div class="settings-row">
+            <span class="settings-group-title">Pig Profiles</span>
+          </div>
+          <div class="update-actions">
+            <button type="button" class="settings-btn ui-btn" id="set-open-pig-profiles">Manage Pigs &amp; Add Pig (Care Calendar)</button>
+          </div>
+        </div>
+
+        <div class="settings-group ui-panel-paper">
           <div class="settings-row volume-row">
             <label for="settingsVolume">Sound volume</label>
             <input type="range" id="settingsVolume" class="retro-range" min="0" max="100" step="1">
@@ -37,7 +46,7 @@
           </div>
         </div>
 
-        <div class="settings-group">
+        <div class="settings-group ui-panel-paper">
           <div class="settings-row">
             <label>Pet size</label>
             <div class="retro-radio-group">
@@ -56,7 +65,7 @@
           </div>
         </div>
 
-        <div class="settings-group update-group">
+        <div class="settings-group ui-panel-paper update-group">
           <div class="settings-row update-header-row">
             <span class="settings-group-title">Game Updates</span>
             <span class="update-badge" id="settingsUpdateBadge" style="display: none;">NEW</span>
@@ -69,8 +78,8 @@
           <div class="update-status-msg" id="settingsUpdateStatus" style="display: none;"></div>
 
           <div class="update-actions">
-            <button type="button" class="settings-btn" id="btnCheckUpdate">Check for updates</button>
-            <button type="button" class="settings-btn btn-apply-update" id="btnApplyUpdate" style="display: none;">Update &amp; Restart</button>
+            <button type="button" class="settings-btn ui-btn" id="btnCheckUpdate">Check for updates</button>
+            <button type="button" class="settings-btn ui-btn btn-apply-update" id="btnApplyUpdate" style="display: none;">Update &amp; Restart</button>
           </div>
         </div>
 
@@ -93,6 +102,22 @@
     const radioSize = document.querySelectorAll('input[name="petSize"]');
     const elBtnCheckUpdate = document.getElementById('btnCheckUpdate');
     const elBtnApplyUpdate = document.getElementById('btnApplyUpdate');
+    const elBtnPigProfiles = document.getElementById('set-open-pig-profiles');
+
+    if (elBtnPigProfiles) {
+      elBtnPigProfiles.addEventListener('click', () => {
+        if (root.Sound) root.Sound.click();
+        if (typeof window !== 'undefined') {
+          window.__cuyOpenCalendarTab = 'settings';
+        }
+        if (window.CuyHome && typeof window.CuyHome.openFeature === 'function') {
+          window.CuyHome.openFeature('calendar');
+        }
+        if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+          window.dispatchEvent(new CustomEvent('cuy:open-calendar-tab', { detail: { tab: 'settings' } }));
+        }
+      });
+    }
 
     function sendMsg(msg) {
       if (window.bridge && typeof window.bridge.send === 'function') {

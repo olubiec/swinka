@@ -327,5 +327,38 @@ namespace Cuy.Core.Tests
             Assert.True(PigRoamer.SetPinned(state, "kuki", true));
             Assert.True(loc.Pinned);
         }
+
+        [Fact]
+        public void RoamerHelpers_TryMove_AllowNonAdjacent_MovesAcrossNonAdjacentScenes()
+        {
+            var order = new[] { "salon", "pig:kuki", "dorm", "garden", "park" };
+            var state = new GameState();
+            state.Roster.Add(new PigProfile("Kuki") { Id = "kuki" });
+            var loc = state.GetPigLocation("kuki");
+            loc.SceneId = "salon";
+
+            // Non-adjacent move rejected when allowNonAdjacent is false
+            Assert.False(PigRoamer.CanMove(state, "kuki", "dorm", order, _ => true, allowNonAdjacent: false));
+            Assert.False(PigRoamer.TryMove(state, "kuki", "dorm", order, _ => true, allowNonAdjacent: false));
+            Assert.Equal("salon", state.GetPigLocation("kuki").SceneId);
+
+            // Non-adjacent move succeeds when allowNonAdjacent is true
+            Assert.True(PigRoamer.CanMove(state, "kuki", "dorm", order, _ => true, allowNonAdjacent: true));
+            Assert.True(PigRoamer.TryMove(state, "kuki", "dorm", order, _ => true, allowNonAdjacent: true));
+            Assert.Equal("dorm", state.GetPigLocation("kuki").SceneId);
+            Assert.Equal("dorm", state.GetPigLocation("kuki").Scene);
+
+            // Same-scene drop also succeeds when allowNonAdjacent is true
+            Assert.True(PigRoamer.TryMove(state, "kuki", "dorm", order, _ => true, allowNonAdjacent: true));
+            Assert.Equal("dorm", state.GetPigLocation("kuki").SceneId);
+
+            // Locked scene still rejected even when allowNonAdjacent is true
+            Assert.False(PigRoamer.TryMove(state, "kuki", "park", order, s => s != "park", allowNonAdjacent: true));
+            Assert.Equal("dorm", state.GetPigLocation("kuki").SceneId);
+
+            // 4-argument overload also moves across non-adjacent scenes and persists SceneId
+            Assert.True(PigRoamer.TryMove(state, "kuki", "garden", allowNonAdjacent: true));
+            Assert.Equal("garden", state.GetPigLocation("kuki").SceneId);
+        }
     }
 }

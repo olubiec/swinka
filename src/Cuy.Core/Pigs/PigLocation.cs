@@ -179,25 +179,63 @@ namespace Cuy.Core.Pigs
 
         public static bool CanMove(GameState state, string pigId, string toScene, IReadOnlyList<string> order, Func<string, bool> isUnlocked)
         {
+            return CanMove(state, pigId, toScene, order, isUnlocked, allowNonAdjacent: false);
+        }
+
+        public static bool CanMove(GameState state, string pigId, string toScene, IReadOnlyList<string> order, Func<string, bool> isUnlocked, bool allowNonAdjacent)
+        {
             if (state == null || string.IsNullOrEmpty(pigId) || string.IsNullOrEmpty(toScene) || order == null)
                 return false;
             var loc = state.GetPigLocation(pigId);
             if (loc == null) return false;
             if (isUnlocked != null && !isUnlocked(toScene)) return false;
+            if (allowNonAdjacent)
+                return ContainsScene(order, toScene);
             return AreAdjacent(loc.SceneId, toScene, order);
         }
 
         public static bool TryMove(GameState state, string pigId, string toScene, IReadOnlyList<string> order, Func<string, bool> isUnlocked, IClock clock = null, Random rng = null, PigRoamingConfig config = null)
         {
-            if (!CanMove(state, pigId, toScene, order, isUnlocked))
+            return TryMove(state, pigId, toScene, order, isUnlocked, allowNonAdjacent: false, clock, rng, config);
+        }
+
+        public static bool TryMove(GameState state, string pigId, string toScene, IReadOnlyList<string> order, Func<string, bool> isUnlocked, bool allowNonAdjacent, IClock clock = null, Random rng = null, PigRoamingConfig config = null)
+        {
+            if (!CanMove(state, pigId, toScene, order, isUnlocked, allowNonAdjacent))
                 return false;
             var loc = state.GetPigLocation(pigId);
             loc.SceneId = toScene;
+            if (state.PigLocations != null)
+            {
+                state.PigLocations[pigId] = loc;
+            }
             if (clock != null)
             {
                 var cfg = config ?? PigRoamingConfig.Current;
                 var r = rng ?? new Random();
                 loc.NextMoveAt = clock.UtcNow.AddSeconds(r.Next(cfg.IntervalMinSeconds, cfg.IntervalMaxSeconds + 1));
+            }
+            return true;
+        }
+
+        public static bool TryMove(GameState state, string pigId, string toScene, bool allowNonAdjacent)
+        {
+            if (state == null || string.IsNullOrEmpty(pigId) || string.IsNullOrEmpty(toScene))
+                return false;
+            var loc = state.GetPigLocation(pigId);
+            if (loc == null) return false;
+            if (!allowNonAdjacent)
+            {
+                var ring = SceneOrder.Build(null, _ => true);
+                var order = new List<string>(ring.Count);
+                for (int i = 0; i < ring.Count; i++) order.Add(ring[i].Id);
+                if (!AreAdjacent(loc.SceneId, toScene, order))
+                    return false;
+            }
+            loc.SceneId = toScene;
+            if (state.PigLocations != null)
+            {
+                state.PigLocations[pigId] = loc;
             }
             return true;
         }

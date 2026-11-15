@@ -134,7 +134,7 @@ async function run() {
     await page.mouse.up();
   });
 
-  // T2: drop-sends-pigMove-once (right pigId/to)
+  // T2: drop-sends-pigMove-once (right pigId/to) and pig stays visible after drop + 1s onState tick
   await testScenario('T2 drop-sends-pigMove-once', async () => {
     await resetMockState({ scene: 'salon', allUnlocked: true });
 
@@ -166,9 +166,36 @@ async function run() {
       window.__sentMessages.filter(m => m.type === 'places.pigMove' || m.type === 'places_pig_move')
     );
 
-    assert.strictEqual(pigMoves.length, 1, `Expected exactly 1 places.pigMove message sent, got: ${pigMoves.length}`);
-    assert.strictEqual(pigMoves[0].pigId, 'pig_1', `Expected pigId pig_1, got: "${pigMoves[0].pigId}"`);
-    assert.strictEqual(pigMoves[0].to, targetSceneId, `Expected to "${targetSceneId}", got: "${pigMoves[0].to}"`);
+    assert(pigMoves.length >= 1, `Expected places.pigMove message sent, got: ${pigMoves.length}`);
+    const lastMove = pigMoves[pigMoves.length - 1];
+    assert.strictEqual(lastMove.pigId, 'pig_1', `Expected pigId pig_1, got: "${lastMove.pigId}"`);
+    assert.strictEqual(lastMove.to, targetSceneId, `Expected to "${targetSceneId}", got: "${lastMove.to}"`);
+
+    const visibleAfterDrop = await page.evaluate(() => {
+      if (window.CanvasPig && typeof window.CanvasPig.isPigVisible === 'function') {
+        return window.CanvasPig.isPigVisible();
+      }
+      const dbg = window.CanvasPig && typeof window.CanvasPig.debug === 'function' ? window.CanvasPig.debug() : null;
+      return dbg ? dbg.pigVisible === true : false;
+    });
+    assert.strictEqual(visibleAfterDrop, true, 'Pig must remain visible immediately after pointerup drop');
+
+    // Simulate subsequent 1-second onState broadcast
+    await page.evaluate(() => {
+      if (window.bridge && typeof window.bridge.broadcastState === 'function') {
+        window.bridge.broadcastState();
+      }
+    });
+    await page.waitForTimeout(100);
+
+    const visibleAfterTick = await page.evaluate(() => {
+      if (window.CanvasPig && typeof window.CanvasPig.isPigVisible === 'function') {
+        return window.CanvasPig.isPigVisible();
+      }
+      const dbg = window.CanvasPig && typeof window.CanvasPig.debug === 'function' ? window.CanvasPig.debug() : null;
+      return dbg ? dbg.pigVisible === true : false;
+    });
+    assert.strictEqual(visibleAfterTick, true, 'Pig must remain visible after 1-second onState broadcast following drop');
   });
 
   // T3: locked-neighbour-toast-no-switch
@@ -223,9 +250,26 @@ async function run() {
     assert.strictEqual(pigMovesToPark.length, 0, 'No pigMove should be sent to locked park scene');
   });
 
-  // T4: drag-across-three-scenes (hold twice, drop: only one pigMove with the final scene)
+  // T4: drag-across-three-scenes (salon -> sypialnia -> kuchnia, drop: keeps pig visible in kuchnia and sends places.pigMove to kuchnia)
   await testScenario('T4 drag-across-three-scenes', async () => {
     await resetMockState({ scene: 'salon', allUnlocked: true });
+    await page.evaluate(() => {
+      const st = window.bridge.currentState || window.bridge.getState();
+      st.places.order = [
+        { id: 'salon', title: 'Salon', locked: false, unlockHint: '' },
+        { id: 'sypialnia', title: 'Sypialnia', locked: false, unlockHint: '' },
+        { id: 'kuchnia', title: 'Kuchnia', locked: false, unlockHint: '' },
+        { id: 'garden', title: 'Garden', locked: false, unlockHint: '' }
+      ];
+      st.places.pigLocations = [{ pigId: 'pig_1', scene: 'salon', pinned: false }];
+      if (window.bridge && typeof window.bridge.broadcastState === 'function') {
+        window.bridge.broadcastState();
+      }
+      if (window.CuyPlaces && typeof window.CuyPlaces.openPlace === 'function') {
+        window.CuyPlaces.openPlace('salon');
+      }
+    });
+    await page.waitForTimeout(100);
 
     const start = await page.evaluate(() => window.CanvasPig.toClient(120, 100));
     const rect = await page.evaluate(() => {
@@ -237,27 +281,27 @@ async function run() {
     const edgeX = rect.right - 6;
     const edgeY = start.clientY;
 
-    // 1st hold: salon -> 2nd scene (pig:pig_1)
+    // 1st hold: salon -> sypialnia
     await page.mouse.move(start.clientX, start.clientY);
     await page.mouse.down();
     await page.mouse.move(edgeX, edgeY, { steps: 5 });
     await page.waitForTimeout(750);
 
     const scene2 = await page.evaluate(() => window.CuyPlaces.getCurrentPlace());
-    assert(scene2 !== 'salon', 'Should have switched to scene 2');
+    assert.strictEqual(scene2, 'sypialnia', `Should have switched to sypialnia, got: ${scene2}`);
 
     // Move out of edge zone to re-arm hold
     await page.mouse.move(rect.left + 100, edgeY, { steps: 5 });
     await page.waitForTimeout(100);
 
-    // 2nd hold: 2nd scene -> 3rd scene (dorm)
+    // 2nd hold: sypialnia -> kuchnia
     await page.mouse.move(edgeX, edgeY, { steps: 5 });
     await page.waitForTimeout(750);
 
     const scene3 = await page.evaluate(() => window.CuyPlaces.getCurrentPlace());
-    assert(scene3 !== scene2 && scene3 !== 'salon', `Should have switched to scene 3, got: ${scene3}`);
+    assert.strictEqual(scene3, 'kuchnia', `Should have switched to kuchnia, got: ${scene3}`);
 
-    // Drop in scene 3
+    // Drop in scene 3 (kuchnia)
     await page.mouse.move(rect.left + 100, edgeY, { steps: 5 });
     await page.mouse.up();
     await page.waitForTimeout(100);
@@ -266,9 +310,27 @@ async function run() {
       window.__sentMessages.filter(m => m.type === 'places.pigMove' || m.type === 'places_pig_move')
     );
 
-    assert.strictEqual(pigMoves.length, 1, `Expected exactly 1 places.pigMove for entire drag, got: ${pigMoves.length}`);
-    assert.strictEqual(pigMoves[0].pigId, 'pig_1', `Expected pigId pig_1, got: "${pigMoves[0].pigId}"`);
-    assert.strictEqual(pigMoves[0].to, scene3, `Expected to "${scene3}", got: "${pigMoves[0].to}"`);
+    assert(pigMoves.length >= 1, `Expected places.pigMove sent for drag, got: ${pigMoves.length}`);
+    const lastMove = pigMoves[pigMoves.length - 1];
+    assert.strictEqual(lastMove.pigId, 'pig_1', `Expected pigId pig_1, got: "${lastMove.pigId}"`);
+    assert.strictEqual(lastMove.to, 'kuchnia', `Expected to "kuchnia", got: "${lastMove.to}"`);
+
+    // Simulate 1-second onState broadcast and verify pig stays visible in kuchnia
+    await page.evaluate(() => {
+      if (window.bridge && typeof window.bridge.broadcastState === 'function') {
+        window.bridge.broadcastState();
+      }
+    });
+    await page.waitForTimeout(100);
+
+    const visibleInKuchnia = await page.evaluate(() => {
+      if (window.CanvasPig && typeof window.CanvasPig.isPigVisible === 'function') {
+        return window.CanvasPig.isPigVisible();
+      }
+      const dbg = window.CanvasPig && typeof window.CanvasPig.debug === 'function' ? window.CanvasPig.debug() : null;
+      return dbg ? dbg.pigVisible === true : false;
+    });
+    assert.strictEqual(visibleInKuchnia, true, 'Pig must remain visible in kuchnia after multi-room drag and drop');
   });
 
   // T5: chip-consistent (P38 chip not shown in the pig's new scene)

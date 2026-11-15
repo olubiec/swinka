@@ -201,11 +201,55 @@ namespace Cuy.Features
             };
         }
 
+        private static bool IsPigMoveMessage(string type)
+        {
+            return string.Equals(type, "places.pigMove", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(type, "places_pig_move", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(type, "pig_move", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(type, "places_pigMove", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsPigPinMessage(string type)
+        {
+            return string.Equals(type, "places.pigPin", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(type, "places_pig_pin", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(type, "pig_pin", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(type, "places_pigPin", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string ResolvePigId(GameState gameState, string pigId)
+        {
+            if (gameState == null) return pigId;
+
+            bool inRoster = gameState.Roster != null &&
+                gameState.Roster.Any(p => p != null && string.Equals(p.Id, pigId, StringComparison.OrdinalIgnoreCase));
+
+            if (!string.IsNullOrEmpty(pigId) &&
+                !string.Equals(pigId, "pig_1", StringComparison.OrdinalIgnoreCase) &&
+                inRoster)
+            {
+                return pigId;
+            }
+
+            if (string.Equals(pigId, "pig_1", StringComparison.OrdinalIgnoreCase) && inRoster)
+            {
+                return pigId;
+            }
+
+            return gameState.PigLocations?.Keys.FirstOrDefault(k => !string.IsNullOrEmpty(k))
+                ?? gameState.Roster?.FirstOrDefault(p => p != null && !string.IsNullOrEmpty(p.Id))?.Id
+                ?? "starter";
+        }
+
         public override bool HandleMessage(string type, JObject message, BrainController brain)
         {
-            if (type != "place_unlock" && type != "room_unlock" && type != "place_upgrade" &&
-                type != "places.pigMove" && type != "places_pig_move" && type != "pig_move" && type != "places_pigMove" &&
-                type != "places.pigPin" && type != "places_pig_pin" && type != "pig_pin" && type != "places_pigPin")
+            bool isPigMove = IsPigMoveMessage(type);
+            bool isPigPin = IsPigPinMessage(type);
+
+            if (!string.Equals(type, "place_unlock", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(type, "room_unlock", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(type, "place_upgrade", StringComparison.OrdinalIgnoreCase) &&
+                !isPigMove && !isPigPin)
             {
                 return false;
             }
@@ -218,36 +262,42 @@ namespace Cuy.Features
             var catalog = pet.PlaceCatalog ?? PlaceCatalog.Current;
             var gameState = pet.State;
 
-            if (type == "places.pigMove" || type == "places_pig_move" || type == "pig_move" || type == "places_pigMove")
+            if (isPigMove)
             {
                 string pigId = message?.Value<string>("pigId") ?? message?.Value<string>("pig_id");
                 string to = message?.Value<string>("to");
-                if (string.IsNullOrEmpty(pigId) || string.IsNullOrEmpty(to) || gameState == null) return true;
+                if (string.IsNullOrEmpty(to) || gameState == null) return true;
+
+                pigId = ResolvePigId(gameState, pigId);
+                if (string.IsNullOrEmpty(pigId)) return true;
 
                 var roomIds = GetRoomIds(gameState, world);
                 Func<string, bool> isUnlocked = s => CheckUnlocked(world, catalog, s);
                 var ring = SceneOrder.Build(roomIds, isUnlocked);
                 var ringIds = ring.Select(r => r.Id).ToList();
 
-                if (!PigRoamer.CanMove(gameState, pigId, to, ringIds, isUnlocked))
+                if (!PigRoamer.CanMove(gameState, pigId, to, ringIds, isUnlocked, allowNonAdjacent: true))
                 {
                     bool locked = !isUnlocked(to);
                     HomeWindow.PostToPage(new { type = "toast", text = locked ? "Not ready yet" : "Cannot move there" });
                     return true;
                 }
 
-                if (PigRoamer.TryMove(gameState, pigId, to, ringIds, isUnlocked, pet.Clock))
+                if (PigRoamer.TryMove(gameState, pigId, to, ringIds, isUnlocked, allowNonAdjacent: true, pet.Clock))
                 {
                     try { brain.Session.AutoSaver.SaveNow(); } catch (Exception ex) { BrainController.Log("[WARN] PlacesFeature save: " + ex.Message); }
                     HomeWindow.NotifyStateChanged();
                 }
                 return true;
             }
-            else if (type == "places.pigPin" || type == "places_pig_pin" || type == "pig_pin" || type == "places_pigPin")
+            else if (isPigPin)
             {
                 string pigId = message?.Value<string>("pigId") ?? message?.Value<string>("pig_id");
                 bool pinned = message?.Value<bool?>("pinned") ?? message?.Value<bool?>("isPinned") ?? true;
-                if (string.IsNullOrEmpty(pigId) || gameState == null) return true;
+                if (gameState == null) return true;
+
+                pigId = ResolvePigId(gameState, pigId);
+                if (string.IsNullOrEmpty(pigId)) return true;
 
                 if (PigRoamer.SetPinned(gameState, pigId, pinned))
                 {

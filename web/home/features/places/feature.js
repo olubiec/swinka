@@ -8,6 +8,8 @@
   let previousPigLocations = null;
   let exitDisabledUntil = 0;
   let draggedPigId = null;
+  let lastState = null;
+  let apiRef = null;
 
   // Scene light and ambient state
   let lightsData = null;
@@ -287,22 +289,43 @@
 
   function getState() {
     return (window.CuyHome && window.CuyHome.api && window.CuyHome.api.getState()) ||
-      (window.bridge && window.bridge.getState && window.bridge.getState()) || null;
+      (window.bridge && window.bridge.getState && window.bridge.getState()) || lastState || null;
+  }
+
+  function sendBridgeMessage(msg) {
+    if (apiRef && typeof apiRef.send === 'function') {
+      apiRef.send(msg);
+    } else if (window.bridge && typeof window.bridge.send === 'function') {
+      window.bridge.send(msg);
+    }
   }
 
   function getFirstPigId(st) {
     if (!st) return 'pig_1';
     if (Array.isArray(st.activePigIds) && st.activePigIds[0]) return st.activePigIds[0];
-    if (st.places && Array.isArray(st.places.pigLocations) && st.places.pigLocations[0]) {
-      return st.places.pigLocations[0].pigId || st.places.pigLocations[0].PigId;
+    if (st.places && st.places.pigLocations) {
+      if (Array.isArray(st.places.pigLocations) && st.places.pigLocations[0]) {
+        const id = st.places.pigLocations[0].pigId || st.places.pigLocations[0].PigId;
+        if (id) return id;
+      } else if (!Array.isArray(st.places.pigLocations) && typeof st.places.pigLocations === 'object') {
+        const keys = Object.keys(st.places.pigLocations);
+        if (keys.length > 0) return keys[0];
+      }
     }
     if (Array.isArray(st.pigLocations) && st.pigLocations[0]) {
-      return st.pigLocations[0].pigId || st.pigLocations[0].PigId;
+      const id = st.pigLocations[0].pigId || st.pigLocations[0].PigId;
+      if (id) return id;
     }
-    if (Array.isArray(st.roster) && st.roster[0]) {
+    if (Array.isArray(st.pigs) && st.pigs[0] && (st.pigs[0].id || st.pigs[0].pigId)) {
+      return st.pigs[0].id || st.pigs[0].pigId;
+    }
+    if (Array.isArray(st.roster) && st.roster[0] && (st.roster[0].id || st.roster[0].pigId)) {
       return st.roster[0].id || st.roster[0].pigId;
     }
-    return st.id || st.pigId || 'pig_1';
+    if (st.pig && (st.pig.id || st.pig.pigId)) {
+      return st.pig.id || st.pig.pigId;
+    }
+    return st.id || st.pigId || 'starter';
   }
 
   function getPigLocations(st) {
@@ -311,10 +334,79 @@
     if (st.places && Array.isArray(st.places.pigLocations)) {
       return st.places.pigLocations;
     }
+    if (st.places && st.places.pigLocations && typeof st.places.pigLocations === 'object') {
+      return Object.keys(st.places.pigLocations).map(k => {
+        const v = st.places.pigLocations[k];
+        return (v && typeof v === 'object') ? v : { pigId: k, scene: v, pinned: false };
+      });
+    }
     if (Array.isArray(st.pigLocations)) {
       return st.pigLocations;
     }
     return [];
+  }
+
+  function applyOptimisticSceneToState(st, pigId, sceneId) {
+    if (!st || !sceneId) return;
+    const resolvedPigId = pigId || getFirstPigId(st);
+    if (!st.places) st.places = {};
+    if (Array.isArray(st.places.pigLocations)) {
+      let loc = st.places.pigLocations.find(p => p && (p.pigId === resolvedPigId || p.PigId === resolvedPigId));
+      if (!loc && st.places.pigLocations.length === 1) {
+        loc = st.places.pigLocations[0];
+      }
+      if (loc) {
+        loc.scene = sceneId;
+        if (loc.sceneId !== undefined) loc.sceneId = sceneId;
+        if (loc.Scene !== undefined) loc.Scene = sceneId;
+        if (loc.SceneId !== undefined) loc.SceneId = sceneId;
+      } else {
+        st.places.pigLocations.push({ pigId: resolvedPigId, scene: sceneId, pinned: false });
+      }
+    } else if (st.places.pigLocations && typeof st.places.pigLocations === 'object') {
+      if (!(resolvedPigId in st.places.pigLocations)) {
+        const keys = Object.keys(st.places.pigLocations);
+        if (keys.length === 1) {
+          st.places.pigLocations[keys[0]] = sceneId;
+        }
+      }
+      st.places.pigLocations[resolvedPigId] = sceneId;
+    } else {
+      st.places.pigLocations = [{ pigId: resolvedPigId, scene: sceneId, pinned: false }];
+    }
+
+    if (Array.isArray(st.pigLocations)) {
+      let locRoot = st.pigLocations.find(p => p && (p.pigId === resolvedPigId || p.PigId === resolvedPigId));
+      if (!locRoot && st.pigLocations.length === 1) {
+        locRoot = st.pigLocations[0];
+      }
+      if (locRoot) {
+        locRoot.scene = sceneId;
+        if (locRoot.sceneId !== undefined) locRoot.sceneId = sceneId;
+        if (locRoot.Scene !== undefined) locRoot.Scene = sceneId;
+        if (locRoot.SceneId !== undefined) locRoot.SceneId = sceneId;
+      }
+    }
+  }
+
+  function optimisticallySetPigScene(pigId, sceneId) {
+    if (!sceneId) return;
+    const st = getState();
+    if (st) applyOptimisticSceneToState(st, pigId, sceneId);
+    if (lastState && lastState !== st) applyOptimisticSceneToState(lastState, pigId, sceneId);
+    if (Array.isArray(previousPigLocations)) {
+      const resolvedPigId = pigId || getFirstPigId(st || lastState);
+      let prev = previousPigLocations.find(p => p && (p.pigId === resolvedPigId || p.PigId === resolvedPigId));
+      if (!prev && previousPigLocations.length === 1) {
+        prev = previousPigLocations[0];
+      }
+      if (prev) {
+        prev.scene = sceneId;
+        if (prev.sceneId !== undefined) prev.sceneId = sceneId;
+        if (prev.Scene !== undefined) prev.Scene = sceneId;
+        if (prev.SceneId !== undefined) prev.SceneId = sceneId;
+      }
+    }
   }
 
   function getPigName(pigId, st) {
@@ -594,8 +686,16 @@
     if (!draggedPigId) {
       draggedPigId = getActivePigIdForScene(current, st);
     }
+    const pigId = draggedPigId || getFirstPigId(st);
+    optimisticallySetPigScene(pigId, neighbourId);
 
     applyScene(neighbourId, st);
+
+    sendBridgeMessage({
+      type: 'places.pigMove',
+      pigId: pigId,
+      to: neighbourId
+    });
 
     const tod = (window.CuyScenes && typeof window.CuyScenes.timeOfDay === 'function')
       ? window.CuyScenes.timeOfDay()
@@ -611,11 +711,18 @@
 
   function handleCanvasDrop(ev) {
     const st = getState();
-    const pigId = draggedPigId || getActivePigIdForScene(currentSceneId, st);
+    const pigId = draggedPigId || getActivePigIdForScene(currentSceneId, st) || getFirstPigId(st);
+    if (pigId && currentSceneId) {
+      optimisticallySetPigScene(pigId, currentSceneId);
+    }
     draggedPigId = null;
 
-    if (pigId && currentSceneId && window.bridge && typeof window.bridge.send === 'function') {
-      window.bridge.send({
+    if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
+      window.CanvasPig.setPigVisible(true);
+    }
+
+    if (pigId && currentSceneId) {
+      sendBridgeMessage({
         type: 'places.pigMove',
         pigId: pigId,
         to: currentSceneId
@@ -975,6 +1082,7 @@
     },
     bindArrows(container) {},
     updateStageNav(st) {
+      if (st) lastState = st;
       applyScene(currentSceneId, st || getState());
       checkArrivals(st);
     },
@@ -1036,13 +1144,18 @@
 
         let loc = st.places.pigLocations && st.places.pigLocations.find(p => (p.pigId || p.PigId) === pigId);
         if (!loc) {
-          loc = { pigId: pigId, scene: 'salon', pinned: false };
+          loc = { pigId: pigId, scene: to, pinned: false };
           if (!st.places.pigLocations) st.places.pigLocations = [];
           st.places.pigLocations.push(loc);
+          const pig1Loc = st.places.pigLocations.find(p => (p.pigId || p.PigId) === 'pig_1');
+          if (pig1Loc) {
+            pig1Loc.scene = to;
+            if (pig1Loc.Scene !== undefined) pig1Loc.Scene = to;
+          }
+        } else {
+          loc.scene = to;
+          if (loc.Scene !== undefined) loc.Scene = to;
         }
-
-        loc.scene = to;
-        if (loc.Scene !== undefined) loc.Scene = to;
         if (Array.isArray(st.pigLocations)) {
           let locRoot = st.pigLocations.find(p => (p.pigId || p.PigId) === pigId);
           if (locRoot) {
@@ -1064,9 +1177,11 @@
       icon: 'icon-house',
       order: 35,
       open(container, api, arg) {
+        if (api) apiRef = api;
         CuyPlaces.openPlace(arg || CuyPlaces.getCurrentPlace() || 'salon');
       },
       onState(st) {
+        if (st) lastState = st;
         CuyPlaces.updateStageNav(st);
       }
     });
