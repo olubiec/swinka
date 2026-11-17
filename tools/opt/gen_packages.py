@@ -103,7 +103,7 @@ def main():
                 text = open(p['manual'], encoding='utf-8').read()
                 files = split_list((re.search(r'^Zmieniaj:\s*(.*)$', text, re.M)).group(1))
                 prompt_file, verify, title = p['manual'], p['verify'], p['title']
-                n = 3
+                n = p.get('weight', 3)
             else:
                 its = []
                 for iid in p['items']:

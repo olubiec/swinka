@@ -1,7 +1,7 @@
 # Plan poprawek UX po teście na Windowsie (6.11.2026)
 
 Źródło: lista błędów od człowieka (zrzut kalendarza opieki + 16 uwag). Fale `P1`-`P8` idą kolejno; po każdej fali człowiek sprawdza w grze krótką listę „Do sprawdzenia" i dopiero wtedy startuje następną.
-**Przebudowa planu 11.11: aktualny stan, kolejność i gotowość wszystkich fal: `docs/PLAN_FAL_PRZEBUDOWA_11_11.md`.**
+**Aktualny plan fal (od 17.11): `docs/PLAN_FAL_PRZEBUDOWA_17_11.md` (jedna fala 2 w 6 wpisach, równolegle). Historia: `docs/PLAN_FAL_PRZEBUDOWA_11_11.md`.**
 Zadania w fali mają rozłączne pliki (mogą iść równolegle); wspólne pliki edytuje jedno zadanie naraz. Prompty zadań powstaną w następnym kroku (wg `docs/opt/README.md`: edycja `docs/opt/packages.spec.json` + `python3 tools/opt/gen_packages.py`, nie ręcznie).
 Zasady z `AGENTS.md` obowiązują: liczby w `assets/data/*.json`, nowe pola zapisu tylko z bezpiecznymi domyślnymi, per-feature pliki (kontrakt, walidacja, mock), JS nigdy nie liczy cen.
 
@@ -31,11 +31,11 @@ Zasady z `AGENTS.md` obowiązują: liczby w `assets/data/*.json`, nowe pola zapi
 | 21 | Nowy piksel-artowy pasek przełączania miejsc (dedykowana grafika zamiast żółtych szwów) | P47-04 |
 | 22 | Każdy element na dworze (ławki, fontanna, stragany, ognisko) usuwalny i przestawialny jak meble | P46-01..P46-03 |
 | 23 | Tła muszą mieć identyczny rozmiar (256x144), by okno nie skakało między lokacjami | P47-01 |
-| 24 | Rozmiar okna ucięty od dołu (dolny pasek nawigacji / przycisk More) | PK-P47c, PK-P47r (sprawdzenie wysokości w `HomeWindow.cs` / `style.css`) |
-| 25 | Lampka ma zepsutą fizykę — nie da się jej przenieść wyżej / na ścianę | P7-01, P7-02 (warstwa `wall` / stopa `h:1` dla małych lampek, `canPlaceAt`) |
-| 26 | Gdy świnka podchodzi do lampki, na lampce znika efekt nocy | P6-07 (kolejność rysowania/blendowania światła nocnego i `litFrame` w `canvas-pig.js`) |
-| 27 | Brak opcji zmiany kupionej tapety i podłogi po usunięciu okna `Rooms` | P6-03 / P6-08 (sekcja tapet i podłóg w `edit-panel.js` z `customize.js`) |
-| 28 | Świnka nie skaluje się proporcjonalnie po upgrade pokoju (zostaje tak samo duża względem okna) | PK-P47r (stała skala świnki z `16px` kratki pokoju zamiast `frac * sceneWidth`) |
+| 24 | Rozmiar okna ucięty od dołu (dolny pasek nawigacji / przycisk More) | badanie PK-R24; naprawa PK-P47c (CSS) i PK-P24c (`HomeWindow.cs`, może NO-OP); test PK-T9 (fala 2, plan 17.11) |
+| 25 | Lampka ma zepsutą fizykę — nie da się jej przenieść wyżej / na ścianę | badanie PK-R25; naprawa PK-P25c (Core, `world_items.json`) i PK-PE2 (edytor); test PK-T7 (fala 2) |
+| 26 | Gdy świnka podchodzi do lampki, na lampce znika efekt nocy | badanie PK-R26; naprawa PK-P47r krok B (`canvas-pig.js`), PK-P6c, PK-PF2; test PK-T6 (fala 2) |
+| 27 | Brak opcji zmiany kupionej tapety i podłogi po usunięciu okna `Rooms` | badanie PK-R27; moduł PK-P6s + montaż PK-PE2; test PK-T5 i PK-T11 (fala 2) |
+| 28 | Świnka nie skaluje się proporcjonalnie po upgrade pokoju (zostaje tak samo duża względem okna) | badanie PK-R28; naprawa PK-P47r krok A (stała skala z kratki 16 px); test PK-T9 i PK-T13 (fala 2) |
 
 Podejrzenie wspólnej przyczyny uwag 5, 11, 12, 13 (przyciski w funkcjach „nic nie robią", a panel pojawia się po powrocie): cykl życia okna funkcji (`openFeature` / modal w `web/home/app.js`, `openMoreModal` ok. linii 783). Zadanie P1-01 ma najpierw to zdiagnozować; P1-02..P1-04 dopiero po nim.
 

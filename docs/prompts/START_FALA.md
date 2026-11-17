@@ -1,6 +1,6 @@
 # Prompt startowy sesji (zmieniasz tylko numer fali)
 
-Fale są numerowane od 1 (R1 jest zrobione i pominięte). Fala to zbiór zadań z `waves.yaml`; wpisy fali mają prefiks `F<numer>-`. Wpisy jednej fali idą po kolei, a paczki w jednym wpisie równolegle.
+Fale są numerowane od 1 (R1 jest zrobione i pominięte; fala 1 zrobiona). Fala to zbiór zadań z `waves.yaml`; wpisy fali mają prefiks `F<numer>-`. Wpisy jednej fali idą po kolei, a paczki w jednym wpisie równolegle.
 
 ```
 FALA = 1
@@ -36,22 +36,20 @@ RAPORT (po polsku, maks. 12 linii):
 - Odpisz mi: "OK" albo "krok X: opis" dla każdego, co nie działa.
 ```
 
-## Fale (stan 11.11.2026)
+## Fale (stan 17.11.2026; plan: `docs/PLAN_FAL_PRZEBUDOWA_17_11.md`)
 
 | Fala | Wpisy w waves.yaml | Zadania (równolegle w obrębie wpisu) | Warunek startu |
 |---|---|---|---|
-| **1** | F1-1 .. F1-6 | F1-1: P44a, P4a, R5, R6, R7, R8; F1-2: P44b, P4b, P8a; F1-3: P8b; F1-4: P4q; F1-5: P44q; F1-6: P8q | brak (R8 ma wynik przed P8a w F1-2) |
-| **2** | F2-1 .. F2-7 | F2-1: P46a; F2-2: P46b; F2-3: P46c; F2-4: P47a, P47r, P47c; F2-5: P46t1, P46t2; F2-6: P46q1, P46q2; F2-7: P47q | fala 1 zakończona; plik `foundations/R46.md` jest. Do dopisania po R5, R6: P5, P6 |
-| **3** | F3-1 .. F3-4 | P43a+b, P43c+d+e, P43f, P43q | fala 2 zakończona (P46c). Do dopisania: P47b (po D2), P7 bez latarni (po R7) |
-| **4** | (jeszcze brak) | P47d (ognisko i światło), P7 (latarnie i noc), bramka końcowa | fala 3 zakończona i dostawa D4 odebrana |
+| **1 (zrobiona)** | F1-1 .. F1-6 | P44, P4, P8, badania R5-R8 | brak |
+| **2** | F2-1 .. F2-6 | F2-1: 12 badań (PK-R24..R35); F2-2: 18 paczek implementujących (Core, dane, grafika, czyste moduły, canvas przejście 1); F2-3: 3 analizy sklejenia (PK-RI1..RI3); F2-4: 6 paczek sklejających (canvas przejście 2, places/feature.js, edit-panel.js, app/index.html, C# Rooms, Core lampy); F2-5: 13 agentów testowych; F2-6: bramki PK-Q1, PK-Q2 | fala 1 zakończona |
 
-## Grafik
+Fale 3 i 4 z planu 11.11 nie istnieją: grafika D2 i D4 jest już w repo, a P43, P47b/d, P5-P7 weszły do fali 2. Paczki RI (F2-3) tak jak R (F2-1) są tylko do odczytu: sprawdź plik wynikowy `node tools/qa/foundation-check.js docs/opt/foundations/<R>.md <min sekcji z promptu>`. Paczki testowe (F2-5) zgłaszają wady jako `DEFECT`, kodu nie poprawiają; w raporcie podaj liczbę DEFECT na paczkę. Przy fali 2 raport może mieć do 20 linii.
 
-| Dostawa | Zamów | Odbierz przed | Zlecenie |
-|---|---|---|---|
-| D3 pasek miejsc | zrobione | odbiór w P47c (fala 2) | `GRAFIK_D3_pasek_miejsc.md` |
-| **D2** obiekty | **przed falą 1** | przed falą 3 | `GRAFIK_D2_obiekty.md` |
-| D4 ognisko i światło | w fali 2, po odbiorze D2 | przed falą 4 | do napisania |
-| D1 tła | robimy sami (P47a, fala 2) | n/d | n/d |
+## Grafika
 
-Po fali 1 czat planujący stosuje "Prompt fixes" z `R5.md`..`R8.md` i dopisuje brakujące paczki do fal 2-4. Plan i tabela fal: `docs/PLAN_FAL_PRZEBUDOWA_11_11.md`.
+| Dostawa | Stan |
+|---|---|
+| D2 obiekty, D3 pasek miejsc, D4 ognisko | **odebrane** (w repo); czego jeszcze brakuje w katalogu/atlasie, wskaże PK-R35, a wpisy dopisze PK-P25c |
+| D1 tła | robimy sami (PK-P47a) |
+
+Plan i tabela fal: `docs/PLAN_FAL_PRZEBUDOWA_17_11.md`.

@@ -536,74 +536,85 @@
     {
       "id": "F2-1",
       "packages": [
-        "PK-P46a"
+        "PK-R24",
+        "PK-R25",
+        "PK-R26",
+        "PK-R27",
+        "PK-R28",
+        "PK-R29",
+        "PK-R30",
+        "PK-R31",
+        "PK-R32",
+        "PK-R33",
+        "PK-R34",
+        "PK-R35"
       ]
     },
     {
       "id": "F2-2",
       "packages": [
-        "PK-P46b"
+        "PK-P46a",
+        "PK-P46b",
+        "PK-P47a",
+        "PK-P47c",
+        "PK-P47r",
+        "PK-P6c",
+        "PK-P43ab",
+        "PK-P5a",
+        "PK-P7a",
+        "PK-P7b",
+        "PK-P6a",
+        "PK-P6b",
+        "PK-P6s",
+        "PK-P5b",
+        "PK-P5c",
+        "PK-P43c",
+        "PK-P43d",
+        "PK-P24c"
       ]
     },
     {
       "id": "F2-3",
       "packages": [
-        "PK-P46c"
+        "PK-RI1",
+        "PK-RI2",
+        "PK-RI3"
       ]
     },
     {
       "id": "F2-4",
       "packages": [
-        "PK-P47a",
-        "PK-P47r",
-        "PK-P47c"
+        "PK-CV2",
+        "PK-PF2",
+        "PK-PE2",
+        "PK-APP2",
+        "PK-P46c",
+        "PK-P25c"
       ]
     },
     {
       "id": "F2-5",
       "packages": [
         "PK-P46t1",
-        "PK-P46t2"
+        "PK-P46t2",
+        "PK-T3",
+        "PK-T4",
+        "PK-T5",
+        "PK-T6",
+        "PK-T7",
+        "PK-T8",
+        "PK-T9",
+        "PK-T10",
+        "PK-T11",
+        "PK-T12",
+        "PK-T13"
       ]
     },
     {
       "id": "F2-6",
       "packages": [
-        "PK-P46q1",
-        "PK-P46q2"
-      ]
-    },
-    {
-      "id": "F2-7",
-      "packages": [
-        "PK-P47q"
-      ]
-    },
-    {
-      "id": "F3-1",
-      "packages": [
-        "PK-P43a",
-        "PK-P43b"
-      ]
-    },
-    {
-      "id": "F3-2",
-      "packages": [
-        "PK-P43c",
-        "PK-P43d",
-        "PK-P43e"
-      ]
-    },
-    {
-      "id": "F3-3",
-      "packages": [
-        "PK-P43f"
-      ]
-    },
-    {
-      "id": "F3-4",
-      "packages": [
-        "PK-P43q"
+        "PK-Q1",
+        "PK-Q2"
       ]
     }
   ],
@@ -1641,28 +1652,13 @@
       "items": []
     },
     {
-      "id": "PK-P43a",
-      "tier": "mid",
-      "title": "Scene hotspots data",
-      "manual": "docs/prompts/PK-P43a-hotspot-data.md",
-      "verify": "node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p43-hotspot-data.js && node tools/qa/ux-p43-hotspot-data.js",
-      "items": []
-    },
-    {
-      "id": "PK-P43b",
-      "tier": "high",
-      "title": "Hotspots in the canvas",
-      "manual": "docs/prompts/PK-P43b-hotspot-engine.md",
-      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p43-hotspot-engine.js && node tools/qa/ux-p43-hotspot-engine.js",
-      "items": []
-    },
-    {
       "id": "PK-P43c",
       "tier": "high",
       "title": "Market: stalls interact in the scene",
       "manual": "docs/prompts/PK-P43c-market-stalls-in-scene.md",
       "verify": "node --check web/home/features/market/feature.js && node --check tools/qa/ux-p43-market-scene.js && node tools/qa/ux-p43-market-scene.js",
-      "items": []
+      "items": [],
+      "weight": 3
     },
     {
       "id": "PK-P43d",
@@ -1670,31 +1666,8 @@
       "title": "Farm: plots interact in the scene",
       "manual": "docs/prompts/PK-P43d-farm-plots-in-scene.md",
       "verify": "node --check web/home/features/farm/feature.js && node --check tools/qa/ux-p43-farm-scene.js && node tools/qa/ux-p43-farm-scene.js",
-      "items": []
-    },
-    {
-      "id": "PK-P43e",
-      "tier": "mid",
-      "title": "Rooms and garden: objects act in the scene",
-      "manual": "docs/prompts/PK-P43e-room-and-garden-objects.md",
-      "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p43-object-actions.js && node tools/qa/ux-p43-object-actions.js",
-      "items": []
-    },
-    {
-      "id": "PK-P43f",
-      "tier": "high",
-      "title": "Farm and Market windows retired",
-      "manual": "docs/prompts/PK-P43f-retire-farm-market-windows.md",
-      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p43-retire-fm.js && node tools/qa/ux-p43-retire-fm.js",
-      "items": []
-    },
-    {
-      "id": "PK-P43q",
-      "tier": "low",
-      "title": "Windows checks after wave P43",
-      "manual": "docs/prompts/PK-P43q-windows-checks-wave-p43.md",
-      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
-      "items": []
+      "items": [],
+      "weight": 3
     },
     {
       "id": "PK-P44a",
@@ -1750,7 +1723,8 @@
       "title": "Core: outdoor fixtures become saved instances",
       "manual": "docs/prompts/PK-P46a-core-outdoor-instances.md",
       "verify": "dotnet build src/Cuy.Core/Cuy.Core.csproj -c Release && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~OutdoorSeed|FullyQualifiedName~RoomLayoutOps|FullyQualifiedName~WorldMigration|FullyQualifiedName~WorldAssets|FullyQualifiedName~WorldItemCatalog\"",
-      "items": []
+      "items": [],
+      "weight": 4
     },
     {
       "id": "PK-P46b",
@@ -1758,15 +1732,8 @@
       "title": "Scenes draw outdoor instances and walk around them",
       "manual": "docs/prompts/PK-P46b-render-outdoor-instances.md",
       "verify": "node --check web/home/features/places/scenes.js && node --check web/home/features/places/mock.js && node --check tools/qa/place-scenes-check.js && node --check tools/qa/ux-p46-render.js && node tools/qa/ux-p46-render.js",
-      "items": []
-    },
-    {
-      "id": "PK-P46c",
-      "tier": "high",
-      "title": "Edit mode moves, rotates and stashes outdoor objects",
-      "manual": "docs/prompts/PK-P46c-edit-mode-outdoor-fixtures.md",
-      "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p46-edit.js && node tools/qa/ux-p46-edit.js && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
-      "items": []
+      "items": [],
+      "weight": 3
     },
     {
       "id": "PK-P46t1",
@@ -1774,7 +1741,8 @@
       "title": "Test agent: adversarial Core tests for outdoor instances",
       "manual": "docs/prompts/PK-P46t1-core-adversarial-tests.md",
       "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~OutdoorSeedAdversarial\"",
-      "items": []
+      "items": [],
+      "weight": 3
     },
     {
       "id": "PK-P46t2",
@@ -1782,23 +1750,8 @@
       "title": "Test agent: browser regression across all scenes",
       "manual": "docs/prompts/PK-P46t2-browser-regression-tests.md",
       "verify": "node --check tools/qa/ux-p46-regress.js && node tools/qa/ux-p46-regress.js",
-      "items": []
-    },
-    {
-      "id": "PK-P46q1",
-      "tier": "low",
-      "title": "Stage gate for wave P46 (full checks)",
-      "manual": "docs/prompts/PK-P46q1-windows-checks-wave-p46.md",
-      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
-      "items": []
-    },
-    {
-      "id": "PK-P46q2",
-      "tier": "low",
-      "title": "Owner test sheet and screenshots for wave P46",
-      "manual": "docs/prompts/PK-P46q2-owner-test-sheet-wave-p46.md",
-      "verify": "node --check tools/qa/ux-p46-shots.js && node tools/qa/ux-p46-shots.js",
-      "items": []
+      "items": [],
+      "weight": 3
     },
     {
       "id": "PK-R5",
@@ -1862,7 +1815,8 @@
       "title": "Clean 256x144 backgrounds without painted fixtures",
       "manual": "docs/prompts/PK-P47a-clean-backgrounds.md",
       "verify": "node --check tools/qa/ux-p47-bg.js && node tools/qa/ux-p47-bg.js && node tools/qa/place-scenes-check.js && node tools/qa/check-assets.js",
-      "items": []
+      "items": [],
+      "weight": 4
     },
     {
       "id": "PK-P47r",
@@ -1870,7 +1824,8 @@
       "title": "Room fixed 256x144 viewport",
       "manual": "docs/prompts/PK-P47r-room-fixed-viewport.md",
       "verify": "node --check web/home/features/places/room-geometry.js && node --check web/home/canvas-pig.js && node --check tools/qa/ux-p47-room.js && node tools/qa/ux-p47-room.js",
-      "items": []
+      "items": [],
+      "weight": 4
     },
     {
       "id": "PK-P47c",
@@ -1878,15 +1833,413 @@
       "title": "Places bar with the new nav art",
       "manual": "docs/prompts/PK-P47c-places-bar-ui.md",
       "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-bar.js && node tools/qa/check-assets.js",
-      "items": []
+      "items": [],
+      "weight": 3
     },
     {
-      "id": "PK-P47q",
+      "id": "PK-R24",
+      "tier": "high",
+      "title": "Research: window cut off at the bottom (note 24)",
+      "manual": "docs/prompts/PK-R24-research-window-layout.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R24.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R25",
+      "tier": "high",
+      "title": "Research: lamp placement physics (note 25)",
+      "manual": "docs/prompts/PK-R25-research-lamp-physics.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R25.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R26",
+      "tier": "high",
+      "title": "Research: night effect on lamps, toggles, contact shadows (note 26, P6-06/07)",
+      "manual": "docs/prompts/PK-R26-research-light-night-shadows.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R26.md 7",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R27",
+      "tier": "high",
+      "title": "Research: wallpaper/floor change in Edit, stash filters and room templates (note 27, P6a/P6b)",
+      "manual": "docs/prompts/PK-R27-research-skins-stash-ui.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R27.md 7",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R28",
+      "tier": "high",
+      "title": "Research: pig scale after room upgrade and fixed 256x144 viewport (note 28, P47r)",
+      "manual": "docs/prompts/PK-R28-research-scale-viewport.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R28.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R29",
+      "tier": "high",
+      "title": "Research: multiple pigs, pin and desktop pet after wave F1 (P5)",
+      "manual": "docs/prompts/PK-R29-research-multi-pig-reground.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R29.md 8",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R30",
+      "tier": "high",
+      "title": "Research: outdoor instances and hotspots after wave F1 (P46, P43)",
+      "manual": "docs/prompts/PK-R30-research-outdoor-hotspots-reground.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R30.md 8",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R31",
+      "tier": "high",
+      "title": "Research: play targets, toy sync, weather and animated light strips (P7)",
+      "manual": "docs/prompts/PK-R31-research-play-weather-strips.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R31.md 8",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R32",
+      "tier": "high",
+      "title": "Research: canvas-pig.js edit plan (two passes, no overlap)",
+      "manual": "docs/prompts/PK-R32-research-canvas-seams.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R32.md 7",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R33",
+      "tier": "high",
+      "title": "Research: places/feature.js, edit-panel.js, scenes.js, app.js wiring map",
+      "manual": "docs/prompts/PK-R33-research-ui-seams.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R33.md 7",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R34",
+      "tier": "high",
+      "title": "Research: test kit, fixtures and per-package test recipes",
+      "manual": "docs/prompts/PK-R34-research-test-kit.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R34.md 7",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R35",
+      "tier": "high",
+      "title": "Research: delivered D2/D4 art, atlas and catalog gaps, light data",
+      "manual": "docs/prompts/PK-R35-research-art-state.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R35.md 5",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P6c",
+      "tier": "mid",
+      "title": "Lights: toggle guard, outdoor night auto-on, campfire and torch sources",
+      "manual": "docs/prompts/PK-P6c-lights-guard-outdoor-night.md",
+      "verify": "node --check web/home/lib/lights.js && node --check tools/qa/ux-p6-lights.js && node tools/qa/lights-test.js && node tools/qa/ux-p6-lights.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P43ab",
+      "tier": "mid",
+      "title": "Hotspots: static data file and pure engine module (no canvas edit)",
+      "manual": "docs/prompts/PK-P43ab-hotspot-data-and-module.md",
+      "verify": "node --check web/home/lib/hotspots.js && node --check tools/qa/hotspots-check.js && node --check tools/qa/ux-p43-hotspots.js && node tools/qa/hotspots-check.js && node tools/qa/ux-p43-hotspots.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P5a",
+      "tier": "mid",
+      "title": "Multi-pig scene module (pure state per pig)",
+      "manual": "docs/prompts/PK-P5a-scene-pigs-module.md",
+      "verify": "node --check web/home/lib/scene-pigs.js && node --check tools/qa/ux-p5-scene-pigs.js && node tools/qa/ux-p5-scene-pigs.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P7a",
+      "tier": "mid",
+      "title": "Visual weather module and data (rain, tint), no gameplay effect",
+      "manual": "docs/prompts/PK-P7a-weather-module.md",
+      "verify": "node --check web/home/lib/weather.js && node --check tools/qa/ux-p7-weather.js && node tools/qa/ux-p7-weather.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P7b",
+      "tier": "mid",
+      "title": "Reachable play targets module (tunnel, ball)",
+      "manual": "docs/prompts/PK-P7b-play-targets-module.md",
+      "verify": "node --check web/home/lib/play-targets.js && node --check tools/qa/ux-p7-play-targets.js && node tools/qa/ux-p7-play-targets.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P6a",
+      "tier": "mid",
+      "title": "Edit drawer: category tabs and search (module)",
+      "manual": "docs/prompts/PK-P6a-edit-filters-module.md",
+      "verify": "node --check web/home/features/places/edit-filters.js && node --check tools/qa/ux-p6-filters.js && node tools/qa/ux-p6-filters.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P6b",
+      "tier": "mid",
+      "title": "Edit drawer: room templates (wallpaper + floor themes) module",
+      "manual": "docs/prompts/PK-P6b-edit-templates-module.md",
+      "verify": "node --check web/home/features/places/edit-templates.js && node --check tools/qa/ux-p6-templates.js && node tools/qa/ux-p6-templates.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P6s",
+      "tier": "mid",
+      "title": "Edit drawer: change bought wallpaper and floor (note 27) module",
+      "manual": "docs/prompts/PK-P6s-edit-skins-module.md",
+      "verify": "node --check web/home/features/places/edit-skins.js && node --check tools/qa/ux-p6-skins.js && node tools/qa/ux-p6-skins.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P5b",
+      "tier": "high",
+      "title": "Pigs: pin/roam button, desktop toggle, validation, mock, contract",
+      "manual": "docs/prompts/PK-P5b-pig-pin-desktop-ui.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~PigPinMessages\" && node --check web/home/features/pigs/feature.js && node --check web/home/features/pigs/mock.js && node --check tools/qa/ux-p5-pin.js && node tools/qa/ux-p5-pin.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-P5c",
+      "tier": "high",
+      "title": "Desktop: minimal second pig companion (C#, build-verified)",
+      "manual": "docs/prompts/PK-P5c-desktop-second-pig-cs.md",
+      "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P24c",
+      "tier": "mid",
+      "title": "HomeWindow: fix the C# cause of the cut bottom (note 24), or NO-OP",
+      "manual": "docs/prompts/PK-P24c-home-window-fit.md",
+      "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 2
+    },
+    {
+      "id": "PK-RI1",
+      "tier": "high",
+      "title": "Integration analysis: canvas-pig.js and scenes.js wiring",
+      "manual": "docs/prompts/PK-RI1-integration-canvas-scenes.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RI1.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RI2",
+      "tier": "high",
+      "title": "Integration analysis: places/feature.js, edit-panel.js, app.js, index.html wiring",
+      "manual": "docs/prompts/PK-RI2-integration-ui-wiring.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RI2.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RI3",
+      "tier": "high",
+      "title": "Integration analysis: Core, C# and data after the parallel step",
+      "manual": "docs/prompts/PK-RI3-integration-core-data.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RI3.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-CV2",
+      "tier": "high",
+      "title": "Canvas pass 2: multi-pig, play targets and toy sync, light strips, hotspot API and arbitration, scene hotspots",
+      "manual": "docs/prompts/PK-CV2-canvas-scenes-wiring.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check web/home/features/places/scenes.js && node --check tools/qa/ux-p50-canvas-wiring.js && node tools/qa/ux-p50-canvas-wiring.js && node tools/qa/ux-p47-room.js && node tools/qa/ux-p46-render.js && node tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p39-blockers.js && node tools/qa/ux-p45-pig-depth.js && node tools/qa/ux-p34-pig-walk.js",
+      "items": [],
+      "weight": 6
+    },
+    {
+      "id": "PK-PF2",
+      "tier": "high",
+      "title": "places/feature.js: lamp actions, toggle guard, present pigs, weather layer, night lamps",
+      "manual": "docs/prompts/PK-PF2-places-feature-wiring.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p51-places-wiring.js && node tools/qa/ux-p51-places-wiring.js && node tools/qa/ux-p47-bar.js && node tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p38-presence.js && node tools/qa/ux-p39-light.js",
+      "items": [],
+      "weight": 5
+    },
+    {
+      "id": "PK-PE2",
+      "tier": "high",
+      "title": "edit-panel.js: Outdoor tab and hint, fixture lock, filters, templates, skins, lamp placement",
+      "manual": "docs/prompts/PK-PE2-edit-panel-wiring.md",
+      "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p52-edit-wiring.js && node tools/qa/ux-p52-edit-wiring.js && node tools/qa/ux-p40-edit-drawer.js && node tools/qa/ux-p40-edit-move.js && node tools/qa/ux-p40-edit-place.js && node tools/qa/ux-p40-edit-upgrade.js",
+      "items": [],
+      "weight": 6
+    },
+    {
+      "id": "PK-APP2",
+      "tier": "high",
+      "title": "app.js / index.html / index.json: load order of new modules, retire Farm and Market windows",
+      "manual": "docs/prompts/PK-APP2-app-index-wiring.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p53-load-order.js && node tools/qa/ux-p53-load-order.js && node tools/qa/ux-p47-bar.js && node tools/qa/ux-p40-retire.js && node tools/qa/ux-p1-lifecycle.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P46c",
+      "tier": "high",
+      "title": "C#: outdoor room messages, fixture_locked toast, validation",
+      "manual": "docs/prompts/PK-P46c-cs-outdoor-room-messages.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~RoomsOutdoorMessages|FullyQualifiedName~RoomsMessages|FullyQualifiedName~MessageValidator\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-P25c",
+      "tier": "high",
+      "title": "Core and data: lamp placement physics (note 25), catalog and atlas gaps",
+      "manual": "docs/prompts/PK-P25c-lamp-physics-catalog-atlas.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~LampPlacement|FullyQualifiedName~RoomLayoutOps|FullyQualifiedName~WorldAssets|FullyQualifiedName~WorldItemCatalog|FullyQualifiedName~WorldMigration\" && node tools/qa/check-assets.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T3",
+      "tier": "high",
+      "title": "Test agent: hotspots, market and farm panels, lamp clicks",
+      "manual": "docs/prompts/PK-T3-test-hotspots-panels.md",
+      "verify": "node --check tools/qa/ux-p60-hotspots-adv.js && node tools/qa/ux-p60-hotspots-adv.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T4",
+      "tier": "high",
+      "title": "Test agent: several pigs in scenes, pinning, desktop switch",
+      "manual": "docs/prompts/PK-T4-test-multi-pig.md",
+      "verify": "node --check tools/qa/ux-p61-multipig-adv.js && node tools/qa/ux-p61-multipig-adv.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T5",
+      "tier": "high",
+      "title": "Test agent: Edit drawer (outdoor tab, filters, templates, skins, hint)",
+      "manual": "docs/prompts/PK-T5-test-edit-drawer.md",
+      "verify": "node --check tools/qa/ux-p62-drawer-adv.js && node tools/qa/ux-p62-drawer-adv.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T6",
+      "tier": "high",
+      "title": "Test agent: light, night effect on lamps (note 26), toggles, contact shadows",
+      "manual": "docs/prompts/PK-T6-test-light-night-shadows.md",
+      "verify": "node --check tools/qa/ux-p63-light-pixels.js && node tools/qa/ux-p63-light-pixels.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T7",
+      "tier": "high",
+      "title": "Test agent: lamp placement physics (note 25), Core and editor parity",
+      "manual": "docs/prompts/PK-T7-test-lamp-physics.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~LampPlacementAdversarial\" && node --check tools/qa/ux-p64-lamp-edit.js && node tools/qa/ux-p64-lamp-edit.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T8",
+      "tier": "high",
+      "title": "Test agent: play targets, toy sync, weather, animation scale",
+      "manual": "docs/prompts/PK-T8-test-play-weather.md",
+      "verify": "node --check tools/qa/ux-p65-play-weather.js && node tools/qa/ux-p65-play-weather.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T9",
+      "tier": "high",
+      "title": "Test agent: window layout and pig scale matrix (notes 24 and 28)",
+      "manual": "docs/prompts/PK-T9-test-viewport-scale-matrix.md",
+      "verify": "node --check tools/qa/ux-p66-viewport-matrix.js && node tools/qa/ux-p66-viewport-matrix.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T10",
+      "tier": "high",
+      "title": "Test agent: old saves, migrations and message validation fuzz (Core)",
+      "manual": "docs/prompts/PK-T10-test-save-validation-core.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~NewFeaturesAdversarial\"",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T11",
+      "tier": "high",
+      "title": "Test agent: end-to-end player journeys on the mock",
+      "manual": "docs/prompts/PK-T11-test-journeys.md",
+      "verify": "node --check tools/qa/ux-p67-journeys.js && node tools/qa/ux-p67-journeys.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T12",
+      "tier": "high",
+      "title": "Test agent: performance, memory and listener leaks",
+      "manual": "docs/prompts/PK-T12-test-perf-leaks.md",
+      "verify": "node --check tools/qa/ux-p68-perf-leaks.js && node tools/qa/ux-p68-perf-leaks.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T13",
+      "tier": "high",
+      "title": "Test agent: visual baselines, palette and clipping checks",
+      "manual": "docs/prompts/PK-T13-test-visual-baselines.md",
+      "verify": "node --check tools/qa/ux-p69-visual-baseline.js && node tools/qa/ux-p69-visual-baseline.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-Q1",
       "tier": "low",
-      "title": "Windows checks after wave P47 part 1",
-      "manual": "docs/prompts/PK-P47q-windows-checks-wave-p47.md",
-      "verify": "node --check tools/qa/ux-p47-bg.js && node --check tools/qa/ux-p47-room.js && node --check tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-bg.js && node tools/qa/ux-p47-room.js && node tools/qa/ux-p47-bar.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js",
-      "items": []
+      "title": "Stage gate: full build, all UX tests, strict defect count",
+      "manual": "docs/prompts/PK-Q1-gate-full-checks.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && node tools/qa/ux-all.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && node tools/qa/plan-audit.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-Q2",
+      "tier": "low",
+      "title": "Owner test sheet and screenshots for the whole wave",
+      "manual": "docs/prompts/PK-Q2-gate-owner-sheet.md",
+      "verify": "node --check tools/qa/ux-p70-owner-shots.js && node tools/qa/ux-p70-owner-shots.js",
+      "items": [],
+      "weight": 3
     }
   ]
 }

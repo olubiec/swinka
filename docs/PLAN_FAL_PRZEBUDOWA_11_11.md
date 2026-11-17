@@ -1,5 +1,7 @@
 # Przebudowa planu fal (11.11.2026)
 
+> **Od 17.11.2026 fale 2-4 z tego pliku zastępuje `docs/PLAN_FAL_PRZEBUDOWA_17_11.md`** (jedna fala 2 w sześciu wpisach, ok. 54 agentów, pliki rozłączne; D2 i D4 są już w repo). Tabele fal poniżej zostają jako historia.
+
 Źródło: ostatni commit na GitHubie (`ec2b3ad`: brief dla grafika `docs/BRIEF_DLA_GRAFIKA_SCENY_I_OBIEKTY.md`, fale P46 i P47 w `docs/PLAN_POPRAWEK_UX.md`) oraz przegląd kodu po falach P38-P45. `git fetch` 11.11: lokalny `main` równa się `origin/main`, nowszych wytycznych na GitHubie jeszcze nie ma (lokalnie jest tylko pusta linia dopisana na końcu briefu). Gdy dopiszesz kolejne uwagi, dodaj je do `docs/PLAN_POPRAWEK_UX.md` (mapa uwag) i wróć do tego pliku.
 
 Zasady bez zmian: paczki i `waves.yaml` powstają z `docs/opt/packages.spec.json` przez `python3 tools/opt/gen_packages.py`, potem `node tools/qa/plan-audit.js` (po tej przebudowie: PLAN AUDIT OK, 125 paczek, 85 fal). Prompty nie są pisane ręcznie w `waves.yaml`.

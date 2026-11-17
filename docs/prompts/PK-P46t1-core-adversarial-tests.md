@@ -22,6 +22,9 @@ Produces (names other packages rely on): Test class `OutdoorSeedAdversarialTests
 3. If a test exposes a defect: keep the test, mark it `[Fact(Skip = "DEFECT: <one line>")]` so the build stays green, and list each defect with a 3-line repro in the log. Do not change production code.
 4. Run the Weryfikacja line once.
 
+## Poprawki 17.11
+- Biegniesz w kroku F2-5 razem z PK-T3..PK-T13: kod z F2-2 i F2-4 jest scalony. Plik badawczy `docs/opt/foundations/R30.md` sekcja 7 zawiera dodatkowe przypadki; dodaj je po wymienionych w krokach. Wady jako `DEFECT <id>` (JS: kod wyjścia 0 bez `STRICT=1`; C#: `Skip = "DEFECT ..."`).
+
 ## Poprawki po R1 (obowiązują, mają pierwszeństwo nad krokami wyżej)
 - Dodaj przypadki: zasiew farmy i targu z siatką 16x9 oraz niezmienność fixture (próba usunięcia -> `fixture_locked`, przesunięcie dozwolone).
 

@@ -22,6 +22,9 @@ Produces (names other packages rely on): `tools/qa/ux-p46-regress.js` (picked up
 3. Tests that cannot run because an API does not exist yet are skipped with a printed reason `SKIP <name>: <why>`; they must never pass silently.
 4. Run the Weryfikacja line once. Log defects with a 3-line repro each; do not change production code.
 
+## Poprawki 17.11
+- Biegniesz w kroku F2-5 razem z PK-T3..PK-T13: kod z F2-2 i F2-4 jest scalony. Plik badawczy `docs/opt/foundations/R30.md` sekcja 7 zawiera dodatkowe przypadki; dodaj je po wymienionych w krokach. Wady jako `DEFECT <id>` (JS: kod wyjścia 0 bez `STRICT=1`; C#: `Skip = "DEFECT ..."`).
+
 ## Poprawki po R1 (obowiązują, mają pierwszeństwo nad krokami wyżej)
 - `ux-p46-regress.js` ma sprawdzać roundtrip Edit (przesuń, przełącz scenę, wróć) oraz wyznaczanie ścieżki w scenach z `bg_clean: true`.
 

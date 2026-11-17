@@ -1,0 +1,37 @@
+# PK-P46c: C#: outdoor room messages, fixture_locked toast, validation
+Zmieniaj: src/Cuy/dotNet/Features/RoomsFeature.cs, src/Cuy.Core/Input/Validation/RoomsMessages.cs, tests/Cuy.Core.Tests/RoomsOutdoorMessagesTests.cs, docs/opt/log/PK-P46c.md
+Weryfikacja: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter "FullyQualifiedName~RoomsOutdoorMessages|FullyQualifiedName~RoomsMessages|FullyQualifiedName~MessageValidator" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 45 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane, pliki wskazane w sekcji "Czytaj" oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js.
+Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
+Goal: The C# side of Edit mode for outdoor places: valid place ids and rules for `room_place/move/remove/flip` on garden, park, farm and market, and a short player-facing toast for `fixture_locked` (the JS half lives in PK-PE2).
+
+Depends on: krok F2-3 (`RI3.md`) i `PK-P46a` scalone w `main`. Biegnie w F2-4 równolegle z paczkami sklejającymi (inne pliki).
+
+Produces (names other packages rely on): `RoomsMessages.ToastFor(string errorCode)` (pure, in Core, testable) and its use in the error path of `RoomsFeature.cs`; rules for outdoor `place` ids.
+
+## Czytaj (w tej kolejności, tylko wskazane sekcje)
+- `docs/opt/foundations/RI3.md` sekcje 1-2 (rzeczywisty kształt błędu i plan; wygrywa).
+- `docs/opt/foundations/R30.md` sekcja 5 (tekst toastu i zasady fixture).
+- `docs/opt/log/PK-P46a.md` (kształt `fixture_locked`).
+
+## Kontekst (fakty sprawdzone 17.11.2026, nie szukaj drugi raz)
+- Home: `web/home/` (`index.html`, `app.js`, `bridge.js`, `canvas-pig.js` ok. 3300 linii, `features/places/{feature,scenes,edit-panel,room-geometry,mock}.js`, `lib/{lights,palette,sprites,ui-assets}.js`). Moduły funkcji ładuje `app.js:963-995` z `features/index.json` (`features/<id>/feature.js`, w trybie mock też `features/<id>/mock.js`).
+- Płótno: sceny 256x144 (docelowo wszystkie; pokój dziś 192x112 z siatki, park 384x192 do czasu PK-P47a/PK-P47r), świnka dorosła 32x24. Orientacyjne kotwice `canvas-pig.js` (numery linii się przesuwają, szukaj grepem): `addLayer` ~393, `isFree` ~596, `findPath` ~684, `setScene` ~872, `depthScale`/`bScale` ~904-921, `pickRandomWalkTarget` ~1131, `renderList` ~1244, `drawThing` ~1327, `applySceneLight` ~2711, `drawContactShadow` ~2721, `litFrame` ~2776, publiczny obiekt `CanvasPig` ~3024.
+- Dane: `assets/data/world_items.json` (przedmiot: `id,name,place[],w,h,price,comfort,layer(ground|floor|wall),icon`; lampy: `lamp_mushroom` i `lamp_floor` w1 h2 floor, `lamp_post`/`lamp_salt`/`lamp_oil` w1 h1 floor, `lamp_arc` wall 2x3, `fairy_lights` wall 3x1), `assets/data/lights.json` (źródła z `toggle`, `frames`, `fps`), `assets/data/place_scenes.json`, `assets/data/pig_rooms.json` (motywy ~52-87), `assets/world/atlas.json`.
+- Zapis i C#: `src/Cuy.Core/World/{WorldState,RoomLayoutOps}.cs`, `src/Cuy/dotNet/Features/RoomsFeature.cs` (`room_place/room_move/room_remove/room_flip/room_skin`, `room_skin` ok. linii 471), walidacja `src/Cuy.Core/Input/Validation/<Feature>Messages.cs`, kontrakty `docs/contracts/<feature>.md`.
+- Okno gry ma stały rozmiar 420x640 (`src/Cuy/dotNet/HomeWindow.cs:232-235`, przeliczane o DPI ok. 284-291). Helper testów Playwright domyślnie otwiera 400x620 (`tools/qa/lib/ux.js`), więc testy układu podają rozmiar jawnie.
+- Testy: Playwright przez `tools/qa/lib/ux.js` (`startServer`, `openHome`, `openMore`, `openFromMore`), mock `CuyScenesMock.state('seven')` (7 scen), `tools/qa/ux-all.js` uruchamia wszystkie `ux-p<liczba>-*.js` (nowe testy nazywaj w tym wzorcu). Core: `tests/Cuy.Core.Tests` (xUnit, `RepoFile`, `ManualClock`).
+- Zasady AGENTS.md: liczby w `assets/data/*.json`, nowe pola zapisu z bezpiecznymi domyślnymi, zmiany liczb za flagą `Balance`, JS nie liczy cen, per-feature pliki (kontrakt, walidacja, mock).
+
+## Steps
+1. Testy FIRST, `tests/Cuy.Core.Tests/RoomsOutdoorMessagesTests.cs` (wzorzec istniejących testów reguł): `place` garden/park/farm/market przyjęte dla `room_place/move/remove/flip`; nieznane `place` (`garden2`, pusty, `null`, 300 znaków) odrzucone; `uid` w formacie `fx:<scena>:<id>` przyjęty, uid ze śmieciem (`..`, nowe linie) odrzucony; `x`/`y` NaN, ujemne, ogromne odrzucone; `ToastFor("fixture_locked")` zwraca niepusty tekst bez znaków sterujących <= 60 znaków; `ToastFor` nieznanego kodu nie rzuca wyjątku i zwraca tekst domyślny.
+2. Zaimplementuj pomocnika i reguły w `RoomsMessages.cs` (bez edycji `MessageValidator.cs`), a w `RoomsFeature.cs` tylko zmapuj kod błędu na toast w istniejącej ścieżce błędów.
+3. Uruchom Weryfikację; napraw do zielonego.
+
+## Sklejanie (obowiązkowe)
+Kod z kroku F2-2 jest już w `main`; moduły istnieją naprawdę. Używaj RZECZYWISTYCH nazw z `docs/opt/foundations/RI*.md` (wygrywa nad kontraktem R* i nad tym promptem; różnice zapisz w logu). Wołaj moduły defensywnie (`window.X && window.X.fn`), bo kolejność ładowania wpina równolegle paczka PK-APP2: w testach tej paczki ładuj brakujące skrypty przez `page.addScriptTag({path})`. Do `Weryfikacja` wchodzą też istniejące testy regresji z listy w kroku; jeśli któryś padał PRZED Twoją zmianą (sprawdź `docs/opt/log/baseline-smoke.txt` i logi F2-2), zapisz to w logu zamiast naprawiać.
+
+Prohibited: changing or deleting existing test assertions, new dependencies, touching files outside "Zmieniaj", extra refactors, running git.
+
+Log: write `docs/opt/log/PK-P46c.md` (max 10 linii: decyzje i dlaczego, dokładne nazwy API/pól, różnice od pliku badawczego, atrapy `STUB` użyte w testach, BLOCKED reason if any). Do not run git.

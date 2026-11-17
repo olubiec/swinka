@@ -6,7 +6,11 @@ Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje l
 Limity (twarde): maks. 50 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj oraz zakresy linii znalezione przez grep; PNG nav_* wolno oglądać (po jednym). Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js.
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: Replace the flat places bar (stretched `header_banner`, old 16x16 arrows) with the delivered D3 art: 9-slice frame, title plate, 3-state arrows and a 3-state Edit button.
-Depends on: PK-P44b merged (`places/feature.js` bar switching). Assety D3 są już w repo (commit 00573a3); nie rysuj niczego.
+Depends on: pliki badawcze F2-1: `docs/opt/foundations/R24.md` sekcje 3, 4 i 6 (przyczyna ucięcia dołu okna i poprawka CSS: wygrywa nad krokiem 3 poniżej), `R33.md` sekcja 6. Assety D3 są w repo.
+
+## Praca równoległa (obowiązkowe)
+Ta paczka startuje w tym samym kroku co kilkanaście innych paczek, a każda edytuje inne pliki. Nie czekaj na nie i nie czytaj ich testów ani logów. Stan kodu to `main` z początku kroku: API innych paczek tego kroku jeszcze nie istnieje. Dane testowe buduj we WŁASNYM pliku testu; API rodzeństwa bierz z kontraktu w pliku badawczym wskazanym w "Czytaj" i w testach zastępuj atrapą (komunikat `STUB <nazwa>`). Plików sklejających (`index.html`, `app.js`, `features/index.json`, `canvas-pig.js`, `places/feature.js`, `edit-panel.js`) nie edytujesz, jeśli nie ma ich w Zmieniaj: wpina je krok F2-4. Gdy "Prompt fixes" w pliku badawczym przeczą krokom tego promptu, wygrywa plik badawczy; różnicę zapisz w logu.
+
 
 ## Kontekst (fakty sprawdzone 11.11.2026, nie szukaj drugi raz)
 - Pliki w `assets/ui/`: `nav_bar_frame.png` (48x26) + `.json` `{"slice":[8,8,8,8]}`, `nav_title_plate.png` (64x18) + `.json` `{"slice":[5,5,5,5]}`, `nav_btn_arrow_{left,right}.png`, `_hover`, `_pressed` (20x20), `nav_btn_edit.png`, `_hover`, `_active` (24x20). Wszystkie przechodzą `check-assets.js`.
@@ -14,6 +18,9 @@ Depends on: PK-P44b merged (`places/feature.js` bar switching). Assety D3 są ju
 - Wejście do trybu Edit istnieje już w module miejsc (`features/places/edit-panel.js`, otwierane z `places/feature.js`); znajdź grepem, jak jest dziś wywoływane, i podłącz do niego nowy przycisk, nie pisz nowej logiki edycji.
 - Obrazy ładuj ścieżkami względnymi jak reszta UI (np. jak `assets/ui/close_btn.png` w CSS). Rysowanie pikseli: `image-rendering: pixelated`. `border-image` z wartościami slice z plików `.json`.
 - Nazwy w UI po angielsku; tekst renderuje gra (nie ma liter w PNG).
+
+## Poprawki 17.11 (uwaga właściciela 24)
+- Poprawka układu dolnego paska wg `R24.md` sekcja 4 (selektory i wartości) jest częścią tej paczki: pliki `index.html`, `style.css`, `places/feature.css`. Test T5 uruchom dla rozmiarów okna z `R24.md` sekcja 6 (co najmniej 420x640 i 400x620) i dla wszystkich 7 scen w trybie zwykłym i Edit z otwartą szufladą. Część C# (`HomeWindow.cs`) robi PK-P24c.
 
 ## Steps
 1. `index.html`: owiń `#placesBarTitle` tabliczką (`.places-bar-plate`), dodaj `#placesEditBtn` (przycisk, `aria-pressed`, `aria-label="Edit"`) w `#placesBar`; zachowaj istniejące id strzałek.

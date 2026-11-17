@@ -6,7 +6,11 @@ Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje l
 Limity (twarde): maks. 45 wywołań narzędzi. Linię Weryfikacja uruchom maks. 2 razy. Czytaj tylko pliki z Zmieniaj/Wymagane oraz zakresy linii znalezione przez grep. Nie diagnozuj niczego spoza Zmieniaj. Gdy test pada na czymś, czego Twoja zmiana nie dotyka: zapisz nazwę testu i 5 linii błędu w logu, status BLOCKED, zakończ. Po błędzie we własnym kodzie wolno jedna poprawka i jeden ponowny bieg, potem zakończ jako BLOCKED. Nie uruchamiaj web-smoke.js (robi to paczka q).
 Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
 Goal: Clicking a stall on the market scene opens a small panel anchored to the stall for buying and selling; no separate market window.
-Depends on: PK-P43b merged, PK-P46c merged (przesuwalne obiekty plenerowe).
+Depends on: pliki badawcze F2-1: `docs/opt/foundations/R30.md` sekcja 4 i sekcja 3 (kontrakt `lib/hotspots.js`), `R43.md` sekcje 3-5. Silnik hotspotów (PK-P43ab) i `CanvasPig.onHotspot` (PK-CV2) powstają RÓWNOLEGLE lub później: w testach używaj atrapy.
+
+## Praca równoległa (obowiązkowe)
+Ta paczka startuje w tym samym kroku co kilkanaście innych paczek, a każda edytuje inne pliki. Nie czekaj na nie i nie czytaj ich testów ani logów. Stan kodu to `main` z początku kroku: API innych paczek tego kroku jeszcze nie istnieje. Dane testowe buduj we WŁASNYM pliku testu; API rodzeństwa bierz z kontraktu w pliku badawczym wskazanym w "Czytaj" i w testach zastępuj atrapą (komunikat `STUB <nazwa>`). Plików sklejających (`index.html`, `app.js`, `features/index.json`, `canvas-pig.js`, `places/feature.js`, `edit-panel.js`) nie edytujesz, jeśli nie ma ich w Zmieniaj: wpina je krok F2-4. Gdy "Prompt fixes" w pliku badawczym przeczą krokom tego promptu, wygrywa plik badawczy; różnicę zapisz w logu.
+
 
 ## Kontekst (fakty, nie szukaj drugi raz)
 - Docelowa wizja: każde miejsce (pokoje domku, ogród, park, farma, targ) to scena w głównym oknie Home (pseudo-3D: widok z przodu z góry, podłoga z głębią, świnka chodzi w x i y, skaluje się z głębią, y-sort). Sceny: `assets/data/place_scenes.json` (`bg`, `walk` [x0,y0,x1,y1], `depthScale`, wyjścia), moduł `web/home/features/places/{feature,scenes}.js`, płótno `web/home/canvas-pig.js` (API w logach `docs/opt/log/PK-P33a.md`, `PK-P34a.md`, `PK-P36a.md`).
@@ -15,10 +19,14 @@ Depends on: PK-P43b merged, PK-P46c merged (przesuwalne obiekty plenerowe).
 - Wiadomości mostka (fakty): pokój/ogród `room_place {place,itemId,x,y}`, `room_move {place,uid,x,y}`, `room_remove {place,uid}`, `room_flip {place,uid}`, `place_upgrade {id}`, `place_unlock {id}`; targ `market_quote/market_buy/market_sell {itemId,count}`, `market_stall`; farma `farm_plant {plot,cropId}`, `farm_water {plot}`, `farm_harvest {plot}`, `farm_harvest_all`, `farm_buy {what}`, `orchard_plant/orchard_harvest {slot}`; świnka `places.pigMove {pigId,to}`, `places.pigPin {pigId,pinned}`, `take_out`. Pole `place` to id sceny (`salon`, `pig:<id>`, `dorm`, `garden`, `park`, `farm`, `market`).
 - Testy: Playwright przez `tools/qa/lib/ux.js` (helpery `openHome`, `openMore`, `openFromMore`), mock przeglądarkowy per funkcja (`features/<f>/mock.js`, `CuyScenesMock.state('seven')` daje 7 scen). Testy uruchamia `tools/qa/ux-all.js` (pliki `ux-pN-*.js`).
 
+## Poprawki 17.11 (praca równoległa)
+- `CanvasPig.onHotspot` i `CuyHotspots` jeszcze nie istnieją: w teście zastąp je atrapą (`window.CanvasPig = window.CanvasPig || {}; CanvasPig.onHotspot = fn => handlers.push(fn);`, wywołanie `handlers.forEach(h => h({id, kind, rect}))`) i drukuj `STUB onHotspot`. Rejestracja w kodzie: `if (window.CanvasPig && CanvasPig.onHotspot) CanvasPig.onHotspot(fn)`.
+- Przesuwalność obiektu w Edit (PK-P46c/PK-PE2) testuje PK-T3; tu panel dostaje kotwicę z `rect` hotspotu.
+
 ## Steps
-1. Read `docs/opt/log/PK-P43a.md` (hotspot ids) and `PK-P43b.md` (API). grep in `market/feature.js` the render of goods, quote and buttons (lines ~100-260; messages in the context list below).
+1. Read `docs/opt/foundations/R30.md` sections 3-4 (hotspot ids and API contract; PK-P43ab and PK-CV2 are not merged yet). grep in `market/feature.js` the render of goods, quote and buttons (lines ~100-260; messages in the context list below).
 2. Refactor `market/feature.js` into a panel component `CuyMarket.openPanel(stallId, anchorRect)` that reuses the existing buy/sell/quote rendering and messages, shown as a floating wood panel (9-slice, library close X) positioned beside the stall and clamped inside the window; one panel at a time; Esc/X/click outside closes. Stall -> goods mapping: by hotspot `label`/id; `stall:own` shows the player's stall (`market_stall`). Register with `CanvasPig.onHotspot` when the scene is `market` (subscribe in the feature, not in canvas).
-3. The old window entry (More tile) stays working until PK-P43f removes it; both must show the same data.
+3. The old window entry (More tile) stays working until PK-APP2 removes it (F2-4); both must show the same data.
 4. Tests FIRST, `tools/qa/ux-p43-market-scene.js` (Playwright, mock `seven` + market state): K1 `stall-click-opens-panel`, K2 `buy-sends-market_buy`, K3 `sell-sends-market_sell`, K4 `quote-updates-on-count`, K5 `panel-inside-window` (both viewports), K6 `one-panel-at-a-time`, K7 `esc-closes`, K8 `own-stall-sends-market_stall`, K9 `no-modal` (the panel is not a `.modal`).
 5. Run Weryfikacja; fix until green.
 ## Zasady grafiki i interfejsu (obowiązkowe)
