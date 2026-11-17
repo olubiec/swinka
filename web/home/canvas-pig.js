@@ -1593,7 +1593,7 @@
         }
       } else {
         if (def.layer === 'wall') {
-          if (fx0 < 0 || fx1 > this.sceneWidth || dy < 0 || fy1 > this.wallH + 8) {
+          if (fx0 < 0 || fx1 > this.sceneWidth || dy < 0 || fy1 > this.wallH) {
             return false;
           }
         } else {
@@ -2981,7 +2981,21 @@
       return true;
     }
 
-    const sheet = resolveSheet(normB, normS, normP, namedId);
+    function notifyPortraitUpdates() {
+      if (typeof canvas._onUpdate === 'function') {
+        try { canvas._onUpdate(canvas); } catch (e) {}
+      }
+      if (Array.isArray(canvas._onUpdates)) {
+        canvas._onUpdates.forEach(fn => {
+          if (typeof fn === 'function') {
+            try { fn(canvas); } catch (e) {}
+          }
+        });
+      }
+    }
+
+    const exactSheet = S ? S.sheet(normB, normS, normP, namedId) : null;
+    const sheet = exactSheet || (namedId ? null : resolveSheet(normB, normS, normP, namedId));
     let painted = paint(sheet);
 
     if (painted) {
@@ -2989,18 +3003,18 @@
     }
 
     // If underlying image isn't loaded yet or we used a fallback, listen for load to update
-    if (S) {
+    if (S && !painted) {
       const img = namedId && typeof S.namedImage === 'function' ? S.namedImage(namedId, normS) : (typeof S.image === 'function' ? S.image(normB, normS) : null);
       if (img && !S.loaded(img)) {
-        img.addEventListener('load', function () {
-          const freshSheet = resolveSheet(normB, normS, normP, namedId);
+        const onImgReady = function () {
+          const freshSheet = (S ? S.sheet(normB, normS, normP, namedId) : null) || resolveSheet(normB, normS, normP, namedId);
           if (freshSheet && paint(freshSheet)) {
             portraitCache[cacheKey] = canvas;
-            if (typeof canvas._onUpdate === 'function') {
-              try { canvas._onUpdate(canvas); } catch (e) {}
-            }
+            notifyPortraitUpdates();
           }
-        }, { once: true });
+        };
+        img.addEventListener('load', onImgReady, { once: true });
+        img.addEventListener('error', onImgReady, { once: true });
       }
     }
 

@@ -296,10 +296,11 @@
       if (cvs) {
         const dataUrl = cvs.toDataURL();
         const portraitId = 'portrait_' + Math.random().toString(36).substr(2, 9);
-        cvs._onUpdate = (c) => {
+        cvs._onUpdates = cvs._onUpdates || [];
+        cvs._onUpdates.push((c) => {
           const el = document.getElementById(portraitId);
           if (el) el.src = c.toDataURL();
-        };
+        });
         const attrSpriteKey = spriteKey ? ` data-sprite-key="${spriteKey}"` : '';
         return `<img id="${portraitId}" class="pig-portrait${sz === 64 ? ' size-64' : ''}"${attrSpriteKey} src="${dataUrl}" width="${sz}" height="${sz}" alt="">`;
       }

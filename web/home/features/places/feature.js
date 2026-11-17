@@ -1008,11 +1008,20 @@
     return rooms;
   }
 
+  function isToggleableLightSource(src) {
+    if (!src) return false;
+    if (src.toggle === false) return false;
+    const itemId = String(src.itemId || src.id || '').toLowerCase();
+    if (itemId === 'window' || itemId.startsWith('window_')) return false;
+    return true;
+  }
+
   function toggleLamp(uid) {
     if (!currentSceneId) currentSceneId = 'salon';
     if (!sceneLampToggles[currentSceneId]) sceneLampToggles[currentSceneId] = {};
     const light = CuyLight.build(currentSceneId);
     const src = light && light.sources && light.sources.find(s => s.id === uid || s.uid === uid || s.itemId === uid);
+    if (src && !isToggleableLightSource(src)) return;
     const currentlyOn = src ? src.on : true;
     sceneLampToggles[currentSceneId][uid] = !currentlyOn;
     applyScene(currentSceneId, getState());
@@ -1041,7 +1050,7 @@
       const light = inst && inst.lightScene;
       if (!light || !light.sources) return;
 
-      const hit = light.sources.find(s => Math.hypot(s.x - clickX, s.y - clickY) <= Math.max(16, (s.radius || 40) * 0.4));
+      const hit = light.sources.find(s => isToggleableLightSource(s) && Math.hypot(s.x - clickX, s.y - clickY) <= Math.max(16, (s.radius || 40) * 0.4));
       if (hit) {
         toggleLamp(hit.id);
       }

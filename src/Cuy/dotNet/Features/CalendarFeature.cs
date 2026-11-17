@@ -41,12 +41,6 @@ namespace Cuy.Features
 
             careState.Normalize();
 
-            var defaultName = !string.IsNullOrWhiteSpace(pet.State?.Name) ? pet.State.Name.Trim() : "Gucio";
-            if (settings.PigNames.Count == 0)
-            {
-                settings.PigNames.Add(defaultName);
-            }
-
             var economyConfig = EconomyConfig.Current.CareTask;
             int cloversPerTask = economyConfig.Clovers;
             int maxDaily = economyConfig.MaxPerDay * cloversPerTask;

@@ -38,7 +38,13 @@
         if (root.CuyPig && typeof root.CuyPig.renderPortrait === 'function') {
           const cvs = root.CuyPig.renderPortrait(look, 'adult', 64);
           if (cvs) {
-            return `<img class="pig-portrait size-64" src="${cvs.toDataURL()}" width="64" height="64" alt="${name}">`;
+            const imgId = 'adoption-portrait-' + id;
+            cvs._onUpdates = cvs._onUpdates || [];
+            cvs._onUpdates.push((updatedCvs) => {
+              const el = document.getElementById(imgId);
+              if (el) el.src = updatedCvs.toDataURL();
+            });
+            return `<img id="${imgId}" class="pig-portrait size-64" src="${cvs.toDataURL()}" width="64" height="64" alt="${name}">`;
           }
         }
         return `<img class="pig-portrait size-64" src="../../assets/sprites/portraits/${id}.png" width="64" height="64" alt="${name}" onerror="this.outerHTML='<span class=\\'pixel-icon icon-pig-head\\'></span>'">`;

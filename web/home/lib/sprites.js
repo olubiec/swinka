@@ -2,7 +2,13 @@
 // Needs lib/palette.js. Unknown breeds fall back to smooth, unknown stages to baby, unknown palettes to the default.
 (function (root) {
   'use strict';
-  var BREEDS = ['smooth', 'chubby', 'skinny', 'rosette', 'peruvian'];
+  var BREEDS = [
+    'smooth', 'smooth_normal', 'smooth_chubby', 'smooth_lean',
+    'chubby', 'skinny',
+    'rosette', 'rosette_normal', 'rosette_lean',
+    'peruvian', 'peruvian_normal',
+    'teddy', 'teddy_normal', 'teddy_chubby'
+  ];
   var STAGES = ['baby', 'junior', 'adult', 'senior', 'legend'];
   var images = {};
   var namedImages = {};
@@ -85,11 +91,12 @@
   }
 
   // Palette-remapped canvas for the pig's look, or null while the sheet is still loading.
-  // Optional fourth argument namedId: if provided and baked sheet is available, returns baked sheet directly.
+  // Optional fourth argument namedId: if provided, wait for baked named sheet before falling back.
   function sheet(breed, stage, paletteId, namedId) {
     if (namedId) {
-      var baked = namedSheet(namedId, stage);
-      if (baked) return baked;
+      var nImg = namedImage(namedId, stage);
+      if (loaded(nImg)) return nImg;
+      if (!nImg._failed) return null;
     }
     var img = image(breed, stage);
     if (!loaded(img)) return null;

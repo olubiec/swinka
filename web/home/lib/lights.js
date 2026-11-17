@@ -111,6 +111,7 @@
         x: placed.x,
         y: placed.y,
         on: on,
+        toggle: src.toggle !== false,
         color: src.color,
         radiusCells: src.radius_cells,
         radius: (src.radius_cells || 2.5) * 16,
