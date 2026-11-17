@@ -80,9 +80,9 @@ Fala = zbiór zadań startowany jednym promptem (`docs/prompts/START_FALA.md`, `
 
 | Fala | Zadania | Grafik |
 |---|---|---|
-| **1** | P44 (a, b, q), P4 (a, b, q), badania R5, R6, R7, R8, P8 (a, b, q) | przed falą: **zamów D2** |
-| **2** | P46 (a, b, c, t1, t2, q1, q2), P47a (tła), P47r (stały kadr pokoju 256x144), P47c (pasek miejsc), P47q; do dopisania P5, P6 po R5, R6 | **odbiór D3** w P47c; po odbiorze D2 **zamów D4**; D1 robimy sami |
-| **3** | P43 (a-f, q); do dopisania P47b (sprite'y z D2), P7 bez latarni | **D2 odebrane przed falą**; D4 w toku |
+| **1 (ZROBIONA)** | P44 (a, b, q), P4 (a, b, q), badania R5, R6, R7, R8, P8 (a, b, q) + poprawki F1-fix, F1-fix2 | **zamówione/odebrane** |
+| **2 (NASTĘPNA)** | P46 (a, b, c, t1, t2, q1, q2), P47a (tła), P47r (stały kadr pokoju 256x144 + **stała skala świnki po upgrade pokoju**), P47c (pasek miejsc + **weryfikacja braku ucięcia dołu okna**), P47q; do dopisania P5, P6 po R5, R6 (**w tym zmiana kupionej tapety/podłogi w `edit-panel.js` + spójność efektu nocy na lampce przy podejściu świnki**) | **odbiór D3** w P47c; po odbiorze D2 **zamów D4**; D1 robimy sami |
+| **3** | P43 (a-f, q); do dopisania P47b (sprite'y z D2), P7 bez latarni (**w tym fizyka/strefy stawiania lampek wyżej przy ścianie**) | **D2 odebrane przed falą**; D4 w toku |
 | **4** | do dopisania: P47d (ognisko i światło), P7 (latarnie i noc), bramka końcowa | **D4 odebrane przed falą** |
 
 Kolejność wymuszają tylko zależności: P44 przed P46, P46c przed P43c/d, D2 przed P47b, D4 przed P47d i latarniami P7. W fali 1 P44b i P4b idą po P44a i P4a, bo P44a i P4b zmieniają ten sam `canvas-pig.js`.

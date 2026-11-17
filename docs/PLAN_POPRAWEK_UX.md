@@ -31,6 +31,11 @@ Zasady z `AGENTS.md` obowiązują: liczby w `assets/data/*.json`, nowe pola zapi
 | 21 | Nowy piksel-artowy pasek przełączania miejsc (dedykowana grafika zamiast żółtych szwów) | P47-04 |
 | 22 | Każdy element na dworze (ławki, fontanna, stragany, ognisko) usuwalny i przestawialny jak meble | P46-01..P46-03 |
 | 23 | Tła muszą mieć identyczny rozmiar (256x144), by okno nie skakało między lokacjami | P47-01 |
+| 24 | Rozmiar okna ucięty od dołu (dolny pasek nawigacji / przycisk More) | PK-P47c, PK-P47r (sprawdzenie wysokości w `HomeWindow.cs` / `style.css`) |
+| 25 | Lampka ma zepsutą fizykę — nie da się jej przenieść wyżej / na ścianę | P7-01, P7-02 (warstwa `wall` / stopa `h:1` dla małych lampek, `canPlaceAt`) |
+| 26 | Gdy świnka podchodzi do lampki, na lampce znika efekt nocy | P6-07 (kolejność rysowania/blendowania światła nocnego i `litFrame` w `canvas-pig.js`) |
+| 27 | Brak opcji zmiany kupionej tapety i podłogi po usunięciu okna `Rooms` | P6-03 / P6-08 (sekcja tapet i podłóg w `edit-panel.js` z `customize.js`) |
+| 28 | Świnka nie skaluje się proporcjonalnie po upgrade pokoju (zostaje tak samo duża względem okna) | PK-P47r (stała skala świnki z `16px` kratki pokoju zamiast `frac * sceneWidth`) |
 
 Podejrzenie wspólnej przyczyny uwag 5, 11, 12, 13 (przyciski w funkcjach „nic nie robią", a panel pojawia się po powrocie): cykl życia okna funkcji (`openFeature` / modal w `web/home/app.js`, `openMoreModal` ok. linii 783). Zadanie P1-01 ma najpierw to zdiagnozować; P1-02..P1-04 dopiero po nim.
 
@@ -339,12 +344,12 @@ Cel: kupione rzeczy trafiają do schowka; z niego wyciągasz je do pokoju lub og
 |---|---|---|---|
 | P6-01 | Core: schowek (lista kupionych sztuk, niezwiązana z miejscem), przenoszenie pokój/ogród ↔ schowek, zapis z bezpiecznymi domyślnymi i migracją starych zakupów | `src/Cuy.Core/Decor/Stash.cs`, `GameState.Stash.cs` | testy: zakup → schowek, wyciągnięcie, odłożenie, stary zapis |
 | P6-02 | Edytor rzutu pokoju (ten sam widok z góry co pokój ze świnką) otwierany po zakupie i z Decorate; przeciąganie, obrót, usuwanie do schowka | `web/home/features/decor/feature.js`, `web/home/features/rooms/feature.js` | smoke: kup → edytor → przedmiot ustawiony i zapisany |
-| P6-03 | Okno schowka z filtrami (pokój, ogród, zabawki, meble) dostępne z More i z edytora | `web/home/features/store/feature.js` | smoke: wyciągnięcie z schowka stawia przedmiot w edytorze |
+| P6-03 | Okno schowka z filtrami (pokój, ogród, zabawki, meble) dostępne z More i z edytora; **zakładka/sekcja Tapety i Podłogi (Walls & Floors) w `edit-panel.js`** (przeniesienie `RoomCustomize` po wycofaniu okna `Rooms`, aby gracz mógł założyć kupioną tapetę i podłogę) | `web/home/features/store/feature.js`, `web/home/features/places/edit-panel.js`, `web/home/features/rooms/customize.js` | smoke: wyciągnięcie z schowka stawia przedmiot w edytorze; wybór kupionej tapety zmienia ścianę pokoju |
 
 | P6-04 | Zapis pozycji dekoracji (miejsce, obrót, pokój) w stanie gry; odczyt po restarcie | `src/Cuy.Core/Decor/*`, `GameState.Decor.cs`, `web/home/features/decor/feature.js` | testy: ustaw → zapis → wczytanie, ta sama pozycja |
 | P6-05 | Główne okno pokazuje wybrany design pokoju (lampka, meble z zapisanych pozycji); świnka porusza się po całej podłodze pokoju | `web/home/features/rooms/feature.js`, `web/home/canvas-pig.js` | smoke: lampka postawiona w edytorze jest w głównym oknie; świnka dochodzi do obu końców pokoju |
 | P6-06 | Poprawka włączników lamp i okien na canvasie: okno nie wyłącza światła (`toggle: false`), kliknięcie lampki na canvasie mapowane przez `CanvasPig.toScene(e)` przy `object-fit: cover` (np. `lamp_mushroom`) | `web/home/features/places/feature.js`, `assets/data/lights.json` | smoke: klik w lampkę grzybka włącza/wyłącza światło, klik w okno nie wyłącza słońca |
-| P6-07 | (Do dopracowania) Spójność oświetlenia i cieni sceny: wyeliminowanie fałszywych plam światła w strefach bez okien/lamp; cieniowanie obiektów/mebli w świetle ogólnym pokoju | `web/home/canvas-pig.js`, `web/home/features/places/scenes.js`, `assets/data/lights.json` | weryfikacja wizualna: brak nienaturalnych plam światła bez źródła, obecność cieni mebli przy świetle otoczenia |
+| P6-07 | (Do dopracowania) Spójność oświetlenia i cieni sceny: wyeliminowanie fałszywych plam światła w strefach bez okien/lamp; cieniowanie obiektów/mebli w świetle ogólnym pokoju; **poprawka efektu nocy przy podejściu świnki do lampki** (zbliżenie świnki nie może kasować/wybielać nocnego przyciemnienia na samej lampce — poprawa kolejności `applySceneLight` / `litFrame` / `drawLights` w `canvas-pig.js`) | `web/home/canvas-pig.js`, `web/home/features/places/scenes.js`, `assets/data/lights.json` | weryfikacja wizualna: brak nienaturalnych plam światła bez źródła, obecność cieni mebli, lampka zachowuje efekt nocy gdy świnka obok niej przechodzi |
 
 ### Do sprawdzenia po P6
 0. Postaw lampkę w edytorze: po restarcie stoi w tym samym miejscu i widać ją w głównym oknie; świnka chodzi po całym pokoju; kliknięcie w lampkę włącza/wyłącza jej blask, kliknięcie w okno nie gasi słońca.
@@ -359,8 +364,8 @@ Cel: przedmioty nie nakładają się, świnka ich nie przechodzi; jedna grafika 
 
 | ID | Zadanie | Pliki | Akceptacja |
 |---|---|---|---|
-| P7-01 | Core: siatka zajętości pokoju (stopa przedmiotu z `world_items.json`), walidacja ustawienia bez nakładania, wyjątek dla wiszących (obrazy) | `src/Cuy.Core/Decor/RoomOccupancy.cs`, `assets/data/world_items.json` | testy: kolizja odrzucona, wiszące OK |
-| P7-02 | Edytor używa siatki: czerwone pole przy kolizji, przyciąganie do kratki | `web/home/features/decor/feature.js` | smoke: nakładanie niemożliwe |
+| P7-01 | Core: siatka zajętości pokoju (stopa przedmiotu z `world_items.json`), walidacja ustawienia bez nakładania, wyjątek dla wiszących (obrazy) oraz **poprawka stref/warstw lampek** (kinkiety na warstwie `wall`, mniejsze lampki stołowe/podłogowe z właściwą stopą `h:1` zamiast `h:2`, możliwość wyższego ustawiania przy ścianie) | `src/Cuy.Core/Decor/RoomOccupancy.cs`, `assets/data/world_items.json` | testy: kolizja odrzucona, wiszące i lampki na właściwej wysokości OK |
+| P7-02 | Edytor używa siatki: czerwone pole przy kolizji, przyciąganie do kratki, spójne `canPlaceAt` w `canvas-pig.js` dla lampek i obiektów ściennych | `web/home/features/decor/feature.js`, `web/home/features/places/edit-panel.js`, `web/home/canvas-pig.js` | smoke: nakładanie niemożliwe, lampkę da się ustawić wyżej pod ścianą bez błędu fizyki |
 | P7-03 | Pathfinding świnki po wolnych kratkach; cele zabawy (tunel, piłka) tylko osiągalne; meble/lampki blokują przejście i chowają świnkę gdy stoi za nimi (Z-sort) | `src/Cuy.Core/Pigs/*`, `canvas-pig.js` | testy: ścieżka omija meble, brak ścieżki → inny cel; świnka nie nakłada się na lampkę/mebel |
 | P7-04 | Animacje zabawy rysują przedmioty tym samym spritem i skalą co pokój (koniec starej grafiki i skoków rozmiaru) | `web/home/canvas-pig.js`, animacje w `Graphics/*` | smoke: zrzut przed/po zabawie, przedmiot tej samej wielkości |
 
