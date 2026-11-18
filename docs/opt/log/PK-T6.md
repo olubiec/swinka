@@ -1,0 +1,6 @@
+# PK-T6: Light, night effect on lamps (note 26), toggles, contact shadows
+Cases: 10 PASS, 2 DEFECT, 0 SKIP (L1..L12 in `tools/qa/ux-p63-light-pixels.js`).
+- DEFECT L6: `CuyScenes.placedThings` (`web/home/features/places/scenes.js:689-703`) omits `layer`, so wall items draw a floor contact shadow (`luma` drop 19.42 instead of <= 1.0).
+  Repro: 1) Place wall item (`wall_clock`, `layer: 'wall'`) via `st.rooms.layouts.salon.items` and build via `CuyScenes.placedThings(st, 'salon')`. 2) Render at 12:00 and sample below footprint `(116,94,8,3)`. 3) Expected: `diff <= 1.0` (no shadow); Actual: `placedThings[0].layer === undefined`, shadow drawn with `diff = 19.42`.
+- DEFECT L9: `Lights.autoOn` (`web/home/lib/lights.js:82-86`) returns `true` for all `src.toggle` sources at `evening` even without `auto_at`, so indoor lamps auto-light at dusk without clicking.
+  Repro: 1) Set `window.__cuyNow = '18:30'` (dusk/evening) with empty toggles `{}`. 2) Call `CuyLight.build('salon', [lamp_mushroom, lamp_floor, lamp_salt, lamp_arc], {})`. 3) Expected: outdoor `auto_at: "evening"` sources (`torch`, `lantern`, `lamp_oil`, `campfire`) `on: true` and indoor lamps `on: false`; Actual: all 4 indoor lamps have `on: true`.
