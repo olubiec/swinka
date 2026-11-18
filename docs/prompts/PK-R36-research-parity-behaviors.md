@@ -1,0 +1,45 @@
+# PK-R36: Research: pulpit behaviours that the Home pig lacks (sleep, doze, drink, zoomies, dance...)
+Zmieniaj: docs/opt/foundations/R36.md, docs/opt/log/PK-R36.md
+Weryfikacja: node tools/qa/foundation-check.js docs/opt/foundations/R36.md 7
+Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje lub coś jest niejasne, sam wybierz najrozsądniejsze rozwiązanie zgodne z AGENTS.md, zapisz decyzję w logu i dokończ do końca.
+Limity (twarde): maks. 60 wywołań narzędzi. To jest paczka badawcza: kod, dane i testy w repo tylko do odczytu. Piszesz wyłącznie dokumenty z Zmieniaj. Wolno uruchamiać pomiarowe skrypty Playwright/Node, ale tylko takie, które leżą poza repo (katalog tymczasowy systemu) i niczego w repo nie zapisują. Nie uruchamiaj git. Czytaj zakresy linii znalezione przez grep, nie całe pliki; PNG wolno oglądać tylko te wymienione w krokach. Każde twierdzenie w dokumencie ma mieć plik:linia lub nazwę znalezioną grepem; czego nie sprawdziłeś, oznacz słowem UNVERIFIED. Weryfikację uruchom maks. 2 razy.
+Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj
+Goal: Make an exact inventory of the 28 desktop behaviours (Brain + actions.json), prove what the Home pig does today for each (nothing, partial, full), decide the architecture for autonomous behaviour in Home and fix the contract of the new pure module `web/home/lib/pig-behavior.js` and the data file `assets/data/home_behavior.json`.
+
+Depends on: nothing (tylko odczyt). Działa w kroku F3-1 razem z innymi paczkami badawczymi; wynik czytają paczki następnych kroków.
+
+Produces (names other packages rely on): `docs/opt/foundations/R36.md` max 16000 znaków, sekcje numerowane `## 1.` .. `## 7.` dokładnie w tej kolejności:
+- `## 1.` Inwentarz 28 akcji (tabela z polami)
+- `## 2.` Algorytm Brain do odtworzenia w JS
+- `## 3.` Stan Home dziś dla każdej akcji (BRAK/CZĘŚCIOWO/PEŁNO, plik:linia)
+- `## 4.` Decyzja architektury A czy B z uzasadnieniem
+- `## 5.` Kontrakt `pig-behavior.js` i schemat `home_behavior.json`
+- `## 6.` Przypadki testowe dla PK-T14 i PK-T20
+- `## 7.` Prompt fixes
+Ostatnia sekcja to "Prompt fixes": lista `PK-xxx: stary tekst -> nowy tekst` dla paczek: PK-H1, PK-H2, PK-H3, PK-CV3, PK-T14, PK-T20. Sekcje z kontraktem (nazwy funkcji, pola, kształty komunikatów) podają je DOSŁOWNIE, bo implementujące paczki kodują równolegle wyłącznie według tego pliku.
+
+## Kontekst (fakty sprawdzone 17.11.2026, nie szukaj drugi raz)
+- Home: `web/home/` (`index.html`, `app.js`, `bridge.js`, `canvas-pig.js` ok. 3300 linii, `features/places/{feature,scenes,edit-panel,room-geometry,mock}.js`, `lib/{lights,palette,sprites,ui-assets}.js`). Moduły funkcji ładuje `app.js:963-995` z `features/index.json` (`features/<id>/feature.js`, w trybie mock też `features/<id>/mock.js`).
+- Płótno: sceny 256x144 (docelowo wszystkie; pokój dziś 192x112 z siatki, park 384x192 do czasu PK-P47a/PK-P47r), świnka dorosła 32x24. Orientacyjne kotwice `canvas-pig.js` (numery linii się przesuwają, szukaj grepem): `addLayer` ~393, `isFree` ~596, `findPath` ~684, `setScene` ~872, `depthScale`/`bScale` ~904-921, `pickRandomWalkTarget` ~1131, `renderList` ~1244, `drawThing` ~1327, `applySceneLight` ~2711, `drawContactShadow` ~2721, `litFrame` ~2776, publiczny obiekt `CanvasPig` ~3024.
+- Dane: `assets/data/world_items.json` (przedmiot: `id,name,place[],w,h,price,comfort,layer(ground|floor|wall),icon`; lampy: `lamp_mushroom` i `lamp_floor` w1 h2 floor, `lamp_post`/`lamp_salt`/`lamp_oil` w1 h1 floor, `lamp_arc` wall 2x3, `fairy_lights` wall 3x1), `assets/data/lights.json` (źródła z `toggle`, `frames`, `fps`), `assets/data/place_scenes.json`, `assets/data/pig_rooms.json` (motywy ~52-87), `assets/world/atlas.json`.
+- Zapis i C#: `src/Cuy.Core/World/{WorldState,RoomLayoutOps}.cs`, `src/Cuy/dotNet/Features/RoomsFeature.cs` (`room_place/room_move/room_remove/room_flip/room_skin`, `room_skin` ok. linii 471), walidacja `src/Cuy.Core/Input/Validation/<Feature>Messages.cs`, kontrakty `docs/contracts/<feature>.md`.
+- Okno gry ma stały rozmiar 420x640 (`src/Cuy/dotNet/HomeWindow.cs:232-235`, przeliczane o DPI ok. 284-291). Helper testów Playwright domyślnie otwiera 400x620 (`tools/qa/lib/ux.js`), więc testy układu podają rozmiar jawnie.
+- Testy: Playwright przez `tools/qa/lib/ux.js` (`startServer`, `openHome`, `openMore`, `openFromMore`), mock `CuyScenesMock.state('seven')` (7 scen), `tools/qa/ux-all.js` uruchamia wszystkie `ux-p<liczba>-*.js` (nowe testy nazywaj w tym wzorcu). Core: `tests/Cuy.Core.Tests` (xUnit, `RepoFile`, `ManualClock`).
+- Zasady AGENTS.md: liczby w `assets/data/*.json`, nowe pola zapisu z bezpiecznymi domyślnymi, zmiany liczb za flagą `Balance`, JS nie liczy cen, per-feature pliki (kontrakt, walidacja, mock).
+- PARYTET HOME vs PULPIT (fakty sprawdzone 18.11.2026): pulpitem steruje `Brain` (`src/Cuy.Core/AI/Brain.cs`, akcje z `assets/data/actions.json`: 28 akcji rest, sniffing, walk, zoomies, popcorn, eat_hay, drink, chew_stick, dig_hay, chin_marking, scratching, nap, sleep, wheeking, begging, sadness, sickness, rumblestrut, nose_touch, grooming_other, cold, heat, following, sleeping_together, chirping, dancing, yawning, beaming; animacje: idle, sniff, walk, run, popcorn, eat, drink, chew_stick, dig_hay, chin_rub, scratch, doze, sleep, wheek, beg, sad, sick, rumble, nose_touch, groom_other, shiver, heat_flop, follow, sleep_together, chirp, dance, yawn, front_happy). `BrainController.cs` tyka go tylko dla pulpitu.
+- W Home `canvas-pig.js` ma WSZYSTKIE sprite'y (`ANIM_DEFS` ok. 208-270, 54 wiersze, w tym `sleep_house`), ale zachowanie jest tylko takie: kliknięcia (`app.js` ok. 512-566: eat, beg, happy, greet, purr_pet), losowy `idleTimer` (`canvas-pig.js` ok. 2228-2245: 20% sniff, 10% popcorn, reszta spacer do losowego celu `pickRandomWalkTarget`) oraz `state.currentAction` -> `playAnim(..., 3000)` (ok. 2103), którego C# nigdy nie wysyła (`bridge.js` mock ustawia tylko część). Świnka w Home NIE śpi, NIE drzemie, nie pije, nie drapie się, nie biega (zoomies), nie tańczy, nie ziewa, nie mruczy, nie śpi razem z drugą; skok (popcorn) jest tylko 10% losowaniem w bezruchu.
+- Potrzeby w Home: `state.needs` (`bridge.js` mock: energia spada 0,4 i rośnie 1,2 ok. linii 650-654), etap życia `stageKey`, zegar sceny (pora dnia do światła). Wszystkie liczby zachowań mają pochodzić z `assets/data/actions.json` (jedno źródło prawdy z Core) albo z nowego `assets/data/home_behavior.json`, nigdy z kodu JS.
+- Właściciel: "świnka w domku nie śpi, nie skacze itp.": Home ma tylko losowe sniff/popcorn/walk i reakcje na kliknięcia.
+
+## Steps
+1. Wypisz z `assets/data/actions.json` KAŻDĄ akcję z jej polami (animacja, grupa, warunki potrzeb, wagi, czasy trwania, cooldown, limity dzienne, etapy życia) oraz sekcje `needs`, `decay_per_hour`, `offline`, `day_budget`, `selection`. Tabela: akcja, animacja, warunek, czas, cooldown.
+2. Przeczytaj `src/Cuy.Core/AI/Brain.cs` (wybór: wzór oceny, losowość, `Interrupt`, budżet dnia, rzadkie zachowania) i `src/Cuy.Core/AI/Actions/*.cs`; opisz algorytm tak, by dało się go odtworzyć w JS 1:1 (kolejność kroków, wzory, progi).
+3. Dla każdej z 28 akcji ustal, co robi dziś Home (grep w `canvas-pig.js`, `app.js`, `bridge.js`): BRAK / CZĘŚCIOWO / PEŁNO z plik:linia. Sprawdź też, czy `ANIM_DEFS` ma sprite i liczbę klatek dla animacji akcji.
+4. Rozstrzygnij architekturę: (A) czysty moduł JS w Home czytający te same `actions.json` i `state.needs` (rekomendacja: działa w mocku, dla wielu świnek z P5 i bez zależności od C#), czy (B) C# wysyła akcję `Brain` do Home. Podaj wady i zalety z faktami (np. Brain jest dla jednej aktywnej świnki, drugą w Home trzeba sterować w JS) i zapisz decyzję.
+5. Zaprojektuj kontrakt `web/home/lib/pig-behavior.js` (UMD): `create({data, rng, now})`, `tick(dtMs, ctx)` zwraca `null` albo `{id, anim, durationMs, loop, needsSpot, bubble, sound}`, `interrupt(reason)`, `current()`, `debug()`; `ctx` = `{needs, stage, hour, sceneKind, hasSpot(kind), otherPigNear, mood, sick, weather}`. Podaj szkic `assets/data/home_behavior.json` (`version`, na akcję: `allowedScenes`, `spot`, `weightMul`, `minMs`, `maxMs`, `homeAnim`) i sekcję `motion` (liczby ruchu z R37 sekcja 4, plik należy do PK-H1, a PK-H3 tylko czyta kontrakt) oraz zasady: ruch ma pierwszeństwo przed sprawdzaniem celu, przerwanie kliknięciem, brak akcji gdy przeciągana lub otwarte okno modalne.
+6. Rozpisz tabelę przypadków dla testów (PK-T14, PK-T20): każde z 28 zachowań osiągalne w symulowanej dobie, drzemka/sen przy niskiej energii i w nocy, brak snu w trakcie przeciągania, powtarzalność przy stałym ziarnie.
+7. Uruchom Weryfikację (sprawdza tylko strukturę, 1500-16000 znaków, brak TODO/TBD). Nie edytuj żadnego innego pliku.
+
+Prohibited: edycja kodu, danych i testów, new dependencies, touching files outside "Zmieniaj", extra refactors, running git.
+
+Log: write `docs/opt/log/PK-R36.md` (max 10 linii: decyzje, dokładne nazwy API/pól, o co zapytałbyś właściciela i jaką wybrałeś odpowiedź, BLOCKED reason if any).

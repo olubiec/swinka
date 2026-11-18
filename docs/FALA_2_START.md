@@ -46,7 +46,8 @@ Pliki wszystkich 18 paczek są rozłączne (pilnuje tego `node tools/qa/plan-aud
 - Po F2-3: jeśli któraś RI zgłasza rozjazd kontraktu, napraw prompt paczki F2-4 przed jej startem (kotwice RI mają pierwszeństwo przed R).
 - PK-P5c może skończyć się BLOCKED (R29); to nie zatrzymuje reszty fali.
 
-## Poza falą 2 (nic z tego nie jest "do zrobienia teraz")
-- Odłożone punkty (22): undo/redo edytora, dźwięki, limity rysowania, bieg po ogrodzie W28, rekwizyty pulpitu W29 (`docs/opt/README.md`, sekcja "Odłożone").
-- Wcześniejsze paczki PK-23b (BLOCKED, brak kodu) i PK-21 (częściowo) czekają na osobną decyzję; fala 2 ich nie wymaga.
+## Co dalej
+- **Fala 3** (Home jak pulpit: spanie, drzemka, skok, taniec; odłożone punkty): `docs/FALA_3_START.md`, 6 kroków, 35 agentów.
+- **Fala 4** (Hay Hop, towarzysz, taniec do muzyki, pogoda za zgodą, etapy w Domku, bramka końcowa): `docs/FALA_4_START.md`, 6 kroków, 25 agentów.
+- Wcześniejsze paczki PK-23b (BLOCKED, brak kodu) i PK-21 (częściowo) czekają na osobną decyzję; fale 2-4 ich nie wymagają.
 - Ręczne bramki Windows po W22, W26, W30: `TESTY_RECZNE.md`.

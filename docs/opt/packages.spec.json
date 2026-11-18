@@ -616,6 +616,126 @@
         "PK-Q1",
         "PK-Q2"
       ]
+    },
+    {
+      "id": "F3-1",
+      "packages": [
+        "PK-R36",
+        "PK-R37",
+        "PK-R38",
+        "PK-R39",
+        "PK-R40",
+        "PK-R41"
+      ]
+    },
+    {
+      "id": "F3-2",
+      "packages": [
+        "PK-H1",
+        "PK-H2",
+        "PK-H3",
+        "PK-H4",
+        "PK-U1",
+        "PK-U2",
+        "PK-G1",
+        "PK-G2",
+        "PK-G3",
+        "PK-D1",
+        "PK-D2",
+        "PK-D3"
+      ]
+    },
+    {
+      "id": "F3-3",
+      "packages": [
+        "PK-RI4",
+        "PK-RI5"
+      ]
+    },
+    {
+      "id": "F3-4",
+      "packages": [
+        "PK-CV3",
+        "PK-APP3",
+        "PK-PE3",
+        "PK-PF3",
+        "PK-CS3"
+      ]
+    },
+    {
+      "id": "F3-5",
+      "packages": [
+        "PK-T14",
+        "PK-T15",
+        "PK-T16",
+        "PK-T17",
+        "PK-T18",
+        "PK-T19",
+        "PK-T20",
+        "PK-T21"
+      ]
+    },
+    {
+      "id": "F3-6",
+      "packages": [
+        "PK-Q3",
+        "PK-Q4"
+      ]
+    },
+    {
+      "id": "F4-1",
+      "packages": [
+        "PK-R44",
+        "PK-R45",
+        "PK-R48",
+        "PK-R49",
+        "PK-R50"
+      ]
+    },
+    {
+      "id": "F4-2",
+      "packages": [
+        "PK-HH1",
+        "PK-HH2",
+        "PK-CO1",
+        "PK-CO2",
+        "PK-DN1",
+        "PK-WX1",
+        "PK-WX2",
+        "PK-ST1"
+      ]
+    },
+    {
+      "id": "F4-3",
+      "packages": [
+        "PK-RI6"
+      ]
+    },
+    {
+      "id": "F4-4",
+      "packages": [
+        "PK-CV4",
+        "PK-APP4",
+        "PK-CS4"
+      ]
+    },
+    {
+      "id": "F4-5",
+      "packages": [
+        "PK-T22",
+        "PK-T23",
+        "PK-T24",
+        "PK-T25",
+        "PK-T26",
+        "PK-T27"
+      ]
+    },
+    {
+      "id": "F4-6",
+      "packages": [
+        "PK-Q5",
+        "PK-Q6"
+      ]
     }
   ],
   "packages": [
@@ -2238,6 +2358,546 @@
       "title": "Owner test sheet and screenshots for the whole wave",
       "manual": "docs/prompts/PK-Q2-gate-owner-sheet.md",
       "verify": "node --check tools/qa/ux-p70-owner-shots.js && node tools/qa/ux-p70-owner-shots.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R36",
+      "tier": "high",
+      "title": "Research: pulpit behaviours that the Home pig lacks (sleep, doze, drink, zoomies, dance...)",
+      "manual": "docs/prompts/PK-R36-research-parity-behaviors.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R36.md 7",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R37",
+      "tier": "high",
+      "title": "Research: sleeping places, hops and motion of the Home pig",
+      "manual": "docs/prompts/PK-R37-research-rest-spots-motion.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R37.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R38",
+      "tier": "high",
+      "title": "Research: garden run (W28) re-grounded on the unified world",
+      "manual": "docs/prompts/PK-R38-research-garden-run.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R38.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R39",
+      "tier": "high",
+      "title": "Research: desktop props (W29) re-grounded",
+      "manual": "docs/prompts/PK-R39-research-desktop-props.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R39.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R40",
+      "tier": "high",
+      "title": "Research: editor undo/redo and snapping, draw limits, world sounds, residents in editor",
+      "manual": "docs/prompts/PK-R40-research-editor-extras-budget-sounds.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R40.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R41",
+      "tier": "high",
+      "title": "Research: interactions, care, health and sounds - desktop versus Home",
+      "manual": "docs/prompts/PK-R41-research-interactions-care-parity.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R41.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-H1",
+      "tier": "mid",
+      "title": "Home pig brain: pure module and data for all 28 behaviours",
+      "manual": "docs/prompts/PK-H1-pig-behavior-module.md",
+      "verify": "node --check web/home/lib/pig-behavior.js && node --check tools/qa/home-behavior-check.js && node --check tools/qa/ux-p110-behavior.js && node tools/qa/home-behavior-check.js && node tools/qa/ux-p110-behavior.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-H2",
+      "tier": "mid",
+      "title": "Home pig places to sleep, hide and rest: pure module",
+      "manual": "docs/prompts/PK-H2-rest-spots-module.md",
+      "verify": "node --check web/home/lib/rest-spots.js && node --check tools/qa/ux-p111-rest-spots.js && node tools/qa/ux-p111-rest-spots.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-H3",
+      "tier": "mid",
+      "title": "Home pig motion: hops, speeds, zzz and hearts: pure module",
+      "manual": "docs/prompts/PK-H3-pig-motion-module.md",
+      "verify": "node --check web/home/lib/pig-motion.js && node --check tools/qa/ux-p112-motion.js && node tools/qa/ux-p112-motion.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-H4",
+      "tier": "mid",
+      "title": "Home pig reactions to feeding, petting, tricks, sickness: pure module",
+      "manual": "docs/prompts/PK-H4-pig-reactions-module.md",
+      "verify": "node --check web/home/lib/pig-reactions.js && node --check tools/qa/ux-p113-reactions.js && node tools/qa/ux-p113-reactions.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-U1",
+      "tier": "mid",
+      "title": "Editor undo/redo, snapping and comfort meter: pure module",
+      "manual": "docs/prompts/PK-U1-edit-history-module.md",
+      "verify": "node --check web/home/features/places/edit-history.js && node --check tools/qa/ux-p114-edit-history.js && node tools/qa/ux-p114-edit-history.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-U2",
+      "tier": "mid",
+      "title": "Draw limits and world sounds: pure modules and data",
+      "manual": "docs/prompts/PK-U2-draw-budget-world-sounds.md",
+      "verify": "node --check web/home/lib/draw-budget.js && node --check web/home/lib/world-sounds.js && node --check tools/qa/ux-p115-budget-sounds.js && node tools/qa/ux-p115-budget-sounds.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-G1",
+      "tier": "mid",
+      "title": "Garden run: Core check, rules and data",
+      "manual": "docs/prompts/PK-G1-run-core.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-G2",
+      "tier": "mid",
+      "title": "Garden run: C# feature, validation rules and contract",
+      "manual": "docs/prompts/PK-G2-run-cs-contract.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-G3",
+      "tier": "mid",
+      "title": "Garden run: web module, entry in the garden scene and mock",
+      "manual": "docs/prompts/PK-G3-run-web.md",
+      "verify": "node --check web/home/features/run/feature.js && node --check web/home/features/run/mock.js && node --check tools/qa/ux-p116-run.js && node tools/qa/ux-p116-run.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-D1",
+      "tier": "mid",
+      "title": "Desktop props: Core catalogue, operations and data",
+      "manual": "docs/prompts/PK-D1-props-core.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-D2",
+      "tier": "mid",
+      "title": "Desktop props: C# feature, validation rules and contract",
+      "manual": "docs/prompts/PK-D2-props-cs-contract.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-D3",
+      "tier": "mid",
+      "title": "Desktop props: transparent overlay window (build-verified)",
+      "manual": "docs/prompts/PK-D3-props-overlay.md",
+      "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RI4",
+      "tier": "high",
+      "title": "Integration analysis: behaviour, spots, motion, reactions into the canvas",
+      "manual": "docs/prompts/PK-RI4-integ-behavior-wiring.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RI4.md 4",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RI5",
+      "tier": "high",
+      "title": "Integration analysis: editor history, run feature, props, C# registration",
+      "manual": "docs/prompts/PK-RI5-integ-edit-run-props.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RI5.md 4",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-CV3",
+      "tier": "high",
+      "title": "Canvas: drive the pig with behaviour, spots, motion, reactions, budget",
+      "manual": "docs/prompts/PK-CV3-canvas-behavior-wiring.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p117-canvas-behavior.js && node tools/qa/ux-p117-canvas-behavior.js",
+      "items": [],
+      "weight": 6
+    },
+    {
+      "id": "PK-APP3",
+      "tier": "mid",
+      "title": "App: load the new modules and the run feature",
+      "manual": "docs/prompts/PK-APP3-app-load-wiring.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p118-app-load.js && node tools/qa/ux-p118-app-load.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-PE3",
+      "tier": "high",
+      "title": "Editor: undo/redo, snapping, comfort meter and budget wired in",
+      "manual": "docs/prompts/PK-PE3-editor-history-wiring.md",
+      "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p119-edit-wiring.js && node tools/qa/ux-p119-edit-wiring.js",
+      "items": [],
+      "weight": 5
+    },
+    {
+      "id": "PK-PF3",
+      "tier": "high",
+      "title": "Places feature: scene context for behaviour, world sounds, run entry",
+      "manual": "docs/prompts/PK-PF3-places-context-wiring.md",
+      "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p100-places-wiring.js && node tools/qa/ux-p100-places-wiring.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-CS3",
+      "tier": "mid",
+      "title": "C#: register the run and props features and the overlay (build-verified)",
+      "manual": "docs/prompts/PK-CS3-cs-registration.md",
+      "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 2
+    },
+    {
+      "id": "PK-T14",
+      "tier": "high",
+      "title": "Test agent: all 28 desktop behaviours reachable in Home",
+      "manual": "docs/prompts/PK-T14-test-behavior-parity.md",
+      "verify": "node --check tools/qa/ux-p120-behavior-parity.js && node tools/qa/ux-p120-behavior-parity.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T15",
+      "tier": "high",
+      "title": "Test agent: sleeping places and motion matrix",
+      "manual": "docs/prompts/PK-T15-test-rest-spots-motion.md",
+      "verify": "node --check tools/qa/ux-p121-rest-motion.js && node tools/qa/ux-p121-rest-motion.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T16",
+      "tier": "high",
+      "title": "Test agent: reactions to feeding, petting, tricks, care",
+      "manual": "docs/prompts/PK-T16-test-reactions.md",
+      "verify": "node --check tools/qa/ux-p122-reactions.js && node tools/qa/ux-p122-reactions.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T17",
+      "tier": "high",
+      "title": "Test agent: undo/redo, snapping and draw budget in Edit",
+      "manual": "docs/prompts/PK-T17-test-editor-history.md",
+      "verify": "node --check tools/qa/ux-p123-editor-adv.js && node tools/qa/ux-p123-editor-adv.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T18",
+      "tier": "high",
+      "title": "Test agent: garden run (Core and web)",
+      "manual": "docs/prompts/PK-T18-test-run.md",
+      "verify": "node --check tools/qa/ux-p124-run-adv.js && node tools/qa/ux-p124-run-adv.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T19",
+      "tier": "high",
+      "title": "Test agent: desktop props (Core and messages)",
+      "manual": "docs/prompts/PK-T19-test-props.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && node --check tools/qa/ux-p125-props-adv.js && node tools/qa/ux-p125-props-adv.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T20",
+      "tier": "high",
+      "title": "Test agent: a whole day of Home life with two pigs",
+      "manual": "docs/prompts/PK-T20-test-day-journey.md",
+      "verify": "node --check tools/qa/ux-p126-day-journey.js && node tools/qa/ux-p126-day-journey.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T21",
+      "tier": "high",
+      "title": "Test agent: performance and leaks with the behaviour loop",
+      "manual": "docs/prompts/PK-T21-test-perf-leaks-3.md",
+      "verify": "node --check tools/qa/ux-p127-perf-leaks.js && node tools/qa/ux-p127-perf-leaks.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-Q3",
+      "tier": "low",
+      "title": "Stage gate (wave 3): full build, all UX tests, strict defect count",
+      "manual": "docs/prompts/PK-Q3-gate-full-checks-3.md",
+      "verify": "node tools/qa/plan-audit.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-Q4",
+      "tier": "low",
+      "title": "Owner test sheet (wave 3): Home parity, editor history, run, props",
+      "manual": "docs/prompts/PK-Q4-gate-owner-sheet-3.md",
+      "verify": "node tools/qa/plan-audit.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R44",
+      "tier": "high",
+      "title": "Research: Hay Hop minigame",
+      "manual": "docs/prompts/PK-R44-research-hay-hop.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R44.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R45",
+      "tier": "high",
+      "title": "Research: companion",
+      "manual": "docs/prompts/PK-R45-research-companion.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R45.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R48",
+      "tier": "high",
+      "title": "Research: dancing to music",
+      "manual": "docs/prompts/PK-R48-research-dance-music.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R48.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R49",
+      "tier": "high",
+      "title": "Research: live weather from Open-Meteo with consent",
+      "manual": "docs/prompts/PK-R49-research-weather-live.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R49.md 7",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-R50",
+      "tier": "high",
+      "title": "Research: life-stage looks in the Domek",
+      "manual": "docs/prompts/PK-R50-research-stage-looks-house.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R50.md 6",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-HH1",
+      "tier": "mid",
+      "title": "Hay Hop: web minigame and mock",
+      "manual": "docs/prompts/PK-HH1-hayhop-web.md",
+      "verify": "node --check web/home/minigames/hayhop/hayhop.js && node --check web/home/minigames/hayhop/hayhop-logic.js && node --check tools/qa/ux-p130-hayhop.js && node tools/qa/ux-p130-hayhop.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-HH2",
+      "tier": "mid",
+      "title": "Hay Hop: Core reward rules, data and message validation",
+      "manual": "docs/prompts/PK-HH2-hayhop-core.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-CO1",
+      "tier": "mid",
+      "title": "Companion: pure module and data",
+      "manual": "docs/prompts/PK-CO1-companion-web.md",
+      "verify": "node --check web/home/lib/companion.js && node --check tools/qa/ux-p131-companion.js && node tools/qa/ux-p131-companion.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-CO2",
+      "tier": "mid",
+      "title": "Companion: Core setting, validation and contract",
+      "manual": "docs/prompts/PK-CO2-companion-core.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-DN1",
+      "tier": "mid",
+      "title": "Dance to music: beat clock module and BPM data",
+      "manual": "docs/prompts/PK-DN1-dance-sync.md",
+      "verify": "node --check web/home/lib/dance-sync.js && node --check tools/qa/ux-p132-dance.js && node tools/qa/ux-p132-dance.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-WX1",
+      "tier": "mid",
+      "title": "Live weather: Core settings, validation and C# service (build-verified)",
+      "manual": "docs/prompts/PK-WX1-weather-core-cs.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-WX2",
+      "tier": "mid",
+      "title": "Live weather: web mapping and consent UI with mock",
+      "manual": "docs/prompts/PK-WX2-weather-web.md",
+      "verify": "node --check web/home/lib/weather-live.js && node --check web/home/features/weather/feature.js && node --check web/home/features/weather/mock.js && node --check tools/qa/ux-p133-weather-live.js && node tools/qa/ux-p133-weather-live.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-ST1",
+      "tier": "mid",
+      "title": "Stage looks in the Domek: pure module and data",
+      "manual": "docs/prompts/PK-ST1-stage-looks.md",
+      "verify": "node --check web/home/lib/stage-looks.js && node --check tools/qa/ux-p134-stage-looks.js && node tools/qa/ux-p134-stage-looks.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RI6",
+      "tier": "high",
+      "title": "Integration analysis: Hay Hop, companion, dance, live weather, stage looks",
+      "manual": "docs/prompts/PK-RI6-integ-optional-wiring.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RI6.md 4",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-CV4",
+      "tier": "high",
+      "title": "Canvas: companion, dancing, live weather and stage looks",
+      "manual": "docs/prompts/PK-CV4-canvas-optional-wiring.md",
+      "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p135-canvas-optional.js && node tools/qa/ux-p135-canvas-optional.js",
+      "items": [],
+      "weight": 5
+    },
+    {
+      "id": "PK-APP4",
+      "tier": "mid",
+      "title": "App: load the optional modules, Hay Hop entry and music hook",
+      "manual": "docs/prompts/PK-APP4-app-optional-wiring.md",
+      "verify": "node --check web/home/app.js && node --check tools/qa/ux-p136-app-optional.js && node tools/qa/ux-p136-app-optional.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-CS4",
+      "tier": "mid",
+      "title": "C#: register the weather service and the Settings switch (build-verified)",
+      "manual": "docs/prompts/PK-CS4-cs-weather-registration.md",
+      "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 2
+    },
+    {
+      "id": "PK-T22",
+      "tier": "high",
+      "title": "Test agent: Hay Hop (game, reward, cheating)",
+      "manual": "docs/prompts/PK-T22-test-hayhop.md",
+      "verify": "node --check tools/qa/ux-p140-hayhop-adv.js && node tools/qa/ux-p140-hayhop-adv.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T23",
+      "tier": "high",
+      "title": "Test agent: companion",
+      "manual": "docs/prompts/PK-T23-test-companion.md",
+      "verify": "node --check tools/qa/ux-p141-companion-adv.js && node tools/qa/ux-p141-companion-adv.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T24",
+      "tier": "high",
+      "title": "Test agent: dancing to music",
+      "manual": "docs/prompts/PK-T24-test-dance.md",
+      "verify": "node --check tools/qa/ux-p142-dance-adv.js && node tools/qa/ux-p142-dance-adv.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T25",
+      "tier": "high",
+      "title": "Test agent: live weather and privacy",
+      "manual": "docs/prompts/PK-T25-test-weather-privacy.md",
+      "verify": "node --check tools/qa/ux-p143-weather-privacy.js && node tools/qa/ux-p143-weather-privacy.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T26",
+      "tier": "high",
+      "title": "Test agent: stage looks and a full Home regression",
+      "manual": "docs/prompts/PK-T26-test-stage-looks-parity.md",
+      "verify": "node --check tools/qa/ux-p144-stage-regression.js && node tools/qa/ux-p144-stage-regression.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-T27",
+      "tier": "high",
+      "title": "Test agent: old saves and message fuzz for every message added in waves 3 and 4 (Core)",
+      "manual": "docs/prompts/PK-T27-test-saves-validation-all.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-Q5",
+      "tier": "low",
+      "title": "Final gate (waves 3 and 4): full build, all UX tests, strict defect count",
+      "manual": "docs/prompts/PK-Q5-gate-final.md",
+      "verify": "node tools/qa/plan-audit.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-Q6",
+      "tier": "low",
+      "title": "Owner test sheet (wave 4) and release readiness note",
+      "manual": "docs/prompts/PK-Q6-gate-owner-sheet-final.md",
+      "verify": "node tools/qa/plan-audit.js",
       "items": [],
       "weight": 3
     }

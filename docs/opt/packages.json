@@ -2986,6 +2986,918 @@
    "model": "gemini-3.8-flash-medium",
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-Q2-gate-owner-sheet.md"
+  },
+  "PK-R36": {
+   "wave": "F3-1",
+   "title": "Research: pulpit behaviours that the Home pig lacks (sleep, doze, drink, zoomies, dance...)",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R36.md",
+    "docs/opt/log/PK-R36.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R36.md 7",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R36-research-parity-behaviors.md"
+  },
+  "PK-R37": {
+   "wave": "F3-1",
+   "title": "Research: sleeping places, hops and motion of the Home pig",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R37.md",
+    "docs/opt/log/PK-R37.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R37.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R37-research-rest-spots-motion.md"
+  },
+  "PK-R38": {
+   "wave": "F3-1",
+   "title": "Research: garden run (W28) re-grounded on the unified world",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R38.md",
+    "docs/opt/log/PK-R38.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R38.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R38-research-garden-run.md"
+  },
+  "PK-R39": {
+   "wave": "F3-1",
+   "title": "Research: desktop props (W29) re-grounded",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R39.md",
+    "docs/opt/log/PK-R39.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R39.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R39-research-desktop-props.md"
+  },
+  "PK-R40": {
+   "wave": "F3-1",
+   "title": "Research: editor undo/redo and snapping, draw limits, world sounds, residents in editor",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R40.md",
+    "docs/opt/log/PK-R40.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R40.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R40-research-editor-extras-budget-sounds.md"
+  },
+  "PK-R41": {
+   "wave": "F3-1",
+   "title": "Research: interactions, care, health and sounds - desktop versus Home",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R41.md",
+    "docs/opt/log/PK-R41.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R41.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R41-research-interactions-care-parity.md"
+  },
+  "PK-H1": {
+   "wave": "F3-2",
+   "title": "Home pig brain: pure module and data for all 28 behaviours",
+   "items": [],
+   "files": [
+    "web/home/lib/pig-behavior.js",
+    "assets/data/home_behavior.json",
+    "tools/qa/home-behavior-check.js",
+    "tools/qa/ux-p110-behavior.js",
+    "docs/opt/log/PK-H1.md"
+   ],
+   "verify": "node --check web/home/lib/pig-behavior.js && node --check tools/qa/home-behavior-check.js && node --check tools/qa/ux-p110-behavior.js && node tools/qa/home-behavior-check.js && node tools/qa/ux-p110-behavior.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-H1-pig-behavior-module.md"
+  },
+  "PK-H2": {
+   "wave": "F3-2",
+   "title": "Home pig places to sleep, hide and rest: pure module",
+   "items": [],
+   "files": [
+    "web/home/lib/rest-spots.js",
+    "tools/qa/ux-p111-rest-spots.js",
+    "docs/opt/log/PK-H2.md"
+   ],
+   "verify": "node --check web/home/lib/rest-spots.js && node --check tools/qa/ux-p111-rest-spots.js && node tools/qa/ux-p111-rest-spots.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-H2-rest-spots-module.md"
+  },
+  "PK-H3": {
+   "wave": "F3-2",
+   "title": "Home pig motion: hops, speeds, zzz and hearts: pure module",
+   "items": [],
+   "files": [
+    "web/home/lib/pig-motion.js",
+    "tools/qa/ux-p112-motion.js",
+    "docs/opt/log/PK-H3.md"
+   ],
+   "verify": "node --check web/home/lib/pig-motion.js && node --check tools/qa/ux-p112-motion.js && node tools/qa/ux-p112-motion.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-H3-pig-motion-module.md"
+  },
+  "PK-H4": {
+   "wave": "F3-2",
+   "title": "Home pig reactions to feeding, petting, tricks, sickness: pure module",
+   "items": [],
+   "files": [
+    "web/home/lib/pig-reactions.js",
+    "tools/qa/ux-p113-reactions.js",
+    "docs/opt/log/PK-H4.md"
+   ],
+   "verify": "node --check web/home/lib/pig-reactions.js && node --check tools/qa/ux-p113-reactions.js && node tools/qa/ux-p113-reactions.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-H4-pig-reactions-module.md"
+  },
+  "PK-U1": {
+   "wave": "F3-2",
+   "title": "Editor undo/redo, snapping and comfort meter: pure module",
+   "items": [],
+   "files": [
+    "web/home/features/places/edit-history.js",
+    "tools/qa/ux-p114-edit-history.js",
+    "docs/opt/log/PK-U1.md"
+   ],
+   "verify": "node --check web/home/features/places/edit-history.js && node --check tools/qa/ux-p114-edit-history.js && node tools/qa/ux-p114-edit-history.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-U1-edit-history-module.md"
+  },
+  "PK-U2": {
+   "wave": "F3-2",
+   "title": "Draw limits and world sounds: pure modules and data",
+   "items": [],
+   "files": [
+    "web/home/lib/draw-budget.js",
+    "web/home/lib/world-sounds.js",
+    "assets/data/draw_limits.json",
+    "tools/qa/ux-p115-budget-sounds.js",
+    "docs/opt/log/PK-U2.md"
+   ],
+   "verify": "node --check web/home/lib/draw-budget.js && node --check web/home/lib/world-sounds.js && node --check tools/qa/ux-p115-budget-sounds.js && node tools/qa/ux-p115-budget-sounds.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-U2-draw-budget-world-sounds.md"
+  },
+  "PK-G1": {
+   "wave": "F3-2",
+   "title": "Garden run: Core check, rules and data",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/World/RunCheck.cs",
+    "src/Cuy.Core/World/RunRules.cs",
+    "assets/data/pig_run.json",
+    "tests/Cuy.Core.Tests/RunCheckTests.cs",
+    "tests/Cuy.Core.Tests/RunRulesTests.cs",
+    "docs/opt/log/PK-G1.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-G1-run-core.md"
+  },
+  "PK-G2": {
+   "wave": "F3-2",
+   "title": "Garden run: C# feature, validation rules and contract",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/Features/RunFeature.cs",
+    "src/Cuy.Core/Input/Validation/RunMessages.cs",
+    "docs/contracts/run.md",
+    "tests/Cuy.Core.Tests/RunMessagesTests.cs",
+    "docs/opt/log/PK-G2.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-G2-run-cs-contract.md"
+  },
+  "PK-G3": {
+   "wave": "F3-2",
+   "title": "Garden run: web module, entry in the garden scene and mock",
+   "items": [],
+   "files": [
+    "web/home/features/run/feature.js",
+    "web/home/features/run/feature.css",
+    "web/home/features/run/mock.js",
+    "tools/qa/ux-p116-run.js",
+    "docs/opt/log/PK-G3.md"
+   ],
+   "verify": "node --check web/home/features/run/feature.js && node --check web/home/features/run/mock.js && node --check tools/qa/ux-p116-run.js && node tools/qa/ux-p116-run.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-G3-run-web.md"
+  },
+  "PK-D1": {
+   "wave": "F3-2",
+   "title": "Desktop props: Core catalogue, operations and data",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/World/DesktopPropCatalog.cs",
+    "src/Cuy.Core/World/DesktopPropOps.cs",
+    "assets/data/desktop_props.json",
+    "tests/Cuy.Core.Tests/DesktopPropCatalogTests.cs",
+    "tests/Cuy.Core.Tests/DesktopPropOpsTests.cs",
+    "docs/opt/log/PK-D1.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-D1-props-core.md"
+  },
+  "PK-D2": {
+   "wave": "F3-2",
+   "title": "Desktop props: C# feature, validation rules and contract",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/Features/PropsFeature.cs",
+    "src/Cuy.Core/Input/Validation/PropsMessages.cs",
+    "docs/contracts/props.md",
+    "tests/Cuy.Core.Tests/PropsMessagesTests.cs",
+    "docs/opt/log/PK-D2.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-D2-props-cs-contract.md"
+  },
+  "PK-D3": {
+   "wave": "F3-2",
+   "title": "Desktop props: transparent overlay window (build-verified)",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/DesktopPropsOverlay.cs",
+    "docs/qa/DESKTOP_PROPS_MANUAL.md",
+    "docs/opt/log/PK-D3.md"
+   ],
+   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-D3-props-overlay.md"
+  },
+  "PK-RI4": {
+   "wave": "F3-3",
+   "title": "Integration analysis: behaviour, spots, motion, reactions into the canvas",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RI4.md",
+    "docs/opt/log/PK-RI4.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RI4.md 4",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RI4-integ-behavior-wiring.md"
+  },
+  "PK-RI5": {
+   "wave": "F3-3",
+   "title": "Integration analysis: editor history, run feature, props, C# registration",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RI5.md",
+    "docs/opt/log/PK-RI5.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RI5.md 4",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RI5-integ-edit-run-props.md"
+  },
+  "PK-CV3": {
+   "wave": "F3-4",
+   "title": "Canvas: drive the pig with behaviour, spots, motion, reactions, budget",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p117-canvas-behavior.js",
+    "docs/opt/log/PK-CV3.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p117-canvas-behavior.js && node tools/qa/ux-p117-canvas-behavior.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 60,
+   "prompt_file": "docs/prompts/PK-CV3-canvas-behavior-wiring.md"
+  },
+  "PK-APP3": {
+   "wave": "F3-4",
+   "title": "App: load the new modules and the run feature",
+   "items": [],
+   "files": [
+    "web/home/app.js",
+    "web/home/index.html",
+    "web/home/features/index.json",
+    "tools/qa/ux-p118-app-load.js",
+    "docs/opt/log/PK-APP3.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check tools/qa/ux-p118-app-load.js && node tools/qa/ux-p118-app-load.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-APP3-app-load-wiring.md"
+  },
+  "PK-PE3": {
+   "wave": "F3-4",
+   "title": "Editor: undo/redo, snapping, comfort meter and budget wired in",
+   "items": [],
+   "files": [
+    "web/home/features/places/edit-panel.js",
+    "web/home/features/places/edit-panel.css",
+    "tools/qa/ux-p119-edit-wiring.js",
+    "docs/opt/log/PK-PE3.md"
+   ],
+   "verify": "node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p119-edit-wiring.js && node tools/qa/ux-p119-edit-wiring.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 60,
+   "prompt_file": "docs/prompts/PK-PE3-editor-history-wiring.md"
+  },
+  "PK-PF3": {
+   "wave": "F3-4",
+   "title": "Places feature: scene context for behaviour, world sounds, run entry",
+   "items": [],
+   "files": [
+    "web/home/features/places/feature.js",
+    "tools/qa/ux-p100-places-wiring.js",
+    "docs/opt/log/PK-PF3.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node --check tools/qa/ux-p100-places-wiring.js && node tools/qa/ux-p100-places-wiring.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-PF3-places-context-wiring.md"
+  },
+  "PK-CS3": {
+   "wave": "F3-4",
+   "title": "C#: register the run and props features and the overlay (build-verified)",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/HomeWindow.cs",
+    "src/Cuy/dotNet/Program.cs",
+    "docs/opt/log/PK-CS3.md"
+   ],
+   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-CS3-cs-registration.md"
+  },
+  "PK-T14": {
+   "wave": "F3-5",
+   "title": "Test agent: all 28 desktop behaviours reachable in Home",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p120-behavior-parity.js",
+    "docs/opt/log/PK-T14.md"
+   ],
+   "verify": "node --check tools/qa/ux-p120-behavior-parity.js && node tools/qa/ux-p120-behavior-parity.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T14-test-behavior-parity.md"
+  },
+  "PK-T15": {
+   "wave": "F3-5",
+   "title": "Test agent: sleeping places and motion matrix",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p121-rest-motion.js",
+    "docs/opt/log/PK-T15.md"
+   ],
+   "verify": "node --check tools/qa/ux-p121-rest-motion.js && node tools/qa/ux-p121-rest-motion.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T15-test-rest-spots-motion.md"
+  },
+  "PK-T16": {
+   "wave": "F3-5",
+   "title": "Test agent: reactions to feeding, petting, tricks, care",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p122-reactions.js",
+    "docs/opt/log/PK-T16.md"
+   ],
+   "verify": "node --check tools/qa/ux-p122-reactions.js && node tools/qa/ux-p122-reactions.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T16-test-reactions.md"
+  },
+  "PK-T17": {
+   "wave": "F3-5",
+   "title": "Test agent: undo/redo, snapping and draw budget in Edit",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p123-editor-adv.js",
+    "docs/opt/log/PK-T17.md"
+   ],
+   "verify": "node --check tools/qa/ux-p123-editor-adv.js && node tools/qa/ux-p123-editor-adv.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T17-test-editor-history.md"
+  },
+  "PK-T18": {
+   "wave": "F3-5",
+   "title": "Test agent: garden run (Core and web)",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p124-run-adv.js",
+    "tests/Cuy.Core.Tests/RunAdversarialTests.cs",
+    "docs/opt/log/PK-T18.md"
+   ],
+   "verify": "node --check tools/qa/ux-p124-run-adv.js && node tools/qa/ux-p124-run-adv.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T18-test-run.md"
+  },
+  "PK-T19": {
+   "wave": "F3-5",
+   "title": "Test agent: desktop props (Core and messages)",
+   "items": [],
+   "files": [
+    "tests/Cuy.Core.Tests/PropsAdversarialTests.cs",
+    "tools/qa/ux-p125-props-adv.js",
+    "docs/opt/log/PK-T19.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && node --check tools/qa/ux-p125-props-adv.js && node tools/qa/ux-p125-props-adv.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T19-test-props.md"
+  },
+  "PK-T20": {
+   "wave": "F3-5",
+   "title": "Test agent: a whole day of Home life with two pigs",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p126-day-journey.js",
+    "docs/opt/log/PK-T20.md"
+   ],
+   "verify": "node --check tools/qa/ux-p126-day-journey.js && node tools/qa/ux-p126-day-journey.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T20-test-day-journey.md"
+  },
+  "PK-T21": {
+   "wave": "F3-5",
+   "title": "Test agent: performance and leaks with the behaviour loop",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p127-perf-leaks.js",
+    "docs/opt/log/PK-T21.md"
+   ],
+   "verify": "node --check tools/qa/ux-p127-perf-leaks.js && node tools/qa/ux-p127-perf-leaks.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T21-test-perf-leaks-3.md"
+  },
+  "PK-Q3": {
+   "wave": "F3-6",
+   "title": "Stage gate (wave 3): full build, all UX tests, strict defect count",
+   "items": [],
+   "files": [
+    "docs/opt/log/PK-Q3.md",
+    "docs/opt/log/F3-gate.txt"
+   ],
+   "verify": "node tools/qa/plan-audit.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-Q3-gate-full-checks-3.md"
+  },
+  "PK-Q4": {
+   "wave": "F3-6",
+   "title": "Owner test sheet (wave 3): Home parity, editor history, run, props",
+   "items": [],
+   "files": [
+    "docs/qa/F3_OWNER_SHEET.md",
+    "docs/opt/log/PK-Q4.md"
+   ],
+   "verify": "node tools/qa/plan-audit.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-Q4-gate-owner-sheet-3.md"
+  },
+  "PK-R44": {
+   "wave": "F4-1",
+   "title": "Research: Hay Hop minigame",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R44.md",
+    "docs/opt/log/PK-R44.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R44.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R44-research-hay-hop.md"
+  },
+  "PK-R45": {
+   "wave": "F4-1",
+   "title": "Research: companion",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R45.md",
+    "docs/opt/log/PK-R45.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R45.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R45-research-companion.md"
+  },
+  "PK-R48": {
+   "wave": "F4-1",
+   "title": "Research: dancing to music",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R48.md",
+    "docs/opt/log/PK-R48.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R48.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R48-research-dance-music.md"
+  },
+  "PK-R49": {
+   "wave": "F4-1",
+   "title": "Research: live weather from Open-Meteo with consent",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R49.md",
+    "docs/opt/log/PK-R49.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R49.md 7",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R49-research-weather-live.md"
+  },
+  "PK-R50": {
+   "wave": "F4-1",
+   "title": "Research: life-stage looks in the Domek",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/R50.md",
+    "docs/opt/log/PK-R50.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/R50.md 6",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-R50-research-stage-looks-house.md"
+  },
+  "PK-HH1": {
+   "wave": "F4-2",
+   "title": "Hay Hop: web minigame and mock",
+   "items": [],
+   "files": [
+    "web/home/minigames/hayhop/hayhop.js",
+    "web/home/minigames/hayhop/hayhop-logic.js",
+    "web/home/minigames/hayhop/index.html",
+    "tools/qa/ux-p130-hayhop.js",
+    "docs/opt/log/PK-HH1.md"
+   ],
+   "verify": "node --check web/home/minigames/hayhop/hayhop.js && node --check web/home/minigames/hayhop/hayhop-logic.js && node --check tools/qa/ux-p130-hayhop.js && node tools/qa/ux-p130-hayhop.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-HH1-hayhop-web.md"
+  },
+  "PK-HH2": {
+   "wave": "F4-2",
+   "title": "Hay Hop: Core reward rules, data and message validation",
+   "items": [],
+   "files": [
+    "assets/data/hayhop.json",
+    "src/Cuy.Core/Input/Validation/HayHopMessages.cs",
+    "docs/contracts/hayhop.md",
+    "tests/Cuy.Core.Tests/HayHopMessagesTests.cs",
+    "tests/Cuy.Core.Tests/HayHopRewardTests.cs",
+    "docs/opt/log/PK-HH2.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-HH2-hayhop-core.md"
+  },
+  "PK-CO1": {
+   "wave": "F4-2",
+   "title": "Companion: pure module and data",
+   "items": [],
+   "files": [
+    "web/home/lib/companion.js",
+    "assets/data/companions.json",
+    "tools/qa/ux-p131-companion.js",
+    "docs/opt/log/PK-CO1.md"
+   ],
+   "verify": "node --check web/home/lib/companion.js && node --check tools/qa/ux-p131-companion.js && node tools/qa/ux-p131-companion.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-CO1-companion-web.md"
+  },
+  "PK-CO2": {
+   "wave": "F4-2",
+   "title": "Companion: Core setting, validation and contract",
+   "items": [],
+   "files": [
+    "src/Cuy.Core/Input/Validation/CompanionMessages.cs",
+    "docs/contracts/companion.md",
+    "tests/Cuy.Core.Tests/CompanionMessagesTests.cs",
+    "docs/opt/log/PK-CO2.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-CO2-companion-core.md"
+  },
+  "PK-DN1": {
+   "wave": "F4-2",
+   "title": "Dance to music: beat clock module and BPM data",
+   "items": [],
+   "files": [
+    "web/home/lib/dance-sync.js",
+    "assets/data/music_bpm.json",
+    "tools/qa/ux-p132-dance.js",
+    "docs/opt/log/PK-DN1.md"
+   ],
+   "verify": "node --check web/home/lib/dance-sync.js && node --check tools/qa/ux-p132-dance.js && node tools/qa/ux-p132-dance.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-DN1-dance-sync.md"
+  },
+  "PK-WX1": {
+   "wave": "F4-2",
+   "title": "Live weather: Core settings, validation and C# service (build-verified)",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/WeatherService.cs",
+    "src/Cuy.Core/Input/Validation/WeatherMessages.cs",
+    "src/Cuy.Core/Weather/WeatherMapping.cs",
+    "docs/contracts/weather.md",
+    "tests/Cuy.Core.Tests/WeatherMessagesTests.cs",
+    "tests/Cuy.Core.Tests/WeatherMappingTests.cs",
+    "docs/opt/log/PK-WX1.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-WX1-weather-core-cs.md"
+  },
+  "PK-WX2": {
+   "wave": "F4-2",
+   "title": "Live weather: web mapping and consent UI with mock",
+   "items": [],
+   "files": [
+    "web/home/lib/weather-live.js",
+    "web/home/features/weather/feature.js",
+    "web/home/features/weather/feature.css",
+    "web/home/features/weather/mock.js",
+    "tools/qa/ux-p133-weather-live.js",
+    "docs/opt/log/PK-WX2.md"
+   ],
+   "verify": "node --check web/home/lib/weather-live.js && node --check web/home/features/weather/feature.js && node --check web/home/features/weather/mock.js && node --check tools/qa/ux-p133-weather-live.js && node tools/qa/ux-p133-weather-live.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-WX2-weather-web.md"
+  },
+  "PK-ST1": {
+   "wave": "F4-2",
+   "title": "Stage looks in the Domek: pure module and data",
+   "items": [],
+   "files": [
+    "web/home/lib/stage-looks.js",
+    "assets/data/stage_looks.json",
+    "tools/qa/ux-p134-stage-looks.js",
+    "docs/opt/log/PK-ST1.md"
+   ],
+   "verify": "node --check web/home/lib/stage-looks.js && node --check tools/qa/ux-p134-stage-looks.js && node tools/qa/ux-p134-stage-looks.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-ST1-stage-looks.md"
+  },
+  "PK-RI6": {
+   "wave": "F4-3",
+   "title": "Integration analysis: Hay Hop, companion, dance, live weather, stage looks",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RI6.md",
+    "docs/opt/log/PK-RI6.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RI6.md 4",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RI6-integ-optional-wiring.md"
+  },
+  "PK-CV4": {
+   "wave": "F4-4",
+   "title": "Canvas: companion, dancing, live weather and stage looks",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "tools/qa/ux-p135-canvas-optional.js",
+    "docs/opt/log/PK-CV4.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node --check tools/qa/ux-p135-canvas-optional.js && node tools/qa/ux-p135-canvas-optional.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 60,
+   "prompt_file": "docs/prompts/PK-CV4-canvas-optional-wiring.md"
+  },
+  "PK-APP4": {
+   "wave": "F4-4",
+   "title": "App: load the optional modules, Hay Hop entry and music hook",
+   "items": [],
+   "files": [
+    "web/home/app.js",
+    "web/home/index.html",
+    "web/home/features/index.json",
+    "web/home/minigames/games.json",
+    "tools/qa/ux-p136-app-optional.js",
+    "docs/opt/log/PK-APP4.md"
+   ],
+   "verify": "node --check web/home/app.js && node --check tools/qa/ux-p136-app-optional.js && node tools/qa/ux-p136-app-optional.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-APP4-app-optional-wiring.md"
+  },
+  "PK-CS4": {
+   "wave": "F4-4",
+   "title": "C#: register the weather service and the Settings switch (build-verified)",
+   "items": [],
+   "files": [
+    "src/Cuy/dotNet/HomeWindow.cs",
+    "src/Cuy/dotNet/Program.cs",
+    "docs/opt/log/PK-CS4.md"
+   ],
+   "verify": "dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 36,
+   "prompt_file": "docs/prompts/PK-CS4-cs-weather-registration.md"
+  },
+  "PK-T22": {
+   "wave": "F4-5",
+   "title": "Test agent: Hay Hop (game, reward, cheating)",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p140-hayhop-adv.js",
+    "tests/Cuy.Core.Tests/HayHopAdversarialTests.cs",
+    "docs/opt/log/PK-T22.md"
+   ],
+   "verify": "node --check tools/qa/ux-p140-hayhop-adv.js && node tools/qa/ux-p140-hayhop-adv.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T22-test-hayhop.md"
+  },
+  "PK-T23": {
+   "wave": "F4-5",
+   "title": "Test agent: companion",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p141-companion-adv.js",
+    "tests/Cuy.Core.Tests/CompanionAdversarialTests.cs",
+    "docs/opt/log/PK-T23.md"
+   ],
+   "verify": "node --check tools/qa/ux-p141-companion-adv.js && node tools/qa/ux-p141-companion-adv.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T23-test-companion.md"
+  },
+  "PK-T24": {
+   "wave": "F4-5",
+   "title": "Test agent: dancing to music",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p142-dance-adv.js",
+    "docs/opt/log/PK-T24.md"
+   ],
+   "verify": "node --check tools/qa/ux-p142-dance-adv.js && node tools/qa/ux-p142-dance-adv.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T24-test-dance.md"
+  },
+  "PK-T25": {
+   "wave": "F4-5",
+   "title": "Test agent: live weather and privacy",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p143-weather-privacy.js",
+    "tests/Cuy.Core.Tests/WeatherAdversarialTests.cs",
+    "docs/opt/log/PK-T25.md"
+   ],
+   "verify": "node --check tools/qa/ux-p143-weather-privacy.js && node tools/qa/ux-p143-weather-privacy.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T25-test-weather-privacy.md"
+  },
+  "PK-T26": {
+   "wave": "F4-5",
+   "title": "Test agent: stage looks and a full Home regression",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p144-stage-regression.js",
+    "docs/opt/log/PK-T26.md"
+   ],
+   "verify": "node --check tools/qa/ux-p144-stage-regression.js && node tools/qa/ux-p144-stage-regression.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T26-test-stage-looks-parity.md"
+  },
+  "PK-T27": {
+   "wave": "F4-5",
+   "title": "Test agent: old saves and message fuzz for every message added in waves 3 and 4 (Core)",
+   "items": [],
+   "files": [
+    "tests/Cuy.Core.Tests/Wave34SaveCompatTests.cs",
+    "tests/Cuy.Core.Tests/Wave34ValidationFuzzTests.cs",
+    "docs/opt/log/PK-T27.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-T27-test-saves-validation-all.md"
+  },
+  "PK-Q5": {
+   "wave": "F4-6",
+   "title": "Final gate (waves 3 and 4): full build, all UX tests, strict defect count",
+   "items": [],
+   "files": [
+    "docs/opt/log/PK-Q5.md",
+    "docs/opt/log/F4-gate.txt"
+   ],
+   "verify": "node tools/qa/plan-audit.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-Q5-gate-final.md"
+  },
+  "PK-Q6": {
+   "wave": "F4-6",
+   "title": "Owner test sheet (wave 4) and release readiness note",
+   "items": [],
+   "files": [
+    "docs/qa/F4_OWNER_SHEET.md",
+    "docs/opt/log/PK-Q6.md"
+   ],
+   "verify": "node tools/qa/plan-audit.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-Q6-gate-owner-sheet-final.md"
   }
  }
 }

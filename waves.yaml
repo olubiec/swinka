@@ -2506,3 +2506,639 @@ waves:
     test_command: node --check tools/qa/ux-p70-owner-shots.js && node tools/qa/ux-p70-owner-shots.js
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
+- id: F3-1
+  tasks:
+  - id: PK-R36
+    title: 'PK-R36: Research: pulpit behaviours that the Home pig lacks (sleep, doze, drink, zoomies, dance...)'
+    prompt_file: docs/prompts/PK-R36-research-parity-behaviors.md
+    files:
+    - docs/opt/foundations/R36.md
+    - docs/opt/log/PK-R36.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R36.md 7
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R37
+    title: 'PK-R37: Research: sleeping places, hops and motion of the Home pig'
+    prompt_file: docs/prompts/PK-R37-research-rest-spots-motion.md
+    files:
+    - docs/opt/foundations/R37.md
+    - docs/opt/log/PK-R37.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R37.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R38
+    title: 'PK-R38: Research: garden run (W28) re-grounded on the unified world'
+    prompt_file: docs/prompts/PK-R38-research-garden-run.md
+    files:
+    - docs/opt/foundations/R38.md
+    - docs/opt/log/PK-R38.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R38.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R39
+    title: 'PK-R39: Research: desktop props (W29) re-grounded'
+    prompt_file: docs/prompts/PK-R39-research-desktop-props.md
+    files:
+    - docs/opt/foundations/R39.md
+    - docs/opt/log/PK-R39.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R39.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R40
+    title: 'PK-R40: Research: editor undo/redo and snapping, draw limits, world sounds, residents in editor'
+    prompt_file: docs/prompts/PK-R40-research-editor-extras-budget-sounds.md
+    files:
+    - docs/opt/foundations/R40.md
+    - docs/opt/log/PK-R40.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R40.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R41
+    title: 'PK-R41: Research: interactions, care, health and sounds - desktop versus Home'
+    prompt_file: docs/prompts/PK-R41-research-interactions-care-parity.md
+    files:
+    - docs/opt/foundations/R41.md
+    - docs/opt/log/PK-R41.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R41.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: F3-2
+  tasks:
+  - id: PK-H1
+    title: 'PK-H1: Home pig brain: pure module and data for all 28 behaviours'
+    prompt_file: docs/prompts/PK-H1-pig-behavior-module.md
+    files:
+    - web/home/lib/pig-behavior.js
+    - assets/data/home_behavior.json
+    - tools/qa/home-behavior-check.js
+    - tools/qa/ux-p110-behavior.js
+    - docs/opt/log/PK-H1.md
+    test_command: node --check web/home/lib/pig-behavior.js && node --check tools/qa/home-behavior-check.js && node --check tools/qa/ux-p110-behavior.js && node tools/qa/home-behavior-check.js && node tools/qa/ux-p110-behavior.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-H2
+    title: 'PK-H2: Home pig places to sleep, hide and rest: pure module'
+    prompt_file: docs/prompts/PK-H2-rest-spots-module.md
+    files:
+    - web/home/lib/rest-spots.js
+    - tools/qa/ux-p111-rest-spots.js
+    - docs/opt/log/PK-H2.md
+    test_command: node --check web/home/lib/rest-spots.js && node --check tools/qa/ux-p111-rest-spots.js && node tools/qa/ux-p111-rest-spots.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-H3
+    title: 'PK-H3: Home pig motion: hops, speeds, zzz and hearts: pure module'
+    prompt_file: docs/prompts/PK-H3-pig-motion-module.md
+    files:
+    - web/home/lib/pig-motion.js
+    - tools/qa/ux-p112-motion.js
+    - docs/opt/log/PK-H3.md
+    test_command: node --check web/home/lib/pig-motion.js && node --check tools/qa/ux-p112-motion.js && node tools/qa/ux-p112-motion.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-H4
+    title: 'PK-H4: Home pig reactions to feeding, petting, tricks, sickness: pure module'
+    prompt_file: docs/prompts/PK-H4-pig-reactions-module.md
+    files:
+    - web/home/lib/pig-reactions.js
+    - tools/qa/ux-p113-reactions.js
+    - docs/opt/log/PK-H4.md
+    test_command: node --check web/home/lib/pig-reactions.js && node --check tools/qa/ux-p113-reactions.js && node tools/qa/ux-p113-reactions.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-U1
+    title: 'PK-U1: Editor undo/redo, snapping and comfort meter: pure module'
+    prompt_file: docs/prompts/PK-U1-edit-history-module.md
+    files:
+    - web/home/features/places/edit-history.js
+    - tools/qa/ux-p114-edit-history.js
+    - docs/opt/log/PK-U1.md
+    test_command: node --check web/home/features/places/edit-history.js && node --check tools/qa/ux-p114-edit-history.js && node tools/qa/ux-p114-edit-history.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-U2
+    title: 'PK-U2: Draw limits and world sounds: pure modules and data'
+    prompt_file: docs/prompts/PK-U2-draw-budget-world-sounds.md
+    files:
+    - web/home/lib/draw-budget.js
+    - web/home/lib/world-sounds.js
+    - assets/data/draw_limits.json
+    - tools/qa/ux-p115-budget-sounds.js
+    - docs/opt/log/PK-U2.md
+    test_command: node --check web/home/lib/draw-budget.js && node --check web/home/lib/world-sounds.js && node --check tools/qa/ux-p115-budget-sounds.js && node tools/qa/ux-p115-budget-sounds.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-G1
+    title: 'PK-G1: Garden run: Core check, rules and data'
+    prompt_file: docs/prompts/PK-G1-run-core.md
+    files:
+    - src/Cuy.Core/World/RunCheck.cs
+    - src/Cuy.Core/World/RunRules.cs
+    - assets/data/pig_run.json
+    - tests/Cuy.Core.Tests/RunCheckTests.cs
+    - tests/Cuy.Core.Tests/RunRulesTests.cs
+    - docs/opt/log/PK-G1.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-G2
+    title: 'PK-G2: Garden run: C# feature, validation rules and contract'
+    prompt_file: docs/prompts/PK-G2-run-cs-contract.md
+    files:
+    - src/Cuy/dotNet/Features/RunFeature.cs
+    - src/Cuy.Core/Input/Validation/RunMessages.cs
+    - docs/contracts/run.md
+    - tests/Cuy.Core.Tests/RunMessagesTests.cs
+    - docs/opt/log/PK-G2.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-G3
+    title: 'PK-G3: Garden run: web module, entry in the garden scene and mock'
+    prompt_file: docs/prompts/PK-G3-run-web.md
+    files:
+    - web/home/features/run/feature.js
+    - web/home/features/run/feature.css
+    - web/home/features/run/mock.js
+    - tools/qa/ux-p116-run.js
+    - docs/opt/log/PK-G3.md
+    test_command: node --check web/home/features/run/feature.js && node --check web/home/features/run/mock.js && node --check tools/qa/ux-p116-run.js && node tools/qa/ux-p116-run.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-D1
+    title: 'PK-D1: Desktop props: Core catalogue, operations and data'
+    prompt_file: docs/prompts/PK-D1-props-core.md
+    files:
+    - src/Cuy.Core/World/DesktopPropCatalog.cs
+    - src/Cuy.Core/World/DesktopPropOps.cs
+    - assets/data/desktop_props.json
+    - tests/Cuy.Core.Tests/DesktopPropCatalogTests.cs
+    - tests/Cuy.Core.Tests/DesktopPropOpsTests.cs
+    - docs/opt/log/PK-D1.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-D2
+    title: 'PK-D2: Desktop props: C# feature, validation rules and contract'
+    prompt_file: docs/prompts/PK-D2-props-cs-contract.md
+    files:
+    - src/Cuy/dotNet/Features/PropsFeature.cs
+    - src/Cuy.Core/Input/Validation/PropsMessages.cs
+    - docs/contracts/props.md
+    - tests/Cuy.Core.Tests/PropsMessagesTests.cs
+    - docs/opt/log/PK-D2.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-D3
+    title: 'PK-D3: Desktop props: transparent overlay window (build-verified)'
+    prompt_file: docs/prompts/PK-D3-props-overlay.md
+    files:
+    - src/Cuy/dotNet/DesktopPropsOverlay.cs
+    - docs/qa/DESKTOP_PROPS_MANUAL.md
+    - docs/opt/log/PK-D3.md
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: F3-3
+  tasks:
+  - id: PK-RI4
+    title: 'PK-RI4: Integration analysis: behaviour, spots, motion, reactions into the canvas'
+    prompt_file: docs/prompts/PK-RI4-integ-behavior-wiring.md
+    files:
+    - docs/opt/foundations/RI4.md
+    - docs/opt/log/PK-RI4.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/RI4.md 4
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-RI5
+    title: 'PK-RI5: Integration analysis: editor history, run feature, props, C# registration'
+    prompt_file: docs/prompts/PK-RI5-integ-edit-run-props.md
+    files:
+    - docs/opt/foundations/RI5.md
+    - docs/opt/log/PK-RI5.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/RI5.md 4
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: F3-4
+  tasks:
+  - id: PK-CV3
+    title: 'PK-CV3: Canvas: drive the pig with behaviour, spots, motion, reactions, budget'
+    prompt_file: docs/prompts/PK-CV3-canvas-behavior-wiring.md
+    files:
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p117-canvas-behavior.js
+    - docs/opt/log/PK-CV3.md
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p117-canvas-behavior.js && node tools/qa/ux-p117-canvas-behavior.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 60
+  - id: PK-APP3
+    title: 'PK-APP3: App: load the new modules and the run feature'
+    prompt_file: docs/prompts/PK-APP3-app-load-wiring.md
+    files:
+    - web/home/app.js
+    - web/home/index.html
+    - web/home/features/index.json
+    - tools/qa/ux-p118-app-load.js
+    - docs/opt/log/PK-APP3.md
+    test_command: node --check web/home/app.js && node --check tools/qa/ux-p118-app-load.js && node tools/qa/ux-p118-app-load.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-PE3
+    title: 'PK-PE3: Editor: undo/redo, snapping, comfort meter and budget wired in'
+    prompt_file: docs/prompts/PK-PE3-editor-history-wiring.md
+    files:
+    - web/home/features/places/edit-panel.js
+    - web/home/features/places/edit-panel.css
+    - tools/qa/ux-p119-edit-wiring.js
+    - docs/opt/log/PK-PE3.md
+    test_command: node --check web/home/features/places/edit-panel.js && node --check tools/qa/ux-p119-edit-wiring.js && node tools/qa/ux-p119-edit-wiring.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 60
+  - id: PK-PF3
+    title: 'PK-PF3: Places feature: scene context for behaviour, world sounds, run entry'
+    prompt_file: docs/prompts/PK-PF3-places-context-wiring.md
+    files:
+    - web/home/features/places/feature.js
+    - tools/qa/ux-p100-places-wiring.js
+    - docs/opt/log/PK-PF3.md
+    test_command: node --check web/home/features/places/feature.js && node --check tools/qa/ux-p100-places-wiring.js && node tools/qa/ux-p100-places-wiring.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-CS3
+    title: 'PK-CS3: C#: register the run and props features and the overlay (build-verified)'
+    prompt_file: docs/prompts/PK-CS3-cs-registration.md
+    files:
+    - src/Cuy/dotNet/HomeWindow.cs
+    - src/Cuy/dotNet/Program.cs
+    - docs/opt/log/PK-CS3.md
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 36
+- id: F3-5
+  tasks:
+  - id: PK-T14
+    title: 'PK-T14: Test agent: all 28 desktop behaviours reachable in Home'
+    prompt_file: docs/prompts/PK-T14-test-behavior-parity.md
+    files:
+    - tools/qa/ux-p120-behavior-parity.js
+    - docs/opt/log/PK-T14.md
+    test_command: node --check tools/qa/ux-p120-behavior-parity.js && node tools/qa/ux-p120-behavior-parity.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T15
+    title: 'PK-T15: Test agent: sleeping places and motion matrix'
+    prompt_file: docs/prompts/PK-T15-test-rest-spots-motion.md
+    files:
+    - tools/qa/ux-p121-rest-motion.js
+    - docs/opt/log/PK-T15.md
+    test_command: node --check tools/qa/ux-p121-rest-motion.js && node tools/qa/ux-p121-rest-motion.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T16
+    title: 'PK-T16: Test agent: reactions to feeding, petting, tricks, care'
+    prompt_file: docs/prompts/PK-T16-test-reactions.md
+    files:
+    - tools/qa/ux-p122-reactions.js
+    - docs/opt/log/PK-T16.md
+    test_command: node --check tools/qa/ux-p122-reactions.js && node tools/qa/ux-p122-reactions.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T17
+    title: 'PK-T17: Test agent: undo/redo, snapping and draw budget in Edit'
+    prompt_file: docs/prompts/PK-T17-test-editor-history.md
+    files:
+    - tools/qa/ux-p123-editor-adv.js
+    - docs/opt/log/PK-T17.md
+    test_command: node --check tools/qa/ux-p123-editor-adv.js && node tools/qa/ux-p123-editor-adv.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T18
+    title: 'PK-T18: Test agent: garden run (Core and web)'
+    prompt_file: docs/prompts/PK-T18-test-run.md
+    files:
+    - tools/qa/ux-p124-run-adv.js
+    - tests/Cuy.Core.Tests/RunAdversarialTests.cs
+    - docs/opt/log/PK-T18.md
+    test_command: node --check tools/qa/ux-p124-run-adv.js && node tools/qa/ux-p124-run-adv.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T19
+    title: 'PK-T19: Test agent: desktop props (Core and messages)'
+    prompt_file: docs/prompts/PK-T19-test-props.md
+    files:
+    - tests/Cuy.Core.Tests/PropsAdversarialTests.cs
+    - tools/qa/ux-p125-props-adv.js
+    - docs/opt/log/PK-T19.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && node --check tools/qa/ux-p125-props-adv.js && node tools/qa/ux-p125-props-adv.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T20
+    title: 'PK-T20: Test agent: a whole day of Home life with two pigs'
+    prompt_file: docs/prompts/PK-T20-test-day-journey.md
+    files:
+    - tools/qa/ux-p126-day-journey.js
+    - docs/opt/log/PK-T20.md
+    test_command: node --check tools/qa/ux-p126-day-journey.js && node tools/qa/ux-p126-day-journey.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T21
+    title: 'PK-T21: Test agent: performance and leaks with the behaviour loop'
+    prompt_file: docs/prompts/PK-T21-test-perf-leaks-3.md
+    files:
+    - tools/qa/ux-p127-perf-leaks.js
+    - docs/opt/log/PK-T21.md
+    test_command: node --check tools/qa/ux-p127-perf-leaks.js && node tools/qa/ux-p127-perf-leaks.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+- id: F3-6
+  tasks:
+  - id: PK-Q3
+    title: 'PK-Q3: Stage gate (wave 3): full build, all UX tests, strict defect count'
+    prompt_file: docs/prompts/PK-Q3-gate-full-checks-3.md
+    files:
+    - docs/opt/log/PK-Q3.md
+    - docs/opt/log/F3-gate.txt
+    test_command: node tools/qa/plan-audit.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+  - id: PK-Q4
+    title: 'PK-Q4: Owner test sheet (wave 3): Home parity, editor history, run, props'
+    prompt_file: docs/prompts/PK-Q4-gate-owner-sheet-3.md
+    files:
+    - docs/qa/F3_OWNER_SHEET.md
+    - docs/opt/log/PK-Q4.md
+    test_command: node tools/qa/plan-audit.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+- id: F4-1
+  tasks:
+  - id: PK-R44
+    title: 'PK-R44: Research: Hay Hop minigame'
+    prompt_file: docs/prompts/PK-R44-research-hay-hop.md
+    files:
+    - docs/opt/foundations/R44.md
+    - docs/opt/log/PK-R44.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R44.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R45
+    title: 'PK-R45: Research: companion'
+    prompt_file: docs/prompts/PK-R45-research-companion.md
+    files:
+    - docs/opt/foundations/R45.md
+    - docs/opt/log/PK-R45.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R45.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R48
+    title: 'PK-R48: Research: dancing to music'
+    prompt_file: docs/prompts/PK-R48-research-dance-music.md
+    files:
+    - docs/opt/foundations/R48.md
+    - docs/opt/log/PK-R48.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R48.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R49
+    title: 'PK-R49: Research: live weather from Open-Meteo with consent'
+    prompt_file: docs/prompts/PK-R49-research-weather-live.md
+    files:
+    - docs/opt/foundations/R49.md
+    - docs/opt/log/PK-R49.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R49.md 7
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-R50
+    title: 'PK-R50: Research: life-stage looks in the Domek'
+    prompt_file: docs/prompts/PK-R50-research-stage-looks-house.md
+    files:
+    - docs/opt/foundations/R50.md
+    - docs/opt/log/PK-R50.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/R50.md 6
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: F4-2
+  tasks:
+  - id: PK-HH1
+    title: 'PK-HH1: Hay Hop: web minigame and mock'
+    prompt_file: docs/prompts/PK-HH1-hayhop-web.md
+    files:
+    - web/home/minigames/hayhop/hayhop.js
+    - web/home/minigames/hayhop/hayhop-logic.js
+    - web/home/minigames/hayhop/index.html
+    - tools/qa/ux-p130-hayhop.js
+    - docs/opt/log/PK-HH1.md
+    test_command: node --check web/home/minigames/hayhop/hayhop.js && node --check web/home/minigames/hayhop/hayhop-logic.js && node --check tools/qa/ux-p130-hayhop.js && node tools/qa/ux-p130-hayhop.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-HH2
+    title: 'PK-HH2: Hay Hop: Core reward rules, data and message validation'
+    prompt_file: docs/prompts/PK-HH2-hayhop-core.md
+    files:
+    - assets/data/hayhop.json
+    - src/Cuy.Core/Input/Validation/HayHopMessages.cs
+    - docs/contracts/hayhop.md
+    - tests/Cuy.Core.Tests/HayHopMessagesTests.cs
+    - tests/Cuy.Core.Tests/HayHopRewardTests.cs
+    - docs/opt/log/PK-HH2.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-CO1
+    title: 'PK-CO1: Companion: pure module and data'
+    prompt_file: docs/prompts/PK-CO1-companion-web.md
+    files:
+    - web/home/lib/companion.js
+    - assets/data/companions.json
+    - tools/qa/ux-p131-companion.js
+    - docs/opt/log/PK-CO1.md
+    test_command: node --check web/home/lib/companion.js && node --check tools/qa/ux-p131-companion.js && node tools/qa/ux-p131-companion.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-CO2
+    title: 'PK-CO2: Companion: Core setting, validation and contract'
+    prompt_file: docs/prompts/PK-CO2-companion-core.md
+    files:
+    - src/Cuy.Core/Input/Validation/CompanionMessages.cs
+    - docs/contracts/companion.md
+    - tests/Cuy.Core.Tests/CompanionMessagesTests.cs
+    - docs/opt/log/PK-CO2.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-DN1
+    title: 'PK-DN1: Dance to music: beat clock module and BPM data'
+    prompt_file: docs/prompts/PK-DN1-dance-sync.md
+    files:
+    - web/home/lib/dance-sync.js
+    - assets/data/music_bpm.json
+    - tools/qa/ux-p132-dance.js
+    - docs/opt/log/PK-DN1.md
+    test_command: node --check web/home/lib/dance-sync.js && node --check tools/qa/ux-p132-dance.js && node tools/qa/ux-p132-dance.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-WX1
+    title: 'PK-WX1: Live weather: Core settings, validation and C# service (build-verified)'
+    prompt_file: docs/prompts/PK-WX1-weather-core-cs.md
+    files:
+    - src/Cuy/dotNet/WeatherService.cs
+    - src/Cuy.Core/Input/Validation/WeatherMessages.cs
+    - src/Cuy.Core/Weather/WeatherMapping.cs
+    - docs/contracts/weather.md
+    - tests/Cuy.Core.Tests/WeatherMessagesTests.cs
+    - tests/Cuy.Core.Tests/WeatherMappingTests.cs
+    - docs/opt/log/PK-WX1.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-WX2
+    title: 'PK-WX2: Live weather: web mapping and consent UI with mock'
+    prompt_file: docs/prompts/PK-WX2-weather-web.md
+    files:
+    - web/home/lib/weather-live.js
+    - web/home/features/weather/feature.js
+    - web/home/features/weather/feature.css
+    - web/home/features/weather/mock.js
+    - tools/qa/ux-p133-weather-live.js
+    - docs/opt/log/PK-WX2.md
+    test_command: node --check web/home/lib/weather-live.js && node --check web/home/features/weather/feature.js && node --check web/home/features/weather/mock.js && node --check tools/qa/ux-p133-weather-live.js && node tools/qa/ux-p133-weather-live.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-ST1
+    title: 'PK-ST1: Stage looks in the Domek: pure module and data'
+    prompt_file: docs/prompts/PK-ST1-stage-looks.md
+    files:
+    - web/home/lib/stage-looks.js
+    - assets/data/stage_looks.json
+    - tools/qa/ux-p134-stage-looks.js
+    - docs/opt/log/PK-ST1.md
+    test_command: node --check web/home/lib/stage-looks.js && node --check tools/qa/ux-p134-stage-looks.js && node tools/qa/ux-p134-stage-looks.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: F4-3
+  tasks:
+  - id: PK-RI6
+    title: 'PK-RI6: Integration analysis: Hay Hop, companion, dance, live weather, stage looks'
+    prompt_file: docs/prompts/PK-RI6-integ-optional-wiring.md
+    files:
+    - docs/opt/foundations/RI6.md
+    - docs/opt/log/PK-RI6.md
+    test_command: node tools/qa/foundation-check.js docs/opt/foundations/RI6.md 4
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+- id: F4-4
+  tasks:
+  - id: PK-CV4
+    title: 'PK-CV4: Canvas: companion, dancing, live weather and stage looks'
+    prompt_file: docs/prompts/PK-CV4-canvas-optional-wiring.md
+    files:
+    - web/home/canvas-pig.js
+    - tools/qa/ux-p135-canvas-optional.js
+    - docs/opt/log/PK-CV4.md
+    test_command: node --check web/home/canvas-pig.js && node --check tools/qa/ux-p135-canvas-optional.js && node tools/qa/ux-p135-canvas-optional.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 60
+  - id: PK-APP4
+    title: 'PK-APP4: App: load the optional modules, Hay Hop entry and music hook'
+    prompt_file: docs/prompts/PK-APP4-app-optional-wiring.md
+    files:
+    - web/home/app.js
+    - web/home/index.html
+    - web/home/features/index.json
+    - web/home/minigames/games.json
+    - tools/qa/ux-p136-app-optional.js
+    - docs/opt/log/PK-APP4.md
+    test_command: node --check web/home/app.js && node --check tools/qa/ux-p136-app-optional.js && node tools/qa/ux-p136-app-optional.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
+  - id: PK-CS4
+    title: 'PK-CS4: C#: register the weather service and the Settings switch (build-verified)'
+    prompt_file: docs/prompts/PK-CS4-cs-weather-registration.md
+    files:
+    - src/Cuy/dotNet/HomeWindow.cs
+    - src/Cuy/dotNet/Program.cs
+    - docs/opt/log/PK-CS4.md
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 36
+- id: F4-5
+  tasks:
+  - id: PK-T22
+    title: 'PK-T22: Test agent: Hay Hop (game, reward, cheating)'
+    prompt_file: docs/prompts/PK-T22-test-hayhop.md
+    files:
+    - tools/qa/ux-p140-hayhop-adv.js
+    - tests/Cuy.Core.Tests/HayHopAdversarialTests.cs
+    - docs/opt/log/PK-T22.md
+    test_command: node --check tools/qa/ux-p140-hayhop-adv.js && node tools/qa/ux-p140-hayhop-adv.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T23
+    title: 'PK-T23: Test agent: companion'
+    prompt_file: docs/prompts/PK-T23-test-companion.md
+    files:
+    - tools/qa/ux-p141-companion-adv.js
+    - tests/Cuy.Core.Tests/CompanionAdversarialTests.cs
+    - docs/opt/log/PK-T23.md
+    test_command: node --check tools/qa/ux-p141-companion-adv.js && node tools/qa/ux-p141-companion-adv.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T24
+    title: 'PK-T24: Test agent: dancing to music'
+    prompt_file: docs/prompts/PK-T24-test-dance.md
+    files:
+    - tools/qa/ux-p142-dance-adv.js
+    - docs/opt/log/PK-T24.md
+    test_command: node --check tools/qa/ux-p142-dance-adv.js && node tools/qa/ux-p142-dance-adv.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T25
+    title: 'PK-T25: Test agent: live weather and privacy'
+    prompt_file: docs/prompts/PK-T25-test-weather-privacy.md
+    files:
+    - tools/qa/ux-p143-weather-privacy.js
+    - tests/Cuy.Core.Tests/WeatherAdversarialTests.cs
+    - docs/opt/log/PK-T25.md
+    test_command: node --check tools/qa/ux-p143-weather-privacy.js && node tools/qa/ux-p143-weather-privacy.js && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T26
+    title: 'PK-T26: Test agent: stage looks and a full Home regression'
+    prompt_file: docs/prompts/PK-T26-test-stage-looks-parity.md
+    files:
+    - tools/qa/ux-p144-stage-regression.js
+    - docs/opt/log/PK-T26.md
+    test_command: node --check tools/qa/ux-p144-stage-regression.js && node tools/qa/ux-p144-stage-regression.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-T27
+    title: 'PK-T27: Test agent: old saves and message fuzz for every message added in waves 3 and 4 (Core)'
+    prompt_file: docs/prompts/PK-T27-test-saves-validation-all.md
+    files:
+    - tests/Cuy.Core.Tests/Wave34SaveCompatTests.cs
+    - tests/Cuy.Core.Tests/Wave34ValidationFuzzTests.cs
+    - docs/opt/log/PK-T27.md
+    test_command: dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+- id: F4-6
+  tasks:
+  - id: PK-Q5
+    title: 'PK-Q5: Final gate (waves 3 and 4): full build, all UX tests, strict defect count'
+    prompt_file: docs/prompts/PK-Q5-gate-final.md
+    files:
+    - docs/opt/log/PK-Q5.md
+    - docs/opt/log/F4-gate.txt
+    test_command: node tools/qa/plan-audit.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
+  - id: PK-Q6
+    title: 'PK-Q6: Owner test sheet (wave 4) and release readiness note'
+    prompt_file: docs/prompts/PK-Q6-gate-owner-sheet-final.md
+    files:
+    - docs/qa/F4_OWNER_SHEET.md
+    - docs/opt/log/PK-Q6.md
+    test_command: node tools/qa/plan-audit.js
+    model: gemini-3.8-flash-medium
+    timeout_minutes: 44
