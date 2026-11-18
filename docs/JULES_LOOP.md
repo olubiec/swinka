@@ -1,6 +1,6 @@
 # Jules Loop: jedyna droga zadań do Julesa
 
-> **Od 3.11.2026 fale uruchamia orkiestra w Antigravity (`docs/START_ORKIESTRA.md`, plan `waves.yaml`); pętla Julesa jest wyłączona, a ten dokument opisuje tylko format plików zadań.**
+> **Od 18.11.2026 fale uruchamia właściciel ręcznie w Antigravity (`docs/prompts/START_FALA.md`, plan `waves.yaml`); orkiestra i pętla Julesa są usunięte, a ten dokument opisuje tylko format plików zadań.**
 
 > **Wersja v3 (autonomiczna).** Pętla działa w trybie ciągłym: bez `needs-human`, z samodzielnym planowaniem po ostatniej fali (cele w `docs/GOALS.md`), rozbijaniem zadań i korektą następnej fali. Opis: `docs/JAK_TO_DZIALA.md`, instalacja i zmienne: `scripts/jules-loop/README.md`, `scripts/jules-loop/START.md`. Podgląd: `docs/dashboard.html`. Poniższe opisy `needs-human` i ręcznego startu dotyczą trybu `LOOP_AUTONOMOUS=off`.
 

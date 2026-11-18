@@ -12,12 +12,12 @@ Read AGENTS.md once per session (single source of rules for Claude and Jules). P
 - App output: `src/Cuy/bin/Debug/Cuy.exe` (Release: `src/Cuy/bin/Release/Cuy.exe`)
 - Log: `%LocalAppData%\Cuy\logs\cuy.log`; save: `%AppData%\Cuy\save.json`
 
-## Working with waves (orkiestra, packages)
-Waves are run by the orkiestra in Antigravity from `waves.yaml` (`docs/START_ORKIESTRA.md`). Since 4.11.2026 work from W17 on is grouped into **packages** (`PK-*`, one agent session each): the plan, the generator and the reasons are in `docs/opt/README.md`. Rules for the chat that plans or fixes waves:
+## Working with waves (packages)
+Waves are run by hand in Antigravity from `waves.yaml` (`docs/prompts/START_FALA.md`); there is no orkiestra any more. Since 4.11.2026 work from W17 on is grouped into **packages** (`PK-*`, one agent session each): the plan, the generator and the reasons are in `docs/opt/README.md`. Rules for the chat that plans or fixes waves:
 - Never write package prompts or `waves.yaml` by hand. Edit `docs/opt/packages.spec.json` (or an item prompt in `docs/prompts/items/`), run `python3 tools/opt/gen_packages.py` and `node tools/qa/plan-audit.js`.
 - Keep packages small (1-6 items), files disjoint inside one wave, shared files edited by one package at a time. New contracts, validation rules and browser mocks go to per-feature files (AGENTS.md "Per-feature files").
 - Spend limits on agents, not on reading: do not read whole design documents (`docs/WORLD.md`, `docs/PIG_ROOMS.md`, `docs/NAMED_PIGS.md`); the item text already holds the facts. Run `tools/verify.ps1` or the package's `Weryfikacja` line, the full suite only at a stage gate.
-- Jules is not used any more (`docs/JULES_LOOP.md` is history). State of the run: `.orkiestra/state.json`, checkpoints in `STAN_PROJEKTU.md`.
+- Jules is not used any more (`docs/JULES_LOOP.md` is history). State of the run: `STAN_PROJEKTU.md` and `docs/opt/log/`.
 
 ## Visual work
 Sprites, breeds, coats, icons, animations and screen graphics are done by Claude Code in waves V0-V8 (`docs/VISUAL_WAVES.md`, log in `docs/VISUAL_LOG.md`). Those files are in `docs/`, not `tasks/`, so the Jules Loop does not start them. For this work the "do not read assets binaries" rule is lifted: render contact sheets into a scratch folder and look at them.

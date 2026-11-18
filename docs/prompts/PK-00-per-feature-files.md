@@ -6,7 +6,7 @@ Pytania: nie zadawaj pytań i nie czekaj na odpowiedź. Jeśli czegoś brakuje l
 Nie ruszaj: src/Cuy/*, docs/*, tasks/*, waves.yaml, AGENTS.md, existing feature folders
 Goal: Later packages add validation rules, browser-mock behavior and contracts in files of their own, so no two packages edit `MessageValidator.cs`, the `switch` in `bridge.js` or `docs/contracts.md`.
 Depends on: nothing. Docs `docs/contracts/README.md` and the `AGENTS.md` section "Per-feature files" already describe the target design; follow them.
-Steps: work the items below in order. Do not run git (no commit, branch, PR): the orkiestra commits and merges after the Weryfikacja line passes.
+Steps: work the items below in order. Do not run git (no commit, branch, PR): the owner commits and merges after the Weryfikacja line passes.
 ### Item 1: Core message validation.
 - `IMessageRuleSet { IEnumerable<MessageRule> Rules { get; } }`; `MessageRule(string type, params FieldRule[] fields)`; `FieldRule` helpers: `Str(name, maxLen, required=true)`, `Int(name, min, max, required=true)`, `Bool(name, required=true)`, `Id(name)` (non-empty, snake_case or `a-z0-9_:`).
 - `MessageValidator`: static, discovers every public non-abstract `IMessageRuleSet` with a parameterless constructor in the Core assembly by reflection (cached, thread-safe). `ValidationResult Validate(string type, Newtonsoft.Json.Linq.JObject message)` returns `Ok`, `Invalid(error)` or `Unknown` (no rule for this type; callers keep their own checks, existing features are not changed). A type registered twice by different rule sets is a loud error at discovery (exception with both class names).

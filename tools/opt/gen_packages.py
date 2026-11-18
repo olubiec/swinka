@@ -149,7 +149,7 @@ def main():
                         'Nie ruszaj: AGENTS.md, docs/archive/, tasks/*, every file not listed in Zmieniaj',
                         'Items (in this order): ' + ', '.join(i['id'] for i in its),
                         'Goal: ' + title + '.',
-                        'Steps: work the items below in order and keep the files of finished items in place. Do not run git (no commit, branch, PR): the orkiestra commits and merges after the Weryfikacja line passes. '
+                        'Steps: work the items below in order and keep the files of finished items in place. Do not run git (no commit, branch, PR): the owner commits and merges after the Weryfikacja line passes. '
                         'After each item run the part of the Weryfikacja line that concerns it and fix failures; if time runs out, finish the current item and say in the log which items are undone. '
                         'Earlier stages are "merged" = present in the repo now. Where an item has a "Package override", it wins over any conflicting file or step in the item text; the `Zmieniaj` line of this package is authoritative. '
                         'Docs are named by section: read only that section (grep its heading), never a whole design document or docs/PLAN.md.',

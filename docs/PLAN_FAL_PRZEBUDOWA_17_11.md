@@ -101,12 +101,12 @@ Razem z testami wymienionymi w promptach implementujących i istniejącymi `ux-p
 
 ## 6. Jak ruszyć
 1. Scal/commituj te zmiany (nic nie jest wypchnięte; `git status`). Baseline (`docs/opt/log/baseline-smoke.txt`) już jest.
-2. Sesja wg `docs/prompts/START_FALA.md` z `FALA = 2`. Orkiestra czyta `waves.yaml` (wpisy `F2-1`..`F2-6`); `max_parallel` w `orkiestra.toml` podniesiono z 4 do 10 (największy wpis ma 18 paczek, reszta czeka w kolejce).
+2. Sesja wg `docs/prompts/START_FALA.md` z `FALA = 2`. Orkiestry już nie ma (usunięta 18.11.2026): fale uruchamiasz ręcznie w Antigravity wg wpisów `F2-1`..`F2-6` z `waves.yaml`. Największy wpis (F2-2) ma 18 paczek: jeśli Antigravity nie uniesie 18 naraz, uruchom je w 2 partiach po 9 (lista w `docs/FALA_2_START.md`); kolejność kroków F2-1..F2-6 zostaje.
 3. **Punkt kontrolny po F2-1** (opcjonalny, 5 minut): przejrzyj 12 plików `R24..R35.md` (sekcje "Prompt fixes" i "pytania do właściciela"). Implementujący i tak stosują te poprawki sami; przerwanie ma sens tylko, gdy badanie wskaże coś, z czym się nie zgadzasz (np. `R24`: przyczyna uwagi 24).
 4. Po F2-6: arkusz `docs/qa/UX_WAVE_CHECKS.md` (sekcje fali 2) i zrzuty `docs/qa/shots/owner-*.png`; gra na Windowsie wg 3-5 punktów na funkcję.
 
 ## 7. Ryzyka i decyzje właściciela (domyślne odpowiedzi w nawiasach)
-1. **Równoległość kosztuje limity modeli:** każde zadanie buduje się od zera w świeżym worktree. `max_parallel = 10` (zmień w `orkiestra.toml`, jeśli limity się wyczerpują; kolejność kroków zostaje) (tak).
+1. **Równoległość kosztuje limity modeli:** każde zadanie buduje się od zera w świeżym worktree. jeśli limity się wyczerpują, uruchamiaj F2-2 w partiach (kolejność kroków zostaje) (tak).
 2. **Kontrakty zamiast scalonych API:** paczki F2-2 kodują równolegle wg plików badawczych, w testach używają atrap (`STUB`). Ryzyko rozjazdu łapie F2-3 (RI1..RI3 porównują kontrakt z rzeczywistością) i testy F2-4/F2-5 (tak, to dlatego jest krok F2-3).
 3. **PK-P5c (druga świnka na pulpicie, C#)** jest weryfikowane tylko buildem i ręcznie na Windowsie; wg R29 może skończyć się BLOCKED bez zmian kodu, reszta fali idzie dalej (tak).
 4. **Bez zmian zostają:** pliki fal W21-W33 w `waves.yaml` (część pokrywa się z P39-P47; osobna decyzja, domyślnie nie ruszać) i fale F1 (zrobione) (tak).

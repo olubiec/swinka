@@ -12,6 +12,8 @@ Szczegóły: `scripts/jules-loop/README.md`, `docs/JAK_TO_DZIALA.md`. Blok do pr
 
 ## Wariant bez Julesa: Antigravity CLI (`agy`) w Actions
 
+> Od 18.11.2026 martwy: workflow `agent-run.yml` został usunięty razem z orkiestrą (fale idą ręcznie, `docs/prompts/START_FALA.md`).
+
 Gdy Jules przestanie działać (albo od razu): ustaw zmienną repo `LOOP_BACKEND` = `agy`. Pętla zamiast Julesa odpala workflow `.github/workflows/agent-run.yml`, który uruchamia `agy` na runnerze, commituje i otwiera PR.
 
 1. Sekret `GEMINI_API_KEY`: klucz z Google AI Studio z włączonym rozliczeniem (kredyt $10/mies. z planu Pro idzie na to konto Cloud). Bez rozliczeń dostaniesz tylko darmowy tier z małymi limitami.

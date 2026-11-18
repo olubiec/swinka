@@ -30,7 +30,7 @@ for (const r of refs) if (!fs.existsSync(path.join(root, r))) fail('waves.yaml m
 const inYaml = new Set(refs.map(r => path.basename(r)));
 for (const f of prompts) if (!inYaml.has(f)) fail('prompt not in waves.yaml: ' + f);
 console.log(refs.length + ' waves.yaml prompt refs');
-// 2b. waves.yaml `files:` must equal the prompt's `Zmieniaj:` line (orkiestra rejects edits outside `files`)
+// 2b. waves.yaml `files:` must equal the prompt's `Zmieniaj:` line (agents must not edit outside `files`)
 {
   const lines = wy.split('\n');
   let curFile = null, curFiles = null;

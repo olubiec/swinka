@@ -1,5 +1,7 @@
 # Prompt startowy sesji (zmieniasz tylko numer fali)
 
+> Fala 2 (stan 18.11.2026, bez orkiestry): zamiast tego pliku użyj `docs/FALA_2_START.md` (prompt kroku F2-n, lista co zostało, podział F2-2 na partie). Poniższy prompt zostaje jako ogólny wzorzec.
+
 Fale są numerowane od 1 (R1 jest zrobione i pominięte; fala 1 zrobiona). Fala to zbiór zadań z `waves.yaml`; wpisy fali mają prefiks `F<numer>-`. Wpisy jednej fali idą po kolei, a paczki w jednym wpisie równolegle.
 
 ```

@@ -5,7 +5,7 @@ Status: plan only. Nothing here has been run yet. Each wave ends with a written 
 report is pushed, even if it lists failures (failures are findings, not blockers for the next wave).
 
 Rules for every wave (from AGENTS.md): English only, no change of existing test assertions, no new
-dependencies, no edits to `.github/workflows` or `tools/orkiestra`. Fixes are NOT part of a test wave:
+dependencies, no edits to `.github/workflows`. Fixes are NOT part of a test wave:
 a finding goes into the report with severity (S1 crash/data loss, S2 wrong behaviour, S3 cosmetic,
 S4 note) and a repro. Fix waves come after the reports.
 

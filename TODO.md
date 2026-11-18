@@ -1,36 +1,11 @@
-# Status planu fal (3.11.2026)
+# Status planu fal (18.11.2026)
 
-Plan: `waves.yaml` (od W17 paczki PK-*, `docs/opt/README.md`); prompty: `docs/prompts/`; start: `docs/START_ORKIESTRA.md`.
-Kontrola: `python -m orkiestra validate` -> `OK: 33 fal, 78 zadań`; `node tools/qa/plan-audit.js` -> `PLAN AUDIT OK`.
-Testy: `dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --nologo` -> **399/399 passed**.
+Orkiestra jest usunięta; fale uruchamiasz ręcznie w Antigravity. Instrukcja: `docs/FALA_2_START.md`. Plan: `waves.yaml` (generowany z `docs/opt/packages.spec.json` przez `python3 tools/opt/gen_packages.py`, kontrola `node tools/qa/plan-audit.js`), prompty: `docs/prompts/`, logi paczek: `docs/opt/log/`.
 
-## Stan wykonania (12/162 zadań zmergowanych do `main`)
-- **w-qa-tools**: `check-css-vars`, `check-icons` (zmergowane)
-- **w-compat-tests**: `SaveCompatTests`, `a11y-check` (zmergowane)
-- **w-validation-tests**: `data-ranges`, `sim-assertions` (zmergowane)
-- **w-perf-tests**: `perf-test`, `fuzz-test` (zmergowane)
-- **w-backlog-cleanup**: `xml-docs-ai`, `arch-doc-refresh`, `testing-docs-unify` (zmergowane)
-- **W11 (Nazwane świnki)**: `W11-01`, `W11-02`, `W11-03`, `W11-04`, `W11-05` (wszystkie 5 zmergowane!)
+## Zrobione
+- W11-W33 (z odłożonymi punktami i PK-23b BLOCKED, patrz `docs/opt/README.md`), P1-P45, R1, fala 1 (F1: P44, P4, P8, badania R5-R8).
 
-## Następna fala do wykonania:
-- **W12** (Farma: uprawa warzyw - 5 zadań: `W12-01` do `W12-05`)
-  - Wznowienie: `python -m orkiestra -v run --wave W12`
-
-## Kontrola zasilania i baterii
-- Dodano strażnika baterii: [`tools/battery_guard.py`](tools/battery_guard.py) oraz integrację w [`tools/orkiestra/orkiestra/battery.py`](tools/orkiestra/orkiestra/battery.py) i `runner.py`.
-- W razie spadku baterii <= 20% (na baterii) orkiestrator automatycznie przerywa pracę, zapisuje raport [`STAN_PROJEKTU.md`](STAN_PROJEKTU.md), zatwierdza commity i wypycha do `origin/main`.
-- Ręczne sprawdzenie stanu baterii:
-  ```powershell
-  python tools/battery_guard.py status
-  ```
-- Ręczny natychmiastowy bezpieczny zrzut na GitHub:
-  ```powershell
-  python tools/battery_guard.py emergency-save
-  ```
-- Uruchomienie ciągłego monitora w tle:
-  ```powershell
-  python tools/battery_guard.py watch --threshold 20 --interval 30 --kill-agents
-  ```
-
-## Kolejność dalszych fal w `waves.yaml`:
-W12, W13, W14, W15, W16, W17, W18a/b, W19a/b, W20a/b, W21, W22, W23a/b, W24a, W25a/b, W26a-d, W27a-d, W28a-d, W29a-e, W30a-c, W31, W32, W33.
+## Zostało
+- **Fala 2** (F2-1 .. F2-6, 54 agentów w 6 krokach): badania -> implementacja -> analiza sklejenia -> sklejanie -> testy -> bramki. Co każdy krok daje: tabela w `docs/FALA_2_START.md`.
+- Po F2-6: ręczny test na Windowsie (`docs/qa/UX_WAVE_CHECKS.md`, `TESTY_RECZNE.md`).
+- Odłożone: undo/redo edytora, dźwięki, limity rysowania, bieg po ogrodzie (W28), rekwizyty pulpitu (W29).

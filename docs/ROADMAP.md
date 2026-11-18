@@ -1,6 +1,6 @@
 # Roadmap: what is left (2.11.2026)
 
-**Waves W11-W33, 155 prompts; `waves.yaml` holds 46 waves/sub-waves and 162 tasks (incl. QA/cleanup waves).** Executed by the orkiestra in Antigravity (`docs/START_ORKIESTRA.md`); the Jules loop is off. W11-W15 named pigs (28), W16-W22 world (48; W14-09 and W22-07 added), W23-W30 pig rooms, roaming, run, desktop props, home store (65), W31-W33 graphics in code G10-G16 (12). Art: v1 of everything exists; open: style wave S (owner gate) and P0-P3 (`docs/DESIGNER_BRIEF.md`). No wave waits for art (fallback glyphs).
+**Waves W11-W33, 155 prompts; `waves.yaml` holds 46 waves/sub-waves and 162 tasks (incl. QA/cleanup waves).** Run by hand in Antigravity (`docs/prompts/START_FALA.md`); the orkiestra and the Jules loop are gone. W11-W15 named pigs (28), W16-W22 world (48; W14-09 and W22-07 added), W23-W30 pig rooms, roaming, run, desktop props, home store (65), W31-W33 graphics in code G10-G16 (12). Art: v1 of everything exists; open: style wave S (owner gate) and P0-P3 (`docs/DESIGNER_BRIEF.md`). No wave waits for art (fallback glyphs).
 
 ## Part 1: Named pigs (28 tasks, 5 waves). Design: `docs/NAMED_PIGS.md`
 | Wave | Tasks | What it delivers | Where |
@@ -53,7 +53,7 @@ v1 of all art exists. Open: style wave S (owner approval of 5 samples) and P0-P3
 Not in any wave (needs a decision): the farm plot model "lawn -> bed/tree" (`docs/PLAN.md`, "Pole i sad zależne od gracza").
 
 ## Human steps
-1. Rotate the Jules API key (it sits in the Project instructions; Jules is no longer used) and start the waves with `orkiestra run` (`docs/START_ORKIESTRA.md`).
+1. Rotate the Jules API key (it sits in the Project instructions; Jules is no longer used) and start the waves by hand (`docs/prompts/START_FALA.md`).
 2. Windows test after W14 and W15 (two pigs of different ages, offer and adoption, memorial mode, poop rate, skittish James), after W22 (world) and after W26 and W30 (`TESTY_RECZNE.md`: pig rooms, shared bedroom, roaming, run, desktop props, store).
 3. Approve the style samples (wave S gate) and the Kuki sample of P1; decide the open points in `docs/PIG_ROOMS.md` section 13.
 4. Tune numbers in `assets/data/*.json`; check with `node tools/qa/data-check.js` and `node tools/qa/economy-sim.js --runs 12 --variant baseline --sweep --check`.

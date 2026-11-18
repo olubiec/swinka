@@ -18,7 +18,7 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 | `src/Cuy/` | WinForms desktop app, .NET Framework 4.8, namespace `Cuy`. Main classes in `src/Cuy/dotNet/` |
 | `web/home/` | Home page: `index.html`, `app.js`, `bridge.js` (C# <-> JS + mock mode), `canvas-pig.js`, `style.css`; `minigames/` (Phaser 3), `features/<id>/` (feature modules) |
 | `assets/` | `sprites/<stage>/`, `icons/` (`icons_16.png` + `icons.json`), `sounds/`, `music/`, `data/*.json` (all tunable numbers), `coloring/` |
-| `tools/` | `build.ps1`, `package.ps1`, `qa/` (headless web checks), `art/` (Python generators), `Cuy.Simulator/`, `orkiestra/`, `verify.ps1` |
+| `tools/` | `build.ps1`, `package.ps1`, `qa/` (headless web checks), `art/` (Python generators), `Cuy.Simulator/`, `verify.ps1` |
 | `docs/` | `CONCEPT.md`, `PLAN.md` (waves, status), `contracts.md` (Home message/state shapes), `NAMES.md` (old Polish names), `archive/` |
 | `tasks/` | `BACKLOG.md` and `done/` only; wave prompts live in `docs/prompts/` (referenced by `waves.yaml`) |
 
@@ -67,6 +67,6 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 
 ## Packages and autonomy
 - Nobody answers questions or approves plans: decide, record the decision in the PR ("Decyzje"), finish.
-- A package (several `W<n>-<nn>` items in one prompt) is worked in the listed order. Under the orkiestra you never run git (no commit, branch, PR): it commits and merges once the `Weryfikacja` line passes. Instead of a PR description write `docs/opt/log/<package id>.md` (max 10 lines: decisions, differences from the planned names, anything left undone).
-- Do not edit `.github/workflows/` or `tools/orkiestra/`. Do not weaken or remove existing test assertions.
+- A package (several `W<n>-<nn>` items in one prompt) is worked in the listed order. You never run git (no commit, branch, PR): the owner commits and merges once the `Weryfikacja` line passes. Instead of a PR description write `docs/opt/log/<package id>.md` (max 10 lines: decisions, differences from the planned names, anything left undone).
+- Do not edit `.github/workflows/`. Do not weaken or remove existing test assertions.
 - Verify with `tools/verify.ps1` (prints only failures) or the command named in the prompt; run the full test suite only when the prompt says so.
