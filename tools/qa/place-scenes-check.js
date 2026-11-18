@@ -483,6 +483,38 @@ function checkPlaceScenes(data, options = {}) {
   failures.R3 = r3Failures;
   if (!r3Ok) allPassed = false;
 
+  // R4: optional bg_clean must be boolean; warn if bg_clean:true duplicates static blockers
+  let r4Ok = true;
+  const r4Failures = [];
+  const defaultsPath = path.join(repoRoot, 'assets/data/outdoor_defaults.json');
+  let outdoorDefaults = null;
+  if (fs.existsSync(defaultsPath)) {
+    try {
+      outdoorDefaults = JSON.parse(fs.readFileSync(defaultsPath, 'utf8'));
+    } catch (e) {}
+  }
+  const defaultScenes = (outdoorDefaults && (outdoorDefaults.scenes || outdoorDefaults)) || {};
+
+  for (const [name, scene] of Object.entries(data.scenes || {})) {
+    if (!scene) continue;
+    if (scene.bg_clean !== undefined && typeof scene.bg_clean !== 'boolean') {
+      r4Ok = false;
+      r4Failures.push(`${name} bg_clean must be boolean, got ${typeof scene.bg_clean}`);
+    }
+    if (scene.bg_clean === true && Array.isArray(scene.blockers) && scene.blockers.length > 0) {
+      const defList = Array.isArray(defaultScenes[name]) ? defaultScenes[name] : (defaultScenes[name] && defaultScenes[name].items) || [];
+      const instIds = new Set(defList.map(it => it && it.id).filter(Boolean));
+      for (const b of scene.blockers) {
+        if (b && b.id && instIds.has(b.id)) {
+          console.warn(`WARN: ${name} has bg_clean:true but static blocker '${b.id}' duplicates an instance id`);
+        }
+      }
+    }
+  }
+  results.R4 = r4Ok;
+  failures.R4 = r4Failures;
+  if (!r4Ok) allPassed = false;
+
   return { allPassed, results, failures };
 }
 
@@ -518,7 +550,8 @@ function runCli() {
     B6: 'rect order x0<x1, y0<y1',
     R1: 'depth_scale far >= 0.9 and far < near <= 1.0 for every scene',
     R2: 'walk height >= 12 and bottom edge <= size height - 2',
-    R3: 'a scene with size_from_layout has fallback size and walk'
+    R3: 'a scene with size_from_layout has fallback size and walk',
+    R4: 'optional bg_clean flag is boolean when present'
   };
 
   for (const [code, desc] of Object.entries(descriptions)) {

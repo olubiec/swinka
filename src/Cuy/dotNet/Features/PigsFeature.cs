@@ -190,7 +190,7 @@ namespace Cuy.Features
 
         public override bool HandleMessage(string type, JObject message, BrainController brain)
         {
-            if (type != "adopt_pig" && type != "toggle_pig_active" && type != "adopt_named" && type != "adopt_group" && type != "set_memorial" && type != "adopt_starter_pair" && type != "accept_adoption_offer")
+            if (type != "adopt_pig" && type != "toggle_pig_active" && type != "pigs.desktopPet" && type != "adopt_named" && type != "adopt_group" && type != "set_memorial" && type != "adopt_starter_pair" && type != "accept_adoption_offer")
             {
                 return false;
             }
@@ -363,6 +363,42 @@ namespace Cuy.Features
                 if (on)
                 {
                     HomeWindow.PostToPage(new { type = "toast", text = "Forever in the family" });
+                }
+            }
+            else if (type == "pigs.desktopPet")
+            {
+                string id = message?.Value<string>("pigId");
+                bool on = message?.Value<bool?>("on") ?? false;
+                var profile = !string.IsNullOrEmpty(id) ? gs.Roster.FirstOrDefault(p => p.Id == id) : null;
+                if (profile == null) return true;
+
+                var act = gs.ActivePigIds;
+                if (on)
+                {
+                    if (!act.Contains(id))
+                    {
+                        if (act.Count >= 2)
+                        {
+                            HomeWindow.PostToPage(new { type = "toast", text = "Max 2 pigs on desktop" });
+                            return true;
+                        }
+                        act.Add(id);
+                    }
+                    brain.SetDesktopPet(profile, true);
+                    BrainController.Log($"[Pets] Desktop pet enabled: {profile.Name} ({profile.Id})");
+                }
+                else
+                {
+                    if (act.Contains(id))
+                    {
+                        if (act.Count <= 1)
+                        {
+                            return true;
+                        }
+                        act.Remove(id);
+                    }
+                    brain.SetDesktopPet(profile, false);
+                    BrainController.Log($"[Pets] Desktop pet disabled: {profile.Name} ({profile.Id})");
                 }
             }
             else // toggle_pig_active

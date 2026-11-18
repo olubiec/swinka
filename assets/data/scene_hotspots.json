@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "scenes": {
+    "room": [],
+    "garden": [
+      { "id": "pond", "kind": "decor", "rect": [62, 126, 76, 132], "label": "Pond" },
+      { "id": "flowerbed", "kind": "decor", "rect": [10, 118, 42, 124], "label": "Flower bed" }
+    ],
+    "park": [
+      { "id": "gazebo", "kind": "decor", "rect": [70, 70, 130, 84], "label": "Gazebo" }
+    ],
+    "farm": [
+      { "id": "orchard", "kind": "orchard", "rect": [12, 24, 96, 62], "label": "Orchard" },
+      { "id": "shop", "kind": "shop", "rect": [170, 32, 242, 76], "label": "Farm shop" }
+    ],
+    "market": []
+  }
+}

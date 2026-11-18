@@ -18,8 +18,18 @@
     timer: null,
     lastState: null,
     period: null,          // time of day of the last render
-    periodAt: 0            // when the period was last checked (once a minute)
+    periodAt: 0,           // when the period was last checked (once a minute)
+    scenePanel: null,      // { kind: 'plant'|'tooltip'|'orchard'|'shop', plot?: number, rect?: number[] }
+    stripEl: null,
+    overlayEl: null,
+    boundHotspotApi: null,
+    boundLayerApi: null,
+    placeObserver: null
   };
+
+  let iconMap = null;
+  let iconImg = null;
+  let iconsRequested = false;
 
   // Light and time of day (W32-03): ambient tint on the plots and crops.
   // Engine: lib/lights.js (window.Lights); data: assets/data/lights.json. A missing lib or file means no tint, no error.
@@ -117,7 +127,104 @@
     });
   }
 
-  function send(msg) { if (S.api && S.api.send) S.api.send(msg); }
+  function send(msg) {
+    if (S.api && S.api.send) { S.api.send(msg); return; }
+    if (window.bridge && typeof window.bridge.send === 'function') window.bridge.send(msg);
+  }
+
+  function getState() {
+    if (S.api && typeof S.api.getState === 'function') return S.api.getState();
+    if (S.lastState) return S.lastState;
+    if (window.bridge) return window.bridge.currentState || (typeof window.bridge.getState === 'function' ? window.bridge.getState() : null);
+    return null;
+  }
+
+  function isFarmScene() {
+    if (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function') {
+      return window.CuyPlaces.getCurrentPlace() === 'farm';
+    }
+    const title = document.getElementById('placesBarTitle');
+    return !!(title && title.textContent && title.textContent.trim().toLowerCase() === 'farm');
+  }
+
+  function ensureIconSheet() {
+    if (iconsRequested) return;
+    iconsRequested = true;
+    fetch(url('icons/icons.json'))
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { iconMap = j || null; })
+      .catch(() => { iconMap = null; });
+    const img = new Image();
+    img.onload = () => { iconImg = img; };
+    img.src = url('icons/icons_16.png');
+  }
+
+  function drawFallbackMarker(ctx, kind, x, y) {
+    ctx.save();
+    if (kind === 'water_drop') {
+      ctx.fillStyle = '#3a1d17';
+      ctx.fillRect(x + 6, y + 2, 4, 2);
+      ctx.fillRect(x + 5, y + 4, 6, 3);
+      ctx.fillRect(x + 4, y + 7, 8, 5);
+      ctx.fillRect(x + 5, y + 12, 6, 2);
+      ctx.fillStyle = '#5f7f87';
+      ctx.fillRect(x + 6, y + 5, 4, 7);
+      ctx.fillStyle = '#8da9a8';
+      ctx.fillRect(x + 6, y + 6, 2, 4);
+    } else {
+      ctx.fillStyle = '#3a1d17';
+      ctx.fillRect(x + 4, y + 3, 8, 3);
+      ctx.fillRect(x + 2, y + 6, 12, 7);
+      ctx.fillStyle = '#6f4328';
+      ctx.fillRect(x + 5, y + 4, 6, 2);
+      ctx.fillStyle = '#d1a548';
+      ctx.fillRect(x + 3, y + 7, 10, 5);
+      ctx.fillStyle = '#a97a2f';
+      ctx.fillRect(x + 3, y + 9, 10, 1);
+    }
+    ctx.restore();
+  }
+
+  function drawFarmMarkers(ctx, scene) {
+    const sceneId = (scene && scene.id) || (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function' ? window.CuyPlaces.getCurrentPlace() : null);
+    if (sceneId !== 'farm') return;
+    const st = getState();
+    if (!st || !st.farm || !st.farm.unlocked) return;
+    const plots = st.farm.plots || [];
+    const hotspots = (window.CanvasPig && typeof window.CanvasPig.getHotspots === 'function') ? window.CanvasPig.getHotspots() : [];
+    if (!hotspots || !hotspots.length) return;
+
+    ensureIconSheet();
+    for (let k = 0; k < hotspots.length; k++) {
+      const hs = hotspots[k];
+      if (!hs || !Array.isArray(hs.rect) || hs.rect.length < 4) continue;
+      const pm = String(hs.id || hs.uid || '').match(/(?:fx:farm:)?plot:(\d+)/);
+      if (hs.kind !== 'plot' && !pm) continue;
+      const idx = pm ? Number(pm[1]) : -1;
+      const p = plots[idx];
+      if (!p || p.state === 'empty') continue;
+
+      let iconKey = null;
+      if (p.state === 'growing' && !p.watered) iconKey = 'water_drop';
+      else if (p.state === 'ripe') iconKey = 'basket';
+      if (!iconKey) continue;
+
+      const x = Math.round((hs.rect[0] + hs.rect[2]) / 2) - 8;
+      const y = Math.max(0, Math.round(hs.rect[1]) - 16);
+      const sheetIdx = iconMap && typeof iconMap[iconKey] === 'number' ? iconMap[iconKey] : -1;
+      if (iconImg && iconImg.complete && iconImg.naturalWidth > 0 && sheetIdx >= 0) {
+        const cols = Math.max(1, Math.floor(iconImg.naturalWidth / 16));
+        const sx = (sheetIdx % cols) * 16;
+        const sy = Math.floor(sheetIdx / cols) * 16;
+        ctx.save();
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(iconImg, sx, sy, 16, 16, x, y, 16, 16);
+        ctx.restore();
+      } else {
+        drawFallbackMarker(ctx, iconKey, x, y);
+      }
+    }
+  }
 
   function render() {
     const container = S.container;
@@ -319,11 +426,268 @@
     ctx.restore();
   }
 
+  function ensureStrip() {
+    if (S.stripEl && S.stripEl.isConnected) return S.stripEl;
+    const anchor = document.getElementById('placesLockedHint') || document.getElementById('placesBar');
+    if (!anchor || !anchor.parentNode) return null;
+    const strip = document.createElement('div');
+    strip.id = 'farmSceneStrip';
+    strip.className = 'farm-scene-strip feature-farm';
+    strip.hidden = true;
+    strip.setAttribute('role', 'group');
+    strip.setAttribute('aria-label', 'Farm quick actions');
+    strip.innerHTML =
+      '<button type="button" class="farm-btn farm-strip-btn" data-scene-harvest-all="1">Harvest all</button>' +
+      '<button type="button" class="farm-btn farm-strip-btn" data-scene-water-all="1">Water all</button>';
+    anchor.parentNode.insertBefore(strip, anchor.nextSibling);
+    strip.querySelector('[data-scene-harvest-all]').addEventListener('click', () => {
+      send({ type: 'farm_harvest_all' });
+    });
+    strip.querySelector('[data-scene-water-all]').addEventListener('click', () => {
+      const st = getState();
+      if (!st || !st.farm) return;
+      const plots = st.farm.plots || [];
+      const limit = (st.farm.tools && st.farm.tools.plotsPerWater) || 1;
+      plots.map((p, i) => ({ p, i }))
+        .filter(x => x.p.state === 'growing' && !x.p.watered)
+        .slice(0, limit)
+        .forEach(x => send({ type: 'farm_water', plot: x.i }));
+    });
+    S.stripEl = strip;
+    return strip;
+  }
+
+  function closeScenePanel() {
+    S.scenePanel = null;
+    if (S.overlayEl && S.overlayEl.parentNode) {
+      S.overlayEl.parentNode.removeChild(S.overlayEl);
+    }
+    S.overlayEl = null;
+  }
+
+  function positionScenePanel(panel, rect) {
+    const canvas = document.getElementById('pigCanvas');
+    const cr = canvas ? canvas.getBoundingClientRect() : { left: 0, top: 80, width: 256, height: 144 };
+    const def = (window.CuyScenes && typeof window.CuyScenes.def === 'function') ? window.CuyScenes.def('farm') : null;
+    const sw = (def && def.size && def.size[0]) || 256;
+    const sh = (def && def.size && def.size[1]) || 144;
+    const sx = cr.width / sw;
+    const sy = cr.height / sh;
+    const r = Array.isArray(rect) && rect.length >= 4 ? rect : [80, 40, 112, 72];
+
+    let left = Math.round(cr.left + r[0] * sx);
+    let top = Math.round(cr.top + r[3] * sy + 4);
+    const pr = panel.getBoundingClientRect();
+    if (top + pr.height > window.innerHeight - 4) {
+      top = Math.round(cr.top + r[1] * sy - pr.height - 4);
+    }
+    left = Math.round(Math.max(4, Math.min(window.innerWidth - pr.width - 4, left)));
+    top = Math.round(Math.max(4, Math.min(window.innerHeight - pr.height - 4, top)));
+    panel.style.left = left + 'px';
+    panel.style.top = top + 'px';
+  }
+
+  function renderScenePanel() {
+    const spec = S.scenePanel;
+    if (!spec || !isFarmScene()) {
+      closeScenePanel();
+      return;
+    }
+    const st = getState();
+    if (!st || !st.farm || !st.farm.unlocked) {
+      closeScenePanel();
+      return;
+    }
+    const f = st.farm;
+    const crops = f.crops || [];
+    const plots = f.plots || [];
+    const up = f.upgrades || {};
+    const tools = f.tools || { plotsPerWater: 1 };
+    const clovers = st.clovers || 0;
+
+    if (!S.overlayEl || !S.overlayEl.isConnected) {
+      const el = document.createElement('div');
+      el.className = 'feature-farm';
+      document.body.appendChild(el);
+      S.overlayEl = el;
+    }
+
+    let html = '';
+    if (spec.kind === 'tooltip') {
+      const p = plots[spec.plot];
+      if (!p || p.state !== 'growing') { closeScenePanel(); return; }
+      const crop = cropOf(st, p.cropId);
+      const name = crop ? crop.name : 'Crop';
+      html = `<div class="farm-scene-tooltip" role="status">
+        <span>${esc(name)} · ${fmt(p.secondsLeft)} left</span>
+        <button type="button" class="farm-btn farm-close" data-scene-close="1">Close</button>
+      </div>`;
+    } else if (spec.kind === 'plant') {
+      const p = plots[spec.plot];
+      if (!p || p.state !== 'empty') { closeScenePanel(); return; }
+      const rows = crops.map(c => {
+        if (!c.unlocked) {
+          const more = Math.max(0, c.unlockHarvests - (f.harvests || 0));
+          return `<li class="farm-crop is-locked"><span class="pixel-icon icon-padlock" aria-hidden="true"></span> ${esc(c.name)}: ${more} more</li>`;
+        }
+        const owned = c.seedOwned || 0;
+        return `<li class="farm-crop"><span class="farm-crop-name">${esc(c.name)}</span> <span class="farm-crop-meta">${owned} · ${c.growMinutes}m</span>
+          <button type="button" class="farm-btn" data-plant="${esc(c.id)}" ${owned > 0 ? '' : 'disabled'}>Plant</button></li>`;
+      }).join('');
+      html = `<div class="farm-scene-panel" role="dialog" aria-label="Plant on plot ${spec.plot + 1}">
+        <div class="farm-menu-head">Plot ${spec.plot + 1}<button type="button" class="farm-btn farm-close" data-scene-close="1">Close</button></div>
+        <ul class="farm-crops">${rows}</ul>
+      </div>`;
+    } else if (spec.kind === 'orchard') {
+      const slots = (f.orchard || []).map(o => {
+        if (!o.cropId) {
+          return `<div class="farm-slot"><span class="farm-slot-name">Slot ${o.slot + 1}</span>
+            <button type="button" class="farm-btn" data-orchard-plant="${o.slot}">Plant sapling</button></div>`;
+        }
+        const next = o.stock < 5 && o.secondsToNext > 0 ? ' · ' + fmt(o.secondsToNext) : '';
+        return `<div class="farm-slot"><span class="farm-slot-name">Slot ${o.slot + 1}: ${o.stock}${esc(next)}</span>
+          <button type="button" class="farm-btn" data-orchard-harvest="${o.slot}" ${o.stock > 0 ? '' : 'disabled'}>Collect</button></div>`;
+      }).join('');
+      html = `<div class="farm-scene-panel" role="dialog" aria-label="Orchard">
+        <div class="farm-menu-head">Orchard<button type="button" class="farm-btn farm-close" data-scene-close="1">Close</button></div>
+        <div class="farm-scene-list">${slots || '<p class="farm-empty">No orchard slots yet.</p>'}</div>
+      </div>`;
+    } else if (spec.kind === 'shop') {
+      const upgrade = (label, cost, what, disabledWhen) => {
+        const can = cost !== null && cost !== undefined && clovers >= cost && !disabledWhen;
+        const price = cost === null || cost === undefined ? 'Max' : cost + ' clovers';
+        return `<button type="button" class="farm-btn farm-upgrade" data-buy="${what}" ${can ? '' : 'disabled'}>${esc(label)} · ${esc(price)}</button>`;
+      };
+      const items = [
+        upgrade('Next plot pack', up.nextPackCost, 'pack', false),
+        upgrade('Orchard slot', up.nextOrchardCost, 'orchard', false),
+        upgrade('Better can', up.nextCanCost, 'can', false),
+        upgrade('Sprinkler', up.sprinklerCost, 'sprinkler', !!tools.sprinkler)
+      ].join('');
+      html = `<div class="farm-scene-panel" role="dialog" aria-label="Farm shop">
+        <div class="farm-menu-head">Farm shop<button type="button" class="farm-btn farm-close" data-scene-close="1">Close</button></div>
+        <div class="farm-upgrades">${items}</div>
+      </div>`;
+    }
+
+    S.overlayEl.innerHTML = html;
+    const panel = S.overlayEl.firstElementChild;
+    if (panel) positionScenePanel(panel, spec.rect);
+
+    const closeBtn = S.overlayEl.querySelector('[data-scene-close]');
+    if (closeBtn) closeBtn.addEventListener('click', closeScenePanel);
+    S.overlayEl.querySelectorAll('[data-plant]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        send({ type: 'farm_plant', plot: spec.plot, cropId: btn.dataset.plant });
+        closeScenePanel();
+      });
+    });
+    S.overlayEl.querySelectorAll('[data-orchard-plant]').forEach(btn => {
+      btn.addEventListener('click', () => send({ type: 'orchard_plant', slot: Number(btn.dataset.orchardPlant), cropId: 'apple' }));
+    });
+    S.overlayEl.querySelectorAll('[data-orchard-harvest]').forEach(btn => {
+      btn.addEventListener('click', () => send({ type: 'orchard_harvest', slot: Number(btn.dataset.orchardHarvest) }));
+    });
+    S.overlayEl.querySelectorAll('[data-buy]').forEach(btn => {
+      btn.addEventListener('click', () => send({ type: 'farm_buy', what: btn.dataset.buy }));
+    });
+  }
+
+  function handleHotspot(hs) {
+    if (!hs) return;
+    const st = getState();
+    if (!st || !st.farm || !st.farm.unlocked) return;
+    const pm = String(hs.id || hs.uid || '').match(/(?:fx:farm:)?plot:(\d+)/);
+    if (hs.kind === 'plot' || pm) {
+      const idx = pm ? Number(pm[1]) : -1;
+      const p = (st.farm.plots || [])[idx];
+      if (!p) return;
+      if (p.state === 'empty') {
+        S.scenePanel = { kind: 'plant', plot: idx, rect: hs.rect };
+        renderScenePanel();
+      } else if (p.state === 'growing' && !p.watered) {
+        closeScenePanel();
+        send({ type: 'farm_water', plot: idx });
+      } else if (p.state === 'ripe') {
+        closeScenePanel();
+        send({ type: 'farm_harvest', plot: idx });
+      } else if (p.state === 'growing' && p.watered) {
+        S.scenePanel = { kind: 'tooltip', plot: idx, rect: hs.rect };
+        renderScenePanel();
+      }
+      return;
+    }
+    if (hs.kind === 'orchard' || hs.id === 'orchard') {
+      S.scenePanel = { kind: 'orchard', rect: hs.rect };
+      renderScenePanel();
+      return;
+    }
+    if (hs.kind === 'shop' || hs.id === 'shop') {
+      S.scenePanel = { kind: 'shop', rect: hs.rect };
+      renderScenePanel();
+    }
+  }
+
+  function syncSceneUI() {
+    const strip = ensureStrip();
+    const st = getState();
+    const onFarm = isFarmScene();
+    const unlocked = !!(st && st.farm && st.farm.unlocked);
+    if (strip) {
+      strip.hidden = !(onFarm && unlocked);
+      if (onFarm && unlocked) {
+        const plots = st.farm.plots || [];
+        const tools = st.farm.tools || { plotsPerWater: 1 };
+        const ripe = plots.filter(p => p.state === 'ripe').length;
+        const dry = plots.filter(p => p.state === 'growing' && !p.watered).length;
+        const watered = Math.min(tools.plotsPerWater || 1, dry);
+        const hBtn = strip.querySelector('[data-scene-harvest-all]');
+        const wBtn = strip.querySelector('[data-scene-water-all]');
+        if (hBtn) hBtn.disabled = ripe === 0;
+        if (wBtn) {
+          wBtn.disabled = watered === 0;
+          wBtn.textContent = watered > 0 ? 'Water all (' + watered + ')' : 'Water all';
+        }
+      }
+    }
+    if (!onFarm && S.scenePanel) closeScenePanel();
+    else if (S.scenePanel) renderScenePanel();
+  }
+
+  function bindCanvasPig() {
+    if (window.CanvasPig && typeof window.CanvasPig.onHotspot === 'function' && S.boundHotspotApi !== window.CanvasPig.onHotspot) {
+      S.boundHotspotApi = window.CanvasPig.onHotspot;
+      window.CanvasPig.onHotspot(handleHotspot);
+    }
+    const addLayerFn = (window.CanvasPig && typeof window.CanvasPig.addLayer === 'function')
+      ? window.CanvasPig.addLayer
+      : (window.CuyRoom && typeof window.CuyRoom.addLayer === 'function' ? window.CuyRoom.addLayer : null);
+    if (addLayerFn && S.boundLayerApi !== addLayerFn) {
+      S.boundLayerApi = addLayerFn;
+      addLayerFn('farm_markers', 60, drawFarmMarkers);
+    }
+    if (!S.placeObserver && typeof MutationObserver !== 'undefined') {
+      const title = document.getElementById('placesBarTitle');
+      if (title) {
+        S.placeObserver = new MutationObserver(() => syncSceneUI());
+        S.placeObserver.observe(title, { childList: true, characterData: true, subtree: true });
+      }
+    }
+  }
+
+  window.CuyFarm = {
+    handleHotspot,
+    closePanel: closeScenePanel,
+    drawMarkers: drawFarmMarkers,
+    syncSceneUI
+  };
+
   window.CuyHome.registerFeature({
     id: 'farm',
     title: 'Farm',
     icon: 'icon-place-farm',
     order: 60,
+    alwaysOnState: true,
     open(container, api) {
       S.container = container;
       S.api = api;
@@ -338,8 +702,18 @@
       S.container = null;
       if (S.timer) { clearInterval(S.timer); S.timer = null; }
     },
-    onState() {
+    onState(st) {
+      if (st) S.lastState = st;
+      bindCanvasPig();
+      syncSceneUI();
       if (S.container && S.container.isConnected) render();
     }
   });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { bindCanvasPig(); syncSceneUI(); });
+  } else {
+    bindCanvasPig();
+    syncSceneUI();
+  }
 })();

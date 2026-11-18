@@ -385,6 +385,89 @@ namespace Cuy
             }
         }
 
+        public void SetDesktopPet(Cuy.Core.Pigs.PigProfile pig, bool on)
+        {
+            if (pig == null) return;
+
+            try
+            {
+                var existing = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                if (existing == null || existing.IsDisposed)
+                {
+                    Log("[Pets] SetDesktopPet: No existing FormPet available.");
+                    return;
+                }
+
+                if (existing.InvokeRequired)
+                {
+                    existing.BeginInvoke(new Action(() => SetDesktopPet(pig, on)));
+                    return;
+                }
+
+                if (on)
+                {
+                    foreach (var p in FormPet.AllPets)
+                    {
+                        if (p != null && !p.IsDisposed && p.Profile?.Id == pig.Id)
+                        {
+                            return;
+                        }
+                    }
+
+                    if (FormPet.AllPets.Count >= 2)
+                    {
+                        Log("[Pets] Already at max active desktop pets (2).");
+                        return;
+                    }
+
+                    var xml = existing.Xml;
+                    var animField = typeof(FormPet).GetField("Animations", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    var animations = animField?.GetValue(existing) as Animations;
+                    if (animations == null && xml != null)
+                    {
+                        animations = new Animations(xml);
+                        xml.LoadAnimations(animations);
+                    }
+
+                    if (xml == null || animations == null)
+                    {
+                        Log("[Pets] Cannot create ambient pet window: Xml or Animations missing.");
+                        return;
+                    }
+
+                    var newPet = new FormPet(animations, xml);
+                    newPet.IsAmbientCompanion = true;
+                    foreach (var sprite in xml.sprites)
+                    {
+                        newPet.AddImage(sprite);
+                    }
+                    newPet.Profile = pig;
+                    PigLook.Apply(newPet, xml, PigLook.CurrentStageKey());
+                    newPet.Show(xml.spriteWidth, xml.spriteHeight);
+                    newPet.Play(true);
+
+                    Log($"[Pets] Created ambient desktop pet window: {pig.Name} ({pig.Id})");
+                }
+                else
+                {
+                    for (int i = FormPet.AllPets.Count - 1; i >= 0; i--)
+                    {
+                        var p = FormPet.AllPets[i];
+                        if (p != null && !p.IsDisposed && p != FormPet.ActivePet && p.Profile?.Id == pig.Id)
+                        {
+                            p.Close();
+                            if (!p.IsDisposed) p.Dispose();
+                            Log($"[Pets] Closed ambient desktop pet window: {pig.Name} ({pig.Id})");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log("[ERROR] SetDesktopPet: " + ex);
+            }
+        }
+
         public static void Initialize(double initialMultiplier = 1.0)
         {
             if (_instance == null)

@@ -90,6 +90,13 @@
    "requires": [
     "garden"
    ],
+   "levels": [
+    {
+     "cols": 16,
+     "rows": 9,
+     "cost": 0
+    }
+   ],
    "welcome_items": {
     "seed_dandelion": 2,
     "seed_cilantro": 2,
@@ -119,7 +126,14 @@
   {
    "id": "market",
    "name": "Market",
-   "unlocked_at_start": true
+   "unlocked_at_start": true,
+   "levels": [
+    {
+     "cols": 16,
+     "rows": 9,
+     "cost": 0
+    }
+   ]
   }
  ],
  "grid": {

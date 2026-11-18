@@ -273,6 +273,7 @@
    "strength": 1.1,
    "flicker": 0.14,
    "toggle": true,
+   "auto_at": "evening",
    "note": "pochodnia na slupie, w bezpiecznym miejscu (nie przy sianie)",
    "item": "torch",
    "file": "garden/torch.png",
@@ -295,6 +296,7 @@
    "strength": 0.9,
    "flicker": 0.05,
    "toggle": true,
+   "auto_at": "evening",
    "note": "lampa naftowa",
    "item": "lamp_oil",
    "file": "garden/lamp_oil.png",
@@ -317,6 +319,7 @@
    "strength": 0.9,
    "flicker": 0.08,
    "toggle": true,
+   "auto_at": "evening",
    "note": "latarnia ze swieca, wiszaca",
    "item": "lantern_garden",
    "file": "garden/lantern_garden.png",
@@ -364,6 +367,7 @@
    "strength": 1.1,
    "flicker": 0.12,
    "toggle": true,
+   "auto_at": "evening",
    "note": "kosz z zarem za siatka, tylko w parku, daleko od siana",
    "item": "brazier",
    "file": "garden/brazier.png",
@@ -373,6 +377,71 @@
    "glow": [
     8,
     5
+   ]
+  },
+  "campfire": {
+   "place": "outdoor",
+   "color": [
+    1.0,
+    0.52,
+    0.22
+   ],
+   "radius_cells": 5.5,
+   "strength": 1.2,
+   "flicker": 0.14,
+   "toggle": true,
+   "auto_at": "evening",
+   "note": "ognisko z baza i plomieniem",
+   "item": "campfire",
+   "file": "garden/campfire_base.png",
+   "base_file": "garden/campfire_base.png",
+   "on_file": "garden/campfire_flame.png",
+   "frames": 6,
+   "fps": 8,
+   "flame_anchor": [
+    16,
+    17
+   ],
+   "flame_strip_anchor": [
+    12,
+    31
+   ],
+   "glow": [
+    16,
+    14
+   ],
+   "mask": "fx/glow_round.png"
+  },
+  "campfire_small": {
+   "place": "outdoor",
+   "color": [
+    1.0,
+    0.62,
+    0.28
+   ],
+   "radius_cells": 3.5,
+   "strength": 0.85,
+   "flicker": 0.1,
+   "toggle": true,
+   "auto_at": "evening",
+   "note": "male ognisko",
+   "item": "campfire_small",
+   "file": "garden/campfire_base.png",
+   "base_file": "garden/campfire_base.png",
+   "on_file": "garden/campfire_flame_small.png",
+   "frames": 4,
+   "fps": 6,
+   "flame_anchor": [
+    16,
+    17
+   ],
+   "flame_strip_anchor": [
+    8,
+    19
+   ],
+   "glow": [
+    16,
+    15
    ]
   },
   "player_turntable": {

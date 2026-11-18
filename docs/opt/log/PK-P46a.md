@@ -1,0 +1,11 @@
+# PK-P46a: Core outdoor instances
+- Mapping: R46 sec 3 used (garden: bench_wood, bird_bath, flowerbed_tulip/daisy, tree_small, hedge, willow_tunnel[fixture]; park: gazebo, bench_park, bridge_wood[fixture], tree_big, lamp_post; farm: barn_hay[fixture], fence_farm; market: stall_basic/big[fixture], order_board, signpost).
+- Added to `world_items.json`: `willow_tunnel`, `barn_hay`, `stall_basic`, `stall_big`, `order_board`; added `"market"` to `signpost.place`; marked `bridge_wood` `"fixture": true`.
+- Added to `atlas.json`: `stall_basic`, `stall_big`, `order_board` (all PNGs already exist on disk; `art: missing` count = 0).
+- Added `levels: [{ cols: 16, rows: 9, cost: 0 }]` to `farm` and `market` in `places.json`.
+- `WorldState.OutdoorSeeded` (case-insensitive `HashSet<string>`), `PlacedItem.Movable`/`Removable` (default `true` for old saves).
+- `OutdoorDefaults.Current/Load/LoadDefault`, `OutdoorSeed.Seed(world, placeId, defaults, balance)`, UID `fx:<scene>:<id>`.
+- `RoomLayoutOps.Remove(room, uid, out string error)` returns `false` with `error = "fixture_locked"` when `!placed.Removable || OutdoorDefaults.Current.IsLockedFixture(uid)`; `Remove(room, uid)` delegates to it.
+- `Balance.OutdoorInstancesActive` default `false`, enabled in `GameSession.Open`, seeding `garden`, `park`, `farm`, `market`.
+- `Balance.OutdoorInstancesActive` default `false`, enabled in `GameSession.Open`, seeding `garden`, `park`, `farm`, `market`.
+- Conflict (not edited per AGENTS.md): `WorldItemCatalogTests.RealCatalog_LoadsAllItems_CountAtLeast50` (outside Zmieniaj) asserts `Assert.Equal(75, ...)` while adding the 5 R46 items to `world_items.json` makes count 80. Also omitted `"icon"` on those 5 items in `world_items.json` as `icons.json` is outside Zmieniaj.

@@ -406,12 +406,79 @@
     return layout || null;
   }
 
+  function isFlatItem(it, entry, itemId) {
+    return !!(it.flat || (entry && entry.flat) || (itemId && (itemId.startsWith('rug_') || itemId.startsWith('mat_') || itemId.includes('carpet'))));
+  }
+
+  function hasAtlasArt(atlas, entry) {
+    if (atlas && atlas.items) {
+      return !!(entry && entry.file && entry.art !== 'missing');
+    }
+    return true;
+  }
+
+  function buildInstanceBlockers(sceneId, state) {
+    const layout = layoutFor(sceneId, state);
+    if (!layout || !Array.isArray(layout.items)) {
+      return [];
+    }
+    const atlas = getAtlas();
+    const blockers = [];
+    for (const it of layout.items) {
+      if (!it) continue;
+      const itemId = it.itemId || it.id;
+      const entry = (atlas && atlas.items) ? atlas.items[itemId] : null;
+      if (!hasAtlasArt(atlas, entry)) continue;
+      if (isFlatItem(it, entry, itemId)) continue;
+
+      const cw = (entry && entry.cells) ? entry.cells[0] : (it.w || 1);
+      const ch = (entry && entry.cells) ? entry.cells[1] : (it.h || 1);
+
+      let rx0, ry0, rx1, ry1;
+      if (it.isPixel) {
+        rx0 = Math.round((it.x || 0) - (cw * 16) / 2);
+        ry1 = Math.round(it.y || 0);
+        rx1 = rx0 + cw * 16;
+        ry0 = ry1 - ch * 16;
+      } else {
+        rx0 = Math.round((it.x || 0) * 16);
+        ry0 = Math.round((it.y || 0) * 16);
+        rx1 = Math.round(((it.x || 0) + cw) * 16);
+        ry1 = Math.round(((it.y || 0) + ch) * 16);
+      }
+
+      blockers.push({
+        id: it.uid || it.id || itemId,
+        rect: [rx0, ry0, rx1, ry1],
+        behindLine: -9999
+      });
+    }
+    return blockers;
+  }
+
+  function setBgClean(sceneId, val) {
+    if (!scenesData) {
+      getScenesDict();
+    }
+    if (!scenesData) {
+      scenesData = { scenes: JSON.parse(JSON.stringify(DEFAULT_SCENES)) };
+    }
+    if (!scenesData.scenes) scenesData.scenes = {};
+    if (!scenesData.scenes[sceneId]) {
+      scenesData.scenes[sceneId] = JSON.parse(JSON.stringify(DEFAULT_SCENES[sceneId] || {}));
+    }
+    scenesData.scenes[sceneId].bg_clean = !!val;
+  }
+
   function def(id, tod, state) {
     let effectiveTod = tod;
     let effectiveState = state;
     if (tod && typeof tod === 'object' && state === undefined) {
       effectiveState = tod;
       effectiveTod = null;
+    }
+    if (!effectiveState && typeof window !== 'undefined' && window.bridge && window.bridge.currentState) {
+      effectiveState = window.bridge.currentState;
     }
 
     const scenes = getScenesDict();
@@ -479,9 +546,11 @@
 
     const computedDs = [topScale, bottomScale];
 
+    const isBgClean = !!template.bg_clean;
     const res = {
       id: effectiveId,
       kind: template.kind,
+      bg_clean: isBgClean,
       title: getTitle(effectiveId, template),
       size: size,
       walk: walk,
@@ -490,8 +559,12 @@
       pigWidthFrac: pigWidthFrac,
       bgUrl: bgUrl,
       exits: exits,
-      blockers: template.blockers ? JSON.parse(JSON.stringify(template.blockers)) : null,
-      behindLine: (typeof template.behindLine === 'number') ? template.behindLine : null
+      blockers: isBgClean
+        ? buildInstanceBlockers(effectiveId, effectiveState)
+        : (template.blockers ? JSON.parse(JSON.stringify(template.blockers)) : null),
+      behindLine: isBgClean
+        ? -9999
+        : ((typeof template.behindLine === 'number') ? template.behindLine : null)
     };
 
     if (wallH !== undefined) {
@@ -520,6 +593,12 @@
   }
 
   function placedThings(state, sceneId) {
+    const scenes = getScenesDict();
+    const tpl = scenes[sceneId];
+    if (!isHouseRoom(sceneId) && tpl && tpl.kind === 'outdoor' && !tpl.bg_clean) {
+      return [];
+    }
+
     const layout = layoutFor(sceneId, state);
 
     if (!layout || !Array.isArray(layout.items)) {
@@ -534,6 +613,7 @@
       if (!it) continue;
       const itemId = it.itemId || it.id;
       const entry = (atlas && atlas.items) ? atlas.items[itemId] : null;
+      if (!hasAtlasArt(atlas, entry)) continue;
 
       const cw = (entry && entry.cells) ? entry.cells[0] : (it.w || 1);
       const ch = (entry && entry.cells) ? entry.cells[1] : (it.h || 1);
@@ -558,10 +638,12 @@
       const anchorY = (entry && entry.anchor) ? entry.anchor[1] : sh;
 
       const url = (entry && entry.file) ? getAssetUrl('world/' + entry.file) : null;
-      const isFlat = !!(it.flat || (entry && entry.flat) || (itemId && (itemId.startsWith('rug_') || itemId.startsWith('mat_') || itemId.includes('carpet'))));
+      const isFlat = isFlatItem(it, entry, itemId);
+      const uid = it.uid || it.id || itemId;
 
       items.push({
-        id: it.uid || it.id || itemId,
+        id: uid,
+        uid: uid,
         itemId: itemId,
         url: url,
         img: null,
@@ -577,6 +659,20 @@
     return items;
   }
 
+  function debugInstances(sceneId, state) {
+    const st = state || (typeof window !== 'undefined' && window.bridge && window.bridge.currentState) || null;
+    const scenes = getScenesDict();
+    const tpl = scenes[sceneId] || {};
+    const d = def(sceneId, null, st);
+    return {
+      sceneId: sceneId,
+      bg_clean: !!tpl.bg_clean,
+      layout: layoutFor(sceneId, st),
+      placedThings: placedThings(st, sceneId),
+      blockers: d ? d.blockers : []
+    };
+  }
+
   const CuyScenes = {
     load: load,
     loadAtlas: loadAtlas,
@@ -588,6 +684,8 @@
     timeOfDay: timeOfDay,
     pigScene: pigScene,
     placedThings: placedThings,
+    debugInstances: debugInstances,
+    setBgClean: setBgClean,
     getAtlas: getAtlas,
     getTiles: getTiles,
     getTileUrl: getTileUrl

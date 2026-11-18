@@ -251,6 +251,12 @@ namespace Cuy.Core.World
 
         public static bool Remove(RoomLayout room, string uid)
         {
+            return Remove(room, uid, out _);
+        }
+
+        public static bool Remove(RoomLayout room, string uid, out string error)
+        {
+            error = null;
             if (room?.Items == null || string.IsNullOrEmpty(uid))
             {
                 return false;
@@ -259,6 +265,12 @@ namespace Cuy.Core.World
             var placed = room.Items.FirstOrDefault(i => string.Equals(i.Uid, uid, StringComparison.OrdinalIgnoreCase));
             if (placed == null)
             {
+                return false;
+            }
+
+            if (!placed.Removable || OutdoorDefaults.Current.IsLockedFixture(placed.Uid))
+            {
+                error = "fixture_locked";
                 return false;
             }
 

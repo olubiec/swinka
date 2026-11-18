@@ -56,3 +56,46 @@
 .feature-market .market-tab,
 .feature-market .market-btn,
 .feature-market .market-step { min-height: 24px; }
+
+/* Scene-anchored stall panel (PK-P43c) */
+.feature-market.market-scene-panel {
+  position: fixed;
+  z-index: 900;
+  width: 310px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  background: var(--ui-linen-2);
+  border-style: solid;
+  border-width: 8px;
+  border-image: var(--ui-panel_wood) 8 / 8px;
+  border-radius: 0;
+  box-shadow: 0 4px 0 var(--ui-wood-0);
+  image-rendering: pixelated;
+  display: flex;
+  flex-direction: column;
+}
+.feature-market .market-scene-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--ui-wood-2);
+  color: var(--ui-linen-3);
+  border: 5px solid var(--ui-wood-2);
+  border-image: var(--ui-bar_wood) 5 fill / 5px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.feature-market .market-scene-head .market-clovers {
+  color: var(--ui-linen-3);
+  margin-left: auto;
+}
+.feature-market .market-scene-title { min-width: 0; }
+.feature-market .market-scene-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

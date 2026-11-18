@@ -418,6 +418,9 @@
 
     const roster = (state && state.roster && state.roster.length > 0) ? state.roster : defaultRoster;
     const activeIds = (state && state.activePigIds) || [roster[0]?.id || 'pig_default'];
+    const pigLocations = (state && state.places && Array.isArray(state.places.pigLocations))
+      ? state.places.pigLocations
+      : [];
     const offers = (state && state.offers && state.offers.length > 0) ? state.offers : getFallbackOffers(roster);
 
     let html = `
@@ -496,6 +499,8 @@
         : '';
 
       const pigSpriteKey = (root.CuyLook && root.CuyLook.spriteFor) ? root.CuyLook.spriteFor(pig) : '';
+      const pigLoc = pigLocations.find(l => l && (l.pigId === pig.id || l.PigId === pig.id));
+      const isPinned = !!(pigLoc && (pigLoc.pinned || pigLoc.Pinned));
       html += `
         <div class="pig-card ${isActive ? 'pig-active' : ''} ${isMemorial ? 'pig-memorial' : ''}" data-pig-id="${pig.id}" data-sprite-key="${pigSpriteKey}">
           <div class="pig-card-header">
@@ -514,6 +519,8 @@
             <button type="button" class="game-btn btn-toggle-active" data-toggle-id="${pig.id}" aria-label="${isActive ? 'Rest ' + pig.name + ' in cage' : 'Bring ' + pig.name + ' to desk'}">
               ${isActive ? 'Rest in Cage' : 'Bring to Desk'}
             </button>
+            ${!isMemorial ? `<button type="button" class="game-btn btn-pin-toggle" data-pig-id="${escAttr(pig.id)}" data-pinned="${isPinned ? '1' : '0'}">${isPinned ? 'Roam freely' : 'Stay in this room'}</button>` : ''}
+            ${!isMemorial ? `<label class="desktop-pet-toggle"><input type="checkbox" class="chk-desktop-pet" data-pig-id="${escAttr(pig.id)}" ${isActive ? 'checked' : ''} /> Show on desktop</label>` : ''}
             ${roomLinkHtml}
             ${(!isMemorial && gardenUnlocked) ? `<button type="button" class="game-btn btn-walk-garden" data-pig-id="${pig.id}" aria-label="Take ${pig.name} for a walk in the garden">Go for a walk</button>` : ''}
             ${memorialSectionHtml}
@@ -711,6 +718,33 @@
             window.bridge.broadcastState();
           }
         }
+      });
+    });
+
+    // Handle Pin / Roam Toggle
+    container.querySelectorAll('.btn-pin-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pigId = btn.dataset.pigId;
+        const nextPinned = btn.dataset.pinned !== '1';
+        if (root.Sound) root.Sound.click();
+        api.send({ type: 'places.pigPin', pigId: pigId, pinned: nextPinned });
+      });
+    });
+
+    // Handle Desktop Pet Switch (max 2)
+    container.querySelectorAll('.chk-desktop-pet').forEach(chk => {
+      chk.addEventListener('change', () => {
+        const pigId = chk.dataset.pigId;
+        const nextOn = !!chk.checked;
+        if (nextOn && activeIds.length >= 2 && !activeIds.includes(pigId)) {
+          chk.checked = false;
+          if (root.bridge && typeof root.bridge.dispatchMessage === 'function') {
+            root.bridge.dispatchMessage({ type: 'toast', text: 'Max 2 pigs on desktop' });
+          }
+          return;
+        }
+        if (root.Sound) root.Sound.click();
+        api.send({ type: 'pigs.desktopPet', pigId: pigId, on: nextOn });
       });
     });
 

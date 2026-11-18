@@ -8,7 +8,9 @@ namespace Cuy.Core.Input.Validation
         {
             new MessageRule("place_unlock", FieldRule.Id("id")),
             new MessageRule("room_unlock", FieldRule.Id("id")),
-            new MessageRule("place_upgrade", FieldRule.Id("id"))
+            new MessageRule("place_upgrade", FieldRule.Id("id")),
+            new MessageRule("places.pigPin", FieldRule.Id("pigId"), FieldRule.Bool("pinned")),
+            new MessageRule("places.pigMove", FieldRule.Id("pigId"), FieldRule.Id("to"))
         };
     }
 }

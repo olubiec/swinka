@@ -2,12 +2,23 @@
   'use strict';
 
   const CELL = 16;
+  const STAGE_W = 256;
+  const STAGE_H = 144;
   const DEFAULT_COLS = 12;
   const DEFAULT_ROWS = 7;
   const DEFAULT_WALL_ROWS = 2;
 
   function isValidPosInt(val) {
     return typeof val === 'number' && Number.isInteger(val) && val > 0;
+  }
+
+  function stageOffset(cols, rows) {
+    const c = isValidPosInt(cols) ? cols : DEFAULT_COLS;
+    const r = isValidPosInt(rows) ? rows : DEFAULT_ROWS;
+    return {
+      x: Math.floor((STAGE_W - c * CELL) / 2),
+      y: Math.floor((STAGE_H - r * CELL) / 2)
+    };
   }
 
   function geometry(layout) {
@@ -123,6 +134,9 @@
 
   const CuyRoomGeometry = {
     CELL: CELL,
+    STAGE_W: STAGE_W,
+    STAGE_H: STAGE_H,
+    stageOffset: stageOffset,
     geometry: geometry,
     cellToPx: cellToPx,
     pxToCell: pxToCell

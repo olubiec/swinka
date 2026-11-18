@@ -113,6 +113,9 @@ namespace Cuy.Core
         /// <summary>The shared bedroom (dorm) for pigs is active.</summary>
         public bool DormActive { get; set; } = false;
 
+        /// <summary>Outdoor fixed objects are seeded as saved instances.</summary>
+        public bool OutdoorInstancesActive { get; set; } = false;
+
         public static Balance CreateDefault()
         {
             return new Balance();

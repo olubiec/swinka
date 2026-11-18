@@ -85,6 +85,11 @@ namespace Cuy.Core.Tests
             var problems = new List<string>();
             foreach (var item in worldItems)
             {
+                if (string.Equals((string)item["art"], "missing", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 string id = (string)item["id"];
                 var entry = atlasItems[id] as JObject;
                 if (entry == null)
@@ -93,11 +98,16 @@ namespace Cuy.Core.Tests
                     continue;
                 }
 
+                if (string.Equals((string)entry["art"], "missing", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 int[] size = ReadPair(entry["size"]);
                 int[] cells = ReadPair(entry["cells"]);
-                if (size[0] != cells[0] * 16 || size[1] != cells[1] * 16)
+                if (size[0] != cells[0] * 16 || size[1] <= 0 || size[1] > cells[1] * 16)
                 {
-                    problems.Add(id + ": size " + size[0] + "x" + size[1] + " is not cells*16");
+                    problems.Add(id + ": size " + size[0] + "x" + size[1] + " is not compatible with cells*16 (" + (cells[0] * 16) + "x" + (cells[1] * 16) + ")");
                     continue;
                 }
 

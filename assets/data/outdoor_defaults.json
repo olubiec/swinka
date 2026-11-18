@@ -1,0 +1,40 @@
+{
+ "version": 1,
+ "scenes": {
+  "garden": [
+   { "id": "bench", "itemId": "bench_wood", "x": 9, "y": 6, "flip": false, "movable": true, "removable": true },
+   { "id": "fountain", "itemId": "bird_bath", "x": 4, "y": 7, "flip": false, "movable": true, "removable": true },
+   { "id": "flower_bed_left", "itemId": "flowerbed_tulip", "x": 1, "y": 7, "flip": false, "movable": true, "removable": true },
+   { "id": "flower_bed_right", "itemId": "flowerbed_daisy", "x": 12, "y": 7, "flip": false, "movable": true, "removable": true },
+   { "id": "tree_left", "itemId": "tree_small", "x": 12, "y": 2, "flip": false, "movable": true, "removable": true },
+   { "id": "tree_right", "itemId": "tree_small", "x": 14, "y": 2, "flip": false, "movable": true, "removable": true },
+   { "id": "hedge", "itemId": "hedge", "x": 11, "y": 4, "flip": false, "movable": true, "removable": true },
+   { "id": "burrow", "itemId": "willow_tunnel", "x": 1, "y": 4, "flip": false, "movable": true, "removable": false }
+  ],
+  "park": [
+   { "id": "gazebo", "itemId": "gazebo", "x": 4, "y": 2, "flip": false, "movable": true, "removable": true },
+   { "id": "bench_left", "itemId": "bench_park", "x": 7, "y": 8, "flip": false, "movable": true, "removable": true },
+   { "id": "bench_right", "itemId": "bench_park", "x": 21, "y": 9, "flip": false, "movable": true, "removable": true },
+   { "id": "bridge", "itemId": "bridge_wood", "x": 10, "y": 5, "flip": false, "movable": true, "removable": false },
+   { "id": "tree_1", "itemId": "tree_big", "x": 0, "y": 1, "flip": false, "movable": true, "removable": true },
+   { "id": "tree_2", "itemId": "tree_big", "x": 13, "y": 1, "flip": false, "movable": true, "removable": true },
+   { "id": "tree_3", "itemId": "tree_big", "x": 16, "y": 1, "flip": false, "movable": true, "removable": true },
+   { "id": "tree_4", "itemId": "tree_big", "x": 20, "y": 1, "flip": false, "movable": true, "removable": true },
+   { "id": "lamp_left", "itemId": "lamp_post", "x": 1, "y": 7, "flip": false, "movable": true, "removable": true },
+   { "id": "lamp_mid", "itemId": "lamp_post", "x": 17, "y": 7, "flip": false, "movable": true, "removable": true },
+   { "id": "lamp_right", "itemId": "lamp_post", "x": 21, "y": 10, "flip": false, "movable": true, "removable": true }
+  ],
+  "farm": [
+   { "id": "barn", "itemId": "barn_hay", "x": 11, "y": 1, "flip": false, "movable": true, "removable": false },
+   { "id": "fence_left", "itemId": "fence_farm", "x": 0, "y": 4, "flip": false, "movable": true, "removable": true },
+   { "id": "fence_right", "itemId": "fence_farm", "x": 15, "y": 4, "flip": false, "movable": true, "removable": true }
+  ],
+  "market": [
+   { "id": "stall_left", "itemId": "stall_basic", "x": 1, "y": 5, "flip": false, "movable": true, "removable": false },
+   { "id": "stall_center", "itemId": "stall_big", "x": 6, "y": 5, "flip": false, "movable": true, "removable": false },
+   { "id": "stall_right", "itemId": "stall_basic", "x": 12, "y": 5, "flip": false, "movable": true, "removable": false },
+   { "id": "notice_board", "itemId": "order_board", "x": 4, "y": 6, "flip": false, "movable": true, "removable": true },
+   { "id": "sign_right", "itemId": "signpost", "x": 15, "y": 6, "flip": false, "movable": true, "removable": true }
+  ]
+ }
+}

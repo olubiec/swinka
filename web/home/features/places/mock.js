@@ -8,6 +8,86 @@
     document.head.appendChild(s);
   }
 
+  // Hardcoded outdoor defaults matching R46.md sec 3 / R30.md sec 2
+  // (outdoor_defaults.json is authored in parallel by PK-P46a; compare after merge in PK-P46t2)
+  const OUTDOOR_SEED = {
+    garden: {
+      cols: 16,
+      rows: 9,
+      items: [
+        { id: 'bench', itemId: 'bench_wood', x: 9, y: 6 },
+        { id: 'fountain', itemId: 'bird_bath', x: 4, y: 7 },
+        { id: 'flower_bed_left', itemId: 'flowerbed_tulip', x: 1, y: 7 },
+        { id: 'flower_bed_right', itemId: 'flowerbed_daisy', x: 12, y: 7 },
+        { id: 'tree_left', itemId: 'tree_small', x: 12, y: 2 },
+        { id: 'tree_right', itemId: 'tree_small', x: 14, y: 2 },
+        { id: 'hedge', itemId: 'hedge', x: 11, y: 4 },
+        { id: 'burrow', itemId: 'willow_tunnel', x: 1, y: 4 }
+      ]
+    },
+    park: {
+      cols: 24,
+      rows: 12,
+      items: [
+        { id: 'gazebo', itemId: 'gazebo', x: 4, y: 2 },
+        { id: 'bench_left', itemId: 'bench_park', x: 7, y: 8 },
+        { id: 'bench_right', itemId: 'bench_park', x: 21, y: 9 },
+        { id: 'bridge', itemId: 'bridge_wood', x: 10, y: 5 },
+        { id: 'tree_1', itemId: 'tree_big', x: 0, y: 1 },
+        { id: 'tree_2', itemId: 'tree_big', x: 13, y: 1 },
+        { id: 'tree_3', itemId: 'tree_big', x: 16, y: 1 },
+        { id: 'tree_4', itemId: 'tree_big', x: 20, y: 1 },
+        { id: 'lamp_left', itemId: 'lamp_post', x: 1, y: 7 },
+        { id: 'lamp_mid', itemId: 'lamp_post', x: 17, y: 7 },
+        { id: 'lamp_right', itemId: 'lamp_post', x: 21, y: 10 }
+      ]
+    },
+    farm: {
+      cols: 16,
+      rows: 9,
+      items: [
+        { id: 'barn', itemId: 'barn_hay', x: 11, y: 1 },
+        { id: 'fence_left', itemId: 'fence_farm', x: 0, y: 4 },
+        { id: 'fence_right', itemId: 'fence_farm', x: 15, y: 4 }
+      ]
+    },
+    market: {
+      cols: 16,
+      rows: 9,
+      items: [
+        { id: 'stall_left', itemId: 'stall_basic', x: 1, y: 5 },
+        { id: 'stall_center', itemId: 'stall_big', x: 6, y: 5 },
+        { id: 'stall_right', itemId: 'stall_basic', x: 12, y: 5 },
+        { id: 'notice_board', itemId: 'order_board', x: 4, y: 6 },
+        { id: 'sign_right', itemId: 'signpost', x: 15, y: 6 }
+      ]
+    }
+  };
+
+  function createOutdoorLayouts() {
+    const layouts = {};
+    Object.keys(OUTDOOR_SEED).forEach(sceneId => {
+      const def = OUTDOOR_SEED[sceneId];
+      layouts[sceneId] = {
+        name: '',
+        cols: def.cols,
+        rows: def.rows,
+        wallRows: 0,
+        wallpaper: '',
+        floor: '',
+        items: def.items.map(it => ({
+          uid: 'fx:' + sceneId + ':' + it.id,
+          itemId: it.itemId,
+          x: it.x,
+          y: it.y,
+          flip: false,
+          variant: 0
+        }))
+      };
+    });
+    return layouts;
+  }
+
   function createState(variant) {
     const isSeven = variant === 'seven';
     const isAllUnlocked = variant === 'all_unlocked';
@@ -44,6 +124,9 @@
         pigLocations: [
           { pigId: 'pig_1', scene: 'salon', pinned: false }
         ]
+      },
+      rooms: {
+        layouts: createOutdoorLayouts()
       }
     };
   }
@@ -66,6 +149,12 @@
           const m = createState();
           st.places.pigLocations = m.places.pigLocations;
         }
+        if (!st.rooms) st.rooms = {};
+        if (!st.rooms.layouts) st.rooms.layouts = {};
+        const outdoor = createOutdoorLayouts();
+        Object.keys(outdoor).forEach(k => {
+          if (!st.rooms.layouts[k]) st.rooms.layouts[k] = outdoor[k];
+        });
       });
     }
 

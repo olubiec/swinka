@@ -50,6 +50,9 @@ namespace Cuy
         public static System.Collections.Generic.List<FormPet> AllPets { get; } = new System.Collections.Generic.List<FormPet>();
         public static FormPet ActivePet { get; private set; }
         public Cuy.Core.Pigs.PigProfile Profile { get; set; }
+        public bool IsAmbientCompanion { get; set; }
+        private static readonly string[] AmbientAnimations = { "idle", "walk", "sniff", "popcorn" };
+        private readonly Random _ambientRng = new Random();
         public IntPtr CurrentHwndWindow => hwndWindow;
         public bool IsFacingLeft => spritesFlipped;
         internal NativeMethods.RECT CurrentWindowRect => currentWindowSize;
@@ -225,7 +228,7 @@ namespace Cuy
             UseSmoothMovements = Program.MyData.GetSmoothMovements();
             if (Name.IndexOf("child") < 0)
             {
-                ActivePet = this;
+                if (ActivePet == null || ActivePet.IsDisposed) ActivePet = this;
                 if (!AllPets.Contains(this)) AllPets.Add(this);
             }
             _brain = BrainController.Instance;
@@ -369,7 +372,7 @@ namespace Cuy
 
         private void OnAnimationRequested(string animName)
         {
-            if (this.IsDisposed) return;
+            if (this.IsDisposed || IsAmbientCompanion) return;
             if (this.InvokeRequired)
             {
                 try { this.BeginInvoke(new Action<string>(OnAnimationRequested), animName); } catch (Exception ex) { BrainController.Log("[WARN] FormPet.OnAnimationRequested: " + ex.Message); }
@@ -1192,8 +1195,11 @@ namespace Cuy
                 BrainController.Log("[Home] Bug corrected: forced pig out of Home.");
             }
 
-            if (_brain == null) _brain = BrainController.Instance;
-            _brain?.Update();
+            if (!IsAmbientCompanion)
+            {
+                if (_brain == null) _brain = BrainController.Instance;
+                _brain?.Update();
+            }
 
             int currentStep = Math.Max(0, AnimationStep);
 
@@ -1257,7 +1263,7 @@ namespace Cuy
             // the walk animation only moves the legs.
             if (IsMovedExternally && (CurrentAnimation.Name == "walk" || CurrentAnimation.Name == "run")) x = 0;
 
-            if (CurrentAnimation.Name == "walk" && !ScriptHoldsPosition && !IsMovedExternally)
+            if (!IsAmbientCompanion && CurrentAnimation.Name == "walk" && !ScriptHoldsPosition && !IsMovedExternally)
             {
                 _brain?.StepWalk((int)Math.Round(Math.Abs(x)));
                 if (_brain != null && !_brain.IsWalking)
@@ -1458,6 +1464,13 @@ namespace Cuy
                     _brain?.ResumePhysics();
                     string nextAnim = _brain?.GetCurrentDesiredAnimation();
                     iNextAni = GetAnimationIdByName(nextAnim);
+                    if (iNextAni < 0) iNextAni = 3;
+                }
+                else if (IsAmbientCompanion)
+                {
+                    string nextAnim = AmbientAnimations[_ambientRng.Next(AmbientAnimations.Length)];
+                    iNextAni = GetAnimationIdByName(nextAnim);
+                    if (iNextAni < 0) iNextAni = GetAnimationIdByName("idle");
                     if (iNextAni < 0) iNextAni = 3;
                 }
                 else if (_brain != null && !_brain.IsPhysicsActive)
@@ -2080,6 +2093,7 @@ namespace Cuy
 
         private void Form2_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (_brain != null) _brain.AnimationRequested -= OnAnimationRequested;
             AllPets.Remove(this);
             if (ActivePet == this) ActivePet = AllPets.Count > 0 ? AllPets[0] : null;
             if(!IsDisposed) Dispose();

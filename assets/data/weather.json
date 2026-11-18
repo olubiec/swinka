@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "outdoorScenes": ["garden", "park", "farm", "market"],
+  "types": {
+    "clear": { "weight": 0.65 },
+    "overcast": { "weight": 0.20, "tintColor": "#5f7f87", "tintAlpha": 0.14 },
+    "rain": {
+      "weight": 0.15,
+      "tintColor": "#3f5a68",
+      "tintAlpha": 0.22,
+      "streakCount": 28,
+      "streakColor": "#b9c9c4",
+      "streakHighlight": "#8da9a8",
+      "streakAlpha": 0.65,
+      "streakLength": 7,
+      "speedY": 160,
+      "windX": -28
+    }
+  }
+}

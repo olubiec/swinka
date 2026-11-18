@@ -921,6 +921,9 @@
       draggedPigId = null;
     }
 
+    bindEditButton();
+    syncEditButton(isPigBeingDragged);
+
     // 5. Update presence chips
     updatePresenceChips(st);
   }
@@ -1065,6 +1068,37 @@
     }
   }
 
+  function syncEditButton(isPigBeingDragged) {
+    const btn = document.getElementById('placesEditBtn');
+    if (!btn) return;
+    const hasEdit = !!(window.CuyEdit && typeof window.CuyEdit.toggle === 'function');
+    const isOpen = !!(window.CuyEdit && typeof window.CuyEdit.isOpen === 'function' && window.CuyEdit.isOpen());
+    btn.disabled = !hasEdit || !!isPigBeingDragged;
+    btn.setAttribute('aria-pressed', isOpen ? 'true' : 'false');
+    btn.classList.toggle('active', isOpen);
+  }
+
+  function bindEditButton() {
+    const btn = document.getElementById('placesEditBtn');
+    if (!btn || btn.dataset.p47cBound) return;
+    btn.dataset.p47cBound = '1';
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      if (window.CuyEdit && typeof window.CuyEdit.toggle === 'function') {
+        window.CuyEdit.toggle();
+      }
+      syncEditButton(false);
+    });
+    if (typeof MutationObserver !== 'undefined') {
+      const obs = new MutationObserver(() => {
+        const pressed = btn.getAttribute('aria-pressed') === 'true';
+        btn.classList.toggle('active', pressed);
+      });
+      obs.observe(btn, { attributes: true, attributeFilter: ['aria-pressed'] });
+    }
+    syncEditButton(false);
+  }
+
   const CuyPlaces = {
     getCurrentPlace() {
       return currentSceneId || 'salon';
@@ -1112,10 +1146,12 @@
   if (typeof window !== 'undefined') {
     bindCanvasExits();
     bindCanvasDragSwitch();
+    bindEditButton();
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
         bindCanvasExits();
         bindCanvasDragSwitch();
+        bindEditButton();
       });
     }
 

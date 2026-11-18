@@ -412,3 +412,42 @@
   padding: 4px 6px;
   width: 100%;
 }
+
+.btn-pin-toggle {
+  font-size: 10px;
+  padding: 4px 6px;
+  width: 100%;
+  background: var(--ui-linen-1);
+  color: var(--ui-wood-0);
+}
+
+.btn-pin-toggle[data-pinned="1"] {
+  background: var(--ui-hay-2);
+  color: var(--ui-wood-0);
+}
+
+.btn-pin-toggle:hover:not(:disabled) {
+  background: var(--ui-wood-4);
+}
+
+.desktop-pet-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--ui-wood-0);
+  background: var(--ui-wood-4);
+  border: 2px solid var(--ui-wood-0);
+  border-radius: 4px;
+  padding: 3px 6px;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.chk-desktop-pet {
+  accent-color: var(--ui-moss-2);
+  cursor: pointer;
+  margin: 0;
+}

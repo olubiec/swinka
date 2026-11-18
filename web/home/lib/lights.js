@@ -97,13 +97,15 @@
       if (!src) continue;
       if (src.place !== 'both' && src.place !== place) continue;
       var key = placed.uid || placed.id;
-      var on = typeof manual[key] === 'boolean'
-        ? manual[key]
-        : (typeof manual[placed.id] === 'boolean'
-          ? manual[placed.id]
-          : (placed.itemId && typeof manual[placed.itemId] === 'boolean'
-            ? manual[placed.itemId]
-            : (typeof placed.on === 'boolean' ? placed.on : autoOn(src, period))));
+      var on = src.toggle === false
+        ? autoOn(src, period)
+        : (typeof manual[key] === 'boolean'
+          ? manual[key]
+          : (typeof manual[placed.id] === 'boolean'
+            ? manual[placed.id]
+            : (placed.itemId && typeof manual[placed.itemId] === 'boolean'
+              ? manual[placed.itemId]
+              : (typeof placed.on === 'boolean' ? placed.on : autoOn(src, period)))));
       result.push({
         id: key,
         uid: key,
@@ -121,7 +123,10 @@
         frames: src.frames,
         fps: src.fps,
         file: src.file,
+        base_file: src.base_file,
         on_file: src.on_file,
+        flame_anchor: src.flame_anchor,
+        flame_strip_anchor: src.flame_strip_anchor,
         mask: src.mask,
         glow: src.glow
       });
@@ -163,6 +168,7 @@
     PLACE_KINDS: PLACE_KINDS,
     periodOf: periodOf,
     ambientFor: ambientFor,
+    autoOn: autoOn,
     activeSources: activeSources,
     tint: tint,
     nearest: nearest

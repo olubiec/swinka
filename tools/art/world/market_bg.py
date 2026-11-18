@@ -49,32 +49,16 @@ def world():
         for x in range(-8 + (k % 2) * 8, W, 16): im.alpha_composite(pc, (x, y))
     H.break_checkers(im)
     PLACED.clear()
-    def put(n, x, y):
-        i = _img(f"market/{n}.png"); PLACED.append((n, x, y, i)); im.alpha_composite(i, (x, y))
-    for name, x, y in STALLS: put(name, x, y)
-    put("order_board", 64, HORIZON + 40)
-    for n, x in (("promo_1", 30), ("promo_2", 112), ("promo_3", 196)): put(n, x, HORIZON + 68)
-    for n, x in (("poster_2", 163), ("poster_3", 177), ("poster_1", 238)): put(n, x, HORIZON + 40)
     return im
 
 
 def build():
     wim = world()
-    lights = [("lantern", x + 1, y + 2, .22) for x, y in BULBS] + [("lantern", 24, HORIZON + 38, .6), ("lantern", 120, HORIZON + 38, .6), ("lantern", 214, HORIZON + 38, .6)]
-    lit = light.render(wim, "evening", lights)
+    lit = light.render(wim, "evening", [])
     out = Image.new("RGBA", (W, HT)); out.alpha_composite(sky()); out.alpha_composite(lit)
-    for i in range(len(BULBS) - 1):                                          # sznur: lina i zarowki po swietle
-        (x0, y0), (x1, y1) = BULBS[i], BULBS[i + 1]
-        for x in range(x0, x1 + 1):
-            t = (x - x0) / max(1, x1 - x0); y = int(y0 + (y1 - y0) * t + 3 * math.sin(t * math.pi))
-            H.put(out, x, y, "wood.0")
-    for x, y in BULBS:
-        H.rect(out, x - 1, y + 1, x + 1, y + 3, "flame.2"); H.rect(out, x, y + 1, x, y + 2, "linen.3"); H.put(out, x, y + 4, "flame.1")
     return _break(out)
 
 
 if __name__ == "__main__":
     im = build()
     H.save_png(im, H.WORLD_DIR / "bg/market.png")
-    S = Path("/tmp/claude-0/-home-user/06cc83a8-7800-529c-8cf3-9903bd86f472/scratchpad")
-    im.convert("RGB").resize((W * 4, HT * 4), Image.NEAREST).save(S / "b8-3.png")

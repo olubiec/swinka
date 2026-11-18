@@ -1,0 +1,5 @@
+# PK-P47c Log
+- Decyzje: `#placesBar` używa 9-slice `nav_bar_frame.png` (wys. 26 px, slice 8), `.places-bar-plate` z `nav_title_plate.png` (slice 5), strzałek 20x20 (`nav_btn_arrow_*`) i przycisku `#placesEditBtn` 24x20 (`nav_btn_edit*`); w `style.css` usunięto stare reguły `.places-bar*` i zastosowano układ pionowy wg `R24.md` sekcja 4 (`stage-viewport` `flex: 1 1 0; height: 0`, `#pigCanvas` `aspect-ratio: 16/9`, `flex: 0 0 auto` na stałych sekcjach).
+- Wywołanie Edit: `#placesEditBtn` w `places/feature.js` (`bindEditButton`) wywołuje `window.CuyEdit.toggle()`, a `syncEditButton` + `MutationObserver` na `aria-pressed` synchronizują klasę `active` i blokują przycisk podczas przeciągania świnki (`isPigBeingDragged`) lub braku `CuyEdit`.
+- Różnice od planu: brak (zastosowano poprawki z `R24.md` sekcja 4/7 i `R33.md` sekcja 6; w `ux-p47-bar.js` dodano fallback na `channel: 'msedge'` gdy brak domyślnego Chromium Playwright).
+- Weryfikacja: `node --check web/home/features/places/feature.js && node --check tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-bar.js && node tools/qa/check-assets.js` -> PASS (T1-T6 OK, ASSETS OK; 4 rozmiary x 7 scen x normal/edit).

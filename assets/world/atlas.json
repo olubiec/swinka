@@ -1816,6 +1816,54 @@
     "frames": 4,
     "fps": 4
    }
+  },
+  "stall_basic": {
+   "place": "market",
+   "cells": [
+    3,
+    3
+   ],
+   "size": [
+    48,
+    40
+   ],
+   "file": "market/stall_basic.png",
+   "anchor": [
+    24,
+    40
+   ]
+  },
+  "stall_big": {
+   "place": "market",
+   "cells": [
+    4,
+    3
+   ],
+   "size": [
+    64,
+    40
+   ],
+   "file": "market/stall_big.png",
+   "anchor": [
+    32,
+    40
+   ]
+  },
+  "order_board": {
+   "place": "market",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "market/order_board.png",
+   "anchor": [
+    16,
+    32
+   ]
   }
  }
 }

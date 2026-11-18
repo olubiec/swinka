@@ -61,12 +61,9 @@ def world(plots=()):
     sheet = _img("farm/farm.png")
     def fr(name, i):
         x, y, w, h = meta[name][i]; return sheet.crop((x, y, x + w, y + h))
-    fence = _img("farm/fence_farm.png")
-    for x in range(0, W, 16): im.alpha_composite(fence, (x, HORIZON + 6))
     PLACED.clear()
     def put(n, x, y, i):
         PLACED.append((n, x, y, i)); im.alpha_composite(i, (x, y))
-    put("barn_hay", 176, HORIZON - 34, _img("farm/barn_hay.png"))
     kinds = {"lawn": ("plot_lawn", None), "bed": ("bed_empty", 0), "bed_wet": ("bed_wet", 0)}
     for kind, c, rw in sorted(plots, key=lambda p: p[2]):                       # rzedami od gory: nizsze rysowane pozniej
         x, y = GX + c * 16, GY + rw * 16
@@ -137,18 +134,3 @@ def overview(path):
 if __name__ == "__main__":
     im = build()
     H.save_png(im, H.WORLD_DIR / "bg/farm.png")
-    oi = orchard_scene(); H.save_png(oi, H.WORLD_DIR / "bg/orchard.png")
-    import layout_check as _LC; _LC.report("sad", PLACED)
-    H._update_json(H.TILES_FILE, lambda d: d["bg"].__setitem__("orchard", {"file": "bg/orchard.png", "size": [W, HT]}))
-    oi.convert("RGB").resize((W * 3, HT * 3), Image.NEAREST).save(H.ROOT / "docs/album/przebudowa/b14-4_sad.png")
-    overview(H.ROOT / "docs/album/przebudowa/b7-6_przeglad_farmy.png")
-    import layout_check as LC
-    S = Path("/tmp/claude-0/-home-user/06cc83a8-7800-529c-8cf3-9903bd86f472/scratchpad")
-    stages = [START, MID, [p for p in MID if p[0] != "lawn"]]
-    sh = Image.new("RGB", (W, HT * 3 + 8))
-    for i, st in enumerate(stages):
-        im2 = build(st); LC.report(f"farma etap {i}", PLACED); sh.paste(im2.convert("RGB"), (0, i * (HT + 4)))
-    sh = sh.resize((sh.width * 3, sh.height * 3), Image.NEAREST)
-    sh.save(S / "b14-farm.png")
-    Path(H.ROOT / "docs/album/przebudowa").mkdir(parents=True, exist_ok=True)
-    sh.save(H.ROOT / "docs/album/przebudowa/b14-4_farma_etapy.png")

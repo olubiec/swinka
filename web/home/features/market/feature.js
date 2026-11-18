@@ -105,7 +105,92 @@
     return typeof n === 'number' ? n : 1;
   }
 
-  function send(msg) { if (S.api && S.api.send) S.api.send(msg); }
+  function send(msg) {
+    const api = getApi();
+    if (api && api.send) api.send(msg);
+  }
+
+  function getApi() {
+    return S.api || (window.CuyHome && window.CuyHome.api) || null;
+  }
+
+  const P = {
+    el: null,
+    tab: 'seeds',
+    stallId: null,
+    anchorRect: null,
+    unsubQuote: null,
+    unsubState: null,
+    onKeyDown: null,
+    onDocDown: null,
+    docDownTimer: null,
+    hotspotSubscribed: false
+  };
+
+  function resolveTab(stallIdOrCategory) {
+    const s = String(stallIdOrCategory || '').trim().toLowerCase();
+    if (s === 'pantry' || s === 'stall:pantry' || s.endsWith('stall_pantry')) return 'pantry';
+    if (s === 'home' || s === 'decor' || s === 'stall:decor' || s.endsWith('stall_decor')) return 'home';
+    if (s === 'sell' || s === 'stall:own' || s.endsWith('stall_own')) return 'sell';
+    return 'seeds';
+  }
+
+  function isMarketScene() {
+    if (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function') {
+      const cur = window.CuyPlaces.getCurrentPlace();
+      if (cur) return cur === 'market';
+    }
+    const api = getApi();
+    const st = api && api.getState ? api.getState() : null;
+    return !!(st && st.places && st.places.current === 'market');
+  }
+
+  function ensureQuoteSub() {
+    if (P.unsubQuote) return;
+    const api = getApi();
+    if (!api || !api.onMessage) return;
+    P.unsubQuote = api.onMessage('market_quote_result', (msg) => {
+      S.quotes[msg.itemId] = { count: msg.count, total: msg.total, unitPrice: msg.unitPrice };
+      const text = msg.count > 0 ? msg.total + ' clovers' : 'No room today';
+      [S.container, P.el].forEach(root => {
+        const el = root && root.querySelector(`[data-total="${CSS.escape(msg.itemId)}"]`);
+        if (el) el.textContent = text;
+      });
+    });
+  }
+
+  function ensureStateSub() {
+    if (P.unsubState) return;
+    const api = getApi();
+    if (!api || !api.onState) return;
+    P.unsubState = api.onState(() => {
+      ensureHotspotHook();
+      if (P.el && P.el.isConnected) {
+        if (P.stallId && window.CanvasPig && typeof window.CanvasPig.getHotspots === 'function') {
+          const list = window.CanvasPig.getHotspots() || [];
+          const hit = list.find(h => h && (h.uid === P.stallId || h.id === P.stallId));
+          if (hit && hit.rect) P.anchorRect = hit.rect;
+        }
+        renderPanel();
+      }
+    });
+  }
+
+  function handleHotspot(hs) {
+    if (!hs) return;
+    const id = String(hs.uid || hs.id || '');
+    const isStall = hs.kind === 'stall' || /^stall[:_]|^fx:market:stall_/.test(id);
+    if (!isStall || !isMarketScene()) return;
+    openPanel(id || hs.label, hs.rect, hs.uid || hs.id);
+  }
+
+  function ensureHotspotHook() {
+    if (P.hotspotSubscribed) return;
+    if (window.CanvasPig && typeof window.CanvasPig.onHotspot === 'function') {
+      P.hotspotSubscribed = true;
+      window.CanvasPig.onHotspot(handleHotspot);
+    }
+  }
 
   function loadExtras() {
     if (window.MarketExtras) { S.extrasReady = true; return; }
@@ -221,42 +306,11 @@
         <section id="market-extras" class="market-extras"></section>
       </div>`;
 
+    bindMarketEvents(container, st, S.tab);
+
     container.querySelectorAll('.market-tab').forEach(btn => {
       btn.addEventListener('click', () => { S.tab = btn.dataset.tab; render(); });
     });
-    container.querySelectorAll('.market-step').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        const next = Math.min(MAX_COUNT, Math.max(1, countOf(id) + Number(btn.dataset.step)));
-        S.counts[id] = next;
-        const out = container.querySelector(`[data-count="${CSS.escape(id)}"]`);
-        if (out) out.textContent = String(next);
-        if (S.tab === 'sell') {
-          requestQuote(id);
-        } else {
-          const buy = container.querySelector(`[data-buy="${CSS.escape(id)}"]`);
-          const price = (st.market.buyable || []).find(b => b.itemId === id);
-          if (buy && price) buy.textContent = 'Buy ' + (next * price.price);
-        }
-      });
-    });
-    container.querySelectorAll('[data-buy]').forEach(btn => {
-      btn.addEventListener('click', () => send({ type: 'market_buy', itemId: btn.dataset.buy, count: countOf(btn.dataset.buy) }));
-    });
-    container.querySelectorAll('[data-sell]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.sell;
-        send({ type: 'market_sell', itemId: id, count: countOf(id) });
-        delete S.quotes[id];
-      });
-    });
-    const stallBtn = container.querySelector('[data-stall]');
-    if (stallBtn) stallBtn.addEventListener('click', () => send({ type: 'market_stall' }));
-
-    // Quotes for the sell tab: ask once per visible item with a count
-    if (S.tab === 'sell') {
-      (m.sellable || []).forEach(s => { if (!S.quotes[s.itemId] && s.owned > 0) requestQuote(s.itemId); });
-    }
 
     const extras = container.querySelector('#market-extras');
     if (window.MarketExtras && extras) {
@@ -265,6 +319,188 @@
       loadExtras();
     }
   }
+
+  function bindMarketEvents(root, st, activeTab) {
+    const m = (st && st.market) || {};
+    root.querySelectorAll('.market-step').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const next = Math.min(MAX_COUNT, Math.max(1, countOf(id) + Number(btn.dataset.step)));
+        S.counts[id] = next;
+        const out = root.querySelector(`[data-count="${CSS.escape(id)}"]`);
+        if (out) out.textContent = String(next);
+        if (activeTab === 'sell') {
+          requestQuote(id);
+        } else {
+          const buy = root.querySelector(`[data-buy="${CSS.escape(id)}"]`);
+          const price = (m.buyable || []).find(b => b.itemId === id);
+          if (buy && price) buy.textContent = 'Buy ' + (next * price.price);
+        }
+      });
+    });
+    root.querySelectorAll('[data-buy]').forEach(btn => {
+      btn.addEventListener('click', () => send({ type: 'market_buy', itemId: btn.dataset.buy, count: countOf(btn.dataset.buy) }));
+    });
+    root.querySelectorAll('[data-sell]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.sell;
+        send({ type: 'market_sell', itemId: id, count: countOf(id) });
+        delete S.quotes[id];
+      });
+    });
+    const stallBtn = root.querySelector('[data-stall]');
+    if (stallBtn) stallBtn.addEventListener('click', () => send({ type: 'market_stall' }));
+
+    if (activeTab === 'sell') {
+      (m.sellable || []).forEach(s => { if (!S.quotes[s.itemId] && s.owned > 0) requestQuote(s.itemId); });
+    }
+  }
+
+  function resolveAnchorClientRect(anchorRect) {
+    const vw = window.innerWidth || 400;
+    const vh = window.innerHeight || 620;
+    if (!anchorRect) {
+      return { left: Math.round(vw / 2), top: Math.round(vh / 2), right: Math.round(vw / 2), bottom: Math.round(vh / 2) };
+    }
+    if (Array.isArray(anchorRect) && anchorRect.length >= 4) {
+      const [x0, y0, x1, y1] = anchorRect.map(Number);
+      const canvas = document.querySelector('#sceneCanvas, canvas.scene-canvas, #pigCanvas, canvas');
+      const cr = canvas ? canvas.getBoundingClientRect() : null;
+      if (cr && cr.width > 0 && cr.height > 0) {
+        const sceneW = 256;
+        const sceneH = 144;
+        return {
+          left: cr.left + (x0 / sceneW) * cr.width,
+          top: cr.top + (y0 / sceneH) * cr.height,
+          right: cr.left + (x1 / sceneW) * cr.width,
+          bottom: cr.top + (y1 / sceneH) * cr.height
+        };
+      }
+      return { left: x0, top: y0, right: x1, bottom: y1 };
+    }
+    const left = Number(anchorRect.left != null ? anchorRect.left : (anchorRect.x || 0));
+    const top = Number(anchorRect.top != null ? anchorRect.top : (anchorRect.y || 0));
+    const right = Number(anchorRect.right != null ? anchorRect.right : left + (anchorRect.width || anchorRect.w || 0));
+    const bottom = Number(anchorRect.bottom != null ? anchorRect.bottom : top + (anchorRect.height || anchorRect.h || 0));
+    return { left, top, right, bottom };
+  }
+
+  function positionPanel() {
+    if (!P.el) return;
+    const margin = 8;
+    const gap = 8;
+    const vw = window.innerWidth || 400;
+    const vh = window.innerHeight || 620;
+    const pw = P.el.offsetWidth || 280;
+    const ph = P.el.offsetHeight || 220;
+    const ar = resolveAnchorClientRect(P.anchorRect);
+
+    let left = ar.right + gap;
+    if (left + pw > vw - margin) {
+      const altLeft = ar.left - pw - gap;
+      left = altLeft >= margin ? altLeft : vw - pw - margin;
+    }
+    let top = ar.top;
+    if (top + ph > vh - margin) {
+      top = vh - ph - margin;
+    }
+    left = Math.round(Math.max(margin, Math.min(left, Math.max(margin, vw - pw - margin))));
+    top = Math.round(Math.max(margin, Math.min(top, Math.max(margin, vh - ph - margin))));
+    P.el.style.left = left + 'px';
+    P.el.style.top = top + 'px';
+  }
+
+  function renderPanel() {
+    if (!P.el) return;
+    const api = getApi();
+    const st = api && api.getState ? api.getState() : null;
+    const tabDef = TABS.find(t => t.id === P.tab) || TABS[0];
+    const title = P.tab === 'sell' ? 'My stall' : tabDef.label;
+
+    const marketPlace = ((st && st.places && st.places.places) || []).find(p => p.id === 'market');
+    let bodyHtml = '';
+    if (marketPlace && marketPlace.unlocked === false) {
+      bodyHtml = `<p class="market-locked-text">The market is still closed. ${marketPlace.unlockCost ? 'Open for ' + marketPlace.unlockCost + ' clovers' : 'Locked'}</p>`;
+    } else if (!st || !st.market) {
+      bodyHtml = '<p class="market-empty">Opening the market…</p>';
+    } else if (P.tab === 'sell') {
+      const m = st.market;
+      const cap = Math.max(1, m.cap || 1);
+      const capPct = Math.round(Math.max(0, Math.min(1, m.capLeft / cap)) * 100);
+      const capText = m.capLeft > 0
+        ? `The market will buy ${m.capLeft} more clovers' worth today`
+        : 'The market has enough for today';
+      const stall = m.stall || { level: 1, nextCost: null };
+      const canStall = stall.nextCost !== null && stall.nextCost !== undefined && st.clovers >= stall.nextCost;
+      bodyHtml = `
+        <div class="market-top">
+          <span class="market-stall">Stall level ${stall.level}
+            <button type="button" class="market-btn" data-stall="1" ${canStall ? '' : 'disabled'}>${stall.nextCost ? 'Upgrade · ' + stall.nextCost : 'Max'}</button></span>
+        </div>
+        <div class="market-cap" aria-label="Daily cap">
+          <p class="market-cap-text">${esc(capText)}</p>
+          <div class="market-cap-bar"><span class="market-cap-fill" style="width:${capPct}%"></span></div>
+        </div>
+        ${sellRows(st)}`;
+    } else {
+      bodyHtml = buyRows(st, tabDef.category);
+    }
+
+    const clovers = st ? (st.clovers || 0) : 0;
+    P.el.innerHTML = `
+      <div class="market-scene-head">
+        <span class="market-scene-title">${esc(title)}</span>
+        <span class="market-clovers"><span class="pixel-icon icon-clover" aria-hidden="true"></span> ${clovers}</span>
+        <button type="button" class="ui-close market-scene-close" aria-label="Close stall panel"></button>
+      </div>
+      <div class="market-scene-body">${bodyHtml}</div>`;
+
+    const closeBtn = P.el.querySelector('.market-scene-close');
+    if (closeBtn) closeBtn.addEventListener('click', closePanel);
+    if (st && st.market) bindMarketEvents(P.el, st, P.tab);
+    positionPanel();
+  }
+
+  function closePanel() {
+    if (P.docDownTimer) { clearTimeout(P.docDownTimer); P.docDownTimer = null; }
+    if (P.onKeyDown) { document.removeEventListener('keydown', P.onKeyDown); P.onKeyDown = null; }
+    if (P.onDocDown) { document.removeEventListener('pointerdown', P.onDocDown); P.onDocDown = null; }
+    if (P.el && P.el.parentNode) P.el.parentNode.removeChild(P.el);
+    P.el = null;
+  }
+
+  function openPanel(stallIdOrCategory, anchorRect, stallUid) {
+    closePanel();
+    ensureQuoteSub();
+    ensureStateSub();
+    P.tab = resolveTab(stallIdOrCategory);
+    P.stallId = stallUid || (typeof stallIdOrCategory === 'string' ? stallIdOrCategory : null);
+    P.anchorRect = anchorRect || null;
+
+    const el = document.createElement('section');
+    el.className = 'feature-market market-scene-panel ui-panel-wood';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-label', 'Market stall');
+    document.body.appendChild(el);
+    P.el = el;
+
+    renderPanel();
+
+    P.onKeyDown = (e) => { if (e.key === 'Escape') closePanel(); };
+    document.addEventListener('keydown', P.onKeyDown);
+
+    P.onDocDown = (e) => {
+      if (P.el && !P.el.contains(e.target)) closePanel();
+    };
+    P.docDownTimer = setTimeout(() => {
+      if (P.el && P.onDocDown) document.addEventListener('pointerdown', P.onDocDown);
+    }, 0);
+  }
+
+  window.CuyMarket = { openPanel, closePanel };
+
+  ensureHotspotHook();
+  ensureStateSub();
 
   window.CuyHome.registerFeature({
     id: 'market',
@@ -279,21 +515,17 @@
       S.quotes = {};
       if (S.lightTimer) clearInterval(S.lightTimer);
       S.lightTimer = setInterval(lightTick, LIGHT_PERIOD_MS);
-      if (S.unsubQuote) S.unsubQuote();
-      S.unsubQuote = api.onMessage('market_quote_result', (msg) => {
-        S.quotes[msg.itemId] = { count: msg.count, total: msg.total, unitPrice: msg.unitPrice };
-        const el = S.container && S.container.querySelector(`[data-total="${CSS.escape(msg.itemId)}"]`);
-        if (el) el.textContent = msg.count > 0 ? msg.total + ' clovers' : 'No room today';
-      });
+      ensureQuoteSub();
+      ensureHotspotHook();
       render();
     },
     close() {
       S.container = null;
       if (S.lightTimer) { clearInterval(S.lightTimer); S.lightTimer = null; }
-      if (S.unsubQuote) { S.unsubQuote(); S.unsubQuote = null; }
       Object.keys(S.quoteTimers).forEach(k => clearTimeout(S.quoteTimers[k]));
     },
     onState() {
+      ensureHotspotHook();
       if (S.container && S.container.isConnected) render();
     }
   });

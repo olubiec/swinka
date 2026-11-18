@@ -32,3 +32,9 @@ On success, updates state and saves. If locked or not adjacent, toasts error wit
 { "type": "places.pigPin", "pigId": "kuki", "pinned": true }
 ```
 Pinned pigs do not roam automatically during roamer ticks.
+
+3. Toggle pig on desktop (max 2 active, min 1):
+```json
+{ "type": "pigs.desktopPet", "pigId": "kuki", "on": true }
+```
+Validated via Core (`PigsMessages`). At most 2 pigs can be active on desktop (`activePigIds`); attempting to enable a 3rd pig is refused with a `"Max 2 pigs on desktop"` toast without changing state. At least 1 pig remains active.

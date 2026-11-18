@@ -443,7 +443,8 @@
    "price": 420,
    "comfort": 5,
    "layer": "floor",
-   "icon": "bridge_wood"
+   "icon": "bridge_wood",
+   "fixture": true
   },
   {
    "id": "lamp_post",
@@ -580,7 +581,8 @@
    "id": "signpost",
    "name": "Signpost",
    "place": [
-    "farm"
+    "farm",
+    "market"
    ],
    "w": 1,
    "h": 1,
@@ -1013,6 +1015,70 @@
     "comfort": 5,
     "layer": "floor",
     "icon": "stump_seat"
+  },
+  {
+    "id": "willow_tunnel",
+    "name": "Willow tunnel",
+    "place": [
+      "garden"
+    ],
+    "w": 3,
+    "h": 2,
+    "price": 0,
+    "comfort": 4,
+    "layer": "floor",
+    "fixture": true
+  },
+  {
+    "id": "barn_hay",
+    "name": "Hay barn",
+    "place": [
+      "farm"
+    ],
+    "w": 4,
+    "h": 3,
+    "price": 0,
+    "comfort": 4,
+    "layer": "floor",
+    "fixture": true
+  },
+  {
+    "id": "stall_basic",
+    "name": "Market stall",
+    "place": [
+      "market"
+    ],
+    "w": 3,
+    "h": 3,
+    "price": 0,
+    "comfort": 2,
+    "layer": "floor",
+    "fixture": true
+  },
+  {
+    "id": "stall_big",
+    "name": "Grand market stall",
+    "place": [
+      "market"
+    ],
+    "w": 4,
+    "h": 3,
+    "price": 0,
+    "comfort": 3,
+    "layer": "floor",
+    "fixture": true
+  },
+  {
+    "id": "order_board",
+    "name": "Order board",
+    "place": [
+      "market"
+    ],
+    "w": 2,
+    "h": 2,
+    "price": 0,
+    "comfort": 1,
+    "layer": "floor"
   }
  ]
 }

@@ -291,10 +291,12 @@
       this.ctx = this.canvas.getContext('2d');
       this.ctx.imageSmoothingEnabled = false;
 
-      // Virtual pixel art scene size (a wide shot of the pig's room)
-      this.sceneWidth = 240;
-      this.sceneHeight = 130;
+      // Virtual pixel art scene size (fixed 256x144 stage)
+      this.sceneWidth = 256;
+      this.sceneHeight = 144;
       this.wallH = 32;
+      this.roomOffset = { x: 0, y: 0 };
+      this.roomSize = [192, 112];
       this.canvas.width = this.sceneWidth;
       this.canvas.height = this.sceneHeight;
 
@@ -338,6 +340,7 @@
       this.lastShadow = null;
       this.litCanvas = null;
       this.litCtx = null;
+      this.thingLitCanvas = null;
       this.lightScene = null;
       this.iconsImg = null;
       this.isLoaded = false;
@@ -893,15 +896,47 @@
         const fsUrl = this.getTrimUrl('floor_shadow');
         if (fsUrl) this.loadCachedImage(fsUrl);
       }
-      if (def.size && Array.isArray(def.size) && def.size.length >= 2) {
-        this.sceneWidth = def.size[0];
-        this.sceneHeight = def.size[1];
-        this.canvas.width = this.sceneWidth;
-        this.canvas.height = this.sceneHeight;
-        if (this.ctx) this.ctx.imageSmoothingEnabled = false;
+      this.sceneWidth = 256;
+      this.sceneHeight = 144;
+      this.canvas.width = this.sceneWidth;
+      this.canvas.height = this.sceneHeight;
+      if (this.ctx) this.ctx.imageSmoothingEnabled = false;
+
+      if (this.sceneKind === 'room') {
+        if (def.roomOffset && typeof def.roomOffset.x === 'number' && typeof def.roomOffset.y === 'number') {
+          this.roomOffset = { x: def.roomOffset.x, y: def.roomOffset.y };
+          this.roomSize = (def.roomSize && Array.isArray(def.roomSize) && def.roomSize.length >= 2)
+            ? [def.roomSize[0], def.roomSize[1]]
+            : [256 - 2 * def.roomOffset.x, 144 - 2 * def.roomOffset.y];
+        } else {
+          const rw = (def.size && Array.isArray(def.size) && def.size[0]) ? def.size[0] : 192;
+          const rh = (def.size && Array.isArray(def.size) && def.size[1]) ? def.size[1] : 112;
+          const cols = Math.round(rw / 16) || 12;
+          const rows = Math.round(rh / 16) || 7;
+          this.roomSize = [cols * 16, rows * 16];
+          const geom = (typeof window !== 'undefined' && window.CuyRoomGeometry) || (typeof CuyRoomGeometry !== 'undefined' ? CuyRoomGeometry : null);
+          this.roomOffset = (geom && typeof geom.stageOffset === 'function')
+            ? geom.stageOffset(cols, rows)
+            : { x: Math.floor((256 - cols * 16) / 2), y: Math.floor((144 - rows * 16) / 2) };
+        }
+      } else {
+        this.roomOffset = { x: 0, y: 0 };
+        this.roomSize = [256, 144];
       }
-      this.walk = def.walk || null;
-      this.depthScale = def.depthScale || null;
+
+      if (this.sceneKind === 'room' && !def.roomOffset) {
+        const rawWalk = def.walk || [8, (this.wallH || 32) + 8, this.roomSize[0] - 8, this.roomSize[1] - 2];
+        this.walk = [
+          rawWalk[0] + this.roomOffset.x,
+          rawWalk[1] + this.roomOffset.y,
+          rawWalk[2] + this.roomOffset.x,
+          rawWalk[3] + this.roomOffset.y
+        ];
+      } else {
+        this.walk = def.walk ? def.walk.slice() : null;
+      }
+
+      this.depthScale = (this.sceneKind === 'room') ? [0.75, 0.875] : (def.depthScale || null);
       this.pigWidthFrac = (typeof def.pigWidthFrac === 'number') ? def.pigWidthFrac : null;
       this.exits = def.exits || null;
       this.blockers = def.blockers || this.lookupSceneBlockers(this.sceneId);
@@ -945,9 +980,18 @@
 
     setThings(list, explicit = true) {
       if (explicit) this.explicitThings = true;
+      const offX = (this.sceneKind === 'room' && this.roomOffset) ? (this.roomOffset.x || 0) : 0;
+      const offY = (this.sceneKind === 'room' && this.roomOffset) ? (this.roomOffset.y || 0) : 0;
       this.things = Array.isArray(list) ? list.slice() : [];
       this.things.forEach(t => {
         if (!t) return;
+        if (this.sceneKind === 'room' && !t._stageOffsetApplied && (offX !== 0 || offY !== 0)) {
+          if (typeof t.x === 'number') t.x += offX;
+          if (typeof t.y === 'number') t.y += offY;
+          t._stageOffsetApplied = true;
+        } else if (this.sceneKind === 'room' && !t._stageOffsetApplied) {
+          t._stageOffsetApplied = true;
+        }
         if (!t.w || !t.h) {
           const def = this.getItemDef(t.itemId || t.id);
           if (def) {
@@ -1266,6 +1310,8 @@
       return {
         sceneId: this.sceneId || (this.currentScene && this.currentScene.id) || 'salon',
         sceneSize: [this.sceneWidth, this.sceneHeight],
+        roomOffset: this.roomOffset ? { x: this.roomOffset.x, y: this.roomOffset.y } : { x: 0, y: 0 },
+        roomSize: this.roomSize ? [this.roomSize[0], this.roomSize[1]] : [this.sceneWidth, this.sceneHeight],
         wallH: (typeof this.wallH === 'number') ? this.wallH : 32,
         bgUrl: this.sceneBgUrl || null,
         ghost: this.ghost ? {
@@ -1324,8 +1370,38 @@
       };
     }
 
-    drawThing(ctx, thing) {
+    drawThingShadow(ctx, thing) {
+      if (!thing || thing.flat || thing.layer === 'wall' || thing.suppressDraw) return;
+      const img = thing.img || (thing.url ? this.loadCachedImage(thing.url) : null);
+      const sw = thing.w || thing.width || (img && (img.naturalWidth || img.width)) || 0;
+      if (!sw || !Number.isFinite(sw)) return;
+      const x = thing.x || 0;
+      const y = thing.y || 0;
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      const scale = this.scaleAt(y);
+      const cx = Math.round(x);
+      const cy = Math.round(y - 1);
+      const rx = Math.max(4, Math.round(sw * 0.42 * Math.min(1, scale)));
+      const ry = Math.max(2, Math.round(rx * 0.3));
+      let r = 16, g = 18, b = 28, alpha = 0.28;
+      if (this.lightScene) {
+        const a = sceneAmbient(this.lightScene);
+        r = Math.round(16 * a[0]);
+        g = Math.round(18 * a[1]);
+        b = Math.round(28 * a[2]);
+        alpha = +(0.26 * Math.max(0.5, (a[0] + a[1] + a[2]) / 3)).toFixed(3);
+      }
+      ctx.save();
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    drawThing(ctx, thing, skipShadow) {
       if (!thing) return;
+      if (!skipShadow) this.drawThingShadow(ctx, thing);
       const img = thing.img || (thing.url ? this.loadCachedImage(thing.url) : null);
       if (!img) return;
       const ready = (img.naturalWidth && img.naturalWidth > 0) || (img.width && img.width > 0);
@@ -1592,12 +1668,16 @@
           return false;
         }
       } else {
+        const offX = (this.roomOffset && this.roomOffset.x) || 0;
+        const offY = (this.roomOffset && this.roomOffset.y) || 0;
+        const roomW = (this.roomSize && this.roomSize[0]) || this.sceneWidth;
+        const roomH = (this.roomSize && this.roomSize[1]) || this.sceneHeight;
         if (def.layer === 'wall') {
-          if (fx0 < 0 || fx1 > this.sceneWidth || dy < 0 || fy1 > this.wallH) {
+          if (fx0 < offX || fx1 > offX + roomW || dy < offY || fy1 > offY + this.wallH) {
             return false;
           }
         } else {
-          if (fx0 < 0 || fx1 > this.sceneWidth || fy0 < this.wallH || fy1 > this.sceneHeight) {
+          if (fx0 < offX || fx1 > offX + roomW || fy0 < offY + this.wallH || fy1 > offY + roomH) {
             return false;
           }
         }
@@ -2349,10 +2429,46 @@
         this.drawBackgroundBlockersOverPig(ctx);
 
         // Standing objects in front of pig
-        allStanding.filter(t => (t.y || 0) > pigFeetY).forEach(t => {
-          if (t.isGhost) this.drawGhost(ctx, t.ghost);
-          else this.drawThing(ctx, t);
-        });
+        const inFront = allStanding.filter(t => (t.y || 0) > pigFeetY);
+        if (lit && inFront.length > 0 && typeof document !== 'undefined') {
+          if (!this.thingLitCanvas) {
+            this.thingLitCanvas = document.createElement('canvas');
+          }
+          if (this.thingLitCanvas.width !== this.sceneWidth || this.thingLitCanvas.height !== this.sceneHeight) {
+            this.thingLitCanvas.width = this.sceneWidth;
+            this.thingLitCanvas.height = this.sceneHeight;
+          }
+          const tctx = this.thingLitCanvas.getContext('2d');
+          tctx.imageSmoothingEnabled = false;
+          const a = sceneAmbient(this.lightScene);
+          const ambFill = `rgb(${Math.round(255 * Math.min(1, a[0]))}, ${Math.round(255 * Math.min(1, a[1]))}, ${Math.round(255 * Math.min(1, a[2]))})`;
+          inFront.forEach(t => {
+            if (t.isGhost) {
+              this.drawGhost(ctx, t.ghost);
+              return;
+            }
+            this.drawThingShadow(ctx, t);
+            tctx.clearRect(0, 0, this.sceneWidth, this.sceneHeight);
+            tctx.save();
+            tctx.globalCompositeOperation = 'source-over';
+            this.drawThing(tctx, t, true);
+            tctx.globalCompositeOperation = 'multiply';
+            tctx.fillStyle = ambFill;
+            tctx.fillRect(0, 0, this.sceneWidth, this.sceneHeight);
+            tctx.globalCompositeOperation = 'destination-in';
+            this.drawThing(tctx, t, true);
+            tctx.restore();
+            ctx.drawImage(this.thingLitCanvas, 0, 0);
+          });
+        } else {
+          inFront.forEach(t => {
+            if (t.isGhost) this.drawGhost(ctx, t.ghost);
+            else this.drawThing(ctx, t);
+          });
+        }
+        if (lit) {
+          this.applySceneGlow(ctx, this.lightScene);
+        }
       } else {
         allStanding.forEach(t => {
           if (t.isGhost) this.drawGhost(ctx, t.ghost);
@@ -2361,6 +2477,7 @@
         this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
         if (lit) {
           this.applySceneLight(ctx, this.lightScene);
+          this.applySceneGlow(ctx, this.lightScene);
         }
       }
 
@@ -2427,6 +2544,8 @@
       }
 
       const wallH = (typeof this.wallH === 'number') ? this.wallH : 32;
+      const offY = (this.roomOffset && this.roomOffset.y) || 0;
+      const stageWallY = Math.max(0, offY + wallH);
       const w = this.sceneWidth;
 
       // 1. Wall rendering (pixel art tiles)
@@ -2438,23 +2557,23 @@
             const ptrn = ctx.createPattern(wallImg, 'repeat');
             if (ptrn) {
               ctx.fillStyle = ptrn;
-              ctx.fillRect(0, 0, w, wallH);
+              ctx.fillRect(0, 0, w, stageWallY);
               drawnWall = true;
             }
           } catch (e) {}
         }
         if (!drawnWall) {
           ctx.fillStyle = '#f7f4eb';
-          ctx.fillRect(0, 0, w, wallH);
+          ctx.fillRect(0, 0, w, stageWallY);
         }
 
-        // Baseboard trim sprite (repeat along x at y = wallH - 8)
+        // Baseboard trim sprite (repeat along x at y = stageWallY - 8)
         const baseboardUrl = this.getTrimUrl('baseboard');
         const baseboardImg = baseboardUrl ? this.loadCachedImage(baseboardUrl) : null;
         if (baseboardImg && !baseboardImg.failed && ((baseboardImg.naturalWidth && baseboardImg.naturalWidth > 0) || (baseboardImg.width && baseboardImg.width > 0))) {
           const bw = baseboardImg.naturalWidth || baseboardImg.width || 16;
           const bh = baseboardImg.naturalHeight || baseboardImg.height || 8;
-          const trimY = Math.round(wallH - 8);
+          const trimY = Math.round(stageWallY - 8);
           try {
             ctx.save();
             ctx.translate(0, trimY);
@@ -2480,13 +2599,13 @@
 
       // 2. Floor rendering (pixel art tiles)
       if (!scene.skipDefaultFloor) {
-        const floorH = this.sceneHeight - wallH;
+        const floorH = this.sceneHeight - stageWallY;
         const floorImg = floorUrl ? this.loadCachedImage(floorUrl) : null;
         let drawnFloor = false;
         if (floorImg && !floorImg.failed && ((floorImg.naturalWidth && floorImg.naturalWidth > 0) || (floorImg.width && floorImg.width > 0))) {
           try {
             ctx.save();
-            ctx.translate(0, wallH);
+            ctx.translate(0, stageWallY);
             const ptrn = ctx.createPattern(floorImg, 'repeat');
             if (ptrn) {
               ctx.fillStyle = ptrn;
@@ -2498,16 +2617,16 @@
         }
         if (!drawnFloor) {
           ctx.fillStyle = '#e6b073';
-          ctx.fillRect(0, wallH, w, floorH);
+          ctx.fillRect(0, stageWallY, w, floorH);
         }
 
-        // Floor shadow trim sprite (repeat along x at y = wallH)
+        // Floor shadow trim sprite (repeat along x at y = stageWallY)
         const shadowUrl = this.getTrimUrl('floor_shadow');
         const shadowImg = shadowUrl ? this.loadCachedImage(shadowUrl) : null;
         if (shadowImg && !shadowImg.failed && ((shadowImg.naturalWidth && shadowImg.naturalWidth > 0) || (shadowImg.width && shadowImg.width > 0))) {
           const sw = shadowImg.naturalWidth || shadowImg.width || 16;
           const sh = shadowImg.naturalHeight || shadowImg.height || 4;
-          const shadowY = Math.round(wallH);
+          const shadowY = Math.round(stageWallY);
           try {
             ctx.save();
             ctx.translate(0, shadowY);
@@ -2716,6 +2835,8 @@
       ctx.fillRect(0, 0, this.sceneWidth, this.sceneHeight);
       ctx.restore();
     }
+
+    applySceneGlow(ctx, scene) {}
 
     // Contact shadow sprite at (32 - width/2, 57) inside the pig frame.
     drawContactShadow(ctx) {

@@ -33,6 +33,7 @@
     bridge.registerMockState('pigs', function (st) {
       if (!st) return;
       if (!Array.isArray(st.roster)) st.roster = [];
+      if (st._singlePigTest) return;
 
       const starterPig = {
         id: 'starter',
@@ -227,5 +228,42 @@
 
     bridge.registerMockHandler('adopt_starter_pair', handleAdoptStarterPair);
     bridge.registerMockHandler('accept_adoption_offer', handleAdoptStarterPair);
+
+    bridge.registerMockHandler('places.pigPin', function (st, action) {
+      if (!st || !action || !action.pigId) return;
+      st.places = st.places || {};
+      if (!Array.isArray(st.places.pigLocations)) st.places.pigLocations = [];
+      let loc = st.places.pigLocations.find(l => l && (l.pigId === action.pigId || l.PigId === action.pigId));
+      if (!loc) {
+        loc = { pigId: action.pigId, scene: 'salon', pinned: !!action.pinned };
+        st.places.pigLocations.push(loc);
+      } else {
+        loc.pinned = !!action.pinned;
+      }
+    });
+
+    bridge.registerMockHandler('pigs.desktopPet', function (st, action) {
+      if (!st || !action || !action.pigId) return;
+      if (!Array.isArray(st.activePigIds) || st.activePigIds.length === 0) {
+        const firstId = st.roster && st.roster[0] ? st.roster[0].id : 'starter';
+        st.activePigIds = [firstId];
+      }
+      const id = action.pigId;
+      if (action.on) {
+        if (!st.activePigIds.includes(id)) {
+          if (st.activePigIds.length >= 2) {
+            if (bridge.dispatchMessage) {
+              bridge.dispatchMessage({ type: 'toast', text: 'Max 2 pigs on desktop' });
+            }
+            return;
+          }
+          st.activePigIds.push(id);
+        }
+      } else {
+        if (st.activePigIds.length > 1) {
+          st.activePigIds = st.activePigIds.filter(x => x !== id);
+        }
+      }
+    });
   }
 })(typeof window !== 'undefined' ? window : this);

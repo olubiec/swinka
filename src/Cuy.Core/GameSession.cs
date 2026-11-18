@@ -42,13 +42,20 @@ namespace Cuy.Core
             string newPetName = "Cuy")
         {
             if (clock == null) throw new ArgumentNullException(nameof(clock));
-            if (balance == null) balance = new Balance { HayRackActive = true, DiaryActive = true, BirthdayRewardsActive = true, PerPigAgeActive = true, PigModifiersActive = true, ArrivalsActive = true, PlacesActive = true, FarmActive = true, MarketActive = true, WorldDecorActive = true, PigRoomsActive = true, DormActive = true, HomesActive = true }; else { balance.HayRackActive = true; balance.DiaryActive = true; balance.BirthdayRewardsActive = true; balance.PerPigAgeActive = true; balance.PigModifiersActive = true; balance.ArrivalsActive = true; balance.PlacesActive = true; balance.FarmActive = true; balance.MarketActive = true; balance.WorldDecorActive = true; balance.PigRoomsActive = true; balance.DormActive = true; balance.HomesActive = true; }
+            if (balance == null) balance = new Balance { HayRackActive = true, DiaryActive = true, BirthdayRewardsActive = true, PerPigAgeActive = true, PigModifiersActive = true, ArrivalsActive = true, PlacesActive = true, FarmActive = true, MarketActive = true, WorldDecorActive = true, PigRoomsActive = true, DormActive = true, HomesActive = true, OutdoorInstancesActive = true }; else { balance.HayRackActive = true; balance.DiaryActive = true; balance.BirthdayRewardsActive = true; balance.PerPigAgeActive = true; balance.PigModifiersActive = true; balance.ArrivalsActive = true; balance.PlacesActive = true; balance.FarmActive = true; balance.MarketActive = true; balance.WorldDecorActive = true; balance.PigRoomsActive = true; balance.DormActive = true; balance.HomesActive = true; balance.OutdoorInstancesActive = true; }
             var saveSystem = new SaveSystem(saveDirectory);
             var load = saveSystem.Load();
             var isNewGame = load.State == null;
             var state = load.State ?? GameState.CreateNew(newPetName, clock.UtcNow);
             state.EnsureRosterInitialized(Cuy.Core.Pigs.NamedPigCatalog.Current, nowUtc: clock.UtcNow);
             state.EnsureWorld(Cuy.Core.World.WorldItemCatalog.Current, ItemCatalog.Default);
+            if (balance.OutdoorInstancesActive)
+            {
+                foreach (var placeId in Cuy.Core.World.OutdoorSeed.DefaultPlaces)
+                {
+                    Cuy.Core.World.OutdoorSeed.Seed(state.World, placeId, balance: balance);
+                }
+            }
             state.EnsureMusic();
             state.EnsurePigRooms(Cuy.Core.World.PigRoomConfig.Current, Cuy.Core.World.WorldItemCatalog.Current);
             var session = new GameSession(new Pet(state, clock, balance), saveSystem, load);

@@ -74,6 +74,16 @@ namespace Cuy.Core.World
             set => _pigRoomsEnsured = value ?? new HashSet<string>();
         }
 
+        /// <summary>Outdoor scenes whose default fixtures/props were seeded.</summary>
+        private HashSet<string> _outdoorSeeded;
+        public HashSet<string> OutdoorSeeded
+        {
+            get => _outdoorSeeded ?? (_outdoorSeeded = new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+            set => _outdoorSeeded = value != null
+                ? new HashSet<string>(value, StringComparer.OrdinalIgnoreCase)
+                : new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        }
+
         /// <summary>Variants bought with clovers, keys '&lt;itemId&gt;:&lt;variant&gt;'.</summary>
         private HashSet<string> _unlockedVariants;
         public HashSet<string> UnlockedVariants
@@ -143,6 +153,9 @@ namespace Cuy.Core.World
 
         /// <summary>Colour variant 0..3; 0 = the default look.</summary>
         public int Variant { get; set; } = 0;
+
+        public bool Movable { get; set; } = true;
+        public bool Removable { get; set; } = true;
     }
 
     public class FarmState
