@@ -1,0 +1,8 @@
+- Status: OK
+- Decyzje: Opcja A dla pulpitu (FormPet.IsAmbientCompanion omija _brain); przełącznik pulpitu wysyła `pigs.desktopPet { pigId, on }`, pin wysyła istniejące `places.pigPin { pigId, pinned }`.
+- API `CuyScenePigs`: `create({ rng, bounds, minGap, speed })`, `sync(list)`, `step(dtMs, ctx)`, `entries()`, `remove(id)`, `setBounds(bounds)`, `setPinned(id, pinned)`, `debug()`.
+- Integracja: `CanvasPig.setPresentPigs(list)` + `debug().pigs`; `places/feature.js` w `applyScene()` przekazuje listę z `currentSceneId`.
+- Walidacja: `PlacesMessages.cs` (`places.pigPin`, `places.pigMove`) i `PigsMessages.cs` (`pigs.desktopPet`); mocki wyłącznie w `pigs/mock.js`.
+- Pytanie do właściciela (rozstrzygnięte domyślnie): zachować `.btn-toggle-active` (`toggle_pig_active`) w C# dla wstecznej kompatybilności, a w UI użyć `.chk-desktop-pet` z `pigs.desktopPet`.
+- Różnice od R5: `pigs/feature.js` ma już `.btn-toggle-active` i `PigsFeature.cs` ma `toggle_pig_active` (bez okna 2. świnki), a `FormPet.cs` przypisuje `_brain = BrainController.Instance`, stąd wymagana flaga `IsAmbientCompanion`.
+- Weryfikacja: `node tools/qa/foundation-check.js docs/opt/foundations/R29.md 8` — PASS.

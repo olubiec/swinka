@@ -1,0 +1,9 @@
+- Decyzja: `RoomLayoutOps` zachowuje `bool Remove(RoomLayout, string)` i dodaje `PlaceResult.FixtureLocked` (przeciążenie/nowa metoda), aby nie łamać starych testów.
+- Decyzja: `RoomsMessages.cs` musi podnieść zakres `x` z `200` do `512` (`y` do `256`), bo `edit-panel.js` wysyła piksele sceny (do 384x192 w parku).
+- Decyzja: `RoomsMessages.ToastFor("fixture_locked")` zwraca `"You can move this fixture, not stash it."` (40 znaków), domyślnie `"Action not available."`.
+- Decyzja: tryb Edit wykrywany przez `window.CuyEdit && window.CuyEdit.isOpen()` (brak `window.CuyEditMode`).
+- Kontrakt `lib/hotspots.js`: UMD `CuyHotspots` (`fromScene`, `hit`, `arbitrate`, `clampLabelRect`, `sortKeyboard`, `createTracker`).
+- Kontrakt `CuyMarket`: `{ openPanel(stallIdOrCategory, anchorRect), closePanel() }`; mapowanie `stall_seeds/pantry/decor/own`.
+- Kontrakt `farm`: `fx:farm:plot:<i>` 1:1 z `FarmState.Plots[i]` (4..24), ikony `water_drop` i `basket` z `icons.json`.
+- Własność F2-2/F2-4: `place_scenes.json` tylko `PK-P47a`, `places/mock.js` tylko `PK-P46b`, `world_items.json`/`atlas.json`/`RoomLayoutOps.cs` `PK-P46a`->`PK-P25c`.
+- O co zapytałbym właściciela: czy `park` docelowo będzie `256x144` przed F2-4; wybrano bezpieczny limit `x<=512` w `RoomsMessages.cs`.
