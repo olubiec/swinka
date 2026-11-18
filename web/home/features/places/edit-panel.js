@@ -10,6 +10,62 @@
 
   let _selectedUid = null;
   let _itemDragState = null;
+  let _filterState = { tab: 'All', query: '' };
+  let _subpanelMode = null;
+
+  function isFixtureItem(thing) {
+    if (!thing) return false;
+    if (thing.fixture === true || thing.removable === false) return true;
+    const uid = String(thing.uid || thing.id || '');
+    return uid.indexOf('fx:') === 0;
+  }
+
+  function findPlacedThing(uid) {
+    if (!uid) return null;
+    const inst = (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance);
+    const things = (inst && inst.things) || [];
+    return things.find(function (t) { return (t.id === uid || t.uid === uid); }) || null;
+  }
+
+  function showEditToast(text) {
+    if (window.bridge && typeof window.bridge.dispatchMessage === 'function') {
+      window.bridge.dispatchMessage({ type: 'toast', text: text });
+    }
+    if (typeof document !== 'undefined') {
+      let toastEl = document.getElementById('globalToast');
+      if (!toastEl) {
+        toastEl = document.createElement('div');
+        toastEl.id = 'globalToast';
+        toastEl.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background-color:var(--ui-wood-0,#47281c);color:var(--ui-hay-1,#f2dc9b);padding:8px 16px;border:2px solid var(--ui-wood-1,#6f4328);font-family:var(--ui-font,"Pixelify Sans",monospace);font-size:14px;z-index:10000;pointer-events:none;opacity:0;';
+        document.body.appendChild(toastEl);
+      }
+      toastEl.textContent = text;
+      toastEl.style.opacity = '1';
+      if (toastEl._timer) clearTimeout(toastEl._timer);
+      toastEl._timer = setTimeout(function () { toastEl.style.opacity = '0'; }, 2500);
+    }
+  }
+
+  function sendBridge(msg) {
+    if (window.bridge && typeof window.bridge.send === 'function') {
+      window.bridge.send(msg);
+    }
+  }
+
+  function toRoomLocalCoords(curScene, sx, sy) {
+    if (getSceneKind(curScene) !== 'indoor') return { x: sx, y: sy };
+    const inst = (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance);
+    let off = inst && inst.roomOffset;
+    if (!off || typeof off.x !== 'number' || typeof off.y !== 'number') {
+      const layout = _lastState && _lastState.rooms && _lastState.rooms.layouts && _lastState.rooms.layouts[curScene];
+      const cols = (layout && layout.cols) || 12;
+      const rows = (layout && layout.rows) || 7;
+      off = (window.CuyRoomGeometry && typeof window.CuyRoomGeometry.stageOffset === 'function')
+        ? window.CuyRoomGeometry.stageOffset(cols, rows)
+        : { x: Math.floor((256 - cols * 16) / 2), y: Math.floor((144 - rows * 16) / 2) };
+    }
+    return { x: sx - (off.x || 0), y: sy - (off.y || 0) };
+  }
 
   function getDomGhost() {
     if (!_domGhost && typeof document !== 'undefined') {
@@ -374,6 +430,34 @@
         }
       }
     }
+
+    if (_isOpen && !(_dragState && _dragState.active) && !(_itemDragState && _itemDragState.moved)) {
+      const canvas = (window.CanvasPig && window.CanvasPig.instance && window.CanvasPig.instance.canvas)
+        || (window.PigCanvas && window.PigCanvas.instance && window.PigCanvas.instance.canvas)
+        || (typeof document !== 'undefined' ? document.getElementById('pigCanvas') : null);
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const isOver = (
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        );
+        if (isOver) {
+          const toSceneFn = (window.CanvasPig && typeof window.CanvasPig.toScene === 'function')
+            ? window.CanvasPig.toScene
+            : (window.CanvasPig && window.CanvasPig.instance && window.CanvasPig.instance.toScene.bind(window.CanvasPig.instance));
+          const p = toSceneFn ? toSceneFn(e) : { x: e.clientX - rect.left, y: e.clientY - rect.top };
+          const pickAtFn = (window.CanvasPig && typeof window.CanvasPig.pickAt === 'function')
+            ? window.CanvasPig.pickAt
+            : (window.CanvasPig && window.CanvasPig.instance && window.CanvasPig.instance.pickAt.bind(window.CanvasPig.instance));
+          const picked = pickAtFn ? pickAtFn(p.x, p.y) : null;
+          canvas.style.cursor = picked ? 'grab' : '';
+        } else {
+          canvas.style.cursor = '';
+        }
+      }
+    }
   }
 
   function onPointerUp(e) {
@@ -417,15 +501,14 @@
             const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
               ? window.CuyPlaces.getCurrentPlace()
               : _currentSceneId;
-            if (window.bridge && typeof window.bridge.send === 'function') {
-              window.bridge.send({
-                type: 'room_place',
-                place: curScene,
-                itemId: _dragState.itemId,
-                x: snappedX,
-                y: snappedY
-              });
-            }
+            const localPt = toRoomLocalCoords(curScene, snappedX, snappedY);
+            sendBridge({
+              type: 'room_place',
+              place: curScene,
+              itemId: _dragState.itemId,
+              x: localPt.x,
+              y: localPt.y
+            });
           }
         }
       }
@@ -461,24 +544,34 @@
           : _currentSceneId;
 
         if (isOverDrawer) {
-          if (window.bridge && typeof window.bridge.send === 'function') {
-            window.bridge.send({
+          if (isFixtureItem(_itemDragState.thing)) {
+            if (_itemDragState.thing) {
+              _itemDragState.thing.x = _itemDragState.origX;
+              _itemDragState.thing.y = _itemDragState.origY;
+              if (inst && Array.isArray(inst.things) && inst.things.indexOf(_itemDragState.thing) === -1) {
+                inst.things.push(_itemDragState.thing);
+                if (typeof inst.rebuildGrid === 'function') inst.rebuildGrid();
+              }
+            }
+            showEditToast('You can move this fixture, not stash it.');
+            setSelection(_itemDragState.uid);
+          } else {
+            sendBridge({
               type: 'room_remove',
               place: curScene,
               uid: _itemDragState.uid
             });
+            setSelection(null);
           }
-          setSelection(null);
         } else if (_itemDragState.isOverCanvas && _itemDragState.valid) {
-          if (window.bridge && typeof window.bridge.send === 'function') {
-            window.bridge.send({
-              type: 'room_move',
-              place: curScene,
-              uid: _itemDragState.uid,
-              x: _itemDragState.currentX,
-              y: _itemDragState.currentY
-            });
-          }
+          const localPt = toRoomLocalCoords(curScene, _itemDragState.currentX, _itemDragState.currentY);
+          sendBridge({
+            type: 'room_move',
+            place: curScene,
+            uid: _itemDragState.uid,
+            x: localPt.x,
+            y: localPt.y
+          });
           if (_itemDragState.thing) {
             _itemDragState.thing.x = _itemDragState.currentX;
             _itemDragState.thing.y = _itemDragState.currentY;
@@ -1071,6 +1164,25 @@
 
     titleEl.textContent = info.title;
 
+    const isIndoor = getSceneKind(curScene) === 'indoor';
+    const skinsBtn = document.getElementById('editSkinsBtn');
+    const templatesBtn = document.getElementById('editTemplatesBtn');
+    const subpanel = document.getElementById('editDrawerSubpanel');
+    if (skinsBtn) {
+      skinsBtn.hidden = !isIndoor;
+      skinsBtn.style.display = isIndoor ? '' : 'none';
+      skinsBtn.setAttribute('aria-pressed', _subpanelMode === 'skins' ? 'true' : 'false');
+    }
+    if (templatesBtn) {
+      templatesBtn.hidden = !isIndoor;
+      templatesBtn.style.display = isIndoor ? '' : 'none';
+      templatesBtn.setAttribute('aria-pressed', _subpanelMode === 'templates' ? 'true' : 'false');
+    }
+    if (!isIndoor && subpanel) {
+      _subpanelMode = null;
+      subpanel.hidden = true;
+    }
+
     if (info.isLocked) {
       levelEl.textContent = info.level > 0 ? ('Level ' + info.level) : 'Locked';
 
@@ -1131,6 +1243,151 @@
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  function renderSubpanel(state, curScene) {
+    if (typeof document === 'undefined') return;
+    const subpanel = document.getElementById('editDrawerSubpanel');
+    const skinsBtn = document.getElementById('editSkinsBtn');
+    const templatesBtn = document.getElementById('editTemplatesBtn');
+    const isIndoor = getSceneKind(curScene) === 'indoor';
+    if (!subpanel) return;
+
+    if (!isIndoor || !_subpanelMode || !_isOpen) {
+      subpanel.hidden = true;
+      if (skinsBtn) skinsBtn.setAttribute('aria-pressed', 'false');
+      if (templatesBtn) templatesBtn.setAttribute('aria-pressed', 'false');
+      return;
+    }
+
+    subpanel.hidden = false;
+    if (skinsBtn) skinsBtn.setAttribute('aria-pressed', _subpanelMode === 'skins' ? 'true' : 'false');
+    if (templatesBtn) templatesBtn.setAttribute('aria-pressed', _subpanelMode === 'templates' ? 'true' : 'false');
+
+    if (_subpanelMode === 'skins' && window.EditSkins && typeof window.EditSkins.build === 'function') {
+      window.EditSkins.build(subpanel, { state: state || _lastState || {}, roomId: curScene, send: sendBridge });
+    } else if (_subpanelMode === 'templates' && window.EditTemplates && typeof window.EditTemplates.build === 'function') {
+      window.EditTemplates.build(subpanel, { state: state || _lastState || {}, roomId: curScene, send: sendBridge });
+    } else {
+      subpanel.innerHTML = '';
+    }
+  }
+
+  function bindHeaderActions(container) {
+    const closeBtn = container.querySelector('#editDrawerClose');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        if (isOpen()) toggle();
+      });
+    }
+
+    const upgradeBtn = container.querySelector('#editDrawerUpgradeBtn');
+    if (upgradeBtn) {
+      upgradeBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
+          ? window.CuyPlaces.getCurrentPlace()
+          : _currentSceneId;
+        if (window.CuyPlaces && typeof window.CuyPlaces.upgrade === 'function') {
+          window.CuyPlaces.upgrade(curScene);
+        } else {
+          sendBridge({ type: 'place_upgrade', id: curScene });
+        }
+      });
+    }
+
+    const unlockBtn = container.querySelector('#editDrawerUnlockBtn');
+    if (unlockBtn) {
+      unlockBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
+          ? window.CuyPlaces.getCurrentPlace()
+          : _currentSceneId;
+        if (window.CuyPlaces && typeof window.CuyPlaces.unlock === 'function') {
+          window.CuyPlaces.unlock(curScene);
+        } else {
+          sendBridge({ type: 'place_unlock', id: curScene });
+        }
+      });
+    }
+
+    const skinsBtn = container.querySelector('#editSkinsBtn');
+    if (skinsBtn) {
+      skinsBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        _subpanelMode = (_subpanelMode === 'skins') ? null : 'skins';
+        const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
+          ? window.CuyPlaces.getCurrentPlace()
+          : _currentSceneId;
+        renderSubpanel(_lastState, curScene);
+      });
+    }
+
+    const templatesBtn = container.querySelector('#editTemplatesBtn');
+    if (templatesBtn) {
+      templatesBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        _subpanelMode = (_subpanelMode === 'templates') ? null : 'templates';
+        const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
+          ? window.CuyPlaces.getCurrentPlace()
+          : _currentSceneId;
+        renderSubpanel(_lastState, curScene);
+      });
+    }
+  }
+
+  function positionDrawer() {
+    if (typeof document === 'undefined') return;
+    const drawer = document.getElementById('editDrawer');
+    if (!drawer || drawer.hidden) return;
+    const moreBtn = document.getElementById('btnMore');
+    const bar = document.getElementById('placesBar');
+    const vh = window.innerHeight || document.documentElement.clientHeight || 640;
+    let bottomPx = 122;
+    if (moreBtn) {
+      const mRect = moreBtn.getBoundingClientRect();
+      if (mRect.height > 0 && mRect.top > 0) {
+        bottomPx = Math.max(bottomPx, Math.ceil(vh - mRect.top + 4));
+      }
+    }
+    drawer.style.bottom = bottomPx + 'px';
+    if (bar) {
+      const bRect = bar.getBoundingClientRect();
+      if (bRect.height > 0) {
+        const maxH = Math.max(120, Math.floor(vh - bottomPx - bRect.bottom - 4));
+        drawer.style.maxHeight = Math.min(230, maxH) + 'px';
+      }
+    }
+  }
+
+  function ensureDrawerInnerNodes(drawer) {
+    const content = drawer.querySelector('#editDrawerContent');
+    if (!content) return;
+    if (!drawer.querySelector('#editHint')) {
+      const hint = document.createElement('div');
+      hint.className = 'edit-hint';
+      hint.id = 'editHint';
+      hint.hidden = !_isOpen;
+      hint.textContent = 'Drag objects to move, or drag to drawer to stash';
+      drawer.insertBefore(hint, content);
+    }
+    if (!drawer.querySelector('#editDrawerFilters')) {
+      const filters = document.createElement('div');
+      filters.className = 'edit-drawer-filters';
+      filters.id = 'editDrawerFilters';
+      drawer.insertBefore(filters, content);
+    }
+    if (!drawer.querySelector('#editDrawerSubpanel')) {
+      const sub = document.createElement('div');
+      sub.className = 'edit-drawer-subpanel';
+      sub.id = 'editDrawerSubpanel';
+      sub.hidden = true;
+      drawer.insertBefore(sub, content);
+    }
+  }
+
   function ensureElements() {
     if (typeof document === 'undefined') return;
 
@@ -1149,6 +1406,19 @@
       bar.appendChild(btn);
     }
 
+    const actionsHtml =
+      '<div class="edit-drawer-header-actions">' +
+        '<button type="button" class="ui-btn edit-skins-btn" id="editSkinsBtn" aria-label="Skins" title="Skins" aria-pressed="false">Skins</button>' +
+        '<button type="button" class="ui-btn edit-templates-btn" id="editTemplatesBtn" aria-label="Themes" title="Themes" aria-pressed="false">Themes</button>' +
+        '<button type="button" class="ui-btn edit-upgrade-btn" id="editDrawerUpgradeBtn" aria-label="Upgrade place">' +
+          'Upgrade (<span class="edit-upgrade-cost">0</span> <span class="pixel-icon icon-clover" aria-hidden="true"></span>)' +
+        '</button>' +
+        '<button type="button" class="ui-btn edit-unlock-btn" id="editDrawerUnlockBtn" aria-label="Unlock place" style="display:none;" hidden>' +
+          'Unlock (<span class="edit-unlock-cost">0</span> <span class="pixel-icon icon-clover" aria-hidden="true"></span>)' +
+        '</button>' +
+        '<button type="button" class="ui-close edit-drawer-close" id="editDrawerClose" aria-label="Close stash"></button>' +
+      '</div>';
+
     const existingDrawer = document.getElementById('editDrawer');
     if (existingDrawer && !existingDrawer.querySelector('#editDrawerUpgradeBtn')) {
       const header = existingDrawer.querySelector('.edit-drawer-header');
@@ -1158,55 +1428,10 @@
             '<span class="edit-drawer-title" id="editDrawerTitle">Stash</span>' +
             '<span class="edit-drawer-level" id="editDrawerLevel">Level 1</span>' +
           '</div>' +
-          '<div class="edit-drawer-header-actions">' +
-            '<button type="button" class="ui-btn edit-upgrade-btn" id="editDrawerUpgradeBtn" aria-label="Upgrade place">' +
-              'Upgrade (<span class="edit-upgrade-cost">0</span> <span class="pixel-icon icon-clover" aria-hidden="true"></span>)' +
-            '</button>' +
-            '<button type="button" class="ui-btn edit-unlock-btn" id="editDrawerUnlockBtn" aria-label="Unlock place" style="display:none;" hidden>' +
-              'Unlock (<span class="edit-unlock-cost">0</span> <span class="pixel-icon icon-clover" aria-hidden="true"></span>)' +
-            '</button>' +
-            '<button type="button" class="ui-close edit-drawer-close" id="editDrawerClose" aria-label="Close stash"></button>' +
-          '</div>';
-
-        const closeBtn = existingDrawer.querySelector('#editDrawerClose');
-        if (closeBtn) {
-          closeBtn.addEventListener('click', function () {
-            if (isOpen()) toggle();
-          });
-        }
-
-        const upgradeBtn = existingDrawer.querySelector('#editDrawerUpgradeBtn');
-        if (upgradeBtn) {
-          upgradeBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
-              ? window.CuyPlaces.getCurrentPlace()
-              : _currentSceneId;
-            if (window.CuyPlaces && typeof window.CuyPlaces.upgrade === 'function') {
-              window.CuyPlaces.upgrade(curScene);
-            } else if (window.bridge && typeof window.bridge.send === 'function') {
-              window.bridge.send({ type: 'place_upgrade', id: curScene });
-            }
-          });
-        }
-
-        const unlockBtn = existingDrawer.querySelector('#editDrawerUnlockBtn');
-        if (unlockBtn) {
-          unlockBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
-              ? window.CuyPlaces.getCurrentPlace()
-              : _currentSceneId;
-            if (window.CuyPlaces && typeof window.CuyPlaces.unlock === 'function') {
-              window.CuyPlaces.unlock(curScene);
-            } else if (window.bridge && typeof window.bridge.send === 'function') {
-              window.bridge.send({ type: 'place_unlock', id: curScene });
-            }
-          });
-        }
+          actionsHtml;
+        bindHeaderActions(existingDrawer);
       }
+      ensureDrawerInnerNodes(existingDrawer);
     }
 
     if (!document.getElementById('editDrawer')) {
@@ -1223,59 +1448,16 @@
             '<span class="edit-drawer-title" id="editDrawerTitle">Stash</span>' +
             '<span class="edit-drawer-level" id="editDrawerLevel">Level 1</span>' +
           '</div>' +
-          '<div class="edit-drawer-header-actions">' +
-            '<button type="button" class="ui-btn edit-upgrade-btn" id="editDrawerUpgradeBtn" aria-label="Upgrade place">' +
-              'Upgrade (<span class="edit-upgrade-cost">0</span> <span class="pixel-icon icon-clover" aria-hidden="true"></span>)' +
-            '</button>' +
-            '<button type="button" class="ui-btn edit-unlock-btn" id="editDrawerUnlockBtn" aria-label="Unlock place" style="display:none;" hidden>' +
-              'Unlock (<span class="edit-unlock-cost">0</span> <span class="pixel-icon icon-clover" aria-hidden="true"></span>)' +
-            '</button>' +
-            '<button type="button" class="ui-close edit-drawer-close" id="editDrawerClose" aria-label="Close stash"></button>' +
-          '</div>' +
+          actionsHtml +
         '</div>' +
+        '<div class="edit-hint" id="editHint" hidden>Drag objects to move, or drag to drawer to stash</div>' +
+        '<div class="edit-drawer-filters" id="editDrawerFilters"></div>' +
+        '<div class="edit-drawer-subpanel" id="editDrawerSubpanel" hidden></div>' +
         '<div class="edit-drawer-content" id="editDrawerContent" role="region" aria-label="Placeable items">' +
           '<div class="edit-drawer-strip" id="editDrawerStrip" role="list"></div>' +
         '</div>';
       document.body.appendChild(drawer);
-
-      const closeBtn = drawer.querySelector('#editDrawerClose');
-      if (closeBtn) {
-        closeBtn.addEventListener('click', function () {
-          if (isOpen()) toggle();
-        });
-      }
-
-      const upgradeBtn = drawer.querySelector('#editDrawerUpgradeBtn');
-      if (upgradeBtn) {
-        upgradeBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
-            ? window.CuyPlaces.getCurrentPlace()
-            : _currentSceneId;
-          if (window.CuyPlaces && typeof window.CuyPlaces.upgrade === 'function') {
-            window.CuyPlaces.upgrade(curScene);
-          } else if (window.bridge && typeof window.bridge.send === 'function') {
-            window.bridge.send({ type: 'place_upgrade', id: curScene });
-          }
-        });
-      }
-
-      const unlockBtn = drawer.querySelector('#editDrawerUnlockBtn');
-      if (unlockBtn) {
-        unlockBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
-            ? window.CuyPlaces.getCurrentPlace()
-            : _currentSceneId;
-          if (window.CuyPlaces && typeof window.CuyPlaces.unlock === 'function') {
-            window.CuyPlaces.unlock(curScene);
-          } else if (window.bridge && typeof window.bridge.send === 'function') {
-            window.bridge.send({ type: 'place_unlock', id: curScene });
-          }
-        });
-      }
+      bindHeaderActions(drawer);
 
       if (!drawer._dragBound) {
         drawer.addEventListener('pointerdown', onPointerDown);
@@ -1335,31 +1517,42 @@
           e.preventDefault();
           e.stopPropagation();
           if (!_selectedUid) return;
+          const thing = findPlacedThing(_selectedUid);
+          if (isFixtureItem(thing)) {
+            showEditToast('You can move this fixture, not stash it.');
+            return;
+          }
           const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
             ? window.CuyPlaces.getCurrentPlace()
             : _currentSceneId;
           const uid = _selectedUid;
           setSelection(null);
-          if (window.bridge && typeof window.bridge.send === 'function') {
-            window.bridge.send({
-              type: 'room_remove',
-              place: curScene,
-              uid: uid
-            });
-          }
+          sendBridge({
+            type: 'room_remove',
+            place: curScene,
+            uid: uid
+          });
         });
       }
     }
   }
 
-  function renderDrawerContent(state, curScene) {
-    const strip = document.getElementById('editDrawerStrip');
+  function renderStripItems(strip, allItems) {
     if (!strip) return;
+    if (!allItems || allItems.length === 0) {
+      strip.innerHTML = '<div class="edit-drawer-empty">Nothing to place yet</div>';
+      return;
+    }
 
-    const items = itemsFor(state, curScene);
+    let items = allItems;
+    if (window.EditFilters && typeof window.EditFilters.filterItems === 'function') {
+      const effectiveTab = _filterState.tab === 'Outdoor' ? 'All' : _filterState.tab;
+      items = window.EditFilters.filterItems(allItems, { tab: effectiveTab, query: _filterState.query });
+    }
 
     if (!items || items.length === 0) {
-      strip.innerHTML = '<div class="edit-drawer-empty">Nothing to place yet</div>';
+      const msg = (window.EditFilters && window.EditFilters.EMPTY_MESSAGE) || 'No items match your filter';
+      strip.innerHTML = '<div class="edit-drawer-empty">' + esc(msg) + '</div>';
       return;
     }
 
@@ -1379,6 +1572,61 @@
     }).join('');
 
     strip.innerHTML = html;
+  }
+
+  function appendOutdoorTabIfNeeded(filtersEl, allItems, curScene) {
+    if (!filtersEl || getSceneKind(curScene) !== 'outdoor') return;
+    const tabsEl = filtersEl.querySelector('.edit-drawer-tabs');
+    if (!tabsEl || tabsEl.querySelector('[data-tab="Outdoor"]')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'edit-drawer-tab';
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('data-tab', 'Outdoor');
+    btn.setAttribute('aria-selected', _filterState.tab === 'Outdoor' ? 'true' : 'false');
+    btn.textContent = 'Outdoor (' + allItems.length + ')';
+    btn.addEventListener('click', function () {
+      _filterState.tab = 'Outdoor';
+      const allTabs = tabsEl.querySelectorAll('[role="tab"]');
+      for (let i = 0; i < allTabs.length; i++) {
+        allTabs[i].setAttribute('aria-selected', allTabs[i] === btn ? 'true' : 'false');
+      }
+      renderStripItems(document.getElementById('editDrawerStrip'), allItems);
+    });
+    tabsEl.appendChild(btn);
+  }
+
+  function renderDrawerContent(state, curScene) {
+    const strip = document.getElementById('editDrawerStrip');
+    if (!strip) return;
+
+    const isOutdoor = getSceneKind(curScene) === 'outdoor';
+    if (!isOutdoor && _filterState.tab === 'Outdoor') {
+      _filterState.tab = 'All';
+    }
+
+    const allItems = itemsFor(state, curScene);
+    const filtersEl = document.getElementById('editDrawerFilters');
+    if (filtersEl && window.EditFilters && typeof window.EditFilters.build === 'function') {
+      const searchEl = document.getElementById('editDrawerSearch');
+      const searchFocused = searchEl && document.activeElement === searchEl;
+      if (!searchFocused) {
+        window.EditFilters.build(filtersEl, {
+          items: allItems,
+          tab: _filterState.tab === 'Outdoor' ? 'All' : _filterState.tab,
+          query: _filterState.query,
+          onChange: function (next) {
+            _filterState = { tab: next.tab || 'All', query: next.query || '' };
+            const outdoorTab = filtersEl.querySelector('[data-tab="Outdoor"]');
+            if (outdoorTab) outdoorTab.setAttribute('aria-selected', 'false');
+            renderStripItems(document.getElementById('editDrawerStrip'), allItems);
+          }
+        });
+        appendOutdoorTabIfNeeded(filtersEl, allItems, curScene);
+      }
+    }
+
+    renderStripItems(strip, allItems);
   }
 
   function ensurePointerListeners() {
@@ -1422,6 +1670,10 @@
     if (!drawer) return;
 
     drawer.hidden = !_isOpen;
+    const hintEl = document.getElementById('editHint');
+    if (hintEl) {
+      hintEl.hidden = !_isOpen;
+    }
 
     if (_isOpen) {
       if (lockInfo.locked) {
@@ -1432,8 +1684,11 @@
       } else {
         renderDrawerContent(state, curScene);
       }
+      renderSubpanel(state, curScene);
+      positionDrawer();
       updateToolbar();
     } else {
+      renderSubpanel(state, curScene);
       updateToolbar();
     }
   }
@@ -1442,6 +1697,11 @@
     _isOpen = !_isOpen;
     if (!_isOpen) {
       setSelection(null);
+      _subpanelMode = null;
+      const canvas = (window.CanvasPig && window.CanvasPig.instance && window.CanvasPig.instance.canvas)
+        || (window.PigCanvas && window.PigCanvas.instance && window.PigCanvas.instance.canvas)
+        || (typeof document !== 'undefined' ? document.getElementById('pigCanvas') : null);
+      if (canvas) canvas.style.cursor = '';
     }
     render(_lastState);
   }
@@ -1487,18 +1747,21 @@
           }
           e.preventDefault();
           e.stopPropagation();
+          const thing = findPlacedThing(_selectedUid);
+          if (isFixtureItem(thing)) {
+            showEditToast('You can move this fixture, not stash it.');
+            return;
+          }
           const curScene = (window.CuyPlaces && typeof window.CuyPlaces.getCurrentPlace === 'function')
             ? window.CuyPlaces.getCurrentPlace()
             : _currentSceneId;
           const uid = _selectedUid;
           setSelection(null);
-          if (window.bridge && typeof window.bridge.send === 'function') {
-            window.bridge.send({
-              type: 'room_remove',
-              place: curScene,
-              uid: uid
-            });
-          }
+          sendBridge({
+            type: 'room_remove',
+            place: curScene,
+            uid: uid
+          });
         }
       }
     });

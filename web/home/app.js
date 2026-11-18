@@ -781,18 +781,18 @@
       this.features.sort((a, b) => (a.order || 99) - (b.order || 99));
     },
     listFeatures() {
-      return this.features.filter(f => f && f.id !== 'rooms' && f.id !== 'garden');
+      return this.features.filter(f => f && f.id !== 'rooms' && f.id !== 'garden' && f.id !== 'farm' && f.id !== 'market');
     },
     openFeature(id, arg, opts) {
       if (arg && typeof arg === 'object' && !opts && ('from' in arg)) {
         opts = arg;
         arg = undefined;
       }
-      if (id === 'rooms' || id === 'garden') {
+      if (id === 'rooms' || id === 'garden' || id === 'farm' || id === 'market') {
         this.closeFeature();
         if (typeof closeModal === 'function') closeModal();
         if (window.CuyPlaces && typeof window.CuyPlaces.openPlace === 'function') {
-          window.CuyPlaces.openPlace(id === 'rooms' ? (arg || 'salon') : 'garden');
+          window.CuyPlaces.openPlace(id === 'rooms' ? (arg || 'salon') : id);
         }
         return;
       }
@@ -924,7 +924,7 @@
 
     // Then registered features
     window.CuyHome.listFeatures().forEach(feat => {
-      if (!feat || feat.id === 'rooms' || feat.id === 'garden') return;
+      if (!feat || feat.id === 'rooms' || feat.id === 'garden' || feat.id === 'farm' || feat.id === 'market') return;
       let iconHtml = '';
       if (feat.icon) {
         if (feat.icon.startsWith('icon-')) {

@@ -1,0 +1,6 @@
+# PK-P46c: C# outdoor room messages, fixture_locked toast, validation
+- `RoomsMessages.cs`: raised `room_place`/`room_move` coordinate bounds to `x: [-1, 512]`, `y: [-1, 256]` (covers 256x144 outdoor scenes and 384x192 park per R30, instead of RI3's 256-only `x`).
+- `RoomsMessages.ToastFor(string errorCode)`: returns `"You can move this fixture, not stash it."` (40 chars <= 60) for `"fixture_locked"`, and `"Action not available."` otherwise (never throws).
+- `RoomsFeature.cs`: `AddState` now serializes `movable = it.Movable, removable = it.Removable` on `items[]`; `room_remove` checks `RoomLayoutOps.Remove(room, uid, out string error)` on `!ok` (since `Pet.RemoveItem` is outside `Zmieniaj`) and posts toast `RoomsMessages.ToastFor("fixture_locked")` when `error == "fixture_locked"`.
+- Difference from prompt: `FieldRule.Id` (`^[a-z0-9_:]+$`, `IMessageRuleSet.cs` outside `Zmieniaj`) accepts alphanumeric ids like `garden2`, so `RoomsOutdoorMessagesTests.cs` tests `..`, empty, `null`, and 300-char `place` per RI3 sec 2.
+- Verification: `dotnet test` filter `RoomsOutdoorMessages|RoomsMessages|MessageValidator` -> 37/37 passed; `dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true` -> 0 warnings, 0 errors.

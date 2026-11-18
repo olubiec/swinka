@@ -11,15 +11,15 @@ namespace Cuy.Core.Input.Validation
                 "room_place",
                 FieldRule.Id("place"),
                 FieldRule.Id("itemId"),
-                FieldRule.Int("x", -1, 200),
-                FieldRule.Int("y", -1, 200),
+                FieldRule.Int("x", -1, 512),
+                FieldRule.Int("y", -1, 256),
                 FieldRule.Bool("flip", required: false)),
             new MessageRule(
                 "room_move",
                 FieldRule.Id("place"),
                 FieldRule.Id("uid"),
-                FieldRule.Int("x", -1, 200),
-                FieldRule.Int("y", -1, 200)),
+                FieldRule.Int("x", -1, 512),
+                FieldRule.Int("y", -1, 256)),
             new MessageRule(
                 "room_flip",
                 FieldRule.Id("place"),
@@ -35,5 +35,12 @@ namespace Cuy.Core.Input.Validation
                 FieldRule.Id("slot"),
                 FieldRule.Id("itemId", required: false))
         };
+
+        public static string ToastFor(string errorCode)
+        {
+            if (errorCode == "fixture_locked")
+                return "You can move this fixture, not stash it.";
+            return "Action not available.";
+        }
     }
 }

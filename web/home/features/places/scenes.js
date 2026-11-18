@@ -93,6 +93,8 @@
   };
 
   let scenesData = null;
+  let hotspotsData = null;
+  let hotspotsPromise = null;
   let loadPromise = null;
   let atlasData = null;
   let atlasPromise = null;
@@ -214,6 +216,7 @@
 
     loadPromise = (async () => {
       loadAtlas().catch(() => {});
+      loadHotspots().catch(() => {});
       if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
         const url = getAssetUrl('data/place_scenes.json');
         try {
@@ -249,11 +252,53 @@
     return loadPromise;
   }
 
+  function getHotspotsData() {
+    if (hotspotsData) return hotspotsData;
+    if (typeof require !== 'undefined') {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const candidates = [
+          path.resolve(__dirname, '../../../assets/data/scene_hotspots.json'),
+          path.resolve(__dirname, '../../../../assets/data/scene_hotspots.json'),
+          path.resolve(process.cwd(), 'assets/data/scene_hotspots.json')
+        ];
+        for (const p of candidates) {
+          if (fs.existsSync(p)) {
+            hotspotsData = JSON.parse(fs.readFileSync(p, 'utf8'));
+            return hotspotsData;
+          }
+        }
+      } catch (e) {}
+    }
+    return hotspotsData;
+  }
+
+  async function loadHotspots() {
+    if (hotspotsData) return hotspotsData;
+    if (hotspotsPromise) return hotspotsPromise;
+    hotspotsPromise = (async () => {
+      if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
+        const url = getAssetUrl('data/scene_hotspots.json');
+        try {
+          const res = await window.fetch(url);
+          if (res.ok) {
+            hotspotsData = await res.json();
+            return hotspotsData;
+          }
+        } catch (e) {}
+      }
+      return getHotspotsData();
+    })();
+    return hotspotsPromise;
+  }
+
   // Pre-trigger loading if in browser
   if (typeof window !== 'undefined') {
     load();
     loadAtlas();
     loadTiles();
+    loadHotspots();
   }
 
   function getScenesDict() {
@@ -649,6 +694,8 @@
         img: null,
         x: x,
         y: y,
+        w: sw,
+        h: sh,
         anchorX: anchorX,
         anchorY: anchorY,
         flat: isFlat,
@@ -673,10 +720,33 @@
     };
   }
 
+  function hotspotsFor(sceneId, state) {
+    const hsMod = (typeof window !== 'undefined' && window.CuyHotspots) || (typeof CuyHotspots !== 'undefined' ? CuyHotspots : null);
+    if (!hsMod || typeof hsMod.fromScene !== 'function') return [];
+    const st = state || (typeof window !== 'undefined' && window.bridge && window.bridge.currentState) || null;
+    let instances = placedThings(st, sceneId);
+    if (isHouseRoom(sceneId) && instances.length > 0) {
+      const layout = layoutFor(sceneId, st);
+      const cols = (layout && layout.cols) ? layout.cols : 12;
+      const rows = (layout && layout.rows) ? layout.rows : 7;
+      const roomGeom = getRoomGeometry();
+      const off = (roomGeom && typeof roomGeom.stageOffset === 'function')
+        ? roomGeom.stageOffset(cols, rows)
+        : { x: Math.floor((256 - cols * 16) / 2), y: Math.floor((144 - rows * 16) / 2) };
+      instances = instances.map(it => Object.assign({}, it, {
+        x: (it.x || 0) + off.x,
+        y: (it.y || 0) + off.y
+      }));
+    }
+    const catalog = (typeof window !== 'undefined' && window.CuyWorldItems) || null;
+    return hsMod.fromScene(sceneId, getHotspotsData(), instances, catalog);
+  }
+
   const CuyScenes = {
     load: load,
     loadAtlas: loadAtlas,
     loadTiles: loadTiles,
+    loadHotspots: loadHotspots,
     order: order,
     neighbor: neighbor,
     def: def,
@@ -684,6 +754,7 @@
     timeOfDay: timeOfDay,
     pigScene: pigScene,
     placedThings: placedThings,
+    hotspotsFor: hotspotsFor,
     debugInstances: debugInstances,
     setBgClean: setBgClean,
     getAtlas: getAtlas,

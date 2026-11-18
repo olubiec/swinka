@@ -78,13 +78,91 @@
       });
   }
 
+  let weatherData = null;
+  let weatherLoaded = false;
+  let weatherLoading = false;
+  let hotspotsData = null;
+  let hotspotsLoaded = false;
+  let hotspotsLoading = false;
+  let lampHotspotSubscribed = false;
+
+  function ensureWeather(onReady) {
+    if (!window.CuyWeather && typeof document !== 'undefined' && !document.querySelector('script[data-cuy-weather]')) {
+      const s = document.createElement('script');
+      s.src = 'lib/weather.js';
+      s.dataset.cuyWeather = '1';
+      s.onload = () => { if (onReady) onReady(); };
+      s.onerror = () => { /* missing lib is safe */ };
+      document.head.appendChild(s);
+    }
+    if (weatherLoaded) {
+      if (onReady) onReady();
+      return;
+    }
+    if (weatherLoading) return;
+    weatherLoading = true;
+    const isWebView = !!(typeof window !== 'undefined' && window.chrome && window.chrome.webview);
+    const url = isWebView ? 'https://cuy.assets/data/weather.json' : '../../assets/data/weather.json';
+    fetch(url)
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => {
+        weatherData = j;
+        weatherLoaded = true;
+        weatherLoading = false;
+        if (onReady) onReady();
+      })
+      .catch(() => {
+        weatherData = null;
+        weatherLoaded = true;
+        weatherLoading = false;
+        if (onReady) onReady();
+      });
+  }
+
+  function ensureHotspots(onReady) {
+    if (hotspotsLoaded) {
+      if (onReady) onReady();
+      return;
+    }
+    if (hotspotsLoading) return;
+    hotspotsLoading = true;
+    const isWebView = !!(typeof window !== 'undefined' && window.chrome && window.chrome.webview);
+    const url = isWebView ? 'https://cuy.assets/data/scene_hotspots.json' : '../../assets/data/scene_hotspots.json';
+    fetch(url)
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => {
+        hotspotsData = j;
+        hotspotsLoaded = true;
+        hotspotsLoading = false;
+        if (onReady) onReady();
+      })
+      .catch(() => {
+        hotspotsData = null;
+        hotspotsLoaded = true;
+        hotspotsLoading = false;
+        if (onReady) onReady();
+      });
+  }
+
+  function ensureLampHotspotSubscription() {
+    if (lampHotspotSubscribed) return;
+    if (window.CanvasPig && typeof window.CanvasPig.onHotspot === 'function') {
+      lampHotspotSubscribed = true;
+      window.CanvasPig.onHotspot((hs) => {
+        if (hs && hs.kind === 'lamp') {
+          toggleLamp(hs.uid || hs.id);
+        }
+      });
+    }
+  }
+
   // Pre-load lights lazily
   ensureLights();
 
   const CuyLight = {
     build(sceneId, placed, toggles) {
       const sId = sceneId || currentSceneId || 'salon';
-      if (!window.Lights || !lightsData) return null;
+      if (!window.Lights || typeof window.Lights.periodOf !== 'function' || typeof window.Lights.ambientFor !== 'function' || typeof window.Lights.activeSources !== 'function' || !lightsData) return null;
       const period = window.Lights.periodOf(getLightsNow());
       const kind = getPlaceKind(sId);
       const amb = window.Lights.ambientFor(lightsData, period);
@@ -139,8 +217,7 @@
             }
           }
         } else {
-          gx = 120;
-          gy = 65;
+          return;
         }
 
         placedForLights.push({
@@ -222,9 +299,9 @@
         }
       };
 
-      const origApply = window.PigCanvas.prototype.applySceneLight;
-      window.PigCanvas.prototype.applySceneLight = function(ctx, scene) {
-        if (origApply) origApply.call(this, ctx, scene);
+      const origGlow = window.PigCanvas.prototype.applySceneGlow;
+      window.PigCanvas.prototype.applySceneGlow = function(ctx, scene) {
+        if (origGlow) origGlow.call(this, ctx, scene);
         if (!scene) return;
 
         // Lamp glow
@@ -848,6 +925,47 @@
       });
     }
 
+    ensureLampHotspotSubscription();
+
+    // Hotspots per scene
+    const syncHotspots = () => {
+      if (window.CuyHotspots && typeof window.CuyHotspots.fromScene === 'function' &&
+          window.CanvasPig && typeof window.CanvasPig.setHotspots === 'function') {
+        const hsList = isLocked
+          ? (window.CuyHotspots.EMPTY || [])
+          : window.CuyHotspots.fromScene(currentSceneId, hotspotsData, things, null);
+        window.CanvasPig.setHotspots(hsList);
+      }
+    };
+    syncHotspots();
+    if (!hotspotsLoaded && window.CuyHotspots && typeof window.CuyHotspots.fromScene === 'function') {
+      ensureHotspots(syncHotspots);
+    }
+
+    // Weather layer (outdoor only, unlocked only)
+    const syncWeatherLayer = () => {
+      if (!window.CuyRoom) return;
+      if (getPlaceKind(currentSceneId) === 'outdoor' && !isLocked &&
+          window.CuyWeather && typeof window.CuyWeather.stateFor === 'function' && typeof window.CuyWeather.draw === 'function') {
+        const weatherState = window.CuyWeather.stateFor(getLightsNow(), 'outdoor', st && st.settings, weatherData);
+        if (typeof window.CuyRoom.addLayer === 'function') {
+          window.CuyRoom.addLayer('weather', 15, (ctx, scene) => {
+            if (!window.CuyWeather || typeof window.CuyWeather.draw !== 'function') return;
+            const w = (scene && scene.width) || 256;
+            const h = (scene && scene.height) || 144;
+            const t = (scene && scene.time != null) ? scene.time : 0;
+            window.CuyWeather.draw(ctx, weatherState, t, w, h);
+          });
+        }
+      } else if (typeof window.CuyRoom.removeLayer === 'function') {
+        window.CuyRoom.removeLayer('weather');
+      }
+    };
+    syncWeatherLayer();
+    if (getPlaceKind(currentSceneId) === 'outdoor' && !isLocked && !weatherLoaded) {
+      ensureWeather(syncWeatherLayer);
+    }
+
     // 3. Pig visibility and exits
     const pigLocs = getPigLocations(st);
     const pigInThisScene = pigLocs.find(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId);
@@ -858,6 +976,20 @@
     const isAnyPigHere = pigLocs.length > 0
       ? pigLocs.some(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId)
       : (currentSceneId === 'salon');
+
+    const roster = Array.isArray(st && st.roster) ? st.roster : [];
+    const presentList = pigLocs
+      .filter(p => p && (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId)
+      .map(loc => {
+        const pigId = loc.pigId || loc.PigId || loc.id;
+        const rosterPig = roster.find(r => r && (r.id === pigId || r.pigId === pigId));
+        return {
+          id: pigId,
+          look: (rosterPig && rosterPig.look) || rosterPig || null,
+          pinned: !!loc.pinned,
+          stage: (rosterPig && rosterPig.stage) || (st && st.stageKey) || 'adult'
+        };
+      });
 
     bindCanvasExits();
     bindCanvasDragSwitch();
@@ -891,7 +1023,9 @@
       if (hintBar) hintBar.hidden = false;
       if (hintText) hintText.textContent = item.unlockHint || 'Locked';
 
-      if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
+      if (window.CanvasPig && typeof window.CanvasPig.setPresentPigs === 'function') {
+        window.CanvasPig.setPresentPigs([]);
+      } else if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
         window.CanvasPig.setPigVisible(false);
       }
 
@@ -912,7 +1046,9 @@
         window.CuyRoom.removeLayer('p36_locked_overlay');
       }
 
-      if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
+      if (window.CanvasPig && typeof window.CanvasPig.setPresentPigs === 'function') {
+        window.CanvasPig.setPresentPigs(presentList);
+      } else if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
         window.CanvasPig.setPigVisible(isAnyPigHere || isPigBeingDragged);
       }
     }
@@ -1033,39 +1169,15 @@
   function setLampToggle(uid, on) {
     if (!currentSceneId) currentSceneId = 'salon';
     if (!sceneLampToggles[currentSceneId]) sceneLampToggles[currentSceneId] = {};
+    const light = CuyLight.build(currentSceneId);
+    const src = light && light.sources && light.sources.find(s => s.id === uid || s.uid === uid || s.itemId === uid);
+    if (src && !isToggleableLightSource(src)) return;
+    if (!src) {
+      const low = String(uid || '').toLowerCase();
+      if (low === 'window' || low.startsWith('window_')) return;
+    }
     sceneLampToggles[currentSceneId][uid] = !!on;
     applyScene(currentSceneId, getState());
-  }
-
-  function initCanvasLampClick() {
-    if (typeof document === 'undefined') return;
-    const canvas = document.getElementById('pigCanvas');
-    if (!canvas || canvas._cuyLampClick) return;
-    canvas._cuyLampClick = true;
-    canvas.addEventListener('click', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-      const clickX = (e.clientX - rect.left) * scaleX;
-      const clickY = (e.clientY - rect.top) * scaleY;
-
-      const inst = (window.CuyPig && window.CuyPig.mainInstance) || (window.CanvasPig && window.CanvasPig.instance);
-      const light = inst && inst.lightScene;
-      if (!light || !light.sources) return;
-
-      const hit = light.sources.find(s => isToggleableLightSource(s) && Math.hypot(s.x - clickX, s.y - clickY) <= Math.max(16, (s.radius || 40) * 0.4));
-      if (hit) {
-        toggleLamp(hit.id);
-      }
-    });
-  }
-
-  if (typeof document !== 'undefined') {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initCanvasLampClick);
-    } else {
-      initCanvasLampClick();
-    }
   }
 
   function syncEditButton(isPigBeingDragged) {

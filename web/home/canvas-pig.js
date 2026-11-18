@@ -319,6 +319,22 @@
       this.targetX = null;
       this.targetY = null;
       this.targetExit = null;
+
+      const ptMod = (typeof window !== 'undefined' && window.CuyPlayTargets) || null;
+      if (ptMod && typeof ptMod.pickReachable === 'function' && Array.isArray(this.things) && this.things.length > 0 && Math.random() < 0.25) {
+        const res = ptMod.pickReachable(
+          this.things,
+          { x: this.pigX, y: this.pigY },
+          (x, y) => this.isFree(x, y),
+          (sx, sy, tx, ty) => this.findPath(sx, sy, tx, ty),
+          Math.random,
+          (id) => this.getItemDef(id)
+        );
+        if (res && res.spot && this.setTarget(res.spot.x, res.spot.y)) {
+          this.pendingPlay = res;
+          return;
+        }
+      }
       this.currentAnim = 'idle';
       this.animTimer = 0;
       this.idleTimer = 400;
@@ -358,6 +374,16 @@
       this.imageCache = {};
       this.pigVisible = true;
       this.pigDraws = 0;
+      this.presentPigs = [];
+      this._multiPigActive = false;
+      this.scenePigs = (typeof window !== 'undefined' && window.CuyScenePigs && typeof window.CuyScenePigs.create === 'function')
+        ? window.CuyScenePigs.create({ bounds: this.walk || [10, 96, 230, 126], minGap: 22 })
+        : null;
+      this.pendingPlay = null;
+      this.activePlay = null;
+      this._hotspots = [];
+      this._hotspotListeners = [];
+      this._renderNowMs = null;
       this.currentScene = null;
       this.sceneId = 'salon';
       this.sceneKind = 'room';
@@ -945,6 +971,22 @@
       this.targetX = null;
       this.targetY = null;
       this.targetExit = null;
+
+      const ptMod = (typeof window !== 'undefined' && window.CuyPlayTargets) || null;
+      if (ptMod && typeof ptMod.pickReachable === 'function' && Array.isArray(this.things) && this.things.length > 0 && Math.random() < 0.25) {
+        const res = ptMod.pickReachable(
+          this.things,
+          { x: this.pigX, y: this.pigY },
+          (x, y) => this.isFree(x, y),
+          (sx, sy, tx, ty) => this.findPath(sx, sy, tx, ty),
+          Math.random,
+          (id) => this.getItemDef(id)
+        );
+        if (res && res.spot && this.setTarget(res.spot.x, res.spot.y)) {
+          this.pendingPlay = res;
+          return;
+        }
+      }
       this.idleTimer = 400;
 
       if (!this.depthScale) {
@@ -957,6 +999,10 @@
       }
 
       this.rebuildGrid();
+      this.clearPlayState();
+      if (this.scenePigs) {
+        this.scenePigs.setBounds(this.walk || [10, 96, 230, 126]);
+      }
 
       const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
       if (this.pigX < x0 || this.pigX > x1) this.pigX = Math.round((x0 + x1) / 2);
@@ -980,6 +1026,7 @@
 
     setThings(list, explicit = true) {
       if (explicit) this.explicitThings = true;
+      this.clearPlayState();
       const offX = (this.sceneKind === 'room' && this.roomOffset) ? (this.roomOffset.x || 0) : 0;
       const offY = (this.sceneKind === 'room' && this.roomOffset) ? (this.roomOffset.y || 0) : 0;
       this.things = Array.isArray(list) ? list.slice() : [];
@@ -1006,14 +1053,96 @@
         }
       });
       this.rebuildGrid();
+      this.clearPlayState();
+      if (this.scenePigs) {
+        this.scenePigs.setBounds(this.walk || [10, 96, 230, 126]);
+      }
     }
 
     setPigVisible(visible) {
+      this._multiPigActive = false;
       this.pigVisible = !!visible;
       if (!this.pigVisible) {
         this.pigDraws = 0;
         this.currentAnim = 'idle';
       }
+    }
+
+    ensureScenePigs() {
+      if (!this.scenePigs && typeof window !== 'undefined' && window.CuyScenePigs && typeof window.CuyScenePigs.create === 'function') {
+        this.scenePigs = window.CuyScenePigs.create({ bounds: this.walk || [10, 96, 230, 126], minGap: 22 });
+      }
+      return this.scenePigs;
+    }
+
+    setPresentPigs(list) {
+      this._multiPigActive = true;
+      this._overridePrimaryPos = false;
+      this.presentPigs = Array.isArray(list) ? list.slice() : [];
+      this.pigVisible = this.presentPigs.length > 0;
+      if (!this.pigVisible) {
+        this.pigDraws = 0;
+        this.currentAnim = 'idle';
+      }
+      const sp = this.ensureScenePigs();
+      if (sp) {
+        sp.setBounds(this.walk || [10, 96, 230, 126]);
+        sp.sync(this.presentPigs);
+        const entries = sp.entries();
+        if (entries.length > 0) {
+          this.pigX = entries[0].x;
+          this.pigY = entries[0].y;
+          this.facing = entries[0].facing;
+          this.activePig = entries[0].look || this.activePig;
+          if (entries[0].stage) this.stageKey = normStage(entries[0].stage);
+        }
+      }
+    }
+
+    clearPlayState() {
+      this.pendingPlay = null;
+      this.activePlay = null;
+      if (Array.isArray(this.things)) {
+        for (let i = 0; i < this.things.length; i++) {
+          if (this.things[i]) this.things[i].suppressDraw = false;
+        }
+      }
+    }
+
+    setHotspots(list) {
+      this._hotspots = Array.isArray(list) ? list.slice() : [];
+    }
+
+    getHotspots() {
+      return (this._hotspots || []).slice();
+    }
+
+    onHotspot(fn) {
+      if (typeof fn !== 'function') return () => {};
+      this._hotspotListeners.push(fn);
+      return () => {
+        const idx = this._hotspotListeners.indexOf(fn);
+        if (idx >= 0) this._hotspotListeners.splice(idx, 1);
+      };
+    }
+
+    isEditMode() {
+      return !!(typeof window !== 'undefined' && window.CuyEdit && typeof window.CuyEdit.isOpen === 'function' && window.CuyEdit.isOpen());
+    }
+
+    hitHotspot(x, y) {
+      if (!this._hotspots || this._hotspots.length === 0) return null;
+      const hsMod = (typeof window !== 'undefined' && window.CuyHotspots) || null;
+      if (hsMod && typeof hsMod.hit === 'function') {
+        return hsMod.hit(this._hotspots, x, y);
+      }
+      for (let i = 0; i < this._hotspots.length; i++) {
+        const h = this._hotspots[i];
+        if (h && Array.isArray(h.rect) && x >= h.rect[0] && x <= h.rect[2] && y >= h.rect[1] && y <= h.rect[3]) {
+          return h;
+        }
+      }
+      return null;
     }
 
     scaleAt(y) {
@@ -1047,6 +1176,22 @@
       this.setPigVisible(true);
       this.hasExited = false;
       this.targetExit = null;
+
+      const ptMod = (typeof window !== 'undefined' && window.CuyPlayTargets) || null;
+      if (ptMod && typeof ptMod.pickReachable === 'function' && Array.isArray(this.things) && this.things.length > 0 && Math.random() < 0.25) {
+        const res = ptMod.pickReachable(
+          this.things,
+          { x: this.pigX, y: this.pigY },
+          (x, y) => this.isFree(x, y),
+          (sx, sy, tx, ty) => this.findPath(sx, sy, tx, ty),
+          Math.random,
+          (id) => this.getItemDef(id)
+        );
+        if (res && res.spot && this.setTarget(res.spot.x, res.spot.y)) {
+          this.pendingPlay = res;
+          return;
+        }
+      }
       this.path = [];
 
       const leftX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.left && typeof this.currentScene.exits.left.x === 'number')
@@ -1147,6 +1292,22 @@
       if (this.hasExited || this.pigVisible === false) return;
       this.hasExited = true;
       this.targetExit = null;
+
+      const ptMod = (typeof window !== 'undefined' && window.CuyPlayTargets) || null;
+      if (ptMod && typeof ptMod.pickReachable === 'function' && Array.isArray(this.things) && this.things.length > 0 && Math.random() < 0.25) {
+        const res = ptMod.pickReachable(
+          this.things,
+          { x: this.pigX, y: this.pigY },
+          (x, y) => this.isFree(x, y),
+          (sx, sy, tx, ty) => this.findPath(sx, sy, tx, ty),
+          Math.random,
+          (id) => this.getItemDef(id)
+        );
+        if (res && res.spot && this.setTarget(res.spot.x, res.spot.y)) {
+          this.pendingPlay = res;
+          return;
+        }
+      }
       this.targetX = null;
       this.targetY = null;
       this.path = [];
@@ -1194,6 +1355,22 @@
       }
 
       this.targetExit = null;
+
+      const ptMod = (typeof window !== 'undefined' && window.CuyPlayTargets) || null;
+      if (ptMod && typeof ptMod.pickReachable === 'function' && Array.isArray(this.things) && this.things.length > 0 && Math.random() < 0.25) {
+        const res = ptMod.pickReachable(
+          this.things,
+          { x: this.pigX, y: this.pigY },
+          (x, y) => this.isFree(x, y),
+          (sx, sy, tx, ty) => this.findPath(sx, sy, tx, ty),
+          Math.random,
+          (id) => this.getItemDef(id)
+        );
+        if (res && res.spot && this.setTarget(res.spot.x, res.spot.y)) {
+          this.pendingPlay = res;
+          return;
+        }
+      }
 
       for (let attempt = 0; attempt < 30; attempt++) {
         let tx;
@@ -1285,12 +1462,24 @@
       const standing = (this.things || []).filter(t => !t.flat).slice().sort((a, b) => (a.y || 0) - (b.y || 0));
       const flats = (this.things || []).filter(t => !!t.flat);
 
+      const sp = this._multiPigActive ? this.ensureScenePigs() : null;
+      const pigEntries = (this._multiPigActive && sp)
+        ? sp.entries()
+        : (this.pigVisible !== false
+          ? [{ id: 'pig', x: this.pigX, y: pigFeetY, look: this.activePig || null, pinned: false }]
+          : []);
+      if (this._multiPigActive && this._overridePrimaryPos && pigEntries.length > 0) {
+        pigEntries[0] = Object.assign({}, pigEntries[0], { x: this.pigX, y: this.pigY });
+      }
+
       const renderList = [];
       flats.forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
-      if (this.pigVisible !== false) {
-        standing.filter(t => (t.y || 0) <= pigFeetY).forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
-        renderList.push({ id: 'pig', y: pigFeetY, kind: 'pig' });
-        standing.filter(t => (t.y || 0) > pigFeetY).forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
+      if (pigEntries.length > 0) {
+        const useLegacyPigId = pigEntries.length === 1;
+        const combined = standing.map(t => ({ id: t.id, y: t.y || 0, kind: 'thing', _ord: 0 }))
+          .concat(pigEntries.map(p => ({ id: useLegacyPigId ? 'pig' : p.id, y: p.y || 0, kind: 'pig', _ord: 1 })));
+        combined.sort((a, b) => (a.y - b.y) || (a._ord - b._ord));
+        combined.forEach(entry => renderList.push({ id: entry.id, y: entry.y, kind: entry.kind }));
       } else {
         standing.forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
       }
@@ -1324,6 +1513,13 @@
         renderList: renderList.map(t => ({ id: t.id, y: t.y })),
         renderOrder: renderList.map(t => t.id),
         pigVisible: this.pigVisible !== false,
+        pigs: pigEntries.map(p => ({
+          id: p.id,
+          x: Math.round(p.x),
+          y: Math.round(p.y),
+          look: p.look || null,
+          pinned: !!p.pinned
+        })),
         smoothing: this.ctx ? this.ctx.imageSmoothingEnabled : false,
         pigDraws: this.pigDraws || 0,
         shadowDraws: this.shadowDraws || 0,
@@ -1400,25 +1596,75 @@
     }
 
     drawThing(ctx, thing, skipShadow) {
-      if (!thing) return;
+      if (!thing || thing.suppressDraw) return;
       if (!skipShadow) this.drawThingShadow(ctx, thing);
-      const img = thing.img || (thing.url ? this.loadCachedImage(thing.url) : null);
+
+      let src = null;
+      if (this.lightScene && Array.isArray(this.lightScene.sources)) {
+        const tid = thing.uid || thing.id;
+        const titem = thing.itemId || thing.id;
+        src = this.lightScene.sources.find(s => s && ((tid && s.id === tid) || (titem && s.item === titem))) || null;
+      }
+
+      const nowMs = (typeof this._renderNowMs === 'number')
+        ? this._renderNowMs
+        : ((typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now());
+
+      if (src && src.on && src.on_file && src.base_file) {
+        const baseImg = thing.img || (thing.url ? this.loadCachedImage(thing.url) : null);
+        if (baseImg && ((baseImg.naturalWidth && baseImg.naturalWidth > 0) || (baseImg.width && baseImg.width > 0))) {
+          const bsw = baseImg.naturalWidth || baseImg.width;
+          const bsh = baseImg.naturalHeight || baseImg.height;
+          const bax = thing.anchorX !== undefined ? thing.anchorX : Math.round(bsw / 2);
+          const bay = thing.anchorY !== undefined ? thing.anchorY : bsh;
+          const bdx = Math.round((thing.x || 0) - bax);
+          const bdy = Math.round((thing.y || 0) - bay);
+          ctx.drawImage(baseImg, bdx, bdy, bsw, bsh);
+          const flameImg = this.loadCachedImage(this.getAssetUrl('world/' + src.on_file));
+          if (flameImg && ((flameImg.naturalWidth && flameImg.naturalWidth > 0) || (flameImg.width && flameImg.width > 0))) {
+            const fsw = flameImg.naturalWidth || flameImg.width;
+            const fsh = flameImg.naturalHeight || flameImg.height;
+            const frames = Math.max(1, src.frames || 1);
+            const fps = src.fps || 1;
+            const fw = Math.floor(fsw / frames);
+            const idx = frames > 1 ? Math.floor((nowMs / 1000) * fps) % frames : 0;
+            const fa = Array.isArray(src.flame_anchor) ? src.flame_anchor : [Math.round(bsw / 2), Math.round(bsh * 0.7)];
+            const fx = Math.round(bdx + fa[0] - Math.round(fw / 2));
+            const fy = Math.round(bdy + fa[1] - fsh + 1);
+            ctx.drawImage(flameImg, idx * fw, 0, fw, fsh, fx, fy, fw, fsh);
+          }
+        }
+        return;
+      }
+
+      let img = thing.img || (thing.url ? this.loadCachedImage(thing.url) : null);
+      if (src && src.on && src.on_file) {
+        const onImg = this.loadCachedImage(this.getAssetUrl('world/' + src.on_file));
+        if (onImg && ((onImg.naturalWidth && onImg.naturalWidth > 0) || (onImg.width && onImg.width > 0))) {
+          img = onImg;
+        }
+      }
       if (!img) return;
       const ready = (img.naturalWidth && img.naturalWidth > 0) || (img.width && img.width > 0);
       if (!ready) return;
       const sw = img.naturalWidth || img.width;
       const sh = img.naturalHeight || img.height;
-      const ax = thing.anchorX !== undefined ? thing.anchorX : Math.round(sw / 2);
+      const frames = Math.max(1, (src && src.on && src.frames) || thing.frames || 1);
+      const fps = (src && src.on && src.fps) || thing.fps || 1;
+      const fw = Math.floor(sw / frames);
+      const idx = frames > 1 ? Math.floor((nowMs / 1000) * fps) % frames : 0;
+      const sx = idx * fw;
+      const ax = thing.anchorX !== undefined ? thing.anchorX : Math.round(fw / 2);
       const ay = thing.anchorY !== undefined ? thing.anchorY : sh;
       const dx = Math.round((thing.x || 0) - ax);
       const dy = Math.round((thing.y || 0) - ay);
       ctx.save();
       if (thing.flip) {
-        ctx.translate(dx + sw, dy);
+        ctx.translate(dx + fw, dy);
         ctx.scale(-1, 1);
-        ctx.drawImage(img, 0, 0, sw, sh, 0, 0, sw, sh);
+        ctx.drawImage(img, sx, 0, fw, sh, 0, 0, fw, sh);
       } else {
-        ctx.drawImage(img, dx, dy, sw, sh);
+        ctx.drawImage(img, sx, 0, fw, sh, dx, dy, fw, sh);
       }
       ctx.restore();
     }
@@ -1439,6 +1685,10 @@
                 if (!this.blockers || this.blockers.length === 0) {
                   this.blockers = this.lookupSceneBlockers(this.sceneId);
                   this.rebuildGrid();
+      this.clearPlayState();
+      if (this.scenePigs) {
+        this.scenePigs.setBounds(this.walk || [10, 96, 230, 126]);
+      }
                 }
               }
             }
@@ -1824,12 +2074,30 @@
     }
 
     isOverPig(x, y) {
-      const scale = this.getDrawScale();
-      const hw = 28 * scale;
-      const th = 50 * scale;
-      const bh = 10 * scale;
-      return x >= this.pigX - hw && x <= this.pigX + hw &&
-             y >= this.pigY - th && y <= this.pigY + bh;
+      if (this.pigVisible !== false) {
+        const scale = this.getDrawScale();
+        const hw = 28 * scale;
+        const th = 50 * scale;
+        const bh = 10 * scale;
+        if (x >= this.pigX - hw && x <= this.pigX + hw &&
+            y >= this.pigY - th && y <= this.pigY + bh) {
+          return true;
+        }
+      }
+      if (this._multiPigActive && this.scenePigs) {
+        const entries = this.scenePigs.entries();
+        for (let i = 0; i < entries.length; i++) {
+          const p = entries[i];
+          const s = this.scaleAt(p.y);
+          const hw = 28 * s;
+          const th = 50 * s;
+          const bh = 10 * s;
+          if (x >= p.x - hw && x <= p.x + hw && y >= p.y - th && y <= p.y + bh) {
+            return true;
+          }
+        }
+      }
+      return false;
     }
 
     setEdgeNeighbours(neighbours) {
@@ -1939,6 +2207,7 @@
       this.canvas.addEventListener('pointerdown', (e) => {
         const p = this.toScene(e);
         if (!this.isOverPig(p.x, p.y)) return;
+        this.clearPlayState();
         this.drag = { startX: e.clientX, startY: e.clientY, moved: false };
         this.edgeHoldRearmed = true;
         this.clearEdgeHold();
@@ -2016,9 +2285,21 @@
           }
           return;
         }
-        // Change the cursor over the pig
+        // Change the cursor over the pig or hotspot
         const p = this.toScene(e);
-        this.canvas.style.cursor = this.isOverPig(p.x, p.y) ? 'grab' : 'default';
+        const overPig = this.isOverPig(p.x, p.y);
+        const editMode = this.isEditMode();
+        const hsMod = (typeof window !== 'undefined' && window.CuyHotspots) || null;
+        const mode = (hsMod && typeof hsMod.arbitrate === 'function')
+          ? hsMod.arbitrate({ overPig, editMode, dragging: !!this.drag })
+          : (editMode ? 'edit' : (this.drag ? 'drag' : (overPig ? 'pig' : 'hotspot')));
+        if (mode === 'pig') {
+          this.canvas.style.cursor = 'grab';
+        } else if (mode === 'hotspot' && this.hitHotspot(p.x, p.y)) {
+          this.canvas.style.cursor = 'pointer';
+        } else {
+          this.canvas.style.cursor = 'default';
+        }
       });
       const endDrag = (e) => {
         if (!this.drag) return;
@@ -2077,6 +2358,20 @@
       // Clicking the pig = petting!
       if (this.isOverPig(x, y)) {
         this.pet();
+      } else if (!this.isEditMode()) {
+        const hs = this.hitHotspot(x, y);
+        if (hs) {
+          const listeners = (this._hotspotListeners || []).slice();
+          for (let i = 0; i < listeners.length; i++) {
+            try { listeners[i](hs); } catch (err) { console.error(err); }
+          }
+          return;
+        }
+        // Clicking next to it = the pig turns around, curious
+        this.facing = x > this.pigX ? 1 : -1;
+        this.playAnim('sniff', 1800);
+        this.showBubble('Sniff sniff...', 1500);
+        if (root.Sound) root.Sound.click();
       } else {
         // Clicking next to it = the pig turns around, curious
         this.facing = x > this.pigX ? 1 : -1;
@@ -2213,6 +2508,34 @@
         this.currentFrame = 0;
         return;
       }
+      if (this._multiPigActive && this.ensureScenePigs() && this.presentPigs.length > 0) {
+        if (!this._overridePrimaryPos) {
+          this.scenePigs.step(dt, {
+            isFree: (x, y) => this.isFree(x, y),
+            bounds: this.walk || [10, 96, 230, 126]
+          });
+          const entries = this.scenePigs.entries();
+          if (entries.length > 0 && !this.drag) {
+            this.pigX = entries[0].x;
+            this.pigY = entries[0].y;
+            this.facing = entries[0].facing;
+            this.currentAnim = entries[0].anim;
+            this.currentFrame = entries[0].frame;
+          }
+        }
+        if (this.bubbleTimer > 0) {
+          this.bubbleTimer -= dt;
+          if (this.bubbleTimer <= 0) this.bubbleVisible = false;
+        }
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life -= dt / 1000;
+          if (p.life <= 0) this.particles.splice(i, 1);
+        }
+        return;
+      }
       // Update the animation frame
       const def = this.defFor(this.currentAnim);
       const frameDuration = 1000 / def.fps;
@@ -2255,6 +2578,25 @@
           } else if (this.targetExit) {
             const to = this.targetExit;
             this.callPigExit(to);
+          } else if (this.pendingPlay) {
+            const play = this.pendingPlay;
+            this.pendingPlay = null;
+            this.targetX = null;
+            this.targetY = null;
+            const thing = (this.things || []).find(t => t && (t.uid === play.thingUid || t.id === play.thingUid));
+            if (thing) {
+              thing.suppressDraw = true;
+              this.facing = (play.spot && play.spot.facing) ? play.spot.facing : this.facing;
+              const queue = play.kind === 'tunnel' ? ['tunnel_in', 'tunnel_wiggle', 'tunnel_out'] : ['ball_push'];
+              this.activePlay = { thing, queue, originX: thing.x, originY: thing.y };
+              const nextAnim = this.activePlay.queue.shift();
+              const ad = this.defFor(nextAnim);
+              const dur = Math.round((ad.frames / Math.max(1, ad.fps)) * 1000);
+              this.playAnim(nextAnim, dur);
+            } else {
+              this.currentAnim = 'idle';
+              this.idleTimer = 800 + Math.random() * 800;
+            }
           } else if (this.exitsEnabled) {
             const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
             const leftX = (this.currentScene && this.currentScene.exits && this.currentScene.exits.left && typeof this.currentScene.exits.left.x === 'number')
@@ -2294,8 +2636,23 @@
       if (this.animTimer > 0) {
         this.animTimer -= dt;
         if (this.animTimer <= 0) {
-          this.currentAnim = 'idle';
-          this.currentFrame = 0;
+          if (this.activePlay) {
+            if (this.activePlay.queue && this.activePlay.queue.length > 0) {
+              const nextAnim = this.activePlay.queue.shift();
+              const ad = this.defFor(nextAnim);
+              const dur = Math.round((ad.frames / Math.max(1, ad.fps)) * 1000);
+              this.playAnim(nextAnim, dur);
+            } else {
+              if (this.activePlay.thing) this.activePlay.thing.suppressDraw = false;
+              this.activePlay = null;
+              this.currentAnim = 'idle';
+              this.currentFrame = 0;
+              this.idleTimer = 800 + Math.random() * 800;
+            }
+          } else {
+            this.currentAnim = 'idle';
+            this.currentFrame = 0;
+          }
         }
       }
 
@@ -2358,6 +2715,7 @@
         skipDefaultWall: false,
         skipDefaultFloor: false
       };
+      this._renderNowMs = scene.time;
 
       const isOutdoor = this.sceneKind === 'outdoor';
 
@@ -2401,12 +2759,20 @@
       const allStanding = ghostObj ? standing.concat([ghostObj]) : standing;
       allStanding.sort((a, b) => (a.y || 0) - (b.y || 0));
 
-      const isPigVisible = this.pigVisible !== false;
-      const pigFeetY = this.pigY;
+      const sp = this._multiPigActive ? this.ensureScenePigs() : null;
+      const pigEntries = (this._multiPigActive && sp)
+        ? sp.entries()
+        : (this.pigVisible !== false
+          ? [{ id: 'pig', x: this.pigX, y: this.pigY, facing: this.facing, anim: this.currentAnim, frame: this.currentFrame, look: this.activePig, stage: this.stageKey, isPrimary: true }]
+          : []);
+      if (this._multiPigActive && this._overridePrimaryPos && pigEntries.length > 0) {
+        pigEntries[0] = Object.assign({}, pigEntries[0], { x: this.pigX, y: this.pigY });
+      }
 
-      if (isPigVisible) {
-        // Standing objects behind pig
-        allStanding.filter(t => (t.y || 0) <= pigFeetY).forEach(t => {
+      if (pigEntries.length > 0) {
+        const firstPigY = pigEntries[0].y;
+        // Standing objects behind first pig
+        allStanding.filter(t => (t.y || 0) <= firstPigY).forEach(t => {
           if (t.isGhost) this.drawGhost(ctx, t.ghost);
           else this.drawThing(ctx, t);
         });
@@ -2414,22 +2780,29 @@
         // Layers 0 <= z < 10
         this.layers.filter(l => l.z >= 0 && l.z < 10).forEach(l => l.drawFn(ctx, scene));
 
-        // Contact shadow sprite under pig feet (drawn before pig, multiplied by scene light if lit)
-        this.drawContactShadow(ctx);
+        // Contact shadow sprite under first pig feet (drawn before pig, multiplied by scene light if lit)
+        this.drawContactShadowFor(ctx, pigEntries[0]);
 
         if (lit) {
           this.applySceneLight(ctx, this.lightScene);
         }
 
-        // Draw Pig
-        this.drawPig(ctx, this.lightScene);
+        // Draw first pig
+        this.drawPigFor(ctx, pigEntries[0], this.lightScene);
         this.pigDraws = (this.pigDraws || 0) + 1;
 
         // Background blockers in front of pig (pig walks behind them)
         this.drawBackgroundBlockersOverPig(ctx);
 
-        // Standing objects in front of pig
-        const inFront = allStanding.filter(t => (t.y || 0) > pigFeetY);
+        // Standing objects in front of first pig, Y-sorted with any additional pigs
+        const inFront = allStanding.filter(t => (t.y || 0) > firstPigY);
+        const extraPigs = pigEntries.slice(1);
+        const merged = inFront.map(t => ({ kind: 'thing', y: t.y || 0, obj: t, _ord: 0 }))
+          .concat(extraPigs.map(p => ({ kind: 'pig', y: p.y || 0, obj: p, _ord: 1 })));
+        merged.sort((a, b) => (a.y - b.y) || (a._ord - b._ord));
+
+        let tctx = null;
+        let ambFill = null;
         if (lit && inFront.length > 0 && typeof document !== 'undefined') {
           if (!this.thingLitCanvas) {
             this.thingLitCanvas = document.createElement('canvas');
@@ -2438,15 +2811,25 @@
             this.thingLitCanvas.width = this.sceneWidth;
             this.thingLitCanvas.height = this.sceneHeight;
           }
-          const tctx = this.thingLitCanvas.getContext('2d');
+          tctx = this.thingLitCanvas.getContext('2d');
           tctx.imageSmoothingEnabled = false;
           const a = sceneAmbient(this.lightScene);
-          const ambFill = `rgb(${Math.round(255 * Math.min(1, a[0]))}, ${Math.round(255 * Math.min(1, a[1]))}, ${Math.round(255 * Math.min(1, a[2]))})`;
-          inFront.forEach(t => {
-            if (t.isGhost) {
-              this.drawGhost(ctx, t.ghost);
-              return;
-            }
+          ambFill = `rgb(${Math.round(255 * Math.min(1, a[0]))}, ${Math.round(255 * Math.min(1, a[1]))}, ${Math.round(255 * Math.min(1, a[2]))})`;
+        }
+
+        merged.forEach(entry => {
+          if (entry.kind === 'pig') {
+            this.drawContactShadowFor(ctx, entry.obj);
+            this.drawPigFor(ctx, entry.obj, this.lightScene);
+            this.pigDraws = (this.pigDraws || 0) + 1;
+            return;
+          }
+          const t = entry.obj;
+          if (t.isGhost) {
+            this.drawGhost(ctx, t.ghost);
+            return;
+          }
+          if (tctx && ambFill) {
             this.drawThingShadow(ctx, t);
             tctx.clearRect(0, 0, this.sceneWidth, this.sceneHeight);
             tctx.save();
@@ -2459,13 +2842,11 @@
             this.drawThing(tctx, t, true);
             tctx.restore();
             ctx.drawImage(this.thingLitCanvas, 0, 0);
-          });
-        } else {
-          inFront.forEach(t => {
-            if (t.isGhost) this.drawGhost(ctx, t.ghost);
-            else this.drawThing(ctx, t);
-          });
-        }
+          } else {
+            this.drawThing(ctx, t);
+          }
+        });
+
         if (lit) {
           this.applySceneGlow(ctx, this.lightScene);
         }
@@ -2485,7 +2866,7 @@
       this.layers.filter(l => l.z >= 10).forEach(l => l.drawFn(ctx, scene));
 
       // --- 4. PARTICLES & SPEECH BUBBLE ---
-      if (isPigVisible) {
+      if (pigEntries.length > 0) {
         this.drawParticles(ctx);
         if (this.bubbleVisible) {
           this.drawSpeechBubble(ctx);
@@ -2735,6 +3116,58 @@
     }
 
     // lightScene is optional: without it the frame is drawn unlit.
+    drawPigFor(ctx, pig, lightScene) {
+      if (!pig || pig.y < -100) return;
+      if (pig.isPrimary) {
+        this.drawPig(ctx, lightScene);
+        return;
+      }
+      const px = pig.x;
+      const py = pig.y;
+      const scale = this.scaleAt(py);
+      const dw = this.getDrawnSize(scale);
+      const dh = dw;
+      const anchorX = Math.round(32 * scale);
+      const anchorY = Math.round(59 * scale);
+      const drawX = Math.round(px - anchorX);
+      const drawY = Math.round(py - anchorY);
+      const stg = normStage(pig.stage || this.stageKey);
+      const desc = (root.CuyLook && root.CuyLook.resolve) ? root.CuyLook.resolve(pig.look, stg) : null;
+      const namedId = desc ? desc.named : (pig.look && (pig.look.namedId || pig.look.named));
+      const breed = desc ? desc.breed : ((pig.look && pig.look.breed) || this.breed);
+      const coat = desc ? desc.coat : ((pig.look && (pig.look.coat || pig.look.paletteId)) || this.paletteId);
+      const stage = desc ? desc.stage : stg;
+      const sheet = resolveSheet(breed, stage, coat, namedId);
+      if (!sheet) {
+        ctx.fillStyle = '#e98c42';
+        ctx.fillRect(Math.round(px - 22 * scale), Math.round(py - 29 * scale), Math.round(44 * scale), Math.round(28 * scale));
+        return;
+      }
+      const def = ANIM_DEFS[pig.anim] || ANIM_DEFS.idle;
+      const sx = ((pig.frame || 0) % def.frames) * FRAME_SIZE;
+      const sy = def.row * FRAME_SIZE;
+      ctx.save();
+      let frame = sheet;
+      let fx = sx;
+      let fy = sy;
+      if (lightScene) {
+        const lit = this.litFrame(sheet, sx, sy, lightScene);
+        if (lit) {
+          frame = lit;
+          fx = 0;
+          fy = 0;
+        }
+      }
+      if ((pig.facing || 1) < 0) {
+        ctx.translate(drawX + dw, drawY);
+        ctx.scale(-1, 1);
+        ctx.drawImage(frame, fx, fy, FRAME_SIZE, FRAME_SIZE, 0, 0, dw, dh);
+      } else {
+        ctx.drawImage(frame, fx, fy, FRAME_SIZE, FRAME_SIZE, drawX, drawY, dw, dh);
+      }
+      ctx.restore();
+    }
+
     drawPig(ctx, lightScene) {
       if (this.pigVisible === false) return;
       if (this.pigY < -100) return; // Hidden
@@ -2839,6 +3272,25 @@
     applySceneGlow(ctx, scene) {}
 
     // Contact shadow sprite at (32 - width/2, 57) inside the pig frame.
+    drawContactShadowFor(ctx, pig) {
+      if (!pig || pig.y < -100) return;
+      if (pig.isPrimary) {
+        this.drawContactShadow(ctx);
+        return;
+      }
+      const scale = this.scaleAt(pig.y);
+      const stg = normStage(pig.stage || this.stageKey);
+      const key = PIG_SHADOW_BY_STAGE[stg] || 'adult';
+      const img = this.pigShadowImage(key);
+      if (!img || !img.complete || !img.naturalWidth) return;
+      const sw = Math.round(PIG_SHADOW_WIDTH[key] * scale);
+      const sh = Math.round((img.naturalHeight || 6) * scale);
+      const sx = Math.round(pig.x - sw / 2);
+      const sy = Math.round(pig.y - 2 * scale);
+      ctx.drawImage(img, sx, sy, sw, sh);
+      this.shadowDraws = (this.shadowDraws || 0) + 1;
+    }
+
     drawContactShadow(ctx) {
       if (this.pigVisible === false) return;
       if (this.pigY < -100) return; // Hidden
@@ -3156,6 +3608,24 @@
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst) return inst.setPigVisible(visible);
     },
+    setPresentPigs(list) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.setPresentPigs === 'function') return inst.setPresentPigs(list);
+    },
+    setHotspots(list) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.setHotspots === 'function') return inst.setHotspots(list);
+    },
+    getHotspots() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.getHotspots === 'function') return inst.getHotspots();
+      return [];
+    },
+    onHotspot(fn) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.onHotspot === 'function') return inst.onHotspot(fn);
+      return () => {};
+    },
     setExitsEnabled(enabled) {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst) return inst.setExitsEnabled(enabled);
@@ -3192,7 +3662,10 @@
     },
     set pigY(val) {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
-      if (inst) inst.pigY = val;
+      if (inst) {
+        inst.pigY = val;
+        if (inst._multiPigActive) inst._overridePrimaryPos = true;
+      }
     },
     get pigX() {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
@@ -3200,7 +3673,10 @@
     },
     set pigX(val) {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
-      if (inst) inst.pigX = val;
+      if (inst) {
+        inst.pigX = val;
+        if (inst._multiPigActive) inst._overridePrimaryPos = true;
+      }
     },
     debug() {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
@@ -3321,6 +3797,10 @@
   PigCanvas.setScene = (def) => CanvasPig.setScene(def);
   PigCanvas.setThings = (l) => CanvasPig.setThings(l);
   PigCanvas.setPigVisible = (v) => CanvasPig.setPigVisible(v);
+  PigCanvas.setPresentPigs = (l) => CanvasPig.setPresentPigs(l);
+  PigCanvas.setHotspots = (l) => CanvasPig.setHotspots(l);
+  PigCanvas.getHotspots = () => CanvasPig.getHotspots();
+  PigCanvas.onHotspot = (fn) => CanvasPig.onHotspot(fn);
   PigCanvas.setExitsEnabled = (e) => CanvasPig.setExitsEnabled(e);
   PigCanvas.enterFrom = (s) => CanvasPig.enterFrom(s);
   PigCanvas.setTarget = (x, y) => CanvasPig.setTarget(x, y);

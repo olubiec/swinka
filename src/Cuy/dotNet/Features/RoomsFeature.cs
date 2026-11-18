@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cuy.Core;
+using Cuy.Core.Input.Validation;
 using Cuy.Core.World;
 using Newtonsoft.Json.Linq;
 
@@ -109,7 +110,9 @@ namespace Cuy.Features
                             x = it.X,
                             y = it.Y,
                             flip = it.Flip,
-                            variant = it.Variant
+                            variant = it.Variant,
+                            movable = it.Movable,
+                            removable = it.Removable
                         });
                     }
                 }
@@ -467,6 +470,18 @@ namespace Cuy.Features
                 {
                     HomeWindow.PostToPage(new { type = "toast", text = "Removed!" });
                 }
+                else
+                {
+                    var world = pet.State?.World;
+                    if (world?.Rooms != null && world.Rooms.TryGetValue(place, out var room) && room != null)
+                    {
+                        RoomLayoutOps.Remove(room, uid, out string error);
+                        if (error == "fixture_locked")
+                        {
+                            HomeWindow.PostToPage(new { type = "toast", text = RoomsMessages.ToastFor("fixture_locked") });
+                        }
+                    }
+                }
             }
             else if (type == "room_skin")
             {
@@ -605,8 +620,8 @@ namespace Cuy.Features
             if (rows <= 0) rows = 7;
             int wallRows = pet.PlaceCatalog != null ? pet.PlaceCatalog.WallRows : 2;
 
-            int w = def.W > 0 ? def.W : 1;
-            int h = def.H > 0 ? def.H : 1;
+            int w = def.EffectiveFootW;
+            int h = def.EffectiveFootH;
 
             RoomLayout room = null;
             if (world.Rooms != null)

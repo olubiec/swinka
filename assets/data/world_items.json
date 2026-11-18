@@ -711,6 +711,8 @@
     ],
     "w": 1,
     "h": 2,
+    "foot_h": 1,
+    "sprite_h": 2,
     "price": 15,
     "comfort": 0,
     "layer": "floor",
@@ -724,6 +726,8 @@
     ],
     "w": 1,
     "h": 2,
+    "foot_h": 1,
+    "sprite_h": 2,
     "price": 15,
     "comfort": 0,
     "layer": "floor",
@@ -737,6 +741,8 @@
     ],
     "w": 2,
     "h": 3,
+    "foot_h": 1,
+    "sprite_h": 3,
     "price": 15,
     "comfort": 0,
     "layer": "wall",
@@ -1079,6 +1085,267 @@
     "price": 0,
     "comfort": 1,
     "layer": "floor"
+  },
+  {
+    "id": "campfire",
+    "name": "Campfire",
+    "place": [
+      "garden",
+      "park"
+    ],
+    "w": 2,
+    "h": 2,
+    "price": 0,
+    "comfort": 2,
+    "layer": "floor"
+  },
+  {
+    "id": "grass_tuft_1",
+    "name": "Grass tuft 1",
+    "place": [
+      "garden",
+      "park",
+      "farm"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "grass_tuft_2",
+    "name": "Grass tuft 2",
+    "place": [
+      "garden",
+      "park",
+      "farm"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "grass_tuft_3",
+    "name": "Grass tuft 3",
+    "place": [
+      "garden",
+      "park",
+      "farm"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "grass_tuft_4",
+    "name": "Grass tuft 4",
+    "place": [
+      "garden",
+      "park",
+      "farm"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "tunnel_playground",
+    "name": "Playground tunnel",
+    "place": [
+      "park"
+    ],
+    "w": 3,
+    "h": 2,
+    "price": 0,
+    "comfort": 2,
+    "layer": "floor"
+  },
+  {
+    "id": "stall_veg",
+    "name": "Veggie stall",
+    "place": [
+      "market"
+    ],
+    "w": 3,
+    "h": 3,
+    "price": 0,
+    "comfort": 2,
+    "layer": "floor"
+  },
+  {
+    "id": "stall_fruit",
+    "name": "Fruit stall",
+    "place": [
+      "market"
+    ],
+    "w": 3,
+    "h": 3,
+    "price": 0,
+    "comfort": 2,
+    "layer": "floor"
+  },
+  {
+    "id": "stall_seeds",
+    "name": "Seed stall",
+    "place": [
+      "market"
+    ],
+    "w": 3,
+    "h": 3,
+    "price": 0,
+    "comfort": 2,
+    "layer": "floor"
+  },
+  {
+    "id": "plot_empty",
+    "name": "Empty plot",
+    "place": [
+      "farm"
+    ],
+    "w": 2,
+    "h": 2,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "plot_watered",
+    "name": "Watered plot",
+    "place": [
+      "farm"
+    ],
+    "w": 2,
+    "h": 2,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "plot_sprout",
+    "name": "Sprout plot",
+    "place": [
+      "farm"
+    ],
+    "w": 2,
+    "h": 2,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "plot_ripe",
+    "name": "Ripe plot",
+    "place": [
+      "farm"
+    ],
+    "w": 2,
+    "h": 2,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "plot_lawn",
+    "name": "Lawn plot",
+    "place": [
+      "farm"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "plot_orchard",
+    "name": "Orchard plot",
+    "place": [
+      "farm"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 0,
+    "comfort": 0,
+    "layer": "ground"
+  },
+  {
+    "id": "poster_1",
+    "name": "Market poster 1",
+    "place": [
+      "market"
+    ],
+    "w": 1,
+    "h": 2,
+    "price": 0,
+    "comfort": 1,
+    "layer": "wall"
+  },
+  {
+    "id": "poster_2",
+    "name": "Market poster 2",
+    "place": [
+      "market"
+    ],
+    "w": 1,
+    "h": 2,
+    "price": 0,
+    "comfort": 1,
+    "layer": "wall"
+  },
+  {
+    "id": "poster_3",
+    "name": "Market poster 3",
+    "place": [
+      "market"
+    ],
+    "w": 1,
+    "h": 2,
+    "price": 0,
+    "comfort": 1,
+    "layer": "wall"
+  },
+  {
+    "id": "promo_1",
+    "name": "Market banner 1",
+    "place": [
+      "market"
+    ],
+    "w": 2,
+    "h": 1,
+    "price": 0,
+    "comfort": 1,
+    "layer": "wall"
+  },
+  {
+    "id": "promo_2",
+    "name": "Market banner 2",
+    "place": [
+      "market"
+    ],
+    "w": 2,
+    "h": 1,
+    "price": 0,
+    "comfort": 1,
+    "layer": "wall"
+  },
+  {
+    "id": "promo_3",
+    "name": "Market banner 3",
+    "place": [
+      "market"
+    ],
+    "w": 2,
+    "h": 1,
+    "price": 0,
+    "comfort": 1,
+    "layer": "wall"
   }
  ]
 }

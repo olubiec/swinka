@@ -53,8 +53,8 @@ namespace Cuy.Core.World
                 return PlaceResult.NotAllowedHere;
             }
 
-            int w = item.W > 0 ? item.W : (item.Width > 0 ? item.Width : 1);
-            int h = item.H > 0 ? item.H : (item.Height > 0 ? item.Height : 1);
+            int w = item.EffectiveFootW;
+            int h = item.EffectiveFootH;
 
             if (x < 0 || y < 0 || x + w > cols || y + h > rows)
             {
@@ -112,8 +112,8 @@ namespace Cuy.Core.World
                     }
 
                     string otherLayer = (otherDef?.Layer ?? "floor").Trim().ToLowerInvariant();
-                    int otherW = otherDef != null && otherDef.W > 0 ? otherDef.W : 1;
-                    int otherH = otherDef != null && otherDef.H > 0 ? otherDef.H : 1;
+                    int otherW = otherDef != null ? otherDef.EffectiveFootW : 1;
+                    int otherH = otherDef != null ? otherDef.EffectiveFootH : 1;
 
                     bool sameLayer = string.Equals(layer, otherLayer, StringComparison.OrdinalIgnoreCase);
                     if (sameLayer)

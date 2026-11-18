@@ -17,6 +17,12 @@ namespace Cuy.Core.World
         public int H { get; set; }
         public int Width => W;
         public int Height => H;
+        public int FootW { get; set; }
+        public int FootH { get; set; }
+        public int SpriteH { get; set; }
+        public int EffectiveFootW => FootW > 0 ? FootW : (W > 0 ? W : 1);
+        public int EffectiveFootH => FootH > 0 ? FootH : (H > 0 ? H : 1);
+        public int EffectiveSpriteH => SpriteH > 0 ? SpriteH : (H > 0 ? H : 1);
         public int Price { get; set; }
         public int Comfort { get; set; }
         public string Layer { get; set; }
@@ -51,13 +57,19 @@ namespace Cuy.Core.World
             string note = null,
             string signatureOf = null,
             string propOf = null,
-            bool recolor = false)
+            bool recolor = false,
+            int footW = 0,
+            int footH = 0,
+            int spriteH = 0)
         {
             Id = id;
             Name = name;
             Place = place ?? Array.Empty<string>();
             W = w;
             H = h;
+            FootW = footW;
+            FootH = footH;
+            SpriteH = spriteH;
             Price = price;
             Comfort = comfort;
             Layer = layer;
@@ -334,6 +346,9 @@ namespace Cuy.Core.World
                             string signatureOf = (string)token["signature_of"];
                             string propOf = (string)token["prop_of"];
                             bool recolor = (bool?)token["recolor"] ?? false;
+                            int footW = (int?)token["foot_w"] ?? 0;
+                            int footH = (int?)token["foot_h"] ?? 0;
+                            int spriteH = (int?)token["sprite_h"] ?? 0;
 
                             var def = new WorldItemDefinition(
                                 id,
@@ -351,7 +366,10 @@ namespace Cuy.Core.World
                                 note,
                                 signatureOf,
                                 propOf,
-                                recolor);
+                                recolor,
+                                footW,
+                                footH,
+                                spriteH);
 
                             catalog._itemsById[id] = def;
                             catalog._items.Add(def);

@@ -862,7 +862,7 @@
    "file": "house/lamp_arc.png",
    "anchor": [
     16,
-    48
+    16
    ],
    "light": {
     "kind": "lamp_arc",
@@ -1863,6 +1863,294 @@
    "anchor": [
     16,
     32
+   ]
+  },
+  "campfire": {
+   "place": "garden",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    24
+   ],
+   "file": "garden/campfire_base.png",
+   "anchor": [
+    16,
+    24
+   ]
+  },
+  "grass_tuft_1": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    12
+   ],
+   "file": "garden/grass_tuft_1.png",
+   "anchor": [
+    8,
+    12
+   ]
+  },
+  "grass_tuft_2": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    12
+   ],
+   "file": "garden/grass_tuft_2.png",
+   "anchor": [
+    8,
+    12
+   ]
+  },
+  "grass_tuft_3": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    12
+   ],
+   "file": "garden/grass_tuft_3.png",
+   "anchor": [
+    8,
+    12
+   ]
+  },
+  "grass_tuft_4": {
+   "place": "garden",
+   "cells": [
+    1,
+    1
+   ],
+   "size": [
+    16,
+    12
+   ],
+   "file": "garden/grass_tuft_4.png",
+   "anchor": [
+    8,
+    12
+   ]
+  },
+  "stall_veg": {
+   "place": "market",
+   "cells": [
+    3,
+    3
+   ],
+   "size": [
+    48,
+    44
+   ],
+   "file": "market/stall_veg.png",
+   "anchor": [
+    24,
+    44
+   ]
+  },
+  "stall_fruit": {
+   "place": "market",
+   "cells": [
+    3,
+    3
+   ],
+   "size": [
+    48,
+    44
+   ],
+   "file": "market/stall_fruit.png",
+   "anchor": [
+    24,
+    44
+   ]
+  },
+  "stall_seeds": {
+   "place": "market",
+   "cells": [
+    3,
+    3
+   ],
+   "size": [
+    48,
+    44
+   ],
+   "file": "market/stall_seeds.png",
+   "anchor": [
+    24,
+    44
+   ]
+  },
+  "plot_empty": {
+   "place": "farm",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    24
+   ],
+   "file": "farm/plot_empty.png",
+   "anchor": [
+    16,
+    24
+   ]
+  },
+  "plot_watered": {
+   "place": "farm",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    24
+   ],
+   "file": "farm/plot_watered.png",
+   "anchor": [
+    16,
+    24
+   ]
+  },
+  "plot_sprout": {
+   "place": "farm",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    24
+   ],
+   "file": "farm/plot_sprout.png",
+   "anchor": [
+    16,
+    24
+   ]
+  },
+  "plot_ripe": {
+   "place": "farm",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    24
+   ],
+   "file": "farm/plot_ripe.png",
+   "anchor": [
+    16,
+    24
+   ]
+  },
+  "poster_1": {
+   "place": "market",
+   "cells": [
+    1,
+    2
+   ],
+   "size": [
+    16,
+    32
+   ],
+   "file": "market/poster_1.png",
+   "anchor": [
+    8,
+    32
+   ]
+  },
+  "poster_2": {
+   "place": "market",
+   "cells": [
+    1,
+    2
+   ],
+   "size": [
+    16,
+    32
+   ],
+   "file": "market/poster_2.png",
+   "anchor": [
+    8,
+    32
+   ]
+  },
+  "poster_3": {
+   "place": "market",
+   "cells": [
+    1,
+    2
+   ],
+   "size": [
+    16,
+    32
+   ],
+   "file": "market/poster_3.png",
+   "anchor": [
+    8,
+    32
+   ]
+  },
+  "promo_1": {
+   "place": "market",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "market/promo_1.png",
+   "anchor": [
+    16,
+    16
+   ]
+  },
+  "promo_2": {
+   "place": "market",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "market/promo_2.png",
+   "anchor": [
+    16,
+    16
+   ]
+  },
+  "promo_3": {
+   "place": "market",
+   "cells": [
+    2,
+    1
+   ],
+   "size": [
+    32,
+    16
+   ],
+   "file": "market/promo_3.png",
+   "anchor": [
+    16,
+    16
    ]
   }
  }
