@@ -339,5 +339,33 @@ Wszystkie testy fali P44 mają zielony wynik (przeciąganie świnki do krawędzi
 2. Weight: wpisujesz wagę, wiersz pojawia się w tabeli, przypomnienie znika z Today.
 3. Zakładki wyglądają jak reszta gry, nie jak przyciski przeglądarki.
 
+## Fala 2: Sceny, Świnki, Światło i Szuflada (P43, P46, P47, P5, P6, P7)
+
+| Check | Command | Pass Criterion | What a human looks at in the real app |
+|---|---|---|---|
+| P46 Obiekty plenerowe | `node tools/qa/ux-p46-render.js && node tools/qa/ux-p46-regress.js` | Exit code 0, render & regress PASS | Obiekty plenerowe renderują się poprawnie w scenach zewnętrznych bez regresji |
+| P47 Tła, pasek i kadr | `node tools/qa/ux-p47-bg.js && node tools/qa/ux-p47-bar.js && node tools/qa/ux-p47-room.js` | Exit code 0, bg, bar & room PASS | Tła scen, górny pasek i kadr pokoju mieszczą się poprawnie w oknie |
+| P43 Sceny interaktywne | `node tools/qa/ux-p43-hotspots.js && node tools/qa/ux-p43-farm-scene.js && node tools/qa/ux-p43-market-scene.js` | Exit code 0, hotspots, farm & market PASS | Hotspoty farmy i targu reagują na kliknięcia i otwierają właściwe interakcje |
+| P5 Wiele świnek | `node tools/qa/ux-p5-scene-pigs.js && node tools/qa/ux-p5-pin.js` | Exit code 0, scene-pigs & pin PASS | Wiele świnek jednocześnie w scenie oraz przypinanie świnki do sceny |
+| P6 Szuflada i światło | `node tools/qa/ux-p6-filters.js && node tools/qa/ux-p6-lights.js && node tools/qa/ux-p6-skins.js && node tools/qa/ux-p6-templates.js` | Exit code 0, filters, lights, skins & templates PASS | Filtry szuflady Edit, oświetlenie nocne, skórki i szablony działają poprawnie |
+| P7 Lampy, zabawa i pogoda | `node tools/qa/ux-p7-play-targets.js && node tools/qa/ux-p7-weather.js` | Exit code 0, play-targets & weather PASS | Przestawialne lampy, cele zabawy świnek oraz efekty pogody |
+| Owner Shots (PK-Q2) | `node tools/qa/ux-p70-owner-shots.js` | Exit code 0, zapisano `docs/qa/shots/owner-*.png` | Zrzuty ekranu całej fali (5 scen, szuflada Edit, lampka nocna, dwie świnki) |
+
+### Manual Checklist (Do sprawdzenia po Fali 2)
+1. Otwórz Edit w ogrodzie/parku: obiekty plenerowe są widoczne w szufladzie i da się je postawić.
+2. Zmień kupioną tapetę i podłogę w pokoju: wygląd pokoju aktualizuje się od razu.
+3. Włącz noc i postaw lampkę: lampka zachowuje ciepły efekt światła, gdy świnka podchodzi blisko.
+4. Sprawdź okno na skali Windows 100% / 125% / 150%: okno nie jest ucięte od dołu, a po upgrade pokoju świnka zachowuje tę samą wielkość.
+5. Postaw przestawialną lampkę pod ścianą oraz sprawdź dwie świnki w jednej scenie i ich przypięcie.
+
+## Uwagi właściciela 24-28
+
+- **Uwaga 24 (PK-T9):** Przestawialna lampka pod ścianą zachowuje efekt nocy i nie gubi światła przy podejściu świnki — pokryte przez `PK-T9` (`ux-p63-light-pixels.js`, `ux-p64-lamp-edit.js`).
+- **Uwaga 25 (PK-T7):** Szuflada Edit poprawnie filtruje i układa przedmioty (w tym obiekty plenerowe) bez przycinania — pokryte przez `PK-T7` (`ux-p62-drawer-adv.js`).
+- **Uwaga 26 (PK-T6):** Wiele świnek w jednej scenie nie nakłada się na siebie błędnie i zachowuje przypięcie — pokryte przez `PK-T6` (`ux-p61-multipig-adv.js`).
+- **Uwaga 27 (PK-T5):** Hotspoty scen interaktywnych (farma, targ) są klikalne i czytelne — pokryte przez `PK-T5` (`ux-p60-hotspots-adv.js`).
+- **Uwaga 28 (PK-T9):** Okno domku na różnych skalach DPI (100%/125%/150%) nie jest ucięte od dołu, a świnka po upgrade pokoju ma stały rozmiar — pokryte przez `PK-T9` (`ux-p66-viewport-matrix.js`).
+
+
 
 

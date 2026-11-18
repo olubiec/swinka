@@ -1,0 +1,10 @@
+# PK-Q1 Stage Gate Log (Status: BLOCKED)
+- Commands: `build.ps1` FAIL (Build OK; Core.Tests 1235 PASS, 6 FAIL, 1 SKIP), `ux-all.js` FAIL (56/84 PASS, 28 FAIL), `web-smoke.js` FAIL, `check-assets.js` PASS, `check-icons.js` PASS, `plan-audit.js` PASS, `run-exe-smoke.ps1` FAIL.
+- New Wave 2 blockers (first 5 error lines): 1) `web-smoke.js` & `Cuy.exe --selftest` (`PK-APP2`): `FAIL features folder mismatch: { missingIds: [], missingDirs: [ 'garden', 'rooms' ] }`.
+- 2) `Cuy.exe --selftest` (`PK-R30`): `FAIL world item icons: placeable willow_tunnel has no icon`.
+- 3) `Cuy.Core.Tests` (6 FAIL): `WorldItemCatalogTests.RealCatalog_LoadsAllItems_CountAtLeast50` (`PK-R30`), `WorldMessageTests.OutOfRangeInt_ReturnsInvalid(room_place,x,201)` (`PK-R25`), 4x `PigPinMessagesTests` (`PK-R31`).
+- 4) `ux-p46-regress.js` (`PK-P46t2`/`PK-CV2`): `FAIL R3 pig-still-walks: [garden] Pig feet (20,117) inside blocker [16,112,48,128]`.
+- Wave 2 vs old `ux-p*` fails (28 total): Wave-2-related: `ux-p46-regress` (`PK-CV2`), `ux-p40-edit-move`/`ux-p40-edit-place` (`PK-PE2`), `ux-p44-drag-edge`/`ux-p44-drag-switch` (`PK-PF2`/`PK-CV2`); Old pre-Wave-2 (23): `ux-p1-decorate`, `ux-p1-lifecycle`, `ux-p2-player`, `ux-p3-icons`, `ux-p3-places`, `ux-p34-pig-walk`, `ux-p35-cleanup`, `ux-p36-bar`, `ux-p36-rooms-scroll`, `ux-p38-presence`, `ux-p39-blockers/depth/grid/layout`, `ux-p41-gramophone`, `ux-p42-web-look`, `ux-p43-farm/market-scene`, `ux-p45-overlay(-pig)/pig-depth/room-draw/room-scene`.
+- Baseline comparison (`baseline-smoke.txt`): baseline `web-smoke.js` ran 38 checks (6 fails: `26_my_pigs`, `world_places_bar`, `world_pigs`, 3x `roaming_*`); now exits early on `00_features_index` (`missingDirs: ['garden','rooms']`).
+- STRICT=1 DEFECT counts: `PK-T3` (`ux-p60`)=9, `PK-T4` (`ux-p61`)=2, `PK-T5` (`ux-p62`)=0, `PK-T6` (`ux-p63`)=2, `PK-T7` (`ux-p64`+C#)=3, `PK-T8` (`ux-p65`)=2, `PK-T9` (`ux-p66`)=0, `PK-T10` (C#)=0, `PK-T11` (`ux-p67`)=4 (+1 SKIP), `PK-T12` (`ux-p68`)=1, `PK-T13` (`ux-p69`)=3; plus `PK-P46t2` (`ux-p46-regress`)=1.
+- C# `Skip = "DEFECT"` count: 1 (`OutdoorSeedAdversarialTests.A8_UnknownItemIdInData_IsSkippedAndLogged` in `PK-P46t1`).
