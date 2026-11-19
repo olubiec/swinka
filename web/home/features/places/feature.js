@@ -1030,11 +1030,11 @@
       }
 
       if (window.CuyRoom && typeof window.CuyRoom.addLayer === 'function') {
-        window.CuyRoom.addLayer('p36_locked_overlay', 25, (ctx) => {
+        window.CuyRoom.addLayer('p36_locked_overlay', 25, (ctx, scene) => {
           ctx.save();
           ctx.globalCompositeOperation = 'multiply';
           ctx.fillStyle = 'rgb(87, 98, 150)';
-          ctx.fillRect(0, 0, 240, 130);
+          ctx.fillRect(0, 0, (scene && scene.width) || 256, (scene && scene.height) || 144);
           ctx.restore();
         });
       }

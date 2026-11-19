@@ -52,8 +52,15 @@ async function main() {
       window.__cuyNow = '12:00';
       if (window.CuyScenesMock && window.bridge && window.bridge.currentState) {
         const st = window.CuyScenesMock.state('seven');
+        if (st.places && Array.isArray(st.places.order)) {
+          st.places.order.forEach(o => { if (o) o.locked = false; });
+        }
+        if (st.places && Array.isArray(st.places.places)) {
+          st.places.places.forEach(p => { if (p) p.unlocked = true; });
+        }
         window.bridge.currentState.places = st.places;
         if (st.rooms) window.bridge.currentState.rooms = st.rooms;
+        if (window.bridge.currentState.farm) window.bridge.currentState.farm.unlocked = true;
         window.bridge.broadcastState();
       }
     });
