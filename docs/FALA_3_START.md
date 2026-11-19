@@ -16,6 +16,31 @@ Sprawdzenie 18.11.2026 pokazało, że świnka w Home ma wszystkie sprite'y (54 w
 | **F3-5** | 8 (T14..T21) | niezależne testy: 28 zachowań w dobie, miejsca i ruch, reakcje, edytor, wybieg, rekwizyty, doba z dwiema świnkami, wydajność i wycieki (ok. 90 przypadków) |
 | **F3-6** | 2 (Q3, Q4) | bramka (build, `ux-all`, `STRICT=1`) i arkusz właściciela `docs/qa/F3_OWNER_SHEET.md` |
 
+## Prompt startowy CAŁEJ fali 3 (jedna sesja, wklej raz)
+```
+FALA = 3
+
+Wykonaj całą falę 3 repo swinka w TEJ JEDNEJ sesji: kroki F3-0, F3-1, F3-2, F3-3, F3-4, F3-5, F3-6 po kolei (plan: docs/FALA_3_START.md). Bez orkiestry. Nie otwieraj nowych sesji ani okien: każdy subagent działa wewnątrz tej sesji, a po skończeniu pracy zamyka się i zwraca wynik.
+Czytaj tylko AGENTS.md (raz), docs/FALA_3_START.md i dla kroku: bash tools/release-wave.sh F3-n (PROMPT, FILES, VERIFY). Nie czytaj promptów paczek samemu: robią to subagenci.
+
+Pętla dla każdego kroku F3-n:
+1. Uruchom bash tools/release-wave.sh F3-n.
+2. Na każdą paczkę kroku jeden subagent (wszystkie paczki kroku naraz w jednej sesji; jeśli równoległość jest ograniczona, partiami po 6, F3-2: partia A = H1,H2,H3,H4,U1,U2, partia B = G1,G2,G3,D1,D2,D3). Subagentowi przekaż TYLKO ścieżkę jego promptu. Subagent zmienia tylko pliki z FILES, nie używa gita, nie osłabia istniejących asercji.
+3. Po zakończeniu paczek sprawdź logi docs/opt/log/<paczka>.md (status) i uruchom VERIFY każdej paczki raz.
+4. Commit kroku: git status --short, git add <konkretne pliki z FILES, docs/opt/log/, docs/opt/foundations/, docs/qa/, tools/qa/> (nigdy -A ani .; ux-all nadpisuje docs/qa/shots i assets/world/bg, tych nie dodawaj, chyba że są w FILES), git commit -m "F3-n: <zdanie po angielsku>", git push.
+5. Dopiero potem następny krok.
+
+Reguły:
+- F3-0: B1 (testy web, lista docs/opt/log/baseline-ux-f3.txt) i B2 (Core, selftest) razem. B2 wymaga dotnet; jeśli go nie ma, oznacz B2 "ENV (brak dotnet)", NIE blokuj fali i wpisz to do raportu jako rzecz do zrobienia na Windowsie przed Q3.
+- Paczki R/RI (F3-1, F3-3): tylko odczyt, wynik docs/opt/foundations/<id>.md; sprawdź node tools/qa/foundation-check.js <plik> <min sekcji z promptu>. Po F3-1 przejrzyj "Prompt fixes" w R36..R41 (decyzja A/B w R36: domyślnie A) i jeśli trzeba, zaktualizuj prompty F3-2 przed jego startem (kotwice RI mają pierwszeństwo przed R).
+- Paczki T (F3-5): tylko nowe testy; wady jako DEFECT, kodu produkcyjnego nie poprawiają.
+- Paczki Q (F3-6): tylko gdy nic nie jest BLOCKED; nie naprawiają kodu, każda komenda raz.
+- Paczka BLOCKED: nie ponawiaj i nie ruszaj; reszta kroku idzie dalej, następny krok wstrzymaj i zapytaj mnie.
+- Test z docs/opt/log/baseline-ux-f3.txt, który pada poza plikami paczki, nie jest powodem BLOCKED.
+
+RAPORT po każdym kroku (maks. 6 linii) i końcowy po F3-6 (maks. 20 linii, po polsku): paczki (OK / OK-Z-UWAGĄ / BLOCKED / ENV), testy (nowe błędy, stare z baseline, DEFECT na paczkę), hashe commitów, 3-5 punktów do sprawdzenia w grze z docs/qa/F3_OWNER_SHEET.md.
+```
+
 ## Uwagi
 - Start fali 3 po F3-0. Paczki F3-1..F3-5 mają w sekcji "Kontekst" wiersz BASELINE: czerwony test z listy baseline nie jest powodem BLOCKED. Bez F3-0 bramka Q3 będzie czerwona od startu.
 - `ux-all` nadpisuje `docs/qa/shots` i `assets/world/bg`: przed commitem paczki sprawdź `git status` i commituj tylko pliki z "Zmieniaj".
