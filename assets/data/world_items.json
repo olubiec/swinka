@@ -1033,6 +1033,7 @@
     "price": 0,
     "comfort": 4,
     "layer": "floor",
+    "icon": "tunnel",
     "fixture": true
   },
   {
@@ -1046,6 +1047,7 @@
     "price": 0,
     "comfort": 4,
     "layer": "floor",
+    "icon": "place_farm",
     "fixture": true
   },
   {
@@ -1059,6 +1061,7 @@
     "price": 0,
     "comfort": 2,
     "layer": "floor",
+    "icon": "place_market",
     "fixture": true
   },
   {
@@ -1072,6 +1075,7 @@
     "price": 0,
     "comfort": 3,
     "layer": "floor",
+    "icon": "place_market",
     "fixture": true
   },
   {
@@ -1084,7 +1088,8 @@
     "h": 2,
     "price": 0,
     "comfort": 1,
-    "layer": "floor"
+    "layer": "floor",
+    "icon": "signpost"
   },
   {
     "id": "campfire",
@@ -1097,7 +1102,8 @@
     "h": 2,
     "price": 0,
     "comfort": 2,
-    "layer": "floor"
+    "layer": "floor",
+    "icon": "lamp_post"
   },
   {
     "id": "grass_tuft_1",
@@ -1111,7 +1117,8 @@
     "h": 1,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "hedge"
   },
   {
     "id": "grass_tuft_2",
@@ -1125,7 +1132,8 @@
     "h": 1,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "hedge"
   },
   {
     "id": "grass_tuft_3",
@@ -1139,7 +1147,8 @@
     "h": 1,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "hedge"
   },
   {
     "id": "grass_tuft_4",
@@ -1153,7 +1162,8 @@
     "h": 1,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "hedge"
   },
   {
     "id": "tunnel_playground",
@@ -1165,7 +1175,8 @@
     "h": 2,
     "price": 0,
     "comfort": 2,
-    "layer": "floor"
+    "layer": "floor",
+    "icon": "tunnel_playground"
   },
   {
     "id": "stall_veg",
@@ -1177,7 +1188,8 @@
     "h": 3,
     "price": 0,
     "comfort": 2,
-    "layer": "floor"
+    "layer": "floor",
+    "icon": "place_market"
   },
   {
     "id": "stall_fruit",
@@ -1189,7 +1201,8 @@
     "h": 3,
     "price": 0,
     "comfort": 2,
-    "layer": "floor"
+    "layer": "floor",
+    "icon": "place_market"
   },
   {
     "id": "stall_seeds",
@@ -1201,7 +1214,8 @@
     "h": 3,
     "price": 0,
     "comfort": 2,
-    "layer": "floor"
+    "layer": "floor",
+    "icon": "place_market"
   },
   {
     "id": "plot_empty",
@@ -1213,7 +1227,8 @@
     "h": 2,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "place_farm"
   },
   {
     "id": "plot_watered",
@@ -1225,7 +1240,8 @@
     "h": 2,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "place_farm"
   },
   {
     "id": "plot_sprout",
@@ -1237,7 +1253,8 @@
     "h": 2,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "place_farm"
   },
   {
     "id": "plot_ripe",
@@ -1249,7 +1266,8 @@
     "h": 2,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "place_farm"
   },
   {
     "id": "plot_lawn",
@@ -1261,7 +1279,8 @@
     "h": 1,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "place_farm"
   },
   {
     "id": "plot_orchard",
@@ -1273,7 +1292,8 @@
     "h": 1,
     "price": 0,
     "comfort": 0,
-    "layer": "ground"
+    "layer": "ground",
+    "icon": "place_farm"
   },
   {
     "id": "poster_1",
@@ -1285,7 +1305,8 @@
     "h": 2,
     "price": 0,
     "comfort": 1,
-    "layer": "wall"
+    "layer": "wall",
+    "icon": "signpost"
   },
   {
     "id": "poster_2",
@@ -1297,7 +1318,8 @@
     "h": 2,
     "price": 0,
     "comfort": 1,
-    "layer": "wall"
+    "layer": "wall",
+    "icon": "signpost"
   },
   {
     "id": "poster_3",
@@ -1309,7 +1331,8 @@
     "h": 2,
     "price": 0,
     "comfort": 1,
-    "layer": "wall"
+    "layer": "wall",
+    "icon": "signpost"
   },
   {
     "id": "promo_1",
@@ -1321,7 +1344,8 @@
     "h": 1,
     "price": 0,
     "comfort": 1,
-    "layer": "wall"
+    "layer": "wall",
+    "icon": "signpost"
   },
   {
     "id": "promo_2",
@@ -1333,7 +1357,8 @@
     "h": 1,
     "price": 0,
     "comfort": 1,
-    "layer": "wall"
+    "layer": "wall",
+    "icon": "signpost"
   },
   {
     "id": "promo_3",
@@ -1345,7 +1370,8 @@
     "h": 1,
     "price": 0,
     "comfort": 1,
-    "layer": "wall"
+    "layer": "wall",
+    "icon": "signpost"
   }
  ]
 }

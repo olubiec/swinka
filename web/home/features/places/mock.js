@@ -48,7 +48,11 @@
       items: [
         { id: 'barn', itemId: 'barn_hay', x: 11, y: 1 },
         { id: 'fence_left', itemId: 'fence_farm', x: 0, y: 4 },
-        { id: 'fence_right', itemId: 'fence_farm', x: 15, y: 4 }
+        { id: 'fence_right', itemId: 'fence_farm', x: 15, y: 4 },
+        { id: 'plot:0', itemId: 'plot_empty', x: 2, y: 5 },
+        { id: 'plot:1', itemId: 'plot_empty', x: 5, y: 5 },
+        { id: 'plot:2', itemId: 'plot_empty', x: 8, y: 5 },
+        { id: 'plot:3', itemId: 'plot_empty', x: 11, y: 5 }
       ]
     },
     market: {

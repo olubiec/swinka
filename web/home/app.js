@@ -326,10 +326,10 @@
     }
 
     // Broadcast state to currently open feature (or background listeners)
-    window.CuyHome.listFeatures().forEach(feat => {
+    window.CuyHome.features.forEach(feat => {
       if (feat.onState) {
         const isActive = (window.CuyHome && window.CuyHome.currentFeatureId === feat.id);
-        const isAlways = Boolean(feat.alwaysOnState || feat.id === 'daily' || feat.id === 'decor' || feat.id === 'places');
+        const isAlways = Boolean(feat.alwaysOnState || feat.id === 'daily' || feat.id === 'decor' || feat.id === 'places' || feat.id === 'farm' || feat.id === 'market');
         if (isActive || isAlways) {
           try {
             feat.onState(state);

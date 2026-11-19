@@ -295,10 +295,11 @@
 
   // Pre-trigger loading if in browser
   if (typeof window !== 'undefined') {
-    load();
-    loadAtlas();
-    loadTiles();
-    loadHotspots();
+    Promise.all([load(), loadAtlas(), loadTiles(), loadHotspots()]).then(() => {
+      if (window.CuyPlaces && typeof window.CuyPlaces.updateStageNav === 'function') {
+        window.CuyPlaces.updateStageNav();
+      }
+    }).catch(() => {});
   }
 
   function getScenesDict() {
@@ -452,7 +453,7 @@
   }
 
   function isFlatItem(it, entry, itemId) {
-    return !!(it.flat || (entry && entry.flat) || (itemId && (itemId.startsWith('rug_') || itemId.startsWith('mat_') || itemId.includes('carpet'))));
+    return !!(it.flat || (entry && entry.flat) || (itemId && (itemId.startsWith('rug_') || itemId.startsWith('mat_') || itemId.includes('carpet') || itemId.startsWith('plot_') || itemId.startsWith('grass_tuft_') || itemId.startsWith('path_'))));
   }
 
   function hasAtlasArt(atlas, entry) {
@@ -471,7 +472,19 @@
     const blockers = [];
     for (const it of layout.items) {
       if (!it) continue;
-      const itemId = it.itemId || it.id;
+      let itemId = it.itemId || it.id;
+      const uid = it.uid || it.id || itemId;
+      if (sceneId === 'farm' && typeof uid === 'string') {
+        const pm = uid.match(/^fx:farm:plot:(\d+)$/);
+        if (pm && state && state.farm && Array.isArray(state.farm.plots)) {
+          const p = state.farm.plots[Number(pm[1])];
+          if (p) {
+            if (p.state === 'ripe') itemId = 'plot_ripe';
+            else if (p.state === 'growing') itemId = p.watered ? 'plot_watered' : 'plot_sprout';
+            else itemId = 'plot_empty';
+          }
+        }
+      }
       const entry = (atlas && atlas.items) ? atlas.items[itemId] : null;
       if (!hasAtlasArt(atlas, entry)) continue;
       if (isFlatItem(it, entry, itemId)) continue;
@@ -656,7 +669,19 @@
 
     for (const it of layout.items) {
       if (!it) continue;
-      const itemId = it.itemId || it.id;
+      let itemId = it.itemId || it.id;
+      const uid = it.uid || it.id || itemId;
+      if (sceneId === 'farm' && typeof uid === 'string') {
+        const pm = uid.match(/^fx:farm:plot:(\d+)$/);
+        if (pm && state && state.farm && Array.isArray(state.farm.plots)) {
+          const p = state.farm.plots[Number(pm[1])];
+          if (p) {
+            if (p.state === 'ripe') itemId = 'plot_ripe';
+            else if (p.state === 'growing') itemId = p.watered ? 'plot_watered' : 'plot_sprout';
+            else itemId = 'plot_empty';
+          }
+        }
+      }
       const entry = (atlas && atlas.items) ? atlas.items[itemId] : null;
       if (!hasAtlasArt(atlas, entry)) continue;
 
@@ -684,7 +709,6 @@
 
       const url = (entry && entry.file) ? getAssetUrl('world/' + entry.file) : null;
       const isFlat = isFlatItem(it, entry, itemId);
-      const uid = it.uid || it.id || itemId;
 
       items.push({
         id: uid,

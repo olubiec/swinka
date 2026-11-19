@@ -23,7 +23,7 @@ namespace Cuy.Core.World
             if (balance != null && !balance.OutdoorInstancesActive) return;
 
             string key = placeId.Trim();
-            if (world.OutdoorSeeded.Contains(key)) return;
+            bool alreadySeeded = world.OutdoorSeeded.Contains(key);
 
             var table = defaults ?? OutdoorDefaults.Current;
             var entries = table?.ForScene(key);
@@ -35,6 +35,7 @@ namespace Cuy.Core.World
 
             if (!world.Rooms.TryGetValue(key, out var room) || room == null)
             {
+                if (alreadySeeded) return;
                 room = new RoomLayout();
                 world.Rooms[key] = room;
             }
@@ -42,6 +43,10 @@ namespace Cuy.Core.World
             foreach (var entry in entries)
             {
                 if (entry == null || string.IsNullOrEmpty(entry.Id) || string.IsNullOrEmpty(entry.ItemId))
+                {
+                    continue;
+                }
+                if (alreadySeeded && entry.Removable)
                 {
                     continue;
                 }
@@ -60,10 +65,14 @@ namespace Cuy.Core.World
                         Movable = entry.Movable,
                         Removable = entry.Removable
                     });
+                    world.OwnedItems.TryGetValue(entry.ItemId, out int owned);
+                    world.OwnedItems[entry.ItemId] = owned + 1;
                 }
-
-                world.OwnedItems.TryGetValue(entry.ItemId, out int owned);
-                world.OwnedItems[entry.ItemId] = owned + 1;
+                else if (!alreadySeeded)
+                {
+                    world.OwnedItems.TryGetValue(entry.ItemId, out int owned);
+                    world.OwnedItems[entry.ItemId] = owned + 1;
+                }
             }
 
             world.OutdoorSeeded.Add(key);

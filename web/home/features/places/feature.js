@@ -662,7 +662,7 @@
 
       const label = document.createElement('span');
       label.className = 'chip-text';
-      if (multiplePigs) {
+      if (multiplePigs || (pigName && pigName !== 'Pig')) {
         label.textContent = pigName + ' is in ' + sceneTitle;
       } else {
         label.textContent = 'Cuy is in ' + sceneTitle;

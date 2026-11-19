@@ -129,8 +129,8 @@
 
   function resolveTab(stallIdOrCategory) {
     const s = String(stallIdOrCategory || '').trim().toLowerCase();
-    if (s === 'pantry' || s === 'stall:pantry' || s.endsWith('stall_pantry')) return 'pantry';
-    if (s === 'home' || s === 'decor' || s === 'stall:decor' || s.endsWith('stall_decor')) return 'home';
+    if (s === 'pantry' || s === 'stall:pantry' || s.endsWith('stall_pantry') || s === 'stall:center' || s.endsWith('stall_center')) return 'pantry';
+    if (s === 'home' || s === 'decor' || s === 'stall:decor' || s.endsWith('stall_decor') || s === 'stall:right' || s.endsWith('stall_right')) return 'home';
     if (s === 'sell' || s === 'stall:own' || s.endsWith('stall_own')) return 'sell';
     return 'seeds';
   }
@@ -447,16 +447,24 @@
     }
 
     const clovers = st ? (st.clovers || 0) : 0;
+    const tabsHtml = TABS.map(t => `<button type="button" role="tab" class="market-tab${t.id === P.tab ? ' is-current' : ''}" aria-selected="${t.id === P.tab}" data-panel-tab="${t.id}">${esc(t.label)}</button>`).join('');
     P.el.innerHTML = `
       <div class="market-scene-head">
         <span class="market-scene-title">${esc(title)}</span>
         <span class="market-clovers"><span class="pixel-icon icon-clover" aria-hidden="true"></span> ${clovers}</span>
         <button type="button" class="ui-close market-scene-close" aria-label="Close stall panel"></button>
       </div>
+      <div class="market-tabs" role="tablist" aria-label="Market sections">${tabsHtml}</div>
       <div class="market-scene-body">${bodyHtml}</div>`;
 
     const closeBtn = P.el.querySelector('.market-scene-close');
     if (closeBtn) closeBtn.addEventListener('click', closePanel);
+    P.el.querySelectorAll('[data-panel-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        P.tab = btn.dataset.panelTab;
+        renderPanel();
+      });
+    });
     if (st && st.market) bindMarketEvents(P.el, st, P.tab);
     positionPanel();
   }
@@ -526,6 +534,7 @@
     },
     onState() {
       ensureHotspotHook();
+      if (P.el && !isMarketScene()) closePanel();
       if (S.container && S.container.isConnected) render();
     }
   });

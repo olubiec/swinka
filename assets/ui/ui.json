@@ -660,11 +660,100 @@
     16
    ]
   },
-  "back_btn_pressed": {
+   "back_btn_pressed": {
    "file": "ui/back_btn_pressed.png",
    "size": [
     16,
     16
+   ]
+  },
+  "nav_bar_frame": {
+   "file": "ui/nav_bar_frame.png",
+   "size": [
+    24,
+    24
+   ],
+   "slice": [
+    8,
+    8,
+    8,
+    8
+   ]
+  },
+  "nav_title_plate": {
+   "file": "ui/nav_title_plate.png",
+   "size": [
+    24,
+    18
+   ],
+   "slice": [
+    5,
+    5,
+    5,
+    5
+   ]
+  },
+  "nav_btn_arrow_left": {
+   "file": "ui/nav_btn_arrow_left.png",
+   "size": [
+    20,
+    20
+   ]
+  },
+  "nav_btn_arrow_left_hover": {
+   "file": "ui/nav_btn_arrow_left_hover.png",
+   "size": [
+    20,
+    20
+   ]
+  },
+  "nav_btn_arrow_left_pressed": {
+   "file": "ui/nav_btn_arrow_left_pressed.png",
+   "size": [
+    20,
+    20
+   ]
+  },
+  "nav_btn_arrow_right": {
+   "file": "ui/nav_btn_arrow_right.png",
+   "size": [
+    20,
+    20
+   ]
+  },
+  "nav_btn_arrow_right_hover": {
+   "file": "ui/nav_btn_arrow_right_hover.png",
+   "size": [
+    20,
+    20
+   ]
+  },
+  "nav_btn_arrow_right_pressed": {
+   "file": "ui/nav_btn_arrow_right_pressed.png",
+   "size": [
+    20,
+    20
+   ]
+  },
+  "nav_btn_edit": {
+   "file": "ui/nav_btn_edit.png",
+   "size": [
+    24,
+    20
+   ]
+  },
+  "nav_btn_edit_hover": {
+   "file": "ui/nav_btn_edit_hover.png",
+   "size": [
+    24,
+    20
+   ]
+  },
+  "nav_btn_edit_active": {
+   "file": "ui/nav_btn_edit_active.png",
+   "size": [
+    24,
+    20
    ]
   }
  }

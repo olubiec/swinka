@@ -252,7 +252,11 @@ namespace Cuy.Core.World
                 {
                     new OutdoorDefaultItem("barn", "barn_hay", 11, 1, false, true, false),
                     new OutdoorDefaultItem("fence_left", "fence_farm", 0, 4, false, true, true),
-                    new OutdoorDefaultItem("fence_right", "fence_farm", 15, 4, false, true, true)
+                    new OutdoorDefaultItem("fence_right", "fence_farm", 15, 4, false, true, true),
+                    new OutdoorDefaultItem("plot:0", "plot_empty", 2, 5, false, true, false),
+                    new OutdoorDefaultItem("plot:1", "plot_empty", 5, 5, false, true, false),
+                    new OutdoorDefaultItem("plot:2", "plot_empty", 8, 5, false, true, false),
+                    new OutdoorDefaultItem("plot:3", "plot_empty", 11, 5, false, true, false)
                 },
                 ["market"] = new[]
                 {

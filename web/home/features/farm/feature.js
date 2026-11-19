@@ -428,8 +428,9 @@
 
   function ensureStrip() {
     if (S.stripEl && S.stripEl.isConnected) return S.stripEl;
+    const stage = document.querySelector('.stage-viewport');
     const anchor = document.getElementById('placesLockedHint') || document.getElementById('placesBar');
-    if (!anchor || !anchor.parentNode) return null;
+    if (!stage && (!anchor || !anchor.parentNode)) return null;
     const strip = document.createElement('div');
     strip.id = 'farmSceneStrip';
     strip.className = 'farm-scene-strip feature-farm';
@@ -439,7 +440,11 @@
     strip.innerHTML =
       '<button type="button" class="farm-btn farm-strip-btn" data-scene-harvest-all="1">Harvest all</button>' +
       '<button type="button" class="farm-btn farm-strip-btn" data-scene-water-all="1">Water all</button>';
-    anchor.parentNode.insertBefore(strip, anchor.nextSibling);
+    if (stage) {
+      stage.appendChild(strip);
+    } else {
+      anchor.parentNode.insertBefore(strip, anchor.nextSibling);
+    }
     strip.querySelector('[data-scene-harvest-all]').addEventListener('click', () => {
       send({ type: 'farm_harvest_all' });
     });
