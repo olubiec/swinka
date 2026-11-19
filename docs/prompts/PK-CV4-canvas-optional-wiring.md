@@ -12,6 +12,7 @@ Produces (names other packages rely on): Edits only `canvas-pig.js` (anchors in 
 
 ## Czytaj (w tej kolejności, tylko wskazane sekcje)
 - `docs/opt/foundations/RI6.md` (całość) oraz kontrakty w `R45.md` sekcja 3, `R48.md` sekcja 2, `R50.md` sekcja 3.
+- w `web/home/canvas-pig.js` czytaj wyłącznie zakresy linii wskazane przez kotwice w `RI6.md` (zachowaj nienaruszone optymalizacje `litFrame`, `_cachedPattern`, `isDragging()` i `DrawBudget` z F2-FIX oraz F3).
 
 ## Praca równoległa (obowiązkowe)
 Ta paczka startuje w tym samym kroku co kilkanaście innych paczek, a każda edytuje inne pliki. Nie czekaj na nie i nie czytaj ich testów ani logów. Stan kodu to `main` z początku kroku: API innych paczek tego kroku jeszcze nie istnieje. Dane testowe buduj we WŁASNYM pliku testu; API rodzeństwa bierz z kontraktu w pliku badawczym wskazanym w "Czytaj" i w testach zastępuj atrapą (komunikat `STUB <nazwa>`). Plików sklejających (`index.html`, `app.js`, `features/index.json`, `canvas-pig.js`, `places/feature.js`, `edit-panel.js`, `HomeWindow.cs`, `Program.cs`) nie edytujesz, jeśli nie ma ich w Zmieniaj: wpina je krok sklejania. Gdy "Prompt fixes" w pliku badawczym przeczą krokom tego promptu, wygrywa plik badawczy; różnicę zapisz w logu.

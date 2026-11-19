@@ -47,6 +47,7 @@ Pliki wszystkich 18 paczek są rozłączne (pilnuje tego `node tools/qa/plan-aud
 - PK-P5c może skończyć się BLOCKED (R29); to nie zatrzymuje reszty fali.
 
 ## Co dalej
+- **Fala 2 — F2-FIX** (naprawa 9 błędów z testów na żywo w `Cuy.exe`: zacinanie 1 Hz, klasyczny pasek miejsc, przeciąganie świnki na żywo, dopasowanie sceny 16:9 bez brązowych ramek, bogatsze tła plenerowe i 10 obiektów Parku, kolizje stóp mebli w pikselach, klikanie lamp, zamykanie menu grządki/straganu przez `×` i klik w tło, szyldy na straganach i stan `In bag: X` przy sadzeniu): `docs/FALA_2_FIX_START.md`, 6 kroków (`F2F-1`..`F2F-6`), 24 agentów.
 - **Fala 3** (Home jak pulpit: spanie, drzemka, skok, taniec; odłożone punkty): `docs/FALA_3_START.md`, 6 kroków, 35 agentów.
 - **Fala 4** (Hay Hop, towarzysz, taniec do muzyki, pogoda za zgodą, etapy w Domku, bramka końcowa): `docs/FALA_4_START.md`, 6 kroków, 25 agentów.
 - Wcześniejsze paczki PK-23b (BLOCKED, brak kodu) i PK-21 (częściowo) czekają na osobną decyzję; fale 2-4 ich nie wymagają.

@@ -17,6 +17,15 @@ Produces (names other packages rely on): `docs/opt/foundations/R37.md` max 16000
 - `## 6.` Prompt fixes
 Ostatnia sekcja to "Prompt fixes": lista `PK-xxx: stary tekst -> nowy tekst` dla paczek: PK-H2, PK-H3, PK-CV3, PK-T15. Sekcje z kontraktem (nazwy funkcji, pola, kształty komunikatów) podają je DOSŁOWNIE, bo implementujące paczki kodują równolegle wyłącznie według tego pliku.
 
+## Czytaj tylko (zakaz czytania innych plików)
+- `assets/data/world_items.json`
+- `assets/data/actions.json`
+- `web/home/canvas-pig.js` linie 200-275, 1180-1280, 2220-2320
+- `src/Cuy.Core/Balance.cs`
+
+## Nie czytaj
+Wszystkich pozostałych plików w repozytorium, `docs/PLAN.md`, `docs/archive/`.
+
 ## Kontekst (fakty sprawdzone 17.11.2026, nie szukaj drugi raz)
 - Home: `web/home/` (`index.html`, `app.js`, `bridge.js`, `canvas-pig.js` ok. 3300 linii, `features/places/{feature,scenes,edit-panel,room-geometry,mock}.js`, `lib/{lights,palette,sprites,ui-assets}.js`). Moduły funkcji ładuje `app.js:963-995` z `features/index.json` (`features/<id>/feature.js`, w trybie mock też `features/<id>/mock.js`).
 - Płótno: sceny 256x144 (docelowo wszystkie; pokój dziś 192x112 z siatki, park 384x192 do czasu PK-P47a/PK-P47r), świnka dorosła 32x24. Orientacyjne kotwice `canvas-pig.js` (numery linii się przesuwają, szukaj grepem): `addLayer` ~393, `isFree` ~596, `findPath` ~684, `setScene` ~872, `depthScale`/`bScale` ~904-921, `pickRandomWalkTarget` ~1131, `renderList` ~1244, `drawThing` ~1327, `applySceneLight` ~2711, `drawContactShadow` ~2721, `litFrame` ~2776, publiczny obiekt `CanvasPig` ~3024.

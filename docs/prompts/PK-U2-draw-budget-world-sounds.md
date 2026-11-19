@@ -12,6 +12,10 @@ Produces (names other packages rely on): `window.DrawBudget`, `window.WorldSound
 
 ## Czytaj (w tej kolejności, tylko wskazane sekcje)
 - `docs/opt/foundations/R40.md` sekcje 3, 4 i 6.
+- `web/home/sound.js` linie 1-120 (identyfikatory dźwięków syntetycznych i ustawienie wyciszenia).
+
+## Nie czytaj
+Wszystkich pozostałych plików w repozytorium (`canvas-pig.js`, `places/feature.js`, `edit-panel.js`).
 
 ## Praca równoległa (obowiązkowe)
 Ta paczka startuje w tym samym kroku co kilkanaście innych paczek, a każda edytuje inne pliki. Nie czekaj na nie i nie czytaj ich testów ani logów. Stan kodu to `main` z początku kroku: API innych paczek tego kroku jeszcze nie istnieje. Dane testowe buduj we WŁASNYM pliku testu; API rodzeństwa bierz z kontraktu w pliku badawczym wskazanym w "Czytaj" i w testach zastępuj atrapą (komunikat `STUB <nazwa>`). Plików sklejających (`index.html`, `app.js`, `features/index.json`, `canvas-pig.js`, `places/feature.js`, `edit-panel.js`, `HomeWindow.cs`, `Program.cs`) nie edytujesz, jeśli nie ma ich w Zmieniaj: wpina je krok sklejania. Gdy "Prompt fixes" w pliku badawczym przeczą krokom tego promptu, wygrywa plik badawczy; różnicę zapisz w logu.

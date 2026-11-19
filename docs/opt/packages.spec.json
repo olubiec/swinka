@@ -618,6 +618,60 @@
       ]
     },
     {
+      "id": "F2F-1",
+      "packages": [
+        "PK-RF1",
+        "PK-RF2",
+        "PK-RF3",
+        "PK-RF4",
+        "PK-RF5",
+        "PK-RF6"
+      ]
+    },
+    {
+      "id": "F2F-2",
+      "packages": [
+        "PK-PF-BG",
+        "PK-PF-DATA",
+        "PK-PF-HS",
+        "PK-PF-SP",
+        "PK-PF-BAR",
+        "PK-PF-MKT",
+        "PK-PF-FRM"
+      ]
+    },
+    {
+      "id": "F2F-3",
+      "packages": [
+        "PK-RIF1",
+        "PK-RIF2"
+      ]
+    },
+    {
+      "id": "F2F-4",
+      "packages": [
+        "PK-PF-CV",
+        "PK-PF-SC",
+        "PK-PF-PL"
+      ]
+    },
+    {
+      "id": "F2F-5",
+      "packages": [
+        "PK-TF1",
+        "PK-TF2",
+        "PK-TF3",
+        "PK-TF4"
+      ]
+    },
+    {
+      "id": "F2F-6",
+      "packages": [
+        "PK-QF1",
+        "PK-QF2"
+      ]
+    },
+    {
       "id": "F3-1",
       "packages": [
         "PK-R36",
@@ -2898,6 +2952,222 @@
       "title": "Owner test sheet (wave 4) and release readiness note",
       "manual": "docs/prompts/PK-Q6-gate-owner-sheet-final.md",
       "verify": "node tools/qa/plan-audit.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RF1",
+      "tier": "high",
+      "title": "Research: frame lag, state push thrashing and drag override bug in canvas-pig.js and places/feature.js",
+      "manual": "docs/prompts/PK-RF1-research-lag-and-drag.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF1.md 5",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RF2",
+      "tier": "high",
+      "title": "Research: classic places bar restoration and 16:9 canvas stage viewport fit",
+      "manual": "docs/prompts/PK-RF2-research-bar-and-layout.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF2.md 5",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RF3",
+      "tier": "high",
+      "title": "Research: stripped outdoor backgrounds and out-of-bounds park default items",
+      "manual": "docs/prompts/PK-RF3-research-bgs-and-park-seed.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF3.md 5",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RF4",
+      "tier": "high",
+      "title": "Research: item footprint collision grid, multi-pig walk obstacle avoidance and lamp hotspot rectangles",
+      "manual": "docs/prompts/PK-RF4-research-collisions-and-lamps.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF4.md 5",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RF5",
+      "tier": "high",
+      "title": "Research: market stall categories, signboard icons, order board hotspot and outside-click close",
+      "manual": "docs/prompts/PK-RF5-research-market-stalls-and-signs.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF5.md 5",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RF6",
+      "tier": "high",
+      "title": "Research: farm plot popover close button, outside-click dismissal, inventory seed counts and Farm-Market guidance",
+      "manual": "docs/prompts/PK-RF6-research-farm-popover-and-stock.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF6.md 5",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-PF-BG",
+      "tier": "high",
+      "title": "Restore outdoor background scenery (market string lights and posters, farm fence, garden gate, park gazebo and bridge)",
+      "manual": "docs/prompts/PK-PF-BG-restore-outdoor-bgs.md",
+      "verify": "python tools/art/world/market_bg.py && python tools/art/world/farm_bg.py && python tools/art/world/garden_bg.py && python tools/art/world/park_bg.py && node tools/qa/ux-p47-bg.js && node tools/qa/check-assets.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-PF-DATA",
+      "tier": "high",
+      "title": "Fix out-of-bounds Park default coordinates (x < 16) and repair partial park seed in OutdoorSeed",
+      "manual": "docs/prompts/PK-PF-DATA-fix-park-outdoor-defaults.md",
+      "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~OutdoorSeed\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-PF-HS",
+      "tier": "high",
+      "title": "Fix hotspot pixel dimensions from grid cells, add garden_lantern/lantern_post to isLampItem, and add order_board hotspot",
+      "manual": "docs/prompts/PK-PF-HS-fix-hotspots-pixels-and-lamps.md",
+      "verify": "node --check web/home/lib/hotspots.js && node --check tools/qa/hotspots-check.js && node --check tools/qa/ux-p43-hotspots.js && node tools/qa/hotspots-check.js && node tools/qa/ux-p43-hotspots.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-PF-SP",
+      "tier": "high",
+      "title": "Fix multi-pig obstacle avoidance in scene-pigs.js (free spawn, segment line-of-sight walk target, slide deflection)",
+      "manual": "docs/prompts/PK-PF-SP-fix-scene-pigs-obstacles.md",
+      "verify": "node --check web/home/lib/scene-pigs.js && node --check tools/qa/ux-p5-scene-pigs.js && node tools/qa/ux-p5-scene-pigs.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-PF-BAR",
+      "tier": "high",
+      "title": "Restore clean classic places bar with readable Edit button and fit 16:9 canvas stage without brown frames",
+      "manual": "docs/prompts/PK-PF-BAR-restore-bar-and-fit-stage.md",
+      "verify": "node tools/qa/ux-p47-bar.js && node tools/qa/ux-p66-viewport-matrix.js && node tools/qa/check-assets.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-PF-MKT",
+      "tier": "high",
+      "title": "Specialize market stalls by category with header badge, add Orders board tab, and close on scene background click",
+      "manual": "docs/prompts/PK-PF-MKT-market-stalls-and-orders.md",
+      "verify": "node --check web/home/features/market/feature.js && node tools/qa/ux-p43-market.js && node tools/qa/ux-p60-hotspots-adv.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-PF-FRM",
+      "tier": "high",
+      "title": "Add close (x) button and background-click close to farm plot popover, show owned seed/crop counts, and link Farm to Market",
+      "manual": "docs/prompts/PK-PF-FRM-farm-popover-close-and-stock.md",
+      "verify": "node --check web/home/features/farm/feature.js && node tools/qa/ux-p43-farm.js && node tools/qa/ux-p60-hotspots-adv.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-RIF1",
+      "tier": "high",
+      "title": "Integration analysis: canvas-pig.js and scenes.js wiring for F2F-4",
+      "manual": "docs/prompts/PK-RIF1-integ-canvas-and-scenes.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RIF1.md 5",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-RIF2",
+      "tier": "high",
+      "title": "Integration analysis: places/feature.js state diffing, drag guard and popover coordination for F2F-4",
+      "manual": "docs/prompts/PK-RIF2-integ-places-feature.md",
+      "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RIF2.md 5",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-PF-CV",
+      "tier": "high",
+      "title": "Canvas hotfix: live pig dragging under multi-pig, litFrame and pattern caching, double-render removal, and pixel footprint collision grid",
+      "manual": "docs/prompts/PK-PF-CV-canvas-drag-perf-collisions.md",
+      "verify": "node --check web/home/canvas-pig.js && node tools/qa/ux-p50-canvas-wiring.js && node tools/qa/ux-p47-room.js && node tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p39-blockers.js && node tools/qa/ux-p34-pig-walk.js",
+      "items": [],
+      "weight": 5
+    },
+    {
+      "id": "PK-PF-SC",
+      "tier": "high",
+      "title": "Attach single-frame pixel sw/sh to placedThings, draw market stall signboards, and sync Park mock coordinates",
+      "manual": "docs/prompts/PK-PF-SC-scenes-footprints-and-signs.md",
+      "verify": "node --check web/home/features/places/scenes.js && node --check web/home/features/places/mock.js && node tools/qa/ux-p46-render.js && node tools/qa/ux-p50-canvas-wiring.js && node tools/qa/place-scenes-check.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-PF-PL",
+      "tier": "high",
+      "title": "Places feature hotfix: state signature diffing to stop 1 Hz lag, drag guard for setPresentPigs, and immediate lamp toggle",
+      "manual": "docs/prompts/PK-PF-PL-places-feature-diffing-and-lamps.md",
+      "verify": "node --check web/home/features/places/feature.js && node tools/qa/ux-p51-places-wiring.js && node tools/qa/ux-p47-bar.js && node tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p38-presence.js && node tools/qa/ux-p39-light.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-TF1",
+      "tier": "high",
+      "title": "Test agent: 1 Hz state push CPU budget, litFrame cache hit rate, and uninterrupted play/drag during state ticks",
+      "manual": "docs/prompts/PK-TF1-test-lag-and-drag.md",
+      "verify": "node --check tools/qa/ux-p71-lag-and-drag-fix.js && node tools/qa/ux-p71-lag-and-drag-fix.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-TF2",
+      "tier": "high",
+      "title": "Test agent: classic places bar, 16:9 canvas fit without brown borders, outdoor background details, and all 10 Park items",
+      "manual": "docs/prompts/PK-TF2-test-layout-bar-bgs.md",
+      "verify": "node --check tools/qa/ux-p72-layout-bar-bgs.js && node tools/qa/ux-p72-layout-bar-bgs.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-TF3",
+      "tier": "high",
+      "title": "Test agent: full pixel footprint collisions across scenes and lamp click toggling for every lamp type",
+      "manual": "docs/prompts/PK-TF3-test-collisions-and-lamps.md",
+      "verify": "node --check tools/qa/ux-p73-drag-collision-lamps.js && node tools/qa/ux-p73-drag-collision-lamps.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-TF4",
+      "tier": "high",
+      "title": "Test agent: market stall signboards, specialized stall categories, Orders board, farm seed inventory counts, and close on background click",
+      "manual": "docs/prompts/PK-TF4-test-market-and-farm-ux.md",
+      "verify": "node --check tools/qa/ux-p74-market-farm-ux.js && node tools/qa/ux-p74-market-farm-ux.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-QF1",
+      "tier": "low",
+      "title": "Stage gate (F2-FIX): Release and Debug build, Cuy.exe --selftest, Core tests, and all UX tests",
+      "manual": "docs/prompts/PK-QF1-gate-f2-fix-checks.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Debug && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && node tools/qa/ux-p71-lag-and-drag-fix.js && node tools/qa/ux-p72-layout-bar-bgs.js && node tools/qa/ux-p73-drag-collision-lamps.js && node tools/qa/ux-p74-market-farm-ux.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && node tools/qa/plan-audit.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-QF2",
+      "tier": "low",
+      "title": "Owner screenshots and visual verification sheet after F2-FIX",
+      "manual": "docs/prompts/PK-QF2-gate-f2-fix-owner-shots.md",
+      "verify": "node --check tools/qa/ux-p70-owner-shots.js && node tools/qa/ux-p70-owner-shots.js",
       "items": [],
       "weight": 3
     }

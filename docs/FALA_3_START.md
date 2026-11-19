@@ -1,6 +1,6 @@
 # Fala 3: Home jak pulpit + odłożone punkty (instrukcja ręczna)
 
-Start dopiero po F2-6 (fala 2). Zasady, szablon promptu startowego i sposób commitowania są takie same jak w `docs/FALA_2_START.md` (zmień tylko `KROK = F3-n`). Lista paczek kroku: `bash tools/release-wave.sh F3-2` (tak samo F3-1 .. F3-6). **6 kroków, 35 agentów.**
+Start dopiero po F2-6 (fala 2) oraz F2F-6 (`docs/FALA_2_FIX_START.md`). Zasady, szablon promptu startowego i sposób commitowania są takie same jak w `docs/FALA_2_START.md` (zmień tylko `KROK = F3-n`). Lista paczek kroku: `bash tools/release-wave.sh F3-2` (tak samo F3-1 .. F3-6). **6 kroków, 35 agentów.**
 
 ## Po co ta fala
 Sprawdzenie 18.11.2026 pokazało, że świnka w Home ma wszystkie sprite'y (54 wiersze animacji), ale prawie żadnego zachowania z pulpitu. Pulpitem steruje `Brain` (28 akcji z `assets/data/actions.json`), a Home dostaje tylko kliknięcia i losowe sniff/popcorn/spacer. Świnka w Home nie śpi, nie drzemie, nie pije, nie drapie się, nie biega, nie tańczy, nie ziewa i nie śpi razem z drugą. Fala 3 to naprawia i przy okazji domyka punkty odłożone (undo/redo, dźwięki, limity rysowania, wybieg, rekwizyty pulpitu).

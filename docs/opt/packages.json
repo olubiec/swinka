@@ -2987,6 +2987,375 @@
    "timeout_minutes": 44,
    "prompt_file": "docs/prompts/PK-Q2-gate-owner-sheet.md"
   },
+  "PK-RF1": {
+   "wave": "F2F-1",
+   "title": "Research: frame lag, state push thrashing and drag override bug in canvas-pig.js and places/feature.js",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RF1.md",
+    "docs/opt/log/PK-RF1.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF1.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RF1-research-lag-and-drag.md"
+  },
+  "PK-RF2": {
+   "wave": "F2F-1",
+   "title": "Research: classic places bar restoration and 16:9 canvas stage viewport fit",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RF2.md",
+    "docs/opt/log/PK-RF2.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF2.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RF2-research-bar-and-layout.md"
+  },
+  "PK-RF3": {
+   "wave": "F2F-1",
+   "title": "Research: stripped outdoor backgrounds and out-of-bounds park default items",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RF3.md",
+    "docs/opt/log/PK-RF3.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF3.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RF3-research-bgs-and-park-seed.md"
+  },
+  "PK-RF4": {
+   "wave": "F2F-1",
+   "title": "Research: item footprint collision grid, multi-pig walk obstacle avoidance and lamp hotspot rectangles",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RF4.md",
+    "docs/opt/log/PK-RF4.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF4.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RF4-research-collisions-and-lamps.md"
+  },
+  "PK-RF5": {
+   "wave": "F2F-1",
+   "title": "Research: market stall categories, signboard icons, order board hotspot and outside-click close",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RF5.md",
+    "docs/opt/log/PK-RF5.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF5.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RF5-research-market-stalls-and-signs.md"
+  },
+  "PK-RF6": {
+   "wave": "F2F-1",
+   "title": "Research: farm plot popover close button, outside-click dismissal, inventory seed counts and Farm-Market guidance",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RF6.md",
+    "docs/opt/log/PK-RF6.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RF6.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RF6-research-farm-popover-and-stock.md"
+  },
+  "PK-PF-BG": {
+   "wave": "F2F-2",
+   "title": "Restore outdoor background scenery (market string lights and posters, farm fence, garden gate, park gazebo and bridge)",
+   "items": [],
+   "files": [
+    "tools/art/world/market_bg.py",
+    "tools/art/world/farm_bg.py",
+    "tools/art/world/garden_bg.py",
+    "tools/art/world/park_bg.py",
+    "assets/world/bg/market_day.png",
+    "assets/world/bg/market_morning.png",
+    "assets/world/bg/market_evening.png",
+    "assets/world/bg/market_night.png",
+    "assets/world/bg/farm_day.png",
+    "assets/world/bg/farm_morning.png",
+    "assets/world/bg/farm_evening.png",
+    "assets/world/bg/farm_night.png",
+    "assets/world/bg/garden_day.png",
+    "assets/world/bg/garden_morning.png",
+    "assets/world/bg/garden_evening.png",
+    "assets/world/bg/garden_night.png",
+    "assets/world/bg/park_day.png",
+    "assets/world/bg/park_morning.png",
+    "assets/world/bg/park_evening.png",
+    "assets/world/bg/park_night.png",
+    "docs/opt/log/PK-PF-BG.md"
+   ],
+   "verify": "python tools/art/world/market_bg.py && python tools/art/world/farm_bg.py && python tools/art/world/garden_bg.py && python tools/art/world/park_bg.py && node tools/qa/ux-p47-bg.js && node tools/qa/check-assets.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-PF-BG-restore-outdoor-bgs.md"
+  },
+  "PK-PF-DATA": {
+   "wave": "F2F-2",
+   "title": "Fix out-of-bounds Park default coordinates (x < 16) and repair partial park seed in OutdoorSeed",
+   "items": [],
+   "files": [
+    "assets/data/outdoor_defaults.json",
+    "src/Cuy.Core/World/OutdoorDefaults.cs",
+    "src/Cuy.Core/World/OutdoorSeed.cs",
+    "tests/Cuy.Core.Tests/OutdoorSeedTests.cs",
+    "docs/opt/log/PK-PF-DATA.md"
+   ],
+   "verify": "dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release --filter \"FullyQualifiedName~OutdoorSeed\" && dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-PF-DATA-fix-park-outdoor-defaults.md"
+  },
+  "PK-PF-HS": {
+   "wave": "F2F-2",
+   "title": "Fix hotspot pixel dimensions from grid cells, add garden_lantern/lantern_post to isLampItem, and add order_board hotspot",
+   "items": [],
+   "files": [
+    "web/home/lib/hotspots.js",
+    "assets/data/scene_hotspots.json",
+    "tools/qa/hotspots-check.js",
+    "tools/qa/ux-p43-hotspots.js",
+    "docs/opt/log/PK-PF-HS.md"
+   ],
+   "verify": "node --check web/home/lib/hotspots.js && node --check tools/qa/hotspots-check.js && node --check tools/qa/ux-p43-hotspots.js && node tools/qa/hotspots-check.js && node tools/qa/ux-p43-hotspots.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-PF-HS-fix-hotspots-pixels-and-lamps.md"
+  },
+  "PK-PF-SP": {
+   "wave": "F2F-2",
+   "title": "Fix multi-pig obstacle avoidance in scene-pigs.js (free spawn, segment line-of-sight walk target, slide deflection)",
+   "items": [],
+   "files": [
+    "web/home/lib/scene-pigs.js",
+    "tools/qa/ux-p5-scene-pigs.js",
+    "docs/opt/log/PK-PF-SP.md"
+   ],
+   "verify": "node --check web/home/lib/scene-pigs.js && node --check tools/qa/ux-p5-scene-pigs.js && node tools/qa/ux-p5-scene-pigs.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-PF-SP-fix-scene-pigs-obstacles.md"
+  },
+  "PK-PF-BAR": {
+   "wave": "F2F-2",
+   "title": "Restore clean classic places bar with readable Edit button and fit 16:9 canvas stage without brown frames",
+   "items": [],
+   "files": [
+    "web/home/index.html",
+    "web/home/style.css",
+    "web/home/features/places/feature.css",
+    "web/home/features/places/edit-panel.css",
+    "docs/opt/log/PK-PF-BAR.md"
+   ],
+   "verify": "node tools/qa/ux-p47-bar.js && node tools/qa/ux-p66-viewport-matrix.js && node tools/qa/check-assets.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-PF-BAR-restore-bar-and-fit-stage.md"
+  },
+  "PK-PF-MKT": {
+   "wave": "F2F-2",
+   "title": "Specialize market stalls by category with header badge, add Orders board tab, and close on scene background click",
+   "items": [],
+   "files": [
+    "web/home/features/market/feature.js",
+    "web/home/features/market/feature.css",
+    "docs/opt/log/PK-PF-MKT.md"
+   ],
+   "verify": "node --check web/home/features/market/feature.js && node tools/qa/ux-p43-market.js && node tools/qa/ux-p60-hotspots-adv.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-PF-MKT-market-stalls-and-orders.md"
+  },
+  "PK-PF-FRM": {
+   "wave": "F2F-2",
+   "title": "Add close (x) button and background-click close to farm plot popover, show owned seed/crop counts, and link Farm to Market",
+   "items": [],
+   "files": [
+    "web/home/features/farm/feature.js",
+    "web/home/features/farm/feature.css",
+    "docs/opt/log/PK-PF-FRM.md"
+   ],
+   "verify": "node --check web/home/features/farm/feature.js && node tools/qa/ux-p43-farm.js && node tools/qa/ux-p60-hotspots-adv.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-PF-FRM-farm-popover-close-and-stock.md"
+  },
+  "PK-RIF1": {
+   "wave": "F2F-3",
+   "title": "Integration analysis: canvas-pig.js and scenes.js wiring for F2F-4",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RIF1.md",
+    "docs/opt/log/PK-RIF1.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RIF1.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RIF1-integ-canvas-and-scenes.md"
+  },
+  "PK-RIF2": {
+   "wave": "F2F-3",
+   "title": "Integration analysis: places/feature.js state diffing, drag guard and popover coordination for F2F-4",
+   "items": [],
+   "files": [
+    "docs/opt/foundations/RIF2.md",
+    "docs/opt/log/PK-RIF2.md"
+   ],
+   "verify": "node tools/qa/foundation-check.js docs/opt/foundations/RIF2.md 5",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-RIF2-integ-places-feature.md"
+  },
+  "PK-PF-CV": {
+   "wave": "F2F-4",
+   "title": "Canvas hotfix: live pig dragging under multi-pig, litFrame and pattern caching, double-render removal, and pixel footprint collision grid",
+   "items": [],
+   "files": [
+    "web/home/canvas-pig.js",
+    "docs/opt/log/PK-PF-CV.md"
+   ],
+   "verify": "node --check web/home/canvas-pig.js && node tools/qa/ux-p50-canvas-wiring.js && node tools/qa/ux-p47-room.js && node tools/qa/ux-p44-drag-edge.js && node tools/qa/ux-p39-blockers.js && node tools/qa/ux-p34-pig-walk.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 60,
+   "prompt_file": "docs/prompts/PK-PF-CV-canvas-drag-perf-collisions.md"
+  },
+  "PK-PF-SC": {
+   "wave": "F2F-4",
+   "title": "Attach single-frame pixel sw/sh to placedThings, draw market stall signboards, and sync Park mock coordinates",
+   "items": [],
+   "files": [
+    "web/home/features/places/scenes.js",
+    "web/home/features/places/mock.js",
+    "docs/opt/log/PK-PF-SC.md"
+   ],
+   "verify": "node --check web/home/features/places/scenes.js && node --check web/home/features/places/mock.js && node tools/qa/ux-p46-render.js && node tools/qa/ux-p50-canvas-wiring.js && node tools/qa/place-scenes-check.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-PF-SC-scenes-footprints-and-signs.md"
+  },
+  "PK-PF-PL": {
+   "wave": "F2F-4",
+   "title": "Places feature hotfix: state signature diffing to stop 1 Hz lag, drag guard for setPresentPigs, and immediate lamp toggle",
+   "items": [],
+   "files": [
+    "web/home/features/places/feature.js",
+    "docs/opt/log/PK-PF-PL.md"
+   ],
+   "verify": "node --check web/home/features/places/feature.js && node tools/qa/ux-p51-places-wiring.js && node tools/qa/ux-p47-bar.js && node tools/qa/ux-p44-drag-switch.js && node tools/qa/ux-p38-presence.js && node tools/qa/ux-p39-light.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-PF-PL-places-feature-diffing-and-lamps.md"
+  },
+  "PK-TF1": {
+   "wave": "F2F-5",
+   "title": "Test agent: 1 Hz state push CPU budget, litFrame cache hit rate, and uninterrupted play/drag during state ticks",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p71-lag-and-drag-fix.js",
+    "docs/opt/log/PK-TF1.md"
+   ],
+   "verify": "node --check tools/qa/ux-p71-lag-and-drag-fix.js && node tools/qa/ux-p71-lag-and-drag-fix.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-TF1-test-lag-and-drag.md"
+  },
+  "PK-TF2": {
+   "wave": "F2F-5",
+   "title": "Test agent: classic places bar, 16:9 canvas fit without brown borders, outdoor background details, and all 10 Park items",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p72-layout-bar-bgs.js",
+    "docs/opt/log/PK-TF2.md"
+   ],
+   "verify": "node --check tools/qa/ux-p72-layout-bar-bgs.js && node tools/qa/ux-p72-layout-bar-bgs.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-TF2-test-layout-bar-bgs.md"
+  },
+  "PK-TF3": {
+   "wave": "F2F-5",
+   "title": "Test agent: full pixel footprint collisions across scenes and lamp click toggling for every lamp type",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p73-drag-collision-lamps.js",
+    "docs/opt/log/PK-TF3.md"
+   ],
+   "verify": "node --check tools/qa/ux-p73-drag-collision-lamps.js && node tools/qa/ux-p73-drag-collision-lamps.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-TF3-test-collisions-and-lamps.md"
+  },
+  "PK-TF4": {
+   "wave": "F2F-5",
+   "title": "Test agent: market stall signboards, specialized stall categories, Orders board, farm seed inventory counts, and close on background click",
+   "items": [],
+   "files": [
+    "tools/qa/ux-p74-market-farm-ux.js",
+    "docs/opt/log/PK-TF4.md"
+   ],
+   "verify": "node --check tools/qa/ux-p74-market-farm-ux.js && node tools/qa/ux-p74-market-farm-ux.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-high",
+   "timeout_minutes": 52,
+   "prompt_file": "docs/prompts/PK-TF4-test-market-and-farm-ux.md"
+  },
+  "PK-QF1": {
+   "wave": "F2F-6",
+   "title": "Stage gate (F2-FIX): Release and Debug build, Cuy.exe --selftest, Core tests, and all UX tests",
+   "items": [],
+   "files": [
+    "docs/opt/log/PK-QF1.md"
+   ],
+   "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release && powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Debug && dotnet test tests/Cuy.Core.Tests/Cuy.Core.Tests.csproj -c Release && node tools/qa/ux-p71-lag-and-drag-fix.js && node tools/qa/ux-p72-layout-bar-bgs.js && node tools/qa/ux-p73-drag-collision-lamps.js && node tools/qa/ux-p74-market-farm-ux.js && node tools/qa/web-smoke.js && node tools/qa/check-assets.js && node tools/qa/check-icons.js && node tools/qa/plan-audit.js && powershell -ExecutionPolicy Bypass -File tools/qa/run-exe-smoke.ps1 -Seconds 25",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-QF1-gate-f2-fix-checks.md"
+  },
+  "PK-QF2": {
+   "wave": "F2F-6",
+   "title": "Owner screenshots and visual verification sheet after F2-FIX",
+   "items": [],
+   "files": [
+    "docs/qa/UX_WAVE_CHECKS.md",
+    "tools/qa/ux-p70-owner-shots.js",
+    "docs/qa/shots",
+    "docs/opt/log/PK-QF2.md"
+   ],
+   "verify": "node --check tools/qa/ux-p70-owner-shots.js && node tools/qa/ux-p70-owner-shots.js",
+   "gate": false,
+   "model": "gemini-3.8-flash-medium",
+   "timeout_minutes": 44,
+   "prompt_file": "docs/prompts/PK-QF2-gate-f2-fix-owner-shots.md"
+  },
   "PK-R36": {
    "wave": "F3-1",
    "title": "Research: pulpit behaviours that the Home pig lacks (sleep, doze, drink, zoomies, dance...)",

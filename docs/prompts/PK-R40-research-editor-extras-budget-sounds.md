@@ -18,6 +18,18 @@ Produces (names other packages rely on): `docs/opt/foundations/R40.md` max 16000
 - `## 7.` Prompt fixes
 Ostatnia sekcja to "Prompt fixes": lista `PK-xxx: stary tekst -> nowy tekst` dla paczek: PK-U1, PK-U2, PK-PE3, PK-PF3, PK-T17. Sekcje z kontraktem (nazwy funkcji, pola, kształty komunikatów) podają je DOSŁOWNIE, bo implementujące paczki kodują równolegle wyłącznie według tego pliku.
 
+## Czytaj tylko (zakaz czytania innych plików)
+- `docs/prompts/items/W20-03-rooms-editor-extras.md`
+- `docs/prompts/items/W21-03-world-sounds.md`
+- `docs/prompts/items/W21-05-draw-limits.md`
+- `docs/prompts/items/W27-07-room-residents.md`
+- `web/home/features/places/edit-panel.js` linie 1-260
+- `web/home/sound.js` linie 1-140
+- `web/home/canvas-pig.js` linie 2740-2840
+
+## Nie czytaj
+Wszystkich pozostałych plików w repozytorium, `docs/PLAN.md`, `docs/archive/`.
+
 ## Kontekst (fakty sprawdzone 17.11.2026, nie szukaj drugi raz)
 - Home: `web/home/` (`index.html`, `app.js`, `bridge.js`, `canvas-pig.js` ok. 3300 linii, `features/places/{feature,scenes,edit-panel,room-geometry,mock}.js`, `lib/{lights,palette,sprites,ui-assets}.js`). Moduły funkcji ładuje `app.js:963-995` z `features/index.json` (`features/<id>/feature.js`, w trybie mock też `features/<id>/mock.js`).
 - Płótno: sceny 256x144 (docelowo wszystkie; pokój dziś 192x112 z siatki, park 384x192 do czasu PK-P47a/PK-P47r), świnka dorosła 32x24. Orientacyjne kotwice `canvas-pig.js` (numery linii się przesuwają, szukaj grepem): `addLayer` ~393, `isFree` ~596, `findPath` ~684, `setScene` ~872, `depthScale`/`bScale` ~904-921, `pickRandomWalkTarget` ~1131, `renderList` ~1244, `drawThing` ~1327, `applySceneLight` ~2711, `drawContactShadow` ~2721, `litFrame` ~2776, publiczny obiekt `CanvasPig` ~3024.

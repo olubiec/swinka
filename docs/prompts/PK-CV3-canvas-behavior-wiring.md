@@ -13,6 +13,7 @@ Produces (names other packages rely on): Edits only `canvas-pig.js` (anchors fro
 ## Czytaj (w tej kolejności, tylko wskazane sekcje)
 - `docs/opt/foundations/RI4.md` (kotwice i kolejność: czytaj całość) oraz `R36.md` sekcja 5, `R37.md` sekcje 3-4, `R41.md` sekcja 3.
 - kod modułów `web/home/lib/{pig-behavior,rest-spots,pig-motion,pig-reactions,draw-budget}.js` (są w `main`).
+- w `web/home/canvas-pig.js` czytaj wyłącznie zakresy linii wskazane przez kotwice z `RI4.md` (nie czytaj całego pliku). Uwaga po F2-FIX: zachowaj nienaruszone `isDragging()`, cache `litFrame`, `_cachedPattern` oraz przeliczanie stóp `rebuildGrid()` na piksele!
 
 ## Praca równoległa (obowiązkowe)
 Ta paczka startuje w tym samym kroku co kilkanaście innych paczek, a każda edytuje inne pliki. Nie czekaj na nie i nie czytaj ich testów ani logów. Stan kodu to `main` z początku kroku: API innych paczek tego kroku jeszcze nie istnieje. Dane testowe buduj we WŁASNYM pliku testu; API rodzeństwa bierz z kontraktu w pliku badawczym wskazanym w "Czytaj" i w testach zastępuj atrapą (komunikat `STUB <nazwa>`). Plików sklejających (`index.html`, `app.js`, `features/index.json`, `canvas-pig.js`, `places/feature.js`, `edit-panel.js`, `HomeWindow.cs`, `Program.cs`) nie edytujesz, jeśli nie ma ich w Zmieniaj: wpina je krok sklejania. Gdy "Prompt fixes" w pliku badawczym przeczą krokom tego promptu, wygrywa plik badawczy; różnicę zapisz w logu.
