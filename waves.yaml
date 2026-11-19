@@ -2506,6 +2506,63 @@ waves:
     test_command: node --check tools/qa/ux-p70-owner-shots.js && node tools/qa/ux-p70-owner-shots.js
     model: gemini-3.8-flash-medium
     timeout_minutes: 44
+- id: F3-0
+  tasks:
+  - id: PK-B1
+    title: 'PK-B1: Baseline repair: stale web UX tests after the 256x144 scene unification'
+    prompt_file: docs/prompts/PK-B1-baseline-web-tests.md
+    files:
+    - tools/qa/ux-p1-decorate.js
+    - tools/qa/ux-p1-lifecycle.js
+    - tools/qa/ux-p2-player.js
+    - tools/qa/ux-p3-icons.js
+    - tools/qa/ux-p3-places.js
+    - tools/qa/ux-p34-pig-walk.js
+    - tools/qa/ux-p35-cleanup.js
+    - tools/qa/ux-p36-bar.js
+    - tools/qa/ux-p36-rooms-scroll.js
+    - tools/qa/ux-p38-presence.js
+    - tools/qa/ux-p39-blockers.js
+    - tools/qa/ux-p39-depth.js
+    - tools/qa/ux-p39-grid.js
+    - tools/qa/ux-p39-layout.js
+    - tools/qa/ux-p40-edit-move.js
+    - tools/qa/ux-p40-edit-place.js
+    - tools/qa/ux-p41-gramophone.js
+    - tools/qa/ux-p42-web-look.js
+    - tools/qa/ux-p43-market-scene.js
+    - tools/qa/ux-p44-drag-edge.js
+    - tools/qa/ux-p44-drag-switch.js
+    - tools/qa/ux-p45-overlay-pig.js
+    - tools/qa/ux-p45-overlay.js
+    - tools/qa/ux-p45-pig-shadow.js
+    - tools/qa/ux-p45-room-draw.js
+    - tools/qa/ux-p45-room-scene.js
+    - tools/qa/ux-p46-regress.js
+    - tools/qa/ux-p46-render.js
+    - tools/qa/ux-p50-canvas-wiring.js
+    - tools/qa/lib/ux.js
+    - web/home/canvas-pig.js
+    - web/home/features/places
+    - docs/qa/UX_WAVE_CHECKS.md
+    - docs/opt/log/PK-B1.md
+    test_command: node tools/qa/ux-all.js
+    model: gemini-3.8-flash-high
+    timeout_minutes: 52
+  - id: PK-B2
+    title: 'PK-B2: Baseline repair: Core test failures and SelfTest from Q1'
+    prompt_file: docs/prompts/PK-B2-baseline-core-selftest.md
+    files:
+    - assets/data/world_items.json
+    - src/Cuy.Core/Input/Validation
+    - src/Cuy.Core/World
+    - tests/Cuy.Core.Tests
+    - src/Cuy/dotNet/SelfTest.cs
+    - web/home/features/index.json
+    - docs/opt/log/PK-B2.md
+    test_command: powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release
+    model: gemini-3.8-flash-high
+    timeout_minutes: 44
 - id: F3-1
   tasks:
   - id: PK-R36
@@ -2867,6 +2924,9 @@ waves:
     prompt_file: docs/prompts/PK-Q4-gate-owner-sheet-3.md
     files:
     - docs/qa/F3_OWNER_SHEET.md
+    - docs/qa/UX_WAVE_CHECKS.md
+    - tools/qa/ux-p71-f3-owner-shots.js
+    - docs/qa/shots
     - docs/opt/log/PK-Q4.md
     test_command: node tools/qa/plan-audit.js
     model: gemini-3.8-flash-medium

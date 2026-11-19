@@ -618,6 +618,13 @@
       ]
     },
     {
+      "id": "F3-0",
+      "packages": [
+        "PK-B1",
+        "PK-B2"
+      ]
+    },
+    {
       "id": "F3-1",
       "packages": [
         "PK-R36",
@@ -2358,6 +2365,24 @@
       "title": "Owner test sheet and screenshots for the whole wave",
       "manual": "docs/prompts/PK-Q2-gate-owner-sheet.md",
       "verify": "node --check tools/qa/ux-p70-owner-shots.js && node tools/qa/ux-p70-owner-shots.js",
+      "items": [],
+      "weight": 3
+    },
+    {
+      "id": "PK-B1",
+      "tier": "mid",
+      "title": "Baseline repair: stale web UX tests after the 256x144 scene unification",
+      "manual": "docs/prompts/PK-B1-baseline-web-tests.md",
+      "verify": "node tools/qa/ux-all.js",
+      "items": [],
+      "weight": 4
+    },
+    {
+      "id": "PK-B2",
+      "tier": "mid",
+      "title": "Baseline repair: Core test failures and SelfTest from Q1",
+      "manual": "docs/prompts/PK-B2-baseline-core-selftest.md",
+      "verify": "powershell -ExecutionPolicy Bypass -File tools/build.ps1 -Config Release",
       "items": [],
       "weight": 3
     },

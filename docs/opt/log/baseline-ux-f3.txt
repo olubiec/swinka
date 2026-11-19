@@ -1,0 +1,33 @@
+# Baseline po F2-6 (Q1/Q2), 19.11.2026: node tools/qa/ux-all.js = 85 skryptów, 29 FAIL.
+# Te testy padały PRZED falą 3. Paczka fali 3 nie jest BLOCKED z ich powodu; naprawia je PK-B1 (krok F3-0).
+# "Cannot find module playwright" = brak Playwrighta w środowisku, nie wada kodu.
+
+ux-p1-decorate.js :: Error: Cannot find module 'playwright'
+ux-p1-lifecycle.js :: FAIL back-button: Back button aria-label is "Back", expected "Back to More"
+ux-p2-player.js :: Error: Cannot find module 'playwright'
+ux-p3-icons.js :: FAIL size-and-hit: Header close button size (24x24) is under 32x32
+ux-p3-places.js :: FAIL A1 arrow-cycle: page.waitForSelector: Timeout 3000ms exceeded.
+ux-p34-pig-walk.js :: FAIL W2 stays-in-band: page.evaluate: Error: [salon] Pig feet (192,66) out of band [8,40,184,110]
+ux-p35-cleanup.js :: FAIL C1 no-arrows-in-windows: locator.click: Timeout 5000ms exceeded.
+ux-p36-bar.js :: FAIL M1 bar-style: Expected .places-bar to have background-image from assets/ui/, got: none
+ux-p36-rooms-scroll.js :: FAIL R1 scroll-to-bottom: locator.click: Timeout 5000ms exceeded.
+ux-p38-presence.js :: FAIL Pr1 chip-elsewhere: Expected chip text to contain "Cuy is in", got: "Pip is in SalonGo there"
+ux-p39-blockers.js :: throw new AssertionError(obj);
+ux-p39-depth.js :: FAIL D1 scale-monotonic: page.evaluate: Error: [salon] scale at top (0.75) not within depthScale [1,1.125]
+ux-p39-grid.js :: FAIL W2 path-around: page.evaluate: Error: Pig feet (64, 129) entered fountain rect [62,126,76,132] at step 1
+ux-p39-layout.js :: FAIL Ly4 park-fits and farm-fits: Park canvas width must be 384
+ux-p40-edit-move.js :: FAIL M1 select-shows-toolbar: Selected item uid should be u1
+ux-p40-edit-place.js :: FAIL P1 drop-valid-sends: Expected values to be strictly equal:
+ux-p41-gramophone.js :: Error: Cannot find module 'playwright'
+ux-p42-web-look.js :: FAIL L1 same-key-everywhere: My pigs card key (null) !== expectedKey (sprites/adult/spritesheet.png) for kuki
+ux-p43-market-scene.js :: FAIL: page.waitForSelector: Timeout 3000ms exceeded.
+ux-p44-drag-edge.js :: FAIL G3 continue-keeps-drag: Expected values to be strictly equal:
+ux-p44-drag-switch.js :: FAIL T4 drag-across-three-scenes: Should have switched to sypialnia, got: salon
+ux-p45-overlay-pig.js :: UX P45 OVERLAY PIG TEST FAILED: AssertionError [ERR_ASSERTION]: OP1 FAIL: Expected park crop run to differ from no-crop run
+ux-p45-overlay.js :: UX P45 OVERLAY TEST FAILED: AssertionError [ERR_ASSERTION]: Width mismatch for park: got 1024, expected 1536
+ux-p45-pig-shadow.js :: FAIL PS1 no-ellipse-call-with-pig-present-in-10s: page.evaluate: Error: ctx.ellipse was called 2000 times with pig present
+ux-p45-room-draw.js :: FAIL RD1 salon wallH and size, 10x6 pig room wallH and size: page.evaluate: Error: Expected salon size [192, 112], got [256,144]
+ux-p45-room-scene.js :: FAIL RS3: floor item at cell (2,3) of size 3x2 matches cellToPx: RS3: expected 1 placed thing
+ux-p46-regress.js :: FAIL R3 pig-still-walks: page.evaluate: Error: [garden] Pig feet (36,126) inside blocker [16,112,48,128]
+ux-p46-render.js :: Error: Cannot find module 'playwright'
+ux-p50-canvas-wiring.js :: FAIL: Perf 3-pigs <= 1.5x baseline: AssertionError [ERR_ASSERTION]: 3-pigs drawImage (11) exceeds 1.5x baseline (4)
