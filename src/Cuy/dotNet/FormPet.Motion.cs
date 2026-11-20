@@ -17,6 +17,7 @@ namespace Cuy
         private Timer motionTimer;
         private Point dragAnchor;
         private double tossUpdatedAt;
+        private int tossBounces;
         private const double FallCacheMs = 2000;   // window list reuse during a toss (D2.2)
         private double fallCacheAt = double.NegativeInfinity;
         private readonly List<IntPtr> fallHandles = new List<IntPtr>();
@@ -99,6 +100,7 @@ namespace Cuy
         private void BeginToss(double now)
         {
             IsTossing = true;
+            tossBounces = 0;
             ResetTossPerf();
 
             // Init vertical toss velocity and snapshot window rects once before the 8 ms toss loop starts.
@@ -110,23 +112,47 @@ namespace Cuy
 
         private void AdvanceToss(double now)
         {
+            double dtMs = now - tossUpdatedAt;
+            double dt = Math.Max(0, Math.Min(50, dtMs)) / 30.0;
+            int scale = Program.MyData != null ? Math.Max(1, Program.MyData.GetScale()) : 1;
+            double gravityScale = scale == 1 ? 1.0 : scale * 0.85;
+
             // Physics lives in Cuy.Core (TossPhysics). Pauses are bounded to 50 ms inside the step.
             var state = new TossState { X = PositionX, Y = PositionY, VelX = TossForce.X, VelY = tossVertVel };
             var bounds = new TossBounds { Screen = ScreenArea, Width = Width, Height = Height, FootOffsetY = CurrentAnimation.Start.OffsetY };
             // FallDetect reads PositionX, so the probe gets the X the step has already reached.
-            TossStepResult step = TossPhysics.Step(state, now - tossUpdatedAt, bounds, (x, downStep) => { PositionX = x; return FallDetect(downStep); });
+            TossStepResult step = TossPhysics.Step(state, dtMs, bounds, (x, downStep) => { PositionX = x; return FallDetect(downStep); });
             tossUpdatedAt = now;
             if (!step.Stepped) return;
+
             PositionX = step.State.X;
-            PositionY = step.State.Y;
+            double nextY = step.State.Y;
             TossForce.X = (float)step.State.VelX;
-            tossVertVel = step.State.VelY;
+            tossVertVel = step.State.VelY + (gravityScale - 1.0) * 1.5 * dt;
+
+            // Bounce off the top edge of the screen instead of flying off-screen.
+            if (nextY < ScreenArea.Top)
+            {
+                nextY = ScreenArea.Top;
+                if (tossVertVel < 0) tossVertVel *= -0.3;
+            }
+            PositionY = nextY;
+
             // Same sink as the walking animations, so the feet touch the taskbar and landing does not jump.
             OffsetY = step.OffsetY;
             motion.Reset(PositionX, PositionY + OffsetY, now);
             RenderMotion(now);
             if (step.Landed)
             {
+                double bounceThreshold = 6.0 * gravityScale;
+                if (tossVertVel > bounceThreshold && tossBounces < 2)
+                {
+                    tossVertVel = -tossVertVel * 0.35;
+                    TossForce.X *= 0.75f;
+                    tossBounces++;
+                    hwndWindow = IntPtr.Zero;
+                    return;
+                }
                 if ((TossForce.X < 0 && !spritesFlipped) || (TossForce.X > 0 && spritesFlipped)) // face the throw direction
                 {
                     IsMovingLeft = !IsMovingLeft;
@@ -310,7 +336,11 @@ namespace Cuy
                 if (motion.Initialized) RenderMotion(motionClock.Elapsed.TotalMilliseconds);
             }
             if (!IsTossing && !motion.IsMoving(now)) SetMotionTimer(false);
-            ShadowForm.Update(this);
+            if (!IsTossing || now - lastShadowDragUpdateMs >= 16.0)
+            {
+                lastShadowDragUpdateMs = now;
+                ShadowForm.Update(this);
+            }
         }
 
         private double lastShadowDragUpdateMs = -1000.0;

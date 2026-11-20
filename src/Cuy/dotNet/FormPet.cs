@@ -1232,7 +1232,8 @@ namespace Cuy
                 Opacity = CurrentAnimation.Start.Opacity + (CurrentAnimation.End.Opacity - CurrentAnimation.Start.Opacity) * currentStep / CurrentAnimation.Sequence.TotalSteps;
             }
             EnsurePetVisible();
-			OffsetY = CurrentAnimation.Start.OffsetY + (double)((CurrentAnimation.End.OffsetY - CurrentAnimation.Start.OffsetY) * currentStep / CurrentAnimation.Sequence.TotalSteps);
+            if (!IsDragging && !IsTossing)
+                OffsetY = CurrentAnimation.Start.OffsetY + (double)((CurrentAnimation.End.OffsetY - CurrentAnimation.Start.OffsetY) * currentStep / CurrentAnimation.Sequence.TotalSteps);
 
                 // If dragging is enabled, move the pet to the mouse position.
             if (IsDragging)
@@ -1901,8 +1902,7 @@ namespace Cuy
                 _clickStartTime = DateTime.UtcNow;
                 _brain?.InterruptPhysics("drag");
                 hwndWindow = (IntPtr)0;             // Remove window handles
-                TopMost = false;
-                TopMost = true;                     // Set again the topmost
+                if (!TopMost) TopMost = true;       // Ensure topmost without forcing a Z-order flicker
 				IsDragging = true;                   // Flag it as dragging pet
                 IsTossing = false;                     // Flag it as not being tossed
                 BeginSmoothDrag();
@@ -2004,23 +2004,20 @@ namespace Cuy
                         ShowStatusBubble();
                     }
                 }
-                else if (TossForce.Length() > 5)
+                else
                 {
-                    _brain?.InterruptPhysics("toss");
-                    // If toss animation exists, set it. Otherwise, remain in the dragging animation.
-                    if(Animations.AnimationToss != -1)
+                    // Always use ballistic gravity physics on release (even for gentle drops, never slow linear fall).
+                    bool strongToss = TossForce.Length() > 5;
+                    _brain?.InterruptPhysics(strongToss ? "toss" : "fall");
+                    if (strongToss && Animations.AnimationToss != -1)
                         SetNewAnimation(Animations.AnimationToss);
+                    else
+                        SetNewAnimation(Animations.AnimationFall);
 
                     BeginToss(now);
 
-                    // Force the interval while tossing to be a nice and smooth 30 (prevents laggy tossing for pets with slow drag animation intervals)
+                    // Force the interval while tossing/falling to be a nice and smooth 30 (prevents laggy animation for slow drag intervals)
                     timer1.Interval = 30;
-                }
-                // If toss force wasn't large enough, fall like normal
-                else
-                {
-                    _brain?.InterruptPhysics("fall");
-                    SetNewAnimation(Animations.AnimationFall);
                 }
                 
             }
