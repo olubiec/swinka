@@ -366,6 +366,23 @@ Wszystkie testy fali P44 mają zielony wynik (przeciąganie świnki do krawędzi
 - **Uwaga 27 (PK-T5):** Hotspoty scen interaktywnych (farma, targ) są klikalne i czytelne — pokryte przez `PK-T5` (`ux-p60-hotspots-adv.js`).
 - **Uwaga 28 (PK-T9):** Okno domku na różnych skalach DPI (100%/125%/150%) nie jest ucięte od dołu, a świnka po upgrade pokoju ma stały rozmiar — pokryte przez `PK-T9` (`ux-p66-viewport-matrix.js`).
 
+## F2-FIX (Live Testing Hotfixes)
+
+| # | Fixed Issue | Test File | In-Game Verification |
+|---|---|---|---|
+| 1 | UI/canvas lag during rendering and state updates | `tools/qa/ux-p71-lag-and-drag-fix.js` | Open Home and switch scenes or toggle Edit; animation and UI remain responsive without stutter |
+| 2 | Pig drag responsiveness and drop handling | `tools/qa/ux-p71-lag-and-drag-fix.js` | Drag the pig across the scene floor and release; it moves smoothly and stays on a valid cell |
+| 3 | Restored classic places bar above the stage | `tools/qa/ux-p72-layout-bar-bgs.js` | Check the wooden `[<] Place [>] [Edit]` bar sits cleanly above the canvas in a single row |
+| 4 | Fitted 16:9 canvas stage without brown frames | `tools/qa/ux-p72-layout-bar-bgs.js` | Verify the scene fills the 16:9 stage cleanly with no brown side or letterbox bars |
+| 5 | Restored outdoor background details | `tools/qa/ux-p72-layout-bar-bgs.js` | Cycle through Garden, Park, Farm, and Market and confirm full outdoor background art renders |
+| 6 | Drag collision and all 10 Park items / obstacles | `tools/qa/ux-p73-drag-collision-lamps.js` | Visit Park to confirm all 10 items (gazebo, trees, bridge, benches, path, lanterns) render and block walking |
+| 7 | Lamp placement, toggle, and night lighting glow | `tools/qa/ux-p73-drag-collision-lamps.js` | Place a floor lamp in Salon at night (`23:00`) and click it to toggle its warm glow |
+| 8 | Market stall signboards and stall interactions | `tools/qa/ux-p74-market-farm-ux.js` | Open Market and confirm the 3 stalls display clear signboards (sprout, carrot, flower) and respond to clicks |
+| 9 | Farm scene UX and hotspot interactions | `tools/qa/ux-p74-market-farm-ux.js` | Open Farm and confirm crops/hotspots are visible, aligned, and clickable |
+
+- **Owner Screenshots (PK-QF2):** `node tools/qa/ux-p70-owner-shots.js` — regenerates `docs/qa/shots/owner-{salon,garden,park,farm,market,edit-drawer,night-lamp,two-pigs}.png` at `420x640`.
+
+
 
 
 
