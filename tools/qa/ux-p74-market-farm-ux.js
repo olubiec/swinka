@@ -1,7 +1,7 @@
 'use strict';
 
 const { chromium } = require('playwright');
-const { startServer, openHome } = require('./lib/ux');
+const { startServer, openHome, pushState } = require('./lib/ux');
 
 const defects = [];
 const results = [];
@@ -15,6 +15,54 @@ function recordDefect(id, desc) {
   defects.push({ id, desc });
   results.push({ id, ok: false, detail: desc });
   console.log(`DEFECT ${id}: ${desc}`);
+}
+
+async function unlockPlaces(page, placeIds) {
+  await page.evaluate((ids) => {
+    const st = window.bridge && window.bridge.currentState;
+    if (!st) return;
+    if (!st.places) st.places = {};
+    if (Array.isArray(st.places.order)) {
+      for (const id of ids) {
+        const entry = st.places.order.find((p) => p && p.id === id);
+        if (entry) {
+          entry.locked = false;
+          entry.unlocked = true;
+          entry.unlockHint = '';
+        } else {
+          st.places.order.push({
+            id,
+            title: id.charAt(0).toUpperCase() + id.slice(1),
+            locked: false,
+            unlocked: true,
+            unlockHint: ''
+          });
+        }
+      }
+    }
+    if (Array.isArray(st.places.places)) {
+      for (const id of ids) {
+        const entry = st.places.places.find((p) => p && p.id === id);
+        if (entry) {
+          entry.locked = false;
+          entry.unlocked = true;
+        } else {
+          st.places.places.push({
+            id,
+            name: id.charAt(0).toUpperCase() + id.slice(1),
+            locked: false,
+            unlocked: true
+          });
+        }
+      }
+    }
+    if (ids.includes('farm')) {
+      st.farm = st.farm || {};
+      st.farm.unlocked = true;
+    }
+    st.poops = 0;
+  }, placeIds);
+  await pushState(page);
 }
 
 async function setPlace(page, placeId) {
@@ -128,6 +176,7 @@ async function run() {
     page = await openHome(browser, { query: '?mock=seven' });
     await page.setViewportSize({ width: 420, height: 640 });
     await page.waitForTimeout(300);
+    await unlockPlaces(page, ['market', 'farm']);
 
     // --- MARKET TESTS ---
     await setPlace(page, 'market');
@@ -158,7 +207,9 @@ async function run() {
           const panel = document.querySelector('#marketStallPanel') || document.querySelector('.market-scene-panel');
           if (!panel) return null;
           const title = (panel.querySelector('.market-scene-title')?.textContent || '').trim();
-          const activeTab = panel.querySelector('.stall-cat-tab.active, .stall-cat-tab[aria-selected="true"], .market-tab.active, .market-tab[aria-selected="true"]');
+          const activeTab =
+            panel.querySelector('.stall-cat-tab.active, .stall-cat-tab.is-current, .stall-cat-tab[aria-selected="true"]') ||
+            panel.querySelector('.market-tab.active[data-cat], .market-tab.is-current[data-cat], .market-tab[aria-selected="true"][data-cat], .market-tab.active[data-panel-tab], .market-tab[aria-selected="true"][data-panel-tab]');
           const cat = activeTab ? (activeTab.getAttribute('data-cat') || activeTab.getAttribute('data-panel-tab') || '') : '';
           return { hasId: panel.id === 'marketStallPanel', title, cat };
         });
@@ -207,17 +258,22 @@ async function run() {
 
     // M3: market panel closes on background click
     await page.waitForTimeout(120);
-    const wasMarketOpen = await page.locator('#marketStallPanel, .market-scene-panel').isVisible().catch(() => false);
+    let wasMarketOpen = await page.locator('#marketStallPanel, .market-scene-panel').isVisible().catch(() => false);
     if (!wasMarketOpen && seedStall) {
       await clickSceneRect(page, seedStall.rect);
       await page.waitForTimeout(120);
+      wasMarketOpen = await page.locator('#marketStallPanel, .market-scene-panel').isVisible().catch(() => false);
     }
-    await clickCanvasBg(page, 20, 20);
-    const isMarketStillOpen = await page.locator('#marketStallPanel, .market-scene-panel').isVisible().catch(() => false);
-    if (!isMarketStillOpen) {
-      recordPass('M3-market-panel-closes-on-background-click', '#marketStallPanel closed after clicking #pigCanvas background (20, 20)');
+    if (!wasMarketOpen) {
+      recordDefect('M3-market-panel-closes-on-background-click', '#marketStallPanel did not open before testing background click close');
     } else {
-      recordDefect('M3-market-panel-closes-on-background-click', '#marketStallPanel remained open after clicking #pigCanvas background (20, 20)');
+      await clickCanvasBg(page, 20, 20);
+      const isMarketStillOpen = await page.locator('#marketStallPanel, .market-scene-panel').isVisible().catch(() => false);
+      if (!isMarketStillOpen) {
+        recordPass('M3-market-panel-closes-on-background-click', '#marketStallPanel closed after clicking #pigCanvas background (20, 20)');
+      } else {
+        recordDefect('M3-market-panel-closes-on-background-click', '#marketStallPanel remained open after clicking #pigCanvas background (20, 20)');
+      }
     }
 
     // --- FARM TESTS ---
@@ -326,7 +382,7 @@ async function run() {
     }
 
     console.log(`\nSummary: ${results.filter((r) => r.ok).length}/${results.length} passed, ${defects.length} defect(s)`);
-    if (process.env.STRICT === '1' && defects.length > 0) {
+    if ((process.env.STRICT || '').trim() === '1' && defects.length > 0) {
       process.exitCode = 1;
     }
   } finally {

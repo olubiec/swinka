@@ -377,14 +377,19 @@
       this.presentPigs = [];
       this._multiPigActive = false;
       this._litFrameCache = new Map();
+      this._unlitRowCache = new Map();
+      this._unlitFrameCache = new Map();
+      this._rowCanvas = null;
+      this._rowCtx = null;
       this._litSheetIds = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
       this._litSheetSeq = 0;
+      this._lastValidPigPos = new Map();
       this.scenePigs = (typeof window !== 'undefined' && window.CuyScenePigs && typeof window.CuyScenePigs.create === 'function')
         ? window.CuyScenePigs.create({ bounds: this.walk || [10, 96, 230, 126], minGap: 22, isFree: (x, y) => this.isFree(x, y) })
         : null;
       this.pendingPlay = null;
       this.activePlay = null;
-      this._hotspots = [];
+      this._hotspots = (CanvasPig && Array.isArray(CanvasPig._hotspots)) ? CanvasPig._hotspots.slice() : [];
       this._hotspotListeners = [];
       this._renderNowMs = null;
       this.currentScene = null;
@@ -989,22 +994,6 @@
       this.targetX = null;
       this.targetY = null;
       this.targetExit = null;
-
-      const ptMod = (typeof window !== 'undefined' && window.CuyPlayTargets) || null;
-      if (ptMod && typeof ptMod.pickReachable === 'function' && Array.isArray(this.things) && this.things.length > 0 && Math.random() < 0.25) {
-        const res = ptMod.pickReachable(
-          this.things,
-          { x: this.pigX, y: this.pigY },
-          (x, y) => this.isFree(x, y),
-          (sx, sy, tx, ty) => this.findPath(sx, sy, tx, ty),
-          Math.random,
-          (id) => this.getItemDef(id)
-        );
-        if (res && res.spot && this.setTarget(res.spot.x, res.spot.y)) {
-          this.pendingPlay = res;
-          return;
-        }
-      }
       this.idleTimer = 400;
 
       if (!this.depthScale) {
@@ -1016,6 +1005,7 @@
         this.depthScale = [tScale < bScale ? tScale : Math.max(0.125, bScale - 0.125), bScale];
       }
 
+      if (this._lastValidPigPos) this._lastValidPigPos.clear();
       this.rebuildGrid();
       this.clearPlayState();
       if (this.scenePigs) {
@@ -1039,6 +1029,22 @@
       }
       if (!this.explicitThings && this.lastState && typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.placedThings === 'function') {
         this.setThings(window.CuyScenes.placedThings(this.lastState, this.sceneId), false);
+      }
+      this.enforceFreePigs(true);
+
+      const ptMod = (typeof window !== 'undefined' && window.CuyPlayTargets) || null;
+      if (ptMod && typeof ptMod.pickReachable === 'function' && Array.isArray(this.things) && this.things.length > 0 && Math.random() < 0.25) {
+        const res = ptMod.pickReachable(
+          this.things,
+          { x: this.pigX, y: this.pigY },
+          (x, y) => this.isFree(x, y),
+          (sx, sy, tx, ty) => this.findPath(sx, sy, tx, ty),
+          Math.random,
+          (id) => this.getItemDef(id)
+        );
+        if (res && res.spot && this.setTarget(res.spot.x, res.spot.y)) {
+          this.pendingPlay = res;
+        }
       }
     }
 
@@ -1070,11 +1076,13 @@
           t.img = this.loadCachedImage(t.url);
         }
       });
+      if (this._lastValidPigPos) this._lastValidPigPos.clear();
       this.rebuildGrid();
       this.clearPlayState();
       if (this.scenePigs) {
         this.scenePigs.setBounds(this.walk || [10, 96, 230, 126]);
       }
+      this.enforceFreePigs(true);
     }
 
     setPigVisible(visible) {
@@ -1097,6 +1105,84 @@
       return this.scenePigs;
     }
 
+    enforceFreePigs(resync) {
+      if (!this.drag && !this.targetExit && !this.isFree(this.pigX, this.pigY)) {
+        const snapped = this.snapToFreeCell(this.pigX, this.pigY);
+        this.pigX = snapped.x;
+        this.pigY = snapped.y;
+        if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
+          this.scenePigs.movePrimary(this.pigX, this.pigY);
+        }
+      }
+      if (!this._multiPigActive || !this.scenePigs) return;
+      const sp = this.scenePigs;
+      if (resync && Array.isArray(this.presentPigs) && this.presentPigs.length > 0) {
+        const before = sp.entries();
+        const needsResync = before.some((e, i) => !(i === 0 && this.drag) && e && !this.isFree(e.x, e.y));
+        if (needsResync) {
+          sp.sync(this.presentPigs, (x, y) => this.isFree(x, y));
+        }
+      }
+      if (!this._lastValidPigPos) this._lastValidPigPos = new Map();
+      const entries = sp.entries();
+      for (let i = 0; i < entries.length; i++) {
+        const e = entries[i];
+        if (!e) continue;
+        if (i === 0 && (this.drag || this._overridePrimaryPos)) continue;
+        const key = e.id ? String(e.id) : ('idx_' + i);
+        if (this.isFree(e.x, e.y)) {
+          this._lastValidPigPos.set(key, { x: e.x, y: e.y });
+        } else {
+          const prev = this._lastValidPigPos.get(key);
+          const fixed = (prev && this.isFree(prev.x, prev.y)) ? prev : this.snapToFreeCell(e.x, e.y);
+          e.x = fixed.x;
+          e.y = fixed.y;
+          this._lastValidPigPos.set(key, { x: fixed.x, y: fixed.y });
+          if (i === 0) {
+            this.pigX = fixed.x;
+            this.pigY = fixed.y;
+            if (typeof sp.movePrimary === 'function') {
+              sp.movePrimary(fixed.x, fixed.y);
+            }
+          }
+        }
+      }
+    }
+
+    getPigEntries() {
+      const sp = this._multiPigActive ? this.ensureScenePigs() : null;
+      const raw = (this._multiPigActive && sp)
+        ? sp.entries()
+        : (this.pigVisible !== false
+          ? [{ id: 'pig', x: this.pigX, y: this.pigY, facing: this.facing, anim: this.currentAnim, frame: this.currentFrame, look: this.activePig, stage: this.stageKey, isPrimary: true }]
+          : []);
+      if (raw.length === 0) return raw;
+      if (!this._lastValidPigPos) this._lastValidPigPos = new Map();
+      const out = raw.slice();
+      if ((this._overridePrimaryPos || this.drag) && out.length > 0) {
+        const override = { x: this.pigX, y: this.pigY };
+        if (this.drag && this.drag.moved) {
+          override.anim = this.currentAnim;
+        }
+        out[0] = Object.assign({}, out[0], override);
+      }
+      for (let i = 0; i < out.length; i++) {
+        const e = out[i];
+        if (!e) continue;
+        if (i === 0 && (this.drag || this.targetExit)) continue;
+        const key = e.id ? String(e.id) : ('idx_' + i);
+        if (this.isFree(e.x, e.y)) {
+          this._lastValidPigPos.set(key, { x: e.x, y: e.y });
+        } else {
+          const prev = this._lastValidPigPos.get(key);
+          const fixed = (prev && this.isFree(prev.x, prev.y)) ? prev : this.snapToFreeCell(e.x, e.y);
+          out[i] = Object.assign({}, e, { x: fixed.x, y: fixed.y });
+          this._lastValidPigPos.set(key, { x: fixed.x, y: fixed.y });
+        }
+      }
+      return out;
+    }
+
     setPresentPigs(list) {
       const dragging = !!this.drag;
       this._multiPigActive = true;
@@ -1113,7 +1199,8 @@
       if (sp) {
         sp.setBounds(this.walk || [10, 96, 230, 126]);
         sp.sync(this.presentPigs, (x, y) => this.isFree(x, y));
-        const entries = sp.entries();
+        this.enforceFreePigs(false);
+        const entries = this.getPigEntries();
         if (dragging) {
           if (typeof sp.movePrimary === 'function') {
             sp.movePrimary(this.pigX, this.pigY);
@@ -1499,15 +1586,7 @@
       const standing = (this.things || []).filter(t => !t.flat).slice().sort((a, b) => (a.y || 0) - (b.y || 0));
       const flats = (this.things || []).filter(t => !!t.flat);
 
-      const sp = this._multiPigActive ? this.ensureScenePigs() : null;
-      const pigEntries = (this._multiPigActive && sp)
-        ? sp.entries()
-        : (this.pigVisible !== false
-          ? [{ id: 'pig', x: this.pigX, y: pigFeetY, look: this.activePig || null, pinned: false }]
-          : []);
-      if ((this._overridePrimaryPos || this.drag) && pigEntries.length > 0) {
-        pigEntries[0] = Object.assign({}, pigEntries[0], { x: this.pigX, y: this.pigY });
-      }
+      const pigEntries = this.getPigEntries();
 
       const renderList = [];
       flats.forEach(t => renderList.push({ id: t.id, y: t.y, kind: 'thing' }));
@@ -1726,6 +1805,7 @@
       if (this.scenePigs) {
         this.scenePigs.setBounds(this.walk || [10, 96, 230, 126]);
       }
+      this.enforceFreePigs(true);
                 }
               }
             }
@@ -2573,7 +2653,8 @@
             isFree: (x, y) => this.isFree(x, y),
             bounds: this.walk || [10, 96, 230, 126]
           });
-          const entries = this.scenePigs.entries();
+          this.enforceFreePigs(false);
+          const entries = this.getPigEntries();
           if (entries.length > 0 && !this.drag) {
             this.pigX = entries[0].x;
             this.pigY = entries[0].y;
@@ -2682,9 +2763,21 @@
           }
         } else {
           this.facing = dx >= 0 ? 1 : -1;
-          this.pigX += (dx / dist) * speed;
-          this.pigY += (dy / dist) * speed;
-          if (this.currentAnim !== 'walk') {
+          const nextX = this.pigX + (dx / dist) * speed;
+          const nextY = this.pigY + (dy / dist) * speed;
+          if (this.targetExit || this.isFree(nextX, nextY)) {
+            this.pigX = nextX;
+            this.pigY = nextY;
+          } else if (this.isFree(nextX, this.pigY)) {
+            this.pigX = nextX;
+          } else if (this.isFree(this.pigX, nextY)) {
+            this.pigY = nextY;
+          } else {
+            this.path = [];
+            this.targetX = null;
+            this.targetY = null;
+          }
+          if (this.targetX !== null && this.currentAnim !== 'walk') {
             this.currentAnim = 'walk';
             this.animTimer = 0;
           }
@@ -2818,19 +2911,7 @@
       const allStanding = ghostObj ? standing.concat([ghostObj]) : standing;
       allStanding.sort((a, b) => (a.y || 0) - (b.y || 0));
 
-      const sp = this._multiPigActive ? this.ensureScenePigs() : null;
-      const pigEntries = (this._multiPigActive && sp)
-        ? sp.entries()
-        : (this.pigVisible !== false
-          ? [{ id: 'pig', x: this.pigX, y: this.pigY, facing: this.facing, anim: this.currentAnim, frame: this.currentFrame, look: this.activePig, stage: this.stageKey, isPrimary: true }]
-          : []);
-      if ((this._overridePrimaryPos || this.drag) && pigEntries.length > 0) {
-        const override = { x: this.pigX, y: this.pigY };
-        if (this.drag && this.drag.moved) {
-          override.anim = this.currentAnim;
-        }
-        pigEntries[0] = Object.assign({}, pigEntries[0], override);
-      }
+      const pigEntries = this.getPigEntries();
 
       if (pigEntries.length > 0) {
         const firstPigY = pigEntries[0].y;
@@ -2923,6 +3004,10 @@
           this.applySceneLight(ctx, this.lightScene);
           this.applySceneGlow(ctx, this.lightScene);
         }
+      }
+
+      if (this.sceneId === 'market' && typeof window !== 'undefined' && window.CuyScenes && typeof window.CuyScenes.drawMarketSignboards === 'function') {
+        window.CuyScenes.drawMarketSignboards(ctx, this.lastState || {}, { things: this.things });
       }
 
       // Draw Z >= 10 layers
@@ -3223,7 +3308,12 @@
       let fx = sx;
       let fy = sy;
       if (lightScene) {
-        const lit = this.litFrame(sheet, sx, sy, lightScene);
+        const pigLightScene = pig.isPrimary
+          ? lightScene
+          : Object.assign({}, lightScene, {
+              origin: lightScene.origin || { x: Math.round(px - 32 * scale), y: Math.round(py - 59 * scale) }
+            });
+        const lit = this.litFrame(sheet, sx, sy, pigLightScene);
         if (lit) {
           frame = lit;
           fx = 0;
@@ -3416,6 +3506,92 @@
       return this.pigShadows[key];
     }
 
+    getUnlitFrameData(sheet, sheetKey, sx, sy, c, canCache) {
+      const sheetW = (sheet && (sheet.naturalWidth || sheet.width)) || 0;
+      const sheetH = (sheet && (sheet.naturalHeight || sheet.height)) || 0;
+      if (canCache && sheetW >= sx + FRAME_SIZE && sheetH >= sy + FRAME_SIZE && sheetW <= 4096 &&
+          typeof document !== 'undefined' && c && typeof c.createImageData === 'function') {
+        if (!this._unlitRowCache) this._unlitRowCache = new Map();
+        const rowKey = `${sheetKey}|${sy}`;
+        let row = this._unlitRowCache.get(rowKey);
+        if (row) {
+          this._unlitRowCache.delete(rowKey);
+          this._unlitRowCache.set(rowKey, row);
+        } else {
+          if (!this._rowCanvas) {
+            this._rowCanvas = document.createElement('canvas');
+          }
+          if (this._rowCanvas.width !== sheetW || this._rowCanvas.height !== FRAME_SIZE) {
+            this._rowCanvas.width = sheetW;
+            this._rowCanvas.height = FRAME_SIZE;
+            this._rowCtx = this._rowCanvas.getContext('2d', { willReadFrequently: true });
+          } else if (!this._rowCtx) {
+            this._rowCtx = this._rowCanvas.getContext('2d', { willReadFrequently: true });
+          }
+          const rctx = this._rowCtx;
+          if (rctx) {
+            rctx.clearRect(0, 0, sheetW, FRAME_SIZE);
+            rctx.drawImage(sheet, 0, sy, sheetW, FRAME_SIZE, 0, 0, sheetW, FRAME_SIZE);
+            try {
+              const rowImg = rctx.getImageData(0, 0, sheetW, FRAME_SIZE);
+              if (this._unlitRowCache.size >= 16) {
+                const oldestRowKey = this._unlitRowCache.keys().next().value;
+                if (oldestRowKey !== undefined) this._unlitRowCache.delete(oldestRowKey);
+              }
+              row = { data: rowImg.data, width: sheetW };
+              this._unlitRowCache.set(rowKey, row);
+            } catch (err) {
+              return null;
+            }
+          }
+        }
+        if (row) {
+          const img = c.createImageData(FRAME_SIZE, FRAME_SIZE);
+          const dst = img.data;
+          const src = row.data;
+          const rowStride = row.width * 4;
+          const frameBytes = FRAME_SIZE * 4;
+          const sxOff = sx * 4;
+          for (let py = 0; py < FRAME_SIZE; py++) {
+            const sOff = py * rowStride + sxOff;
+            dst.set(src.subarray(sOff, sOff + frameBytes), py * frameBytes);
+          }
+          return img;
+        }
+      }
+
+      if (canCache && c && typeof c.createImageData === 'function') {
+        if (!this._unlitFrameCache) this._unlitFrameCache = new Map();
+        const fKey = `${sheetKey}|${sx},${sy}`;
+        const cachedPixels = this._unlitFrameCache.get(fKey);
+        if (cachedPixels) {
+          this._unlitFrameCache.delete(fKey);
+          this._unlitFrameCache.set(fKey, cachedPixels);
+          const img = c.createImageData(FRAME_SIZE, FRAME_SIZE);
+          img.data.set(cachedPixels);
+          return img;
+        }
+      }
+
+      c.clearRect(0, 0, FRAME_SIZE, FRAME_SIZE);
+      c.drawImage(sheet, sx, sy, FRAME_SIZE, FRAME_SIZE, 0, 0, FRAME_SIZE, FRAME_SIZE);
+      let img;
+      try {
+        img = c.getImageData(0, 0, FRAME_SIZE, FRAME_SIZE);
+      } catch (err) {
+        return null;
+      }
+      if (canCache && c && typeof c.createImageData === 'function' && img && img.data) {
+        if (!this._unlitFrameCache) this._unlitFrameCache = new Map();
+        if (this._unlitFrameCache.size >= 128) {
+          const oldestFrameKey = this._unlitFrameCache.keys().next().value;
+          if (oldestFrameKey !== undefined) this._unlitFrameCache.delete(oldestFrameKey);
+        }
+        this._unlitFrameCache.set(`${sheetKey}|${sx},${sy}`, new Uint8ClampedArray(img.data));
+      }
+      return img;
+    }
+
     // Copy of one sprite frame lit by the scene: ambient plus the two nearest sources, multiplied in
     // at PIG_LIGHT_STRENGTH without dither. Returns null when the pixels cannot be read (tainted canvas).
     litFrame(sheet, sx, sy, scene) {
@@ -3454,7 +3630,8 @@
           const col = Array.isArray(s.color) ? s.color.join(',') : (s.color || '');
           return `${s.x},${s.y},${s.radius || 40},${s.intensity ?? 1},${col}`;
         }).join(';');
-        cacheKey = `${sheetKey}|${sx},${sy}|${Math.round(origin.x / 2)},${Math.round(origin.y / 2)}|${ambient.map((v) => v.toFixed(2)).join(',')}|${srcKey}`;
+        const originKey = sources.length > 0 ? `${Math.round(origin.x / 2)},${Math.round(origin.y / 2)}` : 'static';
+        cacheKey = `${sheetKey}|${sx},${sy}|${originKey}|${ambient.map((v) => v.toFixed(2)).join(',')}|${srcKey}`;
         if (this._litFrameCache.has(cacheKey)) {
           const cached = this._litFrameCache.get(cacheKey);
           this._litFrameCache.delete(cacheKey);
@@ -3470,15 +3647,8 @@
         this.litCtx = this.litCanvas.getContext('2d', { willReadFrequently: true });
       }
       const c = this.litCtx;
-      c.clearRect(0, 0, FRAME_SIZE, FRAME_SIZE);
-      c.drawImage(sheet, sx, sy, FRAME_SIZE, FRAME_SIZE, 0, 0, FRAME_SIZE, FRAME_SIZE);
-
-      let img;
-      try {
-        img = c.getImageData(0, 0, FRAME_SIZE, FRAME_SIZE);
-      } catch (err) {
-        return null;
-      }
+      const img = this.getUnlitFrameData(sheet, sheetKey, sx, sy, c, canCache);
+      if (!img) return null;
       const data = img.data;
 
       const light = [0, 0, 0];
@@ -3744,14 +3914,16 @@
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       return !!(inst && typeof inst.isDragging === 'function' && inst.isDragging());
     },
+    _hotspots: [],
     setHotspots(list) {
+      this._hotspots = Array.isArray(list) ? list.slice() : [];
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst && typeof inst.setHotspots === 'function') return inst.setHotspots(list);
     },
     getHotspots() {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst && typeof inst.getHotspots === 'function') return inst.getHotspots();
-      return [];
+      return (this._hotspots || []).slice();
     },
     onHotspot(fn) {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;

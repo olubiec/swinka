@@ -174,6 +174,10 @@
 
   function ensureLampHotspotSubscription() {
     if (lampHotspotSubscribed) return;
+    const inst = (window.CuyPig && window.CuyPig.mainInstance)
+      || (window.CanvasPig && window.CanvasPig.instance)
+      || (window.PigCanvas && window.PigCanvas.instance);
+    if (!inst) return;
     if (window.CanvasPig && typeof window.CanvasPig.onHotspot === 'function') {
       lampHotspotSubscribed = true;
       window.CanvasPig.onHotspot((hs) => {
@@ -935,13 +939,20 @@
       : { id: currentSceneId, size: [240, 130], walk: [10, 80, 230, 125] };
 
     const inst = (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance) || (window.CuyPig && window.CuyPig.mainInstance);
-    const sizeChanged = inst && sceneDef.size && (inst.sceneWidth !== sceneDef.size[0] || inst.sceneHeight !== sceneDef.size[1]);
+    const instSceneId = (inst && inst.sceneId) || currentInstScene;
+    const instHasScene = !!(inst && inst.currentScene);
+    const instSize = (inst && inst.currentScene && Array.isArray(inst.currentScene.size))
+      ? inst.currentScene.size
+      : (inst && inst.sceneKind === 'room' && Array.isArray(inst.roomSize)
+        ? inst.roomSize
+        : (inst ? [inst.sceneWidth, inst.sceneHeight] : null));
+    const sizeChanged = !!(instSize && sceneDef.size && (instSize[0] !== sceneDef.size[0] || instSize[1] !== sceneDef.size[1]));
     const isCanvasDragging = !!(window.CanvasPig && typeof window.CanvasPig.isDragging === 'function' && window.CanvasPig.isDragging());
     const isPigBeingDragged = (inst && !!inst.drag) || (draggedPigId !== null) || isCanvasDragging;
 
     const sizeKey = (sceneDef && Array.isArray(sceneDef.size)) ? sceneDef.size.join('x') : '';
     const sceneKey = currentSceneId + '|' + tod + '|' + sizeKey + '|' + (isLocked ? '1' : '0');
-    const instSceneChanged = (currentInstScene !== null && currentInstScene !== currentSceneId) || !!sizeChanged;
+    const instSceneChanged = (inst && !instHasScene) || (instSceneId !== null && instSceneId !== currentSceneId) || sizeChanged;
     const sceneChanged = (prevSceneId !== currentSceneId) || instSceneChanged || (sceneKey !== lastSceneKey);
 
     if (sceneChanged) {
@@ -949,7 +960,7 @@
     }
     lastSceneKey = sceneKey;
 
-    if (currentInstScene !== currentSceneId || sizeChanged) {
+    if ((inst && !instHasScene) || instSceneId !== currentSceneId || sizeChanged) {
       if (window.CanvasPig && typeof window.CanvasPig.setScene === 'function') {
         window.CanvasPig.setScene(sceneDef);
       }
@@ -987,12 +998,25 @@
     ensureLampHotspotSubscription();
 
     // Hotspots per scene
+    const catalogForHotspots = (typeof window !== 'undefined' && window.CuyWorldItems) || null;
+    const mySceneId = currentSceneId;
     const syncHotspots = () => {
+      if (currentSceneId !== mySceneId) return;
       if (window.CuyHotspots && typeof window.CuyHotspots.fromScene === 'function' &&
           window.CanvasPig && typeof window.CanvasPig.setHotspots === 'function') {
+        let hsThings = things;
+        if (sceneDef && sceneDef.kind === 'room' && Array.isArray(things) && things.length > 0) {
+          const curInst = (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance) || (window.CuyPig && window.CuyPig.mainInstance);
+          const off = (curInst && curInst.roomOffset) || { x: 0, y: 0 };
+          if (off.x || off.y) {
+            hsThings = things.map(t => (t && !t._stageOffsetApplied && typeof t.x === 'number' && typeof t.y === 'number')
+              ? Object.assign({}, t, { x: t.x + off.x, y: t.y + off.y })
+              : t);
+          }
+        }
         const hsList = isLocked
           ? (window.CuyHotspots.EMPTY || [])
-          : window.CuyHotspots.fromScene(currentSceneId, hotspotsData, things, null);
+          : window.CuyHotspots.fromScene(currentSceneId, hotspotsData, hsThings, catalogForHotspots);
         const hsSig = currentSceneId + '|' + (isLocked ? '1' : '0') + '|' + (hotspotsLoaded ? '1' : '0') + '|' + safeJsonSig(hsList || []);
         if (hsSig !== lastHotspotsSig) {
           lastHotspotsSig = hsSig;
@@ -1310,6 +1334,7 @@
     getHouseRooms,
     openPlace(placeId, roomArg) {
       const target = (placeId === 'house' ? (roomArg || 'salon') : (placeId || 'salon'));
+      lastPresentSig = '';
       applyScene(target, getState());
     },
     next,

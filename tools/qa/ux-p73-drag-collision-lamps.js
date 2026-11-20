@@ -31,29 +31,96 @@ async function run() {
     await page.setViewportSize({ width: 420, height: 640 });
     await page.waitForTimeout(400);
 
-    async function goToScene(sceneId) {
-      await page.evaluate((sid) => {
-        if (window.bridge && typeof window.bridge.send === 'function') {
-          window.bridge.send({ type: 'places_visit', sceneId: sid });
-          window.bridge.send({ type: 'place_visit', sceneId: sid });
-          window.bridge.send({ type: 'visit_place', sceneId: sid, id: sid });
+    await page.waitForFunction(
+      () => window.CuyPlaces && window.CuyScenes && window.CuyHotspots && window.CanvasPig && window.Lights && window.bridge,
+      { timeout: 10000 }
+    );
+
+    await page.evaluate(async () => {
+      window.__cuyNow = '22:00';
+      if (window.CuyScenes && typeof window.CuyScenes.load === 'function') {
+        await window.CuyScenes.load();
+      }
+      const st = window.bridge.currentState || window.bridge.getState();
+      if (st) {
+        if (window.CuyScenesMock && typeof window.CuyScenesMock.state === 'function') {
+          const m = window.CuyScenesMock.state('all_unlocked');
+          st.places = st.places || {};
+          st.places.order = m.places.order;
+          if (!st.places.pigLocations) st.places.pigLocations = m.places.pigLocations;
+          st.rooms = st.rooms || { layouts: {}, owned: {}, catalog: [] };
+          st.rooms.layouts = Object.assign({}, st.rooms.layouts || {}, m.rooms.layouts);
         }
-        if (window.CanvasPig && typeof window.CanvasPig.setScene === 'function') {
+        if (st.places && Array.isArray(st.places.places)) {
+          st.places.places.forEach(p => { p.unlocked = true; });
+        }
+        if (st.places && Array.isArray(st.places.order)) {
+          st.places.order.forEach(p => { p.locked = false; });
+        }
+        if (!st.rooms) st.rooms = {};
+        if (!st.rooms.layouts) st.rooms.layouts = {};
+        if (!st.rooms.layouts.salon) {
+          st.rooms.layouts.salon = { name: 'Salon', cols: 12, rows: 7, wallRows: 2, wallpaper: '', floor: '', items: [] };
+        }
+        if (!Array.isArray(st.rooms.layouts.salon.items)) {
+          st.rooms.layouts.salon.items = [];
+        }
+        if (!st.rooms.layouts.salon.items.some(it => it && it.itemId === 'lamp_floor')) {
+          st.rooms.layouts.salon.items.push({ uid: 'u_lamp_salon', itemId: 'lamp_floor', x: 5, y: 3, flip: false, variant: 0 });
+        }
+        if (st.rooms.layouts.garden && Array.isArray(st.rooms.layouts.garden.items)) {
+          if (!st.rooms.layouts.garden.items.some(it => it && (it.itemId === 'lantern_garden' || it.itemId === 'lamp_post'))) {
+            st.rooms.layouts.garden.items.push({ uid: 'fx:garden:lantern_1', itemId: 'lantern_garden', x: 7, y: 6, flip: false, variant: 0 });
+          }
+        }
+        if (typeof window.bridge.broadcastState === 'function') {
+          window.bridge.broadcastState();
+        }
+      }
+    });
+    await page.waitForTimeout(200);
+
+    async function goToScene(sceneId, opts = {}) {
+      await page.evaluate(({ sid, pigHere }) => {
+        const st = window.bridge && (window.bridge.currentState || (window.bridge.getState && window.bridge.getState()));
+        if (st && st.places) {
+          if (Array.isArray(st.places.order)) {
+            st.places.order.forEach(p => { p.locked = false; });
+          }
+          if (Array.isArray(st.places.places)) {
+            st.places.places.forEach(p => { p.unlocked = true; });
+          }
+          if (pigHere !== undefined) {
+            const targetScene = pigHere ? sid : 'dorm';
+            if (Array.isArray(st.places.pigLocations)) {
+              st.places.pigLocations.forEach(p => {
+                p.scene = targetScene;
+                if (p.sceneId !== undefined) p.sceneId = targetScene;
+                if (p.Scene !== undefined) p.Scene = targetScene;
+              });
+            } else {
+              st.places.pigLocations = [{ pigId: 'pig_1', scene: targetScene, pinned: false }];
+            }
+          }
+        }
+        if (window.CuyPlaces && typeof window.CuyPlaces.setCurrentPlace === 'function') {
+          window.CuyPlaces.setCurrentPlace(sid);
+        } else if (window.CanvasPig && typeof window.CanvasPig.setScene === 'function') {
           window.CanvasPig.setScene(sid);
         }
-      }, sceneId);
-      await page.waitForTimeout(350);
+      }, { sid: sceneId, pigHere: opts.pigHere });
+      await page.waitForTimeout(250);
     }
 
     // C1: footprint full pixel width (room w:2,h:2 -> 32px; market w:3,h:2 -> 48px)
-    await goToScene('room_1');
+    await goToScene('salon');
     const c1 = await page.evaluate(() => {
       const cp = window.CanvasPig;
       if (!cp || typeof cp.isFree !== 'function') return { error: 'CanvasPig.isFree missing' };
       if (typeof cp.setThings !== 'function') return { error: 'CanvasPig.setThings missing' };
 
       cp.setThings([
-        { id: 'test_desk', x: 120, y: 114, w: 2, h: 2, anchorX: 16, anchorY: 32 }
+        { id: 'test_desk', x: 120, y: 114, w: 2, h: 2, anchorX: 16, anchorY: 32, _stageOffsetApplied: true }
       ]);
       const roomBlocked = [];
       for (let px = 104; px < 136; px++) {
@@ -62,7 +129,7 @@ async function run() {
       const roomFalse = roomBlocked.filter(v => v === false).length;
 
       cp.setThings([
-        { id: 'test_stall', x: 120, y: 114, w: 3, h: 2, anchorX: 24, anchorY: 32 }
+        { id: 'test_stall', x: 120, y: 114, w: 3, h: 2, anchorX: 24, anchorY: 32, _stageOffsetApplied: true }
       ]);
       const stallBlocked = [];
       for (let px = 96; px < 144; px++) {
@@ -87,11 +154,11 @@ async function run() {
       pass('C1-footprint-full-pixel-width', `room ${c1.roomFalse}/32 px, stall ${c1.stallFalse}/48 px blocked`);
     }
 
-    // C2: pigs never walk through items in room_1, garden, market, park (150 steps)
-    const scenesForWalk = ['room_1', 'garden', 'market', 'park'];
+    // C2: pigs never walk through items in salon, garden, market, park (150 steps)
+    const scenesForWalk = ['salon', 'garden', 'market', 'park'];
     const c2Violations = [];
     for (const sid of scenesForWalk) {
-      await goToScene(sid);
+      await goToScene(sid, { pigHere: true });
       const res = await page.evaluate((sceneId) => {
         const cp = window.CanvasPig;
         if (!cp || typeof cp.isFree !== 'function' || typeof cp.debug !== 'function') {
@@ -104,8 +171,11 @@ async function run() {
           } else if (typeof cp.step === 'function') {
             cp.step(100);
           }
+          const inst = (window.CuyPig && window.CuyPig.mainInstance) || cp.instance;
           const dbg = cp.debug();
-          const pigs = (dbg && dbg.pigs) ? dbg.pigs : [];
+          const pigs = (inst && inst.scenePigs && typeof inst.scenePigs.entries === 'function')
+            ? inst.scenePigs.entries()
+            : ((dbg && dbg.pigs) ? dbg.pigs : []);
           for (const p of pigs) {
             if (!cp.isFree(p.x, p.y)) {
               violations.push({ sceneId, step, id: p.id, x: p.x, y: p.y });
@@ -129,8 +199,8 @@ async function run() {
       pass('C2-pigs-never-walk-through-items', '150 steps x 4 scenes clean');
     }
 
-    // C3: lamp hotspots pixel sized (w >= 14, h >= 14) in room_1, garden, park
-    const lampScenes = ['room_1', 'garden', 'park'];
+    // C3: lamp hotspots pixel sized (w >= 14, h >= 14) in salon, garden, park
+    const lampScenes = ['salon', 'garden', 'park'];
     const c3Failures = [];
     for (const sid of lampScenes) {
       await goToScene(sid);
@@ -153,7 +223,7 @@ async function run() {
     if (c3Failures.length > 0) {
       defect('C3-lamp-hotspots-pixel-sized', c3Failures.join('; '));
     } else {
-      pass('C3-lamp-hotspots-pixel-sized', 'all lamp hotspots >= 14x14 px in room_1, garden, park');
+      pass('C3-lamp-hotspots-pixel-sized', 'all lamp hotspots >= 14x14 px in salon, garden, park');
     }
 
     // Helper to click hotspot center on #pigCanvas
@@ -164,6 +234,9 @@ async function run() {
         const cy = (r[1] + r[3]) / 2;
         if (cp && typeof cp.toClient === 'function') {
           const pt = cp.toClient(cx, cy);
+          if (pt && Number.isFinite(pt.clientX) && Number.isFinite(pt.clientY)) {
+            return { clientX: pt.clientX, clientY: pt.clientY };
+          }
           if (pt && Number.isFinite(pt.x) && Number.isFinite(pt.y)) {
             return { clientX: pt.x, clientY: pt.y };
           }
@@ -186,7 +259,9 @@ async function run() {
     function getLampStateScript(uid) {
       const dbg = window.CanvasPig.debug();
       const ls = dbg.lightScene || {};
-      const sources = Array.isArray(ls.sources) ? ls.sources.length : (Array.isArray(ls.lights) ? ls.lights.length : null);
+      const sources = Array.isArray(ls.sources)
+        ? ls.sources.filter(s => s && s.on !== false).length
+        : (Array.isArray(ls.lights) ? ls.lights.filter(s => s && s.on !== false).length : null);
       return {
         hasCuyLights: !!window.CuyLights,
         isOff: window.CuyLights && typeof window.CuyLights.isOff === 'function' ? window.CuyLights.isOff(uid) : null,
@@ -195,8 +270,8 @@ async function run() {
       };
     }
 
-    // C4: indoor lamp click toggles off and on in room_1
-    await goToScene('room_1');
+    // C4: indoor lamp click toggles off and on in salon
+    await goToScene('salon', { pigHere: false });
     const roomLamp = await page.evaluate(() => {
       const cp = window.CanvasPig;
       const hotspots = (cp && typeof cp.getHotspots === 'function') ? cp.getHotspots() : [];
@@ -207,7 +282,7 @@ async function run() {
     });
 
     if (!roomLamp || !roomLamp.uid) {
-      defect('C4-indoor-lamp-click-toggles-off-and-on', 'No lamp hotspot with uid found in room_1');
+      defect('C4-indoor-lamp-click-toggles-off-and-on', 'No lamp hotspot with uid found in salon');
     } else {
       const before = await page.evaluate(getLampStateScript, roomLamp.uid);
       await clickHotspotCenter(roomLamp.rect);
@@ -232,7 +307,7 @@ async function run() {
     // C5: outdoor lantern click toggles in garden and park
     const c5Failures = [];
     for (const sid of ['garden', 'park']) {
-      await goToScene(sid);
+      await goToScene(sid, { pigHere: false });
       const lantern = await page.evaluate(() => {
         const cp = window.CanvasPig;
         const hotspots = (cp && typeof cp.getHotspots === 'function') ? cp.getHotspots() : [];

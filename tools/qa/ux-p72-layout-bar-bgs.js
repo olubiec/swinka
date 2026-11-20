@@ -141,12 +141,34 @@ async function launchBrowser() {
       else pass('B3-bottom-bar-fits', `normal=${normalBottom.bottom.toFixed(1)}px, editOpen=${editState.bottom.toFixed(1)}px <= ${editState.innerH}px`);
     }
 
+    // Ensure outdoor scenes have their default seed layouts when rooms/mock.js initialized empty placeholders
+    await page.evaluate(() => {
+      if (window.CuyScenesMock && window.bridge && window.bridge.currentState) {
+        const seed = window.CuyScenesMock.state('seven');
+        const st = window.bridge.currentState;
+        if (seed && seed.rooms && seed.rooms.layouts) {
+          if (!st.rooms) st.rooms = {};
+          if (!st.rooms.layouts) st.rooms.layouts = {};
+          for (const k of ['garden', 'park', 'farm', 'market']) {
+            const cur = st.rooms.layouts[k];
+            if (!cur || !Array.isArray(cur.items) || cur.items.length === 0) {
+              st.rooms.layouts[k] = seed.rooms.layouts[k];
+            }
+          }
+          window.bridge.broadcastState();
+        }
+      }
+    });
+    await page.waitForTimeout(150);
+
     // B2-no-huge-brown-frames + collect park state for B5
-    const targetScenes = ['room_1', 'garden', 'farm', 'market', 'park'];
+    const targetScenes = ['salon', 'garden', 'farm', 'market', 'park'];
     const visited = new Map();
     let parkDebug = null;
+    let parkLayoutItems = null;
+    const allTargetsVisited = () => targetScenes.every((s) => visited.has(s));
 
-    for (let step = 0; step < 12 && visited.size < targetScenes.length; step++) {
+    for (let step = 0; step < 20 && !(allTargetsVisited() && parkDebug); step++) {
       const m = await getCanvasMetrics(page);
       const sceneId = (m.dbg && (m.dbg.placeId || m.dbg.sceneId || m.dbg.scene || m.dbg.place)) || m.title;
       if (sceneId && !visited.has(sceneId)) {
@@ -154,8 +176,18 @@ async function launchBrowser() {
       }
       if (sceneId === 'park' || /park/i.test(m.title)) {
         parkDebug = m.dbg;
+        parkLayoutItems = await page.evaluate(() => {
+          if (window.CuyScenes && typeof window.CuyScenes.debugInstances === 'function') {
+            const d = window.CuyScenes.debugInstances('park');
+            if (d && d.layout && Array.isArray(d.layout.items)) return d.layout.items;
+          }
+          const st = window.bridge && window.bridge.currentState;
+          return st && st.rooms && st.rooms.layouts && st.rooms.layouts.park && Array.isArray(st.rooms.layouts.park.items)
+            ? st.rooms.layouts.park.items
+            : null;
+        });
       }
-      if (visited.size >= targetScenes.length && parkDebug) break;
+      if (allTargetsVisited() && parkDebug) break;
       await page.click('#placesNextBtn');
       await page.waitForTimeout(250);
     }
@@ -187,10 +219,10 @@ async function launchBrowser() {
       const b4Issues = [];
       const b4Notes = [];
 
-      // 1) market_night.png: bright/warm string lights in upper portion (y < 76)
-      const marketImg = await readPngPixelsInBrowser(page, '/assets/world/bg/market_night.png');
+      // 1) market.png: bright/warm string lights in upper portion (y < 76)
+      const marketImg = await readPngPixelsInBrowser(page, '/assets/world/bg/market.png');
       if (marketImg.error) {
-        b4Issues.push(`market_night.png load failed: ${marketImg.error}`);
+        b4Issues.push(`market.png load failed: ${marketImg.error}`);
       } else {
         let bulbPixels = 0;
         const { width, data } = marketImg;
@@ -201,14 +233,14 @@ async function launchBrowser() {
             if (r >= 190 && g >= 140 && (r + g + b) >= 420) bulbPixels++;
           }
         }
-        if (bulbPixels < 15) b4Issues.push(`market_night.png missing bright string-light pixels in y=40..77 (found ${bulbPixels})`);
-        else b4Notes.push(`market_night bulbs=${bulbPixels}px`);
+        if (bulbPixels < 15) b4Issues.push(`market.png missing bright string-light pixels in y=40..77 (found ${bulbPixels})`);
+        else b4Notes.push(`market bulbs=${bulbPixels}px`);
       }
 
-      // 2) farm_day.png: horizon wooden fence (y=46..58, x=0..170)
-      const farmImg = await readPngPixelsInBrowser(page, '/assets/world/bg/farm_day.png');
+      // 2) farm.png: horizon wooden fence (y=46..58, x=0..170)
+      const farmImg = await readPngPixelsInBrowser(page, '/assets/world/bg/farm.png');
       if (farmImg.error) {
-        b4Issues.push(`farm_day.png load failed: ${farmImg.error}`);
+        b4Issues.push(`farm.png load failed: ${farmImg.error}`);
       } else {
         let woodPixels = 0;
         const { width, data } = farmImg;
@@ -219,8 +251,8 @@ async function launchBrowser() {
             if (r > g && g > b && (r - b) >= 25 && r >= 80 && r <= 200) woodPixels++;
           }
         }
-        if (woodPixels < 80) b4Issues.push(`farm_day.png missing horizon wooden fence pixels in x=0..170,y=46..58 (found ${woodPixels})`);
-        else b4Notes.push(`farm_day fence=${woodPixels}px`);
+        if (woodPixels < 80) b4Issues.push(`farm.png missing horizon wooden fence pixels in x=0..170,y=46..58 (found ${woodPixels})`);
+        else b4Notes.push(`farm fence=${woodPixels}px`);
       }
 
       // 3) garden_day.png: gate in center path gap (x=114..142, y=52..72 differs from side picket fence)
@@ -277,7 +309,9 @@ async function launchBrowser() {
     // B5-park-all-10-items-in-bounds
     {
       const defaultsPath = path.join(ROOT, 'assets', 'data', 'outdoor_defaults.json');
-      const itemsWorldPath = path.join(ROOT, 'assets', 'data', 'items_world.json');
+      const worldItemsPath = path.join(ROOT, 'assets', 'data', 'world_items.json');
+      const fallbackItemsPath = path.join(ROOT, 'assets', 'data', 'items_world.json');
+      const itemsWorldPath = fs.existsSync(worldItemsPath) ? worldItemsPath : fallbackItemsPath;
       const defaultsJson = JSON.parse(fs.readFileSync(defaultsPath, 'utf8'));
       const itemsWorldJson = fs.existsSync(itemsWorldPath) ? JSON.parse(fs.readFileSync(itemsWorldPath, 'utf8')) : {};
       const itemsMap = itemsWorldJson.items || itemsWorldJson;
@@ -290,6 +324,7 @@ async function launchBrowser() {
       }
 
       const expectedIds = [];
+      const entryMeta = new Map();
       for (const entry of parkEntries) {
         const id = entry.id || entry.uid || entry.itemId || entry.item;
         const itemId = entry.itemId || entry.item || id;
@@ -299,6 +334,7 @@ async function launchBrowser() {
         const x = entry.x;
         const y = entry.y;
         expectedIds.push(id);
+        entryMeta.set(id, { w, h });
         if (x < 0 || x + w > 16 || y < 0 || y + h > 9) {
           b5Issues.push(`defaults park "${id}" (${itemId}) at (${x},${y},${w}x${h}) out of 16x9 bounds`);
         }
@@ -314,18 +350,36 @@ async function launchBrowser() {
         for (const entry of parkEntries) {
           const id = entry.id || entry.uid;
           const itemId = entry.itemId || entry.item;
+          const fxId = id ? `fx:park:${id}` : null;
           const found = liveThings.find((t) =>
-            (id && (t.id === id || t.uid === `fx:park:${id}` || t.uid === id)) ||
+            (id && (t.id === id || t.id === fxId || t.uid === fxId || t.uid === id)) ||
             (itemId && t.itemId === itemId && t.x === entry.x && t.y === entry.y)
           );
           if (!found) {
             b5Issues.push(`live park missing default item "${id || itemId}"`);
-          } else {
-            const w = found.w || 1;
-            const h = found.h || 1;
+            continue;
+          }
+          const layoutItem = Array.isArray(parkLayoutItems)
+            ? parkLayoutItems.find((li) =>
+              (id && (li.uid === fxId || li.uid === id || li.id === id || li.id === fxId)) ||
+              (itemId && li.itemId === itemId && li.x === entry.x && li.y === entry.y)
+            )
+            : null;
+          const dims = entryMeta.get(id) || { w: 1, h: 1 };
+          if (layoutItem) {
+            const lw = layoutItem.w || dims.w || 1;
+            const lh = layoutItem.h || dims.h || 1;
+            if (layoutItem.x < 0 || layoutItem.x + lw > 16 || layoutItem.y < 0 || layoutItem.y + lh > 9) {
+              b5Issues.push(`live park "${id || found.id}" at (${layoutItem.x},${layoutItem.y},${lw}x${lh}) out of 16x9 bounds`);
+            }
+          } else if (typeof found.x === 'number') {
+            const w = found.w || dims.w || 1;
+            const h = found.h || dims.h || 1;
             if (found.x < 0 || found.x + w > 16 || found.y < 0 || found.y + h > 9) {
               b5Issues.push(`live park "${id || found.id}" at (${found.x},${found.y},${w}x${h}) out of 16x9 bounds`);
             }
+          } else if (typeof found.y !== 'number' || found.y <= 0 || found.y > 9 * 16) {
+            b5Issues.push(`live park "${id || found.id}" pixel y=${found.y} out of 0..${9 * 16} bounds`);
           }
         }
       }
