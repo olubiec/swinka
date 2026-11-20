@@ -10,20 +10,44 @@ namespace Cuy.Core.World
 
         private const int ParkGridCols = 16;
         private const int ParkGridRows = 9;
-        private const string ParkMigrationMarker = "park#v3";
+        private const string ParkMigrationMarker = "park#v4";
+        private const string GardenMigrationMarker = "garden#v2";
 
         private static readonly (string Id, int X, int Y)[] LegacyParkCoords =
         {
             ("gazebo", 4, 2),
+            ("gazebo", 3, 2),
+            ("gazebo", 3, 3),
             ("bench_left", 7, 8),
+            ("bench_left", 6, 7),
             ("bench_right", 13, 7),
+            ("bench_right", 12, 7),
+            ("bench_right", 12, 6),
             ("bridge", 10, 5),
+            ("bridge", 9, 4),
             ("tree_1", 0, 1),
             ("tree_2", 13, 1),
+            ("tree_2", 0, 4),
             ("tree_3", 10, 1),
             ("tree_4", 0, 4),
+            ("tree_4", 5, 0),
+            ("lamp_left", 1, 7),
             ("lamp_mid", 9, 5),
-            ("lamp_right", 14, 5)
+            ("lamp_mid", 8, 5),
+            ("lamp_mid", 8, 4),
+            ("lamp_right", 14, 5),
+            ("lamp_right", 13, 5),
+            ("lamp_right", 13, 4)
+        };
+
+        private static readonly (string Id, int X, int Y)[] LegacyGardenCoords =
+        {
+            ("tree_left", 12, 2),
+            ("tree_left", 12, 3),
+            ("tree_right", 14, 2),
+            ("tree_right", 14, 3),
+            ("hedge", 11, 3),
+            ("burrow", 1, 3)
         };
 
         public static string BuildUid(string placeId, string id)
@@ -43,6 +67,7 @@ namespace Cuy.Core.World
             string key = placeId.Trim();
             bool alreadySeeded = world.OutdoorSeeded.Contains(key);
             bool isPark = string.Equals(key, "park", StringComparison.OrdinalIgnoreCase);
+            bool isGarden = string.Equals(key, "garden", StringComparison.OrdinalIgnoreCase);
 
             var table = defaults ?? OutdoorDefaults.Current;
             var entries = table?.ForScene(key);
@@ -59,12 +84,14 @@ namespace Cuy.Core.World
                 world.Rooms[key] = room;
             }
 
-            // Old saves seeded "park" with 24x12 coordinates, partial items, or stream-overlapping v2 layouts;
-            // perform a one-time backfill + coordinate repair while keeping subsequent player removals intact.
+            // Old saves seeded "park" or "garden" with legacy/overlapping coordinates;
+            // perform a one-time coordinate repair while keeping subsequent player removals intact.
             bool parkMigration = isPark && alreadySeeded && !world.OutdoorSeeded.Contains(ParkMigrationMarker);
+            bool gardenMigration = isGarden && alreadySeeded && !world.OutdoorSeeded.Contains(GardenMigrationMarker);
 
-            if (parkMigration)
+            if (parkMigration || gardenMigration)
             {
+                var legacyTable = parkMigration ? LegacyParkCoords : LegacyGardenCoords;
                 var repairs = new List<(OutdoorDefaultItem entry, PlacedItem item)>();
                 var pendingRepairs = new HashSet<PlacedItem>();
                 foreach (var entry in entries)
@@ -75,7 +102,7 @@ namespace Cuy.Core.World
                     }
                     string uid = BuildUid(key, entry.Id);
                     var existing = room.Items.FirstOrDefault(i => i != null && string.Equals(i.Uid, uid, StringComparison.OrdinalIgnoreCase));
-                    if (existing != null && NeedsParkCoordinateRepair(entry, existing))
+                    if (existing != null && NeedsCoordinateRepair(entry, existing, legacyTable))
                     {
                         repairs.Add((entry, existing));
                         pendingRepairs.Add(existing);
@@ -140,16 +167,23 @@ namespace Cuy.Core.World
             {
                 world.OutdoorSeeded.Add(ParkMigrationMarker);
             }
+            if (isGarden)
+            {
+                world.OutdoorSeeded.Add(GardenMigrationMarker);
+            }
         }
 
-        private static bool NeedsParkCoordinateRepair(OutdoorDefaultItem entry, PlacedItem existing)
+        private static bool NeedsCoordinateRepair(
+            OutdoorDefaultItem entry,
+            PlacedItem existing,
+            (string Id, int X, int Y)[] legacyCoords)
         {
             if (existing.X < 0 || existing.X >= ParkGridCols || existing.Y < 0 || existing.Y >= ParkGridRows)
             {
                 return true;
             }
 
-            foreach (var legacy in LegacyParkCoords)
+            foreach (var legacy in legacyCoords)
             {
                 if (string.Equals(entry.Id, legacy.Id, StringComparison.OrdinalIgnoreCase) &&
                     existing.X == legacy.X && existing.Y == legacy.Y &&

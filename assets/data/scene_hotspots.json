@@ -7,7 +7,7 @@
       { "id": "flowerbed", "kind": "decor", "rect": [10, 118, 42, 124], "label": "Flower bed" }
     ],
     "park": [
-      { "id": "gazebo", "kind": "decor", "rect": [70, 70, 130, 84], "label": "Gazebo" }
+      { "id": "gazebo", "kind": "decor", "rect": [48, 0, 112, 48], "label": "Gazebo" }
     ],
     "farm": [
       { "id": "orchard", "kind": "orchard", "rect": [12, 24, 96, 62], "label": "Orchard" },

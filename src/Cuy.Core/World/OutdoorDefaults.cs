@@ -229,24 +229,24 @@ namespace Cuy.Core.World
                     new OutdoorDefaultItem("fountain", "bird_bath", 4, 7, false, true, true),
                     new OutdoorDefaultItem("flower_bed_left", "flowerbed_tulip", 1, 7, false, true, true),
                     new OutdoorDefaultItem("flower_bed_right", "flowerbed_daisy", 12, 7, false, true, true),
-                    new OutdoorDefaultItem("tree_left", "tree_small", 12, 3, false, true, true),
-                    new OutdoorDefaultItem("tree_right", "tree_small", 14, 3, false, true, true),
+                    new OutdoorDefaultItem("tree_left", "tree_small", 12, 4, false, true, true),
+                    new OutdoorDefaultItem("tree_right", "tree_small", 14, 4, false, true, true),
                     new OutdoorDefaultItem("hedge", "hedge", 11, 4, false, true, true),
                     new OutdoorDefaultItem("burrow", "willow_tunnel", 1, 4, false, true, false)
                 },
                 ["park"] = new[]
                 {
-                    new OutdoorDefaultItem("gazebo", "gazebo", 3, 3, false, true, true),
+                    new OutdoorDefaultItem("gazebo", "gazebo", 3, 0, false, true, true),
                     new OutdoorDefaultItem("bench_left", "bench_park", 5, 6, false, true, true),
-                    new OutdoorDefaultItem("bench_right", "bench_park", 12, 6, false, true, true),
+                    new OutdoorDefaultItem("bench_right", "bench_park", 13, 6, false, true, true),
                     new OutdoorDefaultItem("bridge", "bridge_wood", 9, 3, false, true, false),
                     new OutdoorDefaultItem("tree_1", "tree_big", 0, 0, false, true, true),
-                    new OutdoorDefaultItem("tree_2", "tree_big", 0, 4, false, true, true),
+                    new OutdoorDefaultItem("tree_2", "tree_big", 0, 5, false, true, true),
                     new OutdoorDefaultItem("tree_3", "tree_big", 13, 0, false, true, true),
-                    new OutdoorDefaultItem("tree_4", "tree_big", 5, 0, false, true, true),
-                    new OutdoorDefaultItem("lamp_left", "lamp_post", 1, 7, false, true, true),
-                    new OutdoorDefaultItem("lamp_mid", "lamp_post", 8, 4, false, true, true),
-                    new OutdoorDefaultItem("lamp_right", "lamp_post", 13, 4, false, true, true)
+                    new OutdoorDefaultItem("tree_4", "tree_big", 10, 0, false, true, true),
+                    new OutdoorDefaultItem("lamp_left", "lamp_post", 3, 5, false, true, true),
+                    new OutdoorDefaultItem("lamp_mid", "lamp_post", 8, 5, false, true, true),
+                    new OutdoorDefaultItem("lamp_right", "lamp_post", 11, 5, false, true, true)
                 },
                 ["farm"] = new[]
                 {

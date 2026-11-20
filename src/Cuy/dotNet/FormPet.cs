@@ -720,8 +720,9 @@ namespace Cuy
 
             pictureBox1.MouseMove += (s, e) =>
             {
+                if (IsDragging || IsTossing) return;
                 InteractionManager.Instance?.OnMouseMove(Cursor.Position);
-                if (!IsDragging && !IsTossing && (_statusBubble == null || !_statusBubble.Visible))
+                if (_statusBubble == null || !_statusBubble.Visible)
                 {
                     if (!_bubbleHoverTimer.Enabled)
                     {
@@ -1650,7 +1651,10 @@ namespace Cuy
         {
             if (y <= 0) return -1;
             Rectangle area = ScreenArea;
-            CheckFullScreen();
+            if (!IsTossing)
+            {
+                CheckFullScreen();
+            }
 
                 // While tossing, reuse the window list for FallCacheMs (refreshed at the first call of each toss).
                 // Walking and falling still enumerate on every call.
@@ -1663,6 +1667,19 @@ namespace Cuy
 
             int index = FallWindowPicker.Pick(fallRects, PositionX, PositionY, Width, Height, y, area.Y, i =>
             {
+                if (IsTossing)
+                {
+                    var rctO = fallRects[i];
+                    for (int j = 0; j < i; j++)
+                    {
+                        var rct = fallRects[j];
+                        if (rct.Top < rctO.Top && rct.Bottom > rctO.Top && rct.Left < PositionX && rct.Right > PositionX + 40)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
                 hwndWindow = fallHandles[i];
                 currentWindowSize = ToNativeRect(fallRects[i]);
                 bool covered = CheckTopWindow(false);

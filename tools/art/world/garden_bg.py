@@ -11,7 +11,7 @@ from PIL import Image
 from garden import blob
 from meadow import meadow
 
-W, HT, HORIZON = 256, 144, 58
+W, HT, HORIZON = 256, 144, 52
 SKY = {
     "morning": ["dusk.3", "dusk.4", "linen.2", "rose.2", "hay.2", "flame.2"],
     "day": ["dusk.2", "dusk.3", "dusk.4", "dusk.4", "linen.3"],
@@ -89,9 +89,9 @@ def world(tod):
     for x in range(W):                                                            # dalekie wzgorza i krzewy
         top = int(HORIZON - 6 - 4 * math.sin(x / 21.0) - 2 * math.sin(x / 8.0 + 1))
         H.vline(im, x, top, HORIZON, "dusk.1" if tod != "evening" else "plum.1")
-    for tx, top_y, rad in ((18, 34, 9), (44, 38, 7), (76, 31, 10), (102, 37, 7), (156, 35, 8)):
-        H.vline(im, tx, top_y, HORIZON + 1, "wood.0")
-        H.vline(im, tx + 1, top_y + 1, HORIZON + 1, "wood.1")
+    for tx, top_y, rad in ((18, 30, 9), (44, 34, 7), (76, 27, 10), (102, 33, 7), (156, 31, 8)):
+        H.vline(im, tx, top_y, HORIZON - 2, "wood.0")
+        H.vline(im, tx + 1, top_y + 1, HORIZON - 2, "wood.1")
         blob(im, tx, top_y, rad, ("moss.0", "moss.1", "moss.1", "moss.2"), tr)
         blob(im, tx - rad // 2, top_y + 3, max(4, rad - 3), ("moss.0", "moss.1", "moss.1", "moss.2"), tr)
         blob(im, tx + rad // 2, top_y + 4, max(4, rad - 4), ("moss.0", "moss.1", "moss.1", "moss.2"), tr)

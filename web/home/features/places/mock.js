@@ -19,8 +19,8 @@
         { id: 'fountain', itemId: 'bird_bath', x: 4, y: 7 },
         { id: 'flower_bed_left', itemId: 'flowerbed_tulip', x: 1, y: 7 },
         { id: 'flower_bed_right', itemId: 'flowerbed_daisy', x: 12, y: 7 },
-        { id: 'tree_left', itemId: 'tree_small', x: 12, y: 3 },
-        { id: 'tree_right', itemId: 'tree_small', x: 14, y: 3 },
+        { id: 'tree_left', itemId: 'tree_small', x: 12, y: 4 },
+        { id: 'tree_right', itemId: 'tree_small', x: 14, y: 4 },
         { id: 'hedge', itemId: 'hedge', x: 11, y: 4 },
         { id: 'burrow', itemId: 'willow_tunnel', x: 1, y: 4 }
       ]
@@ -29,17 +29,17 @@
       cols: 16,
       rows: 9,
       items: [
-        { id: 'gazebo', itemId: 'gazebo', x: 3, y: 3 },
+        { id: 'gazebo', itemId: 'gazebo', x: 3, y: 0 },
         { id: 'bench_left', itemId: 'bench_park', x: 5, y: 6 },
-        { id: 'bench_right', itemId: 'bench_park', x: 12, y: 6 },
+        { id: 'bench_right', itemId: 'bench_park', x: 13, y: 6 },
         { id: 'bridge', itemId: 'bridge_wood', x: 9, y: 3 },
         { id: 'tree_1', itemId: 'tree_big', x: 0, y: 0 },
-        { id: 'tree_2', itemId: 'tree_big', x: 0, y: 4 },
+        { id: 'tree_2', itemId: 'tree_big', x: 0, y: 5 },
         { id: 'tree_3', itemId: 'tree_big', x: 13, y: 0 },
-        { id: 'tree_4', itemId: 'tree_big', x: 5, y: 0 },
-        { id: 'lamp_left', itemId: 'lamp_post', x: 1, y: 7 },
-        { id: 'lamp_mid', itemId: 'lamp_post', x: 8, y: 4 },
-        { id: 'lamp_right', itemId: 'lamp_post', x: 13, y: 4 }
+        { id: 'tree_4', itemId: 'tree_big', x: 10, y: 0 },
+        { id: 'lamp_left', itemId: 'lamp_post', x: 3, y: 5 },
+        { id: 'lamp_mid', itemId: 'lamp_post', x: 8, y: 5 },
+        { id: 'lamp_right', itemId: 'lamp_post', x: 11, y: 5 }
       ]
     },
     farm: {

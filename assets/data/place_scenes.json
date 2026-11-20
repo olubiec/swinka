@@ -60,8 +60,8 @@
         "right": { "to": "farm", "x": 252 }
       },
       "blockers": [
-        { "id": "river_bank_left", "rect": [0, 54, 120, 68] },
-        { "id": "river_bank_right", "rect": [152, 54, 256, 68] }
+        { "id": "river_bank_left", "rect": [0, 54, 144, 68] },
+        { "id": "river_bank_right", "rect": [176, 54, 256, 68] }
       ]
     },
     "farm": {

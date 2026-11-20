@@ -124,7 +124,7 @@ namespace Cuy.Core
 
         private void PlaceStarterItem(RoomLayout room, int cols, int rows, int wallRows, WorldItemDefinition def, string roomId)
         {
-            if (TryGetStarterCoords(def.Id, cols, wallRows, out int px, out int py) &&
+            if (TryGetStarterCoords(def.Id, cols, rows, wallRows, out int px, out int py) &&
                 RoomLayoutOps.Place(room, cols, rows, wallRows, def, roomId, px, py, catalog: WorldItemCatalog) == PlaceResult.Ok)
             {
                 return;
@@ -132,25 +132,46 @@ namespace Cuy.Core
             PlaceInFirstFreeCell(room, cols, rows, wallRows, def, roomId);
         }
 
-        private static bool TryGetStarterCoords(string itemId, int cols, int wallRows, out int x, out int y)
+        private static bool TryGetStarterCoords(string itemId, int cols, int rows, int wallRows, out int x, out int y)
         {
             int floorY = Math.Max(2, wallRows);
-            if (string.Equals(itemId, "window_sun", StringComparison.OrdinalIgnoreCase))
+            int midFloorY = Math.Min(rows - 2, floorY + 1);
+            if (string.Equals(itemId, "window_sun", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(itemId, "curtains_dots", StringComparison.OrdinalIgnoreCase))
             {
                 x = Math.Max(0, cols / 2 - 1);
                 y = 0;
                 return true;
             }
-            if (string.Equals(itemId, "cushion_big", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(itemId, "wall_clock", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(itemId, "shelf_small", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(itemId, "fairy_lights", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(itemId, "hanging_planter", StringComparison.OrdinalIgnoreCase))
             {
-                x = 1;
-                y = floorY;
+                x = Math.Max(1, cols - 3);
+                y = 0;
                 return true;
             }
-            if (string.Equals(itemId, "side_table", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(itemId, "cushion_big", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(itemId, "cosy_nook", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(itemId, "armchair", StringComparison.OrdinalIgnoreCase))
+            {
+                x = 1;
+                y = midFloorY;
+                return true;
+            }
+            if (string.Equals(itemId, "side_table", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(itemId, "toy_basket", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(itemId, "bookshelf", StringComparison.OrdinalIgnoreCase))
             {
                 x = Math.Max(3, cols - 3);
                 y = floorY;
+                return true;
+            }
+            if (string.Equals(itemId, "hay_bar_wood", StringComparison.OrdinalIgnoreCase))
+            {
+                x = Math.Max(3, cols - 3);
+                y = midFloorY;
                 return true;
             }
             x = 0;
@@ -160,24 +181,39 @@ namespace Cuy.Core
 
         private void MigrateClusteredStarterLayout(RoomLayout room, string roomId)
         {
-            if (room?.Items == null || room.Items.Count != 3) return;
+            if (room?.Items == null || room.Items.Count < 3) return;
 
             PlacedItem cushion = null;
             PlacedItem window = null;
             PlacedItem sideTable = null;
             foreach (var item in room.Items)
             {
-                if (item == null || string.IsNullOrEmpty(item.ItemId)) return;
-                if (string.Equals(item.ItemId, "cushion_big", StringComparison.OrdinalIgnoreCase) && item.X == 0 && item.Y == 2)
+                if (item == null || string.IsNullOrEmpty(item.ItemId)) continue;
+                if (string.Equals(item.ItemId, "cushion_big", StringComparison.OrdinalIgnoreCase) &&
+                    ((item.X == 0 && item.Y == 2) || (item.X == 1 && item.Y == 2)))
+                {
                     cushion = item;
-                else if (string.Equals(item.ItemId, "window_sun", StringComparison.OrdinalIgnoreCase) && item.X == 0 && item.Y == 0)
+                }
+                else if (string.Equals(item.ItemId, "window_sun", StringComparison.OrdinalIgnoreCase) &&
+                         item.X == 0 && item.Y == 0)
+                {
                     window = item;
-                else if (string.Equals(item.ItemId, "side_table", StringComparison.OrdinalIgnoreCase) && item.X == 1 && item.Y == 2)
+                }
+                else if (string.Equals(item.ItemId, "side_table", StringComparison.OrdinalIgnoreCase) &&
+                         ((item.X == 1 && item.Y == 2) || (item.X == 2 && item.Y == 2)))
+                {
                     sideTable = item;
-                else
-                    return;
+                }
             }
-            if (cushion == null || window == null || sideTable == null) return;
+            if (window == null && cushion == null && sideTable == null) return;
+            // Require at least two clustered starter items or window@(0,0) + cushion@(0,2)
+            int legacyMatches = (window != null ? 1 : 0) +
+                                (cushion != null && cushion.X == 0 ? 1 : 0) +
+                                (sideTable != null ? 1 : 0);
+            if (legacyMatches < 2 && !(cushion != null && cushion.Y == 2 && sideTable == null && window == null && room.Items.Count == 3))
+            {
+                return;
+            }
 
             var (cols, rows) = GetRoomGridSize(roomId);
             if (cols <= 0 || rows <= 0)
@@ -189,13 +225,23 @@ namespace Cuy.Core
             int wallRows = PlaceCatalog != null ? PlaceCatalog.WallRows : 2;
             int floorY = Math.Max(2, wallRows);
             if (floorY >= rows) return;
+            int midFloorY = Math.Min(rows - 2, floorY + 1);
 
-            window.X = Math.Max(0, cols / 2 - 1);
-            window.Y = 0;
-            cushion.X = 1;
-            cushion.Y = floorY;
-            sideTable.X = Math.Max(3, cols - 3);
-            sideTable.Y = floorY;
+            if (window != null)
+            {
+                window.X = Math.Max(0, cols / 2 - 1);
+                window.Y = 0;
+            }
+            if (cushion != null)
+            {
+                cushion.X = 1;
+                cushion.Y = midFloorY;
+            }
+            if (sideTable != null)
+            {
+                sideTable.X = Math.Max(3, cols - 3);
+                sideTable.Y = floorY;
+            }
         }
 
         private void PlaceInFirstFreeCell(RoomLayout room, int cols, int rows, int wallRows, WorldItemDefinition def, string roomId)

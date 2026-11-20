@@ -853,9 +853,12 @@
 
       if (isRoomScene && !it.isPixel && (itemLayer === 'wall' || (typeof itemId === 'string' && itemId.startsWith('window_')))) {
         const frameH = metrics.sh;
-        const wallTopY = (off.x > 0 || off.y > 0) ? Math.max(0, off.y - 8) : 0;
+        const visibleWallH = Math.max(frameH + 2, wallBottomY - 6);
         let drawY = off.y + (y - metrics.anchorY);
-        drawY = Math.max(wallTopY + 1, Math.min(drawY - 6, wallBottomY - 6 - frameH));
+        if ((it.y || 0) === 0) {
+          drawY = Math.max(3, Math.round((visibleWallH - frameH) / 2));
+        }
+        drawY = Math.max(2, Math.min(drawY, wallBottomY - 6 - frameH));
         y = (drawY - off.y) + metrics.anchorY;
       }
 

@@ -313,6 +313,8 @@ namespace Cuy
             ShadowForm.Update(this);
         }
 
+        private double lastShadowDragUpdateMs = -1000.0;
+
         private void BeginSmoothDrag()
         {
             // Preserve the exact grab point, like dragging a normal window.
@@ -335,7 +337,11 @@ namespace Cuy
             dragVelocity.Add(PositionX, PositionY, now);
             motion.Reset(PositionX, PositionY, now);
             if (Location != position) Location = position;
-            ShadowForm.Update(this);
+            if (now - lastShadowDragUpdateMs >= 16.0)
+            {
+                lastShadowDragUpdateMs = now;
+                ShadowForm.Update(this);
+            }
         }
     }
 }

@@ -200,7 +200,7 @@
   transform: translateY(1px);
 }
 
-/* Full-height edge navigation arrows inside .stage-viewport */
+/* Edge transfer indicator inside .stage-viewport (hidden in normal viewing; appears on edge drag) */
 .stage-edge-arrow {
   position: absolute;
   top: 0;
@@ -211,12 +211,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(38, 22, 12, 0.18);
+  background: transparent;
   color: var(--ui-cream-0, #fff4d6);
   border: none;
   cursor: pointer;
-  opacity: 0.45;
-  transition: opacity 0.12s, background 0.12s;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.14s, background 0.14s;
   font-family: inherit;
   font-size: 14px;
   font-weight: bold;
@@ -231,16 +232,15 @@
   right: 0;
 }
 
-.stage-edge-arrow:hover,
 .stage-edge-arrow.edge-active {
-  opacity: 0.95;
+  opacity: 0.92;
   background: rgba(68, 38, 20, 0.55);
 }
 
 .stage-edge-arrow:focus-visible {
   outline: 2px solid var(--ui-hay-2, #e9c871);
   outline-offset: -2px;
-  opacity: 0.95;
+  opacity: 0.92;
 }
 
 .stage-edge-arrow[hidden],
@@ -250,7 +250,7 @@
 
 .stage-edge-arrow:disabled,
 .stage-edge-arrow[disabled] {
-  opacity: 0.18;
+  opacity: 0;
   cursor: default;
   pointer-events: none;
 }

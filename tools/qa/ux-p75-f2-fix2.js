@@ -78,7 +78,7 @@ async function main() {
       defect('T1', `Side bars or bottom clip detected: ${JSON.stringify(t1)}`);
     }
 
-    // T2: Full-height #stageEdgeLeft / #stageEdgeRight arrows switch places on click and highlight on edgeHold
+    // T2: Full-height #stageEdgeLeft / #stageEdgeRight arrows are invisible when idle and highlight on edgeHold
     const t2 = await page.evaluate(async () => {
       const leftBtn = document.getElementById('stageEdgeLeft');
       const rightBtn = document.getElementById('stageEdgeRight');
@@ -86,6 +86,7 @@ async function main() {
       if (!leftBtn || !rightBtn || !inst) return { ok: false, reason: 'missing edge buttons or instance' };
       const lr = leftBtn.getBoundingClientRect();
       const rr = rightBtn.getBoundingClientRect();
+      const idleOpacity = parseFloat(window.getComputedStyle(rightBtn).opacity || '1');
       const beforeScene = window.CanvasPig.debug().sceneId;
       rightBtn.click();
       await new Promise(r => setTimeout(r, 80));
@@ -100,9 +101,10 @@ async function main() {
       inst.clearEdgeHold();
       const clearedRight = !rightBtn.classList.contains('edge-active');
       return {
-        ok: lr.height >= 120 && rr.height >= 120 && beforeScene !== afterRight && afterLeft === beforeScene && activeRight && clearedRight,
+        ok: lr.height >= 120 && rr.height >= 120 && idleOpacity === 0 && beforeScene !== afterRight && afterLeft === beforeScene && activeRight && clearedRight,
         leftH: lr.height,
         rightH: rr.height,
+        idleOpacity,
         beforeScene,
         afterRight,
         afterLeft,
@@ -145,7 +147,7 @@ async function main() {
       const rows = (layout && layout.rows) || 7;
       const off = window.CuyRoomGeometry.stageOffset(cols, rows);
       const geom = window.CuyRoomGeometry.geometry(layout || { cols, rows, wallRows: 2 });
-      const wallTopY = (off.x > 0 || off.y > 0) ? Math.max(0, off.y - 8) : 0;
+      const wallTopY = 0;
       const wallBottomY = off.y + ((geom && geom.wallH) || 32);
       const topY = off.y + (win.y - win.anchorY);
       const bottomY = topY + win.sh;
@@ -164,7 +166,7 @@ async function main() {
       defect('T3', `Room window height check failed: ${JSON.stringify(t3)}`);
     }
 
-    // T4: Park trees and gazebo do not sit on the water stream (y = 52..68 px)
+    // T4: Park trees and gazebo do not sit on the water stream (y = 52..68 px), and Garden trees do not overlap picket fence (y = 50..64 px)
     const t4 = await page.evaluate(() => {
       const st = window.bridge.currentState || window.bridge.getState();
       const things = window.CuyScenes.placedThings(st, 'park');
@@ -172,12 +174,24 @@ async function main() {
       for (const t of things) {
         if (!t) continue;
         if (t.itemId === 'tree_big' || t.itemId === 'gazebo') {
-          if (t.y > 48 && t.y < 80) {
-            offenders.push({ id: t.id, itemId: t.itemId, y: t.y });
+          const topY = t.y - (t.anchorY || t.sh || 48);
+          const bottomY = t.y;
+          if (bottomY > 50 && topY < 70) {
+            offenders.push({ id: t.id, itemId: t.itemId, topY, bottomY });
           }
         }
       }
-      return { count: things.length, offenders };
+      const gardenThings = window.CuyScenes.placedThings(st, 'garden');
+      for (const t of gardenThings) {
+        if (!t) continue;
+        if (t.itemId === 'tree_small') {
+          const topY = t.y - (t.anchorY || t.sh || 32);
+          if (topY < 64) {
+            offenders.push({ id: t.id, itemId: t.itemId, topY, bottomY: t.y });
+          }
+        }
+      }
+      return { count: things.length, gardenCount: gardenThings.length, offenders };
     });
     if (t4.count >= 10 && t4.offenders.length === 0) {
       pass('T4-park-trees-gazebo-clear-of-stream', `park items=${t4.count}, stream offenders=0`);
