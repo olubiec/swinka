@@ -10,6 +10,34 @@
   let draggedPigId = null;
   let lastState = null;
   let apiRef = null;
+  let lastSceneKey = '';
+  let lastThingsSig = '';
+  let lastLightSig = '';
+  let lastPresentSig = '';
+  let lastHotspotsSig = '';
+  let lastWeatherSig = '';
+  let lastEdgeSig = '';
+  let lastLockedOverlaySig = '';
+  let lastEditOpen = null;
+
+  function resetSceneSigs() {
+    lastSceneKey = '';
+    lastThingsSig = '';
+    lastLightSig = '';
+    lastPresentSig = '';
+    lastHotspotsSig = '';
+    lastWeatherSig = '';
+    lastEdgeSig = '';
+    lastLockedOverlaySig = '';
+  }
+
+  function safeJsonSig(val) {
+    try {
+      return JSON.stringify(val);
+    } catch (e) {
+      return String(Date.now()) + ':' + Math.random();
+    }
+  }
 
   // Scene light and ambient state
   let lightsData = null;
@@ -149,7 +177,8 @@
     if (window.CanvasPig && typeof window.CanvasPig.onHotspot === 'function') {
       lampHotspotSubscribed = true;
       window.CanvasPig.onHotspot((hs) => {
-        if (hs && hs.kind === 'lamp') {
+        if (hs && (hs.kind === 'lamp' || hs.kind === 'lamp_toggle' || hs.id === 'lamp_toggle')) {
+          lastLightSig = '';
           toggleLamp(hs.uid || hs.id);
         }
       });
@@ -874,7 +903,14 @@
         ? window.CuyScenes.pigScene(st, firstPig)
         : 'salon';
     }
+    const prevSceneId = currentSceneId;
     currentSceneId = sceneId;
+
+    const isEditOpen = !!(window.CuyEdit && typeof window.CuyEdit.isOpen === 'function' && window.CuyEdit.isOpen());
+    if (lastEditOpen !== null && lastEditOpen !== isEditOpen) {
+      resetSceneSigs();
+    }
+    lastEditOpen = isEditOpen;
 
     const ord = getOrder(st);
     const item = ord.find(s => s.id === currentSceneId) || { id: currentSceneId, title: currentSceneId, locked: false };
@@ -883,7 +919,10 @@
     // 1. Update title in the bar
     const titleEl = document.getElementById('placesBarTitle');
     if (titleEl) {
-      titleEl.textContent = getSceneTitle(currentSceneId, st);
+      const newTitle = getSceneTitle(currentSceneId, st);
+      if (titleEl.textContent !== newTitle) {
+        titleEl.textContent = newTitle;
+      }
     }
 
     // 2. Set CanvasPig scene & things
@@ -897,6 +936,18 @@
 
     const inst = (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance) || (window.CuyPig && window.CuyPig.mainInstance);
     const sizeChanged = inst && sceneDef.size && (inst.sceneWidth !== sceneDef.size[0] || inst.sceneHeight !== sceneDef.size[1]);
+    const isCanvasDragging = !!(window.CanvasPig && typeof window.CanvasPig.isDragging === 'function' && window.CanvasPig.isDragging());
+    const isPigBeingDragged = (inst && !!inst.drag) || (draggedPigId !== null) || isCanvasDragging;
+
+    const sizeKey = (sceneDef && Array.isArray(sceneDef.size)) ? sceneDef.size.join('x') : '';
+    const sceneKey = currentSceneId + '|' + tod + '|' + sizeKey + '|' + (isLocked ? '1' : '0');
+    const instSceneChanged = (currentInstScene !== null && currentInstScene !== currentSceneId) || !!sizeChanged;
+    const sceneChanged = (prevSceneId !== currentSceneId) || instSceneChanged || (sceneKey !== lastSceneKey);
+
+    if (sceneChanged) {
+      resetSceneSigs();
+    }
+    lastSceneKey = sceneKey;
 
     if (currentInstScene !== currentSceneId || sizeChanged) {
       if (window.CanvasPig && typeof window.CanvasPig.setScene === 'function') {
@@ -907,21 +958,29 @@
     const things = (window.CuyScenes && typeof window.CuyScenes.placedThings === 'function')
       ? window.CuyScenes.placedThings(st, currentSceneId)
       : [];
-    if (window.CanvasPig && typeof window.CanvasPig.setThings === 'function') {
-      window.CanvasPig.setThings(things, true);
+    const thingsSig = currentSceneId + '|' + safeJsonSig(things || []);
+    if (sceneChanged || (!isPigBeingDragged && thingsSig !== lastThingsSig)) {
+      lastThingsSig = thingsSig;
+      if (window.CanvasPig && typeof window.CanvasPig.setThings === 'function') {
+        window.CanvasPig.setThings(things, true);
+      }
     }
 
     // Light scene
-    const sceneLight = CuyLight.build(currentSceneId);
-    if (window.CanvasPig && typeof window.CanvasPig.setLightScene === 'function') {
-      window.CanvasPig.setLightScene(sceneLight);
-    }
-    if (!lightsLoaded) {
-      ensureLights(() => {
-        const sl = CuyLight.build(currentSceneId);
+    const applyLightIfChanged = (sl) => {
+      const sig = currentSceneId + '|' + (lightsLoaded ? '1' : '0') + '|' + safeJsonSig(sl);
+      if (sig !== lastLightSig) {
+        lastLightSig = sig;
         if (window.CanvasPig && typeof window.CanvasPig.setLightScene === 'function') {
           window.CanvasPig.setLightScene(sl);
         }
+      }
+    };
+    const sceneLight = CuyLight.build(currentSceneId);
+    applyLightIfChanged(sceneLight);
+    if (!lightsLoaded) {
+      ensureLights(() => {
+        applyLightIfChanged(CuyLight.build(currentSceneId));
       });
     }
 
@@ -934,7 +993,11 @@
         const hsList = isLocked
           ? (window.CuyHotspots.EMPTY || [])
           : window.CuyHotspots.fromScene(currentSceneId, hotspotsData, things, null);
-        window.CanvasPig.setHotspots(hsList);
+        const hsSig = currentSceneId + '|' + (isLocked ? '1' : '0') + '|' + (hotspotsLoaded ? '1' : '0') + '|' + safeJsonSig(hsList || []);
+        if (hsSig !== lastHotspotsSig) {
+          lastHotspotsSig = hsSig;
+          window.CanvasPig.setHotspots(hsList);
+        }
       }
     };
     syncHotspots();
@@ -948,17 +1011,24 @@
       if (getPlaceKind(currentSceneId) === 'outdoor' && !isLocked &&
           window.CuyWeather && typeof window.CuyWeather.stateFor === 'function' && typeof window.CuyWeather.draw === 'function') {
         const weatherState = window.CuyWeather.stateFor(getLightsNow(), 'outdoor', st && st.settings, weatherData);
-        if (typeof window.CuyRoom.addLayer === 'function') {
-          window.CuyRoom.addLayer('weather', 15, (ctx, scene) => {
-            if (!window.CuyWeather || typeof window.CuyWeather.draw !== 'function') return;
-            const w = (scene && scene.width) || 256;
-            const h = (scene && scene.height) || 144;
-            const t = (scene && scene.time != null) ? scene.time : 0;
-            window.CuyWeather.draw(ctx, weatherState, t, w, h);
-          });
+        const wSig = currentSceneId + '|outdoor|' + (weatherLoaded ? '1' : '0') + '|' + safeJsonSig(weatherState);
+        if (wSig !== lastWeatherSig) {
+          lastWeatherSig = wSig;
+          if (typeof window.CuyRoom.addLayer === 'function') {
+            window.CuyRoom.addLayer('weather', 15, (ctx, scene) => {
+              if (!window.CuyWeather || typeof window.CuyWeather.draw !== 'function') return;
+              const w = (scene && scene.width) || 256;
+              const h = (scene && scene.height) || 144;
+              const t = (scene && scene.time != null) ? scene.time : 0;
+              window.CuyWeather.draw(ctx, weatherState, t, w, h);
+            });
+          }
         }
-      } else if (typeof window.CuyRoom.removeLayer === 'function') {
-        window.CuyRoom.removeLayer('weather');
+      } else if (lastWeatherSig !== 'none') {
+        lastWeatherSig = 'none';
+        if (typeof window.CuyRoom.removeLayer === 'function') {
+          window.CuyRoom.removeLayer('weather');
+        }
       }
     };
     syncWeatherLayer();
@@ -1000,14 +1070,16 @@
       hasLeftNeighbour = true;
       hasRightNeighbour = true;
     }
-    if (window.CanvasPig && typeof window.CanvasPig.setEdgeNeighbours === 'function') {
-      window.CanvasPig.setEdgeNeighbours({
-        left: hasLeftNeighbour,
-        right: hasRightNeighbour
-      });
+    const edgeSig = (hasLeftNeighbour ? '1' : '0') + (hasRightNeighbour ? '1' : '0');
+    if (sceneChanged || edgeSig !== lastEdgeSig) {
+      lastEdgeSig = edgeSig;
+      if (window.CanvasPig && typeof window.CanvasPig.setEdgeNeighbours === 'function') {
+        window.CanvasPig.setEdgeNeighbours({
+          left: hasLeftNeighbour,
+          right: hasRightNeighbour
+        });
+      }
     }
-
-    const isPigBeingDragged = (inst && !!inst.drag) || (draggedPigId !== null);
 
     if (window.CanvasPig && typeof window.CanvasPig.setExitsEnabled === 'function') {
       const now = Date.now();
@@ -1023,34 +1095,41 @@
       if (hintBar) hintBar.hidden = false;
       if (hintText) hintText.textContent = item.unlockHint || 'Locked';
 
-      if (window.CanvasPig && typeof window.CanvasPig.setPresentPigs === 'function') {
-        window.CanvasPig.setPresentPigs([]);
-      } else if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
-        window.CanvasPig.setPigVisible(false);
-      }
-
-      if (window.CuyRoom && typeof window.CuyRoom.addLayer === 'function') {
-        window.CuyRoom.addLayer('p36_locked_overlay', 25, (ctx, scene) => {
-          ctx.save();
-          ctx.globalCompositeOperation = 'multiply';
-          ctx.fillStyle = 'rgb(87, 98, 150)';
-          ctx.fillRect(0, 0, (scene && scene.width) || 256, (scene && scene.height) || 144);
-          ctx.restore();
-        });
+      if (lastLockedOverlaySig !== 'locked') {
+        lastLockedOverlaySig = 'locked';
+        if (window.CuyRoom && typeof window.CuyRoom.addLayer === 'function') {
+          window.CuyRoom.addLayer('p36_locked_overlay', 25, (ctx, scene) => {
+            ctx.save();
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.fillStyle = 'rgb(87, 98, 150)';
+            ctx.fillRect(0, 0, (scene && scene.width) || 256, (scene && scene.height) || 144);
+            ctx.restore();
+          });
+        }
       }
     } else {
       if (hintBar) hintBar.hidden = true;
       if (hintText) hintText.textContent = '';
 
-      if (window.CuyRoom && typeof window.CuyRoom.removeLayer === 'function') {
-        window.CuyRoom.removeLayer('p36_locked_overlay');
+      if (lastLockedOverlaySig !== 'unlocked') {
+        lastLockedOverlaySig = 'unlocked';
+        if (window.CuyRoom && typeof window.CuyRoom.removeLayer === 'function') {
+          window.CuyRoom.removeLayer('p36_locked_overlay');
+        }
       }
+    }
 
-      if (window.CanvasPig && typeof window.CanvasPig.setPresentPigs === 'function') {
-        window.CanvasPig.setPresentPigs(presentList);
-      } else if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
-        window.CanvasPig.setPigVisible(isAnyPigHere || isPigBeingDragged);
+    if (window.CanvasPig && typeof window.CanvasPig.setPresentPigs === 'function') {
+      if (!isPigBeingDragged) {
+        const targetPresent = isLocked ? [] : presentList;
+        const presentSig = currentSceneId + '|' + (isLocked ? 'locked' : safeJsonSig(targetPresent));
+        if (sceneChanged || presentSig !== lastPresentSig) {
+          lastPresentSig = presentSig;
+          window.CanvasPig.setPresentPigs(targetPresent);
+        }
       }
+    } else if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
+      window.CanvasPig.setPigVisible(isLocked ? false : (isAnyPigHere || isPigBeingDragged));
     }
 
     if (!isPigBeingDragged) {
@@ -1163,6 +1242,7 @@
     if (src && !isToggleableLightSource(src)) return;
     const currentlyOn = src ? src.on : true;
     sceneLampToggles[currentSceneId][uid] = !currentlyOn;
+    lastLightSig = '';
     applyScene(currentSceneId, getState());
   }
 
@@ -1177,6 +1257,7 @@
       if (low === 'window' || low.startsWith('window_')) return;
     }
     sceneLampToggles[currentSceneId][uid] = !!on;
+    lastLightSig = '';
     applyScene(currentSceneId, getState());
   }
 
@@ -1199,6 +1280,7 @@
       if (window.CuyEdit && typeof window.CuyEdit.toggle === 'function') {
         window.CuyEdit.toggle();
       }
+      resetSceneSigs();
       syncEditButton(false);
     });
     if (typeof MutationObserver !== 'undefined') {
@@ -1248,6 +1330,9 @@
       const sId = sceneId || currentSceneId || 'salon';
       const sceneLight = CuyLight.build(sId);
       if (window.CanvasPig && typeof window.CanvasPig.setLightScene === 'function') {
+        if (!currentSceneId || sId === currentSceneId) {
+          lastLightSig = sId + '|' + (lightsLoaded ? '1' : '0') + '|' + safeJsonSig(sceneLight);
+        }
         window.CanvasPig.setLightScene(sceneLight);
       }
     }

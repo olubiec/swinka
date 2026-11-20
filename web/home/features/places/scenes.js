@@ -95,6 +95,8 @@
   let scenesData = null;
   let hotspotsData = null;
   let hotspotsPromise = null;
+  let lightsData = null;
+  let lightsPromise = null;
   let loadPromise = null;
   let atlasData = null;
   let atlasPromise = null;
@@ -217,6 +219,7 @@
     loadPromise = (async () => {
       loadAtlas().catch(() => {});
       loadHotspots().catch(() => {});
+      loadLights().catch(() => {});
       if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
         const url = getAssetUrl('data/place_scenes.json');
         try {
@@ -293,9 +296,50 @@
     return hotspotsPromise;
   }
 
+  function getLightsData() {
+    if (lightsData) return lightsData;
+    if (typeof require !== 'undefined') {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const candidates = [
+          path.resolve(__dirname, '../../../assets/data/lights.json'),
+          path.resolve(__dirname, '../../../../assets/data/lights.json'),
+          path.resolve(process.cwd(), 'assets/data/lights.json')
+        ];
+        for (const p of candidates) {
+          if (fs.existsSync(p)) {
+            lightsData = JSON.parse(fs.readFileSync(p, 'utf8'));
+            return lightsData;
+          }
+        }
+      } catch (e) {}
+    }
+    return lightsData;
+  }
+
+  async function loadLights() {
+    if (lightsData) return lightsData;
+    if (lightsPromise) return lightsPromise;
+    lightsPromise = (async () => {
+      if (typeof window !== 'undefined' && typeof window.fetch === 'function') {
+        const url = getAssetUrl('data/lights.json');
+        try {
+          const res = await window.fetch(url);
+          if (res.ok) {
+            lightsData = await res.json();
+            return lightsData;
+          }
+        } catch (e) {}
+      }
+      return getLightsData();
+    })();
+    return lightsPromise;
+  }
+
   // Pre-trigger loading if in browser
   if (typeof window !== 'undefined') {
-    Promise.all([load(), loadAtlas(), loadTiles(), loadHotspots()]).then(() => {
+    Promise.all([load(), loadAtlas(), loadTiles(), loadHotspots(), loadLights()]).then(() => {
       if (window.CuyPlaces && typeof window.CuyPlaces.updateStageNav === 'function') {
         window.CuyPlaces.updateStageNav();
       }
@@ -650,14 +694,82 @@
     return 'salon';
   }
 
+  function getItemFrames(itemId, entry, it) {
+    if (it && Number.isFinite(Number(it.frames)) && Number(it.frames) > 1) {
+      return { frames: Math.max(1, Number(it.frames)), explicit: true };
+    }
+    if (entry && Number.isFinite(Number(entry.frames)) && Number(entry.frames) > 1) {
+      return { frames: Math.max(1, Number(entry.frames)), explicit: true };
+    }
+    const ld = getLightsData();
+    if (ld && itemId && typeof ld === 'object') {
+      const direct = ld[itemId];
+      if (direct && typeof direct === 'object') {
+        const f = Number(direct.frames || direct.frameCount);
+        if (Number.isFinite(f) && f > 1) return { frames: Math.max(1, f), explicit: false };
+      }
+      for (const key of Object.keys(ld)) {
+        const sub = ld[key];
+        if (sub && typeof sub === 'object' && !Array.isArray(sub) && sub[itemId] && typeof sub[itemId] === 'object') {
+          const f = Number(sub[itemId].frames || sub[itemId].frameCount);
+          if (Number.isFinite(f) && f > 1) return { frames: Math.max(1, f), explicit: false };
+        }
+      }
+    }
+    if (typeof window !== 'undefined' && window.Lights && itemId) {
+      if (typeof window.Lights.framesFor === 'function') {
+        const f = Number(window.Lights.framesFor(itemId));
+        if (Number.isFinite(f) && f > 1) return { frames: Math.max(1, f), explicit: false };
+      }
+      const lItems = window.Lights.items || window.Lights.fixtures;
+      if (lItems && lItems[itemId]) {
+        const f = Number(lItems[itemId].frames || lItems[itemId].frameCount);
+        if (Number.isFinite(f) && f > 1) return { frames: Math.max(1, f), explicit: false };
+      }
+    }
+    return { frames: 1, explicit: false };
+  }
+
+  function resolveSingleFrameMetrics(itemId, entry, it, cw, ch) {
+    const frameInfo = getItemFrames(itemId, entry, it);
+    const frameCount = Math.max(1, Number(frameInfo.frames) || 1);
+    const useEntryW = !!(entry && Number.isFinite(entry.w) && entry.w > 0);
+    const sizeW = (entry && entry.size && Number.isFinite(entry.size[0]) && entry.size[0] > 0) ? entry.size[0] : 0;
+    const sizeH = (entry && entry.size && Number.isFinite(entry.size[1]) && entry.size[1] > 0) ? entry.size[1] : 0;
+    const entryW = useEntryW ? entry.w : sizeW;
+    const entryH = (entry && Number.isFinite(entry.h) && entry.h > 0) ? entry.h : sizeH;
+    const fallbackW = (it && Number.isFinite(it.sw) && it.sw > 0)
+      ? it.sw
+      : ((it && Number.isFinite(it.w) && it.w > 0) ? (it.w <= 8 ? it.w * 16 : it.w) : cw * 16);
+    const fallbackH = (it && Number.isFinite(it.sh) && it.sh > 0)
+      ? it.sh
+      : ((it && Number.isFinite(it.h) && it.h > 0) ? (it.h <= 8 ? it.h * 16 : it.h) : ch * 16);
+    const isStrip = frameCount > 1 && entryW > 0 && (
+      frameInfo.explicit || (useEntryW && entryW >= Math.max(frameCount * 12, Math.round(cw * 16 * frameCount * 0.75)))
+    );
+    const sw = entryW ? (isStrip ? Math.round(entryW / frameCount) : entryW) : fallbackW;
+    const sh = entryH ? entryH : fallbackH;
+    const rawAnchorX = (entry && entry.anchor) ? entry.anchor[0] : Math.round(sw / 2);
+    const anchorX = (isStrip && rawAnchorX > sw) ? Math.round(sw / 2) : rawAnchorX;
+    const anchorY = (entry && entry.anchor) ? entry.anchor[1] : sh;
+    return { sw: sw, sh: sh, anchorX: anchorX, anchorY: anchorY };
+  }
+
   function placedThings(state, sceneId) {
+    let st = state;
+    let sid = sceneId;
+    if (typeof st === 'string') {
+      sid = st;
+      st = (sceneId && typeof sceneId === 'object') ? sceneId : null;
+    }
+
     const scenes = getScenesDict();
-    const tpl = scenes[sceneId];
-    if (!isHouseRoom(sceneId) && tpl && tpl.kind === 'outdoor' && !tpl.bg_clean) {
+    const tpl = scenes[sid];
+    if (!isHouseRoom(sid) && tpl && tpl.kind === 'outdoor' && !tpl.bg_clean) {
       return [];
     }
 
-    const layout = layoutFor(sceneId, state);
+    const layout = layoutFor(sid, st);
 
     if (!layout || !Array.isArray(layout.items)) {
       return [];
@@ -671,10 +783,10 @@
       if (!it) continue;
       let itemId = it.itemId || it.id;
       const uid = it.uid || it.id || itemId;
-      if (sceneId === 'farm' && typeof uid === 'string') {
+      if (sid === 'farm' && typeof uid === 'string') {
         const pm = uid.match(/^fx:farm:plot:(\d+)$/);
-        if (pm && state && state.farm && Array.isArray(state.farm.plots)) {
-          const p = state.farm.plots[Number(pm[1])];
+        if (pm && st && st.farm && Array.isArray(st.farm.plots)) {
+          const p = st.farm.plots[Number(pm[1])];
           if (p) {
             if (p.state === 'ripe') itemId = 'plot_ripe';
             else if (p.state === 'growing') itemId = p.watered ? 'plot_watered' : 'plot_sprout';
@@ -685,8 +797,10 @@
       const entry = (atlas && atlas.items) ? atlas.items[itemId] : null;
       if (!hasAtlasArt(atlas, entry)) continue;
 
-      const cw = (entry && entry.cells) ? entry.cells[0] : (it.w || 1);
-      const ch = (entry && entry.cells) ? entry.cells[1] : (it.h || 1);
+      const cw = (entry && entry.cells) ? entry.cells[0]
+        : ((Number.isFinite(it.w) && it.w > 0) ? (it.w <= 8 ? it.w : Math.max(1, Math.round(it.w / 16))) : 1);
+      const ch = (entry && entry.cells) ? entry.cells[1]
+        : ((Number.isFinite(it.h) && it.h > 0) ? (it.h <= 8 ? it.h : Math.max(1, Math.round(it.h / 16))) : 1);
 
       let x, y;
       if (it.isPixel) {
@@ -701,12 +815,7 @@
         y = Math.round(((it.y || 0) + ch) * 16);
       }
 
-      const sw = (entry && entry.size) ? entry.size[0] : (cw * 16);
-      const sh = (entry && entry.size) ? entry.size[1] : (ch * 16);
-
-      const anchorX = (entry && entry.anchor) ? entry.anchor[0] : Math.round(sw / 2);
-      const anchorY = (entry && entry.anchor) ? entry.anchor[1] : sh;
-
+      const metrics = resolveSingleFrameMetrics(itemId, entry, it, cw, ch);
       const url = (entry && entry.file) ? getAssetUrl('world/' + entry.file) : null;
       const isFlat = isFlatItem(it, entry, itemId);
 
@@ -718,10 +827,12 @@
         img: null,
         x: x,
         y: y,
-        w: sw,
-        h: sh,
-        anchorX: anchorX,
-        anchorY: anchorY,
+        w: metrics.sw,
+        h: metrics.sh,
+        sw: metrics.sw,
+        sh: metrics.sh,
+        anchorX: metrics.anchorX,
+        anchorY: metrics.anchorY,
         flat: isFlat,
         flip: !!it.flip
       });
@@ -749,21 +860,232 @@
     if (!hsMod || typeof hsMod.fromScene !== 'function') return [];
     const st = state || (typeof window !== 'undefined' && window.bridge && window.bridge.currentState) || null;
     let instances = placedThings(st, sceneId);
+    const atlas = getAtlas();
+    let off = { x: 0, y: 0 };
     if (isHouseRoom(sceneId) && instances.length > 0) {
       const layout = layoutFor(sceneId, st);
       const cols = (layout && layout.cols) ? layout.cols : 12;
       const rows = (layout && layout.rows) ? layout.rows : 7;
       const roomGeom = getRoomGeometry();
-      const off = (roomGeom && typeof roomGeom.stageOffset === 'function')
+      off = (roomGeom && typeof roomGeom.stageOffset === 'function')
         ? roomGeom.stageOffset(cols, rows)
         : { x: Math.floor((256 - cols * 16) / 2), y: Math.floor((144 - rows * 16) / 2) };
-      instances = instances.map(it => Object.assign({}, it, {
-        x: (it.x || 0) + off.x,
-        y: (it.y || 0) + off.y
-      }));
     }
+    instances = instances.map(it => {
+      const entry = (atlas && atlas.items) ? atlas.items[it.itemId] : null;
+      const cw = (entry && entry.cells) ? entry.cells[0] : 1;
+      const ch = (entry && entry.cells) ? entry.cells[1] : 1;
+      const metrics = resolveSingleFrameMetrics(it.itemId, entry, it, cw, ch);
+      const sw = (Number.isFinite(it.sw) && it.sw > 0) ? it.sw : metrics.sw;
+      const sh = (Number.isFinite(it.sh) && it.sh > 0) ? it.sh : metrics.sh;
+      const anchorX = Number.isFinite(it.anchorX) ? it.anchorX : metrics.anchorX;
+      const anchorY = Number.isFinite(it.anchorY) ? it.anchorY : metrics.anchorY;
+      return Object.assign({}, it, {
+        x: (it.x || 0) + off.x,
+        y: (it.y || 0) + off.y,
+        sw: sw,
+        sh: sh,
+        anchorX: anchorX,
+        anchorY: anchorY
+      });
+    });
     const catalog = (typeof window !== 'undefined' && window.CuyWorldItems) || null;
     return hsMod.fromScene(sceneId, getHotspotsData(), instances, catalog);
+  }
+
+  const SIGNBOARD_EMBLEMS = {
+    left: {
+      palette: {
+        '1': '#4e9a36',
+        '2': '#9be068',
+        '3': '#7ec850',
+        '4': '#2f7d32',
+        '5': '#4e301b'
+      },
+      rows: [
+        '..11....',
+        '.1221.33',
+        '.112.323',
+        '...4.33.',
+        '...44...',
+        '...4....',
+        '..5555..',
+        '.555555.'
+      ]
+    },
+    center: {
+      palette: {
+        '1': '#58a838',
+        '2': '#7cd458',
+        '3': '#ff9b3d',
+        '4': '#b84b10',
+        '5': '#e87828'
+      },
+      rows: [
+        '....212.',
+        '...121..',
+        '...354..',
+        '..3554..',
+        '..3544..',
+        '.3544...',
+        '.344....',
+        '.4......'
+      ]
+    },
+    right: {
+      palette: {
+        '1': '#e85a90',
+        '2': '#ff9ec4',
+        '3': '#a8325f',
+        '4': '#fff0c2',
+        '5': '#f0c048'
+      },
+      rows: [
+        '..111...',
+        '.12211..',
+        '1245113.',
+        '1154513.',
+        '1115333.',
+        '.11333..',
+        '..333...',
+        '........'
+      ]
+    }
+  };
+
+  function drawPixelGrid(ctx, ox, oy, rows, palette) {
+    for (let r = 0; r < rows.length; r++) {
+      const row = rows[r];
+      let c = 0;
+      while (c < row.length) {
+        const ch = row[c];
+        if (ch === '.' || !palette[ch]) {
+          c++;
+          continue;
+        }
+        let end = c + 1;
+        while (end < row.length && row[end] === ch) end++;
+        ctx.fillStyle = palette[ch];
+        ctx.fillRect(ox + c, oy + r, end - c, 1);
+        c = end;
+      }
+    }
+  }
+
+  function resolveMarketStalls(state, opts) {
+    if (opts && Array.isArray(opts.placed)) return opts.placed;
+    if (Array.isArray(state)) return state;
+    const placed = placedThings(state, 'market');
+    if (placed && placed.length > 0) return placed;
+    const layout = layoutFor('market', state);
+    const rawItems = (layout && Array.isArray(layout.items))
+      ? layout.items
+      : [
+          { uid: 'fx:market:stall_left', itemId: 'stall_basic', x: 1, y: 5, w: 2, h: 2 },
+          { uid: 'fx:market:stall_center', itemId: 'stall_big', x: 6, y: 5, w: 3, h: 2 },
+          { uid: 'fx:market:stall_right', itemId: 'stall_basic', x: 12, y: 5, w: 2, h: 2 }
+        ];
+    const atlas = getAtlas();
+    return rawItems.map(it => {
+      if (!it) return null;
+      const itemId = it.itemId || it.id;
+      const uid = it.uid || it.id || itemId;
+      const entry = (atlas && atlas.items) ? atlas.items[itemId] : null;
+      const cw = (entry && entry.cells) ? entry.cells[0] : (it.w || (itemId === 'stall_big' ? 3 : 2));
+      const ch = (entry && entry.cells) ? entry.cells[1] : (it.h || 2);
+      const metrics = resolveSingleFrameMetrics(itemId, entry, it, cw, ch);
+      const x = it.isPixel ? it.x : Math.round((it.x || 0) * 16 + (cw * 16) / 2);
+      const y = it.isPixel ? it.y : Math.round(((it.y || 0) + ch) * 16);
+      return {
+        id: uid,
+        uid: uid,
+        itemId: itemId,
+        x: x,
+        y: y,
+        w: metrics.sw,
+        h: metrics.sh,
+        sw: metrics.sw,
+        sh: metrics.sh,
+        anchorX: metrics.anchorX,
+        anchorY: metrics.anchorY
+      };
+    }).filter(Boolean);
+  }
+
+  function stallRoleOf(thing) {
+    const uid = String((thing && (thing.uid || thing.id)) || '');
+    if (/(?:^|:)stall_left$/.test(uid)) return 'left';
+    if (/(?:^|:)stall_center$/.test(uid)) return 'center';
+    if (/(?:^|:)stall_right$/.test(uid)) return 'right';
+    return null;
+  }
+
+  function drawMarketSignboards(ctx, state, opts) {
+    if (!ctx || typeof ctx.fillRect !== 'function') return [];
+    const list = resolveMarketStalls(state, opts);
+    const drawn = [];
+    if (typeof ctx.save === 'function') ctx.save();
+    if ('imageSmoothingEnabled' in ctx) ctx.imageSmoothingEnabled = false;
+
+    for (const stall of list) {
+      const role = stallRoleOf(stall);
+      if (!role || !SIGNBOARD_EMBLEMS[role]) continue;
+      const sw = (Number.isFinite(stall.sw) && stall.sw > 0) ? stall.sw : (stall.w || 32);
+      const sh = (Number.isFinite(stall.sh) && stall.sh > 0) ? stall.sh : (stall.h || 32);
+      const ax = Number.isFinite(stall.anchorX) ? stall.anchorX : Math.round(sw / 2);
+      const ay = Number.isFinite(stall.anchorY) ? stall.anchorY : sh;
+      const left = Math.round((stall.x || 0) - ax);
+      const right = left + sw;
+      const top = Math.round((stall.y || 0) - ay);
+
+      const sx = Math.round((left + right) / 2) - 7;
+      const sy = Math.round(top + Math.max(3, Math.min(8, Math.round(sh * 0.12))));
+
+      ctx.fillStyle = 'rgba(30, 16, 8, 0.35)';
+      ctx.fillRect(sx, sy + 12, 14, 1);
+
+      ctx.fillStyle = '#3d2210';
+      ctx.fillRect(sx, sy, 14, 12);
+
+      ctx.fillStyle = '#9c6b3f';
+      ctx.fillRect(sx + 1, sy + 1, 12, 10);
+
+      ctx.fillStyle = '#b98756';
+      ctx.fillRect(sx + 1, sy + 1, 12, 1);
+
+      ctx.fillStyle = '#744a28';
+      ctx.fillRect(sx + 1, sy + 10, 12, 1);
+
+      ctx.fillStyle = '#f3e1b6';
+      ctx.fillRect(sx + 2, sy + 2, 10, 8);
+
+      ctx.fillStyle = '#3b2416';
+      ctx.fillRect(sx + 2, sy + 2, 1, 1);
+      ctx.fillRect(sx + 11, sy + 2, 1, 1);
+
+      const active = opts && (
+        opts.activeStall === role ||
+        opts.hoverStall === role ||
+        opts.activeId === stall.uid ||
+        opts.hoverId === stall.uid ||
+        opts.activeId === 'stall:' + role ||
+        opts.hoverId === 'stall:' + role
+      );
+      if (active) {
+        ctx.fillStyle = '#ffe89a';
+        ctx.fillRect(sx, sy, 14, 1);
+        ctx.fillRect(sx, sy + 11, 14, 1);
+        ctx.fillRect(sx, sy, 1, 12);
+        ctx.fillRect(sx + 13, sy, 1, 12);
+      }
+
+      const emblem = SIGNBOARD_EMBLEMS[role];
+      drawPixelGrid(ctx, sx + 3, sy + 2, emblem.rows, emblem.palette);
+      drawn.push({ id: stall.uid || stall.id, role: role, sx: sx, sy: sy, sw: 14, sh: 12 });
+    }
+
+    if (typeof ctx.restore === 'function') ctx.restore();
+    return drawn;
   }
 
   const CuyScenes = {
@@ -771,6 +1093,7 @@
     loadAtlas: loadAtlas,
     loadTiles: loadTiles,
     loadHotspots: loadHotspots,
+    loadLights: loadLights,
     order: order,
     neighbor: neighbor,
     def: def,
@@ -779,6 +1102,7 @@
     pigScene: pigScene,
     placedThings: placedThings,
     hotspotsFor: hotspotsFor,
+    drawMarketSignboards: drawMarketSignboards,
     debugInstances: debugInstances,
     setBgClean: setBgClean,
     getAtlas: getAtlas,

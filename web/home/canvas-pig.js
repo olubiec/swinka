@@ -376,8 +376,11 @@
       this.pigDraws = 0;
       this.presentPigs = [];
       this._multiPigActive = false;
+      this._litFrameCache = new Map();
+      this._litSheetIds = (typeof WeakMap !== 'undefined') ? new WeakMap() : null;
+      this._litSheetSeq = 0;
       this.scenePigs = (typeof window !== 'undefined' && window.CuyScenePigs && typeof window.CuyScenePigs.create === 'function')
-        ? window.CuyScenePigs.create({ bounds: this.walk || [10, 96, 230, 126], minGap: 22 })
+        ? window.CuyScenePigs.create({ bounds: this.walk || [10, 96, 230, 126], minGap: 22, isFree: (x, y) => this.isFree(x, y) })
         : null;
       this.pendingPlay = null;
       this.activePlay = null;
@@ -556,27 +559,42 @@
       this.blockerRects = blockerRects;
 
       // Extract standing item footprints
-      // width of its sprite x its bottom 4 px; flat things like rugs do not block
+      // blocking floor items block their pixel width (+horizontal margin) x bottom foot height; flat/wall/walkable/noBlock things do not block
       const standingFootprints = [];
       const things = this.things || [];
       for (let i = 0; i < things.length; i++) {
         const t = things[i];
-        if (!t || t.flat) continue;
+        if (!t || t.flat || t.layer === 'wall' || t.walkable || t.noBlock) continue;
         if (t.footprint && Array.isArray(t.footprint) && t.footprint.length === 4) {
           standingFootprints.push(t.footprint);
           continue;
         }
         const img = t.img || (t.url ? this.loadCachedImage(t.url) : null);
-        const spw = t.w || t.width || (img && (img.naturalWidth || img.width)) || (t.anchorX ? t.anchorX * 2 : 32);
-        const sph = t.h || t.height || (img && (img.naturalHeight || img.height)) || (t.anchorY ? t.anchorY : 32);
+        const swVal = Number(t.sw);
+        const wVal = Number(t.w);
+        const rawW = (Number.isFinite(swVal) && swVal > 0)
+          ? swVal
+          : ((Number.isFinite(wVal) && wVal > 0) ? (wVal <= 8 ? wVal * 16 : wVal) : 0);
+        const shVal = Number(t.sh);
+        const hVal = Number(t.h);
+        const rawH = (Number.isFinite(shVal) && shVal > 0)
+          ? shVal
+          : ((Number.isFinite(hVal) && hVal > 0) ? (hVal <= 8 ? hVal * 16 : hVal) : 0);
+        const spw = rawW || t.width || (img && (img.naturalWidth || img.width)) || (t.anchorX ? t.anchorX * 2 : 32);
+        const sph = rawH || t.height || (img && (img.naturalHeight || img.height)) || (t.anchorY ? t.anchorY : 32);
         const ax = t.anchorX !== undefined ? t.anchorX : Math.round(spw / 2);
         const ay = t.anchorY !== undefined ? t.anchorY : sph;
         const dx = Math.round((t.x || 0) - ax);
         const dy = Math.round((t.y || 0) - ay);
-        const fx0 = dx;
-        const fx1 = dx + spw;
+        const padX = 4;
+        const fx0 = dx - padX;
+        const fx1 = dx + spw + padX;
         const fy1 = dy + sph;
-        const fy0 = fy1 - 4;
+        const footHVal = Number(t.footH);
+        const footH = (Number.isFinite(footHVal) && footHVal > 0)
+          ? footHVal * 16
+          : Math.min(sph, Math.max(8, Math.round(sph * 0.45)));
+        const fy0 = Math.max(dy, fy1 - footH);
         standingFootprints.push([fx0, fy0, fx1, fy1]);
       }
       this.standingFootprints = standingFootprints;
@@ -1070,14 +1088,21 @@
 
     ensureScenePigs() {
       if (!this.scenePigs && typeof window !== 'undefined' && window.CuyScenePigs && typeof window.CuyScenePigs.create === 'function') {
-        this.scenePigs = window.CuyScenePigs.create({ bounds: this.walk || [10, 96, 230, 126], minGap: 22 });
+        this.scenePigs = window.CuyScenePigs.create({
+          bounds: this.walk || [10, 96, 230, 126],
+          minGap: 22,
+          isFree: (x, y) => this.isFree(x, y)
+        });
       }
       return this.scenePigs;
     }
 
     setPresentPigs(list) {
+      const dragging = !!this.drag;
       this._multiPigActive = true;
-      this._overridePrimaryPos = false;
+      if (!dragging) {
+        this._overridePrimaryPos = false;
+      }
       this.presentPigs = Array.isArray(list) ? list.slice() : [];
       this.pigVisible = this.presentPigs.length > 0;
       if (!this.pigVisible) {
@@ -1087,9 +1112,17 @@
       const sp = this.ensureScenePigs();
       if (sp) {
         sp.setBounds(this.walk || [10, 96, 230, 126]);
-        sp.sync(this.presentPigs);
+        sp.sync(this.presentPigs, (x, y) => this.isFree(x, y));
         const entries = sp.entries();
-        if (entries.length > 0) {
+        if (dragging) {
+          if (typeof sp.movePrimary === 'function') {
+            sp.movePrimary(this.pigX, this.pigY);
+          }
+          if (entries.length > 0) {
+            this.activePig = entries[0].look || this.activePig;
+            if (entries[0].stage) this.stageKey = normStage(entries[0].stage);
+          }
+        } else if (entries.length > 0) {
           this.pigX = entries[0].x;
           this.pigY = entries[0].y;
           this.facing = entries[0].facing;
@@ -1097,6 +1130,10 @@
           if (entries[0].stage) this.stageKey = normStage(entries[0].stage);
         }
       }
+    }
+
+    isDragging() {
+      return !!this.drag;
     }
 
     clearPlayState() {
@@ -1468,7 +1505,7 @@
         : (this.pigVisible !== false
           ? [{ id: 'pig', x: this.pigX, y: pigFeetY, look: this.activePig || null, pinned: false }]
           : []);
-      if (this._multiPigActive && this._overridePrimaryPos && pigEntries.length > 0) {
+      if ((this._overridePrimaryPos || this.drag) && pigEntries.length > 0) {
         pigEntries[0] = Object.assign({}, pigEntries[0], { x: this.pigX, y: this.pigY });
       }
 
@@ -2149,6 +2186,10 @@
       } else {
         this.drag.moved = true;
       }
+      this._overridePrimaryPos = true;
+      if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
+        this.scenePigs.movePrimary(this.pigX, this.pigY);
+      }
       this.clearEdgeHold();
       this.edgeHoldRearmed = false;
     }
@@ -2209,6 +2250,10 @@
         if (!this.isOverPig(p.x, p.y)) return;
         this.clearPlayState();
         this.drag = { startX: e.clientX, startY: e.clientY, moved: false };
+        this._overridePrimaryPos = true;
+        if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
+          this.scenePigs.movePrimary(this.pigX, this.pigY);
+        }
         this.edgeHoldRearmed = true;
         this.clearEdgeHold();
         try { this.canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
@@ -2235,6 +2280,10 @@
             try { this.canvas.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
             const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
             this.pigY = Math.round((y0 + y1) / 2);
+            this._overridePrimaryPos = false;
+            if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
+              this.scenePigs.movePrimary(this.pigX, this.pigY);
+            }
             if (root.bridge) root.bridge.send({ type: 'take_out' });
             return;
           }
@@ -2242,6 +2291,10 @@
           const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
           this.pigX = Math.max(x0, Math.min(x1, p.x));
           this.pigY = Math.max(y0, Math.min(y1, p.y));
+          this._overridePrimaryPos = true;
+          if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
+            this.scenePigs.movePrimary(this.pigX, this.pigY);
+          }
           this.currentAnim = 'idle';
           this.animTimer = 1000;
           this.targetX = null;
@@ -2324,6 +2377,12 @@
         this.path = [];
         this.targetX = null;
         this.targetY = null;
+        if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
+          this.scenePigs.movePrimary(this.pigX, this.pigY);
+          this._overridePrimaryPos = false;
+        } else if (!hadMoved) {
+          this._overridePrimaryPos = false;
+        }
 
         if (hadMoved) {
           const dropEv = { x: this.pigX, y: this.pigY };
@@ -2765,8 +2824,12 @@
         : (this.pigVisible !== false
           ? [{ id: 'pig', x: this.pigX, y: this.pigY, facing: this.facing, anim: this.currentAnim, frame: this.currentFrame, look: this.activePig, stage: this.stageKey, isPrimary: true }]
           : []);
-      if (this._multiPigActive && this._overridePrimaryPos && pigEntries.length > 0) {
-        pigEntries[0] = Object.assign({}, pigEntries[0], { x: this.pigX, y: this.pigY });
+      if ((this._overridePrimaryPos || this.drag) && pigEntries.length > 0) {
+        const override = { x: this.pigX, y: this.pigY };
+        if (this.drag && this.drag.moved) {
+          override.anim = this.currentAnim;
+        }
+        pigEntries[0] = Object.assign({}, pigEntries[0], override);
       }
 
       if (pigEntries.length > 0) {
@@ -2878,6 +2941,15 @@
       }
     }
 
+    cachedPattern(ctx, img) {
+      if (!img) return null;
+      if (!img._cachedPattern || img._cachedPatternCtx !== ctx) {
+        img._cachedPattern = ctx.createPattern(img, 'repeat');
+        img._cachedPatternCtx = ctx;
+      }
+      return img._cachedPattern;
+    }
+
     drawHabitat(ctx, scene) {
       const isSalon = !this.sceneId || this.sceneId === 'salon';
       const effectiveId = this.sceneId || 'salon';
@@ -2935,7 +3007,7 @@
         let drawnWall = false;
         if (wallImg && !wallImg.failed && ((wallImg.naturalWidth && wallImg.naturalWidth > 0) || (wallImg.width && wallImg.width > 0))) {
           try {
-            const ptrn = ctx.createPattern(wallImg, 'repeat');
+            const ptrn = this.cachedPattern(ctx, wallImg);
             if (ptrn) {
               ctx.fillStyle = ptrn;
               ctx.fillRect(0, 0, w, stageWallY);
@@ -2958,7 +3030,7 @@
           try {
             ctx.save();
             ctx.translate(0, trimY);
-            const ptrn = ctx.createPattern(baseboardImg, 'repeat');
+            const ptrn = this.cachedPattern(ctx, baseboardImg);
             if (ptrn) {
               ctx.fillStyle = ptrn;
               ctx.fillRect(0, 0, w, bh);
@@ -2987,7 +3059,7 @@
           try {
             ctx.save();
             ctx.translate(0, stageWallY);
-            const ptrn = ctx.createPattern(floorImg, 'repeat');
+            const ptrn = this.cachedPattern(ctx, floorImg);
             if (ptrn) {
               ctx.fillStyle = ptrn;
               ctx.fillRect(0, 0, w, floorH);
@@ -3011,7 +3083,7 @@
           try {
             ctx.save();
             ctx.translate(0, shadowY);
-            const ptrn = ctx.createPattern(shadowImg, 'repeat');
+            const ptrn = this.cachedPattern(ctx, shadowImg);
             if (ptrn) {
               ctx.fillStyle = ptrn;
               ctx.fillRect(0, 0, w, sh);
@@ -3347,6 +3419,50 @@
     // Copy of one sprite frame lit by the scene: ambient plus the two nearest sources, multiplied in
     // at PIG_LIGHT_STRENGTH without dither. Returns null when the pixels cannot be read (tainted canvas).
     litFrame(sheet, sx, sy, scene) {
+      if (!sheet) return null;
+      const sc = scene || {};
+      const ambient = sceneAmbient(sc);
+      const scale = this.getDrawScale();
+      const origin = sc.origin || { x: Math.round(this.pigX - 32 * scale), y: Math.round(this.pigY - 59 * scale) };
+      const cx = origin.x + FRAME_SIZE / 2;
+      const cy = origin.y + FRAME_SIZE / 2;
+      const sources = (sc.sources || [])
+        .map((s) => ({ s, d: Math.hypot(s.x - cx, s.y - cy) }))
+        .sort((a, b) => a.d - b.d)
+        .slice(0, 2)
+        .map((e) => e.s);
+
+      let sheetKey = sheet.src || '';
+      if (!sheetKey) {
+        if (!this._litSheetIds && typeof WeakMap !== 'undefined') this._litSheetIds = new WeakMap();
+        if (this._litSheetIds) {
+          sheetKey = this._litSheetIds.get(sheet) || '';
+          if (!sheetKey) {
+            this._litSheetSeq = (this._litSheetSeq || 0) + 1;
+            sheetKey = 's' + this._litSheetSeq;
+            this._litSheetIds.set(sheet, sheetKey);
+          }
+        }
+      }
+      const canCache = !!sheetKey && (sheet.complete !== false) &&
+        (sheet.naturalWidth === undefined || sheet.naturalWidth > 0) &&
+        (sheet.width === undefined || sheet.width > 0);
+      let cacheKey = null;
+      if (canCache) {
+        if (!this._litFrameCache) this._litFrameCache = new Map();
+        const srcKey = sources.map((s) => {
+          const col = Array.isArray(s.color) ? s.color.join(',') : (s.color || '');
+          return `${s.x},${s.y},${s.radius || 40},${s.intensity ?? 1},${col}`;
+        }).join(';');
+        cacheKey = `${sheetKey}|${sx},${sy}|${Math.round(origin.x / 2)},${Math.round(origin.y / 2)}|${ambient.map((v) => v.toFixed(2)).join(',')}|${srcKey}`;
+        if (this._litFrameCache.has(cacheKey)) {
+          const cached = this._litFrameCache.get(cacheKey);
+          this._litFrameCache.delete(cacheKey);
+          this._litFrameCache.set(cacheKey, cached);
+          return cached;
+        }
+      }
+
       if (!this.litCanvas) {
         this.litCanvas = document.createElement('canvas');
         this.litCanvas.width = FRAME_SIZE;
@@ -3364,15 +3480,6 @@
         return null;
       }
       const data = img.data;
-      const ambient = sceneAmbient(scene);
-      const scale = this.getDrawScale(); const origin = scene.origin || { x: Math.round(this.pigX - 32 * scale), y: Math.round(this.pigY - 59 * scale) };
-      const cx = origin.x + FRAME_SIZE / 2;
-      const cy = origin.y + FRAME_SIZE / 2;
-      const sources = (scene.sources || [])
-        .map((s) => ({ s, d: Math.hypot(s.x - cx, s.y - cy) }))
-        .sort((a, b) => a.d - b.d)
-        .slice(0, 2)
-        .map((e) => e.s);
 
       const light = [0, 0, 0];
       for (let py = 0; py < FRAME_SIZE; py++) {
@@ -3410,6 +3517,23 @@
           }
         }
       }
+
+      if (canCache && typeof document !== 'undefined') {
+        const out = document.createElement('canvas');
+        out.width = FRAME_SIZE;
+        out.height = FRAME_SIZE;
+        const octx = out.getContext('2d');
+        if (octx && typeof octx.putImageData === 'function') {
+          octx.putImageData(img, 0, 0);
+          if (this._litFrameCache.size >= 128) {
+            const oldestKey = this._litFrameCache.keys().next().value;
+            if (oldestKey !== undefined) this._litFrameCache.delete(oldestKey);
+          }
+          this._litFrameCache.set(cacheKey, out);
+          return out;
+        }
+      }
+
       c.putImageData(img, 0, 0);
       return this.litCanvas;
     }
@@ -3612,6 +3736,14 @@
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst && typeof inst.setPresentPigs === 'function') return inst.setPresentPigs(list);
     },
+    setLightScene(scene) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.setLightScene === 'function') return inst.setLightScene(scene);
+    },
+    isDragging() {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      return !!(inst && typeof inst.isDragging === 'function' && inst.isDragging());
+    },
     setHotspots(list) {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst && typeof inst.setHotspots === 'function') return inst.setHotspots(list);
@@ -3798,6 +3930,8 @@
   PigCanvas.setThings = (l) => CanvasPig.setThings(l);
   PigCanvas.setPigVisible = (v) => CanvasPig.setPigVisible(v);
   PigCanvas.setPresentPigs = (l) => CanvasPig.setPresentPigs(l);
+  PigCanvas.setLightScene = (s) => CanvasPig.setLightScene(s);
+  PigCanvas.isDragging = () => CanvasPig.isDragging();
   PigCanvas.setHotspots = (l) => CanvasPig.setHotspots(l);
   PigCanvas.getHotspots = () => CanvasPig.getHotspots();
   PigCanvas.onHotspot = (fn) => CanvasPig.onHotspot(fn);

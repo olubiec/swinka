@@ -26,20 +26,20 @@
       ]
     },
     park: {
-      cols: 24,
-      rows: 12,
+      cols: 16,
+      rows: 9,
       items: [
         { id: 'gazebo', itemId: 'gazebo', x: 4, y: 2 },
         { id: 'bench_left', itemId: 'bench_park', x: 7, y: 8 },
-        { id: 'bench_right', itemId: 'bench_park', x: 21, y: 9 },
+        { id: 'bench_right', itemId: 'bench_park', x: 13, y: 7 },
         { id: 'bridge', itemId: 'bridge_wood', x: 10, y: 5 },
         { id: 'tree_1', itemId: 'tree_big', x: 0, y: 1 },
         { id: 'tree_2', itemId: 'tree_big', x: 13, y: 1 },
-        { id: 'tree_3', itemId: 'tree_big', x: 16, y: 1 },
-        { id: 'tree_4', itemId: 'tree_big', x: 20, y: 1 },
+        { id: 'tree_3', itemId: 'tree_big', x: 10, y: 1 },
+        { id: 'tree_4', itemId: 'tree_big', x: 0, y: 4 },
         { id: 'lamp_left', itemId: 'lamp_post', x: 1, y: 7 },
-        { id: 'lamp_mid', itemId: 'lamp_post', x: 17, y: 7 },
-        { id: 'lamp_right', itemId: 'lamp_post', x: 21, y: 10 }
+        { id: 'lamp_mid', itemId: 'lamp_post', x: 9, y: 5 },
+        { id: 'lamp_right', itemId: 'lamp_post', x: 14, y: 5 }
       ]
     },
     farm: {
