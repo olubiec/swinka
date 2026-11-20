@@ -14,3 +14,9 @@ Start po F3-6. Zasady i prompt startowy jak w `docs/FALA_2_START.md` (zmień tyl
 ## Uwagi
 - Pogoda z internetu jest domyślnie WYŁĄCZONA i działa tylko po zgodzie w Ustawieniach; testy nie łączą się z internetem (sieć wstrzykiwana). Jeśli nie chcesz tej funkcji w ogóle, usuń z `docs/opt/packages.spec.json` paczki PK-R49, PK-WX1, PK-WX2, PK-CS4, PK-T25 i ich wpisy z wave `F4-*`, uruchom `python3 tools/opt/gen_packages.py` i `node tools/qa/plan-audit.js`.
 - Po F4-6 zostają tylko ręczne bramki Windows (`TESTY_RECZNE.md`, arkusze F2-F4), PK-23b (BLOCKED) i PK-21 (częściowo).
+
+## Koncepty pielęgnacji i interakcji na scenie (dopisane po F2-FIX2)
+- **Bezpośrednia pielęgnacja i interakcja na scenie Home**:
+  - Karmienie z ręki na scenie (przeciągnięcie jedzenia pod pyszczek, podejście świnki, chrupanie i cząsteczki).
+  - Głaskanie ze strefami ciała (głowa / grzbiet / brzuszek) i reakcją mruczenia, sprzątanie pokoju oraz czesanie/pielęgnacja bezpośrednio na scenie (`canvas`).
+  - Wizualne odzwierciedlenie stanu potrzeb (głód, senność, czystość) w zachowaniu i wyglądzie na scenie oraz płynne przejścia Home <-> pulpit.

@@ -20,3 +20,9 @@ Sprawdzenie 18.11.2026 pokazało, że świnka w Home ma wszystkie sprite'y (54 w
 - Prompty implementacji mówią "gdy plik badawczy przeczy promptowi, wygrywa plik badawczy". Po F3-1 przejrzyj sekcję "Prompt fixes" w R36..R41, szczególnie decyzję A/B w R36 (rekomendacja A: JS w Home).
 - D3, CS3 i część G2 to C# weryfikowany tylko buildem; działanie na Windowsie sprawdzasz arkuszem z F3-6 i `docs/qa/DESKTOP_PROPS_MANUAL.md`.
 - Po F3-6: gra na Windowsie wg `docs/qa/F3_OWNER_SHEET.md`, potem fala 4 (`docs/FALA_4_START.md`).
+
+## Koncepty i wymagania 1:1 (dopisane po F2-FIX2)
+- **Pełny parytet 1:1 zachowań z pulpitu w Home (`H1..H4`, `CV3`)**:
+  - Pełny repertuar animacji z `assets/data/actions.json` i arkusza sprite'ów: `popcorn`, `zoomies`, `stretch`, `yawn`, `groom`, `sniff`, `dig`, `beg`, `head_tilt`, `sleep_Transition`, `sleep`, `nap`, `drink`, `eat`, `scratch`, `dance`.
+  - Dymki myśli i nastroju, warstwa nakładek (Zzz, serduszka, błyski, okruszki) oraz reaktywność na kursor 1:1 z `FormPet`.
+  - Autonomiczne podchodzenie do miejsc odpoczynku i mebli (domki, poduszki, miski, poidła, zabawki) z użyciem A\* i wspólne zachowania wielu świnek w jednym pokoju.

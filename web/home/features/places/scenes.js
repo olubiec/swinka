@@ -9,9 +9,9 @@
       title: 'Room',
       size: [192, 112],
       walk: [8, 40, 184, 110],
-      depth_scale: [0.9375, 1.0],
+      depth_scale: [0.75, 0.875],
       size_from_layout: true,
-      pigWidthFrac: 0.20,
+      pigWidthFrac: 0.14,
       bg: null
     },
     garden: {
@@ -602,7 +602,10 @@
       }
     }
 
-    const rawDs = template.depthScale || template.depth_scale || [0.88, 1.0];
+    const explicitDs = (Array.isArray(template.depthScale) && template.depthScale.length >= 2)
+      ? template.depthScale
+      : ((Array.isArray(template.depth_scale) && template.depth_scale.length >= 2) ? template.depth_scale : null);
+    const rawDs = explicitDs || [0.88, 1.0];
     const exits = template.exits ? JSON.parse(JSON.stringify(template.exits)) : null;
     const isRoom = template.kind === 'room' || isHouseRoom(effectiveId);
     const pigWidthFrac = (typeof template.pigWidthFrac === 'number')
@@ -610,14 +613,14 @@
       : (isRoom ? 0.20 : 0.17);
 
     const hasSizeFromLayout = !!(template.size_from_layout || template.sizeFromLayout);
+    const layout = (hasSizeFromLayout || isRoom) ? layoutFor(effectiveId, effectiveState) : null;
+    const roomGeom = getRoomGeometry();
 
     let size;
     let wallH = undefined;
     let walk;
 
     if (hasSizeFromLayout) {
-      const layout = layoutFor(effectiveId, effectiveState);
-      const roomGeom = getRoomGeometry();
       if (layout && roomGeom) {
         const geom = roomGeom.geometry(layout);
         size = [geom.size[0], geom.size[1]];
@@ -633,20 +636,29 @@
       walk = [template.walk[0], template.walk[1], template.walk[2], template.walk[3]];
     }
 
-    const sw = (size && size[0]) || (template.size && template.size[0]) || 240;
-    const bodySourceWidth = 46;
-    const targetBottomPx = pigWidthFrac * sw;
-    const rawBottomScale = targetBottomPx / bodySourceWidth;
-    const bottomScale = Math.round(rawBottomScale * 8) / 8;
+    let computedDs;
+    if (isRoom && roomGeom && typeof roomGeom.pigScaleForRoom === 'function') {
+      const cols = (layout && layout.cols) || Math.round(((size && size[0]) || 192) / 16) || 12;
+      const rows = (layout && layout.rows) || Math.round(((size && size[1]) || 112) / 16) || 7;
+      computedDs = roomGeom.pigScaleForRoom(cols, rows);
+    } else if (explicitDs) {
+      computedDs = [Number(explicitDs[0]), Number(explicitDs[1])];
+    } else {
+      const sw = (size && size[0]) || (template.size && template.size[0]) || 240;
+      const bodySourceWidth = 46;
+      const targetBottomPx = pigWidthFrac * sw;
+      const rawBottomScale = targetBottomPx / bodySourceWidth;
+      const bottomScale = Math.round(rawBottomScale * 8) / 8;
 
-    const ratio = (rawDs[1] && rawDs[1] > 0) ? (rawDs[0] / rawDs[1]) : 0.88;
-    const rawTopScale = bottomScale * ratio;
-    let topScale = Math.round(rawTopScale * 8) / 8;
-    if (topScale >= bottomScale) {
-      topScale = Math.max(0.125, bottomScale - 0.125);
+      const ratio = (rawDs[1] && rawDs[1] > 0) ? (rawDs[0] / rawDs[1]) : 0.88;
+      const rawTopScale = bottomScale * ratio;
+      let topScale = Math.round(rawTopScale * 8) / 8;
+      if (topScale >= bottomScale) {
+        topScale = Math.max(0.125, bottomScale - 0.125);
+      }
+
+      computedDs = [topScale, bottomScale];
     }
-
-    const computedDs = [topScale, bottomScale];
 
     const isBgClean = !!template.bg_clean;
     const res = {
@@ -656,8 +668,8 @@
       title: getTitle(effectiveId, template),
       size: size,
       walk: walk,
-      depthScale: computedDs,
-      depth_scale: template.depth_scale || template.depthScale || computedDs,
+      depthScale: computedDs.slice(),
+      depth_scale: (explicitDs ? [Number(explicitDs[0]), Number(explicitDs[1])] : computedDs.slice()),
       pigWidthFrac: pigWidthFrac,
       bgUrl: bgUrl,
       exits: exits,
@@ -777,6 +789,20 @@
 
     const atlas = getAtlas();
     const roomGeom = getRoomGeometry();
+    const isRoomScene = isHouseRoom(sid);
+    const roomCols = (layout && layout.cols) ? layout.cols : 12;
+    const roomRows = (layout && layout.rows) ? layout.rows : 7;
+    const geom = (isRoomScene && roomGeom && typeof roomGeom.geometry === 'function')
+      ? roomGeom.geometry(layout)
+      : { wallH: 32 };
+    const off = isRoomScene
+      ? ((roomGeom && typeof roomGeom.stageOffset === 'function')
+        ? roomGeom.stageOffset(roomCols, roomRows)
+        : { x: Math.floor((256 - roomCols * 16) / 2), y: Math.floor((144 - roomRows * 16) / 2) })
+      : { x: 0, y: 0 };
+    const wallBottomY = off.y + (typeof geom.wallH === 'number' ? geom.wallH : 32);
+    const wallPrefixes = ['window_', 'picture_', 'shelf_', 'fairy_lights', 'bunting', 'hanging_ivy', 'wall_clock', 'clock_cuckoo', 'lace_curtain', 'wall_picture', 'curtains_dots', 'hanging_planter', 'mirror_wavy', 'frames_gallery', 'plant_shelf', 'memory_frame'];
+    const catalog = (st && st.rooms && Array.isArray(st.rooms.catalog)) ? st.rooms.catalog : null;
     const items = [];
 
     for (const it of layout.items) {
@@ -818,6 +844,20 @@
       const metrics = resolveSingleFrameMetrics(itemId, entry, it, cw, ch);
       const url = (entry && entry.file) ? getAssetUrl('world/' + entry.file) : null;
       const isFlat = isFlatItem(it, entry, itemId);
+      const catEntry = catalog ? catalog.find(c => c && (c.id === itemId || c.itemId === itemId)) : null;
+      let itemLayer = (entry && entry.layer) || (catEntry && catEntry.layer) || it.layer || null;
+      if ((!itemLayer || itemLayer === 'floor') && typeof itemId === 'string' && wallPrefixes.some(p => itemId.startsWith(p) || itemId === p)) {
+        itemLayer = 'wall';
+      }
+      if (!itemLayer) itemLayer = 'floor';
+
+      if (isRoomScene && !it.isPixel && (itemLayer === 'wall' || (typeof itemId === 'string' && itemId.startsWith('window_')))) {
+        const frameH = metrics.sh;
+        const wallTopY = (off.x > 0 || off.y > 0) ? Math.max(0, off.y - 8) : 0;
+        let drawY = off.y + (y - metrics.anchorY);
+        drawY = Math.max(wallTopY + 1, Math.min(drawY - 6, wallBottomY - 6 - frameH));
+        y = (drawY - off.y) + metrics.anchorY;
+      }
 
       items.push({
         id: uid,
@@ -834,6 +874,7 @@
         anchorX: metrics.anchorX,
         anchorY: metrics.anchorY,
         flat: isFlat,
+        layer: itemLayer,
         flip: !!it.flip
       });
     }

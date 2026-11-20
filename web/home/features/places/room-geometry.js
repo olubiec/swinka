@@ -132,6 +132,14 @@
     return { cx: cx, cy: cy };
   }
 
+  function pigScaleForRoom(cols, rows) {
+    const c = isValidPosInt(cols) ? cols : DEFAULT_COLS;
+    if (c <= 10 || c >= 18) {
+      return [0.6875, 0.8125];
+    }
+    return [0.75, 0.875];
+  }
+
   const CuyRoomGeometry = {
     CELL: CELL,
     STAGE_W: STAGE_W,
@@ -139,7 +147,8 @@
     stageOffset: stageOffset,
     geometry: geometry,
     cellToPx: cellToPx,
-    pxToCell: pxToCell
+    pxToCell: pxToCell,
+    pigScaleForRoom: pigScaleForRoom
   };
 
   if (typeof window !== 'undefined') {

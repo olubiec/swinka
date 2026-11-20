@@ -311,6 +311,13 @@
       // Pig position in the scene (feet coordinates)
       this.pigX = 120;
       this.pigY = this.floorLine();
+      this.pigAirY = 0;
+      this._dragAnchor = null;
+      this._dragSamples = [];
+      this._toss = null;
+      this._landTimer = 0;
+      this._overridePrimaryPos = false;
+      this._primaryPigId = null;
       this.walk = null;
       this.depthScale = null;
       this.exits = null;
@@ -385,7 +392,12 @@
       this._litSheetSeq = 0;
       this._lastValidPigPos = new Map();
       this.scenePigs = (typeof window !== 'undefined' && window.CuyScenePigs && typeof window.CuyScenePigs.create === 'function')
-        ? window.CuyScenePigs.create({ bounds: this.walk || [10, 96, 230, 126], minGap: 22, isFree: (x, y) => this.isFree(x, y) })
+        ? window.CuyScenePigs.create({
+            bounds: this.walk || [10, 96, 230, 126],
+            minGap: 22,
+            isFree: (x, y) => this.isFree(x, y),
+            findPath: (x0, y0, x1, y1) => this.findPath(x0, y0, x1, y1)
+          })
         : null;
       this.pendingPlay = null;
       this.activePlay = null;
@@ -591,7 +603,7 @@
         const ay = t.anchorY !== undefined ? t.anchorY : sph;
         const dx = Math.round((t.x || 0) - ax);
         const dy = Math.round((t.y || 0) - ay);
-        const padX = 4;
+        const padX = 6;
         const fx0 = dx - padX;
         const fx1 = dx + spw + padX;
         const fy1 = dy + sph;
@@ -643,6 +655,12 @@
       }
 
       this.gridFreeCount = freeCount;
+      if (this.scenePigs && typeof this.scenePigs.setPathfinder === 'function') {
+        this.scenePigs.setPathfinder(
+          (x0, y0, x1, y1) => this.findPath(x0, y0, x1, y1),
+          (x, y) => this.isFree(x, y)
+        );
+      }
     }
 
     isFree(x, y) {
@@ -731,6 +749,61 @@
         if (!this.isFree(sx, sy)) return false;
       }
       return true;
+    }
+
+    advanceFreeSegment(x0, y0, x1, y1) {
+      const dist = Math.hypot(x1 - x0, y1 - y0);
+      if (dist < 0.01) return { x: x0, y: y0, blocked: false };
+      const steps = Math.max(1, Math.ceil(dist / 2));
+      let lastT = 0;
+      for (let s = 1; s <= steps; s++) {
+        const t = s / steps;
+        const sx = x0 + (x1 - x0) * t;
+        const sy = y0 + (y1 - y0) * t;
+        if (!this.isFree(sx, sy)) {
+          let lo = lastT;
+          let hi = t;
+          for (let k = 0; k < 6; k++) {
+            const mid = (lo + hi) * 0.5;
+            if (this.isFree(x0 + (x1 - x0) * mid, y0 + (y1 - y0) * mid)) lo = mid;
+            else hi = mid;
+          }
+          return {
+            x: x0 + (x1 - x0) * lo,
+            y: y0 + (y1 - y0) * lo,
+            blocked: true
+          };
+        }
+        lastT = t;
+      }
+      return { x: x1, y: y1, blocked: false };
+    }
+
+    clampDragToFree(prevX, prevY, targetX, targetY) {
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      const tx = Math.max(x0, Math.min(x1, targetX));
+      const ty = Math.max(y0, Math.min(y1, targetY));
+      let px = Math.max(x0, Math.min(x1, prevX));
+      let py = Math.max(y0, Math.min(y1, prevY));
+      if (!this.isFree(px, py)) {
+        const snapped = this.snapToFreeCell(px, py);
+        px = snapped.x;
+        py = snapped.y;
+      }
+      const direct = this.advanceFreeSegment(px, py, tx, ty);
+      if (!direct.blocked) {
+        return { x: direct.x, y: direct.y };
+      }
+      let cx = direct.x;
+      let cy = direct.y;
+      if (Math.abs(tx - cx) >= Math.abs(ty - cy)) {
+        cx = this.advanceFreeSegment(cx, cy, tx, cy).x;
+        cy = this.advanceFreeSegment(cx, cy, cx, ty).y;
+      } else {
+        cy = this.advanceFreeSegment(cx, cy, cx, ty).y;
+        cx = this.advanceFreeSegment(cx, cy, tx, cy).x;
+      }
+      return { x: cx, y: cy };
     }
 
     findPath(sx, sy, tx, ty) {
@@ -985,7 +1058,30 @@
         this.walk = def.walk ? def.walk.slice() : null;
       }
 
-      this.depthScale = (this.sceneKind === 'room') ? [0.75, 0.875] : (def.depthScale || null);
+      if (this.sceneKind === 'room') {
+        const cols = Math.round((this.roomSize && this.roomSize[0] ? this.roomSize[0] : 192) / 16) || 12;
+        const rows = Math.round((this.roomSize && this.roomSize[1] ? this.roomSize[1] : 112) / 16) || 7;
+        const geom = (typeof window !== 'undefined' && window.CuyRoomGeometry) || (typeof CuyRoomGeometry !== 'undefined' ? CuyRoomGeometry : null);
+        const isPigRoom = !!(this.sceneId && (this.sceneId.startsWith('pig:') || this.sceneId.startsWith('pig_room:')));
+        if ((isPigRoom || (geom && typeof geom.pigScaleForRoom === 'function')) && geom && typeof geom.pigScaleForRoom === 'function') {
+          this.depthScale = geom.pigScaleForRoom(cols, rows);
+        } else {
+          const roomDs = (Array.isArray(def.depthScale) && def.depthScale.length >= 2) ? def.depthScale : [0.75, 0.875];
+          this.depthScale = [Number(roomDs[0]), Number(roomDs[1])];
+        }
+      } else {
+        const rawDs = (Array.isArray(def.depthScale) && def.depthScale.length >= 2)
+          ? def.depthScale
+          : ((Array.isArray(def.depth_scale) && def.depth_scale.length >= 2) ? def.depth_scale : null);
+        const cachedScene = (!rawDs && cachedPlaceScenesData && cachedPlaceScenesData.scenes && this.sceneId)
+          ? cachedPlaceScenesData.scenes[this.sceneId]
+          : null;
+        const fallbackDs = (cachedScene && Array.isArray(cachedScene.depth_scale) && cachedScene.depth_scale.length >= 2)
+          ? cachedScene.depth_scale
+          : null;
+        const chosenDs = rawDs || fallbackDs;
+        this.depthScale = chosenDs ? [Number(chosenDs[0]), Number(chosenDs[1])] : null;
+      }
       this.pigWidthFrac = (typeof def.pigWidthFrac === 'number') ? def.pigWidthFrac : null;
       this.exits = def.exits || null;
       this.blockers = def.blockers || this.lookupSceneBlockers(this.sceneId);
@@ -994,6 +1090,9 @@
       this.targetX = null;
       this.targetY = null;
       this.targetExit = null;
+      this._toss = null;
+      this._landTimer = 0;
+      if (!this.drag) this.pigAirY = 0;
       this.idleTimer = 400;
 
       if (!this.depthScale) {
@@ -1099,10 +1198,33 @@
         this.scenePigs = window.CuyScenePigs.create({
           bounds: this.walk || [10, 96, 230, 126],
           minGap: 22,
-          isFree: (x, y) => this.isFree(x, y)
+          isFree: (x, y) => this.isFree(x, y),
+          findPath: (x0, y0, x1, y1) => this.findPath(x0, y0, x1, y1)
         });
       }
       return this.scenePigs;
+    }
+
+    syncPrimaryToScenePigs() {
+      const sp = this.scenePigs;
+      if (!sp) return;
+      if (typeof sp.movePrimary === 'function') {
+        sp.movePrimary(this.pigX, this.pigY);
+      }
+      if (!this._multiPigActive || typeof sp.remove !== 'function' || typeof sp.sync !== 'function') return;
+      if (!Array.isArray(this.presentPigs) || this.presentPigs.length === 0) return;
+      const targetId = this._primaryPigId || (this.presentPigs[0] && this.presentPigs[0].id != null ? String(this.presentPigs[0].id) : null);
+      if (!targetId) return;
+      sp.remove(targetId);
+      const updated = this.presentPigs.map((p, idx) => {
+        if (!p) return p;
+        const pid = p.id != null ? String(p.id) : null;
+        if (pid === targetId || (!this._primaryPigId && idx === 0)) {
+          return Object.assign({}, p, { x: this.pigX, y: this.pigY });
+        }
+        return p;
+      });
+      sp.sync(updated, (x, y) => this.isFree(x, y));
     }
 
     enforceFreePigs(resync) {
@@ -1160,16 +1282,27 @@
       if (!this._lastValidPigPos) this._lastValidPigPos = new Map();
       const out = raw.slice();
       if ((this._overridePrimaryPos || this.drag) && out.length > 0) {
-        const override = { x: this.pigX, y: this.pigY };
-        if (this.drag && this.drag.moved) {
+        let pIdx = 0;
+        if (this._primaryPigId) {
+          const found = out.findIndex(p => p && p.id != null && String(p.id) === this._primaryPigId);
+          if (found >= 0) pIdx = found;
+        }
+        const override = {
+          x: this.pigX,
+          y: this.pigY,
+          facing: this.facing,
+          frame: this.currentFrame,
+          isPrimary: true
+        };
+        if ((this.drag && this.drag.moved) || this._toss || this._landTimer > 0 || this._overridePrimaryPos) {
           override.anim = this.currentAnim;
         }
-        out[0] = Object.assign({}, out[0], override);
+        out[pIdx] = Object.assign({}, out[pIdx], override);
       }
       for (let i = 0; i < out.length; i++) {
         const e = out[i];
         if (!e) continue;
-        if (i === 0 && (this.drag || this.targetExit)) continue;
+        if ((e.isPrimary || i === 0) && (this.drag || this._overridePrimaryPos || this.targetExit)) continue;
         const key = e.id ? String(e.id) : ('idx_' + i);
         if (this.isFree(e.x, e.y)) {
           this._lastValidPigPos.set(key, { x: e.x, y: e.y });
@@ -1184,9 +1317,9 @@
     }
 
     setPresentPigs(list) {
-      const dragging = !!this.drag;
+      const overriding = !!(this.drag || this._toss || this._landTimer > 0);
       this._multiPigActive = true;
-      if (!dragging) {
+      if (!overriding) {
         this._overridePrimaryPos = false;
       }
       this.presentPigs = Array.isArray(list) ? list.slice() : [];
@@ -1201,15 +1334,17 @@
         sp.sync(this.presentPigs, (x, y) => this.isFree(x, y));
         this.enforceFreePigs(false);
         const entries = this.getPigEntries();
-        if (dragging) {
+        if (overriding) {
           if (typeof sp.movePrimary === 'function') {
             sp.movePrimary(this.pigX, this.pigY);
           }
           if (entries.length > 0) {
-            this.activePig = entries[0].look || this.activePig;
-            if (entries[0].stage) this.stageKey = normStage(entries[0].stage);
+            const pEntry = (this._primaryPigId && entries.find(e => e && String(e.id) === this._primaryPigId)) || entries[0];
+            this.activePig = pEntry.look || this.activePig;
+            if (pEntry.stage) this.stageKey = normStage(pEntry.stage);
           }
         } else if (entries.length > 0) {
+          this._primaryPigId = entries[0].id != null ? String(entries[0].id) : null;
           this.pigX = entries[0].x;
           this.pigY = entries[0].y;
           this.facing = entries[0].facing;
@@ -1676,7 +1811,7 @@
         edgeNeighbours: this.edgeNeighbours ? { left: this.edgeNeighbours.left !== false, right: this.edgeNeighbours.right !== false } : { left: true, right: true },
         edgeIndicator: this.edgeHold ? {
           side: this.edgeHold.side,
-          progress: Math.min(1, Math.max(0, (((typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()) - this.edgeHold.startTime) / 600)),
+          progress: Math.min(1, Math.max(0, (((typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()) - this.edgeHold.startTime) / 280)),
           visible: true
         } : null
       };
@@ -1798,6 +1933,12 @@
             if (data && data.scenes) {
               cachedPlaceScenesData = data;
               if (this.currentScene) {
+                if (this.sceneKind !== 'room' && !this.currentScene.depthScale && !this.currentScene.depth_scale) {
+                  const scData = data.scenes[this.sceneId];
+                  if (scData && Array.isArray(scData.depth_scale) && scData.depth_scale.length >= 2) {
+                    this.depthScale = [Number(scData.depth_scale[0]), Number(scData.depth_scale[1])];
+                  }
+                }
                 if (!this.blockers || this.blockers.length === 0) {
                   this.blockers = this.lookupSceneBlockers(this.sceneId);
                   this.rebuildGrid();
@@ -2196,8 +2337,9 @@
         const hw = 28 * scale;
         const th = 50 * scale;
         const bh = 10 * scale;
+        const visualY = this.pigY - (this.pigAirY || 0);
         if (x >= this.pigX - hw && x <= this.pigX + hw &&
-            y >= this.pigY - th && y <= this.pigY + bh) {
+            y >= visualY - th && y <= visualY + bh) {
           return true;
         }
       }
@@ -2228,16 +2370,27 @@
       }
     }
 
+    syncEdgeArrowDom() {
+      if (typeof document === 'undefined') return;
+      const leftEl = document.getElementById('stageEdgeLeft');
+      const rightEl = document.getElementById('stageEdgeRight');
+      const activeSide = this.edgeHold ? this.edgeHold.side : null;
+      if (leftEl && leftEl.classList) leftEl.classList.toggle('edge-active', activeSide === 'left');
+      if (rightEl && rightEl.classList) rightEl.classList.toggle('edge-active', activeSide === 'right');
+    }
+
     clearEdgeHold() {
       if (this.edgeHold && this.edgeHold.timer) {
         clearTimeout(this.edgeHold.timer);
       }
       this.edgeHold = null;
+      this.syncEdgeArrowDom();
     }
 
     triggerEdgeHold(side) {
       if (!this.edgeHold || this.edgeHold.fired) return;
       this.edgeHold.fired = true;
+      this.edgeHold.progress = 1;
       this.lastHoldSide = side;
       const ev = { side };
       const fn = (typeof this.onEdgeHold === 'function')
@@ -2261,11 +2414,21 @@
         this.pigX = Math.max(x0, Math.min(x1, 16));
       }
       this.pigY = Math.max(y0, Math.min(y1, this.pigY));
+      if (!this.isFree(this.pigX, this.pigY)) {
+        const snapped = this.snapToFreeCell(this.pigX, this.pigY);
+        this.pigX = snapped.x;
+        this.pigY = snapped.y;
+      }
       if (!this.drag) {
         this.drag = { startX: 0, startY: 0, moved: true };
       } else {
         this.drag.moved = true;
       }
+      this._toss = null;
+      this._landTimer = 0;
+      this._dragAnchor = { dx: 0, dy: 0 };
+      const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+      this._dragSamples = [{ x: this.pigX, y: this.pigY - (this.pigAirY || 0), t: now }];
       this._overridePrimaryPos = true;
       if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
         this.scenePigs.movePrimary(this.pigX, this.pigY);
@@ -2278,7 +2441,8 @@
       if (!this.edgeHold) return;
       const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
       const elapsed = Math.max(0, now - this.edgeHold.startTime);
-      const progress = Math.min(1, elapsed / 600);
+      const progress = Math.min(1, elapsed / 280);
+      this.edgeHold.progress = progress;
       const side = this.edgeHold.side;
 
       ctx.save();
@@ -2329,7 +2493,16 @@
         const p = this.toScene(e);
         if (!this.isOverPig(p.x, p.y)) return;
         this.clearPlayState();
+        const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
         this.drag = { startX: e.clientX, startY: e.clientY, moved: false };
+        this._dragAnchor = {
+          dx: p.x - this.pigX,
+          dy: p.y - (this.pigY - (this.pigAirY || 0))
+        };
+        this._dragStartSceneX = p.x;
+        this._dragSamples = [{ x: p.x, y: p.y, t: now }];
+        this._toss = null;
+        this._landTimer = 0;
         this._overridePrimaryPos = true;
         if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
           this.scenePigs.movePrimary(this.pigX, this.pigY);
@@ -2340,7 +2513,7 @@
       });
       this.canvas.addEventListener('pointermove', (e) => {
         if (this.drag) {
-          if (Math.abs(e.clientX - this.drag.startX) + Math.abs(e.clientY - this.drag.startY) > 6) {
+          if (Math.abs(e.clientX - this.drag.startX) + Math.abs(e.clientY - this.drag.startY) > 2) {
             this.drag.moved = true;
           }
           if (!this.drag.moved) return;
@@ -2355,6 +2528,11 @@
 
           if (outY || outLeft || outRight) {
             this.drag = null;
+            this._dragAnchor = null;
+            this._dragSamples = [];
+            this._toss = null;
+            this._landTimer = 0;
+            this.pigAirY = 0;
             this.clearEdgeHold();
             this.suppressClick = true;
             try { this.canvas.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
@@ -2369,46 +2547,82 @@
           }
           const p = this.toScene(e);
           const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
-          this.pigX = Math.max(x0, Math.min(x1, p.x));
-          this.pigY = Math.max(y0, Math.min(y1, p.y));
+          const anchor = this._dragAnchor || { dx: 0, dy: 0 };
+          const dragDx = p.x - (typeof this._dragStartSceneX === 'number' ? this._dragStartSceneX : p.x);
+          const swingX = Math.max(-3.5, Math.min(3.5, dragDx * 0.1));
+          const rawX = p.x - anchor.dx + swingX;
+          const rawVisualY = p.y - anchor.dy;
+          const targetX = Math.max(x0, Math.min(x1, rawX));
+          const targetY = Math.max(y0, Math.min(y1, rawVisualY));
+          const clamped = this.clampDragToFree(this.pigX, this.pigY, targetX, targetY);
+          if (Math.abs(clamped.x - this.pigX) > 0.5) {
+            this.facing = clamped.x >= this.pigX ? 1 : -1;
+          }
+          this.pigX = clamped.x;
+          this.pigY = clamped.y;
+          this.pigAirY = Math.max(10, Math.min(48, 10 + Math.max(0, y0 - rawVisualY)));
           this._overridePrimaryPos = true;
           if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
             this.scenePigs.movePrimary(this.pigX, this.pigY);
           }
-          this.currentAnim = 'idle';
+          if (this.currentAnim !== 'held') {
+            this.currentAnim = 'held';
+            this.currentFrame = 0;
+            this.frameAcc = 0;
+          }
           this.animTimer = 1000;
           this.targetX = null;
           this.targetY = null;
 
-          // Edge zone check: outer 12 px left/right
-          const inLeftZone = e.clientX <= rect.left + 12;
-          const inRightZone = e.clientX >= rect.right - 12;
+          const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+          if (!Array.isArray(this._dragSamples)) this._dragSamples = [];
+          const prevSample = this._dragSamples[this._dragSamples.length - 1];
+          if (!prevSample || now > prevSample.t) {
+            this._dragSamples.push({ x: p.x, y: p.y, t: now });
+          } else {
+            prevSample.x = p.x;
+            prevSample.y = p.y;
+          }
+          const cutoff = now - 90;
+          while (this._dragSamples.length > 1 && this._dragSamples[0].t < cutoff) {
+            this._dragSamples.shift();
+          }
+
+          // Edge zone check: outer 24 px left/right
+          const inLeftZone = e.clientX <= rect.left + 24;
+          const inRightZone = e.clientX >= rect.right - 24;
 
           if (inLeftZone && hasLeft) {
             if (!this.edgeHold || this.edgeHold.side !== 'left') {
               if (this.edgeHoldRearmed) {
                 this.clearEdgeHold();
-                const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
                 this.edgeHold = {
                   side: 'left',
                   startTime: now,
+                  progress: 0,
                   fired: false,
-                  timer: setTimeout(() => this.triggerEdgeHold('left'), 600)
+                  timer: setTimeout(() => this.triggerEdgeHold('left'), 280)
                 };
+                this.syncEdgeArrowDom();
               }
+            } else {
+              this.edgeHold.progress = Math.min(1, Math.max(0, (now - this.edgeHold.startTime) / 280));
             }
           } else if (inRightZone && hasRight) {
             if (!this.edgeHold || this.edgeHold.side !== 'right') {
               if (this.edgeHoldRearmed) {
                 this.clearEdgeHold();
-                const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
                 this.edgeHold = {
                   side: 'right',
                   startTime: now,
+                  progress: 0,
                   fired: false,
-                  timer: setTimeout(() => this.triggerEdgeHold('right'), 600)
+                  timer: setTimeout(() => this.triggerEdgeHold('right'), 280)
                 };
+                this.syncEdgeArrowDom();
               }
+            } else {
+              this.edgeHold.progress = Math.min(1, Math.max(0, (now - this.edgeHold.startTime) / 280));
             }
           } else {
             if (this.edgeHold) {
@@ -2457,10 +2671,61 @@
         this.path = [];
         this.targetX = null;
         this.targetY = null;
-        if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
-          this.scenePigs.movePrimary(this.pigX, this.pigY);
-          this._overridePrimaryPos = false;
-        } else if (!hadMoved) {
+
+        let vx = 0;
+        let vy = 0;
+        if (hadMoved) {
+          const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+          const samples = Array.isArray(this._dragSamples) ? this._dragSamples.slice() : [];
+          if (e && typeof e.clientX === 'number' && typeof e.clientY === 'number' && e.type !== 'pointercancel') {
+            const pEnd = this.toScene(e);
+            const prevLast = samples[samples.length - 1];
+            if (!prevLast || (now > prevLast.t && Math.hypot(pEnd.x - prevLast.x, pEnd.y - prevLast.y) > 0.5)) {
+              samples.push({ x: pEnd.x, y: pEnd.y, t: now });
+            }
+          }
+          if (samples.length >= 2) {
+            const last = samples[samples.length - 1];
+            if (now - last.t <= 80) {
+              let first = null;
+              for (let i = 0; i < samples.length - 1; i++) {
+                if (samples[i].t >= now - 80) {
+                  first = samples[i];
+                  break;
+                }
+              }
+              if (!first) first = samples[0];
+              const dtMs = last.t - first.t;
+              if (dtMs >= 8) {
+                const rawVx = ((last.x - first.x) / dtMs) * 30;
+                const rawVy = ((last.y - first.y) / dtMs) * 30;
+                vx = Math.max(-32, Math.min(32, rawVx));
+                vy = Math.max(-32, Math.min(32, rawVy));
+              }
+            }
+          }
+        }
+        this._dragAnchor = null;
+        this._dragSamples = [];
+
+        if (hadMoved && (Math.hypot(vx, vy) > 1.8 || (this.pigAirY || 0) > 2)) {
+          this._toss = { vx, vy, groundY: this.pigY, bounces: 0 };
+          this._landTimer = 0;
+          this.currentAnim = 'fall';
+          this.currentFrame = 0;
+          this.frameAcc = 0;
+          this.animTimer = 0;
+          this._overridePrimaryPos = true;
+          if (Math.abs(vx) > 0.5) this.facing = vx >= 0 ? 1 : -1;
+        } else {
+          this.pigAirY = 0;
+          this._toss = null;
+          this._landTimer = 0;
+          this.currentAnim = 'idle';
+          this.currentFrame = 0;
+          this.frameAcc = 0;
+          this.animTimer = 0;
+          this.syncPrimaryToScenePigs();
           this._overridePrimaryPos = false;
         }
 
@@ -2614,7 +2879,7 @@
       }
 
       // React to an action from the state
-      if (state.currentAction && state.currentAction !== this.currentAnim && this.animTimer <= 0) {
+      if (state.currentAction && state.currentAction !== this.currentAnim && this.animTimer <= 0 && !this.drag && !this._toss && !(this._landTimer > 0)) {
         this.playAnim(state.currentAction, 3000);
       }
     }
@@ -2635,10 +2900,116 @@
       this.stopped = true;
     }
 
+    stepPrimaryTossAndLand(dt) {
+      if (this._toss) {
+        if (this.currentAnim !== 'fall') {
+          this.currentAnim = 'fall';
+          this.currentFrame = 0;
+          this.frameAcc = 0;
+        }
+        const toss = this._toss;
+        const stepFactor = Math.min(50, dt) / 30;
+        if (stepFactor > 0) {
+          const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+          let nextX = this.pigX + toss.vx * stepFactor;
+          if (nextX < x0 || nextX > x1) {
+            const edge = nextX < x0 ? x0 : x1;
+            nextX = Math.max(x0, Math.min(x1, edge - (nextX - edge) * 0.35));
+            toss.vx *= -0.35;
+          }
+          const segX = this.advanceFreeSegment(this.pigX, this.pigY, nextX, this.pigY);
+          if (segX.blocked || !this.isFree(segX.x, this.pigY)) {
+            nextX = segX.x;
+            toss.vx *= -0.35;
+          } else {
+            nextX = segX.x;
+          }
+          this.pigX = nextX;
+          if (Math.abs(toss.vx) > 0.5) {
+            this.facing = toss.vx >= 0 ? 1 : -1;
+          }
+
+          if (!this.isFree(this.pigX, toss.groundY)) {
+            const snapped = this.snapToFreeCell(this.pigX, toss.groundY);
+            toss.groundY = snapped.y;
+            if (!this.isFree(this.pigX, toss.groundY)) {
+              this.pigX = snapped.x;
+            }
+          }
+          this.pigY = toss.groundY;
+
+          const curVisualY = this.pigY - (this.pigAirY || 0);
+          const visualY = curVisualY + toss.vy * stepFactor + 0.75 * stepFactor * stepFactor;
+          toss.vy += 1.5 * stepFactor;
+          this.pigAirY = Math.max(0, toss.groundY - visualY);
+
+          if (visualY >= toss.groundY) {
+            if (toss.vy > 6.5 && toss.bounces < 2) {
+              this.pigAirY = 0;
+              toss.vy = -toss.vy * 0.35;
+              toss.vx *= 0.75;
+              toss.bounces++;
+            } else {
+              let freeGroundX = this.pigX;
+              let freeGroundY = toss.groundY;
+              if (!this.isFree(freeGroundX, freeGroundY)) {
+                const snapped = this.snapToFreeCell(freeGroundX, freeGroundY);
+                freeGroundX = snapped.x;
+                freeGroundY = snapped.y;
+              }
+              this.pigX = freeGroundX;
+              this.pigY = freeGroundY;
+              this.pigAirY = 0;
+              this._toss = null;
+              this.currentAnim = 'land';
+              this.currentFrame = 0;
+              this.frameAcc = 0;
+              this._landTimer = 420;
+              this.syncPrimaryToScenePigs();
+            }
+          }
+        }
+      } else if (this._landTimer > 0) {
+        this._landTimer -= dt;
+        if (this._landTimer <= 0) {
+          this._landTimer = 0;
+          this.currentAnim = 'idle';
+          this.currentFrame = 0;
+          this.frameAcc = 0;
+          this.syncPrimaryToScenePigs();
+          this._overridePrimaryPos = false;
+        }
+      }
+    }
+
+    advancePrimaryFrame(dt) {
+      const def = this.defFor(this.currentAnim);
+      const frameDuration = 1000 / def.fps;
+      this.frameAcc += dt;
+
+      while (this.frameAcc >= frameDuration) {
+        this.frameAcc -= frameDuration;
+        this.currentFrame++;
+
+        if (this.currentFrame >= def.frames) {
+          if (def.loop) {
+            this.currentFrame = 0;
+          } else {
+            this.currentFrame = def.frames - 1;
+            if (this.animTimer <= 0 && !this._landTimer && !(this.drag && this.drag.moved) && !this._toss) {
+              this.currentAnim = 'idle';
+              this.currentFrame = 0;
+            }
+          }
+        }
+      }
+    }
+
     update(dt) {
-      if (this.edgeHold && !this.edgeHold.fired) {
+      if (this.edgeHold) {
         const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
-        if (now - this.edgeHold.startTime >= 600) {
+        this.edgeHold.progress = Math.min(1, Math.max(0, (now - this.edgeHold.startTime) / 280));
+        if (!this.edgeHold.fired && now - this.edgeHold.startTime >= 280) {
           this.triggerEdgeHold(this.edgeHold.side);
         }
       }
@@ -2648,20 +3019,25 @@
         return;
       }
       if (this._multiPigActive && this.ensureScenePigs() && this.presentPigs.length > 0) {
+        this.stepPrimaryTossAndLand(dt);
         if (!this._overridePrimaryPos) {
           this.scenePigs.step(dt, {
+            findPath: (x0, y0, x1, y1) => this.findPath(x0, y0, x1, y1),
             isFree: (x, y) => this.isFree(x, y),
             bounds: this.walk || [10, 96, 230, 126]
           });
           this.enforceFreePigs(false);
           const entries = this.getPigEntries();
           if (entries.length > 0 && !this.drag) {
+            this._primaryPigId = entries[0].id != null ? String(entries[0].id) : null;
             this.pigX = entries[0].x;
             this.pigY = entries[0].y;
             this.facing = entries[0].facing;
             this.currentAnim = entries[0].anim;
             this.currentFrame = entries[0].frame;
           }
+        } else {
+          this.advancePrimaryFrame(dt);
         }
         if (this.bubbleTimer > 0) {
           this.bubbleTimer -= dt;
@@ -2676,31 +3052,12 @@
         }
         return;
       }
+      this.stepPrimaryTossAndLand(dt);
       // Update the animation frame
-      const def = this.defFor(this.currentAnim);
-      const frameDuration = 1000 / def.fps;
-      this.frameAcc += dt;
-
-      while (this.frameAcc >= frameDuration) {
-        this.frameAcc -= frameDuration;
-        this.currentFrame++;
-
-        if (this.currentFrame >= def.frames) {
-          if (def.loop) {
-            this.currentFrame = 0;
-          } else {
-            // One-shot animation finished
-            this.currentFrame = def.frames - 1;
-            if (this.animTimer <= 0) {
-              this.currentAnim = 'idle';
-              this.currentFrame = 0;
-            }
-          }
-        }
-      }
+      this.advancePrimaryFrame(dt);
 
       // Walking logic (exits or autonomous walk)
-      if (this.targetX !== null && !this.drag) {
+      if (this.targetX !== null && !this.drag && !this._toss && !(this._landTimer > 0)) {
         const speed = (70 * dt) / 1000;
         const dx = this.targetX - this.pigX;
         const ty = (this.targetY !== null) ? this.targetY : this.pigY;
@@ -2785,7 +3142,7 @@
       }
 
       // Timer of the current forced animation
-      if (this.animTimer > 0) {
+      if (this.animTimer > 0 && !(this.drag && this.drag.moved) && !this._toss && !(this._landTimer > 0)) {
         this.animTimer -= dt;
         if (this.animTimer <= 0) {
           if (this.activePlay) {
@@ -2808,13 +3165,13 @@
         }
       }
 
-      if (this.targetX === null && this.currentAnim === 'walk') {
+      if (this.targetX === null && this.currentAnim === 'walk' && !(this.drag && this.drag.moved) && !this._toss && !(this._landTimer > 0)) {
         this.currentAnim = 'idle';
         this.animTimer = 0;
       }
 
       // Autonomous idle behaviours and walk trigger
-      if (this.currentAnim === 'idle' && !this.drag && this.targetX === null) {
+      if (this.currentAnim === 'idle' && !this.drag && !this._toss && !(this._landTimer > 0) && this.targetX === null) {
         this.idleTimer = (this.idleTimer || 0) - dt;
         if (this.idleTimer <= 0) {
           const r = Math.random();
@@ -3082,27 +3439,65 @@
       }
 
       const wallH = (typeof this.wallH === 'number') ? this.wallH : 32;
+      const offX = (this.roomOffset && this.roomOffset.x) || 0;
       const offY = (this.roomOffset && this.roomOffset.y) || 0;
-      const stageWallY = Math.max(0, offY + wallH);
+      const roomW = (this.roomSize && this.roomSize[0]) || (this.sceneWidth - 2 * offX);
+      const roomH = (this.roomSize && this.roomSize[1]) || (this.sceneHeight - 2 * offY);
       const w = this.sceneWidth;
+      const h = this.sceneHeight;
+      const hasInsetFrame = offX > 0 || offY > 0;
+      const roomX0 = hasInsetFrame ? Math.max(0, offX) : 0;
+      const roomX1 = hasInsetFrame ? Math.min(w, offX + roomW) : w;
+      const innerW = Math.max(0, roomX1 - roomX0);
+      const wallTopY = hasInsetFrame ? Math.max(0, offY - 8) : 0;
+      const stageWallY = Math.max(wallTopY, offY + wallH);
+      const floorBottomY = hasInsetFrame ? Math.min(h, offY + roomH) : h;
+
+      if (hasInsetFrame) {
+        // Outer dark timber surround + framed molding around smaller room interiors (e.g. 10x6, 12x7)
+        ctx.fillStyle = '#24140d';
+        ctx.fillRect(0, 0, w, h);
+        const fx0 = Math.max(0, roomX0 - 4);
+        const fy0 = Math.max(0, wallTopY - 4);
+        const fx1 = Math.min(w, roomX1 + 4);
+        const fy1 = Math.min(h, floorBottomY + 4);
+        ctx.fillStyle = '#180c08';
+        ctx.fillRect(fx0, fy0, fx1 - fx0, fy1 - fy0);
+        const mx0 = Math.max(0, roomX0 - 3);
+        const my0 = Math.max(0, wallTopY - 3);
+        const mx1 = Math.min(w, roomX1 + 3);
+        const my1 = Math.min(h, floorBottomY + 3);
+        ctx.fillStyle = '#4e2c1b';
+        ctx.fillRect(mx0, my0, mx1 - mx0, my1 - my0);
+        const bx0 = Math.max(0, roomX0 - 1);
+        const by0 = Math.max(0, wallTopY - 1);
+        const bx1 = Math.min(w, roomX1 + 1);
+        const by1 = Math.min(h, floorBottomY + 1);
+        ctx.fillStyle = '#6f4128';
+        ctx.fillRect(bx0, by0, bx1 - bx0, by1 - by0);
+      }
 
       // 1. Wall rendering (pixel art tiles)
-      if (!scene.skipDefaultWall) {
+      if (!scene.skipDefaultWall && innerW > 0 && stageWallY > wallTopY) {
+        const wallRenderH = stageWallY - wallTopY;
         const wallImg = wallUrl ? this.loadCachedImage(wallUrl) : null;
         let drawnWall = false;
         if (wallImg && !wallImg.failed && ((wallImg.naturalWidth && wallImg.naturalWidth > 0) || (wallImg.width && wallImg.width > 0))) {
           try {
+            ctx.save();
+            ctx.translate(roomX0, wallTopY);
             const ptrn = this.cachedPattern(ctx, wallImg);
             if (ptrn) {
               ctx.fillStyle = ptrn;
-              ctx.fillRect(0, 0, w, stageWallY);
+              ctx.fillRect(0, 0, innerW, wallRenderH);
               drawnWall = true;
             }
+            ctx.restore();
           } catch (e) {}
         }
         if (!drawnWall) {
           ctx.fillStyle = '#f7f4eb';
-          ctx.fillRect(0, 0, w, stageWallY);
+          ctx.fillRect(roomX0, wallTopY, innerW, wallRenderH);
         }
 
         // Baseboard trim sprite (repeat along x at y = stageWallY - 8)
@@ -3114,21 +3509,21 @@
           const trimY = Math.round(stageWallY - 8);
           try {
             ctx.save();
-            ctx.translate(0, trimY);
+            ctx.translate(roomX0, trimY);
             const ptrn = this.cachedPattern(ctx, baseboardImg);
             if (ptrn) {
               ctx.fillStyle = ptrn;
-              ctx.fillRect(0, 0, w, bh);
+              ctx.fillRect(0, 0, innerW, bh);
             } else {
-              for (let x = 0; x < w; x += bw) {
+              for (let x = 0; x < innerW; x += bw) {
                 ctx.drawImage(baseboardImg, x, 0);
               }
             }
             ctx.restore();
           } catch (e) {
             try {
-              for (let x = 0; x < w; x += bw) {
-                ctx.drawImage(baseboardImg, x, trimY);
+              for (let x = 0; x < innerW; x += bw) {
+                ctx.drawImage(baseboardImg, roomX0 + x, trimY);
               }
             } catch (e2) {}
           }
@@ -3136,18 +3531,18 @@
       }
 
       // 2. Floor rendering (pixel art tiles)
-      if (!scene.skipDefaultFloor) {
-        const floorH = this.sceneHeight - stageWallY;
+      if (!scene.skipDefaultFloor && innerW > 0 && floorBottomY > stageWallY) {
+        const floorH = floorBottomY - stageWallY;
         const floorImg = floorUrl ? this.loadCachedImage(floorUrl) : null;
         let drawnFloor = false;
         if (floorImg && !floorImg.failed && ((floorImg.naturalWidth && floorImg.naturalWidth > 0) || (floorImg.width && floorImg.width > 0))) {
           try {
             ctx.save();
-            ctx.translate(0, stageWallY);
+            ctx.translate(roomX0, stageWallY);
             const ptrn = this.cachedPattern(ctx, floorImg);
             if (ptrn) {
               ctx.fillStyle = ptrn;
-              ctx.fillRect(0, 0, w, floorH);
+              ctx.fillRect(0, 0, innerW, floorH);
               drawnFloor = true;
             }
             ctx.restore();
@@ -3155,7 +3550,7 @@
         }
         if (!drawnFloor) {
           ctx.fillStyle = '#e6b073';
-          ctx.fillRect(0, stageWallY, w, floorH);
+          ctx.fillRect(roomX0, stageWallY, innerW, floorH);
         }
 
         // Floor shadow trim sprite (repeat along x at y = stageWallY)
@@ -3167,21 +3562,21 @@
           const shadowY = Math.round(stageWallY);
           try {
             ctx.save();
-            ctx.translate(0, shadowY);
+            ctx.translate(roomX0, shadowY);
             const ptrn = this.cachedPattern(ctx, shadowImg);
             if (ptrn) {
               ctx.fillStyle = ptrn;
-              ctx.fillRect(0, 0, w, sh);
+              ctx.fillRect(0, 0, innerW, sh);
             } else {
-              for (let x = 0; x < w; x += sw) {
+              for (let x = 0; x < innerW; x += sw) {
                 ctx.drawImage(shadowImg, x, 0);
               }
             }
             ctx.restore();
           } catch (e) {
             try {
-              for (let x = 0; x < w; x += sw) {
-                ctx.drawImage(shadowImg, x, shadowY);
+              for (let x = 0; x < innerW; x += sw) {
+                ctx.drawImage(shadowImg, roomX0 + x, shadowY);
               }
             } catch (e2) {}
           }
@@ -3339,14 +3734,15 @@
       const dh = dw;
       const anchorX = Math.round(32 * scale);
       const anchorY = Math.round(59 * scale);
+      const airY = this.pigAirY || 0;
       const drawX = Math.round(this.pigX - anchorX);
-      const drawY = Math.round(this.pigY - anchorY);
+      const drawY = Math.round(this.pigY - airY - anchorY);
 
       const sheet = this.usableSheet();
       if (!sheet) {
         // Placeholder while loading
         ctx.fillStyle = '#e98c42';
-        ctx.fillRect(Math.round(this.pigX - 22 * scale), Math.round(this.pigY - 29 * scale), Math.round(44 * scale), Math.round(28 * scale));
+        ctx.fillRect(Math.round(this.pigX - 22 * scale), Math.round(this.pigY - airY - 29 * scale), Math.round(44 * scale), Math.round(28 * scale));
         return;
       }
 
@@ -3456,7 +3852,9 @@
     drawContactShadow(ctx) {
       if (this.pigVisible === false) return;
       if (this.pigY < -100) return; // Hidden
-      const scale = this.getDrawScale();
+      const baseScale = this.getDrawScale();
+      const airY = this.pigAirY || 0;
+      const scale = baseScale * (airY > 0 ? Math.max(0.55, 1 - airY / 90) : 1);
       const key = PIG_SHADOW_BY_STAGE[this.stageKey] || 'adult';
       const img = this.pigShadowImage(key);
       if (!img || !img.complete || !img.naturalWidth) return; // not loaded yet
@@ -3599,7 +3997,7 @@
       const sc = scene || {};
       const ambient = sceneAmbient(sc);
       const scale = this.getDrawScale();
-      const origin = sc.origin || { x: Math.round(this.pigX - 32 * scale), y: Math.round(this.pigY - 59 * scale) };
+      const origin = sc.origin || { x: Math.round(this.pigX - 32 * scale), y: Math.round(this.pigY - (this.pigAirY || 0) - 59 * scale) };
       const cx = origin.x + FRAME_SIZE / 2;
       const cy = origin.y + FRAME_SIZE / 2;
       const sources = (sc.sources || [])

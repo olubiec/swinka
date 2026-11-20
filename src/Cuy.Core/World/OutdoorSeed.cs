@@ -10,7 +10,21 @@ namespace Cuy.Core.World
 
         private const int ParkGridCols = 16;
         private const int ParkGridRows = 9;
-        private const string ParkMigrationMarker = "park#v2";
+        private const string ParkMigrationMarker = "park#v3";
+
+        private static readonly (string Id, int X, int Y)[] LegacyParkCoords =
+        {
+            ("gazebo", 4, 2),
+            ("bench_left", 7, 8),
+            ("bench_right", 13, 7),
+            ("bridge", 10, 5),
+            ("tree_1", 0, 1),
+            ("tree_2", 13, 1),
+            ("tree_3", 10, 1),
+            ("tree_4", 0, 4),
+            ("lamp_mid", 9, 5),
+            ("lamp_right", 14, 5)
+        };
 
         public static string BuildUid(string placeId, string id)
         {
@@ -45,9 +59,39 @@ namespace Cuy.Core.World
                 world.Rooms[key] = room;
             }
 
-            // Old saves seeded "park" with 24x12 coordinates or partial items before v2;
-            // perform a one-time backfill + OOB relocation while keeping subsequent player removals intact.
-            bool parkV2Migration = isPark && alreadySeeded && !world.OutdoorSeeded.Contains(ParkMigrationMarker);
+            // Old saves seeded "park" with 24x12 coordinates, partial items, or stream-overlapping v2 layouts;
+            // perform a one-time backfill + coordinate repair while keeping subsequent player removals intact.
+            bool parkMigration = isPark && alreadySeeded && !world.OutdoorSeeded.Contains(ParkMigrationMarker);
+
+            if (parkMigration)
+            {
+                var repairs = new List<(OutdoorDefaultItem entry, PlacedItem item)>();
+                var pendingRepairs = new HashSet<PlacedItem>();
+                foreach (var entry in entries)
+                {
+                    if (entry == null || string.IsNullOrEmpty(entry.Id) || string.IsNullOrEmpty(entry.ItemId))
+                    {
+                        continue;
+                    }
+                    string uid = BuildUid(key, entry.Id);
+                    var existing = room.Items.FirstOrDefault(i => i != null && string.Equals(i.Uid, uid, StringComparison.OrdinalIgnoreCase));
+                    if (existing != null && NeedsParkCoordinateRepair(entry, existing))
+                    {
+                        repairs.Add((entry, existing));
+                        pendingRepairs.Add(existing);
+                    }
+                }
+
+                foreach (var pair in repairs)
+                {
+                    pendingRepairs.Remove(pair.item);
+                    int x = pair.entry.X;
+                    int y = pair.entry.Y;
+                    ResolveFreeAnchor(room, ref x, ref y, pair.item, pendingRepairs);
+                    pair.item.X = x;
+                    pair.item.Y = y;
+                }
+            }
 
             foreach (var entry in entries)
             {
@@ -55,7 +99,7 @@ namespace Cuy.Core.World
                 {
                     continue;
                 }
-                if (alreadySeeded && !parkV2Migration && entry.Removable)
+                if (alreadySeeded && !parkMigration && entry.Removable)
                 {
                     continue;
                 }
@@ -66,7 +110,7 @@ namespace Cuy.Core.World
                 {
                     int x = entry.X;
                     int y = entry.Y;
-                    if (parkV2Migration)
+                    if (parkMigration)
                     {
                         ResolveFreeAnchor(room, ref x, ref y);
                     }
@@ -83,14 +127,6 @@ namespace Cuy.Core.World
                     });
                     world.OwnedItems.TryGetValue(entry.ItemId, out int owned);
                     world.OwnedItems[entry.ItemId] = owned + 1;
-                }
-                else if (parkV2Migration && NeedsParkCoordinateRepair(entry, existing))
-                {
-                    int x = entry.X;
-                    int y = entry.Y;
-                    ResolveFreeAnchor(room, ref x, ref y, existing);
-                    existing.X = x;
-                    existing.Y = y;
                 }
                 else if (!alreadySeeded)
                 {
@@ -113,30 +149,33 @@ namespace Cuy.Core.World
                 return true;
             }
 
-            if (string.Equals(entry.Id, "bench_left", StringComparison.OrdinalIgnoreCase) &&
-                existing.X == 7 && existing.Y == 8 && (entry.X != 7 || entry.Y != 8))
+            foreach (var legacy in LegacyParkCoords)
             {
-                return true;
-            }
-
-            if (string.Equals(entry.Id, "tree_2", StringComparison.OrdinalIgnoreCase) &&
-                existing.X == 13 && existing.Y == 1 && (entry.X != 13 || entry.Y != 1))
-            {
-                return true;
+                if (string.Equals(entry.Id, legacy.Id, StringComparison.OrdinalIgnoreCase) &&
+                    existing.X == legacy.X && existing.Y == legacy.Y &&
+                    (entry.X != legacy.X || entry.Y != legacy.Y))
+                {
+                    return true;
+                }
             }
 
             return false;
         }
 
-        private static void ResolveFreeAnchor(RoomLayout room, ref int x, ref int y, PlacedItem ignore = null)
+        private static void ResolveFreeAnchor(
+            RoomLayout room,
+            ref int x,
+            ref int y,
+            PlacedItem ignore = null,
+            HashSet<PlacedItem> pending = null)
         {
-            if (!IsAnchorOccupied(room, x, y, ignore)) return;
+            if (!IsAnchorOccupied(room, x, y, ignore, pending)) return;
 
             for (int cy = 0; cy < ParkGridRows; cy++)
             {
                 for (int cx = 0; cx < ParkGridCols; cx++)
                 {
-                    if (!IsAnchorOccupied(room, cx, cy, ignore))
+                    if (!IsAnchorOccupied(room, cx, cy, ignore, pending))
                     {
                         x = cx;
                         y = cy;
@@ -146,11 +185,12 @@ namespace Cuy.Core.World
             }
         }
 
-        private static bool IsAnchorOccupied(RoomLayout room, int x, int y, PlacedItem ignore)
+        private static bool IsAnchorOccupied(RoomLayout room, int x, int y, PlacedItem ignore, HashSet<PlacedItem> pending)
         {
             foreach (var item in room.Items)
             {
                 if (item == null || ReferenceEquals(item, ignore)) continue;
+                if (pending != null && pending.Contains(item)) continue;
                 if (item.X == x && item.Y == y) return true;
             }
             return false;

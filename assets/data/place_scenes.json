@@ -13,7 +13,8 @@
       "size": [256, 144],
       "walk": [40, 56, 216, 126],
       "behindLine": 48,
-      "depth_scale": [0.9375, 1.0],
+      "depth_scale": [0.75, 0.875],
+      "pigWidthFrac": 0.14,
       "size_from_layout": true,
       "bg": null,
       "blockers": []
@@ -23,7 +24,8 @@
       "title": "Garden",
       "size": [256, 144],
       "walk": [8, 80, 248, 138],
-      "depth_scale": [0.9375, 1.0],
+      "depth_scale": [0.75, 0.875],
+      "pigWidthFrac": 0.13,
       "behindLine": 74,
       "bg_clean": true,
       "bg": {
@@ -43,7 +45,8 @@
       "title": "Park",
       "size": [256, 144],
       "walk": [8, 80, 248, 138],
-      "depth_scale": [0.9375, 1.0],
+      "depth_scale": [0.6875, 0.8125],
+      "pigWidthFrac": 0.12,
       "behindLine": 74,
       "bg_clean": true,
       "bg": {
@@ -66,7 +69,8 @@
       "title": "Farm",
       "size": [256, 144],
       "walk": [8, 82, 248, 138],
-      "depth_scale": [0.9375, 1.0],
+      "depth_scale": [0.75, 0.875],
+      "pigWidthFrac": 0.13,
       "behindLine": 76,
       "bg_clean": true,
       "bg": {
@@ -86,7 +90,8 @@
       "title": "Market",
       "size": [256, 144],
       "walk": [8, 120, 248, 140],
-      "depth_scale": [0.9375, 1.0],
+      "depth_scale": [0.8125, 0.9375],
+      "pigWidthFrac": 0.15,
       "behindLine": 120,
       "bg_clean": true,
       "bg": {

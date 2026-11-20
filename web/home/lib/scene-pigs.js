@@ -64,15 +64,39 @@
     var bounds = normalizeBounds(o.bounds) || DEFAULT_BOUNDS.slice();
     var minGap = (typeof o.minGap === 'number' && Number.isFinite(o.minGap) && o.minGap >= 0) ? o.minGap : DEFAULT_MIN_GAP;
     var speed = (typeof o.speed === 'number' && Number.isFinite(o.speed) && o.speed >= 0) ? o.speed : DEFAULT_SPEED;
-    var defaultIsFree = typeof o.isFree === 'function' ? o.isFree : null;
-
     var pigs = [];
     var byId = Object.create(null);
+    var controller;
 
     function resolveIsFree(fn) {
       if (typeof fn === 'function') return fn;
       if (fn && typeof fn.isFree === 'function') return fn.isFree;
-      return defaultIsFree;
+      return controller && typeof controller.isFree === 'function' ? controller.isFree : null;
+    }
+
+    function resolveFindPath(fn) {
+      if (typeof fn === 'function') return fn;
+      if (fn && typeof fn.findPath === 'function') return fn.findPath;
+      return controller && typeof controller.findPath === 'function' ? controller.findPath : null;
+    }
+
+    function setPathfinder(findPath, isFree) {
+      if (arguments.length === 1 && findPath && typeof findPath === 'object' && !Array.isArray(findPath)) {
+        if (findPath.findPath !== undefined) {
+          controller.findPath = typeof findPath.findPath === 'function' ? findPath.findPath : null;
+        }
+        if (findPath.isFree !== undefined) {
+          controller.isFree = typeof findPath.isFree === 'function' ? findPath.isFree : null;
+        }
+        return controller;
+      }
+      if (findPath !== undefined) {
+        controller.findPath = typeof findPath === 'function' ? findPath : null;
+      }
+      if (isFree !== undefined) {
+        controller.isFree = typeof isFree === 'function' ? isFree : null;
+      }
+      return controller;
     }
 
     function randUnit() {
@@ -166,7 +190,44 @@
       return { x: b[0] + w * 0.5, y: b[1] + h * 0.5 };
     }
 
-    function pickTarget(pig, b, isFreeFn) {
+    function computePath(pig, tx, ty, b, findPathFn) {
+      if (typeof findPathFn !== 'function') return null;
+      var raw = findPathFn(pig.x, pig.y, tx, ty);
+      if (!Array.isArray(raw)) return null;
+      var waypoints = [];
+      for (var i = 0; i < raw.length; i++) {
+        var pt = raw[i];
+        var wx, wy;
+        if (pt && typeof pt.x === 'number' && typeof pt.y === 'number') {
+          wx = pt.x;
+          wy = pt.y;
+        } else if (Array.isArray(pt) && pt.length >= 2) {
+          wx = Number(pt[0]);
+          wy = Number(pt[1]);
+        } else {
+          continue;
+        }
+        if (!Number.isFinite(wx) || !Number.isFinite(wy)) continue;
+        waypoints.push({
+          x: clamp(wx, b[0], b[2]),
+          y: clamp(wy, b[1], b[3])
+        });
+      }
+      while (waypoints.length > 0 &&
+             Math.abs(waypoints[0].x - pig.x) < 1e-6 &&
+             Math.abs(waypoints[0].y - pig.y) < 1e-6) {
+        waypoints.shift();
+      }
+      if (waypoints.length === 0) {
+        if (Math.hypot(tx - pig.x, ty - pig.y) < 1) {
+          return [{ x: clamp(tx, b[0], b[2]), y: clamp(ty, b[1], b[3]) }];
+        }
+        return null;
+      }
+      return waypoints;
+    }
+
+    function pickTarget(pig, b, isFreeFn, findPathFn) {
       var w = Math.max(0, b[2] - b[0]);
       var h = Math.max(0, b[3] - b[1]);
       for (var i = 0; i < TARGET_ATTEMPTS; i++) {
@@ -174,14 +235,45 @@
         var ty = b[1] + randUnit() * h;
         if (isFreeFn && !isFreeFn(tx, ty)) continue;
         if (minDistToOthers(tx, ty, pig.id) < minGap) continue;
+        if (findPathFn) {
+          var path = computePath(pig, tx, ty, b, findPathFn);
+          if (!path) continue;
+          return { x: tx, y: ty, path: path };
+        }
         if (isFreeFn && !isSegmentFree(pig.x, pig.y, tx, ty, isFreeFn)) continue;
-        return { x: tx, y: ty };
+        return { x: tx, y: ty, path: null };
       }
       return null;
     }
 
+    function clearTarget(pig, idleMin, idleSpan) {
+      pig.targetX = null;
+      pig.targetY = null;
+      pig._path = null;
+      pig.anim = 'idle';
+      pig.idleTimer = idleMin + randUnit() * idleSpan;
+    }
+
+    function assignNewTarget(pig, b, isFreeFn, findPathFn, fallbackIdleMin) {
+      var target = pickTarget(pig, b, isFreeFn, findPathFn);
+      if (target) {
+        pig.targetX = target.x;
+        pig.targetY = target.y;
+        pig._path = target.path;
+        pig.anim = 'walk';
+        return true;
+      }
+      clearTarget(pig, fallbackIdleMin, 400);
+      return false;
+    }
+
     function canStepTo(pig, nx, ny, isFreeFn) {
-      if (isFreeFn && !isFreeFn(nx, ny)) return false;
+      if (isFreeFn) {
+        if (!isFreeFn(nx, ny)) return false;
+        if (Math.hypot(nx - pig.x, ny - pig.y) > 4 && isFreeFn(pig.x, pig.y) && !isSegmentFree(pig.x, pig.y, nx, ny, isFreeFn)) {
+          return false;
+        }
+      }
       for (var i = 0; i < pigs.length; i++) {
         var other = pigs[i];
         if (other.id === pig.id) continue;
@@ -249,6 +341,7 @@
           if (existing.pinned) {
             existing.targetX = null;
             existing.targetY = null;
+            existing._path = null;
             existing.anim = 'idle';
           }
           nextPigs.push(existing);
@@ -282,6 +375,7 @@
             frameAcc: 0,
             targetX: null,
             targetY: null,
+            _path: null,
             idleTimer: pinned ? 0 : randUnit() * 400,
             look: item.look,
             stage: item.stage !== undefined ? item.stage : 'adult',
@@ -297,10 +391,11 @@
       byId = nextById;
     }
 
-    function stepPig(pig, subMs, b, isFreeFn) {
+    function stepPig(pig, subMs, b, isFreeFn, findPathFn) {
       if (pig.pinned) {
         pig.targetX = null;
         pig.targetY = null;
+        pig._path = null;
         pig.anim = 'idle';
       } else {
         if (isFreeFn && !isFreeFn(pig.x, pig.y)) {
@@ -308,25 +403,54 @@
           if (rescued) {
             pig.x = rescued.x;
             pig.y = rescued.y;
+            pig._path = null;
           }
         }
         if (pig.targetX !== null && pig.targetY !== null) {
-          var dx = pig.targetX - pig.x;
-          var dy = pig.targetY - pig.y;
+          if (findPathFn && !pig._path) {
+            var computed = computePath(pig, pig.targetX, pig.targetY, b, findPathFn);
+            if (computed) {
+              pig._path = computed;
+            } else {
+              assignNewTarget(pig, b, isFreeFn, findPathFn, 400);
+            }
+          }
+        }
+        if (pig.targetX !== null && pig.targetY !== null) {
+          var hasPath = Array.isArray(pig._path) && pig._path.length > 0;
+          var goalX = hasPath ? pig._path[0].x : pig.targetX;
+          var goalY = hasPath ? pig._path[0].y : pig.targetY;
+          var dx = goalX - pig.x;
+          var dy = goalY - pig.y;
           var dist = Math.hypot(dx, dy);
           var stepDist = speed * (subMs / 1000);
 
           if (dist <= stepDist || dist < 1) {
-            var ax = clamp(pig.targetX, b[0], b[2]);
-            var ay = clamp(pig.targetY, b[1], b[3]);
+            var ax = clamp(goalX, b[0], b[2]);
+            var ay = clamp(goalY, b[1], b[3]);
             if (canStepTo(pig, ax, ay, isFreeFn)) {
               pig.x = ax;
               pig.y = ay;
+              if (Math.abs(dx) > 0.01) {
+                pig.facing = dx >= 0 ? 1 : -1;
+              }
+              if (hasPath) {
+                pig._path.shift();
+                if (pig._path.length > 0) {
+                  pig.anim = 'walk';
+                } else {
+                  clearTarget(pig, 800, 800);
+                }
+              } else {
+                clearTarget(pig, 800, 800);
+              }
+            } else if (!trySlideStep(pig, dx, dy, stepDist, b, isFreeFn)) {
+              if (isFreeFn || findPathFn) {
+                assignNewTarget(pig, b, isFreeFn, findPathFn, 400);
+              } else {
+                clearTarget(pig, 800, 800);
+              }
             }
-            pig.targetX = null;
-            pig.targetY = null;
-            pig.anim = 'idle';
-            pig.idleTimer = 800 + randUnit() * 800;
           } else {
             var nx = clamp(pig.x + (dx / dist) * stepDist, b[0], b[2]);
             var ny = clamp(pig.y + (dy / dist) * stepDist, b[1], b[3]);
@@ -338,24 +462,18 @@
               }
               pig.anim = 'walk';
             } else if (!trySlideStep(pig, dx, dy, stepDist, b, isFreeFn)) {
-              pig.targetX = null;
-              pig.targetY = null;
-              pig.anim = 'idle';
-              pig.idleTimer = 800 + randUnit() * 800;
+              if (isFreeFn || findPathFn) {
+                assignNewTarget(pig, b, isFreeFn, findPathFn, 400);
+              } else {
+                clearTarget(pig, 800, 800);
+              }
             }
           }
         } else {
           pig.anim = 'idle';
           pig.idleTimer -= subMs;
           if (pig.idleTimer <= 0) {
-            var target = pickTarget(pig, b, isFreeFn);
-            if (target) {
-              pig.targetX = target.x;
-              pig.targetY = target.y;
-              pig.anim = 'walk';
-            } else {
-              pig.idleTimer = 400 + randUnit() * 400;
-            }
+            assignNewTarget(pig, b, isFreeFn, findPathFn, 400);
           }
         }
       }
@@ -374,7 +492,8 @@
       if (pigs.length === 0) return;
 
       var c = ctx || {};
-      var isFreeFn = resolveIsFree(c.isFree);
+      var isFreeFn = resolveIsFree(c.isFree || c.pathfinder);
+      var findPathFn = resolveFindPath(c.findPath || c.pathfinder);
       var activeBounds = normalizeBounds(c.bounds) || bounds;
       var remaining = Math.min(dtMs, MAX_TOTAL_DT_MS);
 
@@ -382,7 +501,7 @@
         var sub = remaining > MAX_SUBSTEP_MS ? MAX_SUBSTEP_MS : remaining;
         remaining -= sub;
         for (var i = 0; i < pigs.length; i++) {
-          stepPig(pigs[i], sub, activeBounds, isFreeFn);
+          stepPig(pigs[i], sub, activeBounds, isFreeFn, findPathFn);
         }
       }
     }
@@ -434,6 +553,7 @@
         if (p.targetX !== null && p.targetY !== null) {
           p.targetX = clamp(p.targetX, bounds[0], bounds[2]);
           p.targetY = clamp(p.targetY, bounds[1], bounds[3]);
+          p._path = null;
         }
       }
     }
@@ -445,6 +565,7 @@
       if (p.pinned) {
         p.targetX = null;
         p.targetY = null;
+        p._path = null;
         p.anim = 'idle';
       }
     }
@@ -467,7 +588,10 @@
       };
     }
 
-    return {
+    controller = {
+      findPath: typeof o.findPath === 'function' ? o.findPath : null,
+      isFree: typeof o.isFree === 'function' ? o.isFree : null,
+      setPathfinder: setPathfinder,
       sync: sync,
       step: step,
       entries: entries,
@@ -476,6 +600,7 @@
       setPinned: setPinned,
       debug: debug
     };
+    return controller;
   }
 
   var api = {

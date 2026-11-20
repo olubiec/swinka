@@ -1195,7 +1195,7 @@ namespace Cuy
                 BrainController.Log("[Home] Bug corrected: forced pig out of Home.");
             }
 
-            if (!IsAmbientCompanion)
+            if (!IsAmbientCompanion && !IsDragging && !IsTossing)
             {
                 if (_brain == null) _brain = BrainController.Instance;
                 _brain?.Update();
@@ -1994,13 +1994,7 @@ namespace Cuy
                     if(Animations.AnimationToss != -1)
                         SetNewAnimation(Animations.AnimationToss);
 
-                    IsTossing = true;
-                    ResetTossPerf();
-
-                    // Init vertical toss velocity
-                    tossVertVel = TossForce.Y;
-                    tossUpdatedAt = now;
-                    fallCacheAt = double.NegativeInfinity;   // first FallDetect of this toss refreshes the window list
+                    BeginToss(now);
 
                     // Force the interval while tossing to be a nice and smooth 30 (prevents laggy tossing for pets with slow drag animation intervals)
                     timer1.Interval = 30;

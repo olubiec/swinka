@@ -765,8 +765,106 @@
     }
   }
 
+  function getCanvasPigInst() {
+    if (typeof window === 'undefined') return null;
+    return (window.CuyPig && window.CuyPig.mainInstance)
+      || (window.CanvasPig && window.CanvasPig.instance)
+      || (window.PigCanvas && window.PigCanvas.instance)
+      || null;
+  }
+
+  function getEdgeHoldSide(holdObj) {
+    const inst = getCanvasPigInst();
+    const hold = holdObj !== undefined
+      ? holdObj
+      : ((inst && inst.edgeHold) || (typeof window !== 'undefined' && window.CanvasPig && window.CanvasPig.edgeHold) || null);
+    if (!hold) return null;
+    if (typeof hold === 'string') {
+      return (hold === 'left' || hold === 'right') ? hold : null;
+    }
+    const raw = hold.side != null ? hold.side : hold.dir;
+    if (raw === 'left' || raw === -1) return 'left';
+    if (raw === 'right' || raw === 1) return 'right';
+    return null;
+  }
+
+  function syncEdgeActive(holdObj) {
+    if (typeof document === 'undefined') return;
+    const leftBtn = document.getElementById('stageEdgeLeft');
+    const rightBtn = document.getElementById('stageEdgeRight');
+    const side = getEdgeHoldSide(holdObj);
+    if (leftBtn) {
+      leftBtn.classList.toggle('edge-active', side === 'left' && !leftBtn.disabled && !leftBtn.hidden);
+    }
+    if (rightBtn) {
+      rightBtn.classList.toggle('edge-active', side === 'right' && !rightBtn.disabled && !rightBtn.hidden);
+    }
+  }
+
+  function watchEdgeHoldProp(obj, defaultVal) {
+    if (!obj || typeof obj !== 'object' || obj._cuyEdgeHoldWatched) return;
+    const desc = Object.getOwnPropertyDescriptor(obj, 'edgeHold');
+    if (desc && (!desc.configurable || typeof desc.get === 'function' || typeof desc.set === 'function')) return;
+    let current = desc ? desc.value : defaultVal;
+    try {
+      Object.defineProperty(obj, '_cuyEdgeHoldWatched', {
+        value: true,
+        enumerable: false,
+        configurable: true
+      });
+      Object.defineProperty(obj, 'edgeHold', {
+        enumerable: true,
+        configurable: true,
+        get() {
+          return current;
+        },
+        set(val) {
+          current = val;
+          syncEdgeActive();
+        }
+      });
+    } catch (err) {
+      // Ignore non-extensible objects
+    }
+  }
+
+  let globalEdgePointerSyncBound = false;
+  function bindEdgeHoldSync() {
+    const inst = getCanvasPigInst();
+    if (inst) {
+      watchEdgeHoldProp(inst, null);
+      if (inst.canvas && typeof inst.canvas.addEventListener === 'function' && !inst.canvas._cuyEdgeSyncBound) {
+        inst.canvas._cuyEdgeSyncBound = true;
+        inst.canvas.addEventListener('pointermove', () => syncEdgeActive());
+        inst.canvas.addEventListener('pointerup', () => syncEdgeActive());
+        inst.canvas.addEventListener('pointercancel', () => syncEdgeActive());
+      }
+    }
+    if (typeof window !== 'undefined' && window.CanvasPig) {
+      watchEdgeHoldProp(window.CanvasPig, undefined);
+    }
+    if (typeof document !== 'undefined' && typeof document.addEventListener === 'function' && !globalEdgePointerSyncBound) {
+      globalEdgePointerSyncBound = true;
+      document.addEventListener('pointerdown', () => {
+        const curInst = getCanvasPigInst();
+        if (curInst && !curInst._cuyEdgeHoldWatched) bindEdgeHoldSync();
+      });
+      document.addEventListener('pointerup', () => syncEdgeActive());
+      document.addEventListener('pointercancel', () => syncEdgeActive());
+      if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+        window.addEventListener('blur', () => syncEdgeActive(null));
+      }
+    }
+    syncEdgeActive();
+  }
+
   function handleEdgeHold(ev) {
-    const side = (ev && ev.side) || 'right';
+    if (ev && (ev.active === false || ev.side === null || ev.dir === null)) {
+      syncEdgeActive(null);
+      return;
+    }
+    const rawSide = ev && (ev.side != null ? ev.side : ev.dir);
+    const side = (rawSide === 'left' || rawSide === -1) ? 'left' : 'right';
     const current = currentSceneId || 'salon';
     const st = getState();
 
@@ -790,6 +888,7 @@
     if (isLocked || isNone) {
       const hint = (neighbourItem && neighbourItem.unlockHint) ? neighbourItem.unlockHint : 'Locked';
       showToast('Locked: ' + hint);
+      syncEdgeActive();
       return;
     }
 
@@ -817,6 +916,7 @@
     if (window.CanvasPig && typeof window.CanvasPig.continueDrag === 'function') {
       window.CanvasPig.continueDrag(def);
     }
+    syncEdgeActive(null);
   }
 
   function handleCanvasDrop(ev) {
@@ -838,6 +938,7 @@
         to: currentSceneId
       });
     }
+    syncEdgeActive(null);
   }
 
   function bindCanvasDragSwitch() {
@@ -854,6 +955,7 @@
       window.onEdgeHold = handleEdgeHold;
       window.onDrop = handleCanvasDrop;
     }
+    bindEdgeHoldSync();
   }
 
   function checkArrivals(st) {
@@ -1162,6 +1264,8 @@
 
     bindEditButton();
     syncEditButton(isPigBeingDragged);
+    bindEdgeArrows();
+    syncEdgeArrows(st, ord);
 
     // 5. Update presence chips
     updatePresenceChips(st);
@@ -1317,6 +1421,89 @@
     syncEditButton(false);
   }
 
+  function getNavButtons() {
+    if (typeof document === 'undefined') {
+      return { prevBtn: null, nextBtn: null, edgeLeft: null, edgeRight: null };
+    }
+    return {
+      prevBtn: document.getElementById('placesPrevBtn') || document.getElementById('placesPrev'),
+      nextBtn: document.getElementById('placesNextBtn') || document.getElementById('placesNext'),
+      edgeLeft: document.getElementById('stageEdgeLeft'),
+      edgeRight: document.getElementById('stageEdgeRight')
+    };
+  }
+
+  function canCycleInOrder(dir, ord, st) {
+    if (!Array.isArray(ord) || ord.length <= 1) return false;
+    if (window.CuyScenes && typeof window.CuyScenes.neighbor === 'function' && currentSceneId) {
+      const targetId = window.CuyScenes.neighbor(currentSceneId, dir, st);
+      if (!targetId || targetId === currentSceneId) return false;
+    }
+    return true;
+  }
+
+  function syncEdgeArrowButton(edgeBtn, barBtn, canCycle) {
+    if (!edgeBtn) return;
+    const barHidden = !!(barBtn && (barBtn.hidden || barBtn.classList.contains('hidden') || barBtn.getAttribute('aria-hidden') === 'true'));
+    const barDisabled = !!(barBtn && (barBtn.disabled || barBtn.getAttribute('aria-disabled') === 'true'));
+    const isHidden = !canCycle || barHidden;
+    const isDisabled = isHidden || barDisabled;
+
+    edgeBtn.hidden = isHidden;
+    edgeBtn.classList.toggle('hidden', isHidden);
+    edgeBtn.disabled = isDisabled;
+    edgeBtn.setAttribute('aria-disabled', isDisabled ? 'true' : 'false');
+    if (isHidden) {
+      edgeBtn.setAttribute('aria-hidden', 'true');
+    } else {
+      edgeBtn.removeAttribute('aria-hidden');
+    }
+    if (isDisabled) {
+      edgeBtn.classList.remove('edge-active');
+    }
+  }
+
+  function syncEdgeArrows(st, ord) {
+    if (!st) st = getState();
+    if (!ord) ord = getOrder(st);
+    const { prevBtn, nextBtn, edgeLeft, edgeRight } = getNavButtons();
+    syncEdgeArrowButton(edgeLeft, prevBtn, canCycleInOrder(-1, ord, st));
+    syncEdgeArrowButton(edgeRight, nextBtn, canCycleInOrder(1, ord, st));
+    syncEdgeActive();
+  }
+
+  function observeBarNavButton(barBtn) {
+    if (!barBtn || barBtn.dataset.cuyEdgeObserved || typeof MutationObserver === 'undefined') return;
+    barBtn.dataset.cuyEdgeObserved = '1';
+    const obs = new MutationObserver(() => syncEdgeArrows());
+    obs.observe(barBtn, {
+      attributes: true,
+      attributeFilter: ['disabled', 'hidden', 'class', 'aria-disabled', 'aria-hidden']
+    });
+  }
+
+  function bindEdgeArrows() {
+    const { prevBtn, nextBtn, edgeLeft, edgeRight } = getNavButtons();
+    if (edgeLeft && !edgeLeft.dataset.edgeBound) {
+      edgeLeft.dataset.edgeBound = '1';
+      edgeLeft.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (edgeLeft.disabled) return;
+        prev();
+      });
+    }
+    if (edgeRight && !edgeRight.dataset.edgeBound) {
+      edgeRight.dataset.edgeBound = '1';
+      edgeRight.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (edgeRight.disabled) return;
+        next();
+      });
+    }
+    observeBarNavButton(prevBtn);
+    observeBarNavButton(nextBtn);
+  }
+
   const CuyPlaces = {
     getCurrentPlace() {
       return currentSceneId || 'salon';
@@ -1369,11 +1556,15 @@
     bindCanvasExits();
     bindCanvasDragSwitch();
     bindEditButton();
+    bindEdgeArrows();
+    syncEdgeArrows();
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
         bindCanvasExits();
         bindCanvasDragSwitch();
         bindEditButton();
+        bindEdgeArrows();
+        syncEdgeArrows();
       });
     }
 

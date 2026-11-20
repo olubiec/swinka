@@ -17,7 +17,7 @@ namespace Cuy
         private Timer motionTimer;
         private Point dragAnchor;
         private double tossUpdatedAt;
-        private const double FallCacheMs = 75;     // window list reuse during a toss (D2.2)
+        private const double FallCacheMs = 2000;   // window list reuse during a toss (D2.2)
         private double fallCacheAt = double.NegativeInfinity;
         private readonly List<IntPtr> fallHandles = new List<IntPtr>();
         private readonly List<Rectangle> fallRects = new List<Rectangle>();
@@ -94,6 +94,18 @@ namespace Cuy
                 fallCacheAt = nowMs;
             }
             return fallRects;
+        }
+
+        private void BeginToss(double now)
+        {
+            IsTossing = true;
+            ResetTossPerf();
+
+            // Init vertical toss velocity and snapshot window rects once before the 8 ms toss loop starts.
+            tossVertVel = TossForce.Y;
+            tossUpdatedAt = now;
+            RefreshFallWindows();
+            fallCacheAt = motionClock.Elapsed.TotalMilliseconds;
         }
 
         private void AdvanceToss(double now)

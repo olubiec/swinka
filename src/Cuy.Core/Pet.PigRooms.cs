@@ -93,7 +93,14 @@ namespace Cuy.Core
             string roomId = PigRooms.RoomId(key);
             bool known = world.PigRoomsEnsured.Contains(key);
             world.PigRoomsEnsured.Add(key);
-            if (known || world.Rooms.ContainsKey(roomId)) return;
+            if (known || world.Rooms.ContainsKey(roomId))
+            {
+                if (world.Rooms.TryGetValue(roomId, out var existingRoom) && existingRoom != null)
+                {
+                    MigrateClusteredStarterLayout(existingRoom, roomId);
+                }
+                return;
+            }
 
             var theme = PigRooms.ThemeFor(key, randomIndex);
             var room = new RoomLayout
@@ -111,8 +118,84 @@ namespace Cuy.Core
             {
                 var def = WorldItemCatalog.Find(itemId);
                 if (def == null) continue;
-                PlaceInFirstFreeCell(room, grid.cols, grid.rows, wallRows, def, roomId);
+                PlaceStarterItem(room, grid.cols, grid.rows, wallRows, def, roomId);
             }
+        }
+
+        private void PlaceStarterItem(RoomLayout room, int cols, int rows, int wallRows, WorldItemDefinition def, string roomId)
+        {
+            if (TryGetStarterCoords(def.Id, cols, wallRows, out int px, out int py) &&
+                RoomLayoutOps.Place(room, cols, rows, wallRows, def, roomId, px, py, catalog: WorldItemCatalog) == PlaceResult.Ok)
+            {
+                return;
+            }
+            PlaceInFirstFreeCell(room, cols, rows, wallRows, def, roomId);
+        }
+
+        private static bool TryGetStarterCoords(string itemId, int cols, int wallRows, out int x, out int y)
+        {
+            int floorY = Math.Max(2, wallRows);
+            if (string.Equals(itemId, "window_sun", StringComparison.OrdinalIgnoreCase))
+            {
+                x = Math.Max(0, cols / 2 - 1);
+                y = 0;
+                return true;
+            }
+            if (string.Equals(itemId, "cushion_big", StringComparison.OrdinalIgnoreCase))
+            {
+                x = 1;
+                y = floorY;
+                return true;
+            }
+            if (string.Equals(itemId, "side_table", StringComparison.OrdinalIgnoreCase))
+            {
+                x = Math.Max(3, cols - 3);
+                y = floorY;
+                return true;
+            }
+            x = 0;
+            y = 0;
+            return false;
+        }
+
+        private void MigrateClusteredStarterLayout(RoomLayout room, string roomId)
+        {
+            if (room?.Items == null || room.Items.Count != 3) return;
+
+            PlacedItem cushion = null;
+            PlacedItem window = null;
+            PlacedItem sideTable = null;
+            foreach (var item in room.Items)
+            {
+                if (item == null || string.IsNullOrEmpty(item.ItemId)) return;
+                if (string.Equals(item.ItemId, "cushion_big", StringComparison.OrdinalIgnoreCase) && item.X == 0 && item.Y == 2)
+                    cushion = item;
+                else if (string.Equals(item.ItemId, "window_sun", StringComparison.OrdinalIgnoreCase) && item.X == 0 && item.Y == 0)
+                    window = item;
+                else if (string.Equals(item.ItemId, "side_table", StringComparison.OrdinalIgnoreCase) && item.X == 1 && item.Y == 2)
+                    sideTable = item;
+                else
+                    return;
+            }
+            if (cushion == null || window == null || sideTable == null) return;
+
+            var (cols, rows) = GetRoomGridSize(roomId);
+            if (cols <= 0 || rows <= 0)
+            {
+                (cols, rows) = PigRoomGrid();
+            }
+            if (cols < 4 || rows < 3) return;
+
+            int wallRows = PlaceCatalog != null ? PlaceCatalog.WallRows : 2;
+            int floorY = Math.Max(2, wallRows);
+            if (floorY >= rows) return;
+
+            window.X = Math.Max(0, cols / 2 - 1);
+            window.Y = 0;
+            cushion.X = 1;
+            cushion.Y = floorY;
+            sideTable.X = Math.Max(3, cols - 3);
+            sideTable.Y = floorY;
         }
 
         private void PlaceInFirstFreeCell(RoomLayout room, int cols, int rows, int wallRows, WorldItemDefinition def, string roomId)

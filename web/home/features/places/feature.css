@@ -13,7 +13,7 @@
   flex: 0 0 auto;
   box-sizing: border-box;
   width: 100%;
-  padding: 0 4px;
+  padding: 2px 4px;
   background-color: var(--ui-wood-2, #9c6636);
   border: 0;
   border-top: 2px solid var(--ui-wood-1);
@@ -115,7 +115,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 2px 8px;
+  padding: 1px 8px;
   background: var(--ui-wood-3);
   color: var(--ui-linen-3);
   font-family: var(--ui-font, 'Pixelify Sans', monospace);
@@ -198,4 +198,59 @@
 
 .places-presence-chip .chip-go-btn:active {
   transform: translateY(1px);
+}
+
+/* Full-height edge navigation arrows inside .stage-viewport */
+.stage-edge-arrow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 14px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(38, 22, 12, 0.18);
+  color: var(--ui-cream-0, #fff4d6);
+  border: none;
+  cursor: pointer;
+  opacity: 0.45;
+  transition: opacity 0.12s, background 0.12s;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0;
+}
+
+.stage-edge-arrow.left {
+  left: 0;
+}
+
+.stage-edge-arrow.right {
+  right: 0;
+}
+
+.stage-edge-arrow:hover,
+.stage-edge-arrow.edge-active {
+  opacity: 0.95;
+  background: rgba(68, 38, 20, 0.55);
+}
+
+.stage-edge-arrow:focus-visible {
+  outline: 2px solid var(--ui-hay-2, #e9c871);
+  outline-offset: -2px;
+  opacity: 0.95;
+}
+
+.stage-edge-arrow[hidden],
+.stage-edge-arrow.hidden {
+  display: none !important;
+}
+
+.stage-edge-arrow:disabled,
+.stage-edge-arrow[disabled] {
+  opacity: 0.18;
+  cursor: default;
+  pointer-events: none;
 }
