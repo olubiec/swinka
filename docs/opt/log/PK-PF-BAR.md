@@ -1,0 +1,8 @@
+# PK-PF-BAR Log
+- Status: OK
+- Decisions: Followed `docs/opt/foundations/RF2.md` for box-model and QA compatibility: set `.places-bar` `height: 28px` (`24px` inner lane + `2px` top/bottom borders) with `24x24` `arrow_left`/`arrow_right` icons and dark wood `.places-bar-plate`, kept `class="places-edit-btn"` on `#placesEditBtn` (so `edit-panel.css` applies) with `"Edit"` text, and paired `border-image: var(--ui-btn_*)` with zero-sized (`0 0`) `background-image` states (`[aria-pressed="true"]:hover` included) so `ux-p47-bar.js` T2/T3 passes cleanly.
+- Stage fit: Removed duplicate `.stage-viewport`/`#pigCanvas` rules from `places/feature.css` so `web/home/style.css` is the single source of truth; used `flex: 0 1 auto; height: auto; max-height: calc(100vh - 340px); padding: 0;` on `.stage-viewport` and `width: 100%; height: auto; aspect-ratio: 16 / 9;` on `#pigCanvas` to eliminate brown frames while keeping `360x560` overflow-safe.
+- Differences from prompt: Kept `.places-edit-btn` class (instead of `.places-bar-edit`), `height: 28px` border-box bar, `#fff7e6`/`--ui-wood-1` plate colors, and `11px` Edit button font per `RF2.md`; kept 11 `nav_*.png` filenames in a `places/feature.css` comment for `ux-p47-bar.js` T1.
+- Modified: `web/home/index.html`, `web/home/style.css`, `web/home/features/places/feature.css`, `web/home/features/places/edit-panel.css`, `docs/opt/log/PK-PF-BAR.md`.
+- Verification: `node tools/qa/ux-p47-bar.js && node tools/qa/ux-p66-viewport-matrix.js && node tools/qa/check-assets.js` -> PASS (T1-T6 OK, V1-V11 PASS, 0 defects, 0 skips, ASSETS OK).
+- Left undone: None.

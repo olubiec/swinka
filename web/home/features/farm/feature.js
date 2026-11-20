@@ -20,6 +20,8 @@
     period: null,          // time of day of the last render
     periodAt: 0,           // when the period was last checked (once a minute)
     scenePanel: null,      // { kind: 'plant'|'tooltip'|'orchard'|'shop', plot?: number, rect?: number[] }
+    openedAt: 0,
+    outsideBound: false,
     stripEl: null,
     overlayEl: null,
     boundHotspotApi: null,
@@ -108,6 +110,60 @@
     const m = Math.floor(s / 60);
     const r = s % 60;
     return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+
+  function nowMs() {
+    return typeof performance !== 'undefined' && typeof performance.now === 'function'
+      ? performance.now()
+      : Date.now();
+  }
+
+  function getOwnedCount(st, cropId) {
+    if (!st || !st.inventory || !cropId) return 0;
+    const inv = st.inventory;
+    if (Array.isArray(inv)) {
+      const row = inv.find(x => x && (x.id === cropId || x.itemId === cropId));
+      if (!row) return 0;
+      const val = row.count != null ? row.count : row.qty;
+      return Math.max(0, Number(val) || 0);
+    }
+    if (typeof inv === 'object') {
+      const raw = inv[cropId];
+      const val = raw && typeof raw === 'object' ? (raw.count != null ? raw.count : raw.qty) : raw;
+      return Math.max(0, Number(val) || 0);
+    }
+    return 0;
+  }
+
+  function renderCropRows(st, f, clovers, compact) {
+    const crops = f.crops || [];
+    return crops.map(c => {
+      if (!c.unlocked) {
+        const more = Math.max(0, c.unlockHarvests - (f.harvests || 0));
+        const suffix = compact ? 'more' : ('more harvest' + (more === 1 ? '' : 's'));
+        return `<li class="farm-crop is-locked"><span class="pixel-icon icon-padlock" aria-hidden="true"></span> ${esc(c.name)}: ${more} ${suffix}</li>`;
+      }
+      const seeds = c.seedOwned != null ? Math.max(0, Number(c.seedOwned) || 0) : getOwnedCount(st, c.seedItem);
+      const inBag = getOwnedCount(st, c.id);
+      const cost = c.cost != null ? c.cost : c.seedCost;
+      const canAfford = cost == null || cost <= 0 || clovers >= cost;
+      const canPlant = seeds > 0 && canAfford;
+      const priceMeta = cost > 0 ? ` &middot; ${cost} clovers` : (c.sellPrice > 0 ? ` &middot; Sell ${c.sellPrice}` : '');
+      return `<li class="farm-crop${seeds === 0 ? ' is-no-seeds' : ''}">
+        <div class="farm-crop-info">
+          <div class="farm-crop-top"><span class="farm-crop-name">${esc(c.name)}</span> <span class="farm-crop-time">${c.growMinutes}m</span></div>
+          <div class="farm-crop-meta"><span class="farm-crop-seeds${seeds === 0 ? ' is-empty' : ''}">Seeds: ${seeds}</span> &middot; <span class="farm-crop-bag farm-seed-owned">In bag: ${inBag}</span>${priceMeta}</div>
+        </div>
+        <button type="button" class="farm-btn farm-seed-btn" data-plant="${esc(c.id)}" ${canPlant ? '' : 'disabled'}>Plant</button>
+      </li>`;
+    }).join('');
+  }
+
+  function renderMarketFooter() {
+    return '<div class="farm-popover-footer">' +
+      '<span class="farm-loop-hint">Grow crops &rarr; feed Cuy or sell at Market</span>' +
+      '<button type="button" class="farm-btn farm-market-btn farm-goto-market-btn" data-go-market="1">Go to Market</button>' +
+    '</div>';
   }
 
   // Local countdown: updates text and bars between state pushes. It never sends a message.
@@ -277,18 +333,10 @@
 
     let menu = '';
     if (S.menuPlot !== null && plots[S.menuPlot] && plots[S.menuPlot].state === 'empty') {
-      const rows = crops.map(c => {
-        if (!c.unlocked) {
-          const more = Math.max(0, c.unlockHarvests - (f.harvests || 0));
-          return `<li class="farm-crop is-locked"><span class="pixel-icon icon-padlock" aria-hidden="true"></span> ${esc(c.name)}: ${more} more harvest${more === 1 ? '' : 's'}</li>`;
-        }
-        const owned = c.seedOwned || 0;
-        return `<li class="farm-crop"><span class="farm-crop-name">${esc(c.name)}</span> <span class="farm-crop-meta">${owned} seed${owned === 1 ? '' : 's'} · ${c.growMinutes} min</span>
-          <button type="button" class="farm-btn" data-plant="${esc(c.id)}" ${owned > 0 ? '' : 'disabled'}>Plant</button></li>`;
-      }).join('');
+      const rows = renderCropRows(st, f, clovers, false);
       menu = `<div class="farm-menu" role="region" aria-label="Plant on plot ${S.menuPlot + 1}">
-        <div class="farm-menu-head">Plant on plot ${S.menuPlot + 1}<button type="button" class="farm-btn farm-close" data-close="1">Close</button></div>
-        <ul class="farm-crops">${rows}</ul></div>`;
+        <div class="farm-menu-head farm-popover-head"><span class="farm-popover-title">Plant on plot ${S.menuPlot + 1}</span><button type="button" class="farm-popover-close farm-close" data-close="1" aria-label="Close" title="Close">&times;</button></div>
+        <ul class="farm-crops">${rows}</ul>${renderMarketFooter()}</div>`;
     }
 
     const upgrade = (label, cost, what, disabledWhen) => {
@@ -361,6 +409,9 @@
     });
     const close = container.querySelector('[data-close]');
     if (close) close.addEventListener('click', () => { S.menuPlot = null; render(); });
+    container.querySelectorAll('[data-go-market]').forEach(btn => {
+      btn.addEventListener('click', goToMarket);
+    });
     const harvestAll = container.querySelector('[data-harvest-all]');
     if (harvestAll) harvestAll.addEventListener('click', () => send({ type: 'farm_harvest_all' }));
     const waterAll = container.querySelector('[data-water-all]');
@@ -464,10 +515,48 @@
 
   function closeScenePanel() {
     S.scenePanel = null;
+    S.openedAt = 0;
     if (S.overlayEl && S.overlayEl.parentNode) {
       S.overlayEl.parentNode.removeChild(S.overlayEl);
     }
     S.overlayEl = null;
+  }
+
+  function closePopover() {
+    closeScenePanel();
+  }
+
+  function goToMarket() {
+    closePopover();
+    if (S.menuPlot !== null) {
+      S.menuPlot = null;
+      if (S.container && S.container.isConnected) render();
+    }
+    if (window.CuyPlaces && typeof window.CuyPlaces.setCurrentPlace === 'function') {
+      window.CuyPlaces.setCurrentPlace('market');
+    }
+  }
+
+  function onOutsidePointerDown(ev) {
+    if (!S.scenePanel || !S.overlayEl || !S.overlayEl.isConnected) return;
+    if (nowMs() - S.openedAt <= 80) return;
+    const popover = S.overlayEl.querySelector('#farmPopover, .farm-popover, .farm-scene-panel, .farm-scene-tooltip');
+    if (popover && ev.target instanceof Node && popover.contains(ev.target)) return;
+    closePopover();
+  }
+
+  function onDismissKeyDown(ev) {
+    if (ev.key !== 'Escape') return;
+    if (S.scenePanel) closePopover();
+    if (S.menuPlot !== null) { S.menuPlot = null; render(); }
+  }
+
+  function bindOutsideDismiss() {
+    if (S.outsideBound) return;
+    S.outsideBound = true;
+    document.addEventListener('pointerdown', onOutsidePointerDown, true);
+    document.addEventListener('mousedown', onOutsidePointerDown, true);
+    document.addEventListener('keydown', onDismissKeyDown);
   }
 
   function positionScenePanel(panel, rect) {
@@ -510,6 +599,8 @@
     const tools = f.tools || { plotsPerWater: 1 };
     const clovers = st.clovers || 0;
 
+    bindOutsideDismiss();
+
     if (!S.overlayEl || !S.overlayEl.isConnected) {
       const el = document.createElement('div');
       el.className = 'feature-farm';
@@ -523,25 +614,23 @@
       if (!p || p.state !== 'growing') { closeScenePanel(); return; }
       const crop = cropOf(st, p.cropId);
       const name = crop ? crop.name : 'Crop';
-      html = `<div class="farm-scene-tooltip" role="status">
-        <span>${esc(name)} · ${fmt(p.secondsLeft)} left</span>
-        <button type="button" class="farm-btn farm-close" data-scene-close="1">Close</button>
+      html = `<div id="farmPopover" class="farm-scene-tooltip farm-popover" role="status">
+        <div class="farm-menu-head farm-popover-head">
+          <span class="farm-popover-title">${esc(name)} &middot; ${fmt(p.secondsLeft)} left</span>
+          <button type="button" class="farm-popover-close farm-close" data-scene-close="1" aria-label="Close" title="Close">&times;</button>
+        </div>
       </div>`;
     } else if (spec.kind === 'plant') {
       const p = plots[spec.plot];
       if (!p || p.state !== 'empty') { closeScenePanel(); return; }
-      const rows = crops.map(c => {
-        if (!c.unlocked) {
-          const more = Math.max(0, c.unlockHarvests - (f.harvests || 0));
-          return `<li class="farm-crop is-locked"><span class="pixel-icon icon-padlock" aria-hidden="true"></span> ${esc(c.name)}: ${more} more</li>`;
-        }
-        const owned = c.seedOwned || 0;
-        return `<li class="farm-crop"><span class="farm-crop-name">${esc(c.name)}</span> <span class="farm-crop-meta">${owned} · ${c.growMinutes}m</span>
-          <button type="button" class="farm-btn" data-plant="${esc(c.id)}" ${owned > 0 ? '' : 'disabled'}>Plant</button></li>`;
-      }).join('');
-      html = `<div class="farm-scene-panel" role="dialog" aria-label="Plant on plot ${spec.plot + 1}">
-        <div class="farm-menu-head">Plot ${spec.plot + 1}<button type="button" class="farm-btn farm-close" data-scene-close="1">Close</button></div>
+      const rows = renderCropRows(st, f, clovers, true);
+      html = `<div id="farmPopover" class="farm-scene-panel farm-popover" role="dialog" aria-label="Plant on plot ${spec.plot + 1}">
+        <div class="farm-menu-head farm-popover-head">
+          <span class="farm-popover-title">Plot ${spec.plot + 1}</span>
+          <button type="button" class="farm-popover-close farm-close" data-scene-close="1" aria-label="Close" title="Close">&times;</button>
+        </div>
         <ul class="farm-crops">${rows}</ul>
+        ${renderMarketFooter()}
       </div>`;
     } else if (spec.kind === 'orchard') {
       const slots = (f.orchard || []).map(o => {
@@ -553,8 +642,11 @@
         return `<div class="farm-slot"><span class="farm-slot-name">Slot ${o.slot + 1}: ${o.stock}${esc(next)}</span>
           <button type="button" class="farm-btn" data-orchard-harvest="${o.slot}" ${o.stock > 0 ? '' : 'disabled'}>Collect</button></div>`;
       }).join('');
-      html = `<div class="farm-scene-panel" role="dialog" aria-label="Orchard">
-        <div class="farm-menu-head">Orchard<button type="button" class="farm-btn farm-close" data-scene-close="1">Close</button></div>
+      html = `<div id="farmPopover" class="farm-scene-panel farm-popover" role="dialog" aria-label="Orchard">
+        <div class="farm-menu-head farm-popover-head">
+          <span class="farm-popover-title">Orchard</span>
+          <button type="button" class="farm-popover-close farm-close" data-scene-close="1" aria-label="Close" title="Close">&times;</button>
+        </div>
         <div class="farm-scene-list">${slots || '<p class="farm-empty">No orchard slots yet.</p>'}</div>
       </div>`;
     } else if (spec.kind === 'shop') {
@@ -569,8 +661,11 @@
         upgrade('Better can', up.nextCanCost, 'can', false),
         upgrade('Sprinkler', up.sprinklerCost, 'sprinkler', !!tools.sprinkler)
       ].join('');
-      html = `<div class="farm-scene-panel" role="dialog" aria-label="Farm shop">
-        <div class="farm-menu-head">Farm shop<button type="button" class="farm-btn farm-close" data-scene-close="1">Close</button></div>
+      html = `<div id="farmPopover" class="farm-scene-panel farm-popover" role="dialog" aria-label="Farm shop">
+        <div class="farm-menu-head farm-popover-head">
+          <span class="farm-popover-title">Farm shop</span>
+          <button type="button" class="farm-popover-close farm-close" data-scene-close="1" aria-label="Close" title="Close">&times;</button>
+        </div>
         <div class="farm-upgrades">${items}</div>
       </div>`;
     }
@@ -580,11 +675,14 @@
     if (panel) positionScenePanel(panel, spec.rect);
 
     const closeBtn = S.overlayEl.querySelector('[data-scene-close]');
-    if (closeBtn) closeBtn.addEventListener('click', closeScenePanel);
+    if (closeBtn) closeBtn.addEventListener('click', closePopover);
+    S.overlayEl.querySelectorAll('[data-go-market]').forEach(btn => {
+      btn.addEventListener('click', goToMarket);
+    });
     S.overlayEl.querySelectorAll('[data-plant]').forEach(btn => {
       btn.addEventListener('click', () => {
         send({ type: 'farm_plant', plot: spec.plot, cropId: btn.dataset.plant });
-        closeScenePanel();
+        closePopover();
       });
     });
     S.overlayEl.querySelectorAll('[data-orchard-plant]').forEach(btn => {
@@ -609,6 +707,7 @@
       if (!p) return;
       if (p.state === 'empty') {
         S.scenePanel = { kind: 'plant', plot: idx, rect: hs.rect };
+        S.openedAt = nowMs();
         renderScenePanel();
       } else if (p.state === 'growing' && !p.watered) {
         closeScenePanel();
@@ -618,17 +717,20 @@
         send({ type: 'farm_harvest', plot: idx });
       } else if (p.state === 'growing' && p.watered) {
         S.scenePanel = { kind: 'tooltip', plot: idx, rect: hs.rect };
+        S.openedAt = nowMs();
         renderScenePanel();
       }
       return;
     }
     if (hs.kind === 'orchard' || hs.id === 'orchard') {
       S.scenePanel = { kind: 'orchard', rect: hs.rect };
+      S.openedAt = nowMs();
       renderScenePanel();
       return;
     }
     if (hs.kind === 'shop' || hs.id === 'shop') {
       S.scenePanel = { kind: 'shop', rect: hs.rect };
+      S.openedAt = nowMs();
       renderScenePanel();
     }
   }
@@ -660,6 +762,7 @@
   }
 
   function bindCanvasPig() {
+    bindOutsideDismiss();
     if (window.CanvasPig && typeof window.CanvasPig.onHotspot === 'function' && S.boundHotspotApi !== window.CanvasPig.onHotspot) {
       S.boundHotspotApi = window.CanvasPig.onHotspot;
       window.CanvasPig.onHotspot(handleHotspot);
@@ -683,6 +786,7 @@
   window.CuyFarm = {
     handleHotspot,
     closePanel: closeScenePanel,
+    closePopover,
     drawMarkers: drawFarmMarkers,
     syncSceneUI
   };

@@ -194,5 +194,75 @@ test('X10 bad-input', function () {
   });
 });
 
+// X11: grid-cells-and-lamps (w/h <= 8 scaled by 16, lantern/torch_wall, window_ excluded, sw/sh & >8 px preserved)
+test('X11 grid-cells-and-lamps', function () {
+  const roomList = CuyHotspots.fromScene('room', staticData, [
+    { uid: 'r1', itemId: 'lamp_mushroom', x: 3, y: 2, w: 1, h: 2 }
+  ], {});
+  const mushroom = roomList.find(function (h) { return h.id === 'r1'; });
+  assert.ok(mushroom, 'lamp_mushroom hotspot should exist');
+  assert.strictEqual(mushroom.kind, 'lamp');
+  assert.ok((mushroom.rect[2] - mushroom.rect[0]) >= 16, 'width should be >= 16');
+  assert.ok((mushroom.rect[3] - mushroom.rect[1]) >= 32, 'height should be >= 32');
+
+  const mixedList = CuyHotspots.fromScene('garden', staticData, [
+    { uid: 'l1', itemId: 'garden_lantern', x: 100, y: 110, w: 1, h: 2 },
+    { uid: 'l2', itemId: 'lantern_post', x: 150, y: 110, w: 1, h: 2 },
+    { uid: 'l3', itemId: 'torch_wall', x: 180, y: 90, w: 1, h: 1 },
+    { uid: 'w1', itemId: 'window_lantern', x: 60, y: 60, w: 1, h: 1 },
+    { uid: 'l4', itemId: 'lamp_desk', x: 40, y: 80, w: 1, h: 1, sw: 24, sh: 20 },
+    { uid: 'l5', itemId: 'lamp_floor', x: 200, y: 100, w: 24, h: 36 }
+  ], {});
+
+  const lantern = mixedList.find(function (h) { return h.id === 'l1'; });
+  assert.ok(lantern && lantern.kind === 'lamp', 'garden_lantern should be classified as lamp');
+  assert.deepStrictEqual(lantern.rect, [92, 78, 108, 110]);
+  assert.strictEqual(CuyHotspots.hit(mixedList, 100, 95).id, 'l1');
+
+  const post = mixedList.find(function (h) { return h.id === 'l2'; });
+  assert.ok(post && post.kind === 'lamp', 'lantern_post should be classified as lamp');
+  assert.deepStrictEqual(post.rect, [142, 78, 158, 110]);
+
+  const torch = mixedList.find(function (h) { return h.id === 'l3'; });
+  assert.ok(torch && torch.kind === 'lamp', 'torch_wall should be classified as lamp');
+  assert.deepStrictEqual(torch.rect, [172, 74, 188, 90]);
+
+  assert.strictEqual(mixedList.find(function (h) { return h.id === 'w1'; }), undefined, 'window_* must stay excluded');
+
+  const explicit = mixedList.find(function (h) { return h.id === 'l4'; });
+  assert.strictEqual(explicit.rect[2] - explicit.rect[0], 24);
+  assert.strictEqual(explicit.rect[3] - explicit.rect[1], 20);
+
+  const pxSize = mixedList.find(function (h) { return h.id === 'l5'; });
+  assert.strictEqual(pxSize.rect[2] - pxSize.rect[0], 24);
+  assert.strictEqual(pxSize.rect[3] - pxSize.rect[1], 36);
+});
+
+// X12: market-order-board (fx:market:order_board, order_board itemId, and static fallback)
+test('X12 market-order-board', function () {
+  const dynUid = CuyHotspots.fromScene('market', staticData, [
+    { uid: 'fx:market:order_board', x: 30, y: 80, w: 1, h: 2 }
+  ], {});
+  const byUid = dynUid.find(function (h) { return h.id === 'stall:orders'; });
+  assert.ok(byUid, 'fx:market:order_board should map to stall:orders');
+  assert.strictEqual(byUid.kind, 'stall');
+  assert.strictEqual(byUid.label, 'Orders');
+  assert.deepStrictEqual(byUid.rect, [22, 48, 38, 80]);
+  assert.strictEqual(CuyHotspots.hit(dynUid, 30, 65).id, 'stall:orders');
+
+  const dynItem = CuyHotspots.fromScene('market', staticData, [
+    { uid: 'ob_custom', itemId: 'order_board', x: 60, y: 90, sw: 20, sh: 28 }
+  ], {});
+  const byItem = dynItem.find(function (h) { return h.id === 'stall:orders'; });
+  assert.ok(byItem, 'itemId order_board should map to stall:orders');
+  assert.strictEqual(byItem.kind, 'stall');
+  assert.strictEqual(byItem.label, 'Orders');
+  assert.deepStrictEqual(byItem.rect, [50, 62, 70, 90]);
+
+  const fallbackList = CuyHotspots.fromScene('market', staticData, [], {});
+  const fallback = fallbackList.find(function (h) { return h.id === 'stall:orders'; });
+  assert.ok(fallback && fallback.kind === 'stall', 'static fallback stall:orders should be present');
+});
+
 console.log('Summary: ' + passed + ' passed, ' + failed + ' failed');
 if (failed > 0) process.exit(1);

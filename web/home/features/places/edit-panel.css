@@ -7,6 +7,7 @@
   min-height: 20px;
   line-height: 14px;
   font-size: 11px;
+  font-weight: 700;
   font-family: var(--ui-font, 'Pixelify Sans', monospace);
   padding: 0 6px;
   margin-right: 4px;
@@ -16,7 +17,10 @@
   align-items: center;
   justify-content: center;
   user-select: none;
-  background: var(--ui-wood-4, #e3b27a);
+  background-color: var(--ui-wood-4, #e3b27a);
+  background-image: var(--ui-btn_normal, url('../../../../assets/ui/btn_normal.png'));
+  background-size: 0 0;
+  background-repeat: no-repeat;
   color: var(--ui-wood-0, #47281c);
   border: 3px solid var(--ui-wood-0, #47281c);
   border-image: var(--ui-btn_normal) 6 fill / 6px;
@@ -24,17 +28,25 @@
 }
 
 .places-edit-btn:hover:not([disabled]) {
-  background: var(--ui-hay-2, #e9c871);
+  background-color: var(--ui-hay-2, #e9c871);
+  background-image: var(--ui-btn_hover, url('../../../../assets/ui/btn_hover.png'));
+  background-size: 0 0;
+  background-repeat: no-repeat;
   border-image: var(--ui-btn_hover) 6 fill / 6px;
 }
 
 .places-edit-btn:active:not([disabled]),
-.places-edit-btn[aria-pressed="true"] {
-  background: var(--ui-hay-2, #e9c871);
+.places-edit-btn[aria-pressed="true"],
+.places-edit-btn[aria-pressed="true"]:hover:not([disabled]) {
+  background-color: var(--ui-hay-2, #e9c871);
+  background-image: var(--ui-btn_pressed, url('../../../../assets/ui/btn_pressed.png'));
+  background-size: 0 0;
+  background-repeat: no-repeat;
   border-image: var(--ui-btn_pressed) 6 fill / 6px;
 }
 
-.places-edit-btn[disabled] {
+.places-edit-btn[disabled],
+.places-edit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

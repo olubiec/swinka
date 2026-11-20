@@ -4,12 +4,69 @@
 (function () {
   'use strict';
 
-  const TABS = [
-    { id: 'seeds',  label: 'Seeds & tools',   category: 'seed' },
-    { id: 'home',   label: 'Home & garden',   category: 'decor' },
-    { id: 'pantry', label: 'Pantry',          category: 'pantry' },
-    { id: 'sell',   label: 'Sell',            category: null }
+  const CAT_TABS = [
+    { id: 'seeds', label: 'Seeds',        categories: ['seed', 'seeds'] },
+    { id: 'food',  label: 'Food',         categories: ['food', 'pantry', 'treat', 'treats'] },
+    { id: 'toys',  label: 'Toys & Decor', categories: ['toy', 'toys', 'decor', 'home', 'craft'] }
   ];
+  const SIDEBAR_TABS = [
+    { id: 'seeds',  label: 'Seeds',        categories: ['seed', 'seeds'] },
+    { id: 'food',   label: 'Food',         categories: ['food', 'pantry', 'treat', 'treats'] },
+    { id: 'toys',   label: 'Toys & Decor', categories: ['toy', 'toys', 'decor', 'home', 'craft'] },
+    { id: 'orders', label: 'Orders',       categories: null },
+    { id: 'sell',   label: 'Sell',         categories: null }
+  ];
+  const CRAFT_SUBS = {
+    toys:  ['toy', 'toys'],
+    decor: ['decor', 'home', 'craft']
+  };
+  const STALLS = {
+    seeds: {
+      key: 'seeds',
+      icon: 'sprout',
+      title: 'Seed Stall — Farm Seeds & Crops',
+      subtitle: 'Farm Seeds & Crops',
+      defaultMode: 'buy',
+      defaultCat: 'seeds',
+      specialtyCat: 'seeds'
+    },
+    food: {
+      key: 'food',
+      icon: 'carrot',
+      title: 'Food Stall — Fresh Veggies & Treats',
+      subtitle: 'Fresh Veggies & Treats',
+      defaultMode: 'buy',
+      defaultCat: 'food',
+      specialtyCat: 'food'
+    },
+    toys: {
+      key: 'toys',
+      icon: 'toy',
+      title: 'Craft Stall — Toys & Decor',
+      subtitle: 'Toys & Decor',
+      defaultMode: 'buy',
+      defaultCat: 'toys',
+      specialtyCat: 'toys'
+    },
+    orders: {
+      key: 'orders',
+      icon: 'orders',
+      title: 'Market Orders — Crop Requests',
+      subtitle: 'Deliver crops for clovers',
+      defaultMode: 'orders',
+      defaultCat: 'seeds',
+      specialtyCat: null
+    },
+    sell: {
+      key: 'sell',
+      icon: 'sell',
+      title: 'My Stall — Sell from Bag',
+      subtitle: 'Bag & stall upgrades',
+      defaultMode: 'sell',
+      defaultCat: 'seeds',
+      specialtyCat: null
+    }
+  };
   const QUOTE_DELAY = 150;
   const MAX_COUNT = 10;
 
@@ -17,6 +74,7 @@
     container: null,
     api: null,
     tab: 'seeds',
+    craftSub: 'auto',
     counts: {},      // itemId -> stepper value
     quotes: {},      // itemId -> { count, total, unitPrice } from market_quote_result
     quoteTimers: {},
@@ -114,11 +172,148 @@
     return S.api || (window.CuyHome && window.CuyHome.api) || null;
   }
 
+  function nowMs() {
+    return (typeof performance !== 'undefined' && typeof performance.now === 'function')
+      ? performance.now()
+      : Date.now();
+  }
+
+  function prettyName(itemId) {
+    const clean = String(itemId || '').replace(/_/g, ' ').trim();
+    return clean ? clean.charAt(0).toUpperCase() + clean.slice(1) : 'Item';
+  }
+
+  function lookupCount(col, itemId) {
+    if (!col || !itemId) return null;
+    if (Array.isArray(col)) {
+      const hit = col.find(x => x && (x.itemId === itemId || x.id === itemId));
+      if (!hit) return null;
+      const keys = ['owned', 'count', 'qty', 'quantity', 'amount', 'have', 'inBag'];
+      for (let i = 0; i < keys.length; i++) {
+        if (typeof hit[keys[i]] === 'number') return hit[keys[i]];
+      }
+      return null;
+    }
+    if (typeof col === 'object') {
+      const v = col[itemId];
+      if (typeof v === 'number') return v;
+      if (v && typeof v === 'object') {
+        const keys = ['owned', 'count', 'qty', 'quantity', 'amount', 'have', 'inBag'];
+        for (let i = 0; i < keys.length; i++) {
+          if (typeof v[keys[i]] === 'number') return v[keys[i]];
+        }
+      }
+    }
+    return null;
+  }
+
+  function ownedCount(st, itemId, rowObj) {
+    if (rowObj && typeof rowObj === 'object') {
+      const keys = ['owned', 'inBag', 'have'];
+      for (let i = 0; i < keys.length; i++) {
+        if (typeof rowObj[keys[i]] === 'number') return rowObj[keys[i]];
+      }
+    }
+    if (!st || !itemId) return 0;
+    const sources = [
+      st.inventory,
+      st.bag,
+      st.items,
+      st.market && st.market.inventory,
+      st.market && st.market.bag,
+      st.care && st.care.inventory,
+      st.care && st.care.bag,
+      st.farm && st.farm.inventory,
+      st.market && st.market.sellable
+    ];
+    for (let i = 0; i < sources.length; i++) {
+      const n = lookupCount(sources[i], itemId);
+      if (typeof n === 'number') return n;
+    }
+    return 0;
+  }
+
+  function catMatches(item, categories) {
+    if (!item || !categories) return false;
+    const cat = String(item.category || '').trim().toLowerCase();
+    return categories.indexOf(cat) !== -1;
+  }
+
+  function resolveCraftSub(st, requestedSub) {
+    if (requestedSub === 'toys' || requestedSub === 'decor') return requestedSub;
+    const list = (st && st.market && st.market.buyable) || [];
+    if (list.some(b => catMatches(b, CRAFT_SUBS.toys))) return 'toys';
+    if (list.some(b => catMatches(b, CRAFT_SUBS.decor))) return 'decor';
+    return 'toys';
+  }
+
+  function stallIconSvg(key) {
+    if (key === 'carrot') {
+      return '<svg viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">' +
+        '<rect x="9" y="2" width="3" height="2" fill="#3d943c"/>' +
+        '<rect x="11" y="1" width="2" height="2" fill="#7cd458"/>' +
+        '<rect x="10" y="4" width="4" height="2" fill="#3d943c"/>' +
+        '<rect x="7" y="4" width="3" height="3" fill="#ff9b3d"/>' +
+        '<rect x="6" y="6" width="4" height="3" fill="#e86f1c"/>' +
+        '<rect x="4" y="8" width="4" height="3" fill="#e86f1c"/>' +
+        '<rect x="8" y="8" width="1" height="2" fill="#b84b10"/>' +
+        '<rect x="3" y="11" width="3" height="2" fill="#e86f1c"/>' +
+        '<rect x="2" y="13" width="2" height="2" fill="#b84b10"/>' +
+        '</svg>';
+    }
+    if (key === 'toy') {
+      return '<svg viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">' +
+        '<rect x="5" y="2" width="6" height="1" fill="#a8325f"/>' +
+        '<rect x="3" y="3" width="10" height="2" fill="#e85a90"/>' +
+        '<rect x="2" y="5" width="12" height="6" fill="#e85a90"/>' +
+        '<rect x="3" y="11" width="10" height="2" fill="#a8325f"/>' +
+        '<rect x="5" y="13" width="6" height="1" fill="#a8325f"/>' +
+        '<rect x="4" y="4" width="3" height="2" fill="#ff9ec4"/>' +
+        '<rect x="4" y="7" width="8" height="2" fill="#fff0c2"/>' +
+        '<rect x="7" y="4" width="2" height="8" fill="#fff0c2"/>' +
+        '</svg>';
+    }
+    if (key === 'orders') {
+      return '<svg viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">' +
+        '<rect x="2" y="2" width="12" height="13" fill="#744a28"/>' +
+        '<rect x="3" y="3" width="10" height="11" fill="#f4e7cb"/>' +
+        '<rect x="6" y="1" width="4" height="2" fill="#3b2416"/>' +
+        '<rect x="5" y="5" width="6" height="1" fill="#5e3d24"/>' +
+        '<rect x="5" y="7" width="6" height="1" fill="#5e3d24"/>' +
+        '<rect x="5" y="9" width="4" height="1" fill="#5e3d24"/>' +
+        '<rect x="9" y="10" width="3" height="3" fill="#52b748"/>' +
+        '</svg>';
+    }
+    if (key === 'sell') {
+      return '<svg viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">' +
+        '<rect x="5" y="2" width="6" height="2" fill="#744a28"/>' +
+        '<rect x="6" y="4" width="4" height="1" fill="#f4e7cb"/>' +
+        '<rect x="4" y="5" width="8" height="8" fill="#9c6b3f"/>' +
+        '<rect x="3" y="7" width="10" height="5" fill="#9c6b3f"/>' +
+        '<rect x="4" y="12" width="8" height="2" fill="#744a28"/>' +
+        '<rect x="6" y="7" width="4" height="4" fill="#52b748"/>' +
+        '</svg>';
+    }
+    return '<svg viewBox="0 0 16 16" width="16" height="16" shape-rendering="crispEdges" aria-hidden="true">' +
+      '<rect x="3" y="12" width="10" height="3" fill="#4e301b"/>' +
+      '<rect x="7" y="6" width="2" height="6" fill="#2f7d32"/>' +
+      '<rect x="3" y="4" width="4" height="3" fill="#52b748"/>' +
+      '<rect x="4" y="3" width="2" height="1" fill="#9be068"/>' +
+      '<rect x="9" y="3" width="4" height="3" fill="#52b748"/>' +
+      '<rect x="10" y="2" width="2" height="1" fill="#9be068"/>' +
+      '</svg>';
+  }
+
   const P = {
     el: null,
     tab: 'seeds',
+    mode: 'buy',
+    cat: 'seeds',
+    craftSub: 'auto',
+    stallKey: 'seeds',
     stallId: null,
     anchorRect: null,
+    openedAt: 0,
     unsubQuote: null,
     unsubState: null,
     onKeyDown: null,
@@ -127,12 +322,45 @@
     hotspotSubscribed: false
   };
 
-  function resolveTab(stallIdOrCategory) {
+  function resolveStall(stallIdOrCategory) {
     const s = String(stallIdOrCategory || '').trim().toLowerCase();
-    if (s === 'pantry' || s === 'stall:pantry' || s.endsWith('stall_pantry') || s === 'stall:center' || s.endsWith('stall_center')) return 'pantry';
-    if (s === 'home' || s === 'decor' || s === 'stall:decor' || s.endsWith('stall_decor') || s === 'stall:right' || s.endsWith('stall_right')) return 'home';
-    if (s === 'sell' || s === 'stall:own' || s.endsWith('stall_own')) return 'sell';
-    return 'seeds';
+    if (
+      s === 'orders' || s === 'order' || s === 'order_board' ||
+      s === 'stall:orders' || s === 'stall_orders' || s === 'fx:market:order_board' ||
+      s.endsWith('order_board') || s.endsWith('stall_orders') || s.endsWith(':orders')
+    ) {
+      return { stall: STALLS.orders, craftSub: 'auto' };
+    }
+    if (
+      s === 'sell' || s === 'own' || s === 'stall:own' || s === 'stall_own' ||
+      s.endsWith('stall_own') || s.endsWith(':own')
+    ) {
+      return { stall: STALLS.sell, craftSub: 'auto' };
+    }
+    if (
+      s === 'food' || s === 'pantry' ||
+      s === 'stall:center' || s === 'stall_center' || s === 'stall:food' || s === 'stall:pantry' ||
+      s.endsWith('stall_center') || s.endsWith('stall_food') || s.endsWith('stall_pantry') ||
+      s.endsWith(':center') || s.endsWith(':food') || s.endsWith(':pantry')
+    ) {
+      return { stall: STALLS.food, craftSub: 'auto' };
+    }
+    if (
+      s === 'decor' || s === 'home' || s === 'stall:decor' || s === 'stall:home' ||
+      s.endsWith('stall_decor') || s.endsWith('stall_home') || s.endsWith(':decor') || s.endsWith(':home')
+    ) {
+      return { stall: STALLS.toys, craftSub: 'decor' };
+    }
+    if (
+      s === 'toys' || s === 'toy' || s === 'craft' ||
+      s === 'stall:right' || s === 'stall_right' || s === 'stall:craft' || s === 'stall:toys' ||
+      s.endsWith('stall_right') || s.endsWith('stall_craft') || s.endsWith('stall_toys') ||
+      s.endsWith(':right') || s.endsWith(':craft') || s.endsWith(':toys')
+    ) {
+      const explicitToys = s === 'toys' || s === 'toy' || s.endsWith(':toys') || s.endsWith('stall_toys');
+      return { stall: STALLS.toys, craftSub: explicitToys ? 'toys' : 'auto' };
+    }
+    return { stall: STALLS.seeds, craftSub: 'auto' };
   }
 
   function isMarketScene() {
@@ -178,10 +406,13 @@
 
   function handleHotspot(hs) {
     if (!hs) return;
-    const id = String(hs.uid || hs.id || '');
-    const isStall = hs.kind === 'stall' || /^stall[:_]|^fx:market:stall_/.test(id);
+    const uid = String(hs.uid || '');
+    const hid = String(hs.id || '');
+    const id = uid || hid;
+    const pat = /^stall[:_]|^fx:market:(stall_|order_board)|^order_board$|^orders$/i;
+    const isStall = hs.kind === 'stall' || hs.kind === 'orders' || pat.test(uid) || pat.test(hid);
     if (!isStall || !isMarketScene()) return;
-    openPanel(id || hs.label, hs.rect, hs.uid || hs.id);
+    openPanel(hid || uid || hs.label, hs.rect, id || hs.label);
   }
 
   function ensureHotspotHook() {
@@ -216,19 +447,79 @@
       <button type="button" class="market-step" data-step="1" data-id="${esc(id)}" aria-label="More">+</button></span>`;
   }
 
-  function buyRows(st, category) {
-    const list = (st.market.buyable || []).filter(b => b.category === category);
+  function craftToggleHtml(activeSub) {
+    return `<div class="stall-subtabs" role="group" aria-label="Toys and Decor filter">
+      <button type="button" class="stall-subtab${activeSub === 'toys' ? ' is-current' : ''}" data-subcat="toys" aria-pressed="${activeSub === 'toys'}">Toys</button>
+      <button type="button" class="stall-subtab${activeSub === 'decor' ? ' is-current' : ''}" data-subcat="decor" aria-pressed="${activeSub === 'decor'}">Decor</button>
+    </div>`;
+  }
+
+  function buyRows(st, categories) {
+    const allowed = Array.isArray(categories) ? categories : [String(categories || '')];
+    const list = (st.market.buyable || []).filter(b => catMatches(b, allowed));
     if (!list.length) return '<p class="market-empty">Nothing here today.</p>';
     return `<ul class="market-list">${list.map(b => {
       const n = countOf(b.itemId);
-      return `<li class="market-row">
+      const inBag = ownedCount(st, b.itemId, b);
+      return `<li class="market-row market-row-buy">
         <span class="pixel-icon ${iconClass(b.itemId)}" aria-hidden="true"></span>
-        <span class="market-name">${esc(b.name)}</span>
+        <span class="market-name">${esc(b.name)} <span class="market-meta market-in-bag">In bag: ${inBag}</span></span>
         <span class="market-price">${b.price} ea</span>
         ${stepper('buy', b.itemId, n)}
         <button type="button" class="market-btn" data-buy="${esc(b.itemId)}">Buy ${n * b.price}</button>
       </li>`;
     }).join('')}</ul>`;
+  }
+
+  function buyViewHtml(st, catId, craftSub) {
+    if (catId === 'toys') {
+      const activeSub = resolveCraftSub(st, craftSub);
+      return craftToggleHtml(activeSub) + buyRows(st, CRAFT_SUBS[activeSub]);
+    }
+    const tabDef = CAT_TABS.find(t => t.id === catId) || CAT_TABS[0];
+    return buyRows(st, tabDef.categories);
+  }
+
+  function orderRows(st, includeSellButton) {
+    const orders = (st && st.market && Array.isArray(st.market.orders)) ? st.market.orders : [];
+    const sellFoot = includeSellButton
+      ? `<div class="market-orders-foot"><button type="button" class="market-sell-link" data-switch-mode="sell">Sell from bag</button></div>`
+      : '';
+    if (!orders.length) {
+      return `<p class="market-empty">No market orders right now.</p>${sellFoot}`;
+    }
+    const rows = orders.map((o, idx) => {
+      if (!o) return '';
+      const orderIndex = typeof o.orderIndex === 'number' ? o.orderIndex : (typeof o.index === 'number' ? o.index : idx);
+      const itemId = String(o.itemId || o.item || o.cropId || '');
+      const name = o.name || o.itemName || prettyName(itemId || 'Order');
+      const need = Math.max(1, Number(
+        o.need != null ? o.need :
+          (o.count != null ? o.count :
+            (o.required != null ? o.required :
+              (o.amount != null ? o.amount :
+                (o.qty != null ? o.qty : 1))))
+      ));
+      const have = ownedCount(st, itemId, o);
+      const reward = Number(
+        o.reward != null ? o.reward :
+          (o.clovers != null ? o.clovers :
+            (o.payout != null ? o.payout : 0))
+      );
+      const done = Boolean(o.filled || o.done || o.completed || o.claimed);
+      const canDeliver = !done && have >= need;
+      const who = o.requester || o.from || o.client || '';
+      return `<li class="market-order-row${done ? ' is-done' : ''}">
+        ${itemId ? `<span class="pixel-icon ${iconClass(itemId)}" aria-hidden="true"></span>` : ''}
+        <span class="market-order-info">
+          <span class="market-card-name">${esc(name)} ×${need}${who ? ' <span class="market-meta">· ' + esc(who) + '</span>' : ''}</span>
+          <span class="market-meta market-in-bag">In bag: ${have}/${need}</span>
+        </span>
+        <span class="market-order-reward"><span class="pixel-icon icon-clover" aria-hidden="true"></span> +${reward}</span>
+        <button type="button" class="market-btn market-deliver-btn" data-fill-order="${orderIndex}" ${canDeliver ? '' : 'disabled'}>${done ? 'Delivered' : 'Deliver'}</button>
+      </li>`;
+    }).join('');
+    return `<ul class="market-list market-orders-list">${rows}</ul>${sellFoot}`;
   }
 
   function sellRows(st) {
@@ -238,13 +529,14 @@
     const closed = m.capLeft <= 0;
     return `<ul class="market-list">${list.map(s => {
       const n = countOf(s.itemId);
+      const inBag = ownedCount(st, s.itemId, s);
       const q = S.quotes[s.itemId];
       const total = q && q.count > 0 ? q.total : null;
       const pct = Math.round(Math.max(0, Math.min(1, s.demand)) * 100);
-      const canSell = s.owned > 0 && !closed;
+      const canSell = inBag > 0 && !closed;
       return `<li class="market-row market-row-sell">
         <span class="pixel-icon ${iconClass(s.itemId)}" aria-hidden="true"></span>
-        <span class="market-name">${esc(s.name)} <span class="market-meta">${s.owned} owned · ${s.unitNow} ea</span></span>
+        <span class="market-name">${esc(s.name)} <span class="market-meta"><span class="market-in-bag">In bag: ${inBag}</span> · ${s.unitNow} ea</span></span>
         <span class="market-demand" role="meter" aria-label="Demand for ${esc(s.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}">
           <span class="market-demand-fill" style="width:${pct}%"></span></span>
         ${stepper('sell', s.itemId, n)}
@@ -280,8 +572,15 @@
     const stall = m.stall || { level: 1, nextCost: null };
     const canStall = stall.nextCost !== null && stall.nextCost !== undefined && st.clovers >= stall.nextCost;
 
-    const tabs = TABS.map(t => `<button type="button" role="tab" class="market-tab${t.id === S.tab ? ' is-current' : ''}" aria-selected="${t.id === S.tab}" data-tab="${t.id}">${esc(t.label)}</button>`).join('');
-    const body = S.tab === 'sell' ? sellRows(st) : buyRows(st, TABS.find(t => t.id === S.tab).category);
+    const tabs = SIDEBAR_TABS.map(t => `<button type="button" role="tab" class="market-tab${t.id === S.tab ? ' is-current' : ''}" aria-selected="${t.id === S.tab}" data-tab="${t.id}">${esc(t.label)}</button>`).join('');
+    let body = '';
+    if (S.tab === 'sell') {
+      body = sellRows(st);
+    } else if (S.tab === 'orders') {
+      body = orderRows(st, true);
+    } else {
+      body = buyViewHtml(st, S.tab, S.craftSub);
+    }
 
     S.period = lightPeriod();
     ensureLights();
@@ -310,6 +609,12 @@
 
     container.querySelectorAll('.market-tab').forEach(btn => {
       btn.addEventListener('click', () => { S.tab = btn.dataset.tab; render(); });
+    });
+    container.querySelectorAll('[data-subcat]').forEach(btn => {
+      btn.addEventListener('click', () => { S.craftSub = btn.dataset.subcat; render(); });
+    });
+    container.querySelectorAll('[data-switch-mode]').forEach(btn => {
+      btn.addEventListener('click', () => { S.tab = btn.dataset.switchMode; render(); });
     });
 
     const extras = container.querySelector('#market-extras');
@@ -346,6 +651,11 @@
         const id = btn.dataset.sell;
         send({ type: 'market_sell', itemId: id, count: countOf(id) });
         delete S.quotes[id];
+      });
+    });
+    root.querySelectorAll('[data-fill-order]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        send({ type: 'market_fill_order', orderIndex: Number(btn.dataset.fillOrder) });
       });
     });
     const stallBtn = root.querySelector('[data-stall]');
@@ -414,8 +724,10 @@
     if (!P.el) return;
     const api = getApi();
     const st = api && api.getState ? api.getState() : null;
-    const tabDef = TABS.find(t => t.id === P.tab) || TABS[0];
-    const title = P.tab === 'sell' ? 'My stall' : tabDef.label;
+    const stall = STALLS[P.stallKey] || STALLS.seeds;
+    P.el.dataset.stall = stall.key;
+    P.el.dataset.mode = P.mode;
+    P.tab = P.mode === 'buy' ? P.cat : P.mode;
 
     const marketPlace = ((st && st.places && st.places.places) || []).find(p => p.id === 'market');
     let bodyHtml = '';
@@ -423,56 +735,98 @@
       bodyHtml = `<p class="market-locked-text">The market is still closed. ${marketPlace.unlockCost ? 'Open for ' + marketPlace.unlockCost + ' clovers' : 'Locked'}</p>`;
     } else if (!st || !st.market) {
       bodyHtml = '<p class="market-empty">Opening the market…</p>';
-    } else if (P.tab === 'sell') {
+    } else if (P.mode === 'sell') {
       const m = st.market;
       const cap = Math.max(1, m.cap || 1);
       const capPct = Math.round(Math.max(0, Math.min(1, m.capLeft / cap)) * 100);
       const capText = m.capLeft > 0
         ? `The market will buy ${m.capLeft} more clovers' worth today`
         : 'The market has enough for today';
-      const stall = m.stall || { level: 1, nextCost: null };
-      const canStall = stall.nextCost !== null && stall.nextCost !== undefined && st.clovers >= stall.nextCost;
+      const stallInfo = m.stall || { level: 1, nextCost: null };
+      const canStall = stallInfo.nextCost !== null && stallInfo.nextCost !== undefined && st.clovers >= stallInfo.nextCost;
       bodyHtml = `
         <div class="market-top">
-          <span class="market-stall">Stall level ${stall.level}
-            <button type="button" class="market-btn" data-stall="1" ${canStall ? '' : 'disabled'}>${stall.nextCost ? 'Upgrade · ' + stall.nextCost : 'Max'}</button></span>
+          <span class="market-stall">Stall level ${stallInfo.level}
+            <button type="button" class="market-btn" data-stall="1" ${canStall ? '' : 'disabled'}>${stallInfo.nextCost ? 'Upgrade · ' + stallInfo.nextCost : 'Max'}</button></span>
         </div>
         <div class="market-cap" aria-label="Daily cap">
           <p class="market-cap-text">${esc(capText)}</p>
           <div class="market-cap-bar"><span class="market-cap-fill" style="width:${capPct}%"></span></div>
         </div>
         ${sellRows(st)}`;
+    } else if (P.mode === 'orders') {
+      bodyHtml = orderRows(st, true);
     } else {
-      bodyHtml = buyRows(st, tabDef.category);
+      bodyHtml = buyViewHtml(st, P.cat, P.craftSub);
     }
 
     const clovers = st ? (st.clovers || 0) : 0;
-    const tabsHtml = TABS.map(t => `<button type="button" role="tab" class="market-tab${t.id === P.tab ? ' is-current' : ''}" aria-selected="${t.id === P.tab}" data-panel-tab="${t.id}">${esc(t.label)}</button>`).join('');
+    const modesHtml = [
+      { id: 'buy', label: 'Buy', extra: '' },
+      { id: 'sell', label: 'Sell', extra: ' data-panel-tab="sell"' },
+      { id: 'orders', label: 'Orders', extra: ' data-panel-tab="orders"' }
+    ].map(m => {
+      const cur = P.mode === m.id;
+      return `<button type="button" role="tab" class="market-tab stall-mode-tab${cur ? ' is-current' : ''}" aria-selected="${cur}" data-mode="${m.id}"${m.extra}>${m.label}</button>`;
+    }).join('');
+
+    const tabsHtml = CAT_TABS.map(t => {
+      const cur = P.mode === 'buy' && P.cat === t.id;
+      const spec = stall.specialtyCat === t.id;
+      return `<button type="button" role="tab" class="market-tab stall-cat-tab${cur ? ' is-current' : ''}${spec ? ' is-specialty' : ''}" aria-selected="${cur}" data-panel-tab="${t.id}" data-cat="${t.id}" data-specialty="${spec ? 'true' : 'false'}">${esc(t.label)}</button>`;
+    }).join('');
+
     P.el.innerHTML = `
       <div class="market-scene-head">
-        <span class="market-scene-title">${esc(title)}</span>
+        <span class="stall-sign-icon pixel-icon icon-${esc(stall.icon)}" data-stall-icon="${esc(stall.key)}" aria-hidden="true">${stallIconSvg(stall.key)}</span>
+        <div class="market-scene-heading">
+          <span class="market-scene-title">${esc(stall.title)}</span>
+          <span class="market-scene-subtitle">${esc(stall.subtitle)}</span>
+        </div>
         <span class="market-clovers"><span class="pixel-icon icon-clover" aria-hidden="true"></span> ${clovers}</span>
-        <button type="button" class="ui-close market-scene-close" aria-label="Close stall panel"></button>
+        <button type="button" class="ui-close market-scene-close stall-close-btn" aria-label="Close stall panel"></button>
       </div>
-      <div class="market-tabs" role="tablist" aria-label="Market sections">${tabsHtml}</div>
+      <div class="stall-modes" role="tablist" aria-label="Stall mode">${modesHtml}</div>
+      <div class="market-tabs" role="tablist" aria-label="Market categories">${tabsHtml}</div>
       <div class="market-scene-body">${bodyHtml}</div>`;
 
     const closeBtn = P.el.querySelector('.market-scene-close');
     if (closeBtn) closeBtn.addEventListener('click', closePanel);
-    P.el.querySelectorAll('[data-panel-tab]').forEach(btn => {
+
+    P.el.querySelectorAll('.stall-mode-tab').forEach(btn => {
       btn.addEventListener('click', () => {
-        P.tab = btn.dataset.panelTab;
+        P.mode = btn.dataset.mode || 'buy';
         renderPanel();
       });
     });
-    if (st && st.market) bindMarketEvents(P.el, st, P.tab);
+    P.el.querySelectorAll('.stall-cat-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        P.mode = 'buy';
+        P.cat = btn.dataset.cat || btn.dataset.panelTab || 'seeds';
+        renderPanel();
+      });
+    });
+    P.el.querySelectorAll('[data-subcat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        P.craftSub = btn.dataset.subcat || 'toys';
+        renderPanel();
+      });
+    });
+    P.el.querySelectorAll('[data-switch-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        P.mode = btn.dataset.switchMode || 'sell';
+        renderPanel();
+      });
+    });
+
+    if (st && st.market) bindMarketEvents(P.el, st, P.mode === 'sell' ? 'sell' : (P.mode === 'orders' ? 'orders' : P.cat));
     positionPanel();
   }
 
   function closePanel() {
     if (P.docDownTimer) { clearTimeout(P.docDownTimer); P.docDownTimer = null; }
     if (P.onKeyDown) { document.removeEventListener('keydown', P.onKeyDown); P.onKeyDown = null; }
-    if (P.onDocDown) { document.removeEventListener('pointerdown', P.onDocDown); P.onDocDown = null; }
+    if (P.onDocDown) { document.removeEventListener('pointerdown', P.onDocDown, { capture: true }); P.onDocDown = null; }
     if (P.el && P.el.parentNode) P.el.parentNode.removeChild(P.el);
     P.el = null;
   }
@@ -481,11 +835,18 @@
     closePanel();
     ensureQuoteSub();
     ensureStateSub();
-    P.tab = resolveTab(stallIdOrCategory);
+    const resolved = resolveStall(stallIdOrCategory);
+    P.stallKey = resolved.stall.key;
+    P.mode = resolved.stall.defaultMode;
+    P.cat = resolved.stall.defaultCat;
+    P.craftSub = resolved.craftSub;
+    P.tab = P.mode === 'buy' ? P.cat : P.mode;
     P.stallId = stallUid || (typeof stallIdOrCategory === 'string' ? stallIdOrCategory : null);
     P.anchorRect = anchorRect || null;
+    P.openedAt = nowMs();
 
     const el = document.createElement('section');
+    el.id = 'marketStallPanel';
     el.className = 'feature-market market-scene-panel ui-panel-wood';
     el.setAttribute('role', 'dialog');
     el.setAttribute('aria-label', 'Market stall');
@@ -498,11 +859,12 @@
     document.addEventListener('keydown', P.onKeyDown);
 
     P.onDocDown = (e) => {
-      if (P.el && !P.el.contains(e.target)) closePanel();
+      if (!P.el) return;
+      if (nowMs() - P.openedAt <= 80) return;
+      if (P.el.contains(e.target)) return;
+      closePanel();
     };
-    P.docDownTimer = setTimeout(() => {
-      if (P.el && P.onDocDown) document.addEventListener('pointerdown', P.onDocDown);
-    }, 0);
+    document.addEventListener('pointerdown', P.onDocDown, { capture: true });
   }
 
   window.CuyMarket = { openPanel, closePanel };
@@ -520,6 +882,7 @@
       S.api = api;
       if (window.CuyPlaces) window.CuyPlaces.setCurrentPlace('market');
       S.tab = 'seeds';
+      S.craftSub = 'auto';
       S.quotes = {};
       if (S.lightTimer) clearInterval(S.lightTimer);
       S.lightTimer = setInterval(lightTick, LIGHT_PERIOD_MS);

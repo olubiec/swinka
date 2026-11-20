@@ -10,10 +10,10 @@ from PIL import Image
 from garden import blob
 from garden_bg import SKY, _break
 import farm_a
-import farm_b
 from meadow import meadow
 
 W, HT, HORIZON = 256, 144, 54
+BARN_SKIP = (174, 242)
 
 
 def _img(rel):
@@ -48,6 +48,22 @@ MID = [("lawn", c, r) for r in range(ROWS) for c in range(COLS) if (c, r) not in
        ("tree", 6, 1), ("tree", 8, 1), ("tree", 10, 1), ("tree", 6, 3), ("tree", 8, 3), ("tree", 10, 3)]
 
 
+def _draw_horizon_fence(im):
+    x0, x1 = BARN_SKIP
+    for seg_l, seg_r in ((0, x0 - 1), (x1 + 1, W - 1)):
+        if seg_l > seg_r:
+            continue
+        H.hline(im, seg_l, seg_r, HORIZON - 3, "wood.2")
+        H.hline(im, seg_l, seg_r, HORIZON - 2, "wood.1")
+        H.hline(im, seg_l, seg_r, HORIZON + 1, "wood.2")
+        H.hline(im, seg_l, seg_r, HORIZON + 2, "wood.1")
+    for x in range(4, W, 14):
+        if x0 - 2 <= x <= x1:
+            continue
+        H.rrect(im, x, HORIZON - 5, x + 2, HORIZON + 4, 1, ("wood.0", "wood.1", "wood.2", "wood.2"))
+        H.put(im, x + 1, HORIZON - 5, "wood.3")
+
+
 def world(plots=()):
     r = random.Random(51)
     im = H.canvas(W, HT)
@@ -57,6 +73,7 @@ def world(plots=()):
         H.vline(im, x, int(HORIZON - 1 - 2 * math.sin(x / 11.0 + 1)), HORIZON + 2, "moss.0")
     meadow(im, r, W, HT, HORIZON)
     H.break_checkers(im)
+    _draw_horizon_fence(im)
     meta = json.loads((H.WORLD_DIR / "farm/farm.json").read_text(encoding="utf-8"))["frames"]
     sheet = _img("farm/farm.png")
     def fr(name, i):

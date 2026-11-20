@@ -238,15 +238,15 @@ namespace Cuy.Core.World
                 {
                     new OutdoorDefaultItem("gazebo", "gazebo", 4, 2, false, true, true),
                     new OutdoorDefaultItem("bench_left", "bench_park", 7, 8, false, true, true),
-                    new OutdoorDefaultItem("bench_right", "bench_park", 21, 9, false, true, true),
+                    new OutdoorDefaultItem("bench_right", "bench_park", 13, 7, false, true, true),
                     new OutdoorDefaultItem("bridge", "bridge_wood", 10, 5, false, true, false),
                     new OutdoorDefaultItem("tree_1", "tree_big", 0, 1, false, true, true),
                     new OutdoorDefaultItem("tree_2", "tree_big", 13, 1, false, true, true),
-                    new OutdoorDefaultItem("tree_3", "tree_big", 16, 1, false, true, true),
-                    new OutdoorDefaultItem("tree_4", "tree_big", 20, 1, false, true, true),
+                    new OutdoorDefaultItem("tree_3", "tree_big", 10, 1, false, true, true),
+                    new OutdoorDefaultItem("tree_4", "tree_big", 0, 4, false, true, true),
                     new OutdoorDefaultItem("lamp_left", "lamp_post", 1, 7, false, true, true),
-                    new OutdoorDefaultItem("lamp_mid", "lamp_post", 17, 7, false, true, true),
-                    new OutdoorDefaultItem("lamp_right", "lamp_post", 21, 10, false, true, true)
+                    new OutdoorDefaultItem("lamp_mid", "lamp_post", 9, 5, false, true, true),
+                    new OutdoorDefaultItem("lamp_right", "lamp_post", 14, 5, false, true, true)
                 },
                 ["farm"] = new[]
                 {

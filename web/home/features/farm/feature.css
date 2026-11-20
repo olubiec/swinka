@@ -67,3 +67,42 @@
   font-size: 11px; font-weight: 700; min-width: 120px;
 }
 .feature-farm .farm-scene-list { display: flex; flex-direction: column; gap: 4px; }
+.feature-farm .farm-scene-panel { min-width: 220px; max-width: 280px; }
+.feature-farm .farm-popover-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+.feature-farm .farm-scene-tooltip .farm-popover-head { width: 100%; margin-bottom: 0; font-size: 11px; }
+.feature-farm .farm-popover-title { font-weight: 700; color: var(--ui-wood-1); }
+.feature-farm .farm-popover-close {
+  width: 22px; height: 22px; min-width: 22px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  border: 2px solid var(--ui-wood-2); border-radius: 4px;
+  background: var(--ui-linen-2); color: var(--ui-wood-1);
+  font: inherit; font-size: 14px; line-height: 1; font-weight: 700; cursor: pointer;
+}
+.feature-farm .farm-popover-close:hover { background: var(--ui-linen-1); border-color: var(--ui-wood-1); }
+.feature-farm .farm-popover-close:focus-visible { outline: 3px solid var(--ui-moss-1); outline-offset: 2px; }
+.feature-farm .farm-crop { gap: 8px; }
+.feature-farm .farm-crop-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.feature-farm .farm-crop-top { display: flex; align-items: baseline; gap: 6px; }
+.feature-farm .farm-crop-time,
+.feature-farm .farm-crop-meta { font-size: 11px; color: var(--ui-wood-2); margin-right: 0; }
+.feature-farm .farm-crop-seeds.is-empty { color: var(--ui-berry-1, var(--ui-wood-0)); font-weight: 700; }
+.feature-farm .farm-seed-owned,
+.feature-farm .farm-crop-bag {
+  display: inline-block; padding: 0 4px; border: 1px solid var(--ui-wood-3); border-radius: 3px;
+  background: var(--ui-linen-1); color: var(--ui-wood-1); font-weight: 700;
+}
+.feature-farm .farm-popover-footer {
+  display: flex; flex-direction: column; gap: 4px;
+  margin-top: 6px; padding-top: 6px; border-top: 2px dashed var(--ui-wood-3);
+}
+.feature-farm .farm-loop-hint { font-size: 11px; line-height: 1.25; color: var(--ui-wood-2); }
+.feature-farm .farm-goto-market-btn,
+.feature-farm .farm-market-btn {
+  width: 100%; text-align: center;
+  background: var(--ui-hay-2); border-color: var(--ui-wood-1); color: var(--ui-wood-0);
+}
+.feature-farm .farm-goto-market-btn:hover,
+.feature-farm .farm-market-btn:hover { background: var(--ui-hay-1); }

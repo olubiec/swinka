@@ -41,15 +41,39 @@
     return v;
   }
 
+  function isSegmentFree(x0, y0, x1, y1, isFreeFn) {
+    if (typeof isFreeFn !== 'function') return true;
+    if (!Number.isFinite(x0) || !Number.isFinite(y0) ||
+        !Number.isFinite(x1) || !Number.isFinite(y1)) {
+      return false;
+    }
+    var dist = Math.hypot(x1 - x0, y1 - y0);
+    var steps = Math.max(1, Math.ceil(dist / 4));
+    for (var i = 0; i <= steps; i++) {
+      var t = i / steps;
+      var sx = x0 + (x1 - x0) * t;
+      var sy = y0 + (y1 - y0) * t;
+      if (!isFreeFn(sx, sy)) return false;
+    }
+    return true;
+  }
+
   function create(opts) {
     var o = opts || {};
     var rng = typeof o.rng === 'function' ? o.rng : Math.random;
     var bounds = normalizeBounds(o.bounds) || DEFAULT_BOUNDS.slice();
     var minGap = (typeof o.minGap === 'number' && Number.isFinite(o.minGap) && o.minGap >= 0) ? o.minGap : DEFAULT_MIN_GAP;
     var speed = (typeof o.speed === 'number' && Number.isFinite(o.speed) && o.speed >= 0) ? o.speed : DEFAULT_SPEED;
+    var defaultIsFree = typeof o.isFree === 'function' ? o.isFree : null;
 
     var pigs = [];
     var byId = Object.create(null);
+
+    function resolveIsFree(fn) {
+      if (typeof fn === 'function') return fn;
+      if (fn && typeof fn.isFree === 'function') return fn.isFree;
+      return defaultIsFree;
+    }
 
     function randUnit() {
       var v = rng();
@@ -67,16 +91,62 @@
       return best;
     }
 
-    function pickSpawnPoint(b) {
+    function findNearestFree(x0, y0, b, excludeId, isFreeFn) {
+      var sx = clamp(x0, b[0], b[2]);
+      var sy = clamp(y0, b[1], b[3]);
+      if (!isFreeFn || isFreeFn(sx, sy)) {
+        return { x: sx, y: sy };
+      }
+      var step = 4;
+      var maxDx = Math.max(Math.abs(sx - b[0]), Math.abs(b[2] - sx));
+      var maxDy = Math.max(Math.abs(sy - b[1]), Math.abs(b[3] - sy));
+      var maxR = Math.ceil(Math.max(maxDx, maxDy) / step) + 1;
+      var bestFree = null;
+      var bestDist = -1;
+
+      function testPoint(px, py) {
+        var cx = clamp(px, b[0], b[2]);
+        var cy = clamp(py, b[1], b[3]);
+        if (!isFreeFn(cx, cy)) return null;
+        var d = minDistToOthers(cx, cy, excludeId);
+        if (d >= minGap) return { x: cx, y: cy };
+        if (d > bestDist) {
+          bestDist = d;
+          bestFree = { x: cx, y: cy };
+        }
+        return null;
+      }
+
+      for (var ring = 1; ring <= maxR; ring++) {
+        var r = ring * step;
+        var hit;
+        for (var dx = -r; dx <= r; dx += step) {
+          hit = testPoint(sx + dx, sy - r);
+          if (hit) return hit;
+          hit = testPoint(sx + dx, sy + r);
+          if (hit) return hit;
+        }
+        for (var dy = -r + step; dy <= r - step; dy += step) {
+          hit = testPoint(sx - r, sy + dy);
+          if (hit) return hit;
+          hit = testPoint(sx + r, sy + dy);
+          if (hit) return hit;
+        }
+      }
+      return bestFree;
+    }
+
+    function pickSpawnPoint(b, isFreeFn) {
       var w = Math.max(0, b[2] - b[0]);
       var h = Math.max(0, b[3] - b[1]);
-      var bestX = b[0] + w * 0.5;
-      var bestY = b[1] + h * 0.5;
+      var bestX = null;
+      var bestY = null;
       var bestDist = -1;
 
       for (var i = 0; i < SPAWN_ATTEMPTS; i++) {
         var cx = b[0] + randUnit() * w;
         var cy = b[1] + randUnit() * h;
+        if (isFreeFn && !isFreeFn(cx, cy)) continue;
         var d = minDistToOthers(cx, cy, null);
         if (d >= minGap) {
           return { x: cx, y: cy };
@@ -87,7 +157,13 @@
           bestY = cy;
         }
       }
-      return { x: bestX, y: bestY };
+
+      if (bestX !== null) {
+        return { x: bestX, y: bestY };
+      }
+      var fallback = findNearestFree(b[0] + w * 0.5, b[1] + h * 0.5, b, null, isFreeFn);
+      if (fallback) return fallback;
+      return { x: b[0] + w * 0.5, y: b[1] + h * 0.5 };
     }
 
     function pickTarget(pig, b, isFreeFn) {
@@ -98,6 +174,7 @@
         var ty = b[1] + randUnit() * h;
         if (isFreeFn && !isFreeFn(tx, ty)) continue;
         if (minDistToOthers(tx, ty, pig.id) < minGap) continue;
+        if (isFreeFn && !isSegmentFree(pig.x, pig.y, tx, ty, isFreeFn)) continue;
         return { x: tx, y: ty };
       }
       return null;
@@ -117,7 +194,41 @@
       return true;
     }
 
-    function sync(list) {
+    function trySlideStep(pig, dx, dy, stepDist, b, isFreeFn) {
+      var sx = dx !== 0
+        ? clamp(pig.x + (dx > 0 ? 1 : -1) * Math.min(Math.abs(dx), stepDist), b[0], b[2])
+        : pig.x;
+      var sy = dy !== 0
+        ? clamp(pig.y + (dy > 0 ? 1 : -1) * Math.min(Math.abs(dy), stepDist), b[1], b[3])
+        : pig.y;
+
+      var canX = Math.abs(sx - pig.x) >= 0.5;
+      var canY = Math.abs(sy - pig.y) >= 0.5;
+      var tryXFirst = Math.abs(dx) >= Math.abs(dy);
+
+      var candidates = tryXFirst
+        ? [{ ok: canX, x: sx, y: pig.y }, { ok: canY, x: pig.x, y: sy }]
+        : [{ ok: canY, x: pig.x, y: sy }, { ok: canX, x: sx, y: pig.y }];
+
+      for (var i = 0; i < candidates.length; i++) {
+        var cand = candidates[i];
+        if (!cand.ok) continue;
+        if (canStepTo(pig, cand.x, cand.y, isFreeFn)) {
+          var movedX = cand.x - pig.x;
+          pig.x = cand.x;
+          pig.y = cand.y;
+          if (Math.abs(movedX) > 0.01) {
+            pig.facing = movedX >= 0 ? 1 : -1;
+          }
+          pig.anim = 'walk';
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function sync(list, isFreeFn) {
+      var freeFn = resolveIsFree(isFreeFn);
       var items = Array.isArray(list) ? list : [];
       var seen = Object.create(null);
       var nextPigs = [];
@@ -145,10 +256,22 @@
         } else {
           var hasPos = typeof item.x === 'number' && Number.isFinite(item.x) &&
                        typeof item.y === 'number' && Number.isFinite(item.y);
-          var pos = hasPos
-            ? { x: clamp(item.x, bounds[0], bounds[2]), y: clamp(item.y, bounds[1], bounds[3]) }
-            : pickSpawnPoint(bounds);
           var pinned = !!item.pinned;
+          var pos;
+          if (hasPos) {
+            var px = clamp(item.x, bounds[0], bounds[2]);
+            var py = clamp(item.y, bounds[1], bounds[3]);
+            if (!pinned && freeFn && !freeFn(px, py)) {
+              var freed = findNearestFree(px, py, bounds, id, freeFn);
+              if (freed) {
+                px = freed.x;
+                py = freed.y;
+              }
+            }
+            pos = { x: px, y: py };
+          } else {
+            pos = pickSpawnPoint(bounds, freeFn);
+          }
           var created = {
             id: id,
             x: pos.x,
@@ -179,51 +302,60 @@
         pig.targetX = null;
         pig.targetY = null;
         pig.anim = 'idle';
-      } else if (pig.targetX !== null && pig.targetY !== null) {
-        var dx = pig.targetX - pig.x;
-        var dy = pig.targetY - pig.y;
-        var dist = Math.hypot(dx, dy);
-        var stepDist = speed * (subMs / 1000);
-
-        if (dist <= stepDist || dist < 1) {
-          var ax = clamp(pig.targetX, b[0], b[2]);
-          var ay = clamp(pig.targetY, b[1], b[3]);
-          if (canStepTo(pig, ax, ay, isFreeFn)) {
-            pig.x = ax;
-            pig.y = ay;
+      } else {
+        if (isFreeFn && !isFreeFn(pig.x, pig.y)) {
+          var rescued = findNearestFree(pig.x, pig.y, b, pig.id, isFreeFn);
+          if (rescued) {
+            pig.x = rescued.x;
+            pig.y = rescued.y;
           }
-          pig.targetX = null;
-          pig.targetY = null;
-          pig.anim = 'idle';
-          pig.idleTimer = 800 + randUnit() * 800;
-        } else {
-          var nx = clamp(pig.x + (dx / dist) * stepDist, b[0], b[2]);
-          var ny = clamp(pig.y + (dy / dist) * stepDist, b[1], b[3]);
-          if (canStepTo(pig, nx, ny, isFreeFn)) {
-            pig.x = nx;
-            pig.y = ny;
-            if (Math.abs(dx) > 0.01) {
-              pig.facing = dx >= 0 ? 1 : -1;
+        }
+        if (pig.targetX !== null && pig.targetY !== null) {
+          var dx = pig.targetX - pig.x;
+          var dy = pig.targetY - pig.y;
+          var dist = Math.hypot(dx, dy);
+          var stepDist = speed * (subMs / 1000);
+
+          if (dist <= stepDist || dist < 1) {
+            var ax = clamp(pig.targetX, b[0], b[2]);
+            var ay = clamp(pig.targetY, b[1], b[3]);
+            if (canStepTo(pig, ax, ay, isFreeFn)) {
+              pig.x = ax;
+              pig.y = ay;
             }
-            pig.anim = 'walk';
-          } else {
             pig.targetX = null;
             pig.targetY = null;
             pig.anim = 'idle';
             pig.idleTimer = 800 + randUnit() * 800;
-          }
-        }
-      } else {
-        pig.anim = 'idle';
-        pig.idleTimer -= subMs;
-        if (pig.idleTimer <= 0) {
-          var target = pickTarget(pig, b, isFreeFn);
-          if (target) {
-            pig.targetX = target.x;
-            pig.targetY = target.y;
-            pig.anim = 'walk';
           } else {
-            pig.idleTimer = 400 + randUnit() * 400;
+            var nx = clamp(pig.x + (dx / dist) * stepDist, b[0], b[2]);
+            var ny = clamp(pig.y + (dy / dist) * stepDist, b[1], b[3]);
+            if (canStepTo(pig, nx, ny, isFreeFn)) {
+              pig.x = nx;
+              pig.y = ny;
+              if (Math.abs(dx) > 0.01) {
+                pig.facing = dx >= 0 ? 1 : -1;
+              }
+              pig.anim = 'walk';
+            } else if (!trySlideStep(pig, dx, dy, stepDist, b, isFreeFn)) {
+              pig.targetX = null;
+              pig.targetY = null;
+              pig.anim = 'idle';
+              pig.idleTimer = 800 + randUnit() * 800;
+            }
+          }
+        } else {
+          pig.anim = 'idle';
+          pig.idleTimer -= subMs;
+          if (pig.idleTimer <= 0) {
+            var target = pickTarget(pig, b, isFreeFn);
+            if (target) {
+              pig.targetX = target.x;
+              pig.targetY = target.y;
+              pig.anim = 'walk';
+            } else {
+              pig.idleTimer = 400 + randUnit() * 400;
+            }
           }
         }
       }
@@ -242,7 +374,7 @@
       if (pigs.length === 0) return;
 
       var c = ctx || {};
-      var isFreeFn = typeof c.isFree === 'function' ? c.isFree : null;
+      var isFreeFn = resolveIsFree(c.isFree);
       var activeBounds = normalizeBounds(c.bounds) || bounds;
       var remaining = Math.min(dtMs, MAX_TOTAL_DT_MS);
 
@@ -318,11 +450,20 @@
     }
 
     function debug() {
+      var targets = new Array(pigs.length);
+      for (var i = 0; i < pigs.length; i++) {
+        targets[i] = {
+          id: pigs[i].id,
+          targetX: pigs[i].targetX,
+          targetY: pigs[i].targetY
+        };
+      }
       return {
         count: pigs.length,
         bounds: bounds.slice(),
         minGap: minGap,
-        pigs: entries()
+        pigs: entries(),
+        targets: targets
       };
     }
 
@@ -338,7 +479,8 @@
   }
 
   var api = {
-    create: create
+    create: create,
+    isSegmentFree: isSegmentFree
   };
 
   if (typeof module !== 'undefined' && module.exports) {

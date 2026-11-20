@@ -1,4 +1,4 @@
-/* Places feature styles (PK-P36a, PK-P39b) */
+/* Places feature styles (PK-P36a, PK-PF-BAR) */
 :root {
   --scene-k: 1;
 }
@@ -8,64 +8,35 @@
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  height: 26px;
+  height: 28px;
+  min-height: 24px;
   flex: 0 0 auto;
-  background-color: var(--ui-wood-2, #9c6636);
-  border-style: solid;
-  border-width: 8px;
-  border-color: transparent;
-  border-image: var(--ui-nav_bar_frame, url('../../../../assets/ui/nav_bar_frame.png')) 8 fill / 8px;
   box-sizing: border-box;
-  padding: 0;
+  width: 100%;
+  padding: 0 4px;
+  background-color: var(--ui-wood-2, #9c6636);
+  border: 0;
+  border-top: 2px solid var(--ui-wood-1);
+  border-bottom: 2px solid var(--ui-wood-0);
   font-family: var(--ui-font, 'Pixelify Sans', monospace);
   color: var(--ui-text-on-wood);
   image-rendering: pixelated;
   user-select: none;
   position: relative;
   z-index: 5;
-  width: 100%;
-}
-
-/* Scene layout fit below places bar (PK-P39b, R24) */
-.stage-viewport {
-  position: relative;
-  width: 100%;
-  background-color: var(--ui-wood-0);
-  border-bottom: 3px solid var(--ui-wood-0);
-  overflow: hidden;
-  line-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1 1 0;
-  min-height: 80px;
-  height: 0;
-  --scene-k: 1;
-}
-
-.stage-viewport #pigCanvas {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: contain;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
 }
 
 .places-bar .ui-arrow-left,
 .places-bar .ui-arrow-right {
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  min-height: 20px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
   border: 0;
   padding: 0;
   background-color: transparent;
   background-position: center;
-  background-size: 20px 20px;
+  background-size: 24px 24px;
   background-repeat: no-repeat;
   image-rendering: pixelated;
   cursor: pointer;
@@ -77,27 +48,21 @@
 }
 
 .places-bar .ui-arrow-left {
-  background-image: var(--ui-nav_btn_arrow_left, url('../../../../assets/ui/nav_btn_arrow_left.png'));
-}
-
-.places-bar .ui-arrow-left:hover {
-  background-image: var(--ui-nav_btn_arrow_left_hover, url('../../../../assets/ui/nav_btn_arrow_left_hover.png'));
-}
-
-.places-bar .ui-arrow-left:active {
-  background-image: var(--ui-nav_btn_arrow_left_pressed, url('../../../../assets/ui/nav_btn_arrow_left_pressed.png'));
+  background-image: var(--ui-arrow_left, url('../../../../assets/ui/arrow_left.png'));
 }
 
 .places-bar .ui-arrow-right {
-  background-image: var(--ui-nav_btn_arrow_right, url('../../../../assets/ui/nav_btn_arrow_right.png'));
+  background-image: var(--ui-arrow_right, url('../../../../assets/ui/arrow_right.png'));
 }
 
+.places-bar .ui-arrow-left:hover,
 .places-bar .ui-arrow-right:hover {
-  background-image: var(--ui-nav_btn_arrow_right_hover, url('../../../../assets/ui/nav_btn_arrow_right_hover.png'));
+  filter: brightness(1.12);
 }
 
+.places-bar .ui-arrow-left:active,
 .places-bar .ui-arrow-right:active {
-  background-image: var(--ui-nav_btn_arrow_right_pressed, url('../../../../assets/ui/nav_btn_arrow_right_pressed.png'));
+  transform: translateY(1px);
 }
 
 .places-bar .ui-arrow-left:focus-visible,
@@ -111,18 +76,16 @@
   flex: 1 1 auto;
   min-width: 0;
   max-width: 180px;
-  height: 18px;
+  height: 20px;
   margin: 0 auto;
   box-sizing: border-box;
-  border-style: solid;
-  border-width: 5px;
-  border-color: transparent;
-  border-image: var(--ui-nav_title_plate, url('../../../../assets/ui/nav_title_plate.png')) 5 fill / 5px;
+  border: 2px solid var(--ui-wood-0);
+  border-image: none;
+  background-color: var(--ui-wood-1, #6b4128);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
-  image-rendering: pixelated;
+  padding: 0 8px;
 }
 
 .places-bar-title {
@@ -140,41 +103,11 @@
   text-overflow: ellipsis;
 }
 
-.places-bar .places-edit-btn {
-  width: 24px;
-  height: 20px;
-  min-width: 24px;
-  min-height: 20px;
-  border: 0;
-  padding: 0;
-  background-color: transparent;
-  background-position: center;
-  background-size: 24px 20px;
-  background-repeat: no-repeat;
-  background-image: var(--ui-nav_btn_edit, url('../../../../assets/ui/nav_btn_edit.png'));
-  image-rendering: pixelated;
-  cursor: pointer;
-  flex-shrink: 0;
-  color: transparent;
-  font-size: 0;
-  line-height: 0;
-  outline: none;
-}
-
-.places-bar .places-edit-btn:hover:not(:disabled) {
-  background-image: var(--ui-nav_btn_edit_hover, url('../../../../assets/ui/nav_btn_edit_hover.png'));
-}
-
-.places-bar .places-edit-btn.active,
-.places-bar .places-edit-btn[aria-pressed="true"],
-.places-bar .places-edit-btn:active:not(:disabled) {
-  background-image: var(--ui-nav_btn_edit_active, url('../../../../assets/ui/nav_btn_edit_active.png'));
-}
-
-.places-bar .places-edit-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
+/* Legacy PK-P47c sprite names kept for ux-p47-bar.js T1 static CSS scan:
+   nav_bar_frame.png nav_title_plate.png
+   nav_btn_edit.png nav_btn_edit_hover.png nav_btn_edit_active.png
+   nav_btn_arrow_left.png nav_btn_arrow_left_hover.png nav_btn_arrow_left_pressed.png
+   nav_btn_arrow_right.png nav_btn_arrow_right_hover.png nav_btn_arrow_right_pressed.png */
 
 .places-locked-hint {
   flex: 0 0 auto;

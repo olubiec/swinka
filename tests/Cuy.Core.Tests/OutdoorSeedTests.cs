@@ -201,5 +201,121 @@ namespace Cuy.Core.Tests
                 }
             }
         }
+
+        [Fact]
+        public void S9_ParkDefaultsInBoundsAndNonOverlapping()
+        {
+            var defaults = LoadRepoDefaults();
+            var codeDefaults = OutdoorDefaults.CreateCodeDefaults();
+            var catalog = LoadRepoItems();
+            var world = new WorldState();
+
+            OutdoorSeed.Seed(world, "park", defaults, ActiveBalance());
+
+            var jsonPark = defaults.ForScene("park");
+            var codePark = codeDefaults.ForScene("park");
+            Assert.Equal(11, jsonPark.Count);
+            Assert.Equal(jsonPark.Count, codePark.Count);
+            for (int i = 0; i < jsonPark.Count; i++)
+            {
+                Assert.Equal(jsonPark[i].Id, codePark[i].Id);
+                Assert.Equal(jsonPark[i].ItemId, codePark[i].ItemId);
+                Assert.Equal(jsonPark[i].X, codePark[i].X);
+                Assert.Equal(jsonPark[i].Y, codePark[i].Y);
+            }
+
+            var placed = world.Rooms["park"].Items;
+            Assert.Equal(jsonPark.Count, placed.Count);
+
+            for (int i = 0; i < placed.Count; i++)
+            {
+                var a = placed[i];
+                var defA = catalog.Find(a.ItemId);
+                Assert.NotNull(defA);
+                Assert.True(a.X >= 0 && a.X + defA.W <= 16, $"{a.Uid} ({a.ItemId}): X={a.X}, W={defA.W}");
+                Assert.True(a.Y >= 0 && a.Y + defA.H <= 9, $"{a.Uid} ({a.ItemId}): Y={a.Y}, H={defA.H}");
+
+                for (int j = i + 1; j < placed.Count; j++)
+                {
+                    var b = placed[j];
+                    var defB = catalog.Find(b.ItemId);
+                    Assert.NotNull(defB);
+                    bool overlaps =
+                        a.X < b.X + defB.W && a.X + defA.W > b.X &&
+                        a.Y < b.Y + defB.H && a.Y + defA.H > b.Y;
+                    Assert.False(overlaps,
+                        $"Overlap in park: {a.Uid} ({a.ItemId} @ {a.X},{a.Y} {defA.W}x{defA.H}) vs {b.Uid} ({b.ItemId} @ {b.X},{b.Y} {defB.W}x{defB.H})");
+                }
+            }
+        }
+
+        [Fact]
+        public void S10_ParkPartialAndLegacySaveBackfillsAndRespectsRemovals()
+        {
+            var defaults = LoadRepoDefaults();
+            var catalog = LoadRepoItems();
+            var balance = ActiveBalance();
+
+            // Partial already-seeded save missing 5 (or 6) items in park.
+            var partialWorld = new WorldState();
+            partialWorld.OutdoorSeeded.Add("park");
+            partialWorld.Rooms["park"] = new RoomLayout
+            {
+                Items =
+                {
+                    new PlacedItem { Uid = "fx:park:gazebo", ItemId = "gazebo", X = 4, Y = 2, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:bench_left", ItemId = "bench_park", X = 7, Y = 8, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:bridge", ItemId = "bridge_wood", X = 10, Y = 5, Movable = true, Removable = false },
+                    new PlacedItem { Uid = "fx:park:tree_1", ItemId = "tree_big", X = 0, Y = 1, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:lamp_left", ItemId = "lamp_post", X = 1, Y = 7, Movable = true, Removable = true }
+                }
+            };
+
+            OutdoorSeed.Seed(partialWorld, "park", defaults, balance);
+
+            var parkItems = partialWorld.Rooms["park"].Items;
+            Assert.Equal(defaults.ForScene("park").Count, parkItems.Count);
+            foreach (var def in defaults.ForScene("park"))
+            {
+                Assert.Contains(parkItems, i => i.Uid == $"fx:park:{def.Id}");
+            }
+
+            // Subsequent removals after backfill must stay removed.
+            Assert.True(RoomLayoutOps.Remove(partialWorld.Rooms["park"], "fx:park:bench_right", out _));
+            OutdoorSeed.Seed(partialWorld, "park", defaults, balance);
+            Assert.DoesNotContain(partialWorld.Rooms["park"].Items, i => i.Uid == "fx:park:bench_right");
+
+            // Legacy 24x12 OOB park save relocates OOB items inside 16x9 without duplicating.
+            var legacyWorld = new WorldState();
+            legacyWorld.OutdoorSeeded.Add("park");
+            legacyWorld.Rooms["park"] = new RoomLayout
+            {
+                Items =
+                {
+                    new PlacedItem { Uid = "fx:park:gazebo", ItemId = "gazebo", X = 4, Y = 2, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:bench_left", ItemId = "bench_park", X = 7, Y = 8, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:bench_right", ItemId = "bench_park", X = 21, Y = 9, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:bridge", ItemId = "bridge_wood", X = 10, Y = 5, Movable = true, Removable = false },
+                    new PlacedItem { Uid = "fx:park:tree_1", ItemId = "tree_big", X = 0, Y = 1, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:tree_2", ItemId = "tree_big", X = 13, Y = 1, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:tree_3", ItemId = "tree_big", X = 16, Y = 1, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:tree_4", ItemId = "tree_big", X = 20, Y = 1, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:lamp_left", ItemId = "lamp_post", X = 1, Y = 7, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:lamp_mid", ItemId = "lamp_post", X = 17, Y = 7, Movable = true, Removable = true },
+                    new PlacedItem { Uid = "fx:park:lamp_right", ItemId = "lamp_post", X = 21, Y = 10, Movable = true, Removable = true }
+                }
+            };
+
+            OutdoorSeed.Seed(legacyWorld, "park", defaults, balance);
+
+            Assert.Equal(11, legacyWorld.Rooms["park"].Items.Count);
+            foreach (var item in legacyWorld.Rooms["park"].Items)
+            {
+                var def = catalog.Find(item.ItemId);
+                Assert.NotNull(def);
+                Assert.True(item.X >= 0 && item.X + def.W <= 16, $"{item.Uid}: X={item.X}, W={def.W}");
+                Assert.True(item.Y >= 0 && item.Y + def.H <= 9, $"{item.Uid}: Y={item.Y}, H={def.H}");
+            }
+        }
     }
 }

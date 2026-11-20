@@ -379,9 +379,11 @@ body.webview-mode .game-device {
   border-bottom: 3px solid var(--ui-wood-0);
   overflow: hidden;
   line-height: 0;
-  flex: 1 1 0;
+  flex: 0 1 auto;
   min-height: 80px;
-  height: 0;
+  height: auto;
+  max-height: calc(100vh - 340px);
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -390,7 +392,7 @@ body.webview-mode .game-device {
 
 #pigCanvas {
   display: block;
-  width: auto;
+  width: 100%;
   height: auto;
   max-width: 100%;
   max-height: 100%;

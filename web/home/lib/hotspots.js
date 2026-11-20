@@ -30,8 +30,11 @@
 
   function isLampItem(itemId, catalog) {
     if (typeof itemId !== 'string' || !itemId) return false;
+    if (itemId.indexOf('window_') === 0) return false;
     if (catalog && catalog[itemId] && catalog[itemId].kind === 'lamp') return true;
     return itemId.indexOf('lamp_') === 0 ||
+      itemId.indexOf('lantern') !== -1 ||
+      itemId === 'torch_wall' ||
       itemId === 'fairy_lights' ||
       itemId === 'brazier' ||
       itemId === 'campfire';
@@ -47,6 +50,9 @@
     if (uid.indexOf('fx:market:stall_') === 0) {
       kind = 'stall';
       id = 'stall:' + uid.slice('fx:market:stall_'.length);
+    } else if (uid === 'fx:market:order_board' || itemId === 'order_board') {
+      kind = 'stall';
+      id = 'stall:orders';
     } else if (itemId === 'stall_basic' || itemId === 'stall_big') {
       kind = 'stall';
       id = uid ? (uid.indexOf('stall:') === 0 ? uid : 'stall:' + uid) : ('stall:' + itemId);
@@ -61,8 +67,10 @@
     if (!kind || !id) return null;
     if (!Number.isFinite(inst.x) || !Number.isFinite(inst.y)) return null;
 
-    var sw = Number.isFinite(inst.sw) ? inst.sw : (Number.isFinite(inst.w) ? inst.w : 16);
-    var sh = Number.isFinite(inst.sh) ? inst.sh : (Number.isFinite(inst.h) ? inst.h : 16);
+    var sw = (Number.isFinite(inst.sw) && inst.sw > 0) ? inst.sw
+      : (Number.isFinite(inst.w) && inst.w > 0 ? (inst.w <= 8 ? inst.w * 16 : inst.w) : 16);
+    var sh = (Number.isFinite(inst.sh) && inst.sh > 0) ? inst.sh
+      : (Number.isFinite(inst.h) && inst.h > 0 ? (inst.h <= 8 ? inst.h * 16 : inst.h) : 16);
     var ax = Number.isFinite(inst.anchorX) ? inst.anchorX : sw / 2;
     var ay = Number.isFinite(inst.anchorY) ? inst.anchorY : sh;
 
@@ -72,7 +80,8 @@
     var y1 = Math.round(inst.y - ay + sh);
     if (x1 <= x0 || y1 <= y0) return null;
 
-    var rawLabel = inst.label || inst.name || (catalog && catalog[itemId] && catalog[itemId].name) || id;
+    var defaultLabel = id === 'stall:orders' ? 'Orders' : id;
+    var rawLabel = inst.label || inst.name || (catalog && catalog[itemId] && catalog[itemId].name) || defaultLabel;
     return {
       id: id,
       kind: kind,

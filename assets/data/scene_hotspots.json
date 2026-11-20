@@ -13,6 +13,8 @@
       { "id": "orchard", "kind": "orchard", "rect": [12, 24, 96, 62], "label": "Orchard" },
       { "id": "shop", "kind": "shop", "rect": [170, 32, 242, 76], "label": "Farm shop" }
     ],
-    "market": []
+    "market": [
+      { "id": "stall:orders", "uid": "fx:market:order_board", "kind": "stall", "rect": [8, 60, 28, 88], "label": "Orders" }
+    ]
   }
 }
