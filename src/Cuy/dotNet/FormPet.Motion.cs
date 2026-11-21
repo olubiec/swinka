@@ -354,6 +354,17 @@ namespace Cuy
             double now = motionClock.Elapsed.TotalMilliseconds;
             if (IsDragging)
             {
+                if (perfEnabled)
+                {
+                    // The drag timer ticks even when the mouse rests, so a long gap here means the UI thread was blocked.
+                    if (dragPerfTickLastAt >= 0)
+                    {
+                        double tickGap = now - dragPerfTickLastAt;
+                        if (tickGap > dragPerfTickMaxGap) dragPerfTickMaxGap = tickGap;
+                        if (tickGap > 25) dragPerfTickGapsOver25++;
+                    }
+                    dragPerfTickLastAt = now;
+                }
                 UpdateDragPosition(Cursor.Position, now);
                 return;
             }
@@ -378,14 +389,15 @@ namespace Cuy
 
         // CUY_PERF=1: drag diagnostics. Gaps between position updates show whether the UI thread is blocked.
         private double dragPerfLastAt = -1, dragPerfMaxGap, dragPerfMaxSetPos, dragPerfSumSetPos, dragPerfStartAt;
-        private int dragPerfUpdates, dragPerfGapsOver25;
+        private int dragPerfUpdates, dragPerfGapsOver25, dragPerfTickGapsOver25;
+        private double dragPerfTickLastAt = -1, dragPerfTickMaxGap;
         private void ReportDragPerf()
         {
             if (!perfEnabled || dragPerfUpdates == 0) return;
             BrainController.Log(string.Format(CultureInfo.InvariantCulture,
-                "[PERF] drag-perf updates={0} dur={1:F0}ms maxGap={2:F1} gaps>25ms={3} setPos avg={4:F2} max={5:F2} (ms)",
+                "[PERF] drag-perf updates={0} dur={1:F0}ms maxGap={2:F1} gaps>25ms={3} setPos avg={4:F2} max={5:F2} (ms) timerTickMaxGap={6:F1} timerTickGaps>25ms={7}",
                 dragPerfUpdates, motionClock.Elapsed.TotalMilliseconds - dragPerfStartAt, dragPerfMaxGap, dragPerfGapsOver25,
-                dragPerfSumSetPos / dragPerfUpdates, dragPerfMaxSetPos));
+                dragPerfSumSetPos / dragPerfUpdates, dragPerfMaxSetPos, dragPerfTickMaxGap, dragPerfTickGapsOver25));
         }
 
         private void BeginSmoothDrag()
@@ -402,6 +414,7 @@ namespace Cuy
             {
                 dragPerfLastAt = -1; dragPerfMaxGap = 0; dragPerfMaxSetPos = 0; dragPerfSumSetPos = 0;
                 dragPerfUpdates = 0; dragPerfGapsOver25 = 0; dragPerfStartAt = now;
+                dragPerfTickLastAt = -1; dragPerfTickMaxGap = 0; dragPerfTickGapsOver25 = 0;
             }
             motion.Reset(PositionX, PositionY, now);
             dragVelocity.Reset(PositionX, PositionY, now);
