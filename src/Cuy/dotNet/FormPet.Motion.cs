@@ -48,6 +48,56 @@ namespace Cuy
         private const uint SWP_NOACTIVATE = 0x0010;
         private Point dragAnchor;
 
+        // Drag pump: moves the window once per DWM frame. Moving it on every mouse message (up to 1000/s)
+        // and every 8 ms timer tick floods the compositor, so the pet trails the cursor. CUY_DRAG_LEGACY=1 restores the old path.
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmFlush();
+        private static readonly bool legacyDrag = Environment.GetEnvironmentVariable("CUY_DRAG_LEGACY") == "1";
+        private readonly object dragPumpLock = new object();
+        private bool dragPumpRunning;
+        private int dragPumpPending;
+        private double dragPumpAt = double.NegativeInfinity;
+        private const double DragPumpStaleMs = 40;
+
+        private bool DragPumpIdle(double now)
+        {
+            return legacyDrag || now - dragPumpAt > DragPumpStaleMs;
+        }
+
+        private void StartDragPump()
+        {
+            if (legacyDrag) return;
+            lock (dragPumpLock)
+            {
+                if (dragPumpRunning) return;
+                dragPumpRunning = true;
+            }
+            var thread = new System.Threading.Thread(() =>
+            {
+                while (true)
+                {
+                    lock (dragPumpLock)
+                    {
+                        if (!System.Threading.Volatile.Read(ref IsDragging) || IsDisposed) { dragPumpRunning = false; return; }
+                    }
+                    if (DwmFlush() != 0) System.Threading.Thread.Sleep(8);
+                    if (System.Threading.Interlocked.Exchange(ref dragPumpPending, 1) == 1) continue;
+                    try { BeginInvoke((Action)DragPumpTick); }
+                    catch (InvalidOperationException) { lock (dragPumpLock) { dragPumpRunning = false; } return; }
+                }
+            }) { IsBackground = true, Name = "CuyDragPump" };
+            thread.Start();
+        }
+
+        private void DragPumpTick()
+        {
+            System.Threading.Interlocked.Exchange(ref dragPumpPending, 0);
+            if (!IsDragging || IsDisposed) return;
+            double now = motionClock.Elapsed.TotalMilliseconds;
+            dragPumpAt = now;
+            UpdateDragPosition(Cursor.Position, now);
+        }
+
         // D2.4: assigning the same frame again would make PictureBox repaint for nothing.
         private void ShowSprite(Image frame)
         {
@@ -280,7 +330,9 @@ namespace Cuy
             motionTimer.Tick += MotionTimer_Tick;
             pictureBox1.MouseMove += (sender, e) =>
             {
-                if (IsDragging) UpdateDragPosition(Cursor.Position, motionClock.Elapsed.TotalMilliseconds);
+                if (!IsDragging) return;
+                double now = motionClock.Elapsed.TotalMilliseconds;
+                if (DragPumpIdle(now)) UpdateDragPosition(Cursor.Position, now);
             };
             pictureBox1.MouseCaptureChanged += (sender, e) =>
             {
@@ -365,7 +417,7 @@ namespace Cuy
                     }
                     dragPerfTickLastAt = now;
                 }
-                UpdateDragPosition(Cursor.Position, now);
+                if (DragPumpIdle(now)) UpdateDragPosition(Cursor.Position, now);
                 return;
             }
             if (motionTimer.Interval != 8) motionTimer.Interval = 8;
@@ -421,6 +473,8 @@ namespace Cuy
             pictureBox1.Capture = true;
             motionTimer.Interval = 8;
             SetMotionTimer(true);
+            dragPumpAt = double.NegativeInfinity;
+            StartDragPump();
         }
 
         private void UpdateDragPosition(Point cursor, double now)
