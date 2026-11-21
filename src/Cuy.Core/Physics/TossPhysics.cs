@@ -72,8 +72,9 @@ namespace Cuy.Core.Physics
             }
             double x = Math.Max(area.Left, Math.Min(right, nextX));
 
-            double dy = state.VelY * dt + .75 * dt * dt;
-            double velY = state.VelY + 1.5 * dt;
+            const double g = 1.5;
+            double dy = state.VelY * dt + 0.5 * g * dt * dt;
+            double velY = state.VelY + g * dt;
             // The probe sees the X already reached in this step, as the original window check did.
             int windowTop = dy > 0 && probe != null ? probe(x, (int)Math.Ceiling(dy)) : -1;
             double ground = area.Bottom - bounds.Height - bounds.FootOffsetY;

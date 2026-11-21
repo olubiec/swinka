@@ -1229,7 +1229,8 @@ namespace Cuy
             int movementDuration = timer1.Interval;
             if (_forcedVisibleAnimId != CurrentAnimation.ID)
             {
-                Opacity = CurrentAnimation.Start.Opacity + (CurrentAnimation.End.Opacity - CurrentAnimation.Start.Opacity) * currentStep / CurrentAnimation.Sequence.TotalSteps;
+                double targetOpacity = CurrentAnimation.Start.Opacity + (CurrentAnimation.End.Opacity - CurrentAnimation.Start.Opacity) * currentStep / CurrentAnimation.Sequence.TotalSteps;
+                if (Math.Abs(Opacity - targetOpacity) > 0.001) Opacity = targetOpacity;
             }
             EnsurePetVisible();
             if (!IsDragging && !IsTossing)
@@ -1907,6 +1908,11 @@ namespace Cuy
                 IsTossing = false;                     // Flag it as not being tossed
                 BeginSmoothDrag();
                 SetNewAnimation(Animations.AnimationDrag);  // Set the dragging animation (if present)
+                if (CurrentAnimation.Sequence.Frames.Count > 0)
+                {
+                    ShowSprite(GetSprite(CurrentAnimation.Sequence.Frames[0]));
+                }
+                timer1.Interval = Math.Max(16, CurrentAnimation.Start.Interval.Value);
             }
             else if(e.Button == MouseButtons.Right && StartUp.IsDebugActive())
             {
@@ -1980,71 +1986,69 @@ namespace Cuy
         private void PictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left || Name.IndexOf("child") >= 0 || !IsDragging) return;
-            if (e.Button == MouseButtons.Left && Name.IndexOf("child") < 0 && IsDragging)
-            {
-                _bubbleHoverTimer?.Stop();
-                int dragDist = Math.Abs(Cursor.Position.X - _clickStartPos.X) + Math.Abs(Cursor.Position.Y - _clickStartPos.Y);
-                TimeSpan dragDuration = DateTime.UtcNow - _clickStartTime;
-                bool wasClick = dragDist < 8 && dragDuration.TotalMilliseconds < 500;
+            _bubbleHoverTimer?.Stop();
+            int dragDist = Math.Abs(Cursor.Position.X - _clickStartPos.X) + Math.Abs(Cursor.Position.Y - _clickStartPos.Y);
+            TimeSpan dragDuration = DateTime.UtcNow - _clickStartTime;
+            bool wasClick = dragDist < 8 && dragDuration.TotalMilliseconds < 500;
 
-                double now = motionClock.Elapsed.TotalMilliseconds;
+            double now = motionClock.Elapsed.TotalMilliseconds;
+            if (!wasClick)
+            {
                 UpdateDragPosition(Cursor.Position, now);
-                TossForce = dragVelocity.TossForce(now);
-
-                // Log toss force
-                StartUp.AddDebugInfo(StartUp.DEBUG_TYPE.info, "Toss force: (" + TossForce.X + ", " + TossForce.Y + ")");
-
-                if (wasClick)
-                {
-                    _brain?.ResumePhysics();
-                    bool irritated = InteractionManager.Instance != null && InteractionManager.Instance.RegisterClick();
-                    if (!irritated)
-                    {
-                        // Click on the pig without dragging -> status bubble
-                        ShowStatusBubble();
-                    }
-                }
-                else
-                {
-                    // Always use ballistic gravity physics on release (even for gentle drops, never slow linear fall).
-                    bool strongToss = TossForce.Length() > 5;
-                    _brain?.InterruptPhysics(strongToss ? "toss" : "fall");
-                    if (strongToss && Animations.AnimationToss != -1)
-                        SetNewAnimation(Animations.AnimationToss);
-                    else
-                        SetNewAnimation(Animations.AnimationFall);
-
-                    BeginToss(now);
-
-                    // Force the interval while tossing/falling to be a nice and smooth 30 (prevents laggy animation for slow drag intervals)
-                    timer1.Interval = 30;
-                }
-                
             }
-            if(IsDragging)
+            TossForce = dragVelocity.TossForce(now);
+
+            // Log toss force
+            StartUp.AddDebugInfo(StartUp.DEBUG_TYPE.info, "Toss force: (" + TossForce.X + ", " + TossForce.Y + ")");
+
+            if (wasClick)
             {
-                // if it was dragged, check if the screen is different
-                // if(Program.MyData.GetMultiscreen()) <-- If manually moved to another screen, set the new screen as default screen.
+                _brain?.ResumePhysics();
+                bool irritated = InteractionManager.Instance != null && InteractionManager.Instance.RegisterClick();
+                if (!irritated)
                 {
-                    Screen[] screens = Screen.AllScreens;
-                    for(var k=0;k<screens.Length;k++)
-                    {
-                        Rectangle bounds = screens[k].Bounds;
+                    // Click on the pig without dragging -> status bubble
+                    ShowStatusBubble();
+                }
+            }
+            else
+            {
+                // Always use ballistic gravity physics on release (even for gentle drops, never slow linear fall).
+                bool strongToss = TossForce.Length() > 5;
+                _brain?.InterruptPhysics(strongToss ? "toss" : "fall");
+                if (strongToss && Animations.AnimationToss != -1)
+                    SetNewAnimation(Animations.AnimationToss);
+                else
+                    SetNewAnimation(Animations.AnimationFall);
+                if (CurrentAnimation.Sequence.Frames.Count > 0)
+                {
+                    ShowSprite(GetSprite(CurrentAnimation.Sequence.Frames[0]));
+                }
 
-                        if (Left + Width / 2 >= bounds.X && 
-                            Left + Width / 2 <= bounds.X + bounds.Width)
-                        {
-                            if (Top + Height / 2 >= bounds.Y && 
-                                Top + Height <= bounds.Y + bounds.Height)
-                            {
-                                DisplayIndex = k;
-                                break;
-                            }
-                        }
+                BeginToss(now);
+
+                // Force the interval while tossing/falling to be a nice and smooth 30 (prevents laggy animation for slow drag intervals)
+                timer1.Interval = 30;
+            }
+
+            // if it was dragged, check if the screen is different
+            Screen[] screens = Screen.AllScreens;
+            for (var k = 0; k < screens.Length; k++)
+            {
+                Rectangle bounds = screens[k].Bounds;
+
+                if (Left + Width / 2 >= bounds.X &&
+                    Left + Width / 2 <= bounds.X + bounds.Width)
+                {
+                    if (Top + Height / 2 >= bounds.Y &&
+                        Top + Height <= bounds.Y + bounds.Height)
+                    {
+                        DisplayIndex = k;
+                        break;
                     }
                 }
             }
-			IsDragging = false;
+            IsDragging = false;
             pictureBox1.Capture = false;
             ResetMotion();
         }

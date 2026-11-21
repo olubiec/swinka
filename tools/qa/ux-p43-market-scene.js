@@ -48,29 +48,27 @@ function makeMarketState() {
     // Ensure market state + seven mock + stub CanvasPig.onHotspot
     await page.evaluate((mkt) => {
       const seven = window.CuyScenesMock ? window.CuyScenesMock.state('seven') : {};
+      const st = Object.assign({}, seven, mkt, {
+        places: Object.assign({}, seven.places || {}, mkt.places)
+      });
       if (window.bridge) {
-        const origGetState = window.bridge.getState.bind(window.bridge);
-        window.bridge.getState = function () {
-          const cur = origGetState() || {};
-          const m = Object.assign({}, cur.market || mkt.market);
-          m.cap = m.cap || 100;
-          m.capLeft = typeof m.capLeft === 'number' && m.capLeft > 0 ? m.capLeft : 80;
-          m.stall = m.stall || { level: 1, nextCost: 50 };
-          if (Array.isArray(m.sellable)) {
-            m.sellable = m.sellable.map(s => s.itemId === 'carrot' ? Object.assign({}, s, { owned: Math.max(5, s.owned || 0) }) : s);
-          } else {
-            m.sellable = mkt.market.sellable;
-          }
-          return Object.assign({}, seven, cur, {
-            clovers: Math.max(250, cur.clovers || 0),
-            places: Object.assign({}, seven.places || {}, cur.places || {}, mkt.places),
-            market: m
-          });
-        };
+        if (typeof window.bridge.setMockState === 'function') {
+          window.bridge.setMockState(st);
+        } else if (typeof window.bridge.getState === 'function') {
+          const cur = window.bridge.getState() || {};
+          Object.assign(cur, st);
+        }
         window.__sentMessages = [];
         const origSend = window.bridge.send.bind(window.bridge);
         window.bridge.send = function (msg) {
           window.__sentMessages.push(msg);
+          if (msg && msg.type === 'market_quote') {
+            setTimeout(() => {
+              if (typeof window.bridge.emitMessage === 'function') {
+                window.bridge.emitMessage({ type: 'market_quote_result', itemId: msg.itemId, count: msg.count, total: msg.count * 8, unitPrice: 8 });
+              }
+            }, 10);
+          }
           return origSend(msg);
         };
       }
@@ -111,10 +109,10 @@ function makeMarketState() {
 
     // K2: buy-sends-market_buy
     await page.evaluate(() => { window.__sentMessages = []; });
-    await page.click('.market-scene-panel [data-buy="seed_carrot"]');
+    await page.click('.market-scene-panel [data-buy="carrot"]');
     await page.waitForTimeout(50);
     const buyMsgs = await page.evaluate(() => window.__sentMessages.filter(m => m && m.type === 'market_buy'));
-    assert(buyMsgs.length >= 1 && buyMsgs[0].itemId === 'seed_carrot' && buyMsgs[0].count === 1, 'K2: market_buy sent');
+    assert(buyMsgs.length >= 1 && buyMsgs[0].itemId === 'carrot' && buyMsgs[0].count === 1, 'K2: market_buy sent');
     pass('K2', 'buy-sends-market_buy');
 
     // K6: one-panel-at-a-time
@@ -126,7 +124,7 @@ function makeMarketState() {
     const panelCount = await page.locator('.market-scene-panel').count();
     const k6Text = await page.textContent('.market-scene-panel');
     assert.strictEqual(panelCount, 1, 'K6: only one panel at a time');
-    assert(k6Text && k6Text.includes('Hay'), 'K6: switched to pantry stall');
+    assert(k6Text && k6Text.includes('Kale'), 'K6: switched to pantry stall');
     pass('K6', 'one-panel-at-a-time');
 
     // K5: panel-inside-window (both viewports, edge anchor)

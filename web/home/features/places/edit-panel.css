@@ -56,16 +56,22 @@
   outline-offset: 1px;
 }
 
-/* Stash drawer (above .actions-section, 9-slice wood panel) */
+/* Hide action menu while edit drawer is open (drawer replaces menu at bottom) */
+body.cuy-edit-open .actions-grid {
+  display: none;
+}
+
+/* Stash drawer (replaces .actions-grid at bottom, 9-slice wood panel) */
 .edit-drawer {
   position: fixed;
-  bottom: 122px;
+  bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
   height: auto;
-  max-height: 220px;
-  min-height: 120px;
+  max-height: 240px;
+  min-height: 100px;
+  overflow-y: auto;
   box-sizing: border-box;
   background-color: var(--ui-wood-3, #c58a52);
   border: 4px solid var(--ui-wood-1, #6f4328);
@@ -80,6 +86,23 @@
 }
 
 .edit-drawer[hidden] {
+  display: none !important;
+}
+
+.edit-drawer.is-collapsed {
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+.edit-drawer.is-collapsed .edit-drawer-header {
+  border-bottom: 0;
+}
+
+.edit-drawer.is-collapsed .edit-hint,
+.edit-drawer.is-collapsed .edit-drawer-filters,
+.edit-drawer.is-collapsed .edit-drawer-subpanel,
+.edit-drawer.is-collapsed .edit-drawer-content {
   display: none !important;
 }
 
@@ -188,6 +211,44 @@
   pointer-events: none;
 }
 
+.edit-drawer-collapse {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  padding: 0;
+  line-height: 16px;
+  font-size: 12px;
+  font-family: var(--ui-font, 'Pixelify Sans', monospace);
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  background: var(--ui-wood-4, #e3b27a);
+  color: var(--ui-wood-0, #47281c);
+  border: 2px solid var(--ui-wood-0, #47281c);
+  border-image: none;
+  box-shadow: inset 0 1px 0 var(--ui-cream-0, #fff4d6);
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.edit-drawer-collapse:hover {
+  background: var(--ui-cream-0, #fff4d6);
+}
+
+.edit-drawer-collapse:active {
+  background: var(--ui-wood-2, #9b6238);
+  color: var(--ui-cream-0, #fff4d6);
+}
+
+.edit-drawer-collapse:focus-visible {
+  outline: 2px solid var(--ui-hay-2, #e9c871);
+  outline-offset: 1px;
+}
+
 .edit-drawer-close {
   width: 20px;
   height: 20px;
@@ -212,8 +273,8 @@
 }
 
 .edit-drawer-content {
-  flex: 1;
-  min-height: 0;
+  flex: 1 0 auto;
+  min-height: 98px;
   overflow: hidden;
   display: flex;
   align-items: center;

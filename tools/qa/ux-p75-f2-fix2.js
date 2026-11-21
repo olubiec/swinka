@@ -13,7 +13,7 @@ async function launchBrowser() {
   ]) {
     try {
       return await chromium.launch(opts);
-    } catch (_) {}
+    } catch (_) { }
   }
   return await chromium.launch({ headless: true });
 }

@@ -33,6 +33,10 @@
     } catch (e) { }
   }
 
+  const DRAG_LIFT_MIN = 10;
+  const DRAG_LIFT_MAX = 48;
+  const DRAG_SWING_MAX = 3.5;
+  const DRAG_SWING_K = 0.1;
   const KNOWN_NAMED_PIGS = new Set(['kuki', 'ned', 'james', 'glen', 'racuch', 'cuy']);
   const VALID_STAGES = new Set(['baby', 'junior', 'adult', 'senior', 'legend']);
 
@@ -270,9 +274,31 @@
 
   // Home scene light for pigs (rules in docs/SWIATLO_SWINEK.md): the pig's own light strength,
   // the soft knee above which the coat is compressed, and the cap on the light multiplier.
-  const PIG_LIGHT_STRENGTH = 0.5;
-  const PIG_LIGHT_MAX = 1.15;
-  const PIG_KNEE = 200;
+  // Pig light defaults (overridden by lights.json pig_light via scene.pigLight): ambient at full strength like the room,
+  // lamps scaled by source_gain, result capped at max (1.0 = never brighter than the daylight sprite), soft knee.
+  const PIG_LIGHT_DEFAULTS = { ambient_strength: 1.0, source_gain: 0.6, min: 0.2, max: 1.0, knee: 200 };
+  // Pure: [r,g,b] light multipliers for a pig pixel at world (wx,wy).
+  function pigLightAt(ambient, sources, wx, wy, cfg) {
+    const c = Object.assign({}, PIG_LIGHT_DEFAULTS, cfg || {});
+    const amb = Array.isArray(ambient) ? ambient : [1, 1, 1];
+    const l = [0, 1, 2].map((ch) => (typeof amb[ch] === 'number' && !isNaN(amb[ch]) ? amb[ch] : 1));
+    (sources || []).forEach((src) => {
+      const r = src.radius || 40;
+      const dist = Math.hypot(src.x - wx, src.y - wy);
+      if (!(dist < r)) return;
+      const k = (src.intensity ?? 1) * (1 - dist / r);
+      let col = src.color || [1, 1, 1];
+      if (col === 'ambient') col = amb; else if (!Array.isArray(col)) col = [1, 1, 1];
+      for (let ch = 0; ch < 3; ch++) {
+        const val = typeof col[ch] === 'number' && !isNaN(col[ch]) ? col[ch] : 1;
+        l[ch] += k * val * c.source_gain;
+      }
+    });
+    return l.map((v) => {
+      const cl = Math.max(c.min, Math.min(c.max, isNaN(v) ? 1 : v));
+      return 1 - c.ambient_strength + c.ambient_strength * cl;
+    });
+  }
   // Contact shadow sprite per life stage (senior and legend use the adult shadow) and its width.
   const PIG_SHADOW_BY_STAGE = { baby: 'baby', junior: 'junior', adult: 'adult', senior: 'adult', legend: 'adult' };
   const PIG_SHADOW_WIDTH = { baby: 30, junior: 38, adult: 46 };
@@ -2553,19 +2579,20 @@
           const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
           const anchor = this._dragAnchor || { dx: 0, dy: 0 };
           const dragDx = p.x - (typeof this._dragStartSceneX === 'number' ? this._dragStartSceneX : p.x);
-          const rawX = p.x - anchor.dx + dragDx * 0.08;
+          const swingX = Math.max(-DRAG_SWING_MAX, Math.min(DRAG_SWING_MAX, dragDx * DRAG_SWING_K));
+          const rawX = p.x - anchor.dx + swingX;
           const rawVisualY = p.y - anchor.dy;
-          const visualX = Math.max(x0, Math.min(x1, rawX));
-          const visualY = Math.max(16, Math.min(y1, rawVisualY));
-          const baseGroundY = typeof this._dragGroundY === 'number' ? this._dragGroundY : this.pigY;
-          const groundY = Math.max(y0, Math.min(y1, Math.max(baseGroundY, visualY)));
-          this._dragGroundY = groundY;
-          if (Math.abs(visualX - this.pigX) > 0.5) {
-            this.facing = visualX >= this.pigX ? 1 : -1;
+          const targetX = Math.max(x0, Math.min(x1, rawX));
+          const targetY = Math.max(y0, Math.min(y1, rawVisualY));
+          const clamped = this.clampDragToFree(this.pigX, this.pigY, targetX, targetY);
+          if (Math.abs(clamped.x - this.pigX) > 0.5) {
+            this.facing = clamped.x >= this.pigX ? 1 : -1;
           }
-          this.pigX = visualX;
-          this.pigY = groundY;
-          this.pigAirY = Math.max(10, groundY - visualY);
+          this.pigX = clamped.x;
+          this.pigY = clamped.y;
+          this.pigAirY = Math.max(DRAG_LIFT_MIN, Math.min(DRAG_LIFT_MAX, DRAG_LIFT_MIN + Math.max(0, y0 - rawVisualY)));
+          const visualX = this.pigX;
+          const visualY = this.pigY - this.pigAirY;
           this._overridePrimaryPos = true;
           if (this.scenePigs && typeof this.scenePigs.movePrimary === 'function') {
             this.scenePigs.movePrimary(this.pigX, this.pigY);
@@ -3354,7 +3381,7 @@
       }
 
       if (this.edgeHold) {
-        this.drawEdgeIndicator(ctx);
+
       }
     }
 
@@ -3937,7 +3964,7 @@
     }
 
     // Copy of one sprite frame lit by the scene: ambient plus the two nearest sources, multiplied in
-    // at PIG_LIGHT_STRENGTH without dither. Returns null when the pixels cannot be read (tainted canvas).
+    // via pigLightAt without dither. Returns null when the pixels cannot be read (tainted canvas).
     litFrame(sheet, sx, sy, scene) {
       if (!sheet) return null;
       const sc = scene || {};
@@ -3975,7 +4002,7 @@
           return `${s.x},${s.y},${s.radius || 40},${s.intensity ?? 1},${col}`;
         }).join(';');
         const originKey = sources.length > 0 ? `${Math.round(origin.x / 2)},${Math.round(origin.y / 2)}` : 'static';
-        cacheKey = `${sheetKey}|${sx},${sy}|${originKey}|${ambient.map((v) => v.toFixed(2)).join(',')}|${srcKey}`;
+        cacheKey = `${sheetKey}|${sx},${sy}|${originKey}|${ambient.map((v) => v.toFixed(2)).join(',')}|${srcKey}|${JSON.stringify(Object.assign({}, PIG_LIGHT_DEFAULTS, sc.pigLight || {}))}`;
         if (this._litFrameCache.has(cacheKey)) {
           const cached = this._litFrameCache.get(cacheKey);
           this._litFrameCache.delete(cacheKey);
@@ -3995,39 +4022,16 @@
       if (!img) return null;
       const data = img.data;
 
-      const light = [0, 0, 0];
+      const pcfg = Object.assign({}, PIG_LIGHT_DEFAULTS, sc.pigLight || {});
       for (let py = 0; py < FRAME_SIZE; py++) {
         for (let px = 0; px < FRAME_SIZE; px++) {
           const i = (py * FRAME_SIZE + px) * 4;
           if (data[i + 3] === 0) continue;
-          const wx = origin.x + px;
-          const wy = origin.y + py;
-          light[0] = ambient[0];
-          light[1] = ambient[1];
-          light[2] = ambient[2];
-          sources.forEach((src) => {
-            const r = src.radius || 40;
-            const dist = Math.hypot(src.x - wx, src.y - wy);
-            if (dist >= r) return;
-            const k = (src.intensity ?? 1) * (1 - dist / r);
-            let col = src.color || [1, 1, 1];
-            if (col === 'ambient') {
-              col = ambient;
-            } else if (!Array.isArray(col)) {
-              col = [1, 1, 1];
-            }
-            for (let ch = 0; ch < 3; ch++) {
-              const val = typeof col[ch] === 'number' && !isNaN(col[ch]) ? col[ch] : 1;
-              light[ch] += k * val;
-            }
-          });
-          // Multiply only, with a cap and a soft knee: the coat darkens or tints but never burns out to white.
+          const f = pigLightAt(ambient, sources, origin.x + px, origin.y + py, pcfg);
           for (let ch = 0; ch < 3; ch++) {
-            const rawLight = (typeof light[ch] === 'number' && !isNaN(light[ch])) ? light[ch] : 1;
-            const l = Math.max(0.4, Math.min(PIG_LIGHT_MAX, rawLight));
-            const v = data[i + ch] * (1 - PIG_LIGHT_STRENGTH + PIG_LIGHT_STRENGTH * l);
+            const v = data[i + ch] * f[ch];
             const clampedV = (typeof v === 'number' && !isNaN(v)) ? v : data[i + ch];
-            data[i + ch] = clampedV <= PIG_KNEE ? clampedV : PIG_KNEE + (clampedV - PIG_KNEE) * 0.5;
+            data[i + ch] = clampedV <= pcfg.knee ? clampedV : pcfg.knee + (clampedV - pcfg.knee) * 0.5;
           }
         }
       }
@@ -4440,6 +4444,7 @@
 
   root.PigCanvas = PigCanvas;
   root.CanvasPig = CanvasPig;
+  CanvasPig.pigLightAt = pigLightAt;
   PigCanvas.CanvasPig = CanvasPig;
   PigCanvas.instance = null;
   PigCanvas.setScene = (def) => CanvasPig.setScene(def);

@@ -2,6 +2,7 @@
   'use strict';
 
   let _isOpen = false;
+  let _isCollapsed = false;
   let _lastState = null;
   let _currentSceneId = 'salon';
 
@@ -1271,7 +1272,58 @@
     }
   }
 
+  function syncEditOpenBodyClass(drawer) {
+    if (typeof document === 'undefined' || !document.body) return;
+    const isOpenNow = !!(drawer && !drawer.hidden);
+    document.body.classList.toggle('cuy-edit-open', isOpenNow);
+  }
+
+  function setDrawerHidden(drawer, hidden) {
+    if (!drawer) return;
+    drawer.hidden = !!hidden;
+    syncEditOpenBodyClass(drawer);
+  }
+
+  function observeDrawerHidden(drawer) {
+    if (!drawer || drawer._cuyHiddenObserverBound || typeof MutationObserver === 'undefined') return;
+    drawer._cuyHiddenObserverBound = true;
+    const obs = new MutationObserver(function () {
+      syncEditOpenBodyClass(drawer);
+    });
+    obs.observe(drawer, { attributes: true, attributeFilter: ['hidden'] });
+  }
+
+  function applyCollapsedState(drawer) {
+    if (!drawer) return;
+    drawer.classList.toggle('is-collapsed', !!_isCollapsed);
+    const collapseBtn = drawer.querySelector('#editDrawerCollapse');
+    if (collapseBtn) {
+      collapseBtn.setAttribute('aria-expanded', _isCollapsed ? 'false' : 'true');
+      collapseBtn.textContent = _isCollapsed ? '\u25B4' : '\u25BE';
+      const label = _isCollapsed ? 'Expand stash' : 'Collapse stash';
+      collapseBtn.setAttribute('aria-label', label);
+      collapseBtn.setAttribute('title', label);
+    }
+  }
+
+  function bindCollapseButton(container) {
+    if (!container) return;
+    const collapseBtn = container.querySelector('#editDrawerCollapse');
+    if (collapseBtn && !collapseBtn._cuyCollapseBound) {
+      collapseBtn._cuyCollapseBound = true;
+      collapseBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        _isCollapsed = !_isCollapsed;
+        applyCollapsedState(document.getElementById('editDrawer'));
+        positionDrawer();
+      });
+    }
+  }
+
   function bindHeaderActions(container) {
+    bindCollapseButton(container);
+
     const closeBtn = container.querySelector('#editDrawerClose');
     if (closeBtn) {
       closeBtn.addEventListener('click', function () {
@@ -1342,24 +1394,27 @@
     if (typeof document === 'undefined') return;
     const drawer = document.getElementById('editDrawer');
     if (!drawer || drawer.hidden) return;
-    const moreBtn = document.getElementById('btnMore');
-    const bar = document.getElementById('placesBar');
-    const vh = window.innerHeight || document.documentElement.clientHeight || 640;
-    let bottomPx = 122;
-    if (moreBtn) {
-      const mRect = moreBtn.getBoundingClientRect();
-      if (mRect.height > 0 && mRect.top > 0) {
-        bottomPx = Math.max(bottomPx, Math.ceil(vh - mRect.top + 4));
-      }
+    drawer.style.bottom = '0px';
+    if (_isCollapsed) {
+      drawer.style.maxHeight = '';
+      return;
     }
-    drawer.style.bottom = bottomPx + 'px';
-    if (bar) {
+    const vh = window.innerHeight || document.documentElement.clientHeight || 640;
+    const canvas = document.getElementById('pigCanvas');
+    const bar = document.getElementById('placesBar');
+    let maxH = 240;
+    if (canvas) {
+      const cRect = canvas.getBoundingClientRect();
+      if (cRect.height > 0 && cRect.bottom > 0) {
+        maxH = Math.min(maxH, Math.floor(vh - cRect.bottom - 4));
+      }
+    } else if (bar) {
       const bRect = bar.getBoundingClientRect();
       if (bRect.height > 0) {
-        const maxH = Math.max(120, Math.floor(vh - bottomPx - bRect.bottom - 4));
-        drawer.style.maxHeight = Math.min(230, maxH) + 'px';
+        maxH = Math.min(maxH, Math.floor(vh - bRect.bottom - 4));
       }
     }
+    drawer.style.maxHeight = Math.max(100, maxH) + 'px';
   }
 
   function ensureDrawerInnerNodes(drawer) {
@@ -1416,22 +1471,47 @@
         '<button type="button" class="ui-btn edit-unlock-btn" id="editDrawerUnlockBtn" aria-label="Unlock place" style="display:none;" hidden>' +
           'Unlock (<span class="edit-unlock-cost">0</span> <span class="pixel-icon icon-clover" aria-hidden="true"></span>)' +
         '</button>' +
+        '<button type="button" class="edit-drawer-collapse" id="editDrawerCollapse" aria-label="Collapse stash" title="Collapse stash" aria-expanded="true">&#x25BE;</button>' +
         '<button type="button" class="ui-close edit-drawer-close" id="editDrawerClose" aria-label="Close stash"></button>' +
       '</div>';
 
     const existingDrawer = document.getElementById('editDrawer');
-    if (existingDrawer && !existingDrawer.querySelector('#editDrawerUpgradeBtn')) {
-      const header = existingDrawer.querySelector('.edit-drawer-header');
-      if (header) {
-        header.innerHTML =
-          '<div class="edit-drawer-header-left">' +
-            '<span class="edit-drawer-title" id="editDrawerTitle">Stash</span>' +
-            '<span class="edit-drawer-level" id="editDrawerLevel">Level 1</span>' +
-          '</div>' +
-          actionsHtml;
-        bindHeaderActions(existingDrawer);
+    if (existingDrawer) {
+      if (!existingDrawer.querySelector('#editDrawerUpgradeBtn')) {
+        const header = existingDrawer.querySelector('.edit-drawer-header');
+        if (header) {
+          header.innerHTML =
+            '<div class="edit-drawer-header-left">' +
+              '<span class="edit-drawer-title" id="editDrawerTitle">Stash</span>' +
+              '<span class="edit-drawer-level" id="editDrawerLevel">Level 1</span>' +
+            '</div>' +
+            actionsHtml;
+          bindHeaderActions(existingDrawer);
+        }
+        ensureDrawerInnerNodes(existingDrawer);
+      } else if (!existingDrawer.querySelector('#editDrawerCollapse')) {
+        const actionsEl = existingDrawer.querySelector('.edit-drawer-header-actions');
+        const closeBtn = existingDrawer.querySelector('#editDrawerClose');
+        if (actionsEl) {
+          const colBtn = document.createElement('button');
+          colBtn.type = 'button';
+          colBtn.className = 'edit-drawer-collapse';
+          colBtn.id = 'editDrawerCollapse';
+          colBtn.setAttribute('aria-label', 'Collapse stash');
+          colBtn.setAttribute('title', 'Collapse stash');
+          colBtn.setAttribute('aria-expanded', 'true');
+          colBtn.textContent = '\u25BE';
+          if (closeBtn && closeBtn.parentNode === actionsEl) {
+            actionsEl.insertBefore(colBtn, closeBtn);
+          } else {
+            actionsEl.appendChild(colBtn);
+          }
+          bindCollapseButton(existingDrawer);
+        }
       }
-      ensureDrawerInnerNodes(existingDrawer);
+      observeDrawerHidden(existingDrawer);
+      applyCollapsedState(existingDrawer);
+      syncEditOpenBodyClass(existingDrawer);
     }
 
     if (!document.getElementById('editDrawer')) {
@@ -1441,7 +1521,7 @@
       drawer.setAttribute('role', 'region');
       drawer.setAttribute('aria-label', 'Item stash');
       drawer.setAttribute('data-allow-clip', 'true');
-      drawer.hidden = true;
+      setDrawerHidden(drawer, true);
       drawer.innerHTML =
         '<div class="edit-drawer-header">' +
           '<div class="edit-drawer-header-left">' +
@@ -1458,6 +1538,8 @@
         '</div>';
       document.body.appendChild(drawer);
       bindHeaderActions(drawer);
+      observeDrawerHidden(drawer);
+      applyCollapsedState(drawer);
 
       if (!drawer._dragBound) {
         drawer.addEventListener('pointerdown', onPointerDown);
@@ -1669,7 +1751,8 @@
     const drawer = document.getElementById('editDrawer');
     if (!drawer) return;
 
-    drawer.hidden = !_isOpen;
+    setDrawerHidden(drawer, !_isOpen);
+    applyCollapsedState(drawer);
     const hintEl = document.getElementById('editHint');
     if (hintEl) {
       hintEl.hidden = !_isOpen;

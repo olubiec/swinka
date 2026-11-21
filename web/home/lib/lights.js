@@ -170,6 +170,7 @@
     ambientFor: ambientFor,
     autoOn: autoOn,
     activeSources: activeSources,
+    pigLight: function (lights) { return (lights && lights.pig_light) || null; },
     tint: tint,
     nearest: nearest
   };

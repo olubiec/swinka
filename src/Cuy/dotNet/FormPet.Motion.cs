@@ -15,7 +15,6 @@ namespace Cuy
         private readonly MotionTrack motion = new MotionTrack();
         private readonly DragVelocity dragVelocity = new DragVelocity();
         private Timer motionTimer;
-        private Point dragAnchor;
         private double tossUpdatedAt;
         private int tossBounces;
         private const double FallCacheMs = 2000;   // window list reuse during a toss (D2.2)
@@ -40,6 +39,12 @@ namespace Cuy
         private static extern bool UnhookWinEvent(IntPtr hook);
         [DllImport("user32.dll")]
         private static extern uint GetWindowThreadProcessId(IntPtr window, out uint process);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOZORDER = 0x0004;
+        private const uint SWP_NOACTIVATE = 0x0010;
+        private Point dragAnchor;
 
         // D2.4: assigning the same frame again would make PictureBox repaint for nothing.
         private void ShowSprite(Image frame)
@@ -89,7 +94,8 @@ namespace Cuy
         internal IList<Rectangle> GetFallWindowRects()
         {
             double nowMs = motionClock.Elapsed.TotalMilliseconds;
-            if (nowMs - fallCacheAt >= FallCacheMs)
+            // Never stall an active drag with EnumWindows; BeginSmoothDrag warms the cache.
+            if (!IsDragging && nowMs - fallCacheAt >= FallCacheMs)
             {
                 RefreshFallWindows();
                 fallCacheAt = nowMs;
@@ -103,19 +109,25 @@ namespace Cuy
             tossBounces = 0;
             ResetTossPerf();
 
-            // Init vertical toss velocity and snapshot window rects once before the 8 ms toss loop starts.
+            // Init vertical toss velocity and reuse recent window rects if still fresh.
             tossVertVel = TossForce.Y;
             tossUpdatedAt = now;
-            RefreshFallWindows();
-            fallCacheAt = motionClock.Elapsed.TotalMilliseconds;
+            if (Math.Abs(TossForce.X) > 0.5f && ((TossForce.X < 0 && !spritesFlipped) || (TossForce.X > 0 && spritesFlipped)))
+            {
+                IsMovingLeft = !IsMovingLeft;
+                spritesFlipped = !spritesFlipped;
+            }
+            double clockNow = motionClock.Elapsed.TotalMilliseconds;
+            if (clockNow - fallCacheAt >= FallCacheMs)
+            {
+                RefreshFallWindows();
+                fallCacheAt = clockNow;
+            }
         }
 
         private void AdvanceToss(double now)
         {
             double dtMs = now - tossUpdatedAt;
-            double dt = Math.Max(0, Math.Min(50, dtMs)) / 30.0;
-            int scale = Program.MyData != null ? Math.Max(1, Program.MyData.GetScale()) : 1;
-            double gravityScale = scale == 1 ? 1.0 : scale * 0.85;
 
             // Physics lives in Cuy.Core (TossPhysics). Pauses are bounded to 50 ms inside the step.
             var state = new TossState { X = PositionX, Y = PositionY, VelX = TossForce.X, VelY = tossVertVel };
@@ -128,7 +140,13 @@ namespace Cuy
             PositionX = step.State.X;
             double nextY = step.State.Y;
             TossForce.X = (float)step.State.VelX;
-            tossVertVel = step.State.VelY + (gravityScale - 1.0) * 1.5 * dt;
+            tossVertVel = step.State.VelY;
+
+            if (Math.Abs(TossForce.X) > 0.5f && ((TossForce.X < 0 && !spritesFlipped) || (TossForce.X > 0 && spritesFlipped)))
+            {
+                IsMovingLeft = !IsMovingLeft;
+                spritesFlipped = !spritesFlipped;
+            }
 
             // Bounce off the top edge of the screen instead of flying off-screen.
             if (nextY < ScreenArea.Top)
@@ -144,8 +162,7 @@ namespace Cuy
             RenderMotion(now);
             if (step.Landed)
             {
-                double bounceThreshold = 6.0 * gravityScale;
-                if (tossVertVel > bounceThreshold && tossBounces < 2)
+                if (tossVertVel > 6.0 && tossBounces < 2)
                 {
                     tossVertVel = -tossVertVel * 0.35;
                     TossForce.X *= 0.75f;
@@ -255,8 +272,9 @@ namespace Cuy
             };
             pictureBox1.MouseCaptureChanged += (sender, e) =>
             {
-                if (!IsDisposed && !Disposing && IsDragging && !pictureBox1.Capture)
-                    PictureBox1_MouseUp(sender, new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
+                // If another window steals mouse capture mid-drag, treat it as releasing the pet.
+                if (IsDragging && !pictureBox1.Capture)
+                    PictureBox1_MouseUp(pictureBox1, new MouseEventArgs(MouseButtons.Left, 0, 0, 0, 0));
             };
         }
 
@@ -327,6 +345,7 @@ namespace Cuy
                 UpdateDragPosition(Cursor.Position, now);
                 return;
             }
+            if (motionTimer.Interval != 8) motionTimer.Interval = 8;
             if (IsTossing) AdvanceToss(now);
             else
             {
@@ -347,31 +366,49 @@ namespace Cuy
 
         private void BeginSmoothDrag()
         {
-            // Preserve the exact grab point, like dragging a normal window.
-            SyncFollowHook();
             dragAnchor = PointToClient(Cursor.Position);
-            PositionX = Left; PositionY = Top;
+            SyncFollowHook();
+            PositionX = Left;
+            PositionY = Top;
             OffsetY = 0;
+            ShadowForm.DisposeShadow();
             double now = motionClock.Elapsed.TotalMilliseconds;
-            motion.Reset(Left, Top, now);
-            dragVelocity.Reset(Left, Top, now);
+            if (now - fallCacheAt >= FallCacheMs)
+            {
+                RefreshFallWindows();
+                fallCacheAt = now;
+            }
+            motion.Reset(PositionX, PositionY, now);
+            dragVelocity.Reset(PositionX, PositionY, now);
             pictureBox1.Capture = true;
+            motionTimer.Interval = 8;
             SetMotionTimer(true);
         }
 
         private void UpdateDragPosition(Point cursor, double now)
         {
-            Point position = new Point(cursor.X - dragAnchor.X, cursor.Y - dragAnchor.Y);
-            PositionX = position.X; PositionY = position.Y;
-            OffsetY = 0;
+            int x = cursor.X - dragAnchor.X;
+            int y = cursor.Y - dragAnchor.Y;
+            if (x != (int)PositionX || y != (int)PositionY)
+            {
+                double dx = x - PositionX;
+                if (Math.Abs(dx) > 1.0 && ((dx < 0 && !spritesFlipped) || (dx > 0 && spritesFlipped)))
+                {
+                    IsMovingLeft = !IsMovingLeft;
+                    spritesFlipped = !spritesFlipped;
+                    if (CurrentAnimation.Sequence.Frames.Count > 0)
+                    {
+                        int idx = Math.Max(0, Math.Min(AnimationStep, CurrentAnimation.Sequence.Frames.Count - 1));
+                        ShowSprite(GetSprite(CurrentAnimation.Sequence.Frames[idx]));
+                    }
+                }
+                PositionX = x;
+                PositionY = y;
+                OffsetY = 0;
+                SetWindowPos(Handle, IntPtr.Zero, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+            }
             dragVelocity.Add(PositionX, PositionY, now);
             motion.Reset(PositionX, PositionY, now);
-            if (Location != position) Location = position;
-            if (now - lastShadowDragUpdateMs >= 16.0)
-            {
-                lastShadowDragUpdateMs = now;
-                ShadowForm.Update(this);
-            }
         }
     }
 }
