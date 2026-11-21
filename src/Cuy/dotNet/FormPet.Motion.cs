@@ -28,6 +28,8 @@ namespace Cuy
         private double perfLastTickAt = -1;
         private bool spritesFlipped;
         private readonly Dictionary<int, Image> flippedSprites = new Dictionary<int, Image>();
+        // ImageList.Images[i] returns a new copy on every read, so frames are cached; otherwise ShowSprite's reference check never matches.
+        private readonly Dictionary<int, Image> normalSprites = new Dictionary<int, Image>();
         private Timer followFallback;
         private IntPtr followHook, hookedWindow;
         private WinEventCallback followCallback;
@@ -55,13 +57,18 @@ namespace Cuy
         private Image GetSprite(int index)
         {
             // Front-facing symmetrical sprites (front_idle, front_look 352-356, front_happy) must never be flipped
-            if ((index >= 336 && index <= 356) || (index >= 373 && index <= 380))
-            {
-                return imageList1.Images[index];
-            }
+            bool symmetrical = (index >= 336 && index <= 356) || (index >= 373 && index <= 380);
 
-            if (!spritesFlipped) return imageList1.Images[index];
             Image image;
+            if (symmetrical || !spritesFlipped)
+            {
+                if (!normalSprites.TryGetValue(index, out image))
+                {
+                    image = imageList1.Images[index];
+                    normalSprites.Add(index, image);
+                }
+                return image;
+            }
             if (!flippedSprites.TryGetValue(index, out image))
             {
                 image = imageList1.Images[index];
@@ -120,8 +127,11 @@ namespace Cuy
             double clockNow = motionClock.Elapsed.TotalMilliseconds;
             if (clockNow - fallCacheAt >= FallCacheMs)
             {
+                double t0 = motionClock.Elapsed.TotalMilliseconds;
                 RefreshFallWindows();
                 fallCacheAt = clockNow;
+                if (perfEnabled) BrainController.Log(string.Format(CultureInfo.InvariantCulture,
+                    "[PERF] RefreshFallWindows {0:F1} ms, {1} windows", motionClock.Elapsed.TotalMilliseconds - t0, fallRects.Count));
             }
         }
 
@@ -217,6 +227,8 @@ namespace Cuy
             ShadowForm.DisposeShadow();
             foreach (Image image in flippedSprites.Values) image.Dispose();
             flippedSprites.Clear();
+            foreach (Image image in normalSprites.Values) image.Dispose();
+            normalSprites.Clear();
         }
 
         private void DisplaySettingsChanged(object sender, EventArgs e)
@@ -364,6 +376,18 @@ namespace Cuy
 
         private double lastShadowDragUpdateMs = -1000.0;
 
+        // CUY_PERF=1: drag diagnostics. Gaps between position updates show whether the UI thread is blocked.
+        private double dragPerfLastAt = -1, dragPerfMaxGap, dragPerfMaxSetPos, dragPerfSumSetPos, dragPerfStartAt;
+        private int dragPerfUpdates, dragPerfGapsOver25;
+        private void ReportDragPerf()
+        {
+            if (!perfEnabled || dragPerfUpdates == 0) return;
+            BrainController.Log(string.Format(CultureInfo.InvariantCulture,
+                "[PERF] drag-perf updates={0} dur={1:F0}ms maxGap={2:F1} gaps>25ms={3} setPos avg={4:F2} max={5:F2} (ms)",
+                dragPerfUpdates, motionClock.Elapsed.TotalMilliseconds - dragPerfStartAt, dragPerfMaxGap, dragPerfGapsOver25,
+                dragPerfSumSetPos / dragPerfUpdates, dragPerfMaxSetPos));
+        }
+
         private void BeginSmoothDrag()
         {
             dragAnchor = PointToClient(Cursor.Position);
@@ -372,11 +396,12 @@ namespace Cuy
             PositionY = Top;
             OffsetY = 0;
             ShadowForm.DisposeShadow();
+            // No EnumWindows here: it stalls the UI thread at the grab. BeginToss refreshes a stale list on release.
             double now = motionClock.Elapsed.TotalMilliseconds;
-            if (now - fallCacheAt >= FallCacheMs)
+            if (perfEnabled)
             {
-                RefreshFallWindows();
-                fallCacheAt = now;
+                dragPerfLastAt = -1; dragPerfMaxGap = 0; dragPerfMaxSetPos = 0; dragPerfSumSetPos = 0;
+                dragPerfUpdates = 0; dragPerfGapsOver25 = 0; dragPerfStartAt = now;
             }
             motion.Reset(PositionX, PositionY, now);
             dragVelocity.Reset(PositionX, PositionY, now);
@@ -405,7 +430,22 @@ namespace Cuy
                 PositionX = x;
                 PositionY = y;
                 OffsetY = 0;
+                double t0 = perfEnabled ? motionClock.Elapsed.TotalMilliseconds : 0;
                 SetWindowPos(Handle, IntPtr.Zero, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+                if (perfEnabled)
+                {
+                    double spent = motionClock.Elapsed.TotalMilliseconds - t0;
+                    dragPerfSumSetPos += spent;
+                    if (spent > dragPerfMaxSetPos) dragPerfMaxSetPos = spent;
+                    if (dragPerfLastAt >= 0)
+                    {
+                        double gap = now - dragPerfLastAt;
+                        if (gap > dragPerfMaxGap) dragPerfMaxGap = gap;
+                        if (gap > 25) dragPerfGapsOver25++;
+                    }
+                    dragPerfLastAt = now;
+                    dragPerfUpdates++;
+                }
             }
             dragVelocity.Add(PositionX, PositionY, now);
             motion.Reset(PositionX, PositionY, now);

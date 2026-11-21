@@ -813,6 +813,7 @@ namespace Cuy
                     imageList1.Images.Add(s);
                 }
                 flippedSprites.Clear();
+                normalSprites.Clear();
                 Invalidate();
             }
             catch (Exception ex)
@@ -1996,6 +1997,7 @@ namespace Cuy
             {
                 UpdateDragPosition(Cursor.Position, now);
             }
+            ReportDragPerf();
             TossForce = dragVelocity.TossForce(now);
 
             // Log toss force
