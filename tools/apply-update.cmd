@@ -11,6 +11,9 @@ powershell -NoProfile -Command "while(Get-Process -Id %1 -ErrorAction SilentlyCo
 :: Archive extraction
 powershell -NoProfile -Command "Expand-Archive -Path '%~2' -DestinationPath '%~3' -Force; if(Test-Path '%~3\Cuy_v1\Cuy.exe'){ Get-ChildItem '%~3\Cuy_v1\*' | Move-Item -Destination '%~3' -Force; Remove-Item '%~3\Cuy_v1' -Recurse -Force }"
 
+:: Create or update Desktop shortcut
+powershell -NoProfile -Command "try { $ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut((Join-Path ([Environment]::GetFolderPath('Desktop')) 'Cuy.lnk')); $s.TargetPath = '%~3\Cuy.exe'; $s.WorkingDirectory = '%~3'; $s.IconLocation = '%~3\Cuy.exe,0'; $s.Save() } catch {}"
+
 :: Cleanup: deletes %~2 or temp directory
 if exist "%~2" del /f /q "%~2" 2>nul
 if exist "%TEMP%\CuyUpdate" rmdir /s /q "%TEMP%\CuyUpdate" 2>nul
