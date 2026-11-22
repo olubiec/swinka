@@ -21,27 +21,85 @@
      * @param {string} [basePath]
      */
     static preload(scene, stageKey = 'adult', basePath = null) {
-      const look = MinigryPig.look || { breed: 'smooth', paletteId: 'tricolor' };
+      const look = MinigryPig.look || { breed: 'smooth', paletteId: 'tricolor', namedId: null, stage: null };
       const S = root.CuySprites;
       const base = basePath ? basePath.replace(/sprites\/?$/, '') : null;
-      scene.load.spritesheet('pig_sheet', S.path(look.breed, stageKey, base), {
+      const effectiveStage = S && S.normStage ? S.normStage(look.stage || stageKey || 'adult') : (look.stage || stageKey || 'adult');
+      const namedId = look.namedId || look.named || null;
+
+      MinigryPig._usingNamedSheet = false;
+
+      if (namedId && S && typeof S.namedPath === 'function') {
+        MinigryPig._usingNamedSheet = true;
+        if (scene.load && typeof scene.load.on === 'function') {
+          let fallbackQueued = false;
+          const onLoadError = (file) => {
+            if (!fallbackQueued && file && file.key === 'pig_sheet') {
+              fallbackQueued = true;
+              MinigryPig._usingNamedSheet = false;
+              if (typeof scene.load.off === 'function') {
+                scene.load.off('loaderror', onLoadError);
+              }
+              scene.load.spritesheet('pig_sheet', S.path(look.breed, effectiveStage, base), {
+                frameWidth: 64,
+                frameHeight: 64
+              });
+            }
+          };
+          scene.load.on('loaderror', onLoadError);
+        }
+        scene.load.spritesheet('pig_sheet', S.namedPath(namedId, effectiveStage, base), {
+          frameWidth: 64,
+          frameHeight: 64
+        });
+        return;
+      }
+
+      scene.load.spritesheet('pig_sheet', S.path(look.breed, effectiveStage, base), {
         frameWidth: 64,
         frameHeight: 64
       });
     }
 
-    /** Sets the breed and coat palette of the active pig for the next game (call before the scenes preload). */
-    static setLook(breed, paletteId) {
-      MinigryPig.look = { breed: root.CuySprites.normBreed(breed), paletteId: paletteId };
+    /** Sets the breed, coat palette, optional namedId and stage of the active pig for the next game (call before the scenes preload). */
+    static setLook(breedOrLook, paletteId, namedId, stage) {
+      const S = root.CuySprites;
+      if (breedOrLook && typeof breedOrLook === 'object') {
+        const l = breedOrLook;
+        const rawNamed = l.namedId || l.named || (l.look && (l.look.namedId || l.look.named)) || null;
+        const nid = rawNamed ? String(rawNamed).trim().toLowerCase() : null;
+        const rawBreed = l.breed || (l.look && l.look.breed) || 'smooth';
+        const rawPalette = l.paletteId || (l.look && (l.look.paletteId || l.look.coat)) || 'tricolor';
+        const rawStage = l.stage || (l.look && l.look.stage) || null;
+        MinigryPig.look = {
+          breed: S && S.normBreed ? S.normBreed(rawBreed) : (rawBreed || 'smooth'),
+          paletteId: rawPalette,
+          namedId: nid || null,
+          named: nid || null,
+          stage: rawStage ? (S && S.normStage ? S.normStage(rawStage) : rawStage) : null
+        };
+      } else {
+        const nid = namedId ? String(namedId).trim().toLowerCase() : null;
+        MinigryPig.look = {
+          breed: S && S.normBreed ? S.normBreed(breedOrLook) : (breedOrLook || 'smooth'),
+          paletteId: paletteId || 'tricolor',
+          namedId: nid || null,
+          named: nid || null,
+          stage: stage ? (S && S.normStage ? S.normStage(stage) : stage) : null
+        };
+      }
     }
 
     /**
      * Replaces the loaded (ginger) 'pig_sheet' texture with the palette-remapped canvas of the active pig.
+     * Skipped when a baked named pig spritesheet is loaded directly.
      * Must run before the animations are created.
      */
     static applyLook(scene) {
       const look = MinigryPig.look;
-      if (!look || !root.CuyPalette || scene.textures.get('pig_sheet').__looked) return;
+      if (MinigryPig._usingNamedSheet) return;
+      if (!look || !root.CuyPalette || !scene.textures || !scene.textures.exists('pig_sheet')) return;
+      if (scene.textures.get('pig_sheet').__looked) return;
       try {
         const tex = scene.textures.get('pig_sheet');
         const canvas = root.CuyPalette.apply(tex.getSourceImage(), look.paletteId);
@@ -147,6 +205,7 @@
       this.homeMusic = null;
       this._clickHandled = false;
       this._leaving = false;
+      this.selectedPigId = null;
 
       // Global listener for Home closing or the tab being hidden
       this.bindWindowEvents();
@@ -471,6 +530,87 @@
       return 0;
     }
 
+    _escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    getLivingPigs(state) {
+      const roster = state && Array.isArray(state.roster) ? state.roster : [];
+      return roster.filter((p) => p && !p.memorial && p.stage !== 'legend');
+    }
+
+    resolvePigLook(pig, state) {
+      const S = root.CuySprites;
+      if (!pig) {
+        if (S && typeof S.activePig === 'function') {
+          const active = S.activePig(state);
+          return {
+            id: active.id || 'pig_default',
+            name: active.name || 'Cuy',
+            breed: active.breed || 'smooth',
+            paletteId: active.paletteId || 'tricolor',
+            namedId: active.namedId || active.named || null,
+            named: active.named || active.namedId || null,
+            stage: S.normStage ? S.normStage(active.stage || state?.stageKey || 'adult') : (active.stage || state?.stageKey || 'adult'),
+            look: active.look || null
+          };
+        }
+        return {
+          id: 'pig_default',
+          name: (state && state.name) || 'Cuy',
+          breed: 'smooth',
+          paletteId: 'tricolor',
+          namedId: null,
+          named: null,
+          stage: state?.stageKey || 'adult',
+          look: null
+        };
+      }
+
+      const rawNamed = pig.namedId || pig.named || (pig.look && (pig.look.namedId || pig.look.named)) || null;
+      const namedId = rawNamed ? String(rawNamed).trim().toLowerCase() : null;
+      const rawBreed = pig.breed || (pig.look && pig.look.breed) || 'smooth';
+      const breed = S && S.normBreed ? S.normBreed(rawBreed) : rawBreed;
+      const rawPalette = pig.paletteId || (pig.look && (pig.look.paletteId || pig.look.coat)) || 'tricolor';
+      const paletteId = root.CuyPalette ? root.CuyPalette.normalize(rawPalette) : rawPalette;
+      const rawStage = pig.stage || (pig.look && pig.look.stage) || state?.stageKey || 'adult';
+      const stage = S && S.normStage ? S.normStage(rawStage) : rawStage;
+
+      return {
+        id: pig.id,
+        name: pig.name || 'Cuy',
+        breed,
+        paletteId,
+        namedId: namedId || null,
+        named: namedId || null,
+        stage,
+        look: pig.look || null
+      };
+    }
+
+    getSelectedPigLook(state) {
+      const living = this.getLivingPigs(state);
+      let chosen = null;
+      if (this.selectedPigId) {
+        chosen = living.find((p) => p.id === this.selectedPigId) || null;
+      }
+      if (!chosen && root.CuySprites && typeof root.CuySprites.activePig === 'function') {
+        const active = root.CuySprites.activePig(state);
+        chosen = living.find((p) => p.id === active.id) || living[0] || null;
+        if (!chosen) return this.resolvePigLook(null, state);
+      } else if (!chosen) {
+        chosen = living[0] || null;
+      }
+      if (chosen && !this.selectedPigId) {
+        this.selectedPigId = chosen.id;
+      }
+      return this.resolvePigLook(chosen, state);
+    }
+
     // --- Rendering the game selection screen ---
     renderSelectScreen(container) {
       this.rootElement = container;
@@ -484,6 +624,36 @@
       const plays = mgState.plays || {};
       const clovers = state?.clovers ?? 0;
       const isLimitReached = dailyCount >= dailyMax;
+
+      const livingPigs = this.getLivingPigs(state);
+      const selectedLook = this.getSelectedPigLook(state);
+      const selectedPigId = selectedLook ? selectedLook.id : null;
+
+      let pigSelectorHtml = '';
+      if (livingPigs.length > 0) {
+        const chipsHtml = livingPigs.map((pig) => {
+          const isSelected = pig.id === selectedPigId;
+          const safeName = this._escapeHtml(pig.name || 'Cuy');
+          const safeId = this._escapeHtml(pig.id);
+          return `
+            <button type="button"
+              class="minigames-pig-chip ${isSelected ? 'active' : ''}"
+              data-select-pig="${safeId}"
+              title="${safeName}"
+              style="display:inline-flex; align-items:center; gap:4px; padding:2px 6px; border-radius:4px; cursor:pointer; font-family:inherit; font-size:11px; font-weight:${isSelected ? '700' : '500'}; border:2px solid ${isSelected ? 'var(--ui-flame-1, #d96b27)' : 'var(--ui-wood-2, #8c6d46)'}; background:${isSelected ? 'var(--ui-hay-2, #fff4d2)' : 'rgba(255,255,255,0.55)'}; color:var(--ui-wood-0, #4a3520); white-space:nowrap;">
+              <canvas class="minigames-pig-portrait" data-pig-id="${safeId}" width="24" height="24" style="width:24px; height:24px; image-rendering:pixelated; flex-shrink:0;"></canvas>
+              <span>${safeName}</span>
+            </button>
+          `;
+        }).join('');
+
+        pigSelectorHtml = `
+          <div class="minigames-pig-selector" id="minigamesPigSelector" style="display:flex; align-items:center; gap:6px; overflow-x:auto; padding:4px 6px; background:var(--ui-linen-1, #f3ebd3); border:2px solid var(--ui-wood-0, #4a3520); border-radius:6px;">
+            <span style="font-size:11px; font-weight:700; color:var(--ui-wood-0, #4a3520); white-space:nowrap;">Pig:</span>
+            ${chipsHtml}
+          </div>
+        `;
+      }
 
       let dotsHtml = '';
       for (let i = 0; i < dailyMax; i++) {
@@ -508,6 +678,7 @@
       let html = `
         <div class="minigames-root">
           <div class="minigames-select-screen">
+            ${pigSelectorHtml}
             <div class="minigames-status-bar">
               <span class="minigames-status-clovers"><span class="pixel-icon icon-clover"></span> Clovers: <b>${clovers}</b></span>
               <div style="display:flex; flex-direction:column; align-items:flex-end;">
@@ -559,6 +730,33 @@
       `;
 
       container.innerHTML = html;
+
+      // Render pig selector portraits and bind selection clicks
+      if (livingPigs.length > 0) {
+        const pigById = new Map(livingPigs.map((p) => [p.id, p]));
+        container.querySelectorAll('canvas.minigames-pig-portrait').forEach((canvas) => {
+          const pig = pigById.get(canvas.dataset.pigId);
+          if (!pig || !root.CuySprites || typeof root.CuySprites.drawPortrait !== 'function') return;
+          const look = this.resolvePigLook(pig, state);
+          root.CuySprites.drawPortrait(canvas, look.breed, look.stage, look.paletteId, 1, look.namedId);
+          canvas.style.width = '24px';
+          canvas.style.height = '24px';
+        });
+
+        container.querySelectorAll('button[data-select-pig]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (root.Sound) root.Sound.click();
+            this.selectedPigId = btn.dataset.selectPig;
+            container.querySelectorAll('button[data-select-pig]').forEach((chip) => {
+              const active = chip.dataset.selectPig === this.selectedPigId;
+              chip.classList.toggle('active', active);
+              chip.style.fontWeight = active ? '700' : '500';
+              chip.style.borderColor = active ? 'var(--ui-flame-1, #d96b27)' : 'var(--ui-wood-2, #8c6d46)';
+              chip.style.background = active ? 'var(--ui-hay-2, #fff4d2)' : 'rgba(255,255,255,0.55)';
+            });
+          });
+        });
+      }
 
       // Hook up the start buttons
       container.querySelectorAll('button[data-start-game]').forEach((btn) => {
@@ -700,12 +898,13 @@
 
         // Prepare the config for the game
         const state = root.bridge ? root.bridge.getState() : null;
+        const pigLook = this.getSelectedPigLook(state);
         const gameConfig = {
           container: canvasWrapper,
           width: 360,
           height: 290,
-          stageKey: state?.stageKey || 'adult',
-          pigLook: root.CuySprites.activePig(state),
+          stageKey: pigLook.stage || state?.stageKey || 'adult',
+          pigLook,
           onTimeLeft: (s) => {
             if (s === 15 && window.CuyMusic) window.CuyMusic.play('games_boss');
           },
@@ -728,7 +927,7 @@
 
         // Start the specific minigame implementation
         try {
-          root.MinigryPig.setLook(gameConfig.pigLook.breed, gameConfig.pigLook.paletteId);
+          root.MinigryPig.setLook(gameConfig.pigLook);
           this.activeGame = gameDef.start(gameConfig);
           // If a Phaser.Game instance was returned, remember it
           if (root.Phaser && this.activeGame instanceof root.Phaser.Game) {

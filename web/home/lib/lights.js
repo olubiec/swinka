@@ -48,10 +48,89 @@
     return PERIODS.indexOf(period);
   }
 
-  function ambientFor(lights, period) {
+  function hourFraction(date) {
+    if (typeof date === 'number') {
+      return isFinite(date) ? date : null;
+    }
+    if (typeof date === 'string') {
+      if (/^\d{1,2}:\d{2}/.test(date)) {
+        var parts = date.split(':');
+        var hh = parseInt(parts[0], 10);
+        var mm = parseInt(parts[1], 10);
+        if (!isNaN(hh) && !isNaN(mm)) return hh + mm / 60;
+      }
+      var d = new Date(date);
+      if (!isNaN(d.getTime())) return d.getHours() + d.getMinutes() / 60;
+      var parsed = parseFloat(date);
+      return isFinite(parsed) ? parsed : null;
+    }
+    if (date instanceof Date || (date && typeof date.getHours === 'function')) {
+      var h = date.getHours();
+      var m = typeof date.getMinutes === 'function' ? date.getMinutes() : 0;
+      return h + m / 60;
+    }
+    return null;
+  }
+
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function lerpAmbient(a, b, t) {
+    var k = Math.min(1, Math.max(0, t));
+    var ac = a.color || [1, 1, 1];
+    var bc = b.color || [1, 1, 1];
+    return {
+      color: [
+        lerp(ac[0], bc[0], k),
+        lerp(ac[1], bc[1], k),
+        lerp(ac[2], bc[2], k)
+      ],
+      level: lerp(a.level != null ? a.level : 1, b.level != null ? b.level : 1, k)
+    };
+  }
+
+  function ambientFor(lights, period, now) {
     var table = (lights && lights.ambient) || {};
     var entry = table[period] || table[DEFAULT_PERIOD] || { color: [1, 1, 1], level: 1 };
-    return { color: entry.color.slice(), level: entry.level };
+    var out = { color: entry.color.slice(), level: entry.level };
+
+    var timeSource = now != null
+      ? now
+      : (typeof window !== 'undefined' && period === 'evening'
+        ? (window.__cuyNow != null ? window.__cuyNow : new Date())
+        : null);
+
+    if (period === 'evening' && timeSource != null) {
+      var h = hourFraction(timeSource);
+      if (h != null) {
+        var dayEntry = table.day || entry;
+        var eveningEntry = table.evening || entry;
+        var nightEntry = table.night || entry;
+        if (h >= 17 && h < 18) {
+          out = lerpAmbient(dayEntry, eveningEntry, h - 17);
+        } else if (h >= 18 && h < 21) {
+          out = lerpAmbient(eveningEntry, nightEntry, (h - 18) / 3);
+        }
+      }
+    }
+
+    if (typeof window !== 'undefined' && window.__cuyLastState && window.__cuyLastState.weather) {
+      var w = window.__cuyLastState.weather;
+      if (w.consent && w.status !== 'off') {
+        if (w.isDay === false && (period === 'day' || period === 'morning')) {
+          out.level = Math.max(0.55, out.level * 0.88);
+        }
+        var cond = typeof w.condition === 'string' ? w.condition.toLowerCase() : '';
+        if (cond === 'overcast' || cond === 'cloudy' || cond === 'fog') {
+          out.level = Math.max(0.5, out.level * 0.92);
+        } else if (cond === 'rain' || cond === 'storm') {
+          out.level = Math.max(0.45, out.level * 0.85);
+        }
+      }
+    }
+
+    return out;
   }
 
   // Colours come as [r,g,b] arrays or '#rrggbb' strings; both are returned as [r,g,b] numbers.
@@ -106,10 +185,12 @@
             : (placed.itemId && typeof manual[placed.itemId] === 'boolean'
               ? manual[placed.itemId]
               : (typeof placed.on === 'boolean' ? placed.on : autoOn(src, period)))));
+      var resolvedItem = src.item || placed.itemId || placed.id;
       result.push({
         id: key,
         uid: key,
-        itemId: placed.itemId || placed.id,
+        item: resolvedItem,
+        itemId: placed.itemId || src.item || placed.id,
         x: placed.x,
         y: placed.y,
         on: on,

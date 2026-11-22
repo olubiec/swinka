@@ -29,10 +29,10 @@
       "behindLine": 74,
       "bg_clean": true,
       "bg": {
-        "morning": "world/bg/garden_morning.png",
+        "morning": "world/bg/garden_day.png",
         "day": "world/bg/garden_day.png",
-        "evening": "world/bg/garden_evening.png",
-        "night": "world/bg/garden_night.png"
+        "evening": "world/bg/garden_day.png",
+        "night": "world/bg/garden_day.png"
       },
       "exits": {
         "left": { "to": "house", "x": 2 },
@@ -50,10 +50,10 @@
       "behindLine": 74,
       "bg_clean": true,
       "bg": {
-        "morning": "world/bg/park_morning.png",
+        "morning": "world/bg/park_day.png",
         "day": "world/bg/park_day.png",
-        "evening": "world/bg/park_evening.png",
-        "night": "world/bg/park_night.png"
+        "evening": "world/bg/park_day.png",
+        "night": "world/bg/park_day.png"
       },
       "exits": {
         "left": { "to": "garden", "x": 4 },
@@ -89,10 +89,10 @@
       "kind": "outdoor",
       "title": "Market",
       "size": [256, 144],
-      "walk": [8, 120, 248, 140],
-      "depth_scale": [0.8125, 0.9375],
-      "pigWidthFrac": 0.15,
-      "behindLine": 120,
+      "walk": [4, 78, 252, 140],
+      "depth_scale": [0.8125, 1.0],
+      "pigWidthFrac": 0.16,
+      "behindLine": 76,
       "bg_clean": true,
       "bg": {
         "morning": "world/bg/market.png",

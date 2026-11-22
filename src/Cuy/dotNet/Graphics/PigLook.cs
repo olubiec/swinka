@@ -157,12 +157,18 @@ namespace Cuy
                 string namedId = descriptor?.Named;
                 if (!string.IsNullOrWhiteSpace(namedId) && IsNamedPigAvailable(namedId, effectiveStageKey))
                 {
+                    string namedLookKey = $"named:{namedId.ToLowerInvariant()}|{effectiveStageKey.ToLowerInvariant()}|{xml.spriteWidth}x{xml.spriteHeight}";
+                    if (string.Equals(pet.AppliedLookKey, namedLookKey, StringComparison.Ordinal))
+                    {
+                        return;
+                    }
                     try
                     {
                         var namedSprites = xml.BuildNamedPigSprites(namedId, effectiveStageKey);
                         if (namedSprites != null)
                         {
                             pet.ReplaceSprites(namedSprites);
+                            pet.AppliedLookKey = namedLookKey;
                             BrainController.Log("[Look] " + (profile != null ? profile.Name : "pet") + ": " + namedId + "/" + effectiveStageKey);
                             return;
                         }
@@ -177,10 +183,16 @@ namespace Cuy
                 string breed = descriptor?.Breed ?? (profile != null ? profile.Breed : "smooth");
                 string palette = descriptor?.Coat ?? (profile != null ? profile.PaletteId : null);
                 if (palette == null) palette = PaletteRemap.Table.Default;
+                string breedLookKey = $"breed:{(breed ?? "smooth").ToLowerInvariant()}|{effectiveStageKey.ToLowerInvariant()}|{palette.ToLowerInvariant()}|{xml.spriteWidth}x{xml.spriteHeight}";
+                if (string.Equals(pet.AppliedLookKey, breedLookKey, StringComparison.Ordinal))
+                {
+                    return;
+                }
                 var sprites = xml.BuildStageSprites(effectiveStageKey, breed, palette);
                 if (sprites != null)
                 {
                     pet.ReplaceSprites(sprites);
+                    pet.AppliedLookKey = breedLookKey;
                     BrainController.Log("[Look] " + (profile != null ? profile.Name : "pet") + ": " + breed + "/" + effectiveStageKey + "/" + palette);
                 }
             }

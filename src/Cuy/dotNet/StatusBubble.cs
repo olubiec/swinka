@@ -33,22 +33,23 @@ namespace Cuy
         private const int WS_EX_TOOLWINDOW = 0x00000080;
         private const int WS_EX_TOPMOST = 0x00000008;
 
-        // Palette from web/home/style.css
+        // Palette from assets/ui/ui_tokens.css & web/home/style.css
         private static readonly Color ColTransparentKey = Color.FromArgb(255, 0, 255); // Magenta
-        private static readonly Color ColBubbleBg = Color.FromArgb(248, 237, 221);     // --c-cream (#f8eddd)
-        private static readonly Color ColContourDark = Color.FromArgb(43, 23, 18);     // --c-contour-dark (#2b1712)
-        private static readonly Color ColGrooveBg = Color.FromArgb(26, 13, 10);        // bar groove
-        private static readonly Color ColLeaf = Color.FromArgb(127, 191, 74);          // --c-leaf (#7fbf4a, green)
-        private static readonly Color ColGold = Color.FromArgb(242, 201, 76);          // --c-gold (#f2c94c, yellow)
-        private static readonly Color ColRed = Color.FromArgb(232, 86, 76);            // --c-red (#e8564c, red)
-        private static readonly Color ColBtnFeed = Color.FromArgb(248, 194, 120);      // btn-feed (#f8c278)
-        private static readonly Color ColBtnPet = Color.FromArgb(247, 178, 197);       // btn-minigames (#f7b2c5)
-        private static readonly Color ColBtnCall = Color.FromArgb(178, 224, 247);      // btn-call (#b2e0f7)
-        private static readonly Color ColBtnHome = Color.FromArgb(220, 204, 238);     // Home button (#dcccee)
-        private static readonly Color ColBtnDisabled = Color.FromArgb(222, 215, 203);   // disabled (#ded7cb)
-        private static readonly Color ColBtnHover = Color.FromArgb(247, 180, 110);     // hover (#f7b46e)
-        private static readonly Color ColBtnActive = Color.FromArgb(200, 105, 47);      // active (#c8692f)
-        private static readonly Color ColWhite = Color.FromArgb(255, 253, 248);        // --c-white (#fffdf8)
+        private static readonly Color ColBubbleBg = Color.FromArgb(251, 240, 217);     // --ui-linen-3 (#fbf0d9)
+        private static readonly Color ColSeparator = Color.FromArgb(183, 157, 120);    // --ui-linen-0 (#b79d78)
+        private static readonly Color ColContourDark = Color.FromArgb(71, 40, 28);     // --ui-wood-0 (#47281c)
+        private static readonly Color ColGrooveBg = Color.FromArgb(36, 24, 36);        // --ui-plum-0 (#241824)
+        private static readonly Color ColLeaf = Color.FromArgb(151, 165, 105);         // --ui-moss-3 (#97a569)
+        private static readonly Color ColGold = Color.FromArgb(209, 165, 72);          // --ui-hay-1 (#d1a548)
+        private static readonly Color ColRed = Color.FromArgb(184, 96, 74);            // --ui-brick-2 (#b8604a)
+        private static readonly Color ColBtnFeed = Color.FromArgb(233, 200, 113);      // --ui-hay-2 (#e9c871)
+        private static readonly Color ColBtnPet = Color.FromArgb(242, 181, 160);       // --ui-rose-0 (#f2b5a0)
+        private static readonly Color ColBtnCall = Color.FromArgb(185, 201, 196);      // --ui-dusk-4 (#b9c9c4)
+        private static readonly Color ColBtnHome = Color.FromArgb(239, 220, 184);      // --ui-linen-2 (#efdcb8)
+        private static readonly Color ColBtnDisabled = Color.FromArgb(217, 192, 150);  // --ui-linen-1 (#d9c096)
+        private static readonly Color ColBtnHover = Color.FromArgb(246, 226, 160);     // --ui-hay-3 (#f6e2a0)
+        private static readonly Color ColBtnActive = Color.FromArgb(197, 138, 82);     // --ui-wood-3 (#c58a52)
+        private static readonly Color ColWhite = Color.FromArgb(251, 240, 217);        // --ui-linen-3 (#fbf0d9)
 
         private readonly FormPet _petForm;
         private readonly Timer _updateTimer;
@@ -131,48 +132,96 @@ namespace Cuy
             }
         }
 
-        private void InitFonts()
+        private static void EnsurePixelFontLoaded()
         {
-            if (_pixelFamily == null)
+            if (_pixelFamily != null) return;
+            try
             {
-                try
+                _fontCollection = new PrivateFontCollection();
+                string[] relativeFolders = new string[]
                 {
-                    _fontCollection = new PrivateFontCollection();
-                    string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-                    string[] searchPaths = new string[]
-                    {
-                        Path.Combine(baseDir, "web", "home", "fonts", "PixelifySans-Bold.ttf"),
-                        Path.Combine(Directory.GetCurrentDirectory(), "web", "home", "fonts", "PixelifySans-Bold.ttf")
-                    };
+                    Path.Combine("web", "home", "fonts"),
+                    Path.Combine("assets", "fonts")
+                };
+                string[] fontFiles = new string[]
+                {
+                    "PixelifySans-Regular.ttf",
+                    "PixelifySans-Bold.ttf"
+                };
 
-                    foreach (var p in searchPaths)
+                var roots = new System.Collections.Generic.List<string>();
+                string dir = AppDomain.CurrentDomain.BaseDirectory;
+                for (int i = 0; i < 5 && !string.IsNullOrEmpty(dir); i++)
+                {
+                    roots.Add(dir);
+                    dir = Directory.GetParent(dir)?.FullName;
+                }
+                string cwd = Directory.GetCurrentDirectory();
+                if (!string.IsNullOrEmpty(cwd) && !roots.Contains(cwd))
+                {
+                    roots.Add(cwd);
+                }
+
+                foreach (string root in roots)
+                {
+                    foreach (string rel in relativeFolders)
                     {
-                        if (File.Exists(p))
+                        string folder = Path.Combine(root, rel);
+                        if (!Directory.Exists(folder)) continue;
+
+                        bool addedAny = false;
+                        foreach (string file in fontFiles)
                         {
-                            _fontCollection.AddFontFile(Path.GetFullPath(p));
+                            string p = Path.Combine(folder, file);
+                            if (File.Exists(p))
+                            {
+                                _fontCollection.AddFontFile(Path.GetFullPath(p));
+                                addedAny = true;
+                            }
+                        }
+
+                        if (addedAny && _fontCollection.Families.Length > 0)
+                        {
                             _pixelFamily = _fontCollection.Families[0];
-                            break;
+                            return;
                         }
                     }
                 }
-                catch (Exception ex) { BrainController.Log("[WARN] StatusBubble.InitFonts: " + ex.Message); }
-
-                if (_pixelFamily == null)
-                {
-                    _pixelFamily = FontFamily.GenericMonospace;
-                }
             }
+            catch (Exception ex) { BrainController.Log("[WARN] StatusBubble.EnsurePixelFontLoaded: " + ex.Message); }
 
+            if (_pixelFamily == null)
+            {
+                _pixelFamily = FontFamily.GenericSansSerif;
+            }
+        }
+
+        internal static Font CreatePixelFont(float sizePx, FontStyle style = FontStyle.Regular)
+        {
+            EnsurePixelFontLoaded();
             try
             {
-                _fontName = new Font(_pixelFamily, 11f, FontStyle.Bold, GraphicsUnit.Pixel);
-                _fontPercent = new Font(_pixelFamily, 9f, FontStyle.Bold, GraphicsUnit.Pixel);
+                if (_pixelFamily.IsStyleAvailable(style))
+                {
+                    return new Font(_pixelFamily, sizePx, style, GraphicsUnit.Pixel);
+                }
+                if (_pixelFamily.IsStyleAvailable(FontStyle.Regular))
+                {
+                    return new Font(_pixelFamily, sizePx, FontStyle.Regular, GraphicsUnit.Pixel);
+                }
             }
             catch
             {
-                _fontName = new Font(FontFamily.GenericSansSerif, 10f, FontStyle.Bold, GraphicsUnit.Pixel);
-                _fontPercent = new Font(FontFamily.GenericMonospace, 8f, FontStyle.Bold, GraphicsUnit.Pixel);
+                // Fall through to system fallback
             }
+            return new Font(FontFamily.GenericSansSerif, sizePx, style, GraphicsUnit.Pixel);
+        }
+
+        private void InitFonts()
+        {
+            EnsurePixelFontLoaded();
+            _fontName = CreatePixelFont(11f, FontStyle.Bold);
+            _fontPercent = CreatePixelFont(9f, FontStyle.Bold);
         }
 
         public void ShowMessage(string text, int durationMs = 3000)
@@ -401,7 +450,7 @@ namespace Cuy
             DrawNeeds(g);
 
             // Separator line
-            using (Pen p = new Pen(Color.FromArgb(228, 207, 181))) // --c-cream-dark
+            using (Pen p = new Pen(ColSeparator))
             {
                 g.DrawLine(p, 8, 80, 160, 80);
             }
@@ -499,10 +548,12 @@ namespace Cuy
         private void DrawHeader(Graphics g)
         {
             var pet = BrainController.Instance?.Pet;
-            string petName = pet?.State?.Name ?? "Cuy";
+            string petName = !string.IsNullOrWhiteSpace(_petForm?.Profile?.Name)
+                ? _petForm.Profile.Name
+                : (pet?.State?.Name ?? "Cuy");
 
-            // Pig head icon in the corner
-            Bitmap iconHead = PetIcons.GetIconBitmap("pig_head");
+            // Pig head icon in the corner (new app icon)
+            Bitmap iconHead = PetIcons.GetAppIconBitmap();
             if (iconHead != null)
             {
                 g.DrawImage(iconHead, new Rectangle(8, 6, 16, 16), new Rectangle(0, 0, 16, 16), GraphicsUnit.Pixel);
@@ -571,39 +622,46 @@ namespace Cuy
                 g.DrawImage(iconBmp, new Rectangle(x, y, 16, 16), new Rectangle(0, 0, 16, 16), GraphicsUnit.Pixel);
             }
 
-            // 2. Progress bar (48 px wide, 8 px high)
+            // 2. Progress bar (50 px wide, 8 px high) matching Home UI .progress-groove
             int barX = x + 18;
             int barY = y + 4;
             int barW = 50;
             int barH = 8;
 
-            // Bar groove (dark brown background)
+            // Bar groove (dark plum background + dark wood pixel frame)
             using (SolidBrush grooveBrush = new SolidBrush(ColGrooveBg))
             {
-                g.FillRectangle(grooveBrush, barX, barY, barW, barH);
+                g.FillRectangle(grooveBrush, barX + 1, barY + 1, barW - 2, barH - 2);
             }
             using (Pen groovePen = new Pen(ColContourDark, 1f))
             {
-                g.DrawRectangle(groovePen, barX, barY, barW - 1, barH - 1);
+                g.DrawLine(groovePen, barX + 1, barY, barX + barW - 2, barY);
+                g.DrawLine(groovePen, barX + 1, barY + barH - 1, barX + barW - 2, barY + barH - 1);
+                g.DrawLine(groovePen, barX, barY + 1, barX, barY + barH - 2);
+                g.DrawLine(groovePen, barX + barW - 1, barY + 1, barX + barW - 1, barY + barH - 2);
             }
 
             // Fill colour: green >60, yellow 30-60, red <30
             Color fillColor;
             Color highlightColor;
+            Color shadowColor;
             if (value > 60.0)
             {
                 fillColor = ColLeaf;
-                highlightColor = Color.FromArgb(165, 224, 117);
+                highlightColor = Color.FromArgb(195, 201, 138); // --ui-moss-4 (#c3c98a)
+                shadowColor = Color.FromArgb(116, 132, 74);     // darker moss
             }
             else if (value >= 30.0)
             {
                 fillColor = ColGold;
-                highlightColor = Color.FromArgb(253, 224, 136);
+                highlightColor = Color.FromArgb(246, 226, 160); // --ui-hay-3 (#f6e2a0)
+                shadowColor = Color.FromArgb(166, 124, 46);     // darker hay
             }
             else
             {
                 fillColor = ColRed;
-                highlightColor = Color.FromArgb(245, 133, 126);
+                highlightColor = Color.FromArgb(217, 135, 107); // --ui-brick-3 (#d9876b)
+                shadowColor = Color.FromArgb(138, 63, 47);      // darker brick
             }
 
             int innerW = barW - 2;
@@ -615,24 +673,28 @@ namespace Cuy
                 {
                     g.FillRectangle(fillBrush, barX + 1, barY + 1, fillW, barH - 2);
                 }
-                // Top pixel highlight (1px light accent)
+                // Top pixel highlight (1px light accent) and bottom pixel shadow (1px dark accent)
                 using (Pen highPen = new Pen(highlightColor, 1f))
                 {
                     g.DrawLine(highPen, barX + 1, barY + 1, barX + fillW, barY + 1);
+                }
+                using (Pen lowPen = new Pen(shadowColor, 1f))
+                {
+                    g.DrawLine(lowPen, barX + 1, barY + barH - 2, barX + fillW, barY + barH - 2);
                 }
             }
         }
 
         private void DrawButtons(Graphics g)
         {
-            // Button 1: Feed (icon: hay)
-            DrawPixelButton(g, _rcBtnFeed, "hay", 0, isEnabled: true, baseColor: ColBtnFeed);
+            // Button 1: Feed (icon: m_feed)
+            DrawPixelButton(g, _rcBtnFeed, "m_feed", 0, isEnabled: true, baseColor: ColBtnFeed);
 
-            // Button 2: Pet (icon: need_mood / heart)
+            // Button 2: Pet (icon: need_mood)
             DrawPixelButton(g, _rcBtnPet, "need_mood", 1, isEnabled: true, baseColor: ColBtnPet);
 
-            // Button 3: Call (icon: pig_head)
-            DrawPixelButton(g, _rcBtnCall, "pig_head", 2, isEnabled: true, baseColor: ColBtnCall);
+            // Button 3: Call (icon: m_call)
+            DrawPixelButton(g, _rcBtnCall, "m_call", 2, isEnabled: true, baseColor: ColBtnCall);
 
             // Button 4: Home (icon: house)
             DrawPixelButton(g, _rcBtnHome, "house", 3, isEnabled: true, baseColor: ColBtnHome);
@@ -663,13 +725,17 @@ namespace Cuy
                 g.FillRectangle(b, r.X + 1, r.Y + 1, r.Width - 2, r.Height - 2);
             }
 
-            // Dark frame
-            using (Pen p = new Pen(isEnabled ? ColContourDark : Color.FromArgb(112, 101, 93), 1f))
+            // Pixel-art frame with 1px cut corners (matching Home UI .game-btn)
+            Color frameColor = isEnabled ? ColContourDark : Color.FromArgb(112, 101, 93);
+            using (Pen p = new Pen(frameColor, 1f))
             {
-                g.DrawRectangle(p, r.X, r.Y, r.Width - 1, r.Height - 1);
+                g.DrawLine(p, r.X + 1, r.Y, r.Right - 2, r.Y);
+                g.DrawLine(p, r.X + 1, r.Bottom - 1, r.Right - 2, r.Bottom - 1);
+                g.DrawLine(p, r.X, r.Y + 1, r.X, r.Bottom - 2);
+                g.DrawLine(p, r.Right - 1, r.Y + 1, r.Right - 1, r.Bottom - 2);
             }
 
-            // Pixel bevel effect
+            // Inner pixel highlight / shadow
             if (isEnabled && !isPressed)
             {
                 using (Pen highPen = new Pen(ColWhite, 1f))
@@ -677,10 +743,18 @@ namespace Cuy
                     g.DrawLine(highPen, r.X + 1, r.Y + 1, r.Right - 2, r.Y + 1);
                     g.DrawLine(highPen, r.X + 1, r.Y + 1, r.X + 1, r.Bottom - 2);
                 }
-                using (Pen shadowPen = new Pen(ColContourDark, 1f))
+                using (Pen shadowPen = new Pen(ColSeparator, 1f))
                 {
-                    g.DrawLine(shadowPen, r.X + 1, r.Bottom - 1, r.Right - 1, r.Bottom - 1);
-                    g.DrawLine(shadowPen, r.Right - 1, r.Y + 1, r.Right - 1, r.Bottom - 1);
+                    g.DrawLine(shadowPen, r.X + 2, r.Bottom - 2, r.Right - 2, r.Bottom - 2);
+                    g.DrawLine(shadowPen, r.Right - 2, r.Y + 2, r.Right - 2, r.Bottom - 2);
+                }
+            }
+            else if (isEnabled && isPressed)
+            {
+                using (Pen insetPen = new Pen(ColSeparator, 1f))
+                {
+                    g.DrawLine(insetPen, r.X + 1, r.Y + 1, r.Right - 2, r.Y + 1);
+                    g.DrawLine(insetPen, r.X + 1, r.Y + 1, r.X + 1, r.Bottom - 2);
                 }
             }
 

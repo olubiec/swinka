@@ -381,10 +381,10 @@ body.webview-mode .game-device {
   border-bottom: 3px solid var(--ui-wood-0);
   overflow: hidden;
   line-height: 0;
-  flex: 0 0 auto;
-  min-height: 0;
+  flex: 1 1 auto;
+  min-height: 168px;
   height: auto;
-  max-height: none;
+  max-height: 205px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -1881,8 +1881,8 @@ body.webview-mode .game-device {
   gap: 4px;
 }
 
-/* Compact vertical layout for short viewports (e.g. 400x620, 420x600, 360x560) */
-@media (max-height: 625px) {
+/* Compact vertical layout for short viewports (e.g. 420x640, 420x660, 400x620, 360x560) */
+@media (max-height: 660px) {
   .game-header {
     border-width: 4px 0;
     padding: 0 10px;

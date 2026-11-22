@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "defaultId": "garden_friend",
+  "allowedScenes": ["garden", "park"],
+  "companions": [
+    {
+      "id": "garden_friend",
+      "name": "Garden Friend",
+      "sprite": "sprites/companion_agouti/spritesheet.png",
+      "frameSize": [64, 64],
+      "floorY": 59,
+      "scale": 0.45,
+      "speed": 22,
+      "minPigGap": 20,
+      "reactRadius": 34,
+      "reactCooldownMs": 3500,
+      "idleMinMs": 1400,
+      "idleMaxMs": 3200,
+      "animations": {
+        "idle": { "row": 0, "frames": 16, "fps": 8 },
+        "sniff": { "row": 1, "frames": 12, "fps": 12 },
+        "walk": { "row": 2, "frames": 8, "fps": 10 },
+        "popcorn": { "row": 4, "frames": 12, "fps": 14 }
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "defaultBpm": 120,
+  "framesPerBeat": 4,
+  "maxDanceMs": 30000,
+  "tracks": {
+    "games_1": { "file": "music/adventure_stage1.ogg", "bpm": 132, "offsetMs": 0 },
+    "games_2": { "file": "music/adventure_stage2.ogg", "bpm": 138, "offsetMs": 0 },
+    "games_boss": { "file": "music/adventure_boss.ogg", "bpm": 150, "offsetMs": 0 },
+    "menu": { "file": "music/adventure_select.ogg", "bpm": 116, "offsetMs": 0 },
+    "calm": { "file": "music/calm_loop.ogg", "bpm": 96, "offsetMs": 0 }
+  }
+}

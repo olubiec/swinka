@@ -362,12 +362,15 @@ namespace Cuy
                 }
 
                 var newPet = new FormPet(animations, xml);
-                foreach (var sprite in xml.sprites)
-                {
-                    newPet.AddImage(sprite);
-                }
                 newPet.Profile = pig;
                 PigLook.Apply(newPet, xml, PigLook.CurrentStageKey());
+                if (string.IsNullOrEmpty(newPet.AppliedLookKey))
+                {
+                    foreach (var sprite in xml.sprites)
+                    {
+                        newPet.AddImage(sprite);
+                    }
+                }
                 newPet.Show(xml.spriteWidth, xml.spriteHeight);
                 newPet.Play(true);
 
@@ -382,6 +385,79 @@ namespace Cuy
             catch (Exception ex)
             {
                 Log("[ERROR] CreatePetWindowAndPeek: " + ex);
+            }
+        }
+
+        public void SetDesktopPet(string pigId, bool on, bool asPrimary = false)
+        {
+            var gs = _session?.Pet?.State;
+            if (gs == null || string.IsNullOrWhiteSpace(pigId)) return;
+            gs.EnsureRosterInitialized();
+
+            var pig = gs.Roster?.FirstOrDefault(p => p != null && string.Equals(p.Id, pigId, StringComparison.OrdinalIgnoreCase))
+                   ?? gs.Roster?.FirstOrDefault(p => p != null && string.Equals(p.NamedId, pigId, StringComparison.OrdinalIgnoreCase));
+            if (pig == null) return;
+
+            if (asPrimary)
+            {
+                ApplyPrimaryDesktopPet(pig);
+                return;
+            }
+
+            SetDesktopPet(pig, on);
+        }
+
+        private void ApplyPrimaryDesktopPet(Cuy.Core.Pigs.PigProfile pig)
+        {
+            if (pig == null) return;
+            try
+            {
+                var activePet = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                if (activePet == null || activePet.IsDisposed)
+                {
+                    Log("[Pets] ApplyPrimaryDesktopPet: No existing FormPet available.");
+                    return;
+                }
+
+                if (activePet.InvokeRequired)
+                {
+                    activePet.BeginInvoke(new Action(() => ApplyPrimaryDesktopPet(pig)));
+                    return;
+                }
+
+                var gs = _session?.Pet?.State;
+                if (gs != null)
+                {
+                    if (gs.ActivePigIds == null) gs.ActivePigIds = new List<string>();
+                    gs.ActivePigIds.RemoveAll(id => string.Equals(id, pig.Id, StringComparison.OrdinalIgnoreCase));
+                    gs.ActivePigIds.Insert(0, pig.Id);
+                    while (gs.ActivePigIds.Count > 2)
+                    {
+                        gs.ActivePigIds.RemoveAt(gs.ActivePigIds.Count - 1);
+                    }
+                }
+
+                for (int i = FormPet.AllPets.Count - 1; i >= 0; i--)
+                {
+                    var p = FormPet.AllPets[i];
+                    if (p != null && !p.IsDisposed && p != activePet && p.Profile?.Id == pig.Id)
+                    {
+                        p.Close();
+                        if (!p.IsDisposed) p.Dispose();
+                    }
+                }
+
+                activePet.Profile = pig;
+                if (!string.IsNullOrWhiteSpace(pig.Name))
+                {
+                    activePet.Text = pig.Name;
+                }
+                PigLook.RefreshAll();
+                Log($"[Pets] Primary desktop pet updated: {pig.Name} ({pig.Id})");
+            }
+            catch (Exception ex)
+            {
+                Log("[ERROR] ApplyPrimaryDesktopPet: " + ex);
             }
         }
 
@@ -437,12 +513,15 @@ namespace Cuy
 
                     var newPet = new FormPet(animations, xml);
                     newPet.IsAmbientCompanion = true;
-                    foreach (var sprite in xml.sprites)
-                    {
-                        newPet.AddImage(sprite);
-                    }
                     newPet.Profile = pig;
                     PigLook.Apply(newPet, xml, PigLook.CurrentStageKey());
+                    if (string.IsNullOrEmpty(newPet.AppliedLookKey))
+                    {
+                        foreach (var sprite in xml.sprites)
+                        {
+                            newPet.AddImage(sprite);
+                        }
+                    }
                     newPet.Show(xml.spriteWidth, xml.spriteHeight);
                     newPet.Play(true);
 

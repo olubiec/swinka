@@ -1,0 +1,6 @@
+# PK-R41 Log
+- Decisions: Unified missing Home care/affection actions (`chin`, `groom`) into one validated message `care_interact` (`CareInteractMessages.cs` via `IMessageRuleSet`) instead of adding two separate message types; mapped `pet`/`chin`/`groom` sounds to new ZzFX cues (`purr`, `pop`, `chirp`, `chatter`) in `sound.js` since Home currently uses `Sound.wheek()` for petting.
+- APIs: `window.PigReactions` (`PRIORITIES`, `SICK_BLOCKED_ANIMS`, `react(event, ctx)`, `detectSulk(...)`, `canInterrupt(...)`, `isBlockedBySickness(...)`); C# message `{ type: "care_interact", action: "chin"|"groom", taskId? }` + state fields `sicknessAnim`, `isBirthday`.
+- Gaps found: Home lacked `chin` (chin rub), `groom` (brush/care), `sulk` (>8 clicks/3s -> `chatter`), `sick` animation & movement lock, `birthday` (`party` + `"Happy birthday!"`), and `purr`/`pop`/`chirp`/`chatter` SFX.
+- Owner questions & choices: (1) Separate `chin` and `groom` messages vs single `care_interact`? Chose single `care_interact` with `action` enum per step 4 ("zaprojektuj jedną nową wiadomość"). (2) `PK-H4`/`PK-CV3`/`PK-T16` prompt text? Marked `UNVERIFIED` as those prompt files were not inspected.
+- Verification: `node tools/qa/foundation-check.js docs/opt/foundations/R41.md 6` -> check output.

@@ -9,7 +9,9 @@
    { "id": "tree_left", "itemId": "tree_small", "x": 12, "y": 4, "flip": false, "movable": true, "removable": true },
    { "id": "tree_right", "itemId": "tree_small", "x": 14, "y": 4, "flip": false, "movable": true, "removable": true },
    { "id": "hedge", "itemId": "hedge", "x": 11, "y": 4, "flip": false, "movable": true, "removable": true },
-   { "id": "burrow", "itemId": "willow_tunnel", "x": 1, "y": 4, "flip": false, "movable": true, "removable": false }
+   { "id": "burrow", "itemId": "willow_tunnel", "x": 1, "y": 4, "flip": false, "movable": true, "removable": false },
+   { "id": "lamp_left", "itemId": "lamp_post", "x": 3, "y": 5, "flip": false, "movable": true, "removable": true },
+   { "id": "lamp_right", "itemId": "lamp_post", "x": 10, "y": 5, "flip": false, "movable": true, "removable": true }
   ],
   "park": [
    { "id": "gazebo", "itemId": "gazebo", "x": 3, "y": 0, "flip": false, "movable": true, "removable": true },
@@ -31,14 +33,18 @@
    { "id": "plot:0", "itemId": "plot_empty", "x": 2, "y": 5, "flip": false, "movable": true, "removable": false },
    { "id": "plot:1", "itemId": "plot_empty", "x": 5, "y": 5, "flip": false, "movable": true, "removable": false },
    { "id": "plot:2", "itemId": "plot_empty", "x": 8, "y": 5, "flip": false, "movable": true, "removable": false },
-   { "id": "plot:3", "itemId": "plot_empty", "x": 11, "y": 5, "flip": false, "movable": true, "removable": false }
+   { "id": "plot:3", "itemId": "plot_empty", "x": 11, "y": 5, "flip": false, "movable": true, "removable": false },
+   { "id": "lamp_left", "itemId": "lamp_post", "x": 2, "y": 4, "flip": false, "movable": true, "removable": true },
+   { "id": "lamp_right", "itemId": "lamp_post", "x": 9, "y": 4, "flip": false, "movable": true, "removable": true }
   ],
   "market": [
    { "id": "stall_left", "itemId": "stall_basic", "x": 1, "y": 5, "flip": false, "movable": true, "removable": false },
    { "id": "stall_center", "itemId": "stall_big", "x": 6, "y": 5, "flip": false, "movable": true, "removable": false },
    { "id": "stall_right", "itemId": "stall_basic", "x": 12, "y": 5, "flip": false, "movable": true, "removable": false },
    { "id": "notice_board", "itemId": "order_board", "x": 4, "y": 6, "flip": false, "movable": true, "removable": true },
-   { "id": "sign_right", "itemId": "signpost", "x": 15, "y": 6, "flip": false, "movable": true, "removable": true }
+   { "id": "sign_right", "itemId": "signpost", "x": 15, "y": 4, "flip": false, "movable": true, "removable": true },
+   { "id": "lamp_left", "itemId": "lamp_post", "x": 5, "y": 5, "flip": false, "movable": true, "removable": true },
+   { "id": "lamp_right", "itemId": "lamp_post", "x": 11, "y": 5, "flip": false, "movable": true, "removable": true }
   ]
  }
 }

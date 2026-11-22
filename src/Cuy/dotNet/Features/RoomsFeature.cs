@@ -20,6 +20,94 @@ namespace Cuy.Features
             }
         }
 
+        private static string ResolveCanonicalRoomId(Pet pet, string place)
+        {
+            if (string.IsNullOrEmpty(place) || !place.StartsWith("pig:", StringComparison.OrdinalIgnoreCase))
+                return place;
+
+            var roster = pet?.State?.Roster;
+            if (roster == null || roster.Count == 0) return place;
+
+            string raw = place.Substring(4);
+            var pig = roster.FirstOrDefault(p => p != null &&
+                (string.Equals(p.Id, raw, StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(p.NamedId, raw, StringComparison.OrdinalIgnoreCase)));
+
+            if (pig == null && (string.Equals(raw, "starter", StringComparison.OrdinalIgnoreCase) ||
+                                string.Equals(raw, "pig_1", StringComparison.OrdinalIgnoreCase)))
+            {
+                pig = roster.FirstOrDefault(p => p != null && !p.Memorial);
+            }
+
+            if (pig != null)
+            {
+                return pet.RoomIdOf(pig.Id);
+            }
+            return place;
+        }
+
+        private static string ResolveWorldItemId(Pet pet, string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId)) return itemId;
+            if (pet?.WorldItemCatalog?.Find(itemId) != null) return itemId;
+
+            if (string.Equals(itemId, "bed", StringComparison.OrdinalIgnoreCase)) return "cushion_big";
+            if (string.Equals(itemId, "hay_rack", StringComparison.OrdinalIgnoreCase)) return "hay_bar_wood";
+            if (string.Equals(itemId, "house", StringComparison.OrdinalIgnoreCase)) return "cosy_nook";
+            if (string.Equals(itemId, "ball", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(itemId, "tunnel", StringComparison.OrdinalIgnoreCase)) return "toy_basket";
+
+            return itemId;
+        }
+
+        private static void EnsureMinOwned(WorldState world, WorldItemCatalog catalog, string itemId, int minCount)
+        {
+            if (minCount <= 0 || world?.OwnedItems == null || catalog?.Find(itemId) == null) return;
+            world.OwnedItems.TryGetValue(itemId, out int current);
+            if (current < minCount)
+            {
+                world.OwnedItems[itemId] = minCount;
+            }
+        }
+
+        private static readonly string[] LegacyPlaceableInventoryIds =
+        {
+            "warm_house_bed",
+            "rug_round_pink",
+            "rug_stripes",
+            "rug_heart",
+            "plant_fern",
+            "plant_cactus",
+            "plant_flowers",
+            "picture_pig",
+            "picture_sunset",
+            "picture_carrot",
+            "lamp_mushroom",
+            "lamp_star"
+        };
+
+        private static void EnsureStarterRoomEssentials(Pet pet, WorldState world, WorldItemCatalog itemCatalog)
+        {
+            if (pet == null || world?.OwnedItems == null || itemCatalog == null) return;
+
+            int activePigs = pet.State?.Roster?.Count(p => p != null && !p.Memorial) ?? 0;
+            int baseRooms = pet.Balance.PigRoomsActive ? Math.Max(1, 1 + activePigs) : 0;
+
+            EnsureMinOwned(world, itemCatalog, "cushion_big", baseRooms + pet.GetItemCount("bed"));
+            EnsureMinOwned(world, itemCatalog, "hay_bar_wood", baseRooms + pet.GetItemCount("hay_rack"));
+            EnsureMinOwned(world, itemCatalog, "cosy_nook", baseRooms + pet.GetItemCount("house"));
+            EnsureMinOwned(world, itemCatalog, "toy_basket", (baseRooms > 0 ? 1 : 0) + pet.GetItemCount("ball") + pet.GetItemCount("tunnel"));
+
+            foreach (var legacyId in LegacyPlaceableInventoryIds)
+            {
+                int count = pet.GetItemCount(legacyId);
+                if (count > 0)
+                {
+                    EnsureMinOwned(world, itemCatalog, legacyId, count);
+                }
+            }
+        }
+
         public override void AddState(IDictionary<string, object> state, BrainController brain)
         {
             var pet = brain?.Pet;
@@ -29,6 +117,19 @@ namespace Cuy.Features
             var world = pet.EnsureWorld();
             var placeCatalog = pet.PlaceCatalog;
             var itemCatalog = pet.WorldItemCatalog;
+
+            EnsureStarterRoomEssentials(pet, world, itemCatalog);
+
+            bool pigRoomsOn = pet.Balance.PigRoomsActive && pet.PigRooms != null && pet.State.Roster != null;
+            var canonicalPigRooms = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (pet.State?.Roster != null)
+            {
+                foreach (var pig in pet.State.Roster)
+                {
+                    if (pig == null) continue;
+                    canonicalPigRooms.Add(pet.RoomIdOf(pig.Id));
+                }
+            }
 
             // 1. Layouts
             var placeOrRoomIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -50,13 +151,18 @@ namespace Cuy.Features
             {
                 foreach (var k in world.Rooms.Keys)
                 {
-                    if (!string.IsNullOrEmpty(k)) placeOrRoomIds.Add(k);
+                    if (string.IsNullOrEmpty(k)) continue;
+                    if (k.StartsWith("pig:", StringComparison.OrdinalIgnoreCase) &&
+                        canonicalPigRooms.Count > 0 && !canonicalPigRooms.Contains(k))
+                    {
+                        continue;
+                    }
+                    placeOrRoomIds.Add(k);
                 }
             }
             placeOrRoomIds.Add("salon");
 
             // Pig rooms exist only while Balance.PigRoomsActive is on; their ids come from the roster.
-            bool pigRoomsOn = pet.Balance.PigRoomsActive && pet.PigRooms != null && pet.State.Roster != null;
             if (pigRoomsOn)
             {
                 foreach (var pig in pet.State.Roster)
@@ -146,11 +252,17 @@ namespace Cuy.Features
                     int placed = 0;
                     if (world.Rooms != null)
                     {
-                        foreach (var r in world.Rooms.Values)
+                        foreach (var kv in world.Rooms)
                         {
-                            if (r?.Items != null)
+                            if (!string.IsNullOrEmpty(kv.Key) &&
+                                kv.Key.StartsWith("pig:", StringComparison.OrdinalIgnoreCase) &&
+                                canonicalPigRooms.Count > 0 && !canonicalPigRooms.Contains(kv.Key))
                             {
-                                placed += r.Items.Count(i => i != null && string.Equals(i.ItemId, def.Id, StringComparison.OrdinalIgnoreCase));
+                                continue;
+                            }
+                            if (kv.Value?.Items != null)
+                            {
+                                placed += kv.Value.Items.Count(i => i != null && string.Equals(i.ItemId, def.Id, StringComparison.OrdinalIgnoreCase));
                             }
                         }
                     }
@@ -162,6 +274,9 @@ namespace Cuy.Features
                         places = def.Places != null ? def.Places.ToList() : new List<string>(),
                         w = def.W,
                         h = def.H,
+                        footW = def.EffectiveFootW,
+                        footH = def.EffectiveFootH,
+                        spriteH = def.EffectiveSpriteH,
                         price = def.Price,
                         comfort = def.Comfort,
                         layer = def.Layer,
@@ -345,7 +460,7 @@ namespace Cuy.Features
 
             if (type == "room_buy")
             {
-                string itemId = message?.Value<string>("itemId");
+                string itemId = ResolveWorldItemId(pet, message?.Value<string>("itemId"));
                 if (string.IsNullOrEmpty(itemId)) return true;
 
                 var res = pet.BuyItem(itemId);
@@ -369,8 +484,8 @@ namespace Cuy.Features
             }
             else if (type == "room_place")
             {
-                string place = message?.Value<string>("place") ?? "salon";
-                string itemId = message?.Value<string>("itemId");
+                string place = ResolveCanonicalRoomId(pet, message?.Value<string>("place") ?? "salon");
+                string itemId = ResolveWorldItemId(pet, message?.Value<string>("itemId"));
                 int rawX = message?.Value<int?>("x") ?? 0;
                 int rawY = message?.Value<int?>("y") ?? 0;
                 bool flip = message?.Value<bool?>("flip") ?? false;
@@ -404,7 +519,7 @@ namespace Cuy.Features
             }
             else if (type == "room_move")
             {
-                string place = message?.Value<string>("place") ?? "salon";
+                string place = ResolveCanonicalRoomId(pet, message?.Value<string>("place") ?? "salon");
                 string uid = message?.Value<string>("uid");
                 int rawX = message?.Value<int?>("x") ?? 0;
                 int rawY = message?.Value<int?>("y") ?? 0;
@@ -448,7 +563,7 @@ namespace Cuy.Features
             }
             else if (type == "room_flip")
             {
-                string place = message?.Value<string>("place") ?? "salon";
+                string place = ResolveCanonicalRoomId(pet, message?.Value<string>("place") ?? "salon");
                 string uid = message?.Value<string>("uid");
                 if (string.IsNullOrEmpty(uid)) return true;
 
@@ -461,7 +576,7 @@ namespace Cuy.Features
             }
             else if (type == "room_remove")
             {
-                string place = message?.Value<string>("place") ?? "salon";
+                string place = ResolveCanonicalRoomId(pet, message?.Value<string>("place") ?? "salon");
                 string uid = message?.Value<string>("uid");
                 if (string.IsNullOrEmpty(uid)) return true;
 
@@ -485,7 +600,7 @@ namespace Cuy.Features
             }
             else if (type == "room_skin")
             {
-                string room = message?.Value<string>("room") ?? message?.Value<string>("place") ?? "salon";
+                string room = ResolveCanonicalRoomId(pet, message?.Value<string>("room") ?? message?.Value<string>("place") ?? "salon");
                 string slot = message?.Value<string>("slot");
                 string itemId = message?.Value<string>("itemId");
 
@@ -521,7 +636,7 @@ namespace Cuy.Features
             }
             else if (type == "room_variant")
             {
-                string place = message?.Value<string>("place");
+                string place = ResolveCanonicalRoomId(pet, message?.Value<string>("place"));
                 string uid = message?.Value<string>("uid");
                 int? variant = message?.Value<int?>("variant");
                 if (string.IsNullOrEmpty(place) || string.IsNullOrEmpty(uid) || !variant.HasValue) return true;
@@ -533,7 +648,7 @@ namespace Cuy.Features
             }
             else if (type == "room_variant_unlock")
             {
-                string itemId = message?.Value<string>("itemId");
+                string itemId = ResolveWorldItemId(pet, message?.Value<string>("itemId"));
                 int? variant = message?.Value<int?>("variant");
                 if (string.IsNullOrEmpty(itemId) || !variant.HasValue) return true;
 
@@ -553,7 +668,7 @@ namespace Cuy.Features
             }
             else if (type == "room_rename")
             {
-                string place = message?.Value<string>("place");
+                string place = ResolveCanonicalRoomId(pet, message?.Value<string>("place"));
                 string name = message?.Value<string>("name") ?? string.Empty;
                 if (string.IsNullOrEmpty(place)) return true;
 
@@ -564,8 +679,8 @@ namespace Cuy.Features
             }
             else if (type == "room_transfer")
             {
-                string from = message?.Value<string>("from");
-                string to = message?.Value<string>("to");
+                string from = ResolveCanonicalRoomId(pet, message?.Value<string>("from"));
+                string to = ResolveCanonicalRoomId(pet, message?.Value<string>("to"));
                 string uid = message?.Value<string>("uid");
                 int x = message?.Value<int?>("x") ?? 0;
                 int y = message?.Value<int?>("y") ?? 0;
@@ -657,7 +772,10 @@ namespace Cuy.Features
                 int targetY = (int)Math.Round(rawY / 16.0 - h);
 
                 targetX = Math.Max(0, Math.Min(cols - w, targetX));
-                targetY = Math.Max(0, Math.Min(rows - h, targetY));
+                bool isWall = string.Equals(def.Layer, "wall", StringComparison.OrdinalIgnoreCase);
+                int minTargetY = isWall ? 0 : Math.Min(wallRows, Math.Max(0, rows - h));
+                int maxTargetY = (isWall && wallRows > 0) ? Math.Max(0, wallRows - h) : Math.Max(0, rows - h);
+                targetY = Math.Max(minTargetY, Math.Min(maxTargetY, targetY));
 
                 if (RoomLayoutOps.CanPlace(room, cols, rows, wallRows, def, effPlace, targetX, targetY, ignoreUid, pet.WorldItemCatalog) == PlaceResult.Ok)
                 {

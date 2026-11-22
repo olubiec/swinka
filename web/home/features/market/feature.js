@@ -16,55 +16,91 @@
     { id: 'orders', label: 'Orders',       categories: null },
     { id: 'sell',   label: 'Sell',         categories: null }
   ];
+  const DRAWER_TABS = [
+    { id: 'specials', label: 'Specials' },
+    { id: 'food',     label: 'Food',         categories: ['food', 'pantry', 'treat', 'treats', 'vegetable', 'chew_stick'] },
+    { id: 'care',     label: 'Care',         categories: ['care', 'medicine', 'vitamins'] },
+    { id: 'seeds',    label: 'Seeds',        categories: ['seed', 'seeds', 'sapling'] },
+    { id: 'toys',     label: 'Toys & Decor', categories: ['toy', 'toys', 'equipment', 'decor', 'home', 'craft', 'furniture'] },
+    { id: 'orders',   label: 'Orders' },
+    { id: 'sell',     label: 'Sell' }
+  ];
   const CRAFT_SUBS = {
     toys:  ['toy', 'toys'],
     decor: ['decor', 'home', 'craft']
   };
+  const CRAFT_FILTER_TABS = [
+    { id: 'all',       label: 'All' },
+    { id: 'toys',      label: 'Toys' },
+    { id: 'furniture', label: 'Furniture' },
+    { id: 'lights',    label: 'Lights' },
+    { id: 'plants',    label: 'Plants' },
+    { id: 'decor',     label: 'Decor' }
+  ];
+  const LIGHT_IDS = new Set([
+    'lamp_floor', 'lamp_mushroom', 'lamp_arc', 'lantern_paper', 'lamp_salt',
+    'lamp_lava', 'fireplace', 'candle', 'fairy_lights', 'window', 'torch',
+    'lamp_oil', 'lantern', 'lamp_street', 'brazier', 'lamp_post', 'lantern_garden'
+  ]);
+  const PLANT_PREFIXES = ['plant_', 'flower_', 'tree_', 'flowerbed_', 'bush_'];
+  const PLANT_EXACT = ['hanging_planter', 'hedge', 'arch_rose'];
+  const FURNITURE_PREFIXES = ['sofa_', 'bench_', 'table_', 'chair_', 'bed_', 'fence_'];
+  const FURNITURE_EXACT = [
+    'sofa_cosy', 'armchair', 'bookshelf', 'side_table', 'cushion_big', 'hay_bar_wood',
+    'cosy_nook', 'bench_wood', 'bench_park', 'pouf_boucle', 'stump_seat', 'picnic_blanket',
+    'gazebo', 'bridge_wood', 'fence_wood', 'fence_farm', 'gate_garden', 'pigloo_garden',
+    'sandbox_pig', 'hay_basket', 'toy_basket'
+  ];
   const STALLS = {
     seeds: {
       key: 'seeds',
       icon: 'sprout',
-      title: 'Seed Stall — Farm Seeds & Crops',
+      title: 'Seed Stall',
       subtitle: 'Farm Seeds & Crops',
       defaultMode: 'buy',
       defaultCat: 'seeds',
-      specialtyCat: 'seeds'
+      specialtyCat: 'seeds',
+      tabs: ['seeds']
     },
     food: {
       key: 'food',
       icon: 'carrot',
-      title: 'Food Stall — Fresh Veggies & Treats',
+      title: 'Food Stall',
       subtitle: 'Fresh Veggies & Treats',
       defaultMode: 'buy',
       defaultCat: 'food',
-      specialtyCat: 'food'
+      specialtyCat: 'food',
+      tabs: ['food', 'care', 'specials']
     },
     toys: {
       key: 'toys',
       icon: 'toy',
-      title: 'Craft Stall — Toys & Decor',
+      title: 'Craft & Decor',
       subtitle: 'Toys & Decor',
       defaultMode: 'buy',
       defaultCat: 'toys',
-      specialtyCat: 'toys'
+      specialtyCat: 'toys',
+      tabs: ['toys']
     },
     orders: {
       key: 'orders',
       icon: 'orders',
-      title: 'Market Orders — Crop Requests',
+      title: 'Market Orders',
       subtitle: 'Deliver crops for clovers',
       defaultMode: 'orders',
       defaultCat: 'seeds',
-      specialtyCat: null
+      specialtyCat: null,
+      tabs: ['orders']
     },
     sell: {
       key: 'sell',
       icon: 'sell',
-      title: 'My Stall — Sell from Bag',
+      title: 'My Stall',
       subtitle: 'Bag & stall upgrades',
       defaultMode: 'sell',
       defaultCat: 'seeds',
-      specialtyCat: null
+      specialtyCat: null,
+      tabs: ['sell']
     }
   };
   const QUOTE_DELAY = 150;
@@ -112,8 +148,11 @@
       document.head.appendChild(s);
     }
     if (lightsRequested) return;
+    const resolveAsset = (rel) => (S.api && typeof S.api.assetUrl === 'function')
+      ? S.api.assetUrl(rel)
+      : ('../../assets/' + rel.replace(/^\/+/, ''));
     lightsRequested = true;
-    fetch(S.api.assetUrl('data/lights.json'))
+    fetch(resolveAsset('data/lights.json'))
       .then(r => (r.ok ? r.json() : null))
       .then(j => { lightsData = j; render(); })
       .catch(() => { lightsData = null; });
@@ -121,8 +160,11 @@
 
   function loadAtlas() {
     if (atlasRequested) return;
+    const resolveAsset = (rel) => (S.api && typeof S.api.assetUrl === 'function')
+      ? S.api.assetUrl(rel)
+      : ('../../assets/' + rel.replace(/^\/+/, ''));
     atlasRequested = true;
-    fetch(S.api.assetUrl('world/atlas.json'))
+    fetch(resolveAsset('world/atlas.json'))
       .then(r => (r.ok ? r.json() : null))
       .then(j => { atlas = j && j.items ? j : null; render(); })
       .catch(() => { atlas = null; });
@@ -310,10 +352,12 @@
     mode: 'buy',
     cat: 'seeds',
     craftSub: 'auto',
-    stallKey: 'seeds',
+    craftFilter: 'all',
+    stallKey: null,
     stallId: null,
     anchorRect: null,
     openedAt: 0,
+    lastStateSig: null,
     unsubQuote: null,
     unsubState: null,
     onKeyDown: null,
@@ -321,6 +365,48 @@
     docDownTimer: null,
     hotspotSubscribed: false
   };
+
+  function categorizeCraftItem(item) {
+    if (!item || typeof item !== 'object') return 'decor';
+    const cat = String(item.category || '').trim().toLowerCase();
+    if (cat === 'toy' || cat === 'toys' || cat === 'equipment') return 'toys';
+    const id = String(item.itemId || item.id || '').toLowerCase();
+    if (window.EditFilters && typeof window.EditFilters.categorize === 'function') {
+      return String(window.EditFilters.categorize({
+        id: id,
+        itemId: id,
+        layer: item.layer,
+        place: item.place,
+        category: item.subCategory
+      })).toLowerCase();
+    }
+    if (id.indexOf('lamp_') === 0 || LIGHT_IDS.has(id)) return 'lights';
+    if (PLANT_PREFIXES.some(p => id.indexOf(p) === 0) || PLANT_EXACT.indexOf(id) >= 0) return 'plants';
+    if (item.layer !== 'wall' && item.layer !== 'ground' &&
+        (FURNITURE_EXACT.indexOf(id) >= 0 || FURNITURE_PREFIXES.some(p => id.indexOf(p) === 0))) {
+      return 'furniture';
+    }
+    return 'decor';
+  }
+
+  function marketStateSig(st) {
+    if (!st) return '';
+    const marketPlace = ((st.places && st.places.places) || []).find(p => p && p.id === 'market');
+    return JSON.stringify({
+      c: st.clovers,
+      m: st.market,
+      inv: st.inventory,
+      bag: st.bag,
+      ro: st.rooms && st.rooms.owned,
+      pl: marketPlace ? marketPlace.unlocked : null
+    });
+  }
+
+  function isExplicitStallId(stallIdOrCategory, stallUid) {
+    if (stallUid) return true;
+    const s = String(stallIdOrCategory || '').trim().toLowerCase();
+    return /^(?:fx:market:|stall[:_]|own_stall$|order_board$)/.test(s);
+  }
 
   function resolveStall(stallIdOrCategory) {
     const s = String(stallIdOrCategory || '').trim().toLowerCase();
@@ -332,8 +418,8 @@
       return { stall: STALLS.orders, craftSub: 'auto' };
     }
     if (
-      s === 'sell' || s === 'own' || s === 'stall:own' || s === 'stall_own' ||
-      s.endsWith('stall_own') || s.endsWith(':own')
+      s === 'sell' || s === 'own' || s === 'own_stall' || s === 'stall:own' || s === 'stall_own' ||
+      s === 'fx:market:own_stall' || s.endsWith('own_stall') || s.endsWith('stall_own') || s.endsWith(':own')
     ) {
       return { stall: STALLS.sell, craftSub: 'auto' };
     }
@@ -391,7 +477,7 @@
     if (P.unsubState) return;
     const api = getApi();
     if (!api || !api.onState) return;
-    P.unsubState = api.onState(() => {
+    P.unsubState = api.onState((st) => {
       ensureHotspotHook();
       if (P.el && P.el.isConnected) {
         if (P.stallId && window.CanvasPig && typeof window.CanvasPig.getHotspots === 'function') {
@@ -399,7 +485,11 @@
           const hit = list.find(h => h && (h.uid === P.stallId || h.id === P.stallId));
           if (hit && hit.rect) P.anchorRect = hit.rect;
         }
-        renderPanel();
+        const curState = st || (api.getState ? api.getState() : null);
+        const sig = marketStateSig(curState);
+        if (sig !== P.lastStateSig) {
+          renderPanel();
+        }
       }
     });
   }
@@ -409,7 +499,7 @@
     const uid = String(hs.uid || '');
     const hid = String(hs.id || '');
     const id = uid || hid;
-    const pat = /^stall[:_]|^fx:market:(stall_|order_board)|^order_board$|^orders$/i;
+    const pat = /^stall[:_]|^fx:market:(stall_|order_board|own_stall)|^own_stall$|^order_board$|^orders$/i;
     const isStall = hs.kind === 'stall' || hs.kind === 'orders' || pat.test(uid) || pat.test(hid);
     if (!isStall || !isMarketScene()) return;
     openPanel(hid || uid || hs.label, hs.rect, id || hs.label);
@@ -586,6 +676,9 @@
     ensureLights();
     loadAtlas();
 
+    const prevScrollTop = container.scrollTop || 0;
+    const prevScrollLeft = container.scrollLeft || 0;
+
     container.innerHTML = `
       <div class="market-panel" data-place="market" style="position:relative">
         ${tintHtml()}
@@ -623,6 +716,8 @@
     } else {
       loadExtras();
     }
+    container.scrollTop = prevScrollTop;
+    container.scrollLeft = prevScrollLeft;
   }
 
   function bindMarketEvents(root, st, activeTab) {
@@ -655,7 +750,7 @@
     });
     root.querySelectorAll('[data-fill-order]').forEach(btn => {
       btn.addEventListener('click', () => {
-        send({ type: 'market_fill_order', orderIndex: Number(btn.dataset.fillOrder) });
+        send({ type: 'market_order', index: Number(btn.dataset.fillOrder) });
       });
     });
     const stallBtn = root.querySelector('[data-stall]');
@@ -720,107 +815,320 @@
     P.el.style.top = top + 'px';
   }
 
+  function resolveDrawerCardIconHtml(itemId, name) {
+    const api = getApi();
+    if (window.CuyWorldItems && typeof window.CuyWorldItems.find === 'function') {
+      const w = window.CuyWorldItems.find(itemId);
+      if (w && w.file && api && api.assetUrl) {
+        return `<img class="edit-card-icon" src="${esc(api.assetUrl('world/' + w.file))}" alt="${esc(name)}" draggable="false">`;
+      }
+    }
+    if (atlas && atlas.items && atlas.items[itemId] && atlas.items[itemId].file && api && api.assetUrl) {
+      return `<img class="edit-card-icon" src="${esc(api.assetUrl('world/' + atlas.items[itemId].file))}" alt="${esc(name)}" draggable="false">`;
+    }
+    return `<span class="pixel-icon ${iconClass(itemId)} x2" aria-hidden="true"></span>`;
+  }
+
+  function syncMarketBodyClasses(collapsed) {
+    if (typeof document === 'undefined' || !document.body) return;
+    document.body.classList.add('cuy-market-open');
+    document.body.classList.toggle('cuy-market-collapsed', !!collapsed);
+  }
+
+  function renderDrawerCards(st, activeTab, query, craftFilter) {
+    const m = (st && st.market) || {};
+    const clovers = Number((st && st.clovers) || 0);
+    const q = String(query || '').trim().toLowerCase();
+    const matchesQuery = (name, id) => !q || String(name || '').toLowerCase().includes(q) || String(id || '').toLowerCase().includes(q);
+
+    if (activeTab === 'specials') {
+      const specials = (m.specials || []).filter(s => s && matchesQuery(s.name, s.itemId));
+      if (!specials.length) return '<div class="edit-drawer-empty">No specials available</div>';
+      return specials.map(s => {
+        const idx = typeof s.index === 'number' ? s.index : 0;
+        const price = Number(s.price || 0);
+        const was = Number(s.was || 0);
+        const canAfford = clovers >= price;
+        const name = s.name || prettyName(s.itemId);
+        const disabledAttr = canAfford ? '' : ` disabled aria-disabled="true" title="Need ${price - clovers} more clovers"`;
+        const wasHtml = was > price ? `<span class="market-card-was">${was}</span>` : '';
+        return `<div class="edit-card ui-panel-wood" data-id="${esc(s.itemId)}" role="listitem" tabindex="0">
+          <div class="edit-card-icon-wrap">${resolveDrawerCardIconHtml(s.itemId, name)}</div>
+          <div class="edit-card-name" title="${esc(name)}">${esc(name)}</div>
+          <button type="button" class="ui-btn edit-card-buy" data-drawer-special="${idx}"${disabledAttr}>
+            Buy ${price} <span class="pixel-icon icon-clover" aria-hidden="true"></span>${wasHtml}
+          </button>
+        </div>`;
+      }).join('');
+    }
+
+    if (activeTab === 'orders') {
+      const orders = (m.orders || []).filter(o => o && matchesQuery(o.name || o.cropId, o.cropId));
+      if (!orders.length) return '<div class="edit-drawer-empty">No market orders right now</div>';
+      return orders.map((o, idx) => {
+        const orderIndex = typeof o.orderIndex === 'number' ? o.orderIndex : (typeof o.index === 'number' ? o.index : idx);
+        const itemId = String(o.itemId || o.item || o.cropId || '');
+        const name = o.name || o.itemName || prettyName(itemId || 'Order');
+        const need = Math.max(1, Number(o.need != null ? o.need : (o.count != null ? o.count : 1)));
+        const have = ownedCount(st, itemId, o);
+        const reward = Number(o.reward != null ? o.reward : 0);
+        const done = Boolean(o.filled || o.done || o.completed || o.claimed);
+        const canDeliver = !done && have >= need;
+        const label = done ? 'Done' : `+${reward} <span class="pixel-icon icon-clover" aria-hidden="true"></span>`;
+        return `<div class="edit-card ui-panel-wood${done ? ' is-dimmed' : ''}" data-id="${esc(itemId)}" role="listitem" tabindex="0">
+          <div class="edit-card-icon-wrap">${resolveDrawerCardIconHtml(itemId, name)}</div>
+          <div class="edit-card-name" title="${esc(name)} ×${need}">${esc(name)} ×${need}</div>
+          <div class="market-card-meta">${have}/${need}</div>
+          <button type="button" class="ui-btn edit-card-buy" data-drawer-order="${orderIndex}"${canDeliver ? '' : ' disabled aria-disabled="true"'}>${label}</button>
+        </div>`;
+      }).join('');
+    }
+
+    if (activeTab === 'sell') {
+      const sellable = (m.sellable || []).filter(s => s && matchesQuery(s.name, s.itemId));
+      if (!sellable.length) return '<div class="edit-drawer-empty">Nothing to sell yet</div>';
+      const closed = (m.capLeft || 0) <= 0;
+      return sellable.map(s => {
+        const inBag = ownedCount(st, s.itemId, s);
+        const canSell = inBag > 0 && !closed;
+        const unitNow = Number(s.unitNow || 0);
+        const name = s.name || prettyName(s.itemId);
+        return `<div class="edit-card ui-panel-wood${inBag <= 0 ? ' is-dimmed' : ''}" data-id="${esc(s.itemId)}" role="listitem" tabindex="0">
+          <div class="edit-card-icon-wrap">${resolveDrawerCardIconHtml(s.itemId, name)}</div>
+          <div class="edit-card-name" title="${esc(name)}">${esc(name)}</div>
+          <div class="market-card-meta">Bag: ${inBag}</div>
+          <button type="button" class="ui-btn edit-card-buy" data-drawer-sell="${esc(s.itemId)}"${canSell ? '' : ' disabled aria-disabled="true"'}>
+            Sell ${unitNow} <span class="pixel-icon icon-clover" aria-hidden="true"></span>
+          </button>
+        </div>`;
+      }).join('');
+    }
+
+    const tabDef = DRAWER_TABS.find(t => t.id === activeTab) || DRAWER_TABS[1];
+    const allowed = tabDef.categories || [];
+    const cf = String(craftFilter || 'all').toLowerCase();
+    const list = (m.buyable || []).filter(b => {
+      if (!b || !catMatches(b, allowed) || !matchesQuery(b.name, b.itemId)) return false;
+      if (activeTab === 'toys' && cf && cf !== 'all') {
+        return categorizeCraftItem(b) === cf;
+      }
+      return true;
+    });
+    if (!list.length) return '<div class="edit-drawer-empty">Nothing here today</div>';
+    return list.map(b => {
+      const price = Number(b.price || 0);
+      const owned = ownedCount(st, b.itemId, b);
+      const isOneTimeOwned = Boolean(b.oneTime && owned > 0);
+      const atDailyLimit = typeof b.dailyLimit === 'number' && typeof b.boughtToday === 'number' && b.boughtToday >= b.dailyLimit;
+      const canAfford = clovers >= price;
+      const canBuy = !isOneTimeOwned && !atDailyLimit && canAfford;
+      const name = b.name || prettyName(b.itemId);
+      const btnText = isOneTimeOwned ? 'Owned' : (atDailyLimit ? 'Limit' : `Buy ${price} <span class="pixel-icon icon-clover" aria-hidden="true"></span>`);
+      const titleAttr = !canAfford && !isOneTimeOwned && !atDailyLimit ? ` title="Need ${price - clovers} more clovers"` : '';
+      return `<div class="edit-card ui-panel-wood" data-id="${esc(b.itemId)}" role="listitem" tabindex="0">
+        <div class="edit-card-icon-wrap">${resolveDrawerCardIconHtml(b.itemId, name)}</div>
+        <div class="edit-card-name" title="${esc(name)}">${esc(name)}</div>
+        <button type="button" class="ui-btn edit-card-buy" data-drawer-buy="${esc(b.itemId)}"${canBuy ? '' : ' disabled aria-disabled="true"'}${titleAttr}>${btnText}</button>
+      </div>`;
+    }).join('');
+  }
+
   function renderPanel() {
     if (!P.el) return;
     const api = getApi();
     const st = api && api.getState ? api.getState() : null;
-    const stall = STALLS[P.stallKey] || STALLS.seeds;
-    P.el.dataset.stall = stall.key;
-    P.el.dataset.mode = P.mode;
-    P.tab = P.mode === 'buy' ? P.cat : P.mode;
+    P.lastStateSig = marketStateSig(st);
 
-    const marketPlace = ((st && st.places && st.places.places) || []).find(p => p.id === 'market');
-    let bodyHtml = '';
-    if (marketPlace && marketPlace.unlocked === false) {
-      bodyHtml = `<p class="market-locked-text">The market is still closed. ${marketPlace.unlockCost ? 'Open for ' + marketPlace.unlockCost + ' clovers' : 'Locked'}</p>`;
-    } else if (!st || !st.market) {
-      bodyHtml = '<p class="market-empty">Opening the market…</p>';
-    } else if (P.mode === 'sell') {
-      const m = st.market;
-      const cap = Math.max(1, m.cap || 1);
-      const capPct = Math.round(Math.max(0, Math.min(1, m.capLeft / cap)) * 100);
-      const capText = m.capLeft > 0
-        ? `The market will buy ${m.capLeft} more clovers' worth today`
-        : 'The market has enough for today';
-      const stallInfo = m.stall || { level: 1, nextCost: null };
-      const canStall = stallInfo.nextCost !== null && stallInfo.nextCost !== undefined && st.clovers >= stallInfo.nextCost;
-      bodyHtml = `
-        <div class="market-top">
-          <span class="market-stall">Stall level ${stallInfo.level}
-            <button type="button" class="market-btn" data-stall="1" ${canStall ? '' : 'disabled'}>${stallInfo.nextCost ? 'Upgrade · ' + stallInfo.nextCost : 'Max'}</button></span>
-        </div>
-        <div class="market-cap" aria-label="Daily cap">
-          <p class="market-cap-text">${esc(capText)}</p>
-          <div class="market-cap-bar"><span class="market-cap-fill" style="width:${capPct}%"></span></div>
-        </div>
-        ${sellRows(st)}`;
-    } else if (P.mode === 'orders') {
-      bodyHtml = orderRows(st, true);
-    } else {
-      bodyHtml = buyViewHtml(st, P.cat, P.craftSub);
+    const prevScrollTop = P.el.scrollTop || 0;
+    const prevStrip = P.el.querySelector('#marketDrawerStrip');
+    const prevStripLeft = prevStrip ? prevStrip.scrollLeft : 0;
+    const prevContent = P.el.querySelector('#marketDrawerContent');
+    const prevContentLeft = prevContent ? prevContent.scrollLeft : 0;
+    const prevContentTop = prevContent ? prevContent.scrollTop : 0;
+    const prevSearch = P.el.querySelector('#marketDrawerSearch');
+    const wasSearchFocused = !!(prevSearch && document.activeElement === prevSearch);
+    const selStart = wasSearchFocused ? prevSearch.selectionStart : null;
+    const selEnd = wasSearchFocused ? prevSearch.selectionEnd : null;
+
+    const stallDef = P.stallKey && STALLS[P.stallKey] ? STALLS[P.stallKey] : null;
+    const allowedTabIds = stallDef ? stallDef.tabs : null;
+    const visibleTabs = allowedTabIds
+      ? DRAWER_TABS.filter(t => allowedTabIds.indexOf(t.id) !== -1)
+      : DRAWER_TABS;
+    let activeTab = P.tab || (visibleTabs[0] && visibleTabs[0].id) || 'food';
+    if (visibleTabs.length && !visibleTabs.some(t => t.id === activeTab)) {
+      activeTab = visibleTabs[0].id;
+      P.tab = activeTab;
     }
 
-    const clovers = st ? (st.clovers || 0) : 0;
-    const modesHtml = [
-      { id: 'buy', label: 'Buy', extra: '' },
-      { id: 'sell', label: 'Sell', extra: ' data-panel-tab="sell"' },
-      { id: 'orders', label: 'Orders', extra: ' data-panel-tab="orders"' }
-    ].map(m => {
-      const cur = P.mode === m.id;
-      return `<button type="button" role="tab" class="market-tab stall-mode-tab${cur ? ' is-current' : ''}" aria-selected="${cur}" data-mode="${m.id}"${m.extra}>${m.label}</button>`;
-    }).join('');
+    const clovers = st ? Number(st.clovers || 0) : 0;
+    const m = st && st.market ? st.market : null;
+    const marketPlace = ((st && st.places && st.places.places) || []).find(p => p && p.id === 'market');
+    const isLocked = Boolean(marketPlace && marketPlace.unlocked === false);
+    const stallInfo = (m && m.stall) || { level: 1, nextCost: -1 };
+    const hasNext = typeof stallInfo.nextCost === 'number' && stallInfo.nextCost >= 0;
+    const canStall = hasNext && clovers >= stallInfo.nextCost;
 
-    const tabsHtml = CAT_TABS.map(t => {
-      const cur = P.mode === 'buy' && P.cat === t.id;
-      const spec = stall.specialtyCat === t.id;
-      return `<button type="button" role="tab" class="market-tab stall-cat-tab${cur ? ' is-current' : ''}${spec ? ' is-specialty' : ''}" aria-selected="${cur}" data-panel-tab="${t.id}" data-cat="${t.id}" data-specialty="${spec ? 'true' : 'false'}">${esc(t.label)}</button>`;
-    }).join('');
+    const activeCraftFilter = P.craftFilter || 'all';
+    const isCraftStallOnly = P.stallKey === 'toys';
+    let tabsHtml = '';
+    if (isCraftStallOnly) {
+      tabsHtml = CRAFT_FILTER_TABS.map(f => {
+        const cur = activeCraftFilter === f.id;
+        return `<button type="button" role="tab" class="edit-drawer-tab${cur ? ' is-active' : ''}" aria-selected="${cur}" data-craft-filter="${f.id}">${esc(f.label)}</button>`;
+      }).join('');
+    } else {
+      tabsHtml = visibleTabs.map(t => {
+        const cur = activeTab === t.id;
+        return `<button type="button" role="tab" class="edit-drawer-tab${cur ? ' is-active' : ''}" aria-selected="${cur}" data-market-tab="${t.id}">${esc(t.label)}</button>`;
+      }).join('');
+    }
 
+    const subfiltersHtml = (!isCraftStallOnly && activeTab === 'toys')
+      ? `<div class="market-subfilters" role="group" aria-label="Toys and Decor categories">${CRAFT_FILTER_TABS.map(f => {
+          const cur = activeCraftFilter === f.id;
+          return `<button type="button" class="edit-drawer-tab${cur ? ' is-active' : ''}" aria-pressed="${cur}" data-craft-filter="${f.id}">${esc(f.label)}</button>`;
+        }).join('')}</div>`
+      : '';
+
+    const capHtml = (activeTab === 'sell' && m)
+      ? `<div class="market-drawer-cap">${m.capLeft > 0 ? `Market will buy ${m.capLeft} more clovers today (${m.capLeft}/${m.cap})` : 'Daily sales cap reached'}</div>`
+      : '';
+
+    let stripHtml = '';
+    if (isLocked) {
+      stripHtml = `<div class="edit-drawer-empty">Market is locked${marketPlace.unlockCost ? ` (${marketPlace.unlockCost} clovers)` : ''}</div>`;
+    } else if (!m) {
+      stripHtml = '<div class="edit-drawer-empty">Opening the market…</div>';
+    } else {
+      stripHtml = renderDrawerCards(st, activeTab, P.query || '', activeCraftFilter);
+    }
+
+    const showUpgrade = !stallDef || stallDef.key === 'sell';
+    const upgradeHtml = showUpgrade
+      ? (hasNext
+          ? `<button type="button" class="ui-btn edit-upgrade-btn" id="marketStallUpgradeBtn" data-stall="1"${canStall ? '' : ' disabled aria-disabled="true"'}>Upgrade (${stallInfo.nextCost} <span class="pixel-icon icon-clover" aria-hidden="true"></span>)</button>`
+          : `<button type="button" class="ui-btn edit-upgrade-btn" id="marketStallUpgradeBtn" disabled aria-disabled="true">Stall Max</button>`)
+      : '';
+    const drawerTitle = stallDef ? stallDef.title : 'Market';
+
+    P.el.className = 'feature-market edit-drawer market-drawer ui-panel-wood' + (P.collapsed ? ' is-collapsed' : '');
     P.el.innerHTML = `
-      <div class="market-scene-head">
-        <span class="stall-sign-icon pixel-icon icon-${esc(stall.icon)}" data-stall-icon="${esc(stall.key)}" aria-hidden="true">${stallIconSvg(stall.key)}</span>
-        <div class="market-scene-heading">
-          <span class="market-scene-title">${esc(stall.title)}</span>
-          <span class="market-scene-subtitle">${esc(stall.subtitle)}</span>
+      <div class="edit-drawer-header">
+        <div class="edit-drawer-header-left">
+          <span class="edit-drawer-title" id="marketDrawerTitle">${esc(drawerTitle)}</span>
+          <span class="edit-drawer-level" id="marketDrawerClovers"><span class="pixel-icon icon-clover" aria-hidden="true"></span> ${clovers}</span>
+          <span class="edit-drawer-level" id="marketDrawerStall">Stall Lv.${stallInfo.level || 1}</span>
         </div>
-        <span class="market-clovers"><span class="pixel-icon icon-clover" aria-hidden="true"></span> ${clovers}</span>
-        <button type="button" class="ui-close market-scene-close stall-close-btn" aria-label="Close stall panel"></button>
+        <div class="edit-drawer-header-actions">
+          ${upgradeHtml}
+          <button type="button" class="edit-drawer-collapse" id="marketDrawerCollapse" aria-label="${P.collapsed ? 'Expand market' : 'Collapse market'}" title="${P.collapsed ? 'Expand market' : 'Collapse market'}" aria-expanded="${P.collapsed ? 'false' : 'true'}">${P.collapsed ? '&#x25B4;' : '&#x25BE;'}</button>
+          <button type="button" class="ui-close edit-drawer-close" id="marketDrawerClose" aria-label="Close market"></button>
+        </div>
       </div>
-      <div class="stall-modes" role="tablist" aria-label="Stall mode">${modesHtml}</div>
-      <div class="market-tabs" role="tablist" aria-label="Market categories">${tabsHtml}</div>
-      <div class="market-scene-body">${bodyHtml}</div>`;
+      <div class="edit-drawer-filters" id="marketDrawerFilters">
+        <div class="edit-drawer-filters-bar">
+          <div class="edit-drawer-tabs" role="tablist" aria-label="Market categories">${tabsHtml}</div>
+          <input type="search" id="marketDrawerSearch" class="edit-drawer-search" placeholder="Search items..." aria-label="Search market items" value="${esc(P.query || '')}">
+        </div>
+        ${subfiltersHtml}
+      </div>
+      ${capHtml}
+      <div class="edit-drawer-content" id="marketDrawerContent" role="region" aria-label="Market items">
+        <div class="edit-drawer-strip" id="marketDrawerStrip" role="list">${stripHtml}</div>
+      </div>`;
 
-    const closeBtn = P.el.querySelector('.market-scene-close');
+    syncMarketBodyClasses(P.collapsed);
+
+    const closeBtn = P.el.querySelector('#marketDrawerClose');
     if (closeBtn) closeBtn.addEventListener('click', closePanel);
 
-    P.el.querySelectorAll('.stall-mode-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        P.mode = btn.dataset.mode || 'buy';
+    const colBtn = P.el.querySelector('#marketDrawerCollapse');
+    if (colBtn) {
+      colBtn.addEventListener('click', () => {
+        P.collapsed = !P.collapsed;
         renderPanel();
       });
-    });
-    P.el.querySelectorAll('.stall-cat-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        P.mode = 'buy';
-        P.cat = btn.dataset.cat || btn.dataset.panelTab || 'seeds';
-        renderPanel();
+    }
+
+    const stallBtn = P.el.querySelector('#marketStallUpgradeBtn');
+    if (stallBtn) {
+      stallBtn.addEventListener('click', () => {
+        if (!stallBtn.disabled) send({ type: 'market_stall' });
       });
-    });
-    P.el.querySelectorAll('[data-subcat]').forEach(btn => {
+    }
+
+    P.el.querySelectorAll('[data-market-tab]').forEach(btn => {
       btn.addEventListener('click', () => {
-        P.craftSub = btn.dataset.subcat || 'toys';
-        renderPanel();
-      });
-    });
-    P.el.querySelectorAll('[data-switch-mode]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        P.mode = btn.dataset.switchMode || 'sell';
+        P.tab = btn.dataset.marketTab || 'food';
         renderPanel();
       });
     });
 
-    if (st && st.market) bindMarketEvents(P.el, st, P.mode === 'sell' ? 'sell' : (P.mode === 'orders' ? 'orders' : P.cat));
-    positionPanel();
+    P.el.querySelectorAll('[data-craft-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        P.craftFilter = btn.dataset.craftFilter || 'all';
+        renderPanel();
+      });
+    });
+
+    const searchInput = P.el.querySelector('#marketDrawerSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        P.query = searchInput.value || '';
+        const strip = P.el && P.el.querySelector('#marketDrawerStrip');
+        if (strip && m) {
+          const sl = strip.scrollLeft;
+          strip.innerHTML = renderDrawerCards(st, P.tab || 'food', P.query, P.craftFilter || 'all');
+          bindDrawerCardEvents(strip);
+          strip.scrollLeft = sl;
+        }
+      });
+    }
+
+    const strip = P.el.querySelector('#marketDrawerStrip');
+    if (strip) bindDrawerCardEvents(strip);
+
+    P.el.scrollTop = prevScrollTop;
+    if (strip) strip.scrollLeft = prevStripLeft;
+    const newContent = P.el.querySelector('#marketDrawerContent');
+    if (newContent) {
+      newContent.scrollLeft = prevContentLeft;
+      newContent.scrollTop = prevContentTop;
+    }
+    if (wasSearchFocused && searchInput) {
+      searchInput.focus();
+      if (selStart !== null && selEnd !== null && typeof searchInput.setSelectionRange === 'function') {
+        try { searchInput.setSelectionRange(selStart, selEnd); } catch (e) {}
+      }
+    }
+  }
+
+  function bindDrawerCardEvents(strip) {
+    strip.querySelectorAll('[data-drawer-buy]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        send({ type: 'market_buy', itemId: btn.dataset.drawerBuy, count: 1 });
+      });
+    });
+    strip.querySelectorAll('[data-drawer-special]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        send({ type: 'market_special', index: Number(btn.dataset.drawerSpecial) });
+      });
+    });
+    strip.querySelectorAll('[data-drawer-order]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        send({ type: 'market_order', index: Number(btn.dataset.drawerOrder) });
+      });
+    });
+    strip.querySelectorAll('[data-drawer-sell]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.disabled) return;
+        send({ type: 'market_sell', itemId: btn.dataset.drawerSell, count: 1 });
+      });
+    });
   }
 
   function closePanel() {
@@ -829,42 +1137,64 @@
     if (P.onDocDown) { document.removeEventListener('pointerdown', P.onDocDown, { capture: true }); P.onDocDown = null; }
     if (P.el && P.el.parentNode) P.el.parentNode.removeChild(P.el);
     P.el = null;
+    P.lastStateSig = null;
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.classList.remove('cuy-market-open', 'cuy-market-collapsed');
+    }
   }
 
   function openPanel(stallIdOrCategory, anchorRect, stallUid) {
     closePanel();
+    if (window.CuyEdit && typeof window.CuyEdit.close === 'function') {
+      try { window.CuyEdit.close(); } catch (e) {}
+    }
     ensureQuoteSub();
     ensureStateSub();
-    const resolved = resolveStall(stallIdOrCategory);
-    P.stallKey = resolved.stall.key;
-    P.mode = resolved.stall.defaultMode;
-    P.cat = resolved.stall.defaultCat;
-    P.craftSub = resolved.craftSub;
-    P.tab = P.mode === 'buy' ? P.cat : P.mode;
+    loadAtlas();
+
+    const s = String(stallIdOrCategory || '').trim().toLowerCase();
+    const explicitStall = isExplicitStallId(stallIdOrCategory, stallUid);
+    if (explicitStall) {
+      const resolved = resolveStall(stallUid || stallIdOrCategory);
+      P.stallKey = resolved.stall.key;
+      P.tab = resolved.stall.defaultCat || resolved.stall.defaultMode || 'food';
+      if (resolved.stall.key === 'orders') P.tab = 'orders';
+      else if (resolved.stall.key === 'sell') P.tab = 'sell';
+      P.craftFilter = resolved.craftSub === 'decor' ? 'decor' : (resolved.craftSub === 'toys' ? 'toys' : 'all');
+    } else {
+      let initialTab = 'food';
+      if (s === 'specials' || s === 'special') initialTab = 'specials';
+      else if (s === 'care' || s === 'medicine' || s === 'vitamins') initialTab = 'care';
+      else if (s === 'orders' || s === 'order' || s.includes('order')) initialTab = 'orders';
+      else if (s === 'sell' || s === 'own' || s.includes('stall_own') || s.includes('own_stall')) initialTab = 'sell';
+      else if (s === 'seeds' || s.includes('seed') || s.includes('left')) initialTab = 'seeds';
+      else if (s === 'toys' || s === 'decor' || s === 'home' || s.includes('craft') || s.includes('right')) initialTab = 'toys';
+      else if (s === 'food' || s.includes('food') || s.includes('center') || s.includes('pantry')) initialTab = 'food';
+      P.stallKey = null;
+      P.tab = initialTab;
+      P.craftFilter = (s === 'decor' || s === 'home') ? 'decor' : 'all';
+    }
+
+    P.collapsed = false;
+    P.query = '';
     P.stallId = stallUid || (typeof stallIdOrCategory === 'string' ? stallIdOrCategory : null);
     P.anchorRect = anchorRect || null;
     P.openedAt = nowMs();
 
-    const el = document.createElement('section');
-    el.id = 'marketStallPanel';
-    el.className = 'feature-market market-scene-panel ui-panel-wood';
-    el.setAttribute('role', 'dialog');
-    el.setAttribute('aria-label', 'Market stall');
-    document.body.appendChild(el);
+    const host = document.getElementById('gameDevice') || document.body;
+    const el = document.createElement('aside');
+    el.id = 'marketDrawer';
+    el.className = 'feature-market edit-drawer market-drawer ui-panel-wood';
+    el.setAttribute('role', 'region');
+    el.setAttribute('aria-label', 'Market');
+    el.setAttribute('data-allow-clip', 'true');
+    host.appendChild(el);
     P.el = el;
 
     renderPanel();
 
     P.onKeyDown = (e) => { if (e.key === 'Escape') closePanel(); };
     document.addEventListener('keydown', P.onKeyDown);
-
-    P.onDocDown = (e) => {
-      if (!P.el) return;
-      if (nowMs() - P.openedAt <= 80) return;
-      if (P.el.contains(e.target)) return;
-      closePanel();
-    };
-    document.addEventListener('pointerdown', P.onDocDown, { capture: true });
   }
 
   window.CuyMarket = { openPanel, closePanel };

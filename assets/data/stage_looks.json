@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "fallbackStage": "adult",
+  "stageOrder": ["baby", "junior", "adult", "senior", "legend"],
+  "stageAliases": {
+    "young": "junior"
+  },
+  "namedPigs": ["cuy", "kuki", "ned", "james", "glen", "racuch"],
+  "stages": {
+    "baby": {
+      "label": "Baby",
+      "icon": "stage_baby",
+      "plateTitle": "Nursery Home",
+      "shadowStage": "baby",
+      "scaleMul": 0.90,
+      "bubbleOffsetY": -36,
+      "slowMul": 1.0,
+      "bgHex": "#6b8e4e",
+      "borderHex": "#2b1712",
+      "textHex": "#fffdf8"
+    },
+    "junior": {
+      "label": "Junior",
+      "icon": "stage_junior",
+      "plateTitle": "Growing Home",
+      "shadowStage": "junior",
+      "scaleMul": 0.95,
+      "bubbleOffsetY": -40,
+      "slowMul": 1.0,
+      "bgHex": "#d4a84f",
+      "borderHex": "#2b1712",
+      "textHex": "#fffdf8"
+    },
+    "adult": {
+      "label": "Adult",
+      "icon": "stage_adult",
+      "plateTitle": "Cozy Home",
+      "shadowStage": "adult",
+      "scaleMul": 1.00,
+      "bubbleOffsetY": -44,
+      "slowMul": 1.0,
+      "bgHex": "#b45a3c",
+      "borderHex": "#2b1712",
+      "textHex": "#fffdf8"
+    },
+    "senior": {
+      "label": "Senior",
+      "icon": "stage_senior",
+      "plateTitle": "Elder Home",
+      "shadowStage": "adult",
+      "scaleMul": 1.00,
+      "bubbleOffsetY": -44,
+      "slowMul": 0.8,
+      "bgHex": "#7c527a",
+      "borderHex": "#2b1712",
+      "textHex": "#fffdf8"
+    },
+    "legend": {
+      "label": "Legend",
+      "icon": "stage_legend",
+      "plateTitle": "Legend Home",
+      "shadowStage": "adult",
+      "scaleMul": 1.02,
+      "bubbleOffsetY": -46,
+      "slowMul": 0.8,
+      "bgHex": "#f2a65a",
+      "borderHex": "#2b1712",
+      "textHex": "#2b1712"
+    }
+  }
+}

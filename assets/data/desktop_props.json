@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "max_on_desktop": 6,
+  "props": [
+    { "itemId": "toy_basket", "roomItemId": "toy_basket", "name": "Toy basket", "sprite": "props/ball.png", "icon": "toy_basket", "source": "world" },
+    { "itemId": "cushion_big", "roomItemId": "cushion_big", "name": "Big cushion", "sprite": "world/house/cushion_big.png", "icon": "cushion_big", "source": "world" },
+    { "itemId": "cosy_nook", "roomItemId": "cosy_nook", "name": "Cosy nook", "sprite": "props/house.png", "icon": "cosy_nook", "source": "world" },
+    { "itemId": "hay_basket", "roomItemId": "hay_basket", "name": "Hay basket", "sprite": "props/hay_ball.png", "icon": "hay_basket", "source": "world" },
+    { "itemId": "pigloo_garden", "roomItemId": "pigloo_garden", "name": "Garden hideout", "sprite": "props/house.png", "icon": "pigloo_garden", "source": "world" },
+    { "itemId": "willow_tunnel", "roomItemId": "willow_tunnel", "name": "Willow tunnel", "sprite": "props/tunnel.png", "icon": "tunnel", "source": "world" },
+    { "itemId": "golden_bowl", "roomItemId": null, "name": "Golden bowl", "sprite": "props/ball.png", "icon": "golden_bowl", "source": "inventory" },
+    { "itemId": "warm_house_bed", "roomItemId": "cosy_nook", "name": "Warm bed", "sprite": "props/house.png", "icon": "bed", "source": "inventory" }
+  ]
+}

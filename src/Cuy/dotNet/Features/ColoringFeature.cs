@@ -78,6 +78,7 @@ namespace Cuy.Features
 
             state[Id] = new Dictionary<string, object>
             {
+                { "progress", coloring.Progress ?? new Dictionary<string, string>() },
                 { "completed", coloring.Completed },
                 { "unlockedPacks", coloring.UnlockedPacks },
                 { "rewardedToday", economyState.ColoringRewardedToday },

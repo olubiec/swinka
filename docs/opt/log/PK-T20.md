@@ -1,0 +1,5 @@
+PK-T20: 5 PASS, 3 DEFECT, 0 SKIP (8 total). Verified with `node --check tools/qa/ux-p126-day-journey.js && node tools/qa/ux-p126-day-journey.js` (Edge fallback).
+- DEFECT DAY-morning-to-night: Steps: seed 2 pigs in salon, advance 8h/13h/19h/23h/7h via fastForward. Expected: eat/drink/play by day and sleep at night. Actual: only walk/idle run because `_multiPigActive` returns early in `canvas-pig.js:3312` before `this.behavior.tick`.
+- DEFECT DAY-two-pigs-sleep-together-at-night: Steps: 2 pigs in salon with `sofa_cosy`, `hour=23, energy=18`, advance 120s. Expected: `sleep_together` triggered. Actual: `seenAnims=walk,idle`, `CuyScenePigs` has no `sleep_together` or `PigBehavior` step.
+- DEFECT DAY-feed-interrupts-and-resumes: Steps: click `#btnFeed` -> `bell_pepper`, advance 8s. Expected: `eat_treat` plays then `behavior.resume` clears `interrupted`. Actual: `currentAnim` overwritten by `scenePigs` (`walk`/`idle`), `animTimer=3500` never decrements, `interrupted` stays `true`.
+Decisions: used `bridge.handleStateUpdate` + `saveMockState`, unlocked 7 scenes in `places.order`, fell back to `channel: 'msedge'` when Chromium binary missing.

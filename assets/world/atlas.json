@@ -237,6 +237,22 @@
     32
    ]
   },
+  "warm_house_bed": {
+   "place": "house",
+   "cells": [
+    2,
+    2
+   ],
+   "size": [
+    32,
+    32
+   ],
+   "file": "house/cosy_nook.png",
+   "anchor": [
+    16,
+    32
+   ]
+  },
   "fence_wood": {
    "place": "garden",
    "cells": [

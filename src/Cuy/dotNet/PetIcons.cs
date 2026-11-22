@@ -50,11 +50,12 @@ namespace Cuy
 
         private static readonly object _syncLock = new object();
         private static Bitmap _iconsStrip;
+        private static Bitmap _appIconBitmap;
         private static Icon _trayIcon;
         private static readonly Dictionary<string, Bitmap> _cachedBitmaps = new Dictionary<string, Bitmap>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Returns an Icon for 'pig_head' from assets/icons/pig_head.ico (or icons_16.png).
+        /// Returns the app icon from assets/app-icon/cuy.ico (or icon_16.png, falling back to pig_head).
         /// </summary>
         public static Icon GetTrayIcon()
         {
@@ -80,9 +81,9 @@ namespace Cuy
 
         private static void LoadTrayIcon()
         {
-            // 1. Check whether pig_head.ico exists on disk
-            string icoPath = FindFile(Path.Combine("assets", "icons", "pig_head.ico"))
-                                                    ?? FindFile(Path.Combine("assets", "app-icon", "cuy.ico"));
+            // 1. Check whether app-icon/cuy.ico (preferred) or legacy pig_head.ico exists on disk
+            string icoPath = FindFile(Path.Combine("assets", "app-icon", "cuy.ico"))
+                                                    ?? FindFile(Path.Combine("assets", "icons", "pig_head.ico"));
 
             if (!string.IsNullOrEmpty(icoPath))
             {
@@ -97,7 +98,19 @@ namespace Cuy
                 catch (Exception ex) { BrainController.Log("[WARN] PetIcons.LoadTrayIcon: " + ex.Message); }
             }
 
-            // 2. Cut icon no. 24 (pig_head) out of the icons_16.png sheet
+            // 2. Fallback to assets/app-icon/icon_16.png, then icons_16.png (pig_head)
+            string pngPath = FindFile(Path.Combine("assets", "app-icon", "icon_16.png"));
+            if (!string.IsNullOrEmpty(pngPath))
+            {
+                try
+                {
+                    byte[] pngBytes = File.ReadAllBytes(pngPath);
+                    _trayIcon = CreateIcoFromPngBytes(pngBytes);
+                    if (_trayIcon != null) return;
+                }
+                catch (Exception ex) { BrainController.Log("[WARN] PetIcons.LoadTrayIcon: " + ex.Message); }
+            }
+
             Bitmap headBmp = GetIconBitmap("pig_head");
             if (headBmp != null)
             {
@@ -128,6 +141,43 @@ namespace Cuy
             {
                 _trayIcon = SystemIcons.Application;
             }
+        }
+
+        /// <summary>
+        /// Returns the 16x16 px app icon bitmap (assets/app-icon/icon_16.png), falling back to pig_head.
+        /// </summary>
+        public static Bitmap GetAppIconBitmap()
+        {
+            lock (_syncLock)
+            {
+                if (_appIconBitmap != null) return _appIconBitmap;
+
+                string pngPath = FindFile(Path.Combine("assets", "app-icon", "icon_16.png"));
+                if (!string.IsNullOrEmpty(pngPath))
+                {
+                    try
+                    {
+                        using (var fs = new FileStream(pngPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (var temp = Image.FromStream(fs))
+                        {
+                            _appIconBitmap = new Bitmap(16, 16, PixelFormat.Format32bppArgb);
+                            using (Graphics g = Graphics.FromImage(_appIconBitmap))
+                            {
+                                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                                g.PixelOffsetMode = PixelOffsetMode.Half;
+                                g.DrawImage(temp, new Rectangle(0, 0, 16, 16));
+                            }
+                            return _appIconBitmap;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        BrainController.Log("[WARN] PetIcons.GetAppIconBitmap: " + ex.Message);
+                    }
+                }
+            }
+
+            return GetIconBitmap("pig_head");
         }
 
         /// <summary>

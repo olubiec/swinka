@@ -26,13 +26,19 @@ namespace Cuy.Core.Pigs
 
         public Dictionary<string, object> ToLookState()
         {
-            return new Dictionary<string, object>
+            var map = new Dictionary<string, object>
             {
                 ["spriteKey"] = SpriteKey,
                 ["breed"] = Breed,
                 ["coat"] = Coat,
+                ["paletteId"] = Coat,
                 ["stage"] = Stage
             };
+            if (!string.IsNullOrEmpty(Named))
+            {
+                map["named"] = Named;
+            }
+            return map;
         }
 
         public Dictionary<string, object> ToMap()

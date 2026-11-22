@@ -1,7 +1,8 @@
-# Stan projektu Cuy (checkpoint 2026-11-18)
+# Stan projektu Cuy (checkpoint 2026-11-22)
 
-- **Fale:** fala 1 (F1) zrobiona i na `main`. Następne: **fala 2** (`docs/FALA_2_START.md`, 54 agentów), **fala 3** (Home jak pulpit + odłożone punkty, `docs/FALA_3_START.md`, 35 agentów), **fala 4** (funkcje opcjonalne + bramka końcowa, `docs/FALA_4_START.md`, 25 agentów).
-- **Narzędzia:** orkiestra, pętla i strażnik baterii usunięte 18.11.2026 (praca ręczna w Antigravity). Plan: `waves.yaml`; prompty: `docs/prompts/`; logi: `docs/opt/log/`.
-- **Testy (ostatni znany stan):** Core `dotnet test tests/Cuy.Core.Tests` zielone; web: `node tools/qa/web-smoke.js` (baseline: `docs/opt/log/baseline-smoke.txt`). Windows do potwierdzenia po fali 2.
-- **Ryzyka:** W15/W16 robione na innym urządzeniu; PK-23b BLOCKED; PK-P5c (druga świnka na pulpicie) może skończyć się BLOCKED.
-- **Ręczne bramki Windows:** `TESTY_RECZNE.md`, `docs/qa/UX_WAVE_CHECKS.md`.
+- **Zakres od `v1.0.0` (`0add9b6`, 2026-11-01):** 477 commitów na `main` (tagi `v2.6.160`..`v2.6.166`, ostatni `2753f0d`) + niezacommitowane zmiany w drzewie roboczym.
+- **Fale i poprawki:** **W11–W33** (poza odłożonymi punktami i `PK-23b` BLOCKED), **P1–P47**, **F1** (`F1-fix`, `F1-fix2`), **F2** (`F2-1`..`F2-6`) oraz **F2-FIX** (`F2F-1`..`F2F-6`, `F2-FIX2`..`F2-FIX5`) na `main`. W drzewie roboczym: **F3**, **F4**, `PK-FX1` / `F5-*`, **pakiet poprawek playtestowych** (lightmap z naturalnym rozświetlaniem świnek i mebli, bursztynowe lampy na dworze, migracja domyślnych lamp `#lamps_v1`, `warm_house_bed` w `atlas.json`, układ i style Market / Edit drawer, pogoda w Settings, taniec wieloświnkowy + audio pulpitu, głaskanie vs przeciąganie) oraz **pełny samouczek bez spoilerów** (`fresh` 5-kartowy + `update` 4-kartowy po `v1.0.0`, akcyjne podpowiedzi kontekstowe nad modalami/marketem, 8-zakładkowy `Guide` w Settings/More).
+- **Build & SelfTest:** `dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true` — **PASS** (0 błędów, 0 ostrzeżeń); `Cuy.exe --selftest` — **PASS** (exit code 0).
+- **Testy `Cuy.Core.Tests`:** **1414 PASS**, **21 FAIL**, **6 SKIP** (łącznie 1441; `TutorialTests` 4/4 PASS).
+- **Kontrole JS/danych:** `data-check.js` (PASS: 5 świnek, 15 upraw, 112 przedmiotów, 5 motywów pokoi), `lights-test.js` (PASS), `node --check` na zmienionych plikach JS (PASS), Playwright (`msedge`) dla `#editDrawer` i `tutorial-smoke` (PASS).
+- **Do domknięcia przed wydaniem:** naprawa 21 testów Core, `check-assets.js` (duplikat `cosy_nook.png`), `check-css-vars.js`, stabilizacja `web-smoke.js`, commit drzewa roboczego i ręczna weryfikacja na Windows (`TESTY_RECZNE.md`). Szczegóły: `docs/PROJECT_STATE.md`.

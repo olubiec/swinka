@@ -1,0 +1,7 @@
+# PK-CS4
+- Decision: `Program.EnsureWeatherService()` creates `WeatherService` only when `Pet.State.Weather.Consent == true`; `Program.StopWeatherService()` disposes it on consent withdrawal and `Application.ApplicationExit` so no `HttpClient` exists when consent is off.
+- `HomeWindow.SendStateToWebView` emits `payload["weather"]` via `BuildWeatherPayload(state.Weather)` matching `docs/contracts/weather.md` (`consent`, `consentChangedUtc`, `locationName`, `lat`, `lon`, `status`, `condition`, `wmoCode`, `temperatureC`, `isDay`, `updatedUtc`, `attribution`).
+- `HomeWindow.OnWebMessageReceived` handles `weather.setConsent`, `weather.setLocation`, `weather.deleteLocation`, `weather.refresh` using `MessageValidator.Validate(obj)` and `WeatherMessages.ValidateLocationPayload(...)`; city geocoding runs only when `Consent == true`.
+- Diff from `RI6.md`: `GameState.cs` not edited (outside `Zmieniaj`; `GameState.Weather.cs` property already guarantees non-null `WeatherSettings`); `companion`/`hay_hop` left out as `PK-CS4` prompt scopes only `weather.*` + `WeatherService`.
+- Build: `dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true` PASSED (0 warnings, 0 errors).
+- Manual Windows checks: (1) With consent OFF, verify firewall/ProcMon shows zero outbound connections; (2) Toggle consent ON, save city/coords, block network/unplug -> verify status becomes `offline` without crash; (3) Toggle consent OFF -> verify `status: "off"` and no further requests.

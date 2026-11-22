@@ -1,11 +1,14 @@
 # Builds the Release version, self-tests it and packs dist/Cuy_v1.zip (the folder to give away).
+param([switch]$NoTests)
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 $dist = Join-Path $root "dist"
 $out = Join-Path $dist "Cuy_v1"
 $release = Join-Path $root "src\Cuy\bin\Release"
 
-& powershell -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "build.ps1") -Config Release
+$buildArgs = @("-ExecutionPolicy", "Bypass", "-File", (Join-Path $PSScriptRoot "build.ps1"), "-Config", "Release")
+if ($NoTests) { $buildArgs += "-NoTests" }
+& powershell @buildArgs
 if ($LASTEXITCODE -ne 0) { Write-Host "PACKAGE STOPPED: build failed"; exit $LASTEXITCODE }
 
 if (Test-Path $dist) { Remove-Item $dist -Recurse -Force }

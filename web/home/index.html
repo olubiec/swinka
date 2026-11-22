@@ -38,7 +38,6 @@
     <!-- 1. Top bar (title, clovers, sound, dev/mock tests, close) -->
     <header class="game-header">
       <div class="header-left">
-        <span class="pixel-icon icon-pig-head" aria-hidden="true"></span>
         <h1 class="app-title">CUY'S HOME</h1>
       </div>
       <div class="header-right">
@@ -267,11 +266,11 @@
 
     <section class="onboard-view" id="intro" hidden aria-label="Introduction">
       <div class="onboard-card">
-        <div class="intro-card" id="introCard0">Hi! I live on your taskbar and I like to walk on your windows.</div>
-        <div class="intro-card" id="introCard1" hidden>Hold the mouse over me to see how I feel. Click me to pet me.</div>
-        <div class="intro-card" id="introCard2" hidden>Feed me, clean up my poops and play games with me. That earns clovers <span class="pixel-icon icon-clover"></span> for the shop.</div>
-        <div class="intro-card" id="introCard3" hidden>You can pick me up and drop me anywhere. When Home is open I stay inside; drag me out to let me go.</div>
-        <div class="intro-card" id="introCard4" hidden>Click the little head by the clock to open or close my Home. Right-click it for more.</div>
+        <div class="intro-card" id="introCard0">Hi! I live on your taskbar and walk on your windows. Hover over me to see how I feel, click to pet me, or drag me out of Home onto your screen.</div>
+        <div class="intro-card" id="introCard1" hidden>Click the little pig head by the Windows clock to open or close Home. Right-click it for quick Feed, Call, Tricks, Sounds, Size, Autostart, and Quit.</div>
+        <div class="intro-card" id="introCard2" hidden>Watch my 6 needs: Fullness, Vitamin C, Energy, Mood, Cleanliness, and Teeth. Together they shape my Health, and caring for me builds our Bond.</div>
+        <div class="intro-card" id="introCard3" hidden>Use Feed (hay is always free, plus veggies from your bag), Clean (click poops on screen too!), and Call. Caring and games earn clovers <span class="pixel-icon icon-clover"></span> for the Market.</div>
+        <div class="intro-card" id="introCard4" hidden>Use the Places bar (&lt; Living room &gt; Edit) to switch or decorate rooms, Games for minigames, and More for your calendar, vet, diary, herd, guide, and settings.</div>
         <button class="game-btn onboard-btn" id="btnIntroNext" type="button">Next</button>
         <button class="onboard-link" id="btnIntroSkip" type="button">Skip</button>
       </div>
@@ -289,18 +288,33 @@
   <!-- Home logic and engine scripts -->
   <script src="bridge.js" onerror="window.__cuyBridgeFailed = true"></script>
   <script src="sound.js"></script>
+  <script src="lib/world-sounds.js"></script>
   <script src="lib/palette.js"></script>
   <script src="lib/sprites.js"></script>
   <script src="lib/lights.js"></script>
   <script src="lib/hotspots.js"></script>
   <script src="lib/scene-pigs.js"></script>
   <script src="lib/weather.js"></script>
+  <script src="lib/weather-live.js"></script>
   <script src="lib/play-targets.js"></script>
+  <script src="lib/draw-budget.js"></script>
+  <script src="lib/pig-behavior.js"></script>
+  <script src="lib/rest-spots.js"></script>
+  <script src="lib/pig-motion.js"></script>
+  <script src="lib/pig-reactions.js"></script>
+  <script src="lib/companion.js"></script>
+  <script src="lib/dance-sync.js"></script>
+  <script src="lib/stage-looks.js"></script>
   <script src="canvas-pig.js"></script>
 
   <!-- Phaser 3 minigame framework -->
   <script src="minigames/lib/phaser.min.js"></script>
   <script src="minigames/minigames-api.js"></script>
+  <script src="minigames/clover_catch.js"></script>
+  <script src="minigames/veggie_dodge.js"></script>
+  <script src="minigames/hay_maze.js"></script>
+  <script src="minigames/cuy_simon.js"></script>
+  <script src="minigames/nyan_cuy.js"></script>
 
   <script src="lib/ui-assets.js"></script>
   <script src="features/music/contract.js"></script>
@@ -317,6 +331,7 @@
   <script src="features/places/edit-filters.js"></script>
   <script src="features/places/edit-templates.js"></script>
   <script src="features/places/edit-skins.js"></script>
+  <script src="features/places/edit-history.js"></script>
   <script src="features/places/edit-panel.js"></script>
   <script src="features/pigs/adoption-popup.js"></script>
   <script src="app.js"></script>

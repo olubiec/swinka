@@ -1,0 +1,6 @@
+Decision: Deferred WorldState.Run, Pet.Run, Balance.RunActive, and achievements.json because those files are outside PK-G1/PK-G2 Zmieniaj; RunFeature holds session RunState and uses Pet.ChangeNeed/Pet.Count.
+Decision: Canonical message types are run.out and run.in (with run_out/run_in accepted in HandleMessage); RunCheck keeps Analyze(...) plus IsFenced(...) and Capacity(...) overloads.
+Decision: Garden run UI attaches to the unified Places stage (CuyPlaces.getCurrentPlace() === 'garden') via features/run/feature.js with alwaysOnState: true and CuyRoom.addLayer('run_overlay', ...), replacing retired features/garden/ and features/rooms/.
+API/fields: RunConfig (assets/data/pig_run.json), RunInfo, RunCheck.Analyze/IsFenced/Capacity, RunVerdict, RunRules.CanBeOut/Message/MoodFor/CreditableHours, RunMessages (IMessageRuleSet), state.run, run.out/run.in.
+Owner question: Should RunCheck allow a fenced area touching the grid edge or require full enclosure, and should RunFeature keep session state until save extension? Chose full enclosure inside grid (open_edge on grid boundary, matching W28-01) and session state in RunFeature to respect Zmieniaj bounds.
+Note: Verified HomeFeatures.LoadAll() uses reflection (HomeFeatures.cs:15-38) and WeatherService is not yet in src/Cuy/ (null weather passed to RunRules.CanBeOut until PK-WX1).

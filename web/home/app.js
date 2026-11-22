@@ -109,10 +109,14 @@
 
   // Home pig light (docs/SWIATLO_SWINEK.md): the ambient of the local hour from assets/data/lights.json, refreshed once a minute.
   let pigLightData = null;
+  let lastWeatherKey = null;
   function refreshPigLight() {
     if (!canvasPig || !pigLightData || !window.Lights) return;
     const period = window.Lights.periodOf(new Date());
-    canvasPig.setLightScene({ ambient: window.Lights.ambientFor(pigLightData, period), sources: [] });
+    const sources = (canvasPig.lightScene && Array.isArray(canvasPig.lightScene.sources))
+      ? canvasPig.lightScene.sources
+      : [];
+    canvasPig.setLightScene({ ambient: window.Lights.ambientFor(pigLightData, period), sources: sources });
   }
   function initPigLight() {
     const isWebView = !!(window.chrome && window.chrome.webview);
@@ -122,6 +126,84 @@
       .then(j => { pigLightData = j; refreshPigLight(); })
       .catch(() => { pigLightData = null; });
     setInterval(refreshPigLight, 60000);
+  }
+
+  let musicBpmData = null;
+  let activeBeatClock = null;
+
+  function hookMusicBeatClock() {
+    const music = window.CuyMusic;
+    if (!music || music.__beatHooked) return;
+    music.__beatHooked = true;
+    const origPlay = typeof music.play === 'function' ? music.play.bind(music) : null;
+    const origStop = typeof music.stop === 'function' ? music.stop.bind(music) : null;
+
+    if (origPlay) {
+      music.play = async function (id, opts) {
+        const res = await origPlay(id, opts);
+        if (window.DanceSync && typeof window.DanceSync.beatClock === 'function') {
+          const resolved = typeof window.DanceSync.resolveTrackBpm === 'function'
+            ? window.DanceSync.resolveTrackBpm(id, musicBpmData)
+            : { bpm: 120, offsetMs: 0 };
+          const startMs = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+          activeBeatClock = window.DanceSync.beatClock({
+            bpm: resolved.bpm,
+            startMs: startMs,
+            offsetMs: resolved.offsetMs
+          });
+          if (window.CanvasPig && typeof window.CanvasPig.setBeat === 'function') {
+            window.CanvasPig.setBeat(activeBeatClock);
+          } else if (canvasPig && typeof canvasPig.setBeat === 'function') {
+            canvasPig.setBeat(activeBeatClock);
+          }
+        }
+        return res;
+      };
+    }
+
+    if (origStop) {
+      music.stop = function (fadeMs) {
+        activeBeatClock = null;
+        if (window.CanvasPig && typeof window.CanvasPig.setBeat === 'function') {
+          window.CanvasPig.setBeat(null);
+        } else if (canvasPig && typeof canvasPig.setBeat === 'function') {
+          canvasPig.setBeat(null);
+        }
+        return origStop(fadeMs);
+      };
+    }
+  }
+
+  function initBehaviorData() {
+    const isWebView = !!(window.chrome && window.chrome.webview);
+    const base = isWebView ? 'https://cuy.assets/' : '../../assets/';
+    if (window.DrawBudget && typeof window.DrawBudget.loadLimits === 'function') {
+      window.DrawBudget.loadLimits(base + 'data/draw_limits.json').catch(() => {});
+    }
+    const fetchJson = (rel) => fetch(base + rel).then(r => (r.ok ? r.json() : null)).catch(() => null);
+    Promise.all([
+      fetchJson('data/actions.json'),
+      fetchJson('data/home_behavior.json'),
+      fetchJson('data/music_bpm.json'),
+      fetchJson('data/companions.json'),
+      fetchJson('data/stage_looks.json')
+    ]).then(([actionsData, homeBehaviorData, bpmData, companionsData, stageLooksData]) => {
+      if (actionsData && homeBehaviorData && canvasPig && typeof canvasPig.setBehaviorData === 'function') {
+        canvasPig.setBehaviorData(actionsData, homeBehaviorData);
+      }
+      if (bpmData) {
+        musicBpmData = bpmData;
+        if (canvasPig && typeof canvasPig.setMusicBpmData === 'function') {
+          canvasPig.setMusicBpmData(bpmData);
+        }
+      }
+      if (companionsData && canvasPig && typeof canvasPig.setCompanionData === 'function') {
+        canvasPig.setCompanionData(companionsData);
+      }
+      if (stageLooksData && window.StageLooks && typeof window.StageLooks.setData === 'function') {
+        window.StageLooks.setData(stageLooksData);
+      }
+    }).catch(() => {});
   }
 
   // App initialisation
@@ -141,7 +223,9 @@
     if (canvasEl && window.PigCanvas) {
       canvasPig = new window.PigCanvas(canvasEl);
       initPigLight();
+      initBehaviorData();
     }
+    hookMusicBeatClock();
 
     // bridge.js failed to load: say so instead of leaving every action silently dead.
     if (window.__cuyBridgeFailed || !window.bridge) {
@@ -166,7 +250,7 @@
   }
 
   // ---- First run: welcome -> intro -> gift letter ----
-  const onboard = { introActive: false, introStep: 0, letterClosed: false, nameSent: false, renaming: false };
+  const onboard = { introActive: false, introStep: 0, letterClosed: false, nameSent: false, renaming: false, replaying: false };
 
   function showOnly(id) {
     ['welcome', 'intro', 'letter'].forEach((v) => {
@@ -276,13 +360,25 @@
   }
 
   function finishIntro() {
+    const wasReplaying = onboard.replaying;
     onboard.introActive = false;
+    onboard.replaying = false;
     setWelcomeMode(false);
+    if (window.bridge) {
+      window.bridge.send({ type: 'tutorial.completeTour', mode: 'fresh' });
+    }
     const state = window.bridge.currentState;
     if (state) updateOnboarding(state); else showOnly(null);
     // No gift letter waiting: the tutorial is over, the pig goes out to the taskbar.
-    if (!(state && state.giftNote && !onboard.letterClosed)) closeHomeAfterOnboarding();
+    if (!wasReplaying && !(state && state.giftNote && !onboard.letterClosed)) closeHomeAfterOnboarding();
   }
+
+  window.CuyTutorialStartIntro = function () {
+    onboard.replaying = true;
+    onboard.introActive = true;
+    onboard.introStep = 0;
+    showIntroStep();
+  };
 
   function bindOnboarding() {
     document.getElementById('petName')?.addEventListener('click', startRename);
@@ -350,8 +446,11 @@
 
     // Life stage
     if (elements.stageBadge) {
-      const stageName = state.stageName || 'Baby';
-      const stageKey = state.stageKey || 'adult';
+      const lookBadge = (window.StageLooks && typeof window.StageLooks.badge === 'function')
+        ? window.StageLooks.badge(state, state.stageKey)
+        : null;
+      const stageName = (lookBadge && lookBadge.label) || state.stageName || 'Baby';
+      const stageKey = (lookBadge && lookBadge.stage) || state.stageKey || 'adult';
       elements.stageBadge.innerHTML = getStageIcon(stageKey) + ' ' + stageName;
       elements.stageBadge.className = `stage-badge stage-${stageKey}`;
     }
@@ -424,9 +523,34 @@
       if (elements.foodDrawer?.classList.contains('active')) renderFoodDrawer(state);
     }
 
+    if (typeof window !== 'undefined') {
+      window.__cuyLastState = state;
+    }
+
     // Update the canvas
     if (canvasPig) {
       canvasPig.updateState(state);
+      if (typeof canvasPig.setSceneContext === 'function' && window.CuyPlaces && typeof window.CuyPlaces.getSceneContext === 'function') {
+        const sceneCtx = window.CuyPlaces.getSceneContext();
+        if (sceneCtx) canvasPig.setSceneContext(sceneCtx);
+      }
+      if (typeof canvasPig.setWeatherKind === 'function' && window.CuyWeatherLive && typeof window.CuyWeatherLive.mapState === 'function') {
+        const mappedWeather = window.CuyWeatherLive.mapState(state.weather);
+        const weatherKind = (mappedWeather && mappedWeather.enabled && typeof mappedWeather.kind === 'string')
+          ? mappedWeather.kind
+          : null;
+        canvasPig.setWeatherKind(weatherKind);
+      }
+      const weatherKey = state.weather
+        ? [state.weather.consent, state.weather.status, state.weather.condition, state.weather.isDay].join('|')
+        : '';
+      if (weatherKey !== lastWeatherKey) {
+        lastWeatherKey = weatherKey;
+        refreshPigLight();
+      }
+      if (typeof canvasPig.setCompanion === 'function') {
+        canvasPig.setCompanion(state.companion || null);
+      }
     }
   }
 
@@ -498,20 +622,53 @@
     });
   }
 
+  function triggerPigReaction(event, extraCtx, fallbackFn) {
+    if (canvasPig && typeof canvasPig.applyReaction === 'function') {
+      return canvasPig.applyReaction(event, extraCtx || {});
+    }
+    if (window.PigReactions && typeof window.PigReactions.react === 'function') {
+      const res = window.PigReactions.react(event, extraCtx || {});
+      if (res) {
+        if (res.sound && window.Sound) {
+          if (typeof window.Sound.play === 'function') window.Sound.play(res.sound);
+          else if (typeof window.Sound[res.sound] === 'function') window.Sound[res.sound]();
+        }
+        if (canvasPig) {
+          if (!res.blocked && res.anim) canvasPig.playAnim(res.anim, res.durationMs || 2500);
+          if (res.bubble) canvasPig.showBubble(res.bubble, 2500);
+          if (res.effect === 'crunch') canvasPig.spawnCrunch(canvasPig.pigX + 40, canvasPig.pigY + 50);
+          else if (res.effect === 'hearts') canvasPig.spawnHeart(canvasPig.pigX + 32, canvasPig.pigY + 20);
+        }
+        return res;
+      }
+    }
+    return fallbackFn ? fallbackFn() : null;
+  }
+
   function giveFood(food) {
     const state = window.bridge ? window.bridge.getState() : null;
     const fullness = state?.needs?.fullness;
-    if (typeof fullness === 'number' && fullness >= 95) {
-      // The game refuses food when the pig is full; say so here too.
-      if (canvasPig) canvasPig.showBubble("I'm full!", 1800);
+    const res = triggerPigReaction(
+      { type: 'feed', item: food },
+      { fullness, favoriteFood: state?.favoriteFood, isSick: !!state?.vet?.isSick },
+      () => {
+        if (typeof fullness === 'number' && fullness >= 95) {
+          // The game refuses food when the pig is full; say so here too.
+          if (canvasPig) canvasPig.showBubble("I'm full!", 1800);
+          return { blocked: true };
+        }
+        if (window.Sound) window.Sound.crunch();
+        if (canvasPig) {
+          canvasPig.playAnim(food === 'hay' ? 'eat' : 'eat_treat', 3500);
+          canvasPig.showBubble('Yum! Crunch crunch!', 2500);
+          canvasPig.spawnCrunch(canvasPig.pigX + 40, canvasPig.pigY + 50);
+        }
+        return { blocked: false };
+      }
+    );
+    if (res && res.blocked) {
       closeFoodDrawer();
       return;
-    }
-    if (window.Sound) window.Sound.crunch();
-    if (canvasPig) {
-      canvasPig.playAnim(food === 'hay' ? 'eat' : 'eat_treat', 3500);
-      canvasPig.showBubble('Yum! Crunch crunch!', 2500);
-      canvasPig.spawnCrunch(canvasPig.pigX + 40, canvasPig.pigY + 50);
     }
     if (window.bridge) window.bridge.send({ type: 'feed', item: food });
     closeFoodDrawer();
@@ -547,12 +704,18 @@
         if (canvasPig) canvasPig.showBubble('Already clean!', 1800);
         return;
       }
-      if (window.Sound) window.Sound.sweep();
-      if (canvasPig) {
-        canvasPig.playAnim('happy', 2500);
-        canvasPig.showBubble('All clean and fresh!', 2500);
-        canvasPig.spawnHeart(canvasPig.pigX + 32, canvasPig.pigY + 20);
-      }
+      triggerPigReaction(
+        { type: 'poop' },
+        { isSick: !!cleanState?.vet?.isSick },
+        () => {
+          if (window.Sound) window.Sound.sweep();
+          if (canvasPig) {
+            canvasPig.playAnim('happy', 2500);
+            canvasPig.showBubble('All clean and fresh!', 2500);
+            canvasPig.spawnHeart(canvasPig.pigX + 32, canvasPig.pigY + 20);
+          }
+        }
+      );
 
       if (window.bridge) {
         window.bridge.send({ type: 'clean' });
@@ -561,26 +724,34 @@
 
     // 3. CALL — the pig answers with a happy wheek and runs over
     elements.btnCall?.addEventListener('click', () => {
-      if (window.Sound) window.Sound.wheek();
-      if (canvasPig) {
-        canvasPig.playAnim('greet', 3000);
-        canvasPig.showBubble('WHEEEE! I\'m here!', 2800);
-        for (let i = 0; i < 3; i++) {
-          setTimeout(() => {
-            canvasPig.spawnHeart(canvasPig.pigX + 20 + Math.random() * 25, canvasPig.pigY + 15);
-          }, i * 200);
+      const callState = window.bridge ? window.bridge.getState() : null;
+      const res = triggerPigReaction(
+        { type: 'call' },
+        { isSick: !!callState?.vet?.isSick },
+        () => {
+          if (window.Sound) window.Sound.wheek();
+          if (canvasPig) {
+            canvasPig.playAnim('greet', 3000);
+            canvasPig.showBubble('WHEEEE! I\'m here!', 2800);
+            for (let i = 0; i < 3; i++) {
+              setTimeout(() => {
+                canvasPig.spawnHeart(canvasPig.pigX + 20 + Math.random() * 25, canvasPig.pigY + 15);
+              }, i * 200);
+            }
+          }
+          return { blocked: false };
         }
-      }
+      );
 
-      if (window.bridge) {
+      if (window.bridge && !(res && res.blocked)) {
         window.bridge.send({ type: 'call' });
       }
     });
 
-    // 4. SHOP — opens the retro shop dialog
+    // 4. SHOP — opens the Market drawer
     elements.btnShop?.addEventListener('click', () => {
       if (window.Sound) window.Sound.click();
-      if (window.CuyHome) window.CuyHome.openFeature('shop');
+      if (window.CuyHome) window.CuyHome.openFeature('market', 'food');
     });
 
     // 5. GAMES — opens the retro minigames dialog
@@ -776,12 +947,16 @@
   // --- FEATURES MODULE SYSTEM ---
   window.CuyHome = {
     features: [],
+    getBeatClock() {
+      return activeBeatClock;
+    },
     registerFeature(def) {
       this.features.push(def);
       this.features.sort((a, b) => (a.order || 99) - (b.order || 99));
     },
     listFeatures() {
-      return this.features.filter(f => f && f.id !== 'rooms' && f.id !== 'garden' && f.id !== 'farm' && f.id !== 'market');
+      const hidden = new Set(['rooms', 'garden', 'farm', 'market', 'places', 'run', 'decor', 'store', 'tricks', 'props', 'weather']);
+      return this.features.filter(f => f && !hidden.has(f.id));
     },
     openFeature(id, arg, opts) {
       if (arg && typeof arg === 'object' && !opts && ('from' in arg)) {
@@ -791,8 +966,14 @@
       if (id === 'rooms' || id === 'garden' || id === 'farm' || id === 'market') {
         this.closeFeature();
         if (typeof closeModal === 'function') closeModal();
+        if (id === 'rooms' && arg && typeof arg === 'object' && arg.room) {
+          arg = arg.room;
+        }
         if (window.CuyPlaces && typeof window.CuyPlaces.openPlace === 'function') {
           window.CuyPlaces.openPlace(id === 'rooms' ? (arg || 'salon') : id);
+        }
+        if (id === 'market' && window.CuyMarket && typeof window.CuyMarket.openPanel === 'function') {
+          window.CuyMarket.openPanel(typeof arg === 'string' ? arg : 'food');
         }
         return;
       }
@@ -1055,7 +1236,8 @@
     if (window.NyanAudio && typeof window.NyanAudio.stopMusic === 'function') {
       try { window.NyanAudio.stopMusic(); } catch (e) {}
     }
-    if (window.CuyMusic && (!window.Minigry || !window.Minigry.getHomeMusicState || !window.Minigry.getHomeMusicState()?.playing)) {
+    const homeMusicOn = window.CuyMusic && typeof window.CuyMusic.isEnabled === 'function' && window.CuyMusic.isEnabled();
+    if (window.CuyMusic && !homeMusicOn && (!window.Minigry || !window.Minigry.getHomeMusicState || !window.Minigry.getHomeMusicState()?.playing)) {
       if (typeof window.CuyMusic.stop === 'function') {
         try { window.CuyMusic.stop(100); } catch (e) {}
       }

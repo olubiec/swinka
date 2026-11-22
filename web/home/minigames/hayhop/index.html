@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hay Hop - Cuy</title>
+  <link rel="stylesheet" href="../../style.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #47281c;
+      color: #fbf0d9;
+      font-family: var(--ui-font, monospace);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    #modalBody {
+      width: 100%;
+      max-width: 420px;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    canvas {
+      image-rendering: pixelated;
+    }
+  </style>
+</head>
+<body>
+  <div id="modalBody"></div>
+  <script src="../../bridge.js"></script>
+  <script src="../../lib/palette.js"></script>
+  <script src="../../lib/sprites.js"></script>
+  <script src="../lib/phaser.min.js"></script>
+  <script src="../minigames-api.js"></script>
+  <script src="hayhop-logic.js"></script>
+  <script src="hayhop.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      var container = document.getElementById('modalBody');
+      if (window.MiniGames && container) {
+        window.MiniGames.start('hay_hop', { container: container });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -110,15 +110,20 @@ namespace Cuy.Features
                     }
                 }
 
+                var traits = (p.Traits != null && p.Traits.Count > 0)
+                    ? p.Traits.ToList()
+                    : (namedDef?.Traits != null ? namedDef.Traits.ToList() : new List<string>());
+
                 var pigMap = new Dictionary<string, object>
                 {
                     ["id"] = p.Id,
                     ["name"] = p.Name,
                     ["breed"] = p.Breed,
                     ["paletteId"] = p.PaletteId,
-                    ["traits"] = p.Traits != null ? p.Traits.ToList() : new List<string>(),
+                    ["traits"] = traits,
                     ["discoveredTraits"] = p.DiscoveredTraits != null ? p.DiscoveredTraits.ToList() : new List<string>(),
                     ["namedId"] = p.NamedId,
+                    ["named"] = p.NamedId,
                     ["ageYears"] = ageYears,
                     ["stage"] = stage,
                     ["memorial"] = p.Memorial,
@@ -172,7 +177,8 @@ namespace Cuy.Features
                         look = new
                         {
                             breed = def?.Breed ?? string.Empty,
-                            paletteId = def?.PaletteId ?? string.Empty
+                            paletteId = def?.PaletteId ?? string.Empty,
+                            named = def?.Id ?? string.Empty
                         },
                         blurb = def?.Blurb ?? string.Empty,
                         traits = def?.Traits != null ? def.Traits.ToList() : new List<string>()
@@ -190,7 +196,8 @@ namespace Cuy.Features
 
         public override bool HandleMessage(string type, JObject message, BrainController brain)
         {
-            if (type != "adopt_pig" && type != "toggle_pig_active" && type != "pigs.desktopPet" && type != "adopt_named" && type != "adopt_group" && type != "set_memorial" && type != "adopt_starter_pair" && type != "accept_adoption_offer")
+            bool isDesktopPetMsg = string.Equals(type, "pigs.desktopPet", StringComparison.OrdinalIgnoreCase);
+            if (type != "adopt_pig" && type != "toggle_pig_active" && !isDesktopPetMsg && type != "adopt_named" && type != "adopt_group" && type != "set_memorial" && type != "adopt_starter_pair" && type != "accept_adoption_offer" && type != "walk")
             {
                 return false;
             }
@@ -202,10 +209,38 @@ namespace Cuy.Features
 
             DateTime nowUtc = pet.Clock != null ? pet.Clock.UtcNow : DateTime.UtcNow;
 
-            if (type == "adopt_starter_pair" || type == "accept_adoption_offer" || (type == "adopt_group" && (message?.Value<string>("id") == "starter" || message?.Value<string>("groupId") == "starter")))
+            if (type == "walk")
+            {
+                string pigId = message?.Value<string>("pigId")
+                    ?? (gs.ActivePigIds != null && gs.ActivePigIds.Count > 0 ? gs.ActivePigIds[0] : null)
+                    ?? (gs.Roster != null && gs.Roster.Count > 0 ? gs.Roster[0]?.Id : null);
+                string place = message?.Value<string>("place") ?? "garden";
+                if (!string.IsNullOrEmpty(pigId))
+                {
+                    var moveMsg = new JObject
+                    {
+                        ["type"] = "places.pigMove",
+                        ["pigId"] = pigId,
+                        ["to"] = place
+                    };
+                    HomeFeatures.Dispatch("places.pigmove", moveMsg, brain);
+                }
+            }
+            else if (type == "adopt_starter_pair" || type == "accept_adoption_offer" || (type == "adopt_group" && (message?.Value<string>("id") == "starter" || message?.Value<string>("groupId") == "starter")))
             {
                 var catalog = pet.NamedPigs ?? NamedPigCatalog.Current;
+                var cfg = LoadConfig();
+                int maxRoster = (int?)cfg["max_roster"] ?? 6;
+                pet.MaxRoster = maxRoster;
+
+                if (!gs.OffersStartUtc.HasValue) gs.OffersStartUtc = nowUtc;
                 bool accepted = AdoptionGate.AcceptOffer(gs, catalog, nowUtc);
+                if (!accepted)
+                {
+                    gs.AdoptionOfferAccepted = true;
+                    var res = pet.AdoptGroup("starter", new Random(), nowUtc);
+                    accepted = (res == AdoptResult.Ok);
+                }
                 if (accepted)
                 {
                     try
@@ -278,6 +313,12 @@ namespace Cuy.Features
                 var cfg = LoadConfig();
                 int maxRoster = (int?)cfg["max_roster"] ?? 6;
                 pet.MaxRoster = maxRoster;
+
+                if (!gs.OffersStartUtc.HasValue) gs.OffersStartUtc = nowUtc;
+                if (string.Equals(def.OfferGroup, "starter", StringComparison.OrdinalIgnoreCase))
+                {
+                    gs.AdoptionOfferAccepted = true;
+                }
 
                 var rng = new Random();
                 var result = pet.AdoptNamed(id, memorial, rng, nowUtc);
@@ -365,7 +406,7 @@ namespace Cuy.Features
                     HomeWindow.PostToPage(new { type = "toast", text = "Forever in the family" });
                 }
             }
-            else if (type == "pigs.desktopPet")
+            else if (isDesktopPetMsg)
             {
                 string id = message?.Value<string>("pigId");
                 bool on = message?.Value<bool?>("on") ?? false;
@@ -418,7 +459,10 @@ namespace Cuy.Features
             }
 
             try { brain.Session.AutoSaver.SaveNow(); } catch (Exception ex) { BrainController.Log("[WARN] PigsFeature save: " + ex.Message); }
-            PigLook.RefreshAll();
+            if (!isDesktopPetMsg && type != "walk")
+            {
+                PigLook.RefreshAll();
+            }
             HomeWindow.NotifyStateChanged();
             return true;
         }

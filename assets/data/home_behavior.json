@@ -1,0 +1,373 @@
+{
+  "version": 1,
+  "actions": {
+    "rest": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.6,
+      "weightBonus": 1.2,
+      "minMs": 5000,
+      "maxMs": 10000,
+      "homeAnim": "idle",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "sniffing": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.3,
+      "weightBonus": 0.4,
+      "minMs": 3000,
+      "maxMs": 5000,
+      "homeAnim": "sniff",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "walk": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 0.45,
+      "minMs": 2000,
+      "maxMs": 4500,
+      "homeAnim": "walk",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "zoomies": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 0.9,
+      "minMs": 3500,
+      "maxMs": 4000,
+      "homeAnim": "run",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "popcorn": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.0,
+      "minMs": 1000,
+      "maxMs": 1400,
+      "homeAnim": "popcorn",
+      "loop": false,
+      "bubble": "Popcorn!",
+      "sound": null
+    },
+    "eat_hay": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.35,
+      "minMs": 5000,
+      "maxMs": 9000,
+      "homeAnim": "eat",
+      "loop": true,
+      "bubble": "Crunch!",
+      "sound": null
+    },
+    "drink": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.35,
+      "weightBonus": 1.2,
+      "minMs": 4000,
+      "maxMs": 6000,
+      "homeAnim": "drink",
+      "loop": true,
+      "bubble": "Sip sip",
+      "sound": null
+    },
+    "chew_stick": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.2,
+      "minMs": 5000,
+      "maxMs": 7000,
+      "homeAnim": "chew_stick",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "dig_hay": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.15,
+      "minMs": 2500,
+      "maxMs": 3500,
+      "homeAnim": "dig_hay",
+      "loop": false,
+      "bubble": null,
+      "sound": null
+    },
+    "chin_marking": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.15,
+      "minMs": 3000,
+      "maxMs": 4000,
+      "homeAnim": "chin_rub",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "scratching": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.25,
+      "minMs": 2500,
+      "maxMs": 4000,
+      "homeAnim": "scratch",
+      "loop": false,
+      "bubble": null,
+      "sound": null
+    },
+    "nap": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": "sleep",
+      "weightMul": 1.7,
+      "weightBonus": 1.2,
+      "minMs": 7000,
+      "maxMs": 13000,
+      "homeAnim": "doze",
+      "loop": true,
+      "bubble": "Zzz...",
+      "sound": null
+    },
+    "sleep": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": "sleep",
+      "weightMul": 1.8,
+      "weightBonus": 1.5,
+      "minMs": 12000,
+      "maxMs": 22000,
+      "homeAnim": "sleep",
+      "loop": true,
+      "bubble": "Zzz...",
+      "sound": null
+    },
+    "wheeking": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.0,
+      "weightBonus": 4.0,
+      "minMs": 1200,
+      "maxMs": 1800,
+      "homeAnim": "wheek",
+      "loop": false,
+      "bubble": "Wheek!",
+      "sound": "wheek"
+    },
+    "begging": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.0,
+      "weightBonus": 4.0,
+      "minMs": 1600,
+      "maxMs": 2400,
+      "homeAnim": "beg",
+      "loop": false,
+      "bubble": "Wheek?",
+      "sound": null
+    },
+    "sadness": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.0,
+      "weightBonus": 5.0,
+      "minMs": 8000,
+      "maxMs": 12000,
+      "homeAnim": "sad",
+      "loop": true,
+      "bubble": "...",
+      "sound": null
+    },
+    "sickness": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.0,
+      "weightBonus": 6.0,
+      "minMs": 8000,
+      "maxMs": 12000,
+      "homeAnim": "sick",
+      "loop": true,
+      "bubble": "*sniffle*",
+      "sound": null
+    },
+    "rumblestrut": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.1,
+      "weightBonus": 1.5,
+      "minMs": 3000,
+      "maxMs": 4000,
+      "homeAnim": "rumble",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "nose_touch": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.2,
+      "minMs": 2500,
+      "maxMs": 3500,
+      "homeAnim": "nose_touch",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "grooming_other": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.2,
+      "minMs": 4000,
+      "maxMs": 5500,
+      "homeAnim": "groom_other",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "cold": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.0,
+      "weightBonus": 5.0,
+      "minMs": 3000,
+      "maxMs": 4500,
+      "homeAnim": "shiver",
+      "loop": true,
+      "bubble": "Brr...",
+      "sound": null
+    },
+    "heat": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.0,
+      "weightBonus": 4.0,
+      "minMs": 12000,
+      "maxMs": 22000,
+      "homeAnim": "heat_flop",
+      "loop": true,
+      "bubble": "Phew...",
+      "sound": null
+    },
+    "following": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 0.8,
+      "minMs": 3000,
+      "maxMs": 4500,
+      "homeAnim": "follow",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "sleeping_together": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": "sleep_together",
+      "weightMul": 1.5,
+      "weightBonus": 40.0,
+      "minMs": 12000,
+      "maxMs": 22000,
+      "homeAnim": "sleep_together",
+      "loop": true,
+      "bubble": "Zzz...",
+      "sound": null
+    },
+    "chirping": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.15,
+      "weightBonus": 1.5,
+      "minMs": 2500,
+      "maxMs": 3500,
+      "homeAnim": "chirp",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "dancing": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.15,
+      "weightBonus": 1.5,
+      "minMs": 3500,
+      "maxMs": 5000,
+      "homeAnim": "dance",
+      "loop": true,
+      "bubble": null,
+      "sound": null
+    },
+    "yawning": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.35,
+      "weightBonus": 0.8,
+      "minMs": 3000,
+      "maxMs": 4000,
+      "homeAnim": "yawn",
+      "loop": false,
+      "bubble": null,
+      "sound": null
+    },
+    "beaming": {
+      "allowedScenes": ["room", "outdoor"],
+      "spot": null,
+      "weightMul": 1.15,
+      "weightBonus": 1.5,
+      "minMs": 3000,
+      "maxMs": 4500,
+      "homeAnim": "front_happy",
+      "loop": true,
+      "bubble": "Happy!",
+      "sound": null
+    }
+  },
+  "motion": {
+    "hop": {
+      "popcornHeightPx": 10,
+      "popcornDurationMs": 857,
+      "popcornPeakFrac": 0.5
+    },
+    "speeds": {
+      "walk": 32,
+      "run": 65,
+      "follow": 38
+    },
+    "stageSpeedMul": {
+      "baby": 1.1,
+      "junior": 1.15,
+      "adult": 1.0,
+      "senior": 0.72,
+      "legend": 0.72
+    },
+    "particles": {
+      "maxActive": 24,
+      "zzzIntervalMs": 900,
+      "heartIntervalMs": 700,
+      "sweatIntervalMs": 1100
+    },
+    "bubbles": {
+      "popcorn": "Popcorn!",
+      "wheek": "Wheek!",
+      "sleep": "Zzz...",
+      "doze": "Zzz...",
+      "sleep_house": "Zzz...",
+      "sleep_together": "Zzz...",
+      "drink": "Sip sip",
+      "happy": "Happy!",
+      "front_happy": "Happy!",
+      "purr_pet": "Purr...",
+      "beg": "Wheek?",
+      "eat": "Crunch!",
+      "sad": "...",
+      "sick": "*sniffle*",
+      "shiver": "Brr...",
+      "heat_flop": "Phew..."
+    }
+  }
+}

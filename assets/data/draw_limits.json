@@ -1,0 +1,16 @@
+{
+  "maxItems": 48,
+  "maxAnimated": 24,
+  "maxParticles": 32,
+  "maxLights": 8,
+  "hiddenFps": 30,
+  "activeFps": 60,
+  "cullMarginPx": 32,
+  "layerPriority": {
+    "fixture": 0,
+    "wall": 1,
+    "floor": 2,
+    "ground": 3,
+    "decor": 4
+  }
+}

@@ -7,7 +7,7 @@
     <RootNamespace>Cuy</RootNamespace>
     <AssemblyName>Cuy</AssemblyName>
     <LangVersion>latest</LangVersion>
-    <ApplicationIcon>cuy.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\assets\app-icon\cuy.ico</ApplicationIcon>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>

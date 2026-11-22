@@ -1,0 +1,135 @@
+.wx-panel {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-pixel);
+  color: var(--ui-wood-0);
+  image-rendering: pixelated;
+}
+
+.wx-card {
+  background: var(--ui-linen-2);
+  color: var(--ui-wood-0);
+  border: 4px solid var(--ui-wood-0);
+  border-image: var(--ui-panel_paper) 8 fill / 8px;
+  border-radius: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.wx-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.wx-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ui-wood-0);
+}
+
+.wx-status-row,
+.wx-saved-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.wx-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ui-wood-1);
+}
+
+.wx-status-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
+  color: var(--ui-wood-0);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.wx-consent-text,
+.wx-hint {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ui-wood-1);
+}
+
+.wx-input-row {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.wx-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  padding: 5px 8px;
+  background: var(--ui-linen-3);
+  color: var(--ui-wood-0);
+  border: 3px solid var(--ui-wood-0);
+  border-image: var(--ui-field) 3 fill / 9px stretch;
+  border-radius: 0;
+}
+
+.wx-input:focus-visible,
+.wx-btn:focus-visible,
+.wx-toggle:focus-visible {
+  outline: 2px solid var(--ui-hay-2);
+  outline-offset: 1px;
+}
+
+.wx-btn {
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.wx-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.wx-btn-danger {
+  background: var(--ui-brick-1);
+  color: var(--ui-linen-3);
+}
+
+.wx-error {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ui-brick-1);
+  background: var(--ui-linen-3);
+  border: 2px solid var(--ui-brick-1);
+  padding: 4px 6px;
+}
+
+.wx-saved-val {
+  font-size: 13px;
+  color: var(--ui-wood-0);
+}
+
+.wx-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wx-footer {
+  font-size: 11px;
+  text-align: center;
+  color: var(--ui-wood-2);
+}

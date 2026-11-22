@@ -22,11 +22,12 @@
       depth_scale: [0.9375, 1.0],
       pigWidthFrac: 0.17,
       behindLine: 74,
+      bg_clean: true,
       bg: {
-        morning: 'world/bg/garden_morning.png',
+        morning: 'world/bg/garden_day.png',
         day: 'world/bg/garden_day.png',
-        evening: 'world/bg/garden_evening.png',
-        night: 'world/bg/garden_night.png'
+        evening: 'world/bg/garden_day.png',
+        night: 'world/bg/garden_day.png'
       },
       exits: {
         left: { to: 'house', x: 2 },
@@ -36,20 +37,21 @@
     park: {
       kind: 'outdoor',
       title: 'Park',
-      size: [384, 192],
-      walk: [10, 110, 374, 186],
+      size: [256, 144],
+      walk: [8, 80, 248, 138],
       depth_scale: [0.9375, 1.0],
       pigWidthFrac: 0.17,
-      behindLine: 106,
+      behindLine: 74,
+      bg_clean: true,
       bg: {
-        morning: 'world/bg/park_morning.png',
+        morning: 'world/bg/park_day.png',
         day: 'world/bg/park_day.png',
-        evening: 'world/bg/park_evening.png',
-        night: 'world/bg/park_night.png'
+        evening: 'world/bg/park_day.png',
+        night: 'world/bg/park_day.png'
       },
       exits: {
         left: { to: 'garden', x: 4 },
-        right: { to: 'farm', x: 380 }
+        right: { to: 'farm', x: 252 }
       }
     },
     farm: {
@@ -60,6 +62,7 @@
       depth_scale: [0.9375, 1.0],
       pigWidthFrac: 0.17,
       behindLine: 76,
+      bg_clean: true,
       bg: {
         morning: 'world/bg/farm.png',
         day: 'world/bg/farm.png',
@@ -75,10 +78,11 @@
       kind: 'outdoor',
       title: 'Market',
       size: [256, 144],
-      walk: [8, 120, 248, 140],
-      depth_scale: [0.9375, 1.0],
-      pigWidthFrac: 0.17,
-      behindLine: 120,
+      walk: [4, 78, 252, 140],
+      depth_scale: [0.8125, 1.0],
+      pigWidthFrac: 0.16,
+      behindLine: 76,
+      bg_clean: true,
       bg: {
         morning: 'world/bg/market.png',
         day: 'world/bg/market.png',
@@ -202,6 +206,9 @@
           const res = await window.fetch(url);
           if (res.ok) {
             atlasData = await res.json();
+            if (typeof window !== 'undefined' && window.CuyPlaces && typeof window.CuyPlaces.applyLight === 'function') {
+              try { window.CuyPlaces.applyLight(); } catch (e) {}
+            }
             return atlasData;
           }
         } catch (e) {}
@@ -549,6 +556,11 @@
         ry1 = Math.round(((it.y || 0) + ch) * 16);
       }
 
+      if (sceneId === 'market' && stallRoleOf({ uid: uid, id: uid })) {
+        ry1 = 84;
+        ry0 = ry1 - Math.min(ch * 16, 18);
+      }
+
       blockers.push({
         id: it.uid || it.id || itemId,
         rect: [rx0, ry0, rx1, ry1],
@@ -827,24 +839,45 @@
         : ((Number.isFinite(it.w) && it.w > 0) ? (it.w <= 8 ? it.w : Math.max(1, Math.round(it.w / 16))) : 1);
       const ch = (entry && entry.cells) ? entry.cells[1]
         : ((Number.isFinite(it.h) && it.h > 0) ? (it.h <= 8 ? it.h : Math.max(1, Math.round(it.h / 16))) : 1);
+      const catEntry = catalog ? catalog.find(c => c && (c.id === itemId || c.itemId === itemId)) : null;
+      const worldItem = (typeof window !== 'undefined' && window.CuyWorldItems && typeof window.CuyWorldItems.find === 'function')
+        ? window.CuyWorldItems.find(itemId)
+        : null;
+      const footHCandidates = [
+        it.footH,
+        it.foot_h,
+        catEntry && catEntry.footH,
+        catEntry && catEntry.foot_h,
+        worldItem && worldItem.footH,
+        worldItem && worldItem.foot_h,
+        entry && entry.footH,
+        entry && entry.foot_h
+      ];
+      let footH = ch;
+      for (let fi = 0; fi < footHCandidates.length; fi++) {
+        const v = Number(footHCandidates[fi]);
+        if (Number.isFinite(v) && v > 0) {
+          footH = v;
+          break;
+        }
+      }
 
       let x, y;
       if (it.isPixel) {
         x = it.x;
         y = it.y;
       } else if (roomGeom && typeof roomGeom.cellToPx === 'function') {
-        const pt = roomGeom.cellToPx(layout, it.x || 0, it.y || 0, cw, ch);
+        const pt = roomGeom.cellToPx(layout, it.x || 0, it.y || 0, cw, footH);
         x = pt.x;
         y = pt.y;
       } else {
         x = Math.round((it.x || 0) * 16 + (cw * 16) / 2);
-        y = Math.round(((it.y || 0) + ch) * 16);
+        y = Math.round(((it.y || 0) + footH) * 16);
       }
 
       const metrics = resolveSingleFrameMetrics(itemId, entry, it, cw, ch);
       const url = (entry && entry.file) ? getAssetUrl('world/' + entry.file) : null;
       const isFlat = isFlatItem(it, entry, itemId);
-      const catEntry = catalog ? catalog.find(c => c && (c.id === itemId || c.itemId === itemId)) : null;
       let itemLayer = (entry && entry.layer) || (catEntry && catEntry.layer) || it.layer || null;
       if ((!itemLayer || itemLayer === 'floor') && typeof itemId === 'string' && wallPrefixes.some(p => itemId.startsWith(p) || itemId === p)) {
         itemLayer = 'wall';
@@ -862,6 +895,10 @@
         y = (drawY - off.y) + metrics.anchorY;
       }
 
+      if (sid === 'market' && stallRoleOf({ uid: uid, id: uid })) {
+        y = 84;
+      }
+
       items.push({
         id: uid,
         uid: uid,
@@ -870,12 +907,14 @@
         img: null,
         x: x,
         y: y,
+        isPixel: true,
         w: metrics.sw,
         h: metrics.sh,
         sw: metrics.sw,
         sh: metrics.sh,
         anchorX: metrics.anchorX,
         anchorY: metrics.anchorY,
+        footH: footH,
         flat: isFlat,
         layer: itemLayer,
         flip: !!it.flip
@@ -1039,7 +1078,10 @@
       const ch = (entry && entry.cells) ? entry.cells[1] : (it.h || 2);
       const metrics = resolveSingleFrameMetrics(itemId, entry, it, cw, ch);
       const x = it.isPixel ? it.x : Math.round((it.x || 0) * 16 + (cw * 16) / 2);
-      const y = it.isPixel ? it.y : Math.round(((it.y || 0) + ch) * 16);
+      let y = it.isPixel ? it.y : Math.round(((it.y || 0) + ch) * 16);
+      if (stallRoleOf({ uid: uid, id: uid })) {
+        y = 84;
+      }
       return {
         id: uid,
         uid: uid,
@@ -1083,7 +1125,7 @@
       const top = Math.round((stall.y || 0) - ay);
 
       const sx = Math.round((left + right) / 2) - 7;
-      const sy = Math.round(top + Math.max(3, Math.min(8, Math.round(sh * 0.12))));
+      const sy = Math.round((stall.y || 84) - 16);
 
       ctx.fillStyle = 'rgba(30, 16, 8, 0.35)';
       ctx.fillRect(sx, sy + 12, 14, 1);

@@ -383,8 +383,11 @@
   // The pig's own room (W25-06): joined by pigId. Null when rooms.pigRooms is missing.
   function roomForPig(state, pig) {
     const rooms = state && state.rooms;
-    if (!rooms || !Array.isArray(rooms.pigRooms) || !pig || !pig.namedId) return null;
-    return rooms.pigRooms.find(r => r && r.pigId === pig.namedId) || null;
+    if (!rooms || !Array.isArray(rooms.pigRooms) || !pig) return null;
+    return rooms.pigRooms.find(r => r && (
+      (pig.id && (r.pigId === pig.id || r.roomId === ('pig:' + pig.id))) ||
+      (pig.namedId && (r.pigId === pig.namedId || r.roomId === ('pig:' + pig.namedId)))
+    )) || null;
   }
 
   function escAttr(s) {
@@ -660,7 +663,7 @@
     const btnAdopt = container.querySelector('#btnAdoptPig');
     if (btnAdopt) {
       btnAdopt.addEventListener('click', () => {
-        if (root.Sound) root.Sound.popcorn();
+        if (root.Sound && typeof root.Sound.popcorn === 'function') root.Sound.popcorn();
         api.send({ type: 'adopt_pig' });
         // Mock fallback
         if (!window.chrome || !window.chrome.webview) {
@@ -701,7 +704,7 @@
     container.querySelectorAll('.btn-toggle-active').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.dataset.toggleId;
-        if (root.Sound) root.Sound.click();
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
         api.send({ type: 'toggle_pig_active', pigId: id });
         // Mock fallback
         if (!window.chrome || !window.chrome.webview) {
@@ -726,7 +729,7 @@
       btn.addEventListener('click', () => {
         const pigId = btn.dataset.pigId;
         const nextPinned = btn.dataset.pinned !== '1';
-        if (root.Sound) root.Sound.click();
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
         api.send({ type: 'places.pigPin', pigId: pigId, pinned: nextPinned });
       });
     });
@@ -743,7 +746,7 @@
           }
           return;
         }
-        if (root.Sound) root.Sound.click();
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
         api.send({ type: 'pigs.desktopPet', pigId: pigId, on: nextOn });
       });
     });
@@ -760,7 +763,7 @@
             btn.style.display = 'none';
           }
         } else if (action === 'off') {
-          if (root.Sound) root.Sound.click();
+          if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
           api.send({ type: 'set_memorial', pigId: pigId, on: false });
           // Mock fallback
           if (!window.chrome || !window.chrome.webview) {
@@ -779,7 +782,7 @@
     container.querySelectorAll('.btn-confirm-yes').forEach(btn => {
       btn.addEventListener('click', () => {
         const pigId = btn.dataset.pigId;
-        if (root.Sound) root.Sound.click();
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
         api.send({ type: 'set_memorial', pigId: pigId, on: true });
         // Mock fallback
         if (!window.chrome || !window.chrome.webview) {
@@ -810,7 +813,7 @@
     container.querySelectorAll('.btn-adopt-named').forEach(btn => {
       btn.addEventListener('click', () => {
         const offerId = btn.dataset.offerId;
-        if (root.Sound) root.Sound.popcorn();
+        if (root.Sound && typeof root.Sound.popcorn === 'function') root.Sound.popcorn();
         api.send({ type: 'adopt_named', id: offerId, memorial: false });
         // Mock fallback
         if (!window.chrome || !window.chrome.webview) {
@@ -850,7 +853,7 @@
     container.querySelectorAll('.btn-adopt-memory').forEach(btn => {
       btn.addEventListener('click', () => {
         const offerId = btn.dataset.offerId;
-        if (root.Sound) root.Sound.click();
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
         api.send({ type: 'adopt_named', id: offerId, memorial: true });
         // Mock fallback
         if (!window.chrome || !window.chrome.webview) {
@@ -885,17 +888,21 @@
     // Handle Walk in the garden
     container.querySelectorAll('.btn-walk-garden').forEach(btn => {
       btn.addEventListener('click', () => {
-        if (root.Sound) root.Sound.click();
-        api.send({ type: 'walk', place: 'garden' });
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
+        const pigId = btn.dataset.pigId;
+        api.send({ type: 'places.pigMove', pigId: pigId, to: 'garden' });
+        if (root.CuyHome && typeof root.CuyHome.openFeature === 'function') {
+          root.CuyHome.openFeature('garden');
+        }
       });
     });
 
     // Handle Visit my room (opens the rooms feature on that pig's tab)
     container.querySelectorAll('.btn-visit-room').forEach(btn => {
       btn.addEventListener('click', () => {
-        if (root.Sound) root.Sound.click();
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
         if (root.CuyHome && typeof root.CuyHome.openFeature === 'function') {
-          root.CuyHome.openFeature('rooms', { room: btn.dataset.roomId });
+          root.CuyHome.openFeature('rooms', btn.dataset.roomId);
         }
       });
     });
@@ -903,7 +910,7 @@
     // Handle memory corner link (opens the garden feature)
     container.querySelectorAll('.btn-memory-corner').forEach(btn => {
       btn.addEventListener('click', () => {
-        if (root.Sound) root.Sound.click();
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
         if (window.CuyHome && typeof window.CuyHome.openFeature === 'function') {
           window.CuyHome.openFeature('garden');
         }
@@ -914,7 +921,7 @@
     container.querySelectorAll('.btn-adopt-group').forEach(btn => {
       btn.addEventListener('click', () => {
         const groupId = btn.dataset.groupId;
-        if (root.Sound) root.Sound.popcorn();
+        if (root.Sound && typeof root.Sound.popcorn === 'function') root.Sound.popcorn();
         api.send({ type: 'adopt_group', id: groupId });
         // Mock fallback
         if (!window.chrome || !window.chrome.webview) {
@@ -949,11 +956,42 @@
     });
   }
 
+  let lastRenderSig = null;
+
+  function computePigsSig(state) {
+    if (!state) return '';
+    try {
+      const offersClean = Array.isArray(state.offers)
+        ? state.offers.map(o => o ? { id: o.id, unlocked: o.unlocked, adopted: o.adopted, cost: o.cost, daysLeft: o.daysLeft } : null)
+        : null;
+      return JSON.stringify({
+        clovers: state.clovers || 0,
+        roster: state.roster || null,
+        activePigIds: state.activePigIds || null,
+        offers: offersClean,
+        pigLocations: (state.places && state.places.pigLocations) || null,
+        pigRooms: (state.rooms && state.rooms.pigRooms) || null
+      });
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function hasOpenConfirm(container) {
+    if (!container || typeof container.querySelectorAll !== 'function') return false;
+    const rows = container.querySelectorAll('.memorial-confirm-row');
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i].style && rows[i].style.display === 'flex') return true;
+    }
+    return false;
+  }
+
   function startRefreshTimer() {
     stopRefreshTimer();
     refreshTimer = setInterval(() => {
-      if (activeContainer && activeApi && activeContainer.offsetParent !== null) {
+      if (activeContainer && activeApi && activeContainer.offsetParent !== null && !hasOpenConfirm(activeContainer)) {
         const st = (activeApi.getState ? activeApi.getState() : null) || lastState;
+        lastRenderSig = computePigsSig(st);
         render(activeContainer, activeApi, st);
       }
     }, 30000);
@@ -986,9 +1024,10 @@
       lastState = api && api.getState ? api.getState() : null;
       if (lastState && Array.isArray(lastState.offers)) {
         lastState.offers.forEach(o => {
-          if (o) o._receivedAt = Date.now();
+          if (o && !o._receivedAt) o._receivedAt = Date.now();
         });
       }
+      lastRenderSig = computePigsSig(lastState);
       render(container, api, lastState);
       startRefreshTimer();
     },
@@ -996,12 +1035,13 @@
       stopRefreshTimer();
       activeContainer = null;
       activeApi = null;
+      lastRenderSig = null;
     },
     onState(state) {
       lastState = state;
       if (state && Array.isArray(state.offers)) {
         state.offers.forEach(o => {
-          if (o) o._receivedAt = Date.now();
+          if (o && !o._receivedAt) o._receivedAt = Date.now();
         });
       }
       const active = (state && state.roster && (state.roster.find(p => p && (p.id === (state.activePigIds && state.activePigIds[0]))) || state.roster[0])) || null;
@@ -1009,7 +1049,11 @@
         this.spriteKey = root.CuyLook.spriteFor(active);
       }
       if (activeContainer && activeApi && activeContainer.offsetParent !== null) {
-        render(activeContainer, activeApi, state);
+        const sig = computePigsSig(state);
+        if (sig !== lastRenderSig && !hasOpenConfirm(activeContainer)) {
+          lastRenderSig = sig;
+          render(activeContainer, activeApi, state);
+        }
       }
       if (typeof document !== 'undefined') {
         const moreBtn = document.querySelector('button[data-open-feature="pigs"]');

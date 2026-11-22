@@ -608,6 +608,10 @@ namespace Cuy
             return sprites;
         }
 
+        private static readonly ConcurrentDictionary<string, Bitmap[]> _scaledStageSpritesCache =
+            new ConcurrentDictionary<string, Bitmap[]>(StringComparer.OrdinalIgnoreCase);
+        private static readonly object _scaledStageSpritesLock = new object();
+
         /// <summary>
         /// Scaled sprite list for one breed + stage + coat palette (same scale as the loaded sheet). Returns null and logs on failure.
         /// Does not touch this.sprites: each pet applies its own list with FormPet.ReplaceSprites.
@@ -616,22 +620,38 @@ namespace Cuy
         {
             try
             {
-                var frames = SpriteSheetLoader.Load(stageKey, breed, paletteId);
-                if (frames == null || frames.Length == 0) return null;
-                if (frames[0].Width != 64 || frames[0].Height != 64) return null;
-                var list = new List<Bitmap>(frames.Length);
-                foreach (var src in frames)
+                string cacheKey = (stageKey ?? string.Empty) + "|" + (breed ?? string.Empty) + "|" + (paletteId ?? string.Empty) + "|" + spriteWidth + "x" + spriteHeight;
+                if (_scaledStageSpritesCache.TryGetValue(cacheKey, out var cached))
                 {
-                    var bmp = new Bitmap(spriteWidth, spriteHeight, src.PixelFormat);
-                    using (var g = Graphics.FromImage(bmp))
-                    {
-                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-                        g.DrawImage(src, new Rectangle(0, 0, spriteWidth, spriteHeight), new Rectangle(0, 0, src.Width, src.Height), GraphicsUnit.Pixel);
-                    }
-                    list.Add(bmp);
+                    return cached;
                 }
-                return list;
+
+                lock (_scaledStageSpritesLock)
+                {
+                    if (_scaledStageSpritesCache.TryGetValue(cacheKey, out cached))
+                    {
+                        return cached;
+                    }
+
+                    var frames = SpriteSheetLoader.Load(stageKey, breed, paletteId);
+                    if (frames == null || frames.Length == 0) return null;
+                    if (frames[0].Width != 64 || frames[0].Height != 64) return null;
+                    var scaled = new Bitmap[frames.Length];
+                    for (int i = 0; i < frames.Length; i++)
+                    {
+                        var src = frames[i];
+                        var bmp = new Bitmap(spriteWidth, spriteHeight, src.PixelFormat);
+                        using (var g = Graphics.FromImage(bmp))
+                        {
+                            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                            g.DrawImage(src, new Rectangle(0, 0, spriteWidth, spriteHeight), new Rectangle(0, 0, src.Width, src.Height), GraphicsUnit.Pixel);
+                        }
+                        scaled[i] = bmp;
+                    }
+                    _scaledStageSpritesCache[cacheKey] = scaled;
+                    return scaled;
+                }
             }
             catch (Exception ex)
             {
@@ -643,6 +663,9 @@ namespace Cuy
         private static readonly ConcurrentDictionary<string, Bitmap[]> _namedFramesCache =
             new ConcurrentDictionary<string, Bitmap[]>(StringComparer.OrdinalIgnoreCase);
         private static readonly object _namedFramesLock = new object();
+        private static readonly ConcurrentDictionary<string, Bitmap[]> _scaledNamedSpritesCache =
+            new ConcurrentDictionary<string, Bitmap[]>(StringComparer.OrdinalIgnoreCase);
+        private static readonly object _scaledNamedSpritesLock = new object();
 
         internal static string ResolveAssetsSpritesDir()
         {
@@ -730,26 +753,41 @@ namespace Cuy
         {
             try
             {
-                var frames = LoadNamedPigFrames(pigId, stageKey);
-                if (frames == null || frames.Length == 0) return null;
-                if (frames[0].Width != 64 || frames[0].Height != 64) return null;
-
                 int targetW = spriteWidth > 0 ? spriteWidth : (64 * (iScale > 0 ? iScale : 1));
                 int targetH = spriteHeight > 0 ? spriteHeight : (64 * (iScale > 0 ? iScale : 1));
-
-                var list = new List<Bitmap>(frames.Length);
-                foreach (var src in frames)
+                string cacheKey = (pigId ?? string.Empty) + "|" + (stageKey ?? string.Empty) + "|" + targetW + "x" + targetH;
+                if (_scaledNamedSpritesCache.TryGetValue(cacheKey, out var cached))
                 {
-                    var bmp = new Bitmap(targetW, targetH, src.PixelFormat);
-                    using (var g = Graphics.FromImage(bmp))
-                    {
-                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-                        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-                        g.DrawImage(src, new Rectangle(0, 0, targetW, targetH), new Rectangle(0, 0, src.Width, src.Height), GraphicsUnit.Pixel);
-                    }
-                    list.Add(bmp);
+                    return cached;
                 }
-                return list;
+
+                lock (_scaledNamedSpritesLock)
+                {
+                    if (_scaledNamedSpritesCache.TryGetValue(cacheKey, out cached))
+                    {
+                        return cached;
+                    }
+
+                    var frames = LoadNamedPigFrames(pigId, stageKey);
+                    if (frames == null || frames.Length == 0) return null;
+                    if (frames[0].Width != 64 || frames[0].Height != 64) return null;
+
+                    var scaled = new Bitmap[frames.Length];
+                    for (int i = 0; i < frames.Length; i++)
+                    {
+                        var src = frames[i];
+                        var bmp = new Bitmap(targetW, targetH, src.PixelFormat);
+                        using (var g = Graphics.FromImage(bmp))
+                        {
+                            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+                            g.DrawImage(src, new Rectangle(0, 0, targetW, targetH), new Rectangle(0, 0, src.Width, src.Height), GraphicsUnit.Pixel);
+                        }
+                        scaled[i] = bmp;
+                    }
+                    _scaledNamedSpritesCache[cacheKey] = scaled;
+                    return scaled;
+                }
             }
             catch (Exception ex)
             {

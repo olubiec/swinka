@@ -33,6 +33,9 @@ namespace Cuy
         private Point _dragStartCursor;
         private Point _dragStartLocation;
         private double _fitZoom = 1.0;
+        private WeatherFetchResult _lastWeatherResult;
+        private bool _weatherFetchInFlight = false;
+        private DateTime _lastAutoWeatherCheckUtc = DateTime.MinValue;
 
         #region Win32 API (DWM & Window Drag)
 
@@ -229,10 +232,10 @@ namespace Cuy
         private void SetupFormStyle()
         {
             this.AutoScaleMode = AutoScaleMode.None;
-            this.Size = new Size(420, 640);
-            this.ClientSize = new Size(420, 640);
-            this.MaximumSize = new Size(420, 640);
-            this.MinimumSize = new Size(420, 640);
+            this.Size = new Size(420, 664);
+            this.ClientSize = new Size(420, 664);
+            this.MaximumSize = new Size(420, 664);
+            this.MinimumSize = new Size(420, 664);
             this.FormBorderStyle = FormBorderStyle.None;
             this.ShowInTaskbar = false;
             this.DoubleBuffered = true;
@@ -281,13 +284,13 @@ namespace Cuy
                 Rectangle wa = screen.WorkingArea;
                 Rectangle bounds = screen.Bounds;
 
-                // PerMonitorV2: the WebView lays out at 420x640 CSS px, so the window must be 420x640 * DPI scale
+                // PerMonitorV2: the WebView lays out at 420x664 CSS px, so the window must be 420x664 * DPI scale
                 // (otherwise the page is squeezed into a narrower viewport and gets clipped). Shrink to fit small screens.
                 float dpiScale = Math.Max(1f, this.DeviceDpi / 96f);
-                float fit = Math.Min(1f, Math.Min((wa.Width - 24) / (420f * dpiScale), (wa.Height - 24) / (640f * dpiScale)));
+                float fit = Math.Min(1f, Math.Min((wa.Width - 24) / (420f * dpiScale), (wa.Height - 24) / (664f * dpiScale)));
                 fit = Math.Max(0.5f, fit);
                 int w = (int)Math.Round(420 * dpiScale * fit);
-                int h = (int)Math.Round(640 * dpiScale * fit);
+                int h = (int)Math.Round(664 * dpiScale * fit);
                 this.MinimumSize = new Size(0, 0);
                 this.MaximumSize = new Size(w, h);
                 this.MinimumSize = new Size(w, h);
@@ -655,8 +658,19 @@ namespace Cuy
                     },
                     { "currentAction", brain.CurrentAction?.AnimationName ?? "idle" },
                     { "isSleeping", pet.IsSleeping },
-                    { "lastActiveUtc", state.LastActiveUtc.ToString("o") }
+                    { "lastActiveUtc", state.LastActiveUtc.ToString("o") },
+                    { "weather", BuildWeatherPayload(state.Weather) }
                 };
+
+                if (state.Weather != null
+                    && state.Weather.Consent
+                    && state.Weather.Latitude.HasValue
+                    && state.Weather.Longitude.HasValue
+                    && !_weatherFetchInFlight
+                    && (_lastWeatherResult == null || (DateTime.UtcNow - _lastAutoWeatherCheckUtc) >= WeatherService.MinRefreshInterval))
+                {
+                    _ = RefreshWeatherAsync(force: false);
+                }
 
                 Cuy.Features.HomeFeatures.AddAllState(payload, brain);
 
@@ -720,9 +734,14 @@ namespace Cuy
 
                     case "take_out":
                         // The pig was dragged out of the Home scene: close Home, the pig drops at the cursor.
+                        string takeOutPigId = obj.Value<string>("pigId");
+                        if (!string.IsNullOrEmpty(takeOutPigId))
+                        {
+                            BrainController.Instance?.SetDesktopPet(takeOutPigId, true, asPrimary: true);
+                        }
                         _leavePoint = Cursor.Position;
                         this.Hide();
-                        BrainController.Log("[HomeWindow] Pig taken out of Home.");
+                        BrainController.Log("[HomeWindow] Pig taken out of Home: " + (takeOutPigId ?? "active"));
                         return;
 
                     case "pet":
@@ -750,6 +769,13 @@ namespace Cuy
                     case "settings":
                         string action = obj.Value<string>("action")?.ToLowerInvariant();
                         HandleSettings(action, obj);
+                        break;
+
+                    case "weather.setconsent":
+                    case "weather.setlocation":
+                    case "weather.deletelocation":
+                    case "weather.refresh":
+                        HandleWeatherMessage(obj);
                         break;
 
                     default:
@@ -883,6 +909,10 @@ namespace Cuy
             }
 
             pet.State.Name = name;
+            if (pet.State.NeedsNaming && string.IsNullOrEmpty(pet.State.TutorialKind))
+            {
+                pet.State.TutorialKind = "fresh";
+            }
             pet.State.NeedsNaming = false;
             BrainController.Instance.Session.AutoSaver.SaveNow();
             Program.Tray?.UpdateTooltip();
@@ -1056,6 +1086,276 @@ namespace Cuy
                     int diffY = cur.Y - _dragStartCursor.Y;
                     this.Location = new Point(_dragStartLocation.X + diffX, _dragStartLocation.Y + diffY);
                 }
+            }
+        }
+
+        private object BuildWeatherPayload(WeatherSettings ws)
+        {
+            bool consent = ws != null && ws.Consent;
+            bool hasCoords = ws != null && ws.Latitude.HasValue && ws.Longitude.HasValue;
+
+            string status = "off";
+            Cuy.Core.Weather.WeatherInfo info = null;
+
+            if (consent)
+            {
+                if (!hasCoords)
+                {
+                    status = "no_location";
+                }
+                else if (_lastWeatherResult != null)
+                {
+                    status = string.IsNullOrEmpty(_lastWeatherResult.Status) ? "ok" : _lastWeatherResult.Status;
+                    info = _lastWeatherResult.Info;
+                }
+                else
+                {
+                    status = "offline";
+                }
+            }
+
+            string condition = info != null ? Cuy.Core.Weather.WeatherMapping.FromWmo(info.WmoCode) : "clear";
+            int wmoCode = info != null ? info.WmoCode : 0;
+            double? temperatureC = info != null ? (double?)Math.Round(info.TemperatureC, 1) : null;
+            bool isDay = info != null ? info.IsDay : true;
+            string updatedUtc = info != null && info.FetchedUtc != default(DateTime)
+                ? info.FetchedUtc.ToString("o")
+                : null;
+
+            return new
+            {
+                consent = consent,
+                consentChangedUtc = ws?.ConsentChangedUtc?.ToString("o"),
+                locationName = ws?.LocationName ?? "",
+                lat = ws?.Latitude,
+                lon = ws?.Longitude,
+                status = status,
+                condition = condition,
+                wmoCode = wmoCode,
+                temperatureC = temperatureC,
+                isDay = isDay,
+                updatedUtc = updatedUtc,
+                attribution = Cuy.Core.Weather.OpenMeteo.Attribution
+            };
+        }
+
+        private void HandleWeatherMessage(JObject obj)
+        {
+            var validation = Cuy.Core.Input.MessageValidator.Validate(obj);
+            if (!validation.IsOk)
+            {
+                BrainController.Log("[HomeWindow] Invalid weather message: " + validation.Error);
+                return;
+            }
+
+            var brain = BrainController.Instance;
+            var pet = brain?.Pet;
+            if (pet == null) return;
+
+            var ws = pet.State.Weather;
+            string rawType = obj.Value<string>("type");
+
+            switch (rawType)
+            {
+                case "weather.setConsent":
+                {
+                    bool consent = obj.Value<bool?>("consent") ?? false;
+                    ws.Consent = consent;
+                    ws.ConsentChangedUtc = DateTime.UtcNow;
+
+                    if (!consent)
+                    {
+                        Program.StopWeatherService();
+                        _lastWeatherResult = null;
+                    }
+                    else
+                    {
+                        Program.EnsureWeatherService();
+                        if (ws.Latitude.HasValue && ws.Longitude.HasValue)
+                        {
+                            _ = RefreshWeatherAsync(force: false);
+                        }
+                        else if (!string.IsNullOrWhiteSpace(ws.LocationName))
+                        {
+                            _ = GeocodeAndRefreshWeatherAsync(ws.LocationName);
+                        }
+                    }
+
+                    brain.Session?.AutoSaver?.SaveNow();
+                    break;
+                }
+
+                case "weather.setLocation":
+                {
+                    string locErr = Cuy.Core.Input.Validation.WeatherMessages.ValidateLocationPayload(
+                        obj, out double? roundedLat, out double? roundedLon, out string city);
+                    if (locErr != null)
+                    {
+                        BrainController.Log("[HomeWindow] Invalid weather.setLocation: " + locErr);
+                        return;
+                    }
+
+                    if (roundedLat.HasValue && roundedLon.HasValue)
+                    {
+                        ws.Latitude = roundedLat.Value;
+                        ws.Longitude = roundedLon.Value;
+                        ws.LocationName = !string.IsNullOrWhiteSpace(city)
+                            ? city
+                            : string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:0.0}, {1:0.0}", roundedLat.Value, roundedLon.Value);
+                        brain.Session?.AutoSaver?.SaveNow();
+                        if (ws.Consent)
+                        {
+                            _ = RefreshWeatherAsync(force: true);
+                        }
+                    }
+                    else if (!string.IsNullOrWhiteSpace(city))
+                    {
+                        ws.LocationName = city;
+                        ws.Latitude = null;
+                        ws.Longitude = null;
+                        brain.Session?.AutoSaver?.SaveNow();
+                        if (ws.Consent)
+                        {
+                            _ = GeocodeAndRefreshWeatherAsync(city);
+                        }
+                    }
+                    break;
+                }
+
+                case "weather.deleteLocation":
+                {
+                    ws.LocationName = "";
+                    ws.Latitude = null;
+                    ws.Longitude = null;
+                    _lastWeatherResult = null;
+
+                    if (Program.WeatherService != null)
+                    {
+                        Program.WeatherService.ClearCache();
+                    }
+                    else
+                    {
+                        try
+                        {
+                            string cachePath = Path.Combine(Cuy.Core.Save.SaveSystem.DefaultDirectory, "weather_cache.json");
+                            if (File.Exists(cachePath)) File.Delete(cachePath);
+                        }
+                        catch (Exception) { }
+                    }
+
+                    brain.Session?.AutoSaver?.SaveNow();
+                    break;
+                }
+
+                case "weather.refresh":
+                {
+                    if (!ws.Consent) return;
+
+                    if (ws.Latitude.HasValue && ws.Longitude.HasValue)
+                    {
+                        _ = RefreshWeatherAsync(force: true);
+                    }
+                    else if (!string.IsNullOrWhiteSpace(ws.LocationName))
+                    {
+                        _ = GeocodeAndRefreshWeatherAsync(ws.LocationName);
+                    }
+                    else
+                    {
+                        _lastWeatherResult = new WeatherFetchResult { Status = "no_location", Info = null, FromCache = false };
+                    }
+                    break;
+                }
+            }
+        }
+
+        private async Task RefreshWeatherAsync(bool force)
+        {
+            if (_weatherFetchInFlight) return;
+
+            var ws = BrainController.Instance?.Pet?.State?.Weather;
+            if (ws == null || !ws.Consent) return;
+            if (!ws.Latitude.HasValue || !ws.Longitude.HasValue) return;
+
+            var svc = Program.EnsureWeatherService();
+            if (svc == null) return;
+
+            _weatherFetchInFlight = true;
+            _lastAutoWeatherCheckUtc = DateTime.UtcNow;
+            try
+            {
+                var result = await svc.GetCurrentAsync(ws.Latitude.Value, ws.Longitude.Value, force).ConfigureAwait(false);
+                if (this.IsDisposed) return;
+
+                void Apply()
+                {
+                    if (this.IsDisposed) return;
+                    bool currentConsent = BrainController.Instance?.Pet?.State?.Weather?.Consent == true;
+                    _lastWeatherResult = currentConsent ? result : null;
+                    SendStateToWebView();
+                }
+
+                if (this.InvokeRequired)
+                    this.BeginInvoke((Action)Apply);
+                else
+                    Apply();
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[HomeWindow] Weather refresh error: " + ex.Message);
+            }
+            finally
+            {
+                _weatherFetchInFlight = false;
+            }
+        }
+
+        private async Task GeocodeAndRefreshWeatherAsync(string city)
+        {
+            var ws = BrainController.Instance?.Pet?.State?.Weather;
+            if (ws == null || !ws.Consent || string.IsNullOrWhiteSpace(city)) return;
+
+            var svc = Program.EnsureWeatherService();
+            if (svc == null) return;
+
+            try
+            {
+                var place = await svc.GeocodeCityAsync(city).ConfigureAwait(false);
+                if (this.IsDisposed) return;
+
+                void Apply()
+                {
+                    if (this.IsDisposed) return;
+                    var currentWs = BrainController.Instance?.Pet?.State?.Weather;
+                    if (currentWs == null || !currentWs.Consent) return;
+
+                    if (place != null)
+                    {
+                        currentWs.Latitude = place.Latitude;
+                        currentWs.Longitude = place.Longitude;
+                        currentWs.LocationName = !string.IsNullOrWhiteSpace(place.DisplayName) ? place.DisplayName : city;
+                        BrainController.Instance?.Session?.AutoSaver?.SaveNow();
+                        _ = RefreshWeatherAsync(force: true);
+                    }
+                    else
+                    {
+                        _lastWeatherResult = new WeatherFetchResult
+                        {
+                            Status = "error",
+                            Info = _lastWeatherResult?.Info,
+                            FromCache = false
+                        };
+                        SendStateToWebView();
+                    }
+                }
+
+                if (this.InvokeRequired)
+                    this.BeginInvoke((Action)Apply);
+                else
+                    Apply();
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[HomeWindow] Weather geocode error: " + ex.Message);
             }
         }
 

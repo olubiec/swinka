@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "min_cells": 12,
+  "cells_per_pig": 6,
+  "gate_item": "gate_garden",
+  "blockers": ["fence_wood", "hedge", "gate_garden"],
+  "max_hours_per_day": 6,
+  "day_from_hour": 8,
+  "day_to_hour": 19,
+  "min_temp_c": 10,
+  "max_temp_c": 28,
+  "allowed_conditions": ["Clear", "Cloudy"],
+  "mood_per_hour": 1.0,
+  "mood_cap_per_day": 6
+}

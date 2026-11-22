@@ -51,6 +51,7 @@ namespace Cuy
         public static FormPet ActivePet { get; private set; }
         public Cuy.Core.Pigs.PigProfile Profile { get; set; }
         public bool IsAmbientCompanion { get; set; }
+        internal string AppliedLookKey { get; set; }
         private static readonly string[] AmbientAnimations = { "idle", "walk", "sniff", "popcorn" };
         private readonly Random _ambientRng = new Random();
         public IntPtr CurrentHwndWindow => hwndWindow;
@@ -95,6 +96,7 @@ namespace Cuy
             /// If the pet is in dragging mode (user is holding the pet with the mouse)
             /// </summary>
         internal bool IsDragging = false;
+        private bool _isPendingDrag = false;
             /// <summary>
             /// If the pet is leaving the screen
             /// </summary>
@@ -720,6 +722,16 @@ namespace Cuy
 
             pictureBox1.MouseMove += (s, e) =>
             {
+                if (_isPendingDrag && !IsDragging)
+                {
+                    int moveDist = Math.Abs(Cursor.Position.X - _clickStartPos.X) + Math.Abs(Cursor.Position.Y - _clickStartPos.Y);
+                    double heldMs = (DateTime.UtcNow - _clickStartTime).TotalMilliseconds;
+                    if (moveDist >= 10 || heldMs >= 180)
+                    {
+                        StartDragFromPending();
+                    }
+                    return;
+                }
                 if (IsDragging || IsTossing) return;
                 InteractionManager.Instance?.OnMouseMove(Cursor.Position);
                 if (_statusBubble == null || !_statusBubble.Visible)
@@ -807,13 +819,28 @@ namespace Cuy
 
             try
             {
-                imageList1.Images.Clear();
-                foreach (var s in newSprites)
-                {
-                    imageList1.Images.Add(s);
-                }
+                AppliedLookKey = null;
+                pictureBox1.Image = null;
                 flippedSprites.Clear();
                 normalSprites.Clear();
+
+                imageList1.Images.Clear();
+                var first = newSprites[0];
+                if (first != null && (imageList1.ImageSize.Width != first.Width || imageList1.ImageSize.Height != first.Height))
+                {
+                    imageList1.ImageSize = new Size(first.Width, first.Height);
+                }
+
+                var arr = newSprites as Image[] ?? newSprites.Cast<Image>().ToArray();
+                imageList1.Images.AddRange(arr);
+                if (CurrentAnimation.Sequence.Frames != null && CurrentAnimation.Sequence.Frames.Count > 0)
+                {
+                    pictureBox1.Image = GetSprite(CurrentAnimation.Sequence.Frames[0]);
+                }
+                else if (imageList1.Images.Count > 0)
+                {
+                    pictureBox1.Image = GetSprite(0);
+                }
                 Invalidate();
             }
             catch (Exception ex)
@@ -1902,18 +1929,9 @@ namespace Cuy
                 _bubbleHoverTimer?.Stop();
                 _clickStartPos = Cursor.Position;
                 _clickStartTime = DateTime.UtcNow;
-                _brain?.InterruptPhysics("drag");
-                hwndWindow = (IntPtr)0;             // Remove window handles
-                if (!TopMost) TopMost = true;       // Ensure topmost without forcing a Z-order flicker
-				IsDragging = true;                   // Flag it as dragging pet
-                IsTossing = false;                     // Flag it as not being tossed
-                BeginSmoothDrag();
-                SetNewAnimation(Animations.AnimationDrag);  // Set the dragging animation (if present)
-                if (CurrentAnimation.Sequence.Frames.Count > 0)
-                {
-                    ShowSprite(GetSprite(CurrentAnimation.Sequence.Frames[0]));
-                }
-                timer1.Interval = Math.Max(16, CurrentAnimation.Start.Interval.Value);
+                _isPendingDrag = true;
+                IsDragging = false;
+                IsTossing = false;
             }
             else if(e.Button == MouseButtons.Right && StartUp.IsDebugActive())
             {
@@ -1979,6 +1997,24 @@ namespace Cuy
             }
         }
 
+        private void StartDragFromPending()
+        {
+            _isPendingDrag = false;
+            _bubbleHoverTimer?.Stop();
+            _brain?.InterruptPhysics("drag");
+            hwndWindow = (IntPtr)0;             // Remove window handles
+            if (!TopMost) TopMost = true;       // Ensure topmost without forcing a Z-order flicker
+            IsDragging = true;                  // Flag it as dragging pet
+            IsTossing = false;                  // Flag it as not being tossed
+            BeginSmoothDrag();
+            SetNewAnimation(Animations.AnimationDrag);  // Set the dragging animation (if present)
+            if (CurrentAnimation.Sequence.Frames.Count > 0)
+            {
+                ShowSprite(GetSprite(CurrentAnimation.Sequence.Frames[0]));
+            }
+            timer1.Interval = Math.Max(16, CurrentAnimation.Start.Interval.Value);
+        }
+
             /// <summary>
             /// Mouse released the pet.
             /// </summary>
@@ -1986,8 +2022,27 @@ namespace Cuy
             /// <param name="e">Mouse event values.</param>
         private void PictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button != MouseButtons.Left || Name.IndexOf("child") >= 0 || !IsDragging) return;
+            if (e.Button != MouseButtons.Left || Name.IndexOf("child") >= 0) return;
+            if (!_isPendingDrag && !IsDragging) return;
             _bubbleHoverTimer?.Stop();
+            if (_isPendingDrag && !IsDragging)
+            {
+                _isPendingDrag = false;
+                _brain?.ResumePhysics();
+                bool irritated = InteractionManager.Instance != null && InteractionManager.Instance.RegisterClick(this);
+                if (!irritated)
+                {
+                    if (InteractionManager.Instance != null)
+                    {
+                        InteractionManager.Instance.TriggerPetting(this);
+                    }
+                    else
+                    {
+                        ShowStatusBubble();
+                    }
+                }
+                return;
+            }
             int dragDist = Math.Abs(Cursor.Position.X - _clickStartPos.X) + Math.Abs(Cursor.Position.Y - _clickStartPos.Y);
             TimeSpan dragDuration = DateTime.UtcNow - _clickStartTime;
             bool wasClick = dragDist < 8 && dragDuration.TotalMilliseconds < 500;

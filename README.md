@@ -2,32 +2,33 @@
 
 <!-- HANDOFF_BANNER_START -->
 > [!IMPORTANT]
-> ### 🔄 Status sesji i gotowość do przełączenia (Handoff dla nowego urządzenia)
-> **Zaktualizowano:** 2026-11-04 15:53:00 (czas lokalny)
+> ### 🔄 Status projektu (od `v1.0.0` do `2026-11-22`)
+> **Zaktualizowano:** 2026-11-22 (czas lokalny)
 > 
-> - **Wykonano w całości w tej sesji (100% zmergowane do main i wypchnięte na GitHub):**
->   - **Fale W13 do W18 (100%):** Wszystkie zadania W13, W14, W15, W16 oraz pakiety W17 (PK-17a, PK-17b, PK-17c) i W18 (PK-18a, PK-18b, PK-18c).
->   - **Stan testów:** 686 testów Cuy.Core przechodzi bez błędów regresji.
-> - **Aktualny stan i plan:**
->   - **Następna fala do wykonania:** **W19** (PK-19) oraz **W20** (PK-20a, PK-20b, PK-20c).
->   - **Timer:** Aktywny timer na 38 minut (zaplanowany start fali o **16:18:33**).
->   - **Limit czasu:** Zakończenie pracy i push całości przed **17:20**.
+> - **Wykonano od `v1.0.0` (`0add9b6`, 477 commitów na `main` + drzewo robocze):**
+>   - **W11–W33, P1–P47, F1, F2, F2-FIX (`F2F-1`..`F2F-6`, `F2-FIX2`..`F2-FIX5`):** wdrożone i zmergowane na `main` (tagi do `v2.6.166`, poza odłożonymi punktami i `PK-23b`).
+>   - **Fala 3 i Fala 4 + poprawki `PK-FX1` / `F5-*`:** zaimplementowane w drzewie roboczym (niezacommitowane).
+> - **Aktualna weryfikacja (2026-11-22):**
+>   - **Release build + `--selftest`:** **PASS** (0 błędów, 0 ostrzeżeń).
+>   - **Testy `Cuy.Core.Tests`:** **1410 PASS / 21 FAIL / 6 SKIP** (łącznie 1437).
+>   - **QA / Playwright:** `data-check`, `economy-sim --check`, `plan-audit`, `home-behavior-check`, `hotspots-check`, `check-icons`, `maze-test` **PASS**; `check-assets` **FAIL** (duplikat `cosy_nook.png`), `check-css-vars` (18 błędów), `web-smoke.js` i `ux-p76`/`p77` **FAIL**.
+> - **Gotowość do wydania:** **NO-GO** — do naprawy 21 testów Core, stabilizacja `web/home` w Playwright, commit zmian i ręczne bramki Windows.
 <!-- HANDOFF_BANNER_END -->
 
 <!-- STATUS_DASHBOARD_START -->
 > [!NOTE]
-> ### 📱 STATUS NA ŻYWO (Podgląd z telefonu)
-> **Ostatni heartbeat:** 2026-11-04 16:35:00
+> ### 📱 STATUS NA ŻYWO
+> **Ostatni przegląd:** 2026-11-22
 >
 > | Wskaźnik | Wartość | Status |
 > | :--- | :--- | :---: |
-> | 🔋 **Zasilanie i Bateria** | **97%** (Zasilacz AC podłączony) | 🟢 Zasilacz AC (Bezpieczny) |
-> | 🌊 **Zakończone Fale** | **W13 - W19** (PK-19 gotowe) | ✅ Ukończone 100% i zweryfikowane |
-> | 🌊 **Aktualna Fala** | **W20** (PK-20a, PK-20b, PK-20c) | 🟢 W toku |
-> | 🧪 **Testy Jednostkowe** | **762** zaliczonych | ✅ Wszystkie testy przechodzą |
-> | 💻 **Stan Systemu** | ⚡ W19 ukończone, start równoległy W20 | 🟢 Agenci w akcji |
+> | 🌊 **Fale na `main`** | **W11–W33, P1–P47, F1, F2, F2-FIX** | ✅ Zmergowane (477 commitów od `v1.0.0`) |
+> | 🛠️ **Drzewo robocze** | **Fala 3 + Fala 4 + `PK-FX1` / `F5-*`** | 🟡 Niezacommitowane |
+> | 🏗️ **Build Release + `--selftest`** | **0 błędów, 0 ostrzeżeń** | ✅ PASS |
+> | 🧪 **Testy `Cuy.Core.Tests`** | **1410 PASS / 21 FAIL / 6 SKIP** (1437) | 🔴 Wymaga napraw |
+> | 🌐 **Playwright & Zasoby** | `web-smoke` FAIL, `check-assets` FAIL, `data-check` PASS | 🔴 Wymaga napraw |
 >
-> 📄 [Szczegółowy raport zadań](STAN_PROJEKTU.md) • 📋 [Lista kolejnych fal](TODO.md) • 🔄 Odśwież stronę w przeglądarce telefonu, aby zobaczyć aktualny czas
+> 📄 [Szczegółowy raport stanu](docs/PROJECT_STATE.md) • 📋 [Lista pozostałych zadań](TODO.md) • 🧾 [Checkpoint](STAN_PROJEKTU.md)
 <!-- STATUS_DASHBOARD_END -->
 
 A pixel art guinea pig for the Windows desktop. It walks on the taskbar and on windows, has needs like a Pou-style pet, and grows up at the pace of a real guinea pig. A gift project, built with AI agents.

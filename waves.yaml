@@ -3134,6 +3134,18 @@ waves:
     timeout_minutes: 44
 - id: F4-1
   tasks:
+  - id: PK-FX1
+    title: 'PK-FX1: Hotfixes: house icon roof, remove old Home logo, and fix take_out crash/restart'
+    prompt_file: docs/prompts/PK-FX1-wave4-hotfixes.md
+    files:
+    - src/Cuy/dotNet/StatusBubble.cs
+    - src/Cuy/dotNet/ContextMenus.cs
+    - web/home/index.html
+    - src/Cuy/dotNet/FormPet.cs
+    - docs/opt/log/PK-FX1.md
+    test_command: dotnet build src/Cuy/Cuy.csproj -c Release -p:EnableWindowsTargeting=true
+    model: gemini-3.8-flash-high
+    timeout_minutes: 30
   - id: PK-R44
     title: 'PK-R44: Research: Hay Hop minigame'
     prompt_file: docs/prompts/PK-R44-research-hay-hop.md

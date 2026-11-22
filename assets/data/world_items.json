@@ -43,6 +43,8 @@
    ],
    "w": 2,
    "h": 3,
+   "foot_h": 1,
+   "sprite_h": 3,
    "price": 220,
    "comfort": 3,
    "layer": "floor",
@@ -546,6 +548,8 @@
    ],
    "w": 1,
    "h": 2,
+   "foot_h": 1,
+   "sprite_h": 2,
    "price": 150,
    "comfort": 2,
    "layer": "floor",
@@ -698,6 +702,8 @@
     ],
     "w": 3,
     "h": 3,
+    "foot_h": 1,
+    "sprite_h": 3,
     "price": 15,
     "comfort": 0,
     "layer": "floor",
@@ -745,7 +751,7 @@
     "sprite_h": 3,
     "price": 15,
     "comfort": 0,
-    "layer": "wall",
+    "layer": "floor",
     "icon": "lamp_arc"
   },
   {
@@ -782,6 +788,8 @@
     ],
     "w": 1,
     "h": 2,
+    "foot_h": 1,
+    "sprite_h": 2,
     "price": 15,
     "comfort": 0,
     "layer": "floor",
@@ -821,7 +829,7 @@
     ],
     "w": 1,
     "h": 1,
-    "price": 0,
+    "price": 150,
     "unlock_level": 1,
     "comfort": 0,
     "layer": "floor",
@@ -952,6 +960,8 @@
     ],
     "w": 1,
     "h": 2,
+    "foot_h": 1,
+    "sprite_h": 2,
     "price": 110,
     "comfort": 5,
     "layer": "floor",
@@ -1372,6 +1382,151 @@
     "comfort": 1,
     "layer": "wall",
     "icon": "signpost"
+  },
+  {
+    "id": "warm_house_bed",
+    "name": "Warm house bed",
+    "place": [
+      "house"
+    ],
+    "w": 2,
+    "h": 2,
+    "price": 300,
+    "comfort": 5,
+    "layer": "floor",
+    "icon": "warm_house_bed"
+  },
+  {
+    "id": "rug_round_pink",
+    "name": "Pink round rug",
+    "place": [
+      "house"
+    ],
+    "w": 2,
+    "h": 1,
+    "price": 80,
+    "comfort": 2,
+    "layer": "floor",
+    "icon": "rug"
+  },
+  {
+    "id": "rug_stripes",
+    "name": "Stripes rug",
+    "place": [
+      "house"
+    ],
+    "w": 2,
+    "h": 1,
+    "price": 80,
+    "comfort": 2,
+    "layer": "floor",
+    "icon": "rug"
+  },
+  {
+    "id": "rug_heart",
+    "name": "Heart rug",
+    "place": [
+      "house"
+    ],
+    "w": 2,
+    "h": 1,
+    "price": 80,
+    "comfort": 2,
+    "layer": "floor",
+    "icon": "rug"
+  },
+  {
+    "id": "plant_fern",
+    "name": "Fern",
+    "place": [
+      "house"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 60,
+    "comfort": 2,
+    "layer": "floor",
+    "icon": "plant"
+  },
+  {
+    "id": "plant_cactus",
+    "name": "Cactus",
+    "place": [
+      "house"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 60,
+    "comfort": 2,
+    "layer": "floor",
+    "icon": "plant"
+  },
+  {
+    "id": "plant_flowers",
+    "name": "Flowers",
+    "place": [
+      "house"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 60,
+    "comfort": 2,
+    "layer": "floor",
+    "icon": "plant"
+  },
+  {
+    "id": "picture_pig",
+    "name": "Pig picture",
+    "place": [
+      "house"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 100,
+    "comfort": 2,
+    "layer": "wall",
+    "icon": "picture_frame"
+  },
+  {
+    "id": "picture_sunset",
+    "name": "Sunset picture",
+    "place": [
+      "house"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 100,
+    "comfort": 2,
+    "layer": "wall",
+    "icon": "picture_frame"
+  },
+  {
+    "id": "picture_carrot",
+    "name": "Carrot picture",
+    "place": [
+      "house"
+    ],
+    "w": 1,
+    "h": 1,
+    "price": 100,
+    "comfort": 2,
+    "layer": "wall",
+    "icon": "picture_frame"
+  },
+  {
+    "id": "lamp_star",
+    "name": "Star lamp",
+    "place": [
+      "house"
+    ],
+    "w": 1,
+    "h": 2,
+    "foot_h": 1,
+    "sprite_h": 2,
+    "price": 140,
+    "comfort": 3,
+    "layer": "floor",
+    "icon": "lamp"
   }
  ]
 }

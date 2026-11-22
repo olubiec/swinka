@@ -174,7 +174,7 @@
 }
 .feature-market .market-in-bag {
   display: inline-block;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--ui-wood-2);
 }
 .feature-market .market-order-row {
@@ -226,4 +226,22 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.market-drawer,
+.market-drawer button,
+.market-drawer input,
+.market-drawer select,
+.edit-drawer-tab,
+.edit-drawer-search,
+.edit-drawer-filters-bar {
+  font-family: var(--font-pixel, 'Pixelify Sans', monospace);
+}
+
+.market-drawer .market-subfilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 0 0;
 }

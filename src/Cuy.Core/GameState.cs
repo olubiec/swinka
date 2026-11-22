@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Cuy.Core
@@ -115,6 +115,7 @@ namespace Cuy.Core
             BirthDateUtc = AsUtc(BirthDateUtc);
             LastActiveUtc = AsUtc(LastActiveUtc);
             if (LastActiveUtc < BirthDateUtc) LastActiveUtc = BirthDateUtc;
+            EnsureTutorialDefaults();
         }
 
         private static DateTime AsUtc(DateTime d)

@@ -73,13 +73,13 @@ namespace Cuy
 			this.ControlBox = false;
 			this.Controls.Add(this.pictureBox1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = Cuy.PetIcons.GetTrayIcon() ?? ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "FormPet";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
-			this.Text = "Sheep";
+			this.Text = "Cuy";
 			this.TopMost = true;
 			this.TransparencyKey = System.Drawing.Color.Magenta;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form2_FormClosed);

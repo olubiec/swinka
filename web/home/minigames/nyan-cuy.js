@@ -466,8 +466,8 @@
 
           // 4. Record position for rainbow trail
           this.trailHistory.unshift({
-            x: this.pig.x - 14,
-            y: this.pig.y + 4
+            x: this.pig.x - 18,
+            y: this.pig.y + 15
           });
         }
 
@@ -482,11 +482,11 @@
         // 6. Draw undulating retro rainbow trail
         this.rainbowGfx.clear();
         if (this.trailHistory.length > 1) {
-          const pigX = this.pig.x - 14;
+          const pigX = this.pig.x - 18;
           const sliceW = 6;
           for (let x = -6; x <= pigX; x += sliceW) {
             // Find closest historical y
-            let closestY = this.pig.y + 4;
+            let closestY = this.pig.y + 15;
             let minDiff = 9999;
             for (let i = 0; i < this.trailHistory.length; i++) {
               const diff = Math.abs(this.trailHistory[i].x - x);

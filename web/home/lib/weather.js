@@ -12,6 +12,8 @@
     types: {
       clear: { weight: 0.65 },
       overcast: { weight: 0.20, tintColor: '#5f7f87', tintAlpha: 0.14 },
+      cloudy: { weight: 0, tintColor: '#6d8792', tintAlpha: 0.12 },
+      fog: { weight: 0, tintColor: '#b7c7c9', tintAlpha: 0.24 },
       rain: {
         weight: 0.15,
         tintColor: '#3f5a68',
@@ -23,6 +25,28 @@
         streakLength: 7,
         speedY: 160,
         windX: -28
+      },
+      storm: {
+        weight: 0,
+        tintColor: '#2c414f',
+        tintAlpha: 0.30,
+        streakCount: 44,
+        streakColor: '#c9d7d4',
+        streakHighlight: '#ffffff',
+        streakAlpha: 0.78,
+        streakLength: 9,
+        speedY: 220,
+        windX: -52
+      },
+      snow: {
+        weight: 0,
+        tintColor: '#9fb8c4',
+        tintAlpha: 0.12,
+        flakeCount: 36,
+        flakeColor: '#eef4f5',
+        flakeAlpha: 0.85,
+        speedY: 24,
+        windX: -8
       }
     }
   };
@@ -151,7 +175,7 @@
       ctx.fillRect(0, 0, width, height);
     }
 
-    if (state.type === 'rain') {
+    if (state.type === 'rain' || state.type === 'storm') {
       var count = (Number.isFinite(cfg.streakCount) && cfg.streakCount > 0) ? Math.floor(cfg.streakCount) : 28;
       var len = (Number.isFinite(cfg.streakLength) && cfg.streakLength > 0) ? cfg.streakLength : 7;
       var speedY = Number.isFinite(cfg.speedY) ? cfg.speedY : 160;
@@ -173,6 +197,26 @@
         drawStreaksBatch(ctx, hiColor, count, true, 4, seed, t, width, height, windX, speedY, dx, dy);
       } else {
         drawStreaksBatch(ctx, mainColor, count, false, 0, seed, t, width, height, windX, speedY, dx, dy);
+      }
+    } else if (state.type === 'snow') {
+      var fCount = (Number.isFinite(cfg.flakeCount) && cfg.flakeCount > 0) ? Math.floor(cfg.flakeCount) : 36;
+      var fSpeedY = Number.isFinite(cfg.speedY) ? cfg.speedY : 24;
+      var fWindX = Number.isFinite(cfg.windX) ? cfg.windX : -8;
+      var fAlpha = (Number.isFinite(cfg.flakeAlpha) && cfg.flakeAlpha >= 0) ? cfg.flakeAlpha : 0.85;
+      var fSeed = (state.seed >>> 0) || 1;
+
+      ctx.globalAlpha = fAlpha;
+      ctx.fillStyle = cfg.flakeColor || '#eef4f5';
+      for (var fi = 0; fi < fCount; fi++) {
+        var fh1 = Math.imul((fSeed ^ (fi * 374761393)) >>> 0, 668265263) >>> 0;
+        var fh2 = Math.imul((fSeed ^ (fi * 1274126177)) >>> 0, 2246822519) >>> 0;
+        var fx0 = (fh1 / 4294967296) * width;
+        var fy0 = (fh2 / 4294967296) * height;
+        var sway = Math.sin(t * 2 + fi) * 2;
+        var fx = Math.floor(((fx0 + fWindX * t + sway) % width + width) % width);
+        var fy = Math.floor(((fy0 + fSpeedY * t) % height + height) % height);
+        var sz = (fi % 4 === 0) ? 2 : 1;
+        ctx.fillRect(fx, fy, sz, sz);
       }
     }
 

@@ -89,11 +89,26 @@ namespace Cuy
 
         public void OnMouseMove(Point screenPos)
         {
-            if (_petForm == null || _petForm.IsDisposed) return;
-            if (_petForm.IsDragging || _petForm.IsTossing) return;
+            FormPet hitPet = null;
+            var allPets = FormPet.AllPets;
+            if (allPets != null && allPets.Count > 0)
+            {
+                for (int i = 0; i < allPets.Count; i++)
+                {
+                    var p = allPets[i];
+                    if (p != null && !p.IsDisposed && !p.IsDragging && !p.IsTossing && p.Bounds.Contains(screenPos))
+                    {
+                        hitPet = p;
+                        break;
+                    }
+                }
+            }
+            else if (_petForm != null && !_petForm.IsDisposed && !_petForm.IsDragging && !_petForm.IsTossing && _petForm.Bounds.Contains(screenPos))
+            {
+                hitPet = _petForm;
+            }
 
-            Rectangle petBounds = _petForm.Bounds;
-            if (petBounds.Contains(screenPos))
+            if (hitPet != null)
             {
                 DateTime now = DateTime.UtcNow;
                 int curX = screenPos.X;
@@ -129,7 +144,7 @@ namespace Cuy
                     _reversalTimes.Clear();
                     _lastPetX = -1;
                     _lastPetDir = 0;
-                    TriggerPetting();
+                    TriggerPetting(hitPet);
                 }
             }
             else
@@ -140,15 +155,16 @@ namespace Cuy
             }
         }
 
-        public void TriggerPetting()
+        public void TriggerPetting(FormPet targetPet = null)
         {
-            if (_petForm == null || _petForm.IsDisposed) return;
+            FormPet petForm = (targetPet != null && !targetPet.IsDisposed) ? targetPet : _petForm;
+            if (petForm == null || petForm.IsDisposed) return;
 
             var controller = BrainController.Instance;
             var pet = controller?.Pet;
 
             // Check whether the pig is asleep
-            TAnimation currentAnim = _petForm.CurrentAnimation;
+            TAnimation currentAnim = petForm.CurrentAnimation;
             string curAnimName = currentAnim.Name;
             bool isSleeping = (curAnimName == "sleep" ||
                                curAnimName == "doze" ||
@@ -167,7 +183,7 @@ namespace Cuy
                         pet.Needs.Mood));
                     HomeWindow.NotifyStateChanged();
                 }
-                _petForm.PlayAnimationByName("wake_up");
+                petForm.PlayAnimationByName("wake_up");
             }
             else
             {
@@ -195,14 +211,15 @@ namespace Cuy
                         "[Petting] Limit of 10 rewarded pets per hour reached. The pig only purrs (purr_pet).");
                 }
 
-                _petForm.PlayAnimationByName("purr_pet");
+                petForm.PlayAnimationByName("purr_pet");
             }
         }
 
         // ---- Clicks and annoyance ---------------------------------------------
 
-        public bool RegisterClick()
+        public bool RegisterClick(FormPet targetPet = null)
         {
+            FormPet petForm = (targetPet != null && !targetPet.IsDisposed) ? targetPet : _petForm;
             DateTime now = DateTime.UtcNow;
             _clickTimes.Add(now);
             _clickTimes.RemoveAll(t => (now - t).TotalSeconds > 3.0);
@@ -216,8 +233,8 @@ namespace Cuy
                 _lookState = LookAtUserState.None;
                 _callState = CallPetState.None;
 
-                _petForm.HideStatusBubble();
-                _petForm.PlayAnimationByName("chatter");
+                petForm?.HideStatusBubble();
+                petForm?.PlayAnimationByName("chatter");
 
                 BrainController.Log(
                     "[Annoyance] More than 8 clicks on the pig in 3 s! The pig chatters its teeth and sulks for 30 seconds.");

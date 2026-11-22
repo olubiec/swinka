@@ -138,8 +138,8 @@
 
             // Rainbow trail: push new segment
             state.rainbow.push({
-                x: state.pig.x - 12,
-                y: state.pig.y + 6
+                x: state.pig.x - 18,
+                y: state.pig.y + 15
             });
         }
 

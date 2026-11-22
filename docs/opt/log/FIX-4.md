@@ -1,0 +1,5 @@
+# FIX-4: Home Pig Behavior, Calm Desktop Rhythm, 28 Animations, Petting Click, Autonomous Tricks & Room Exits
+- Removed the early `return` in `canvas-pig.js` `update(dt)` when `_multiPigActive` is true so the primary pig always runs `PigBehavior`, `RestSpots`, `PigMotion`, particles, room exits, and all 28 animations, while syncing primary pig state into `entries[0]`.
+- Slowed `scene-pigs.js` for secondary pigs to `28` px/s walk speed with `3500`–`9000` ms calm idle pauses cycling `idle`, `sniff`, `doze`, `sleep`, `yawn`, and `scratch`.
+- Tuned `assets/data/home_behavior.json` and `web/home/lib/pig-behavior.js` for calm desktop speeds (`walk`: 32 px/s, `follow`: 38 px/s, `run`: 65 px/s), higher rest/sleep/eat/drink weights (~70% calm behaviors), autonomous learned tricks, 18–30s ambient bubble cooldown, and 45s+ autonomous room exits.
+- Updated `canvas-pig.js` pointer handling so pointer movements `<= 6px` within `< 500ms` trigger `pet()` (playing `purr_pet`, spawning hearts, showing bubble, playing sound, and sending `{ type: 'pet' }`) instead of lifting/dropping the pig.

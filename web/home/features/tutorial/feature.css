@@ -1,0 +1,250 @@
+/* ==========================================================================
+   Tutorial & Guide (update tour, contextual hints, on-demand guide modal)
+   ========================================================================== */
+
+.tut-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 960;
+  background: rgba(36, 24, 36, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.tut-overlay[hidden] {
+  display: none;
+}
+
+.tut-tour-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--ui-linen-2);
+  border: 4px solid var(--ui-wood-0);
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: var(--ui-shadow);
+  color: var(--ui-text);
+  font-family: var(--font-pixel);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tut-tour-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tut-tour-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--ui-hay-2);
+  border: 2px solid var(--ui-wood-0);
+  border-radius: 4px;
+  color: var(--ui-wood-0);
+}
+
+.tut-tour-step {
+  font-size: 12px;
+  color: var(--ui-text-soft);
+}
+
+.tut-tour-title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.25;
+  color: var(--ui-brick-1);
+}
+
+.tut-tour-body {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ui-text);
+}
+
+.tut-tour-body ul {
+  margin: 6px 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tut-tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tut-tour-nav {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.tut-btn {
+  font-family: var(--font-pixel);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border: 2px solid var(--ui-wood-0);
+  border-radius: 6px;
+  background: var(--ui-linen-3);
+  color: var(--ui-wood-0);
+  cursor: pointer;
+}
+
+.tut-btn-primary {
+  background: var(--ui-moss-3);
+  color: var(--ui-linen-3);
+}
+
+.tut-btn-link {
+  background: none;
+  border: 0;
+  padding: 4px 6px;
+  font-family: var(--font-pixel);
+  font-size: 12px;
+  color: var(--ui-text-soft);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Contextual hint banner (just-in-time) */
+.tut-hint-banner {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 950;
+  background: var(--ui-linen-3);
+  border: 3px solid var(--ui-wood-0);
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: var(--ui-shadow);
+  color: var(--ui-text);
+  font-family: var(--font-pixel);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tut-hint-banner.pos-top {
+  top: 44px;
+  bottom: auto;
+}
+
+.tut-hint-banner[hidden] {
+  display: none;
+}
+
+.tut-hint-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tut-hint-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ui-brick-1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tut-hint-list {
+  margin: 0 0 2px 16px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.tut-hint-foot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tut-spotlight {
+  outline: 3px solid var(--ui-flame-2) !important;
+  outline-offset: 2px;
+  position: relative;
+  z-index: 940;
+}
+
+/* On-demand Guide modal */
+.feature-tutorial .tut-guide-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--font-pixel);
+  color: var(--ui-text);
+}
+
+.feature-tutorial .tut-guide-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.feature-tutorial .tut-guide-tab {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  padding: 4px 8px;
+  border: 2px solid var(--ui-wood-0);
+  border-radius: 6px;
+  background: var(--ui-linen-1);
+  color: var(--ui-wood-0);
+  cursor: pointer;
+}
+
+.feature-tutorial .tut-guide-tab.active {
+  background: var(--ui-wood-2);
+  color: var(--ui-linen-3);
+}
+
+.feature-tutorial .tut-guide-card {
+  background: var(--ui-linen-3);
+  border: 2px solid var(--ui-wood-0);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feature-tutorial .tut-guide-card h3 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--ui-brick-1);
+}
+
+.feature-tutorial .tut-guide-card ul {
+  margin: 0 0 0 16px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.feature-tutorial .tut-guide-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: space-between;
+  padding-top: 4px;
+}

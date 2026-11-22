@@ -27,7 +27,12 @@
     return b + 'sprites/' + (breed === 'smooth' ? '' : 'breeds/' + breed + '/') + stage + '/spritesheet.png';
   }
 
+  function normNamedId(pigId) {
+    return pigId ? String(pigId).trim().toLowerCase() : '';
+  }
+
   function namedPath(pigId, stage, base) {
+    pigId = normNamedId(pigId);
     stage = normStage(stage);
     var b = base || assetsBase();
     return b + 'sprites/pigs/' + pigId + '/' + stage + '/spritesheet.png';
@@ -68,6 +73,7 @@
   }
 
   function namedImage(pigId, stage) {
+    pigId = normNamedId(pigId);
     stage = normStage(stage);
     var key = pigId + '/' + stage;
     if (namedImages[key]) return namedImages[key];
@@ -83,6 +89,7 @@
   function loaded(img) { return img && img.complete && img.naturalWidth > 0 && !img._failed; }
 
   function namedSheet(pigId, stage) {
+    pigId = normNamedId(pigId);
     if (!pigId) return null;
     stage = normStage(stage);
     var img = namedImage(pigId, stage);
@@ -93,6 +100,7 @@
   // Palette-remapped canvas for the pig's look, or null while the sheet is still loading.
   // Optional fourth argument namedId: if provided, wait for baked named sheet before falling back.
   function sheet(breed, stage, paletteId, namedId) {
+    namedId = normNamedId(namedId);
     if (namedId) {
       var nImg = namedImage(namedId, stage);
       if (loaded(nImg)) return nImg;
@@ -103,25 +111,39 @@
     return root.CuyPalette ? root.CuyPalette.apply(img, paletteId) : img;
   }
 
-  // The first active pig of a state ({ roster, activePigIds }) -> { id, name, breed, paletteId, traits }.
+  // The first active pig of a state ({ roster, activePigIds }) -> { id, name, breed, paletteId, namedId, named, look, traits, modifiers, stage }.
   function activePig(state) {
     var roster = (state && state.roster) || [];
     var ids = (state && state.activePigIds) || [];
     var pig = null;
     for (var i = 0; i < roster.length && !pig; i++) if (roster[i].id === ids[0]) pig = roster[i];
     if (!pig) pig = roster[0] || { id: 'pig_default', name: (state && state.name) || 'Cuy', breed: 'smooth', paletteId: 'tricolor', traits: [] };
-    return { id: pig.id, name: pig.name, breed: normBreed(pig.breed), paletteId: root.CuyPalette ? root.CuyPalette.normalize(pig.paletteId) : (pig.paletteId || 'tricolor'), traits: pig.traits || [] };
+    var namedId = normNamedId(pig.namedId || pig.named || (pig.look && (pig.look.namedId || pig.look.named))) || null;
+    var rawPalette = pig.paletteId || (pig.look && (pig.look.paletteId || pig.look.coat)) || 'tricolor';
+    return {
+      id: pig.id,
+      name: pig.name,
+      breed: normBreed(pig.breed || (pig.look && pig.look.breed)),
+      paletteId: root.CuyPalette ? root.CuyPalette.normalize(rawPalette) : rawPalette,
+      namedId: namedId,
+      named: namedId,
+      look: pig.look || null,
+      traits: pig.traits || [],
+      modifiers: pig.modifiers || null,
+      stage: pig.stage || (pig.look && pig.look.stage) || null
+    };
   }
 
   // Draws the idle frame 0 of a pig into a canvas (card portraits). Redraws when the sheet has loaded.
-  function drawPortrait(canvas, breed, stage, paletteId, scale) {
+  function drawPortrait(canvas, breed, stage, paletteId, scale, namedId) {
     scale = scale || 2;
     canvas.width = 64 * scale; canvas.height = 64 * scale;
     var ctx = canvas.getContext('2d');
     ctx.imageSmoothingEnabled = false;
-    var img = image(breed, stage);
+    namedId = normNamedId(namedId);
+    var img = namedId ? namedImage(namedId, stage) : image(breed, stage);
     function paint() {
-      var s = sheet(breed, stage, paletteId);
+      var s = sheet(breed, stage, paletteId, namedId);
       if (!s) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(s, 0, 0, 64, 64, 0, 0, canvas.width, canvas.height);

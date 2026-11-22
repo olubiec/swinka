@@ -1,0 +1,6 @@
+Decision: Grounded desktop props on real assets/props/*.png and existing items in world_items.json + items_shop.json via new assets/data/desktop_props.json, because ToysFeature.cs does not exist and world_items.json has no prop_of entries yet.
+Decision: Deferred WorldState.DesktopProps, Pet.Props, and Balance.PropsActive because those files are outside PK-D1/PK-D2 Zmieniaj; PropsFeature holds session List<DesktopProp> and uses DesktopPropOps + Pet.Count.
+Decision: DesktopPropsOverlay uses WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW (click-through, matching PK-D3), positioned via PrimaryScreen.WorkingArea fractions 0..1 with DisplaySettingsChanged handling; Brain.cs stays untouched.
+API/fields: DesktopPropCatalog, DesktopPropDef, DesktopProp, DesktopPropResult, DesktopPropOps, PropsMessages (IMessageRuleSet + Validate), state.props, props.{place,move,remove,toRoom,fromRoom}, DesktopPropsOverlay.{Show,Hide,Update}.
+Owner question: Should the overlay allow dragging props directly or stay click-through as PK-D3 says? Chose click-through (WS_EX_TRANSPARENT) to satisfy PK-D3 and avoid intercepting desktop clicks, moving via props.move.
+Note: Verified PoopForm.cs:19-75 uses Color.Magenta TransparencyKey + TopMost + WS_EX_NOACTIVATE + WS_EX_TOOLWINDOW; HomeFeatures.LoadAll() loads PropsFeature by reflection.

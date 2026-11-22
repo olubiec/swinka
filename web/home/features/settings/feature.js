@@ -20,6 +20,15 @@
         </div>
 
         <div class="settings-group ui-panel-paper">
+          <div class="settings-row">
+            <span class="settings-group-title">Guide &amp; Tutorial</span>
+          </div>
+          <div class="update-actions">
+            <button type="button" class="settings-btn ui-btn" id="set-open-tutorial">Open Guide &amp; Tutorial</button>
+          </div>
+        </div>
+
+        <div class="settings-group ui-panel-paper">
           <div class="settings-row volume-row">
             <label for="settingsVolume">Sound volume</label>
             <input type="range" id="settingsVolume" class="retro-range" min="0" max="100" step="1">
@@ -65,6 +74,40 @@
           </div>
         </div>
 
+        <div class="settings-group ui-panel-paper wx-settings-group">
+          <div class="settings-row">
+            <label class="settings-group-title" for="wxConsentToggle">Live Weather</label>
+            <input type="checkbox" id="wxConsentToggle" class="retro-toggle wx-toggle" aria-label="Live weather">
+          </div>
+          <div class="wx-status-row">
+            <span class="wx-label">Status:</span>
+            <span id="wxStatusText" class="wx-status-badge" aria-live="polite">Off</span>
+          </div>
+          <p class="wx-consent-text">
+            Live weather sends only your rounded coordinates (1 decimal place, ~11 km) to Open-Meteo (api.open-meteo.com) at most once every 30 minutes. No player name, pig data, or device ID is sent. Weather is visual only.
+          </p>
+          <div class="wx-location-block">
+            <label class="wx-label" for="wxLocationInput">City or coordinates (lat, lon)</label>
+            <div class="wx-input-row">
+              <input type="text" id="wxLocationInput" class="wx-input" placeholder="Warsaw or 52.2, 21.0" maxlength="80" autocomplete="off">
+              <button type="button" id="wxSaveLocationBtn" class="settings-btn ui-btn wx-btn">Save location</button>
+            </div>
+            <p id="wxErrorMsg" class="wx-error" role="alert" hidden></p>
+            <p class="wx-hint">
+              Searching a city sends the typed city name once to geocoding-api.open-meteo.com to resolve coordinates.
+            </p>
+            <div class="wx-saved-row">
+              <span class="wx-label">Saved location:</span>
+              <span id="wxSavedLocation" class="wx-saved-val">None</span>
+            </div>
+            <div class="wx-actions">
+              <button type="button" id="wxRefreshBtn" class="settings-btn ui-btn wx-btn">Refresh</button>
+              <button type="button" id="wxDeleteLocationBtn" class="settings-btn ui-btn btn-danger wx-btn wx-btn-danger">Delete my location</button>
+            </div>
+          </div>
+          <div class="wx-footer" id="wxAttribution">Weather data by Open-Meteo.com (CC BY 4.0)</div>
+        </div>
+
         <div class="settings-group ui-panel-paper update-group">
           <div class="settings-row update-header-row">
             <span class="settings-group-title">Game Updates</span>
@@ -91,6 +134,168 @@
   }
 
 
+  function sendWeatherMsg(msg) {
+    if (featureApi && typeof featureApi.send === 'function') {
+      featureApi.send(msg);
+      return;
+    }
+    if (root.bridge && typeof root.bridge.send === 'function') {
+      root.bridge.send(msg);
+    }
+  }
+
+  function formatWeatherStatus(w) {
+    if (!w || !w.consent || w.status === 'off') return 'Off';
+    if (w.status === 'no_location') return 'Location required';
+    if (w.status === 'offline') return 'Offline';
+    if (w.status === 'error') return 'Error';
+    if (w.status === 'ok') {
+      const parts = ['Connected'];
+      if (w.condition) parts.push(w.condition);
+      if (typeof w.temperatureC === 'number') parts.push(Math.round(w.temperatureC) + ' C');
+      return parts.join(' - ');
+    }
+    return 'Off';
+  }
+
+  function formatWeatherLocation(w) {
+    if (!w) return 'None';
+    const hasCoords = typeof w.lat === 'number' && typeof w.lon === 'number';
+    if (w.locationName && hasCoords) {
+      return w.locationName + ' (' + w.lat + ', ' + w.lon + ')';
+    }
+    if (w.locationName) return w.locationName;
+    if (hasCoords) return w.lat + ', ' + w.lon;
+    return 'None';
+  }
+
+  function showWeatherError(msg) {
+    if (!containerNode) return;
+    const el = containerNode.querySelector('#wxErrorMsg');
+    if (!el) return;
+    if (!msg) {
+      el.textContent = '';
+      el.hidden = true;
+      return;
+    }
+    el.textContent = msg;
+    el.hidden = false;
+  }
+
+  function looksLikeCoords(text) {
+    return text.indexOf(',') !== -1 || /^[+-]?\d/.test(text);
+  }
+
+  function submitWeatherLocation() {
+    if (!containerNode) return;
+    const input = containerNode.querySelector('#wxLocationInput');
+    if (!input) return;
+    const raw = (input.value || '').trim();
+    showWeatherError('');
+
+    if (!raw) {
+      showWeatherError('Enter a city name or coordinates (lat, lon).');
+      return;
+    }
+
+    if (looksLikeCoords(raw)) {
+      const validator = root.CuyWeatherLive && root.CuyWeatherLive.validateCoordsInput;
+      if (typeof validator === 'function') {
+        const res = validator(raw);
+        if (!res.ok) {
+          showWeatherError(res.error || 'Invalid coordinates.');
+          return;
+        }
+        sendWeatherMsg({
+          type: 'weather.setLocation',
+          city: '',
+          lat: String(res.lat),
+          lon: String(res.lon)
+        });
+        return;
+      }
+    }
+
+    sendWeatherMsg({
+      type: 'weather.setLocation',
+      city: raw,
+      lat: '',
+      lon: ''
+    });
+  }
+
+  function bindWeatherEvents() {
+    if (!containerNode) return;
+    const toggle = containerNode.querySelector('#wxConsentToggle');
+    const input = containerNode.querySelector('#wxLocationInput');
+    const saveBtn = containerNode.querySelector('#wxSaveLocationBtn');
+    const refreshBtn = containerNode.querySelector('#wxRefreshBtn');
+    const deleteBtn = containerNode.querySelector('#wxDeleteLocationBtn');
+
+    if (toggle) {
+      toggle.addEventListener('change', function () {
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
+        sendWeatherMsg({ type: 'weather.setConsent', consent: !!toggle.checked });
+      });
+    }
+
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function () {
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
+        submitWeatherLocation();
+      });
+    }
+
+    if (input) {
+      input.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter') {
+          ev.preventDefault();
+          submitWeatherLocation();
+        }
+      });
+    }
+
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', function () {
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
+        sendWeatherMsg({ type: 'weather.refresh' });
+      });
+    }
+
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', function () {
+        if (root.Sound && typeof root.Sound.click === 'function') root.Sound.click();
+        showWeatherError('');
+        if (input) input.value = '';
+        sendWeatherMsg({ type: 'weather.deleteLocation' });
+      });
+    }
+  }
+
+  function updateWeatherUI(state) {
+    if (!containerNode) return;
+    const w = state && state.weather ? state.weather : {
+      consent: false,
+      status: 'off',
+      locationName: '',
+      lat: null,
+      lon: null,
+      attribution: 'Weather data by Open-Meteo.com (CC BY 4.0)'
+    };
+
+    const toggle = containerNode.querySelector('#wxConsentToggle');
+    const statusEl = containerNode.querySelector('#wxStatusText');
+    const savedEl = containerNode.querySelector('#wxSavedLocation');
+    const refreshBtn = containerNode.querySelector('#wxRefreshBtn');
+    const attrEl = containerNode.querySelector('#wxAttribution');
+
+    if (toggle) toggle.checked = !!w.consent;
+    if (statusEl) statusEl.textContent = formatWeatherStatus(w);
+    if (savedEl) savedEl.textContent = formatWeatherLocation(w);
+    if (refreshBtn) refreshBtn.disabled = !w.consent;
+    if (attrEl && w.attribution) attrEl.textContent = w.attribution;
+  }
+
   function bindEvents(api) {
     const elVolume = document.getElementById('settingsVolume');
     const elQuietHours = document.getElementById('settingsQuietHours');
@@ -103,6 +308,16 @@
     const elBtnCheckUpdate = document.getElementById('btnCheckUpdate');
     const elBtnApplyUpdate = document.getElementById('btnApplyUpdate');
     const elBtnPigProfiles = document.getElementById('set-open-pig-profiles');
+    const elBtnTutorial = document.getElementById('set-open-tutorial');
+
+    if (elBtnTutorial) {
+      elBtnTutorial.addEventListener('click', () => {
+        if (root.Sound) root.Sound.click();
+        if (window.CuyHome && typeof window.CuyHome.openFeature === 'function') {
+          window.CuyHome.openFeature('tutorial');
+        }
+      });
+    }
 
     if (elBtnPigProfiles) {
       elBtnPigProfiles.addEventListener('click', () => {
@@ -127,20 +342,21 @@
       }
     }
 
-    elVolume.addEventListener('change', (e) => {
+    function onVolumeInput(e) {
       const val = parseInt(e.target.value, 10) / 100;
-      if (api.send) api.send('settings_volume', { value: val });
-      if (root.Sound) root.Sound.click();
-    });
+      sendMsg({ type: 'settings_volume', value: val });
+      if (e.type === 'change' && root.Sound) root.Sound.click();
+    }
+    elVolume.addEventListener('input', onVolumeInput);
+    elVolume.addEventListener('change', onVolumeInput);
 
     function updateQuietHours() {
-      if (api.send) {
-        api.send('settings_quiet_hours', {
-          enabled: elQuietHours.checked,
-          from: elQuietHoursFrom.value,
-          to: elQuietHoursTo.value
-        });
-      }
+      sendMsg({
+        type: 'settings_quiet_hours',
+        enabled: elQuietHours.checked,
+        from: elQuietHoursFrom.value,
+        to: elQuietHoursTo.value
+      });
     }
 
     elQuietHours.addEventListener('change', (e) => {
@@ -152,7 +368,7 @@
 
     elMuteFullscreen.addEventListener('change', (e) => {
       if (root.Sound) root.Sound.click();
-      if (api.send) api.send('settings_mute_fullscreen', { enabled: e.target.checked });
+      sendMsg({ type: 'settings_mute_fullscreen', enabled: e.target.checked });
     });
 
     radioSize.forEach(radio => {
@@ -247,7 +463,7 @@
     const s = state.settings || {};
 
     const elVolume = document.getElementById('settingsVolume');
-    if (elVolume) {
+    if (elVolume && document.activeElement !== elVolume) {
       const vol = typeof s.volume === 'number' ? s.volume : 0.7;
       elVolume.value = Math.round(vol * 100);
     }
@@ -347,6 +563,8 @@
       }
     }
     prevUpdateStatus = update ? update.status : null;
+
+    updateWeatherUI(state);
   }
 
   root.CuyHome.registerFeature({
@@ -359,8 +577,11 @@
       featureApi = api;
       render(container);
       bindEvents(api);
+      bindWeatherEvents();
 
-      const state = window.bridge ? window.bridge.getState() : null;
+      const state = (api && typeof api.getState === 'function')
+        ? api.getState()
+        : (window.bridge ? window.bridge.getState() : null);
       updateUI(state);
     },
     close() {

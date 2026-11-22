@@ -1,0 +1,6 @@
+# PK-R40 Log
+- Decisions: Replaced obsolete `features/rooms/editor.js` and `features/rooms/residents.js` with `edit-panel.js` + `edit-history.js` and `canvas-pig.js` edit-preview mode; set history limit to 50 (over W20-03's 30) per PK-R40 step 2.
+- APIs: `window.EditHistory` (`create`, `push`, `undo`, `redo`, `resolvePlacedUid`, `rollbackPending`, `clear`, `snapCell`, `computeComfortDisplay`), `window.DrawBudget` (`selectItems`, `capAnimated`, `capParticles`, `capLights`, `shouldDrawFrame`, `frameCost`), `window.WorldSounds` (`EVENT_MAP`, `play`, `canPlay`, `isSuppressed`), `Sound.play(name)` + `Sound.CUES`.
+- Audio gap: `assets/sounds/` only contains pig vocalizations (`wheek_1..3`, `crunch_1..2`, `purr`, `pop`, `chirp`, `angry_squeal`, `fear_squeal`); no new binary WAVs added — all world/farm/editor cues synthesized via ZzFX in `sound.js`.
+- Owner questions & choices: (1) Should `EditHistory` keep 30 or 50 steps? Chose 50 per PK-R40 step 2. (2) What if `room_place` lacks `uid` until C# responds? Added `resolvePlacedUid` + `rollbackPending` on rejection. (3) Prompt fixes old text? Marked `UNVERIFIED` because `Czytaj tylko` forbade reading `docs/prompts/PK-*.md`.
+- Verification: `node tools/qa/foundation-check.js docs/opt/foundations/R40.md 6` -> check output.

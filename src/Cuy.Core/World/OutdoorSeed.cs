@@ -88,6 +88,8 @@ namespace Cuy.Core.World
             // perform a one-time coordinate repair while keeping subsequent player removals intact.
             bool parkMigration = isPark && alreadySeeded && !world.OutdoorSeeded.Contains(ParkMigrationMarker);
             bool gardenMigration = isGarden && alreadySeeded && !world.OutdoorSeeded.Contains(GardenMigrationMarker);
+            string lampMigrationMarker = key.ToLowerInvariant() + "#lamps_v1";
+            bool lampMigration = alreadySeeded && !world.OutdoorSeeded.Contains(lampMigrationMarker);
 
             if (parkMigration || gardenMigration)
             {
@@ -126,7 +128,8 @@ namespace Cuy.Core.World
                 {
                     continue;
                 }
-                if (alreadySeeded && !parkMigration && entry.Removable)
+                bool isLampEntry = string.Equals(entry.ItemId, "lamp_post", StringComparison.OrdinalIgnoreCase);
+                if (alreadySeeded && !parkMigration && !(lampMigration && isLampEntry) && entry.Removable)
                 {
                     continue;
                 }
@@ -137,7 +140,7 @@ namespace Cuy.Core.World
                 {
                     int x = entry.X;
                     int y = entry.Y;
-                    if (parkMigration)
+                    if (parkMigration || (lampMigration && isLampEntry))
                     {
                         ResolveFreeAnchor(room, ref x, ref y);
                     }
@@ -163,6 +166,7 @@ namespace Cuy.Core.World
             }
 
             world.OutdoorSeeded.Add(key);
+            world.OutdoorSeeded.Add(lampMigrationMarker);
             if (isPark)
             {
                 world.OutdoorSeeded.Add(ParkMigrationMarker);

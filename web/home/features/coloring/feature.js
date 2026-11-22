@@ -13,7 +13,11 @@
 
     getState() {
       if (!this.isMock && this.api.getState().coloring) {
-        return this.api.getState().coloring;
+        const c = this.api.getState().coloring;
+        if (!c.progress || typeof c.progress !== 'object') c.progress = {};
+        if (!Array.isArray(c.completed)) c.completed = [];
+        if (!Array.isArray(c.unlockedPacks)) c.unlockedPacks = [];
+        return c;
       }
       try {
         const str = localStorage.getItem('cuy_coloring_v1');
@@ -160,8 +164,8 @@
 
       const imgData = ctx.createImageData(w, h);
       const cells = picture.cells;
-      const progress = state.progress[picture.id] || '';
-      const isCompleted = state.completed.includes(picture.id);
+      const progress = (state && state.progress && state.progress[picture.id]) || '';
+      const isCompleted = !!(state && Array.isArray(state.completed) && state.completed.includes(picture.id));
 
       for (let i = 0; i < cells.length; i++) {
         let r, g, b;
@@ -991,6 +995,20 @@
     }
   }
 
+  let lastColoringSig = null;
+
+  function computeColoringSig(state) {
+    if (!state || !state.coloring) return '';
+    try {
+      return JSON.stringify({
+        completed: state.coloring.completed || [],
+        unlockedPacks: state.coloring.unlockedPacks || []
+      });
+    } catch (e) {
+      return '';
+    }
+  }
+
   window.CuyHome.registerFeature({
     id: 'coloring',
     title: 'Colouring',
@@ -1000,6 +1018,7 @@
       containerNode = container;
       featureApi = api;
       hasFeatureCreatedBackBtn = false;
+      lastColoringSig = computeColoringSig(api && api.getState ? api.getState() : null);
 
       document.removeEventListener('click', handleBackClick, true);
       document.addEventListener('click', handleBackClick, true);
@@ -1043,11 +1062,16 @@
         editorInstance = null;
       }
       galleryInstance = null;
+      lastColoringSig = null;
     },
     onState(state) {
-       // Re-render if new pack unlocked and editor is not open
+       // Re-render only if completed or unlockedPacks actually changed and editor is not open
        if (galleryInstance && !galleryInstance.currentPack && !editorInstance) {
-           galleryInstance.renderPacks();
+           const sig = computeColoringSig(state);
+           if (sig !== lastColoringSig) {
+               lastColoringSig = sig;
+               galleryInstance.renderPacks();
+           }
        }
     }
   });

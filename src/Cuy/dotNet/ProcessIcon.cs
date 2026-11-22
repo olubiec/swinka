@@ -8,7 +8,7 @@ namespace Cuy
 {
     /// <summary>
     /// Icon in the system tray (next to the Windows clock).
-    /// Shows the app icon (the same icon as the exe, src/Cuy/cuy.ico),
+    /// Shows the app icon (assets/app-icon/cuy.ico embedded in the exe),
     /// a tooltip with the pig's name,
     /// opens Home on double-click, and the context menu.
     /// </summary>
@@ -92,11 +92,17 @@ namespace Cuy
         }
 
         /// <summary>
-        /// Loads the app icon embedded in the exe (ApplicationIcon = cuy.ico in Cuy.csproj).
-        /// Falls back to the pig head when the exe has no icon.
+        /// Loads the app icon from assets/app-icon/cuy.ico or embedded in the exe.
+        /// Falls back to PetIcons.GetTrayIcon() (assets/icons/pig_head.ico) when not found.
         /// </summary>
         private static Icon LoadAppIcon()
         {
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            string icoPath = System.IO.Path.Combine(baseDir, "assets", "app-icon", "cuy.ico");
+            if (System.IO.File.Exists(icoPath))
+            {
+                return new Icon(icoPath, 32, 32);
+            }
             Icon icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             return icon ?? PetIcons.GetTrayIcon();
         }

@@ -19,6 +19,13 @@
   let lastEdgeSig = '';
   let lastLockedOverlaySig = '';
   let lastEditOpen = null;
+  let lastSceneContext = null;
+
+  function playWorldSound(eventName, opts) {
+    if (window.WorldSounds && typeof window.WorldSounds.play === 'function') {
+      window.WorldSounds.play(eventName, opts);
+    }
+  }
 
   function resetSceneSigs() {
     lastSceneKey = '';
@@ -172,6 +179,55 @@
       });
   }
 
+  function handleGramophoneHotspot() {
+    const music = window.CuyMusic;
+    const wasPlaying = !!(music && typeof music.isPlaying === 'function' && music.isPlaying());
+    if (music) {
+      if (wasPlaying) {
+        if (typeof music.stop === 'function') music.stop(150);
+      } else {
+        if (typeof music.setEnabled === 'function' && typeof music.isEnabled === 'function' && !music.isEnabled()) {
+          music.setEnabled(true);
+        }
+        if (typeof music.play === 'function') music.play('calm');
+      }
+    }
+    const curInst = getCanvasPigInst();
+    if (curInst) {
+      const sp = curInst.scenePigs;
+      const entries = (sp && typeof sp.entries === 'function') ? sp.entries() : [];
+      if (wasPlaying) {
+        if (typeof curInst.playAnim === 'function') curInst.playAnim('popcorn', 1400);
+        if (typeof curInst._showAmbientBubble === 'function') curInst._showAmbientBubble('Wheek!', 1400);
+        if (sp && typeof sp.setDance === 'function') {
+          for (let i = 0; i < entries.length; i++) {
+            sp.setDance(entries[i].id, false);
+          }
+        }
+      } else {
+        if (curInst.behavior && typeof curInst.behavior.interrupt === 'function') {
+          curInst.behavior.interrupt('dance');
+        }
+        if (typeof curInst.playAnim === 'function') curInst.playAnim('dance', 6000);
+        if (typeof curInst._showAmbientBubble === 'function') curInst._showAmbientBubble('Music!', 1500);
+        if (sp && typeof sp.setDance === 'function') {
+          const fps = curInst._danceSyncFps || 8;
+          const primaryId = curInst._primaryPigId != null ? String(curInst._primaryPigId) : null;
+          for (let i = 0; i < entries.length; i++) {
+            const p = entries[i];
+            if (!p || p.id == null) continue;
+            if (primaryId && String(p.id) === primaryId) continue;
+            if (p.pinned || p.anim === 'sleep' || p.anim === 'doze' || p.anim === 'sleep_house' || p.anim === 'held') continue;
+            sp.setDance(p.id, true, fps);
+          }
+        }
+      }
+    }
+    if (window.Sound && typeof window.Sound.wheek === 'function') {
+      window.Sound.wheek();
+    }
+  }
+
   function ensureLampHotspotSubscription() {
     if (lampHotspotSubscribed) return;
     const inst = (window.CuyPig && window.CuyPig.mainInstance)
@@ -184,6 +240,8 @@
         if (hs && (hs.kind === 'lamp' || hs.kind === 'lamp_toggle' || hs.id === 'lamp_toggle')) {
           lastLightSig = '';
           toggleLamp(hs.uid || hs.id);
+        } else if (hs && hs.kind === 'gramophone') {
+          handleGramophoneHotspot(hs);
         }
       });
     }
@@ -201,6 +259,14 @@
       const amb = window.Lights.ambientFor(lightsData, period);
 
       let items = placed;
+      let fromInst = false;
+      if (!items) {
+        const inst = getCanvasPigInst();
+        if (inst && inst.sceneId === sId && Array.isArray(inst.things) && inst.things.length > 0) {
+          items = inst.things;
+          fromInst = true;
+        }
+      }
       if (!items) {
         const st = getState();
         items = (window.CuyScenes && typeof window.CuyScenes.placedThings === 'function')
@@ -215,14 +281,29 @@
         }
       }
 
+      let off = { x: 0, y: 0 };
+      if (kind === 'indoor' && !placed) {
+        const layout = (window.CuyScenes && typeof window.CuyScenes.layoutFor === 'function')
+          ? window.CuyScenes.layoutFor(sId, getState())
+          : null;
+        const cols = (layout && layout.cols) || 12;
+        const rows = (layout && layout.rows) || 7;
+        off = (window.CuyRoomGeometry && typeof window.CuyRoomGeometry.stageOffset === 'function')
+          ? window.CuyRoomGeometry.stageOffset(cols, rows)
+          : { x: Math.floor((256 - cols * 16) / 2), y: Math.floor((144 - rows * 16) / 2) };
+      }
+
       const activeToggles = toggles || (sceneLampToggles && sceneLampToggles[sId]) || {};
       const sourcesMap = lightsData.sources || {};
+      const atlas = (window.CuyScenes && typeof window.CuyScenes.getAtlas === 'function') ? window.CuyScenes.getAtlas() : null;
+      const atlasItems = (atlas && atlas.items) ? atlas.items : null;
       const placedForLights = [];
 
       (items || []).forEach(it => {
         if (!it) return;
         const itemId = it.itemId || it.id;
-        const key = Object.keys(sourcesMap).find(k => k === itemId || sourcesMap[k].item === itemId);
+        const entry = atlasItems ? atlasItems[itemId] : null;
+        const key = Object.keys(sourcesMap).find(k => k === itemId || sourcesMap[k].item === itemId || (entry && entry.light && entry.light.kind === k));
         if (!key) return;
         const srcDef = sourcesMap[key];
         const uid = it.uid || it.id || key;
@@ -230,7 +311,7 @@
         let gx, gy;
         const cell = 16;
         if (it.x != null && it.y != null) {
-          if (it.isPixel || it.x > 15 || it.y > 8) {
+          if (it.isPixel || fromInst || it.x > 15 || it.y > 8) {
             const ax = it.anchorX != null ? it.anchorX : 8;
             const ay = it.anchorY != null ? it.anchorY : 16;
             if (srcDef.glow && Array.isArray(srcDef.glow)) {
@@ -253,6 +334,11 @@
           return;
         }
 
+        if (!it._stageOffsetApplied && !fromInst) {
+          gx += off.x;
+          gy += off.y;
+        }
+
         placedForLights.push({
           id: uid,
           uid: uid,
@@ -270,6 +356,7 @@
         ambient: amb,
         sources: active || [],
         dust: lightsData.dust || null,
+        pigLight: (window.Lights && typeof window.Lights.pigLight === 'function') ? window.Lights.pigLight(lightsData) : (lightsData.pig_light || null),
         period: period,
         kind: kind
       };
@@ -343,13 +430,13 @@
         const lit = [];
 
         sources.forEach((src, idx) => {
-          if (!src || !src.on) return;
+          if (!src || !src.on || src.color === 'ambient' || src.itemId === 'window') return;
           const cx = src.x;
           const cy = src.y;
-          const r = src.radius || (src.radiusCells ? src.radiusCells * 16 : 40);
+          const r = Math.round((src.radius || (src.radiusCells ? src.radiusCells * 16 : 44)) * 1.18);
           lit.push({ cx, cy });
 
-          let strength = src.strength != null ? src.strength : (src.intensity != null ? src.intensity : 0.8);
+          let strength = src.strength != null ? src.strength : (src.intensity != null ? src.intensity : 0.85);
           if (src.flicker) {
             strength *= (0.85 + 0.15 * Math.sin(now / 160 + idx));
           }
@@ -364,9 +451,13 @@
 
           ctx.save();
           ctx.globalCompositeOperation = 'lighter';
-          const glowAlpha = Math.min(0.32, (strength || 0.8) * 0.32);
+          let glowAlpha = scene.kind === 'outdoor'
+            ? Math.min(0.20, (strength || 0.75) * 0.17)
+            : Math.min(0.28, (strength || 0.85) * 0.24);
+          if (scene.period === 'day') glowAlpha *= 0.45;
           const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
           g.addColorStop(0, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${glowAlpha})`);
+          g.addColorStop(0.35, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${glowAlpha * 0.55})`);
           g.addColorStop(1, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0)`);
           ctx.fillStyle = g;
           ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r);
@@ -628,6 +719,23 @@
     return (pigEntry && (pigEntry.pigId || pigEntry.PigId)) || activePigId;
   }
 
+  function findNextUnlockedScene(currentScene, direction, st) {
+    const ord = getOrder(st);
+    if (!Array.isArray(ord) || ord.length === 0) return null;
+    const step = (direction === 'left' || direction === -1) ? -1 : 1;
+    const startIdx = ord.findIndex(s => s && s.id === currentScene);
+    if (startIdx === -1) {
+      return ord.find(s => s && !s.locked && s.id !== currentScene) || null;
+    }
+    for (let i = 1; i < ord.length; i++) {
+      const candidate = ord[(startIdx + step * i + ord.length * 2) % ord.length];
+      if (candidate && !candidate.locked && candidate.id !== currentScene) {
+        return candidate;
+      }
+    }
+    return null;
+  }
+
   function computeNeighbourScene(currentScene, direction, st) {
     const ord = getOrder(st);
     if (!ord || ord.length === 0) return null;
@@ -659,6 +767,9 @@
       stage.appendChild(container);
     }
     if (!container) return;
+    container.hidden = true;
+    container.innerHTML = '';
+    return;
 
     const pigLocs = getPigLocations(st);
     if (pigLocs.length === 0) {
@@ -722,18 +833,23 @@
     const pigLocs = getPigLocations(st);
     const activePigId = getFirstPigId(st);
 
-    const pigInScene = pigLocs.find(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId);
-    const pigEntry = pigInScene || pigLocs.find(p => (p.pigId || p.PigId) === activePigId) || pigLocs[0];
+    const evPigId = (ev && ev.pigId != null) ? String(ev.pigId) : null;
+    const pigInScene = (evPigId && pigLocs.find(p => String(p.pigId || p.PigId) === evPigId))
+      || pigLocs.find(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId);
+    const pigEntry = pigInScene || pigLocs.find(p => (p.pigId || p.PigId) === (evPigId || activePigId)) || pigLocs[0];
     if (pigEntry && pigEntry.pinned) {
       return;
     }
 
     const direction = (ev && ev.to === 'left') ? 'left' : 'right';
-    const targetScene = computeNeighbourScene(currentSceneId, direction, st);
+    let targetScene = computeNeighbourScene(currentSceneId, direction, st);
+    if (!targetScene || targetScene.locked) {
+      targetScene = findNextUnlockedScene(currentSceneId, direction, st);
+    }
 
     if (!targetScene || targetScene.locked) {
       exitDisabledUntil = Date.now() + 60000;
-      if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
+      if (window.CanvasPig && typeof window.CanvasPig.setPresentPigs !== 'function' && typeof window.CanvasPig.setPigVisible === 'function') {
         window.CanvasPig.setPigVisible(true);
       }
       if (window.CanvasPig && typeof window.CanvasPig.setExitsEnabled === 'function') {
@@ -742,7 +858,7 @@
       return;
     }
 
-    const pigId = (pigEntry && (pigEntry.pigId || pigEntry.PigId)) || activePigId;
+    const pigId = evPigId || (pigEntry && (pigEntry.pigId || pigEntry.PigId)) || activePigId;
     if (window.bridge && typeof window.bridge.send === 'function') {
       window.bridge.send({
         type: 'places.pigMove',
@@ -788,16 +904,42 @@
     return null;
   }
 
+  function isNeighborBlocked(side, st) {
+    const current = currentSceneId || 'salon';
+    const state = st || getState();
+    let neighbourId = null;
+    if (window.CuyScenes && typeof window.CuyScenes.neighbor === 'function') {
+      neighbourId = window.CuyScenes.neighbor(current, side, state);
+    } else {
+      const ord = getOrder(state);
+      const idx = ord ? ord.findIndex(s => s.id === current) : -1;
+      if (idx !== -1) {
+        const step = (side === 'left' || side === -1) ? -1 : 1;
+        neighbourId = ord[(idx + step + ord.length) % ord.length].id;
+      }
+    }
+    if (!neighbourId || neighbourId === current) return true;
+    const ord = getOrder(state);
+    const neighbourItem = ord ? ord.find(s => s.id === neighbourId) : null;
+    return !neighbourItem || !!neighbourItem.locked;
+  }
+
   function syncEdgeActive(holdObj) {
     if (typeof document === 'undefined') return;
     const leftBtn = document.getElementById('stageEdgeLeft');
     const rightBtn = document.getElementById('stageEdgeRight');
     const side = getEdgeHoldSide(holdObj);
+    const leftNear = side === 'left';
+    const rightNear = side === 'right';
+    const leftBlocked = leftNear && isNeighborBlocked('left');
+    const rightBlocked = rightNear && isNeighborBlocked('right');
     if (leftBtn) {
-      leftBtn.classList.toggle('edge-active', side === 'left' && !leftBtn.disabled && !leftBtn.hidden);
+      leftBtn.classList.toggle('edge-active', leftNear && !leftBlocked && !leftBtn.disabled && !leftBtn.hidden);
+      leftBtn.classList.toggle('edge-blocked', leftBlocked);
     }
     if (rightBtn) {
-      rightBtn.classList.toggle('edge-active', side === 'right' && !rightBtn.disabled && !rightBtn.hidden);
+      rightBtn.classList.toggle('edge-active', rightNear && !rightBlocked && !rightBtn.disabled && !rightBtn.hidden);
+      rightBtn.classList.toggle('edge-blocked', rightBlocked);
     }
   }
 
@@ -881,18 +1023,30 @@
     }
 
     const ord = getOrder(st);
-    const neighbourItem = ord ? ord.find(s => s.id === neighbourId) : null;
-    const isLocked = !neighbourItem || !!neighbourItem.locked;
-    const isNone = !neighbourId || neighbourId === current;
+    let neighbourItem = ord ? ord.find(s => s.id === neighbourId) : null;
+    let isLocked = !neighbourItem || !!neighbourItem.locked;
+    let isNone = !neighbourId || neighbourId === current;
 
-    if (isLocked || isNone) {
-      const hint = (neighbourItem && neighbourItem.unlockHint) ? neighbourItem.unlockHint : 'Locked';
-      showToast('Locked: ' + hint);
-      syncEdgeActive();
+    if (isNone) {
+      const inst = getCanvasPigInst();
+      if (inst && typeof inst.clearEdgeHold === 'function') inst.clearEdgeHold();
+      syncEdgeActive(null);
       return;
     }
 
-    if (!draggedPigId) {
+    if (isLocked) {
+      const hint = (neighbourItem && neighbourItem.unlockHint) ? neighbourItem.unlockHint : 'Locked';
+      showToast(hint === 'Locked' ? 'Locked' : ('Locked: ' + hint));
+      playWorldSound('edit_error');
+      const inst = getCanvasPigInst();
+      if (inst && typeof inst.clearEdgeHold === 'function') inst.clearEdgeHold();
+      syncEdgeActive(null);
+      return;
+    }
+
+    if (ev && ev.pigId != null) {
+      draggedPigId = String(ev.pigId);
+    } else if (!draggedPigId) {
       draggedPigId = getActivePigIdForScene(current, st);
     }
     const pigId = draggedPigId || getFirstPigId(st);
@@ -921,13 +1075,15 @@
 
   function handleCanvasDrop(ev) {
     const st = getState();
-    const pigId = draggedPigId || getActivePigIdForScene(currentSceneId, st) || getFirstPigId(st);
+    const pigId = (ev && ev.pigId != null ? String(ev.pigId) : null) || draggedPigId || getActivePigIdForScene(currentSceneId, st) || getFirstPigId(st);
     if (pigId && currentSceneId) {
       optimisticallySetPigScene(pigId, currentSceneId);
     }
     draggedPigId = null;
 
-    if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
+    if (window.CanvasPig && typeof window.CanvasPig.setPresentPigs === 'function') {
+      if (currentSceneId && st) applyScene(currentSceneId, st);
+    } else if (window.CanvasPig && typeof window.CanvasPig.setPigVisible === 'function') {
       window.CanvasPig.setPigVisible(true);
     }
 
@@ -1020,7 +1176,7 @@
 
     const ord = getOrder(st);
     const item = ord.find(s => s.id === currentSceneId) || { id: currentSceneId, title: currentSceneId, locked: false };
-    const isLocked = !!item.locked;
+    const isLocked = (currentSceneId === 'salon' || String(currentSceneId).indexOf('pig:') === 0) ? false : !!item.locked;
 
     // 1. Update title in the bar
     const titleEl = document.getElementById('placesBarTitle');
@@ -1039,6 +1195,9 @@
     const sceneDef = (window.CuyScenes && typeof window.CuyScenes.def === 'function')
       ? window.CuyScenes.def(currentSceneId, tod, st)
       : { id: currentSceneId, size: [240, 130], walk: [10, 80, 230, 125] };
+    if (sceneDef && !sceneDef.id) {
+      sceneDef.id = currentSceneId;
+    }
 
     const inst = (window.CanvasPig && window.CanvasPig.instance) || (window.PigCanvas && window.PigCanvas.instance) || (window.CuyPig && window.CuyPig.mainInstance);
     const instSceneId = (inst && inst.sceneId) || currentInstScene;
@@ -1050,10 +1209,12 @@
         : (inst ? [inst.sceneWidth, inst.sceneHeight] : null));
     const sizeChanged = !!(instSize && sceneDef.size && (instSize[0] !== sceneDef.size[0] || instSize[1] !== sceneDef.size[1]));
     const isCanvasDragging = !!(window.CanvasPig && typeof window.CanvasPig.isDragging === 'function' && window.CanvasPig.isDragging());
-    const isPigBeingDragged = (inst && !!inst.drag) || (draggedPigId !== null) || isCanvasDragging;
+    const isPigBeingDragged = !!(inst && inst.drag && inst.drag.moved) || (draggedPigId !== null) || isCanvasDragging;
 
+    const layoutWallpaper = (st && st.rooms && st.rooms.layouts && st.rooms.layouts[currentSceneId] && st.rooms.layouts[currentSceneId].wallpaper) || '';
+    const layoutFloor = (st && st.rooms && st.rooms.layouts && st.rooms.layouts[currentSceneId] && st.rooms.layouts[currentSceneId].floor) || '';
     const sizeKey = (sceneDef && Array.isArray(sceneDef.size)) ? sceneDef.size.join('x') : '';
-    const sceneKey = currentSceneId + '|' + tod + '|' + sizeKey + '|' + (isLocked ? '1' : '0');
+    const sceneKey = currentSceneId + '|' + tod + '|' + sizeKey + '|' + (isLocked ? '1' : '0') + '|' + layoutWallpaper + '|' + layoutFloor;
     const instSceneChanged = (inst && !instHasScene) || (instSceneId !== null && instSceneId !== currentSceneId) || sizeChanged;
     const sceneChanged = (prevSceneId !== currentSceneId) || instSceneChanged || (sceneKey !== lastSceneKey);
 
@@ -1062,20 +1223,45 @@
     }
     lastSceneKey = sceneKey;
 
-    if ((inst && !instHasScene) || instSceneId !== currentSceneId || sizeChanged) {
+    if (sceneChanged || (inst && !instHasScene) || instSceneId !== currentSceneId || sizeChanged) {
       if (window.CanvasPig && typeof window.CanvasPig.setScene === 'function') {
         window.CanvasPig.setScene(sceneDef);
+      }
+      if (inst) {
+        inst.sceneId = currentSceneId;
       }
     }
 
     const things = (window.CuyScenes && typeof window.CuyScenes.placedThings === 'function')
       ? window.CuyScenes.placedThings(st, currentSceneId)
       : [];
+    const sceneKind = getPlaceKind(currentSceneId) === 'outdoor' ? 'outdoor' : 'room';
     const thingsSig = currentSceneId + '|' + safeJsonSig(things || []);
     if (sceneChanged || (!isPigBeingDragged && thingsSig !== lastThingsSig)) {
       lastThingsSig = thingsSig;
       if (window.CanvasPig && typeof window.CanvasPig.setThings === 'function') {
         window.CanvasPig.setThings(things, true);
+      }
+      if (inst) {
+        if (typeof inst.invalidateRestSpots === 'function') {
+          inst.invalidateRestSpots();
+        } else {
+          inst.pendingSpot = null;
+        }
+      }
+      lastSceneContext = {
+        sceneId: currentSceneId,
+        sceneKind: sceneKind,
+        things: Array.isArray(things) ? things.slice() : []
+      };
+      if (window.CanvasPig && typeof window.CanvasPig.setSceneContext === 'function') {
+        window.CanvasPig.setSceneContext(lastSceneContext);
+      }
+    }
+    if (sceneChanged && !isLocked) {
+      const hasFountain = (things || []).some(t => t && /fountain/i.test(t.id || t.itemId || ''));
+      if (currentSceneId === 'park' || (currentSceneId === 'garden' && hasFountain)) {
+        playWorldSound('fountain_ambience', { minIntervalMs: 1400 });
       }
     }
 
@@ -1095,6 +1281,12 @@
       ensureLights(() => {
         applyLightIfChanged(CuyLight.build(currentSceneId));
       });
+    }
+    if (window.CuyScenes && typeof window.CuyScenes.loadAtlas === 'function' && typeof window.CuyScenes.getAtlas === 'function' && !window.CuyScenes.getAtlas()) {
+      const atlasSceneId = currentSceneId;
+      window.CuyScenes.loadAtlas().then(() => {
+        if (currentSceneId === atlasSceneId) applyLightIfChanged(CuyLight.build(currentSceneId));
+      }).catch(() => {});
     }
 
     ensureLampHotspotSubscription();
@@ -1136,7 +1328,31 @@
       if (!window.CuyRoom) return;
       if (getPlaceKind(currentSceneId) === 'outdoor' && !isLocked &&
           window.CuyWeather && typeof window.CuyWeather.stateFor === 'function' && typeof window.CuyWeather.draw === 'function') {
-        const weatherState = window.CuyWeather.stateFor(getLightsNow(), 'outdoor', st && st.settings, weatherData);
+        let liveMapped = null;
+        if (window.CuyWeatherLive && typeof window.CuyWeatherLive.mapState === 'function') {
+          liveMapped = window.CuyWeatherLive.mapState(st && st.weather);
+        } else if (st && st.weather && st.weather.consent && st.weather.status !== 'off' && typeof st.weather.condition === 'string') {
+          const cond = st.weather.condition.toLowerCase();
+          const visMap = { clear: 'clear', cloudy: 'overcast', fog: 'overcast', rain: 'rain', snow: 'snow', storm: 'rain' };
+          if (visMap[cond]) liveMapped = { enabled: true, kind: cond, visualType: visMap[cond] };
+        }
+        let weatherState;
+        if (liveMapped && liveMapped.enabled) {
+          const visType = liveMapped.visualType || 'clear';
+          const cfg = (weatherData && weatherData.types && weatherData.types[visType])
+            || (window.CuyWeather.DEFAULT_DATA && window.CuyWeather.DEFAULT_DATA.types && window.CuyWeather.DEFAULT_DATA.types[visType])
+            || null;
+          weatherState = {
+            type: visType,
+            outdoor: true,
+            seed: 1337,
+            live: true,
+            kind: liveMapped.kind,
+            config: cfg ? Object.assign({}, cfg) : null
+          };
+        } else {
+          weatherState = window.CuyWeather.stateFor(getLightsNow(), 'outdoor', st && st.settings, weatherData);
+        }
         const wSig = currentSceneId + '|outdoor|' + (weatherLoaded ? '1' : '0') + '|' + safeJsonSig(weatherState);
         if (wSig !== lastWeatherSig) {
           lastWeatherSig = wSig;
@@ -1179,9 +1395,26 @@
       .map(loc => {
         const pigId = loc.pigId || loc.PigId || loc.id;
         const rosterPig = roster.find(r => r && (r.id === pigId || r.pigId === pigId));
+        let pigLook = null;
+        if (rosterPig) {
+          const baseLook = (rosterPig.look && typeof rosterPig.look === 'object') ? rosterPig.look : rosterPig;
+          pigLook = Object.assign({}, baseLook);
+          const resolvedNamed = baseLook.namedId || baseLook.named || rosterPig.namedId || rosterPig.named || null;
+          if (resolvedNamed) {
+            pigLook.namedId = resolvedNamed;
+            pigLook.named = resolvedNamed;
+          }
+          const resolvedPalette = baseLook.paletteId || rosterPig.paletteId || baseLook.coat || null;
+          if (resolvedPalette) {
+            pigLook.paletteId = resolvedPalette;
+            if (!pigLook.coat) pigLook.coat = resolvedPalette;
+          }
+        }
         return {
           id: pigId,
-          look: (rosterPig && rosterPig.look) || rosterPig || null,
+          look: pigLook,
+          traits: (rosterPig && Array.isArray(rosterPig.traits)) ? rosterPig.traits : [],
+          modifiers: (rosterPig && rosterPig.modifiers) ? rosterPig.modifiers : null,
           pinned: !!loc.pinned,
           stage: (rosterPig && rosterPig.stage) || (st && st.stageKey) || 'adult'
         };
@@ -1216,10 +1449,86 @@
     // 4. Locked overlay and hint
     const hintBar = document.getElementById('placesLockedHint');
     const hintText = document.getElementById('placesHintText');
+    let unlockBtn = document.getElementById('placesUnlockBtn');
+    if (hintBar && !unlockBtn) {
+      unlockBtn = document.createElement('button');
+      unlockBtn.type = 'button';
+      unlockBtn.id = 'placesUnlockBtn';
+      unlockBtn.className = 'ui-btn places-unlock-btn';
+      unlockBtn.hidden = true;
+      hintBar.appendChild(unlockBtn);
+    }
+    if (unlockBtn && !unlockBtn._unlockBound) {
+      unlockBtn._unlockBound = true;
+      unlockBtn.addEventListener('click', () => {
+        if (unlockBtn.disabled) return;
+        const pid = unlockBtn.dataset.placeId;
+        const msgType = unlockBtn.dataset.unlockType || 'place_unlock';
+        if (!pid) return;
+        if (window.bridge && typeof window.bridge.send === 'function') {
+          window.bridge.send({ type: msgType, id: pid });
+        }
+        if (window.Sound && typeof window.Sound.click === 'function') {
+          window.Sound.click();
+        }
+      });
+    }
 
     if (isLocked) {
+      const placesArr = (st && st.places && Array.isArray(st.places.places)) ? st.places.places : [];
+      const roomsArr = (st && st.places && Array.isArray(st.places.rooms)) ? st.places.rooms : [];
+      const placeDef = placesArr.find(p => p && p.id === currentSceneId) || null;
+      const roomDef = roomsArr.find(r => r && r.id === currentSceneId) || null;
+      const def = placeDef || roomDef;
+      const isRoom = !placeDef && !!roomDef;
+      const cost = def && typeof def.unlockCost === 'number' ? def.unlockCost : 0;
+      const clovers = Number((st && st.clovers) || 0);
+      const requires = (placeDef && Array.isArray(placeDef.requires)) ? placeDef.requires : [];
+      const missingReqs = requires.filter(reqId => {
+        const p = placesArr.find(x => x && x.id === reqId);
+        if (p) return !p.unlocked;
+        const r = roomsArr.find(x => x && x.id === reqId);
+        if (r) return !r.unlocked;
+        return false;
+      });
+      const missingNames = missingReqs.map(reqId => {
+        const p = placesArr.find(x => x && x.id === reqId);
+        if (p && p.name) return p.name;
+        const r = roomsArr.find(x => x && x.id === reqId);
+        if (r && r.name) return r.name;
+        return reqId.charAt(0).toUpperCase() + reqId.slice(1);
+      });
+      const reqsMet = missingReqs.length === 0;
+      const canAfford = clovers >= cost;
+      const canUnlock = !!def && reqsMet && canAfford;
+
       if (hintBar) hintBar.hidden = false;
-      if (hintText) hintText.textContent = item.unlockHint || 'Locked';
+      if (hintText) {
+        if (!reqsMet) {
+          hintText.textContent = 'Requires ' + missingNames.join(', ');
+        } else if (def && !canAfford) {
+          hintText.textContent = 'Need ' + cost + ' clovers (have ' + clovers + ')';
+        } else if (def) {
+          hintText.textContent = 'Ready to unlock';
+        } else {
+          hintText.textContent = item.unlockHint || 'Locked';
+        }
+      }
+      if (unlockBtn) {
+        if (def) {
+          unlockBtn.hidden = false;
+          unlockBtn.disabled = !canUnlock;
+          unlockBtn.setAttribute('aria-disabled', canUnlock ? 'false' : 'true');
+          unlockBtn.dataset.placeId = currentSceneId;
+          unlockBtn.dataset.unlockType = isRoom ? 'room_unlock' : 'place_unlock';
+          unlockBtn.innerHTML = 'Unlock (' + cost + ' <span class="pixel-icon icon-clover" aria-hidden="true"></span>)';
+          unlockBtn.title = !reqsMet
+            ? ('Requires ' + missingNames.join(', '))
+            : (!canAfford ? ('Need ' + (cost - clovers) + ' more clovers') : ('Unlock ' + (item.title || currentSceneId)));
+        } else {
+          unlockBtn.hidden = true;
+        }
+      }
 
       if (lastLockedOverlaySig !== 'locked') {
         lastLockedOverlaySig = 'locked';
@@ -1236,6 +1545,7 @@
     } else {
       if (hintBar) hintBar.hidden = true;
       if (hintText) hintText.textContent = '';
+      if (unlockBtn) unlockBtn.hidden = true;
 
       if (lastLockedOverlaySig !== 'unlocked') {
         lastLockedOverlaySig = 'unlocked';
@@ -1269,6 +1579,32 @@
 
     // 5. Update presence chips
     updatePresenceChips(st);
+
+    if (prevSceneId !== currentSceneId && window.CuyEdit && typeof window.CuyEdit.render === 'function') {
+      try {
+        window.CuyEdit.render(st);
+      } catch (e) {}
+    }
+
+    if (prevSceneId !== currentSceneId) {
+      if (currentSceneId === 'market' && !isLocked) {
+        if (window.CuyMarket && typeof window.CuyMarket.openPanel === 'function' && !document.getElementById('marketDrawer')) {
+          window.CuyMarket.openPanel('food');
+        }
+      } else if (prevSceneId === 'market' || currentSceneId !== 'market') {
+        if (window.CuyMarket && typeof window.CuyMarket.closePanel === 'function' && document.getElementById('marketDrawer')) {
+          window.CuyMarket.closePanel();
+        }
+      }
+    }
+
+    if (sceneChanged && window.CuyRun && typeof window.CuyRun.onState === 'function') {
+      window.CuyRun.onState(st);
+    }
+    if (isLocked && currentSceneId === 'garden') {
+      const runBtn = document.getElementById('runEntryBtn');
+      if (runBtn) runBtn.hidden = true;
+    }
   }
 
   function next() {
@@ -1368,9 +1704,15 @@
     const light = CuyLight.build(currentSceneId);
     const src = light && light.sources && light.sources.find(s => s.id === uid || s.uid === uid || s.itemId === uid);
     if (src && !isToggleableLightSource(src)) return;
-    const currentlyOn = src ? src.on : true;
+    const prevOverride = Object.prototype.hasOwnProperty.call(sceneLampToggles[currentSceneId], uid)
+      ? sceneLampToggles[currentSceneId][uid]
+      : undefined;
+    const currentlyOn = src ? !!src.on : (prevOverride !== undefined ? !!prevOverride : true);
     sceneLampToggles[currentSceneId][uid] = !currentlyOn;
     lastLightSig = '';
+    if (window.Sound && typeof window.Sound.click === 'function') {
+      window.Sound.click();
+    }
     applyScene(currentSceneId, getState());
   }
 
@@ -1507,6 +1849,21 @@
   const CuyPlaces = {
     getCurrentPlace() {
       return currentSceneId || 'salon';
+    },
+    getSceneContext() {
+      if (lastSceneContext) {
+        return {
+          sceneId: lastSceneContext.sceneId,
+          sceneKind: lastSceneContext.sceneKind,
+          things: Array.isArray(lastSceneContext.things) ? lastSceneContext.things.slice() : []
+        };
+      }
+      const sId = currentSceneId || 'salon';
+      return {
+        sceneId: sId,
+        sceneKind: getPlaceKind(sId) === 'outdoor' ? 'outdoor' : 'room',
+        things: []
+      };
     },
     setCurrentPlace(placeId) {
       if (placeId) applyScene(placeId, getState());

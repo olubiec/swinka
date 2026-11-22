@@ -1,0 +1,6 @@
+PK-T24: 8 PASS, 2 DEFECT, 0 SKIP (`node --check tools/qa/ux-p142-dance-adv.js && node tools/qa/ux-p142-dance-adv.js`, exit 0).
+- DEFECT `DAN-click-interrupts-and-resumes`: Clicking/triggering a reaction (`purr_pet`) while dancing is immediately overwritten by `shouldStartDance` on the next `update()` tick because `canvas-pig.js:4167-4215` does not require `currentAnim === 'idle'` or set a cooldown on interruption.
+  Repro: Start `'calm'` music with high mood/energy -> call `inst.playAnim('purr_pet', 1500)` + `fastForward(100)` -> expected `pig.anim === 'purr_pet'`, actual `pig.anim === 'dance'` (`danceSynced=true`).
+- DEFECT `DAN-two-pigs-both-dance`: Companion pig (`web/home/lib/companion.js`) has no `dance` animation or `DanceSync` hook, and `setCompanion({ enabled: true, id: 'garden_friend' })` yielded `companion=none` and `main=idle`.
+  Repro: Enable companion via `PigCanvas.setCompanion({ enabled: true, id: 'garden_friend' })` and play `'calm'` -> expected both main and companion in `'dance'`, actual `main=idle(synced=false), companion=none`.
+Decisions: Used deterministic `window.CuyMusic` mock in Playwright to avoid headless Chromium autoplay flakes; tested both pure `DanceSync` (Node) and Home `PigCanvas` integration.

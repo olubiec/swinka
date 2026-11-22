@@ -104,17 +104,23 @@
       currentContainer = container;
       currentApi = api;
       const state = api.getState();
+      this._lastSig = JSON.stringify((state && state.achievements) || null);
       render(container, state);
       setAllowClip();
     },
 
     close() {
+      this._lastSig = null;
       setAllowClip();
     },
 
     onState(state) {
       if (currentContainer && currentApi) {
-        render(currentContainer, state);
+        const sig = JSON.stringify((state && state.achievements) || null);
+        if (sig !== this._lastSig) {
+          this._lastSig = sig;
+          render(currentContainer, state);
+        }
       }
       setAllowClip();
     }

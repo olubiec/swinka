@@ -4,7 +4,7 @@
 (function (root) {
   'use strict';
 
-  var KINDS = Object.freeze(['stall', 'plot', 'orchard', 'shop', 'decor', 'lamp']);
+  var KINDS = Object.freeze(['stall', 'plot', 'orchard', 'shop', 'decor', 'lamp', 'gramophone']);
   var EMPTY = Object.freeze([]);
   var ROOM_SCENES = { room: true, salon: true, bedroom: true, playroom: true, dorm: true };
   var SCENE_W = 256;
@@ -35,9 +35,13 @@
     return itemId.indexOf('lamp_') === 0 ||
       itemId.indexOf('lantern') !== -1 ||
       itemId === 'torch_wall' ||
+      itemId === 'torch' ||
       itemId === 'fairy_lights' ||
       itemId === 'brazier' ||
-      itemId === 'campfire';
+      itemId === 'campfire' ||
+      itemId === 'campfire_small' ||
+      itemId === 'fireplace' ||
+      itemId === 'candle';
   }
 
   function classifyInstance(inst, catalog) {
@@ -62,6 +66,9 @@
     } else if (isLampItem(itemId, catalog)) {
       kind = 'lamp';
       id = uid || itemId;
+    } else if (itemId === 'gramophone' || itemId === 'player_gramophone' || uid === 'gramophone' || uid === 'player_gramophone') {
+      kind = 'gramophone';
+      id = uid || itemId;
     }
 
     if (!kind || !id) return null;
@@ -78,6 +85,13 @@
     var y0 = Math.round(inst.y - ay);
     var x1 = Math.round(inst.x - ax + sw);
     var y1 = Math.round(inst.y - ay + sh);
+    if (itemId === 'lamp_post' || itemId === 'lamp_street') {
+      var pad = 8;
+      x0 = Math.max(0, x0 - pad);
+      y0 = Math.max(0, y0 - pad);
+      x1 = Math.min(SCENE_W, x1 + pad);
+      y1 = Math.min(SCENE_H, y1 + pad);
+    }
     if (x1 <= x0 || y1 <= y0) return null;
 
     var defaultLabel = id === 'stall:orders' ? 'Orders' : id;

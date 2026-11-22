@@ -1,0 +1,3 @@
+PK-T21: 6 PASS, 1 DEFECT, 0 SKIP (7 total). Verified with `node --check tools/qa/ux-p127-perf-leaks.js && node tools/qa/ux-p127-perf-leaks.js` (Edge fallback).
+- DEFECT PERF-heap-growth-switch-100: Steps: warm up 14 scene switches (`salon..market`), wait 200ms, run 100 `CuyPlaces.openPlace` + `inst.render()` switches. Expected: `usedJSHeapSize` growth < 15%. Actual: `heapBefore=16945996`, `heapAfter=23278748` (`+37.37%`; non-deterministic without forced GC, passed once when GC ran mid-loop).
+Decisions: threshold `1000 / activeFps` (`16.667ms`) from `assets/data/draw_limits.json`; particle cap `24` from `assets/data/home_behavior.json`; fell back to `channel: 'msedge'`; returned to `salon` before `PERF-particles-cap-long-sleep` so `pigVisible=true`.

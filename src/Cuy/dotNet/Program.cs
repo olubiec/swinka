@@ -1,12 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using Microsoft.Win32;
 using Cuy.Core;
+using Cuy.Core.World;
+using Cuy.Features;
 
 namespace Cuy
 {
@@ -31,6 +35,27 @@ namespace Cuy
         static readonly Mutex mutex = new Mutex(false, "Cuy.SingleInstance");
 
         public static LocalData MyData = new LocalData();
+
+        public static WeatherService WeatherService { get; private set; }
+
+        public static WeatherService EnsureWeatherService()
+        {
+            if (BrainController.Instance?.Pet?.State?.Weather?.Consent != true)
+                return null;
+
+            if (WeatherService == null)
+            {
+                WeatherService = new WeatherService(
+                    hasConsent: () => BrainController.Instance?.Pet?.State?.Weather?.Consent == true);
+            }
+            return WeatherService;
+        }
+
+        public static void StopWeatherService()
+        {
+            WeatherService?.Dispose();
+            WeatherService = null;
+        }
 
 #if DEBUG
         public static double ParseSpeedMultiplier(string[] args)
@@ -229,11 +254,12 @@ namespace Cuy
                 double initialSpeed = 1.0;
 #endif
                 BrainController.Initialize(initialSpeed);
+                EnsureWeatherService();
                 Cuy.Features.HomeFeatures.LoadAll();
                 Cuy.Features.HomeFeatures.InitializeAll(BrainController.Instance);
                 bool isNewGame = BrainController.Instance.Session.IsNewGame;
                 ItemCatalog.ErrorLogger = message => BrainController.Log("[ERROR] " + message);
-                Application.ApplicationExit += (s, e) => { BrainController.Instance?.Close(); };
+                Application.ApplicationExit += (s, e) => { StopWeatherService(); BrainController.Instance?.Close(); };
 
                 BrainController.Log("[Program] Args: " + (args != null ? string.Join(" ", args) : "null"));
                 bool autoOpenHome = false;
@@ -251,6 +277,8 @@ namespace Cuy
                 // Helper control: lets background threads run code on the UI thread.
                 _uiInvoker = new Control();
                 IntPtr invokerHandle = _uiInvoker.Handle;
+
+                // DesktopPropsOverlay disabled: props are kept inside Home scenes rather than separate desktop overlay windows.
 
                 // A second start of Cuy signals this one to open Home.
                 var showHomeThread = new Thread(() =>

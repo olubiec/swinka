@@ -1,0 +1,6 @@
+- Decisions: Hay Hop (id `hay_hop`) runs at 360x290 logical size with gravity 760, jump -340 (-510 on spring), moveSpeed 210, horizontal clamp [12, width-12], score = floor(maxHeightPx / 10).
+- Sprites: MinigryPig (`assets/sprites/<stage>/spritesheet.png`), `assets/world/garden/grass_tuft_1.png` & `grass_tuft_2.png`, `assets/icons/icons_16.png` frames 12/13; missing platform bars/sky use `style_palette.json`.
+- Reward/anti-cheat: `assets/data/hayhop.json` + `HayHopConfig` / `HayHopReward.Compute(score, durationMs, dailyGamesCount, dailyCloversToday, config, economy, scoreMultiplier)` rejecting >25 pts/s or <1000ms.
+- Validation: `HayHopMessages : IMessageRuleSet` (`minigame.hay_hop.result`: `score`, `durationMs`, optional `seed`) + `HayHopMessages.ValidateResultPayload(JObject)`.
+- Owner Q&A chosen: horizontal wrap vs clamp -> chose clamp `[12, width-12]` to match `PK-HH1` `H6 input-left-right-clamped`; added `src/Cuy.Core/Minigames/HayHopReward.cs` to `PK-HH2` via Prompt fixes.
+- Verification: `node tools/qa/foundation-check.js docs/opt/foundations/R44.md 6` PASS.

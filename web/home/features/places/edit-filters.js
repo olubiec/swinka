@@ -147,64 +147,8 @@
     return result;
   }
 
-  function ensureStyle(doc) {
-    if (!doc || !doc.head || doc.getElementById('editFiltersStyle')) return;
-    var style = doc.createElement('style');
-    style.id = 'editFiltersStyle';
-    style.textContent = [
-      '.edit-drawer-tabs {',
-      '  display: flex;',
-      '  flex-wrap: wrap;',
-      '  align-items: center;',
-      '  gap: 4px;',
-      '  padding: 2px 0;',
-      '  image-rendering: pixelated;',
-      '}',
-      '.edit-drawer-tab {',
-      '  font-family: var(--ui-font, "Pixelify Sans", monospace);',
-      '  font-size: 10px;',
-      '  line-height: 12px;',
-      '  padding: 2px 6px;',
-      '  cursor: pointer;',
-      '  background-color: var(--ui-wood-4, #e3b27a);',
-      '  color: var(--ui-wood-0, #47281c);',
-      '  border: 2px solid var(--ui-wood-1, #6f4328);',
-      '  image-rendering: pixelated;',
-      '}',
-      '.edit-drawer-tab:hover {',
-      '  background-color: var(--ui-hay-1, #f6e2a0);',
-      '}',
-      '.edit-drawer-tab[aria-selected="true"],',
-      '.edit-drawer-tab.is-active {',
-      '  background-color: var(--ui-hay-2, #e9c871);',
-      '  border-color: var(--ui-wood-0, #47281c);',
-      '  font-weight: bold;',
-      '}',
-      '.edit-drawer-tab:focus-visible {',
-      '  outline: 2px solid var(--ui-hay-2, #e9c871);',
-      '  outline-offset: 1px;',
-      '}',
-      '.edit-drawer-search {',
-      '  font-family: var(--ui-font, "Pixelify Sans", monospace);',
-      '  font-size: 11px;',
-      '  line-height: 14px;',
-      '  padding: 2px 6px;',
-      '  width: 100%;',
-      '  box-sizing: border-box;',
-      '  background-color: var(--ui-linen-3, #fbf0d9);',
-      '  color: var(--ui-wood-0, #47281c);',
-      '  border: 2px solid var(--ui-wood-1, #6f4328);',
-      '  image-rendering: pixelated;',
-      '}',
-      '.edit-drawer-search::placeholder {',
-      '  color: var(--ui-wood-2, #9b6238);',
-      '}',
-      '.edit-drawer-search:focus-visible {',
-      '  outline: 2px solid var(--ui-hay-2, #e9c871);',
-      '  outline-offset: 1px;',
-      '}'
-    ].join('\n');
-    doc.head.appendChild(style);
+  function ensureStyle() {
+    // Styles for .edit-drawer-tabs, .edit-drawer-tab, and .edit-drawer-search live in edit-panel.css.
   }
 
   function build(container, opts) {

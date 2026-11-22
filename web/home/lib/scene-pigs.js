@@ -5,17 +5,25 @@
 
   var DEFAULT_BOUNDS = [10, 96, 230, 126];
   var DEFAULT_MIN_GAP = 22;
-  var DEFAULT_SPEED = 70;
+  var DEFAULT_SPEED = 28;
   var MAX_SUBSTEP_MS = 50;
   var MAX_TOTAL_DT_MS = 2000;
   var SPAWN_ATTEMPTS = 24;
   var TARGET_ATTEMPTS = 16;
 
+  var CALM_IDLE_ANIMS = ['idle', 'sniff', 'doze', 'sleep', 'yawn', 'scratch'];
+
   var ANIM_FPS = {
     idle: 4,
     walk: 8,
     sniff: 6,
-    popcorn: 8
+    popcorn: 8,
+    dance: 8,
+    purr_pet: 6,
+    doze: 4,
+    sleep: 5,
+    yawn: 8,
+    scratch: 10
   };
 
   function normalizeBounds(b) {
@@ -118,7 +126,7 @@
     function findNearestFree(x0, y0, b, excludeId, isFreeFn) {
       var sx = clamp(x0, b[0], b[2]);
       var sy = clamp(y0, b[1], b[3]);
-      if (!isFreeFn || isFreeFn(sx, sy)) {
+      if ((!isFreeFn || isFreeFn(sx, sy)) && minDistToOthers(sx, sy, excludeId) >= minGap) {
         return { x: sx, y: sy };
       }
       var step = 4;
@@ -246,12 +254,21 @@
       return null;
     }
 
+    function pickCalmIdleAnim() {
+      var idx = Math.floor(randUnit() * CALM_IDLE_ANIMS.length);
+      return CALM_IDLE_ANIMS[idx] || 'idle';
+    }
+
     function clearTarget(pig, idleMin, idleSpan) {
       pig.targetX = null;
       pig.targetY = null;
       pig._path = null;
-      pig.anim = 'idle';
-      pig.idleTimer = idleMin + randUnit() * idleSpan;
+      pig.anim = pickCalmIdleAnim();
+      pig.frame = 0;
+      pig.frameAcc = 0;
+      var minMs = typeof idleMin === 'number' ? idleMin : 3500;
+      var spanMs = typeof idleSpan === 'number' ? idleSpan : 5500;
+      pig.idleTimer = minMs + randUnit() * spanMs;
     }
 
     function assignNewTarget(pig, b, isFreeFn, findPathFn, fallbackIdleMin) {
@@ -263,7 +280,7 @@
         pig.anim = 'walk';
         return true;
       }
-      clearTarget(pig, fallbackIdleMin, 400);
+      clearTarget(pig, fallbackIdleMin || 3500, 3500);
       return false;
     }
 
@@ -337,6 +354,8 @@
         if (existing) {
           existing.look = item.look;
           existing.stage = item.stage !== undefined ? item.stage : existing.stage;
+          existing.traits = Array.isArray(item.traits) ? item.traits : (existing.traits || []);
+          existing.modifiers = item.modifiers !== undefined ? item.modifiers : existing.modifiers;
           existing.pinned = !!item.pinned;
           if (existing.pinned) {
             existing.targetX = null;
@@ -354,7 +373,7 @@
           if (hasPos) {
             var px = clamp(item.x, bounds[0], bounds[2]);
             var py = clamp(item.y, bounds[1], bounds[3]);
-            if (!pinned && freeFn && !freeFn(px, py)) {
+            if (!pinned && freeFn && (!freeFn(px, py) || minDistToOthers(px, py, id) < minGap)) {
               var freed = findNearestFree(px, py, bounds, id, freeFn);
               if (freed) {
                 px = freed.x;
@@ -370,16 +389,20 @@
             x: pos.x,
             y: pos.y,
             facing: randUnit() < 0.5 ? -1 : 1,
-            anim: 'idle',
+            anim: pickCalmIdleAnim(),
             frame: 0,
             frameAcc: 0,
             targetX: null,
             targetY: null,
             _path: null,
-            idleTimer: pinned ? 0 : randUnit() * 400,
+            idleTimer: pinned ? 0 : (3500 + randUnit() * 5500),
             look: item.look,
             stage: item.stage !== undefined ? item.stage : 'adult',
-            pinned: pinned
+            traits: Array.isArray(item.traits) ? item.traits : [],
+            modifiers: item.modifiers || null,
+            pinned: pinned,
+            dance: false,
+            danceFps: null
           };
           pigs.push(created);
           nextPigs.push(created);
@@ -397,6 +420,11 @@
         pig.targetY = null;
         pig._path = null;
         pig.anim = 'idle';
+      } else if (pig.dance && pig.anim !== 'sleep' && pig.anim !== 'doze' && pig.anim !== 'sleep_house') {
+        pig.targetX = null;
+        pig.targetY = null;
+        pig._path = null;
+        pig.anim = 'dance';
       } else {
         if (isFreeFn && !isFreeFn(pig.x, pig.y)) {
           var rescued = findNearestFree(pig.x, pig.y, b, pig.id, isFreeFn);
@@ -412,7 +440,7 @@
             if (computed) {
               pig._path = computed;
             } else {
-              assignNewTarget(pig, b, isFreeFn, findPathFn, 400);
+              assignNewTarget(pig, b, isFreeFn, findPathFn, 3500);
             }
           }
         }
@@ -423,7 +451,8 @@
           var dx = goalX - pig.x;
           var dy = goalY - pig.y;
           var dist = Math.hypot(dx, dy);
-          var stepDist = speed * (subMs / 1000);
+          var activityMul = (pig.modifiers && typeof pig.modifiers.activity === 'number' && Number.isFinite(pig.modifiers.activity)) ? pig.modifiers.activity : 1;
+          var stepDist = speed * activityMul * (subMs / 1000);
 
           if (dist <= stepDist || dist < 1) {
             var ax = clamp(goalX, b[0], b[2]);
@@ -439,16 +468,16 @@
                 if (pig._path.length > 0) {
                   pig.anim = 'walk';
                 } else {
-                  clearTarget(pig, 800, 800);
+                  clearTarget(pig, 3500, 5500);
                 }
               } else {
-                clearTarget(pig, 800, 800);
+                clearTarget(pig, 3500, 5500);
               }
             } else if (!trySlideStep(pig, dx, dy, stepDist, b, isFreeFn)) {
               if (isFreeFn || findPathFn) {
-                assignNewTarget(pig, b, isFreeFn, findPathFn, 400);
+                assignNewTarget(pig, b, isFreeFn, findPathFn, 3500);
               } else {
-                clearTarget(pig, 800, 800);
+                clearTarget(pig, 3500, 5500);
               }
             }
           } else {
@@ -463,22 +492,30 @@
               pig.anim = 'walk';
             } else if (!trySlideStep(pig, dx, dy, stepDist, b, isFreeFn)) {
               if (isFreeFn || findPathFn) {
-                assignNewTarget(pig, b, isFreeFn, findPathFn, 400);
+                assignNewTarget(pig, b, isFreeFn, findPathFn, 3500);
               } else {
-                clearTarget(pig, 800, 800);
+                clearTarget(pig, 3500, 5500);
               }
             }
           }
         } else {
-          pig.anim = 'idle';
+          if (!pig.anim || pig.anim === 'walk') {
+            pig.anim = pickCalmIdleAnim();
+          }
           pig.idleTimer -= subMs;
           if (pig.idleTimer <= 0) {
-            assignNewTarget(pig, b, isFreeFn, findPathFn, 400);
+            if (randUnit() < 0.45) {
+              clearTarget(pig, 3500, 5500);
+            } else {
+              assignNewTarget(pig, b, isFreeFn, findPathFn, 3500);
+            }
           }
         }
       }
 
-      var fps = ANIM_FPS[pig.anim] || 4;
+      var fps = (pig.anim === 'dance' && typeof pig.danceFps === 'number' && Number.isFinite(pig.danceFps) && pig.danceFps > 0)
+        ? pig.danceFps
+        : (ANIM_FPS[pig.anim] || 4);
       pig.frameAcc += (subMs / 1000) * fps;
       if (pig.frameAcc >= 1) {
         var adv = Math.floor(pig.frameAcc);
@@ -519,7 +556,9 @@
           frame: p.frame,
           look: p.look,
           stage: p.stage,
-          pinned: p.pinned
+          pinned: p.pinned,
+          dance: !!p.dance,
+          danceFps: p.danceFps || null
         };
       }
       out.sort(function (a, b) {
@@ -570,6 +609,39 @@
       }
     }
 
+    function setDance(id, dancing, fps) {
+      var p = byId[String(id)];
+      if (!p) return;
+      p.dance = !!dancing;
+      p.danceFps = (typeof fps === 'number' && Number.isFinite(fps) && fps > 0) ? fps : null;
+      if (p.dance) {
+        if (!p.pinned && p.anim !== 'sleep' && p.anim !== 'doze' && p.anim !== 'sleep_house') {
+          p.targetX = null;
+          p.targetY = null;
+          p._path = null;
+          p.anim = 'dance';
+        }
+      } else if (p.anim === 'dance') {
+        p.anim = 'idle';
+        p.frame = 0;
+        p.frameAcc = 0;
+      }
+    }
+
+    function movePig(id, x, y, facing, anim, frame) {
+      var p = (id != null) ? byId[String(id)] : pigs[0];
+      if (!p) return;
+      if (typeof x === 'number' && Number.isFinite(x)) p.x = x;
+      if (typeof y === 'number' && Number.isFinite(y)) p.y = y;
+      if (facing === 1 || facing === -1) p.facing = facing;
+      if (typeof anim === 'string' && anim) p.anim = anim;
+      if (typeof frame === 'number' && Number.isFinite(frame)) p.frame = frame;
+    }
+
+    function movePrimary(x, y, facing, anim, frame) {
+      movePig(null, x, y, facing, anim, frame);
+    }
+
     function debug() {
       var targets = new Array(pigs.length);
       for (var i = 0; i < pigs.length; i++) {
@@ -598,6 +670,9 @@
       remove: remove,
       setBounds: setBounds,
       setPinned: setPinned,
+      setDance: setDance,
+      movePig: movePig,
+      movePrimary: movePrimary,
       debug: debug
     };
     return controller;

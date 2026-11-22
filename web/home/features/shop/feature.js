@@ -275,6 +275,7 @@
       containerNode = container;
       apiRef = api;
       currentState = api.getState();
+      this._lastSig = JSON.stringify((currentState && currentState.shop) || null) + '|' + ((currentState && currentState.clovers) || 0);
       loadAtlas().then(() => {
         if (containerNode && containerNode.isConnected) render(containerNode);
       });
@@ -283,11 +284,16 @@
     close() {
       containerNode = null;
       apiRef = null;
+      this._lastSig = null;
     },
     onState(state) {
       if (!containerNode) return;
       currentState = state;
-      render(containerNode);
+      const sig = JSON.stringify((state && state.shop) || null) + '|' + ((state && state.clovers) || 0);
+      if (sig !== this._lastSig) {
+        this._lastSig = sig;
+        render(containerNode);
+      }
     }
   });
 })();

@@ -1,0 +1,17 @@
+{
+  "excluded_processes": [
+    "audiodg",
+    "svchost",
+    "explorer",
+    "shellexperiencehost",
+    "searchhost",
+    "discord",
+    "teams",
+    "ms-teams",
+    "zoom",
+    "skype",
+    "slack",
+    "obs64",
+    "obs32"
+  ]
+}

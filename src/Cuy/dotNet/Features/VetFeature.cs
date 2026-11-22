@@ -170,6 +170,10 @@ namespace Cuy.Features
                 ? null
                 : pet.State.Health.LastCheckupUtc.ToLocalTime().ToString("yyyy-MM-ddTHH:mm");
 
+            var gs = pet.State;
+            string activePigId = gs?.ActivePigIds?.FirstOrDefault(id => !string.IsNullOrEmpty(id))
+                ?? gs?.Roster?.FirstOrDefault(p => p != null && !p.Memorial)?.Id;
+
             var vetState = new Dictionary<string, object>
             {
                 ["isSick"] = pet.IsSick,
@@ -179,6 +183,10 @@ namespace Cuy.Features
                 ["history"] = history,
                 ["symptoms"] = symptomsSet.ToList()
             };
+            if (!string.IsNullOrEmpty(activePigId))
+            {
+                vetState["pigId"] = activePigId;
+            }
 
             currentState["vet"] = vetState;
 
@@ -220,13 +228,35 @@ namespace Cuy.Features
             var pet = brain.Pet;
             if (pet == null) return false;
 
+            var gs = pet.State;
+            string activePigId = gs?.ActivePigIds?.FirstOrDefault(id => !string.IsNullOrEmpty(id))
+                ?? gs?.Roster?.FirstOrDefault(p => p != null && !p.Memorial)?.Id;
+            string requestedPigId = msg?["pigId"]?.ToString();
+            var targetPig = (!string.IsNullOrEmpty(requestedPigId) && gs?.Roster != null)
+                ? gs.Roster.FirstOrDefault(p => p != null && string.Equals(p.Id, requestedPigId, StringComparison.Ordinal))
+                : null;
+            bool hasMultiplePigs = gs?.Roster != null && gs.Roster.Count > 1;
+            bool targetsActivePig = string.IsNullOrEmpty(requestedPigId)
+                || string.IsNullOrEmpty(activePigId)
+                || string.Equals(requestedPigId, activePigId, StringComparison.Ordinal)
+                || targetPig == null
+                || !hasMultiplePigs;
+            string resolvedPigId = targetPig?.Id ?? activePigId;
+
             if (type == "vet_checkup")
             {
                 int price = pet.HealthSystem.CheckupPrice;
                 if (pet.TryPay(price, "vet"))
                 {
-                    var result = pet.CheckupWithResult();
-                    HomeWindow.PostToPage(new { type = "vet_checkup_result", found = result.Found, newlyKnown = result.NewlyKnown });
+                    if (targetsActivePig)
+                    {
+                        var result = pet.CheckupWithResult();
+                        HomeWindow.PostToPage(new { type = "vet_checkup_result", found = result.Found, newlyKnown = result.NewlyKnown, pigId = resolvedPigId });
+                    }
+                    else
+                    {
+                        HomeWindow.PostToPage(new { type = "vet_checkup_result", found = 0, newlyKnown = 0, pigId = resolvedPigId });
+                    }
                     HomeWindow.NotifyStateChanged();
                     brain.Session.AutoSaver.SaveNow();
                 }
@@ -237,6 +267,7 @@ namespace Cuy.Features
             }
             else if (type == "vet_treat")
             {
+                if (!targetsActivePig) return true;
                 var conditionId = (string)msg["conditionId"];
                 var def = pet.HealthSystem.GetCondition(conditionId);
                 var active = pet.State.Health.Active.FirstOrDefault(a => a.Id == conditionId);
@@ -258,6 +289,7 @@ namespace Cuy.Features
             }
             else if (type == "vet_dose")
             {
+                if (!targetsActivePig) return true;
                 var conditionId = (string)msg["conditionId"];
                 pet.GiveDose(conditionId);
                 HomeWindow.NotifyStateChanged();

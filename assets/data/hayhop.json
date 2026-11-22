@@ -1,0 +1,11 @@
+{
+  "game_id": "hay_hop",
+  "points_per_clover": 10,
+  "max_clovers_per_game": 40,
+  "max_score": 5000,
+  "min_duration_ms": 1000,
+  "max_duration_ms": 3600000,
+  "max_points_per_second": 25,
+  "mood_rewarded": 15.0,
+  "mood_unrewarded": 3.0
+}

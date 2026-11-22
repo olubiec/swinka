@@ -13,6 +13,20 @@ namespace Cuy
         private const int WS_EX_TOOLWINDOW = 0x00000080;
         private const int WS_EX_TOPMOST = 0x00000008;
 
+        // Cozy warm pixel palette (assets/ui/ui_tokens.css)
+        private static readonly Color ColBg = Color.FromArgb(251, 240, 217);           // --ui-linen-3 (#fbf0d9)
+        private static readonly Color ColInnerBevel = Color.FromArgb(239, 220, 184);   // --ui-linen-2 (#efdcb8)
+        private static readonly Color ColWoodDark = Color.FromArgb(71, 40, 28);        // --ui-wood-0 (#47281c)
+        private static readonly Color ColWoodSoft = Color.FromArgb(111, 67, 40);       // --ui-wood-1 (#6f4328)
+        private static readonly Color ColBtnDone = Color.FromArgb(151, 165, 105);      // --ui-moss-3 (#97a569)
+        private static readonly Color ColBtnDoneHover = Color.FromArgb(195, 201, 138); // --ui-moss-4 (#c3c98a)
+        private static readonly Color ColBtnLater = Color.FromArgb(239, 220, 184);     // --ui-linen-2 (#efdcb8)
+        private static readonly Color ColBtnLaterHover = Color.FromArgb(246, 226, 160);// --ui-hay-3 (#f6e2a0)
+        private static readonly Color ColBtnClose = Color.FromArgb(217, 135, 107);     // --ui-brick-3 (#d9876b)
+        private static readonly Color ColBtnCloseHover = Color.FromArgb(184, 96, 74);  // --ui-brick-2 (#b8604a)
+        private static readonly Color ColBtnPress = Color.FromArgb(197, 138, 82);      // --ui-wood-3 (#c58a52)
+        private static readonly Color ColHighlight = Color.FromArgb(251, 240, 217);    // --ui-linen-3 (#fbf0d9)
+
         public CareTaskDefinition Task { get; }
         public string CloseReason { get; set; } = "auto-hide";
         private Timer _followTimer;
@@ -23,6 +37,10 @@ namespace Cuy
         private Button _btnLater;
         private Button _btnClose;
         private PictureBox _pbIcon;
+        private Font _fontTitle;
+        private Font _fontBody;
+        private Font _fontBtnBold;
+        private Font _fontBtnRegular;
         private DateTime _openedAt;
 
         private readonly BrainController _brain;
@@ -36,11 +54,11 @@ namespace Cuy
             ShowInTaskbar = false;
             TopMost = true;
             StartPosition = FormStartPosition.Manual;
-            BackColor = ColorTranslator.FromHtml("#f7ecd9"); // Cream
-            ForeColor = ColorTranslator.FromHtml("#2b1712"); // Dark brown
+            BackColor = ColBg;
+            ForeColor = ColWoodDark;
             DoubleBuffered = true;
             AutoScaleMode = AutoScaleMode.None;
-            Size = new Size(240, 100);
+            Size = new Size(248, 104);
 
             InitializeComponents();
 
@@ -71,9 +89,14 @@ namespace Cuy
 
         private void InitializeComponents()
         {
+            _fontTitle = StatusBubble.CreatePixelFont(12f, FontStyle.Bold);
+            _fontBody = StatusBubble.CreatePixelFont(11f, FontStyle.Regular);
+            _fontBtnBold = StatusBubble.CreatePixelFont(11f, FontStyle.Bold);
+            _fontBtnRegular = StatusBubble.CreatePixelFont(11f, FontStyle.Regular);
+
             _pbIcon = new PictureBox
             {
-                Location = new Point(8, 8),
+                Location = new Point(10, 10),
                 Size = new Size(32, 32),
                 SizeMode = PictureBoxSizeMode.Zoom,
                 BackColor = Color.Transparent
@@ -88,10 +111,11 @@ namespace Cuy
 
             _lblTitle = new Label
             {
-                Location = new Point(48, 8),
-                Size = new Size(164, 20),
+                Location = new Point(48, 9),
+                Size = new Size(168, 20),
                 Text = Task.Title,
-                Font = new Font("Arial", 9F, FontStyle.Bold),
+                Font = _fontTitle,
+                ForeColor = ColWoodDark,
                 UseMnemonic = false,
                 BackColor = Color.Transparent
             };
@@ -100,10 +124,11 @@ namespace Cuy
             string firstSentence = GetFirstSentence(Task.Text);
             _lblText = new Label
             {
-                Location = new Point(48, 28),
-                Size = new Size(184, 40),
+                Location = new Point(48, 29),
+                Size = new Size(190, 38),
                 Text = firstSentence,
-                Font = new Font("Arial", 8.5F, FontStyle.Regular),
+                Font = _fontBody,
+                ForeColor = ColWoodSoft,
                 UseMnemonic = false,
                 BackColor = Color.Transparent
             };
@@ -111,42 +136,102 @@ namespace Cuy
 
             _btnDone = new Button
             {
-                Location = new Point(48, 68),
-                Size = new Size(60, 24),
+                Location = new Point(48, 70),
+                Size = new Size(64, 24),
                 Text = "Done",
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand,
-                Font = new Font("Arial", 8.5F, FontStyle.Bold)
+                Font = _fontBtnBold,
+                ForeColor = ColWoodDark,
+                TabStop = false
             };
-            _btnDone.FlatAppearance.BorderColor = ForeColor;
+            AttachPixelButtonStyle(_btnDone, ColBtnDone, ColBtnDoneHover, ColBtnPress, ColBtnDoneHover);
             _btnDone.Click += BtnDone_Click;
             Controls.Add(_btnDone);
 
             _btnLater = new Button
             {
-                Location = new Point(116, 68),
-                Size = new Size(80, 24),
+                Location = new Point(118, 70),
+                Size = new Size(88, 24),
                 Text = "Later (1 h)",
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand,
-                Font = new Font("Arial", 8.5F)
+                Font = _fontBtnRegular,
+                ForeColor = ColWoodDark,
+                TabStop = false
             };
-            _btnLater.FlatAppearance.BorderColor = ForeColor;
+            AttachPixelButtonStyle(_btnLater, ColBtnLater, ColBtnLaterHover, ColBtnPress, ColHighlight);
             _btnLater.Click += BtnLater_Click;
             Controls.Add(_btnLater);
 
             _btnClose = new Button
             {
-                Location = new Point(Width - 24, 4),
+                Location = new Point(Width - 26, 6),
                 Size = new Size(20, 20),
                 Text = "×",
                 FlatStyle = FlatStyle.Flat,
                 Cursor = Cursors.Hand,
-                Font = new Font("Arial", 10F, FontStyle.Bold)
+                Font = _fontBtnBold,
+                ForeColor = ColWoodDark,
+                TabStop = false
             };
-            _btnClose.FlatAppearance.BorderSize = 0;
+            AttachPixelButtonStyle(_btnClose, ColBtnClose, ColBtnCloseHover, ColBtnPress, ColHighlight);
             _btnClose.Click += BtnClose_Click;
             Controls.Add(_btnClose);
+        }
+
+        private static void AttachPixelButtonStyle(Button btn, Color baseColor, Color hoverColor, Color pressColor, Color highlightColor)
+        {
+            btn.FlatAppearance.BorderSize = 0;
+            bool isHovered = false;
+            bool isPressed = false;
+
+            btn.MouseEnter += (s, e) => { isHovered = true; btn.Invalidate(); };
+            btn.MouseLeave += (s, e) => { isHovered = false; isPressed = false; btn.Invalidate(); };
+            btn.MouseDown += (s, e) => { if (e.Button == MouseButtons.Left) { isPressed = true; btn.Invalidate(); } };
+            btn.MouseUp += (s, e) => { isPressed = false; btn.Invalidate(); };
+
+            btn.Paint += (s, e) =>
+            {
+                Graphics g = e.Graphics;
+                g.SmoothingMode = SmoothingMode.None;
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+
+                Rectangle r = new Rectangle(0, 0, btn.Width, btn.Height);
+                Color bg = isPressed ? pressColor : (isHovered ? hoverColor : baseColor);
+
+                using (var bgBrush = new SolidBrush(bg))
+                {
+                    g.FillRectangle(bgBrush, r);
+                }
+
+                using (var borderPen = new Pen(ColWoodDark, 1f))
+                {
+                    g.DrawRectangle(borderPen, 0, 0, r.Width - 1, r.Height - 1);
+                }
+
+                if (!isPressed)
+                {
+                    using (var hiPen = new Pen(highlightColor, 1f))
+                    {
+                        g.DrawLine(hiPen, 1, 1, r.Width - 2, 1);
+                        g.DrawLine(hiPen, 1, 1, 1, r.Height - 2);
+                    }
+                    using (var shPen = new Pen(ColWoodDark, 1f))
+                    {
+                        g.DrawLine(shPen, 1, r.Height - 2, r.Width - 2, r.Height - 2);
+                    }
+                }
+
+                Rectangle textRect = isPressed ? new Rectangle(0, 1, r.Width, r.Height) : r;
+                TextRenderer.DrawText(
+                    g,
+                    btn.Text,
+                    btn.Font,
+                    textRect,
+                    btn.ForeColor,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+            };
         }
 
         private string GetIconForTask(string taskId)
@@ -191,9 +276,14 @@ namespace Cuy
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            using (var p = new Pen(ForeColor, 3))
+            e.Graphics.SmoothingMode = SmoothingMode.None;
+            using (var outerPen = new Pen(ColWoodDark, 2f))
             {
-                e.Graphics.DrawRectangle(p, 1, 1, Width - 3, Height - 3); // Draw border inside the edge
+                e.Graphics.DrawRectangle(outerPen, 1, 1, Width - 2, Height - 2);
+            }
+            using (var innerPen = new Pen(ColInnerBevel, 1f))
+            {
+                e.Graphics.DrawRectangle(innerPen, 2, 2, Width - 5, Height - 5);
             }
         }
 
@@ -302,6 +392,10 @@ namespace Cuy
                     _autoHideTimer.Dispose();
                     _autoHideTimer = null;
                 }
+                _fontTitle?.Dispose();
+                _fontBody?.Dispose();
+                _fontBtnBold?.Dispose();
+                _fontBtnRegular?.Dispose();
             }
             base.Dispose(disposing);
         }

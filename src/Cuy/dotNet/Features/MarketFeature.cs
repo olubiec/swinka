@@ -70,6 +70,7 @@ namespace Cuy.Features
 
             // 2. Buyable
             var buyableList = new List<object>();
+            var seenBuyableIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             if (farmConfig?.Crops != null)
             {
                 foreach (var crop in farmConfig.Crops)
@@ -80,6 +81,7 @@ namespace Cuy.Features
                     string seedName = sDef?.Name ?? (crop.Kind == CropKind.Annual ? $"{crop.Id} seed" : $"{crop.Id} sapling");
                     string cat = crop.Kind == CropKind.Annual ? "seed" : "sapling";
 
+                    seenBuyableIds.Add(seedId);
                     buyableList.Add(new
                     {
                         itemId = seedId,
@@ -96,14 +98,51 @@ namespace Cuy.Features
                 {
                     if (item == null || item.Price <= 0 || item.IsFree || item.Free) continue;
 
+                    seenBuyableIds.Add(item.Id);
                     buyableList.Add(new
                     {
                         itemId = item.Id,
                         name = item.Name,
                         category = "decor",
-                        price = item.Price
+                        price = item.Price,
+                        layer = item.Layer,
+                        place = item.Place,
+                        icon = item.Icon
                     });
                 }
+            }
+
+            string todayCompact = pet.Clock.LocalNow().ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+            foreach (var def in ItemCatalogLoader.GetAll())
+            {
+                if (def == null || string.IsNullOrEmpty(def.Id) || seenBuyableIds.Contains(def.Id)) continue;
+                if (!def.Price.HasValue || def.Price.Value < 0 || def.IsUnlimited) continue;
+
+                string cat = def.Category ?? "food";
+                if (string.Equals(def.Id, "water_bottle", StringComparison.OrdinalIgnoreCase)) cat = "care";
+                else if (cat == "vegetable" || cat == "treat" || cat == "chew_stick") cat = "food";
+                else if (cat == "equipment") cat = "toy";
+                else if (cat == "furniture") cat = "decor";
+                else if (cat == "medicine" || cat == "vitamins") cat = "care";
+
+                int owned = pet.GetItemCount(def.Id);
+                int boughtToday = 0;
+                pet.State.Stats.Counters.TryGetValue($"bought_{def.Id}_{todayCompact}", out boughtToday);
+
+                seenBuyableIds.Add(def.Id);
+                buyableList.Add(new
+                {
+                    itemId = def.Id,
+                    name = def.Name,
+                    category = cat,
+                    price = def.Price.Value,
+                    icon = def.IconName,
+                    description = def.Description,
+                    oneTime = def.OneTime,
+                    dailyLimit = def.DailyLimit,
+                    owned = owned,
+                    boughtToday = boughtToday
+                });
             }
 
             // 3. Specials & Orders
@@ -257,6 +296,34 @@ namespace Cuy.Features
                 int count = message?.Value<int?>("count") ?? 1;
                 if (string.IsNullOrEmpty(itemId) || count <= 0) return true;
 
+                CuyItemDef shopDef = pet.WorldItemCatalog?.Find(itemId) == null ? ItemCatalogLoader.GetItem(itemId) : null;
+                string shopCounterKey = null;
+                if (shopDef != null)
+                {
+                    if (!shopDef.Price.HasValue || shopDef.Price.Value < 0 || shopDef.IsUnlimited)
+                    {
+                        HomeWindow.PostToPage(new { type = "toast", text = "Item not for sale" });
+                        return true;
+                    }
+                    if (shopDef.OneTime && pet.GetItemCount(shopDef.Id) > 0)
+                    {
+                        HomeWindow.PostToPage(new { type = "toast", text = "Already owned" });
+                        return true;
+                    }
+                    string todayCompact = pet.Clock.LocalNow().ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+                    shopCounterKey = $"bought_{shopDef.Id}_{todayCompact}";
+                    if (shopDef.DailyLimit.HasValue)
+                    {
+                        int boughtToday = 0;
+                        pet.State.Stats.Counters.TryGetValue(shopCounterKey, out boughtToday);
+                        if (boughtToday + count > shopDef.DailyLimit.Value)
+                        {
+                            HomeWindow.PostToPage(new { type = "toast", text = "Daily limit reached" });
+                            return true;
+                        }
+                    }
+                }
+
                 var res = pet.Buy(itemId, count);
                 if (res == BuyResult.UnknownItem)
                 {
@@ -264,6 +331,10 @@ namespace Cuy.Features
                 }
                 else if (res == BuyResult.Ok)
                 {
+                    if (shopDef != null && !string.IsNullOrEmpty(shopCounterKey))
+                    {
+                        pet.Count(shopCounterKey, count);
+                    }
                     HomeWindow.PostToPage(new { type = "toast", text = "Item bought!" });
                 }
                 else if (res == BuyResult.NotEnoughClovers)

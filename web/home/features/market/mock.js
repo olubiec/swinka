@@ -30,9 +30,11 @@
     { itemId: 'carrot_treat', name: 'Carrot treat',  category: 'pantry', price: 7 }
   ];
   const DECOR_ITEMS = [
-    { itemId: 'lamp_floor', name: 'Floor lamp', category: 'decor' },
-    { itemId: 'fence_wood', name: 'Wood fence', category: 'decor' },
-    { itemId: 'bench_wood', name: 'Wood bench', category: 'decor' }
+    { itemId: 'lamp_floor',      name: 'Floor lamp',   category: 'decor', layer: 'floor', place: ['house'],  price: 60 },
+    { itemId: 'fence_wood',      name: 'Wood fence',   category: 'decor', layer: 'floor', place: ['garden'], price: 15 },
+    { itemId: 'bench_wood',      name: 'Wood bench',   category: 'decor', layer: 'floor', place: ['garden'], price: 110 },
+    { itemId: 'flowerbed_tulip', name: 'Tulip bed',    category: 'decor', layer: 'floor', place: ['garden'], price: 70 },
+    { itemId: 'gramophone',      name: 'Gramophone',   category: 'decor', layer: 'floor', place: ['house'],  price: 150 }
   ];
   const SPECIALS = [
     { itemId: 'seed_kale',    name: 'Kale seeds',   was: 30, price: 24 },
@@ -71,8 +73,13 @@
     const m = st.market;
     const harvests = st.farmMock ? st.farmMock.harvests : 0;
     const decor = DECOR_ITEMS.map((d) => {
-      const price = (window.CuyRoomsMock && window.CuyRoomsMock.CATALOG.find((c) => c.id === d.itemId) || {}).price || 40;
-      return { itemId: d.itemId, name: d.name, category: d.category, price: price };
+      const catEntry = window.CuyRoomsMock && Array.isArray(window.CuyRoomsMock.CATALOG)
+        ? window.CuyRoomsMock.CATALOG.find((c) => c.id === d.itemId)
+        : null;
+      const price = (catEntry && catEntry.price) || d.price || 40;
+      const layer = (catEntry && catEntry.layer) || d.layer || 'floor';
+      const place = (catEntry && catEntry.place) || d.place || ['house'];
+      return { itemId: d.itemId, name: d.name, category: d.category, price: price, layer: layer, place: place };
     });
     m.sellable = SELLABLE.map((s) => ({
       itemId: s.itemId, name: s.name, owned: st.inventory[s.itemId] || 0,

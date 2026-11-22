@@ -264,7 +264,7 @@ namespace Cuy.Core.World
                     new OutdoorDefaultItem("stall_center", "stall_big", 6, 5, false, true, false),
                     new OutdoorDefaultItem("stall_right", "stall_basic", 12, 5, false, true, false),
                     new OutdoorDefaultItem("notice_board", "order_board", 4, 6, false, true, true),
-                    new OutdoorDefaultItem("sign_right", "signpost", 15, 6, false, true, true)
+                    new OutdoorDefaultItem("sign_right", "signpost", 15, 4, false, true, true)
                 }
             };
             return new OutdoorDefaults(scenes);

@@ -219,6 +219,7 @@
 .feature-store .store-stepper button {
   min-width: 32px;
   min-height: 32px;
+  font-family: inherit;
 }
 
 .feature-store .store-stepper input {
@@ -250,7 +251,6 @@
   grid-column: 1 / -1;
   padding: 16px;
   text-align: center;
-  font-style: italic;
 }
 
 /* Phone width: stack the category list above the grid, no horizontal scroll. */
