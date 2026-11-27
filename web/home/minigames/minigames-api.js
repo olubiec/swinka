@@ -681,13 +681,16 @@
             ${pigSelectorHtml}
             <div class="minigames-status-bar">
               <span class="minigames-status-clovers"><span class="pixel-icon icon-clover"></span> Clovers: <b>${clovers}</b></span>
-              <div style="display:flex; flex-direction:column; align-items:flex-end;">
-                <div class="minigames-dots" title="At most ${dailyMax} rewarded games per day">
-                  ${dotsHtml}
+              <div style="display:flex; align-items:center; gap:8px;">
+                <button class="minigames-hud-btn" id="minigamesSelectSizeBtn" type="button" title="Toggle Arcade / Near-Fullscreen">${document.body.classList.contains('mg-fullscreen') ? 'Arcade Size' : 'Fullscreen'}</button>
+                <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                  <div class="minigames-dots" title="At most ${dailyMax} rewarded games per day">
+                    ${dotsHtml}
+                  </div>
+                  <span class="minigames-daily-limit" style="font-size:11px; margin-top:2px;">
+                    Rewards today: <b>${dailyCount}/${dailyMax}</b>
+                  </span>
                 </div>
-                <span class="minigames-daily-limit" style="font-size:11px; margin-top:2px;">
-                  Rewards today: <b>${dailyCount}/${dailyMax}</b>
-                </span>
               </div>
             </div>
 
@@ -771,6 +774,16 @@
               chip.style.background = active ? 'var(--ui-hay-2, #fff4d2)' : 'rgba(255,255,255,0.55)';
             });
           });
+        });
+      }
+
+      const selectSizeBtn = container.querySelector('#minigamesSelectSizeBtn');
+      if (selectSizeBtn) {
+        selectSizeBtn.addEventListener('click', () => {
+          if (root.Sound) root.Sound.click();
+          const next = document.body.classList.contains('mg-fullscreen') ? 'arcade' : 'fullscreen';
+          if (typeof root.CuyWindowMode === 'function') root.CuyWindowMode(next);
+          selectSizeBtn.textContent = next === 'fullscreen' ? 'Arcade Size' : 'Fullscreen';
         });
       }
 
@@ -877,6 +890,7 @@
                 </span>
                 <span class="minigames-hud-score" id="minigamesLiveScore">Points: 0</span>
                 <div class="minigames-hud-controls">
+                  <button class="minigames-hud-btn" id="minigamesBtnSize" type="button" title="Toggle Arcade / Near-Fullscreen">${document.body.classList.contains('mg-fullscreen') ? 'Arcade' : 'Full'}</button>
                   <button class="minigames-hud-btn" id="minigamesBtnPause" type="button" title="Pause"><span class="pixel-icon icon-pause"></span></button>
                   <button class="minigames-hud-btn" id="minigamesBtnBack" type="button" title="Back to the menu">✕</button>
                 </div>
@@ -911,6 +925,16 @@
         const scoreEl = document.getElementById('minigamesLiveScore');
 
         // HUD control handlers
+        document.getElementById('minigamesBtnSize')?.addEventListener('click', (e) => {
+          if (root.Sound) root.Sound.click();
+          const next = document.body.classList.contains('mg-fullscreen') ? 'arcade' : 'fullscreen';
+          if (typeof root.CuyWindowMode === 'function') root.CuyWindowMode(next);
+          e.currentTarget.textContent = next === 'fullscreen' ? 'Arcade' : 'Full';
+          if (this.phaserInstance && this.phaserInstance.scale) {
+            setTimeout(() => { try { this.phaserInstance.scale.refresh(); } catch (err) {} }, 60);
+          }
+        });
+
         document.getElementById('minigamesBtnPause')?.addEventListener('click', () => {
           if (root.Sound) root.Sound.click();
           this.togglePause();
@@ -1174,6 +1198,82 @@
 
   // Expose globally
   const manager = new MinigryManager();
+
+  // Campaign persistence helpers (levels, 1-3 stars, checkpoints)
+  manager.getCampaign = function (gameId) {
+    const state = root.bridge ? root.bridge.getState() : null;
+    const camps = state && state.minigameCampaigns ? state.minigameCampaigns : null;
+    if (camps && camps[gameId]) return camps[gameId];
+    try {
+      const raw = localStorage.getItem('cuy_campaign_' + gameId);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { unlockedLevel: 1, starsPerLevel: {}, bestScorePerLevel: {}, checkpointLevel: 0, checkpointJson: null };
+  };
+
+  manager.submitLevelComplete = function (gameId, level, stars, score) {
+    if (root.bridge && typeof root.bridge.send === 'function') {
+      root.bridge.send({ type: 'minigame_level_complete', gameId, level, stars, score });
+    } else {
+      const camp = manager.getCampaign(gameId);
+      camp.unlockedLevel = Math.max(camp.unlockedLevel || 1, level + 1);
+      camp.starsPerLevel = camp.starsPerLevel || {};
+      camp.starsPerLevel[level] = Math.max(camp.starsPerLevel[level] || 0, stars);
+      camp.bestScorePerLevel = camp.bestScorePerLevel || {};
+      camp.bestScorePerLevel[level] = Math.max(camp.bestScorePerLevel[level] || 0, score);
+      try { localStorage.setItem('cuy_campaign_' + gameId, JSON.stringify(camp)); } catch (e) {}
+    }
+  };
+
+  manager.saveCheckpoint = function (gameId, level, checkpointJson) {
+    if (root.bridge && typeof root.bridge.send === 'function') {
+      root.bridge.send({ type: 'minigame_checkpoint_save', gameId, level, checkpointJson });
+    }
+  };
+
+  manager.phaserScale = function (w, h, container) {
+    if (!root.Phaser || !root.Phaser.Scale) return undefined;
+    return {
+      mode: root.Phaser.Scale.FIT,
+      autoCenter: root.Phaser.Scale.CENTER_BOTH,
+      parent: container,
+      width: w,
+      height: h
+    };
+  };
+
+  if (root.bridge && typeof root.bridge.registerMockHandler === 'function') {
+    root.bridge.registerMockHandler('window_mode', () => {});
+    root.bridge.registerMockHandler('minigame_level_complete', (action, state) => {
+      const gameId = action.gameId;
+      const level = Math.max(1, action.level || 1);
+      const stars = Math.max(1, Math.min(3, action.stars || 1));
+      const score = Math.max(0, action.score || 0);
+      if (!state.minigameCampaigns) state.minigameCampaigns = {};
+      if (!state.minigameCampaigns[gameId]) {
+        state.minigameCampaigns[gameId] = { unlockedLevel: 1, starsPerLevel: {}, bestScorePerLevel: {}, checkpointLevel: 0, checkpointJson: null };
+      }
+      const c = state.minigameCampaigns[gameId];
+      c.unlockedLevel = Math.max(c.unlockedLevel || 1, level + 1);
+      c.starsPerLevel[level] = Math.max(c.starsPerLevel[level] || 0, stars);
+      c.bestScorePerLevel[level] = Math.max(c.bestScorePerLevel[level] || 0, score);
+      if (c.checkpointLevel === level) { c.checkpointLevel = 0; c.checkpointJson = null; }
+      if (!state.minigames) state.minigames = { records: {}, dailyRewardedDate: '', dailyRewardedCount: 0, dailyMax: 10, plays: {}, lastResult: null };
+      state.minigames.plays[gameId] = (state.minigames.plays[gameId] || 0) + 1;
+      state.clovers = (state.clovers || 0) + Math.min(40, Math.floor(score / 10));
+    });
+
+    root.bridge.registerMockHandler('minigame_checkpoint_save', (action, state) => {
+      const gameId = action.gameId;
+      if (!state.minigameCampaigns) state.minigameCampaigns = {};
+      if (!state.minigameCampaigns[gameId]) {
+        state.minigameCampaigns[gameId] = { unlockedLevel: 1, starsPerLevel: {}, bestScorePerLevel: {}, checkpointLevel: 0, checkpointJson: null };
+      }
+      state.minigameCampaigns[gameId].checkpointLevel = action.level || 1;
+      state.minigameCampaigns[gameId].checkpointJson = action.checkpointJson || null;
+    });
+  }
+
   root.Minigry = manager;
   root.MiniGames = manager;
   root.MinigryPig = MinigryPig;

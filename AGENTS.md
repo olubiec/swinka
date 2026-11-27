@@ -67,6 +67,6 @@ The WinForms app cannot run on Linux; the human tests it on Windows with `tools/
 
 ## Packages and autonomy
 - Nobody answers questions or approves plans: decide, record the decision in the PR ("Decyzje"), finish.
-- A package (several `W<n>-<nn>` items in one prompt) is worked in the listed order. You never run git (no commit, branch, PR): the owner commits and merges once the `Weryfikacja` line passes. Instead of a PR description write `docs/opt/log/<package id>.md` (max 10 lines: decisions, differences from the planned names, anything left undone).
+- A package (several `W<n>-<nn>` items in one prompt) is worked in the listed order. Instead of a PR description write `docs/opt/log/<package id>.md` (max 10 lines: decisions, differences from the planned names, anything left undone).
 - Do not edit `.github/workflows/`. Do not weaken or remove existing test assertions.
 - Verify with `tools/verify.ps1` (prints only failures) or the command named in the prompt; run the full test suite only when the prompt says so.

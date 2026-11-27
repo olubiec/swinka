@@ -33,6 +33,7 @@ namespace Cuy
         private Point _dragStartCursor;
         private Point _dragStartLocation;
         private double _fitZoom = 1.0;
+        private string _windowMode = "normal";
         private WeatherFetchResult _lastWeatherResult;
         private bool _weatherFetchInFlight = false;
         private DateTime _lastAutoWeatherCheckUtc = DateTime.MinValue;
@@ -181,6 +182,7 @@ namespace Cuy
             }
             else
             {
+                _windowMode = "normal";
                 Point basePoint = _leavePoint ?? new Point(this.Left + this.Width / 2, this.Bottom - 40);
                 _leavePoint = null;
 
@@ -346,6 +348,15 @@ namespace Cuy
             }
         }
 
+        public void SetWindowMode(string mode)
+        {
+            string normalized = (mode ?? "normal").Trim().ToLowerInvariant();
+            if (normalized != "arcade" && normalized != "fullscreen") normalized = "normal";
+            if (_windowMode == normalized) return;
+            _windowMode = normalized;
+            PositionNearTray();
+        }
+
         public void PositionNearTray()
         {
             try
@@ -354,9 +365,35 @@ namespace Cuy
                 Rectangle wa = screen.WorkingArea;
                 Rectangle bounds = screen.Bounds;
 
+                float dpiScale = Math.Max(1f, this.DeviceDpi / 96f);
+
+                if (_windowMode == "arcade" || _windowMode == "fullscreen")
+                {
+                    int targetW, targetH;
+                    if (_windowMode == "fullscreen")
+                    {
+                        targetW = Math.Max(640, (int)Math.Round(wa.Width * 0.94));
+                        targetH = Math.Max(480, (int)Math.Round(wa.Height * 0.92));
+                    }
+                    else
+                    {
+                        targetW = Math.Min(wa.Width - 32, (int)Math.Round(940 * dpiScale));
+                        targetH = Math.Min(wa.Height - 32, (int)Math.Round(660 * dpiScale));
+                    }
+                    this.MinimumSize = new Size(0, 0);
+                    this.MaximumSize = new Size(targetW, targetH);
+                    this.MinimumSize = new Size(targetW, targetH);
+                    this.Size = new Size(targetW, targetH);
+                    _fitZoom = 1.0;
+                    try { if (_webView != null) _webView.ZoomFactor = 1.0; } catch (Exception) { }
+                    int cx = wa.Left + Math.Max(0, (wa.Width - this.Width) / 2);
+                    int cy = wa.Top + Math.Max(0, (wa.Height - this.Height) / 2);
+                    this.Location = new Point(cx, cy);
+                    return;
+                }
+
                 // PerMonitorV2: the WebView lays out at 420x664 CSS px, so the window must be 420x664 * DPI scale
                 // (otherwise the page is squeezed into a narrower viewport and gets clipped). Shrink to fit small screens.
-                float dpiScale = Math.Max(1f, this.DeviceDpi / 96f);
                 float fit = Math.Min(1f, Math.Min((wa.Width - 24) / (420f * dpiScale), (wa.Height - 24) / (664f * dpiScale)));
                 fit = Math.Max(0.5f, fit);
                 int w = (int)Math.Round(420 * dpiScale * fit);
@@ -850,6 +887,11 @@ namespace Cuy
 
                     case "log":
                         BrainController.Log("[Home JS] " + obj.Value<string>("msg"));
+                        return;
+
+                    case "window_mode":
+                        string wMode = obj.Value<string>("mode") ?? "normal";
+                        this.BeginInvoke(new Action(() => SetWindowMode(wMode)));
                         return;
 
                     case "settings":

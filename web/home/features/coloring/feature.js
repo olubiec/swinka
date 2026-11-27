@@ -286,7 +286,7 @@
           if (e && e.preventDefault) e.preventDefault();
           try {
             const currentState = this.store.getState();
-            const packOrder = ['guinea_pigs', 'food_and_toys'];
+            const packOrder = ['meadow_seasons', 'farm_orchard', 'guinea_pigs'];
             let allPacks = [...packOrder];
             if (this.indexData && Array.isArray(this.indexData.packs)) {
               this.indexData.packs.forEach(p => {
@@ -463,6 +463,7 @@
       this.cellSize = 20;
 
       this.isFlat = localStorage.getItem('cuy_coloring_style') === 'flat';
+      this.brushMode = localStorage.getItem('cuy_coloring_brush') || '1'; // '1', '3', 'fill'
 
       this.rafId = null;
       this.needsRedraw = true;
@@ -499,7 +500,12 @@
           <div class="coloring-header">
              <span class="editor-title">${this.level ? `Level ${this.level}` : this.pic.title}</span>
              <span class="editor-progress">0%</span>
-             <button class="coloring-btn toggle-style">${this.isFlat ? 'Flat' : 'Beads'}</button>
+             <div class="coloring-tools-group" style="display:flex;gap:4px;align-items:center;">
+               <button class="coloring-btn tool-brush ${this.brushMode === '1' ? 'active' : ''}" data-brush="1" title="1x1 pixel">1x1</button>
+               <button class="coloring-btn tool-brush ${this.brushMode === '3' ? 'active' : ''}" data-brush="3" title="3x3 brush">3x3</button>
+               <button class="coloring-btn tool-brush ${this.brushMode === 'fill' ? 'active' : ''}" data-brush="fill" title="Flood fill area">Fill</button>
+               <button class="coloring-btn toggle-style">${this.isFlat ? 'Flat' : 'Beads'}</button>
+             </div>
           </div>
           <div class="editor-canvas-wrap">
              <canvas id="editorCanvas"></canvas>
@@ -515,6 +521,14 @@
           </div>
        </div>`;
        this.container.innerHTML = html;
+
+       this.container.querySelectorAll('.tool-brush').forEach((btn) => {
+          btn.addEventListener('click', () => {
+             this.brushMode = btn.dataset.brush || '1';
+             localStorage.setItem('cuy_coloring_brush', this.brushMode);
+             this.container.querySelectorAll('.tool-brush').forEach(b => b.classList.toggle('active', b === btn));
+          });
+       });
 
        this.container.querySelector('.toggle-style').addEventListener('click', (e) => {
           this.isFlat = !this.isFlat;
@@ -565,6 +579,13 @@
           return Math.sqrt(dx*dx + dy*dy);
        };
 
+       const getColorIdxAt = (idx) => {
+          const c = this.pic.cells[idx];
+          if (c === '.') return -1;
+          if (c >= '1' && c <= '9') return parseInt(c, 10) - 1;
+          return c.charCodeAt(0) - 'a'.charCodeAt(0) + 9;
+       };
+
        const handlePaint = (x, y) => {
           if (this.isCompleted) return;
           const rect = this.canvas.getBoundingClientRect();
@@ -573,24 +594,74 @@
           const cx = Math.floor((x - rect.left - this.panX) / s);
           const cy = Math.floor((y - rect.top - this.panY) / s);
 
-          if (cx >= 0 && cx < this.pic.w && cy >= 0 && cy < this.pic.h) {
-             const i = cy * this.pic.w + cx;
-             const c = this.pic.cells[i];
-             if (c === '.' || this.painted[i] === '1') return;
+          if (cx < 0 || cx >= this.pic.w || cy < 0 || cy >= this.pic.h) return;
 
-             let colorIdx;
-             if (c >= '1' && c <= '9') colorIdx = parseInt(c) - 1;
-             else colorIdx = c.charCodeAt(0) - 'a'.charCodeAt(0) + 9;
+          const centerIdx = cy * this.pic.w + cx;
+          const centerColor = getColorIdxAt(centerIdx);
+          if (centerColor < 0) return;
 
-             if (colorIdx === this.selectedColorIdx) {
-                this.painted = this.painted.substring(0, i) + '1' + this.painted.substring(i + 1);
-                this.store.savePictureProgress(this.pic.id, this.painted);
-                this.checkColorDone();
-                this.needsRedraw = true;
-             } else {
-                this.flashCells.set(i, Date.now());
+          const paintedArr = this.painted.split('');
+          let changed = false;
+
+          if (this.brushMode === 'fill') {
+             if (centerColor !== this.selectedColorIdx) {
+                if (this.painted[centerIdx] !== '1') {
+                   this.flashCells.set(centerIdx, Date.now());
+                   this.needsRedraw = true;
+                }
+                return;
+             }
+             if (paintedArr[centerIdx] === '1') return;
+             const queue = [[cx, cy]];
+             const visited = new Set([centerIdx]);
+             while (queue.length > 0) {
+                const [qx, qy] = queue.pop();
+                const qi = qy * this.pic.w + qx;
+                if (paintedArr[qi] !== '1') {
+                   paintedArr[qi] = '1';
+                   changed = true;
+                }
+                const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+                for (const [dx, dy] of dirs) {
+                   const nx = qx + dx, ny = qy + dy;
+                   if (nx >= 0 && nx < this.pic.w && ny >= 0 && ny < this.pic.h) {
+                      const ni = ny * this.pic.w + nx;
+                      if (!visited.has(ni) && paintedArr[ni] !== '1' && getColorIdxAt(ni) === this.selectedColorIdx) {
+                         visited.add(ni);
+                         queue.push([nx, ny]);
+                      }
+                   }
+                }
+             }
+          } else {
+             const radius = this.brushMode === '3' ? 1 : 0;
+             let hitMismatch = false;
+             for (let dy = -radius; dy <= radius; dy++) {
+                for (let dx = -radius; dx <= radius; dx++) {
+                   const nx = cx + dx, ny = cy + dy;
+                   if (nx < 0 || nx >= this.pic.w || ny < 0 || ny >= this.pic.h) continue;
+                   const ni = ny * this.pic.w + nx;
+                   const cIdx = getColorIdxAt(ni);
+                   if (cIdx < 0 || paintedArr[ni] === '1') continue;
+                   if (cIdx === this.selectedColorIdx) {
+                      paintedArr[ni] = '1';
+                      changed = true;
+                   } else if (dx === 0 && dy === 0) {
+                      hitMismatch = true;
+                   }
+                }
+             }
+             if (hitMismatch && !changed) {
+                this.flashCells.set(centerIdx, Date.now());
                 this.needsRedraw = true;
              }
+          }
+
+          if (changed) {
+             this.painted = paintedArr.join('');
+             this.store.savePictureProgress(this.pic.id, this.painted);
+             this.checkColorDone();
+             this.needsRedraw = true;
           }
        };
 

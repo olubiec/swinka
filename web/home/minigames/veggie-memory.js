@@ -61,17 +61,18 @@
   // Export for testing
   root.VeggieMemoryLogic = { buildDeck, LEVELS, FOOD_ICONS };
 
-  function iconsUrl() {
+  function assetUrl(relPath) {
     const isWebView = !!(root.chrome && root.chrome.webview);
-    if (isWebView) return 'https://cuy.assets/icons/icons_16.png';
+    if (isWebView) return 'https://cuy.assets/' + relPath;
     const inMinigames = typeof location !== 'undefined' && location.pathname.includes('/minigames');
-    return inMinigames ? '../../../assets/icons/icons_16.png' : '../../assets/icons/icons_16.png';
+    return (inMinigames ? '../../../assets/' : '../../assets/') + relPath;
   }
 
   function start(config) {
     let currentLevel = 0;
     let score = 0;
     let moves = 0;
+    let streak = 0;
     let matchedPairs = 0;
     let firstCard = null;
     let secondCard = null;
@@ -86,7 +87,11 @@
       preload() {
         const stage = config.stageKey || 'adult';
         root.MinigryPig.preload(this, stage);
-        this.load.spritesheet('icons16', iconsUrl(), { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('icons16', assetUrl('icons/icons_16.png'), { frameWidth: 16, frameHeight: 16 });
+        this.load.image('vm_bg_table', assetUrl('minigames/veggie_memory/bg_table.png'));
+        this.load.image('vm_card_back', assetUrl('minigames/veggie_memory/card_back.png'));
+        this.load.image('vm_glow', assetUrl('world/fx/glow_round.png'));
+        this.load.image('vm_shadow', assetUrl('world/fx/shadow_pig_adult.png'));
       }
 
       create() {
@@ -96,16 +101,17 @@
           if (config && config.audio) mg.track(config.audio);
         }
 
-        // Wooden tabletop background
-        this.add.rectangle(W / 2, H / 2, W, H, 0x8b5a2b);
-        // Tablecloth / playmat area
-        this.add.rectangle(W / 2 - 25, H / 2, 290, 260, 0x5a823b, 0.95);
+        // Dedicated Gazebo Picnic Table backdrop + warm candle glow
+        this.add.image(W / 2, H / 2, 'vm_bg_table').setDisplaySize(W, H);
+        this.add.image(W - 19, 20, 'vm_glow').setScale(0.38).setAlpha(0.42);
 
         // Score & level HUD
-        this.hudText = this.add.text(12, 10, 'Level 1/4   Score: 0', {
+        this.hudText = this.add.text(12, 8, 'Level 1/4   Score: 0', {
           fontSize: '12px',
           fontFamily: 'monospace',
-          color: '#ffffff',
+          color: '#fffdf8',
+          stroke: '#3a1d17',
+          strokeThickness: 3,
           fontStyle: 'bold'
         });
 
@@ -125,6 +131,7 @@
         });
 
         // Little pig companion bottom right
+        this.add.image(W - 32, H - 16, 'vm_shadow').setAlpha(0.7);
         this.pig = root.MinigryPig.create(this, W - 32, H - 36);
         this.pig.play('pig_idle');
 
@@ -160,27 +167,24 @@
           container.setSize(cardW, cardH);
           container.setInteractive({ useHandCursor: true });
 
-          // Card back: green with dark green border
-          const cardBack = this.add.rectangle(0, 0, cardW, cardH, 0x2e7d32);
-          cardBack.setStrokeStyle(2, 0x1b5e20);
-          const leafDeco = this.add.rectangle(0, 0, 10, 10, 0x81c784);
-          leafDeco.setRotation(0.78);
+          // Card back: custom ornate clover card back
+          const cardBack = this.add.image(0, 0, 'vm_card_back').setDisplaySize(cardW, cardH);
 
-          // Card front: cream base + icon scaled x2
-          const cardFront = this.add.rectangle(0, 0, cardW, cardH, 0xfffdd0);
-          cardFront.setStrokeStyle(2, 0x8d6e63);
+          // Card front: linen cream base + icon scaled x2
+          const cardFront = this.add.rectangle(0, 0, cardW, cardH, 0xfbf0d9);
+          cardFront.setStrokeStyle(2, 0x6e4424);
           cardFront.setVisible(false);
 
           const iconSprite = this.add.sprite(0, 0, 'icons16', cardData.frame);
           iconSprite.setScale(2);
           iconSprite.setVisible(false);
 
-          container.add([cardBack, leafDeco, cardFront, iconSprite]);
+          container.add([cardBack, cardFront, iconSprite]);
 
           container.cardData = cardData;
           container.isFaceUp = false;
           container.isMatched = false;
-          container.backElements = [cardBack, leafDeco];
+          container.backElements = [cardBack];
           container.frontElements = [cardFront, iconSprite];
 
           container.on('pointerdown', () => this.handleCardClick(container));
@@ -237,11 +241,13 @@
             root.Sound.crunch();
           }
 
-          // Calculate score
-          const pairScore = Math.max(2, 12 - Math.max(0, moves - (lvl.total / 2)));
+          // Calculate score with streak combo
+          streak++;
+          const baseScore = Math.max(4, 14 - Math.max(0, moves - (lvl.total / 2)));
+          const pairScore = baseScore + (streak > 1 ? (streak - 1) * 4 : 0);
           score += pairScore;
           if (config.updateScore) config.updateScore(score);
-          this.hudText.setText(`Level ${currentLevel + 1}/4   Score: ${score}`);
+          this.hudText.setText(`Level ${currentLevel + 1}/4   Score: ${score}` + (streak > 1 ? `  x${streak}` : ''));
 
           // Floating heart
           const heart = this.add.image((firstCard.x + secondCard.x) / 2, (firstCard.y + secondCard.y) / 2, 'icons16', 102).setScale(1.5);
@@ -261,6 +267,8 @@
             this.levelComplete();
           }
         } else {
+          streak = 0;
+          this.hudText.setText(`Level ${currentLevel + 1}/4   Score: ${score}`);
           // No match, flip back after 700ms
           this.time.delayedCall(700, () => {
             this.flipCard(firstCard, false);

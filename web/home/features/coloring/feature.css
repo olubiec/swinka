@@ -27,8 +27,14 @@
    box-shadow: 0 2px 0 var(--ui-plum-0);
 }
 
-.feature-coloring .coloring-btn:hover {
+.feature-coloring .coloring-btn:hover,
+.feature-coloring .coloring-btn.active {
    background: var(--ui-brick-1);
+}
+
+.feature-coloring .tool-brush {
+   font-size: 11px;
+   padding: 3px 6px;
 }
 
 .feature-coloring .coloring-packs-grid,
@@ -123,16 +129,19 @@
    overflow-x: auto;
    gap: 8px;
    padding: 10px;
-   background: var(--ui-dusk-4);
-   border-top: 2px solid var(--ui-linen-1);
+   background: var(--ui-linen-1);
+   border-top: 3px solid var(--ui-wood-0);
    scrollbar-width: thin;
 }
 
 .feature-coloring .palette-chip {
-   width: 44px;
-   height: 44px;
+   width: 48px;
+   height: 48px;
    flex-shrink: 0;
-   border-radius: 50%;
+   border-radius: 0;
+   border: 2px solid var(--ui-wood-0);
+   background: var(--ui-linen-3);
+   box-shadow: 0 3px 0 var(--ui-wood-0);
    position: relative;
    cursor: pointer;
    display: flex;
@@ -142,37 +151,39 @@
 }
 
 .feature-coloring .palette-chip.selected {
-   transform: scale(1.15);
-   box-shadow: 0 0 0 2px var(--ui-wood-0);
+   transform: translateY(-2px) scale(1.08);
+   border-color: var(--ui-flame-1);
+   box-shadow: 0 0 0 2px var(--ui-flame-2), 0 4px 0 var(--ui-wood-0);
    z-index: 2;
 }
 
 .feature-coloring .palette-chip.done {
-   opacity: 0.5;
-   transform: scale(0.9);
+   opacity: 0.7;
+   transform: scale(0.95);
 }
 
 .feature-coloring .chip-ring {
    position: absolute;
-   top: -2px; left: -2px; right: -2px; bottom: -2px;
-   border-radius: 50%;
+   inset: 0;
+   border-radius: 0;
    z-index: 0;
 }
 
 .feature-coloring .chip-circle {
    position: relative;
-   width: 38px;
-   height: 38px;
-   border-radius: 50%;
+   width: 40px;
+   height: 40px;
+   border-radius: 0;
+   border: 1px solid var(--ui-wood-0);
    z-index: 1;
    display: flex;
    align-items: center;
    justify-content: center;
-   color: var(--ui-linen-3);
-   text-shadow: 1px 1px 0 var(--ui-plum-0), -1px -1px 0 var(--ui-plum-0), 1px -1px 0 var(--ui-plum-0), -1px 1px 0 var(--ui-plum-0);
+   color: #fbf0d9;
+   text-shadow: 1px 1px 0 #241824, -1px -1px 0 #241824, 1px -1px 0 #241824, -1px 1px 0 #241824;
    font-weight: bold;
-   font-size: 14px;
-   box-shadow: inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.3);
+   font-size: 15px;
+   box-shadow: inset 2px 2px 0 rgba(251,240,217,0.28), inset -2px -2px 0 rgba(36,24,36,0.28);
 }
 
 .feature-coloring .editor-confetti-layer {

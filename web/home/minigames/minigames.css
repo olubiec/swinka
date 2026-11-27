@@ -246,8 +246,47 @@
 
 .minigames-canvas-wrapper canvas {
   display: block;
+  max-width: 100%;
+  max-height: 100%;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+/* Expanded Arcade & Near-Fullscreen overrides */
+body.mg-arcade .minigames-root,
+body.mg-fullscreen .minigames-root {
+  max-width: none;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+body.mg-arcade .minigames-grid,
+body.mg-fullscreen .minigames-grid {
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 10px;
+}
+
+body.mg-arcade .minigames-play-screen,
+body.mg-fullscreen .minigames-play-screen {
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+}
+
+body.mg-arcade .minigames-canvas-wrapper,
+body.mg-fullscreen .minigames-canvas-wrapper {
+  flex: 1;
+  height: 100%;
+  min-height: 360px;
+}
+
+body.mg-arcade .minigames-canvas-wrapper canvas,
+body.mg-fullscreen .minigames-canvas-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
 }
 
 /* --- 3. Pause overlay --- */

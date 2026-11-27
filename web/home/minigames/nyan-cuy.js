@@ -31,11 +31,15 @@
     0x8844cc  // Purple
   ];
 
-  function iconsUrl() {
+  function assetUrl(relPath) {
     const isWebView = !!(root.chrome && root.chrome.webview);
-    if (isWebView) return 'https://cuy.assets/icons/icons_16.png';
+    if (isWebView) return 'https://cuy.assets/' + relPath;
     const inMinigamesDir = typeof location !== 'undefined' && location.pathname.includes('/minigames');
-    return inMinigamesDir ? '../../../assets/icons/icons_16.png' : '../../assets/icons/icons_16.png';
+    return (inMinigamesDir ? '../../../assets/' : '../../assets/') + relPath;
+  }
+
+  function iconsUrl() {
+    return assetUrl('icons/icons_16.png');
   }
 
   // --- Retro Sound & Audio Engine Integration ---
@@ -84,11 +88,24 @@
         const stage = config.stageKey || 'adult';
         root.MinigryPig.preload(this, stage);
         this.load.spritesheet('icons16', iconsUrl(), { frameWidth: 16, frameHeight: 16 });
+        this.load.image('nc_sky', assetUrl('minigames/nyan_cuy/layer_sky.png'));
+        this.load.image('nc_clouds', assetUrl('minigames/nyan_cuy/layer_clouds.png'));
+        this.load.image('nc_stars', assetUrl('minigames/nyan_cuy/layer_stars.png'));
       }
 
       create() {
-        // 1. Cosmic dark blue background
-        this.add.rectangle(W / 2, H / 2, W, H, 0x090d24);
+        // 1. 3-layer dedicated cosmic parallax backdrop
+        this.add.image(W / 2, H / 2, 'nc_sky').setDisplaySize(W, H).setDepth(0);
+        this.bgClouds = this.add.tileSprite(W / 2, H / 2, W, H, 'nc_clouds').setDepth(1);
+        this.bgStars = this.add.tileSprite(W / 2, H / 2, W, H, 'nc_stars').setDepth(1);
+
+        const tip = this.add.text(W / 2, 24, 'HOLD SPACE or CLICK to fly · Catch clovers for a shield!', {
+          fontFamily: 'monospace', fontSize: '9px', color: '#fffdf8', backgroundColor: '#191322cc', padding: { x: 6, y: 3 }
+        }).setOrigin(0.5).setDepth(25);
+        this.tweens.add({ targets: tip, alpha: 0, delay: 2800, duration: 700, onComplete: () => tip.destroy() });
+
+        this.hasShield = false;
+        this.shieldBadge = this.add.image(W - 22, 16, 'icons16', 100).setDepth(25).setAlpha(0.2);
 
         // 2. Scrolling twinkling stars (3 parallax layers)
         this.stars = [];
@@ -220,6 +237,21 @@
 
       spawnTreat() {
         const r = Math.random();
+        if (r < 0.08 && !this.hasShield) {
+          const y = 32 + Math.random() * (H - 68);
+          const sh = this.treats.create(W + 16, y, 'icons16', 100);
+          sh.setScale(2);
+          sh.isShield = true;
+          sh.pts = 15;
+          sh.color = '#85e085';
+          sh.setDepth(8);
+          sh.body.setAllowGravity(false);
+          sh.body.setVelocityX(-SCROLL_SPEED);
+          sh.body.setSize(12, 12);
+          sh.baseY = y;
+          sh.spawnTime = this.time.now;
+          return;
+        }
         let treatDef = TREAT_TYPES[0]; // parsley
         if (r < 0.20) treatDef = TREAT_TYPES[2]; // strawberry (rare)
         else if (r < 0.65) treatDef = TREAT_TYPES[1]; // carrot
@@ -269,6 +301,12 @@
         const color = treat.color || '#ffd23f';
         treat.destroy();
 
+        if (treat.isShield) {
+          this.hasShield = true;
+          if (this.shieldBadge) this.shieldBadge.setAlpha(1);
+          this.floatText(x, y, 'Clover Shield!', '#85e085');
+          return;
+        }
         score += pts;
         if (config.updateScore) config.updateScore(score);
         this.scoreText.setText(`${score}`);
@@ -284,6 +322,15 @@
 
       hitObstacle(obs) {
         if (ended || !obs.active || !this.isStarted) return;
+        if (this.hasShield) {
+          this.hasShield = false;
+          if (this.shieldBadge) this.shieldBadge.setAlpha(0.2);
+          obs.destroy();
+          this.cameras.main.shake(120, 0.008);
+          this.floatText(this.pig.x, this.pig.y, 'Shield Saved!', '#85e085');
+          if (root.Sound && root.Sound.click) root.Sound.click();
+          return;
+        }
         this.floatText(this.pig.x, this.pig.y, 'Ouch!', '#ff4d6d');
         this.gameOver();
       }
@@ -414,7 +461,9 @@
           }
         }
 
-        // 1. Update scrolling twinkling stars
+        // 1. Update parallax layers & twinkling stars
+        if (this.bgClouds) this.bgClouds.tilePositionX += 22 * dt;
+        if (this.bgStars) this.bgStars.tilePositionX += 64 * dt;
         for (let i = 0; i < this.stars.length; i++) {
           const s = this.stars[i];
           s.rect.x -= s.speed * dt;

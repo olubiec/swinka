@@ -1311,6 +1311,7 @@
       }
     }
     if (window.CuyHome) window.CuyHome.closeFeature();
+    setWindowMode('normal');
     elements.modalBackdrop.classList.remove('active');
     // Return focus to whatever opened the dialog, if it is still on the page.
     if (modalOpener && document.body.contains(modalOpener) && typeof modalOpener.focus === 'function') {
@@ -1319,6 +1320,16 @@
     modalOpener = null;
   }
 
+  function setWindowMode(mode) {
+    const m = (mode === 'arcade' || mode === 'fullscreen') ? mode : 'normal';
+    document.body.classList.toggle('mg-arcade', m === 'arcade');
+    document.body.classList.toggle('mg-fullscreen', m === 'fullscreen');
+    if (window.bridge && typeof window.bridge.send === 'function') {
+      window.bridge.send({ type: 'window_mode', mode: m });
+    }
+  }
+  window.CuyWindowMode = setWindowMode;
+
   window.addEventListener('keydown', trapModalFocus);
 
   // Shop dialog
@@ -1326,6 +1337,7 @@
   // Modal Minigier
   function openMinigamesModal() {
     if (window.CuyHome) window.CuyHome.closeFeature({ keepBackdrop: true });
+    setWindowMode('arcade');
     openModal('Games', '');
     if (window.Minigry && elements.modalBody) {
       window.Minigry.renderSelectScreen(elements.modalBody);

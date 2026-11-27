@@ -6,7 +6,7 @@ namespace Cuy.Core
 {
     public partial class Pet
     {
-        private static readonly Regex _coloringRegex = new Regex("^[01]{1,4096}$", RegexOptions.Compiled);
+        private static readonly Regex _coloringRegex = new Regex("^[01]{1,16384}$", RegexOptions.Compiled);
 
         public void SaveColoringProgress(string id, string painted)
         {
