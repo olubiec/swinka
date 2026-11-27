@@ -658,7 +658,7 @@ namespace Cuy
             if (!File.Exists(gamesJson)) return;
             var arr = JArray.Parse(File.ReadAllText(gamesJson));
             var fileList = arr.Select(t => (string)t).ToList();
-            string[] required = { "veggie-rain.js", "veggie-memory.js", "hay-maze.js" };
+            string[] required = { "cuy-quest.js", "veggie-rain.js", "veggie-memory.js" };
             foreach (var req in required)
             {
                 if (!fileList.Contains(req))
