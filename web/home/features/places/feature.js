@@ -183,43 +183,35 @@
     const music = window.CuyMusic;
     const wasPlaying = !!(music && typeof music.isPlaying === 'function' && music.isPlaying());
     if (music) {
-      if (wasPlaying) {
-        if (typeof music.stop === 'function') music.stop(150);
-      } else {
-        if (typeof music.setEnabled === 'function' && typeof music.isEnabled === 'function' && !music.isEnabled()) {
-          music.setEnabled(true);
-        }
-        if (typeof music.play === 'function') music.play('calm');
+      if (typeof music.setEnabled === 'function' && typeof music.isEnabled === 'function' && !music.isEnabled()) {
+        music.setEnabled(true);
+      }
+      if (typeof music.playRandom === 'function') {
+        music.playRandom();
+      } else if (typeof music.play === 'function') {
+        music.play('calm');
       }
     }
     const curInst = getCanvasPigInst();
     if (curInst) {
       const sp = curInst.scenePigs;
       const entries = (sp && typeof sp.entries === 'function') ? sp.entries() : [];
-      if (wasPlaying) {
-        if (typeof curInst.playAnim === 'function') curInst.playAnim('popcorn', 1400);
-        if (typeof curInst._showAmbientBubble === 'function') curInst._showAmbientBubble('Wheek!', 1400);
-        if (sp && typeof sp.setDance === 'function') {
-          for (let i = 0; i < entries.length; i++) {
-            sp.setDance(entries[i].id, false);
-          }
-        }
-      } else {
-        if (curInst.behavior && typeof curInst.behavior.interrupt === 'function') {
-          curInst.behavior.interrupt('dance');
-        }
-        if (typeof curInst.playAnim === 'function') curInst.playAnim('dance', 6000);
-        if (typeof curInst._showAmbientBubble === 'function') curInst._showAmbientBubble('Music!', 1500);
-        if (sp && typeof sp.setDance === 'function') {
-          const fps = curInst._danceSyncFps || 8;
-          const primaryId = curInst._primaryPigId != null ? String(curInst._primaryPigId) : null;
-          for (let i = 0; i < entries.length; i++) {
-            const p = entries[i];
-            if (!p || p.id == null) continue;
-            if (primaryId && String(p.id) === primaryId) continue;
-            if (p.pinned || p.anim === 'sleep' || p.anim === 'doze' || p.anim === 'sleep_house' || p.anim === 'held') continue;
-            sp.setDance(p.id, true, fps);
-          }
+      if (curInst.behavior && typeof curInst.behavior.interrupt === 'function') {
+        curInst.behavior.interrupt('dance');
+      }
+      if (typeof curInst.playAnim === 'function') curInst.playAnim('dance', 6000);
+      if (typeof curInst._showAmbientBubble === 'function') {
+        curInst._showAmbientBubble(wasPlaying ? 'Next track!' : 'Music!', 1500);
+      }
+      if (sp && typeof sp.setDance === 'function') {
+        const fps = curInst._danceSyncFps || 8;
+        const primaryId = curInst._primaryPigId != null ? String(curInst._primaryPigId) : null;
+        for (let i = 0; i < entries.length; i++) {
+          const p = entries[i];
+          if (!p || p.id == null) continue;
+          if (primaryId && String(p.id) === primaryId) continue;
+          if (p.pinned || p.anim === 'sleep' || p.anim === 'doze' || p.anim === 'sleep_house' || p.anim === 'held') continue;
+          sp.setDance(p.id, true, fps);
         }
       }
     }
@@ -1379,15 +1371,22 @@
     }
 
     // 3. Pig visibility and exits
-    const pigLocs = getPigLocations(st);
+    const desktopIds = new Set(
+      Array.isArray(st && st.desktopPigIds)
+        ? st.desktopPigIds.map(id => String(id).toLowerCase())
+        : []
+    );
+    const pigLocs = getPigLocations(st).filter(p => {
+      if (!p) return false;
+      const pid = p.pigId || p.PigId || p.id;
+      return !pid || !desktopIds.has(String(pid).toLowerCase());
+    });
     const pigInThisScene = pigLocs.find(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId);
     const firstPig = getFirstPigId(st);
     const firstPigLoc = pigLocs.find(p => (p.pigId || p.PigId) === firstPig) || pigLocs[0];
     const isPigPinned = pigInThisScene ? !!pigInThisScene.pinned : (firstPigLoc ? !!firstPigLoc.pinned : false);
 
-    const isAnyPigHere = pigLocs.length > 0
-      ? pigLocs.some(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId)
-      : (currentSceneId === 'salon');
+    const isAnyPigHere = pigLocs.some(p => (p.scene || p.sceneId || p.Scene || p.SceneId || 'salon') === currentSceneId);
 
     const roster = Array.isArray(st && st.roster) ? st.roster : [];
     const presentList = pigLocs

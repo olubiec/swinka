@@ -21,6 +21,29 @@ namespace Cuy.Features
             var data = CareData.Current;
             brain.Pet.SetCareTasks(data.Tasks);
             brain.Pet.SetCareConfig(data.WeightAlert, data.SnoozeMinutes);
+            var careState = brain.Pet.State.Care;
+            if (careState != null && data.Tasks != null)
+            {
+                careState.Normalize();
+                var nowUtc = brain.Pet.Clock != null ? brain.Pet.Clock.UtcNow : DateTime.UtcNow;
+                bool seeded = false;
+                foreach (var t in data.Tasks)
+                {
+                    if (t.Schedule == "every_n_days" && !careState.LastDoneUtc.ContainsKey(t.Id))
+                    {
+                        bool hasHistory = careState.History.Any(h => string.Equals(h.TaskId, t.Id, StringComparison.OrdinalIgnoreCase));
+                        if (!hasHistory)
+                        {
+                            careState.LastDoneUtc[t.Id] = nowUtc;
+                            seeded = true;
+                        }
+                    }
+                }
+                if (seeded)
+                {
+                    try { brain.Session.AutoSaver.SaveNow(); } catch { }
+                }
+            }
             int n = data.Tasks?.Count ?? 0;
             if (n == 0)
             {
@@ -290,7 +313,7 @@ namespace Cuy.Features
                                         BrainController.Log($"[Calendar] ignored {type}: time invalid");
                                     }
                                 }
-                                if (tToken["weekday"] != null)
+                                if (tToken["weekday"] != null && tToken["weekday"].Type != JTokenType.Null)
                                 {
                                     int weekday = (int)tToken["weekday"];
                                     if (CareInput.TryWeekday(weekday))
@@ -302,7 +325,7 @@ namespace Cuy.Features
                                         BrainController.Log($"[Calendar] ignored {type}: weekday invalid");
                                     }
                                 }
-                                if (tToken["everyDays"] != null)
+                                if (tToken["everyDays"] != null && tToken["everyDays"].Type != JTokenType.Null)
                                 {
                                     int everyDays = (int)tToken["everyDays"];
                                     if (CareInput.TryEveryDays(everyDays))

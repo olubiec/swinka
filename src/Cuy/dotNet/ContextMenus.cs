@@ -130,6 +130,20 @@ namespace Cuy
                 MessageBox.Show("Cuy 1.0.0 - made with love", "About Cuy", MessageBoxButtons.OK, MessageBoxIcon.Information);
             menu.Items.Add(aboutItem);
 
+            var updateItem = new ToolStripMenuItem("Update available!") { Visible = false };
+            updateItem.Click += (s, e) => OpenHomeWindow();
+            menu.Items.Add(updateItem);
+
+            menu.Opening += (s, e) =>
+            {
+                updateItem.Visible = Cuy.Features.SettingsFeature.IsUpdateAvailable;
+                if (updateItem.Visible)
+                {
+                    string ver = Cuy.Features.SettingsFeature.AvailableVersion;
+                    updateItem.Text = string.IsNullOrEmpty(ver) ? "Update available!" : $"Update available ({ver})!";
+                }
+            };
+
 #if DEBUG
             // Dev tools (Debug builds only)
             menu.Items.Add(new ToolStripSeparator());

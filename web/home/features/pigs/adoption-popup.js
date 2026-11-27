@@ -10,6 +10,11 @@
 
     show() {
       this._isOpen = true;
+      this._shownThisSession = true;
+      const bridge = root.bridge || (typeof window !== 'undefined' ? window.bridge : null);
+      if (bridge && typeof bridge.send === 'function') {
+        bridge.send({ type: 'mark_tutorial_seen', key: 'adoption_starter' });
+      }
       const modalBackdrop = document.getElementById('modalBackdrop');
       const modalTitle = document.getElementById('modalTitle');
       const modalBody = document.getElementById('modalBody');
@@ -246,7 +251,9 @@
 
     if (bridge && typeof bridge.onState === 'function') {
       bridge.onState((state) => {
-        if (state && state.adoptionOfferAvailable && !state.adoptionOfferAccepted && !state.adoptionGateOpen) {
+        const seenList = Array.isArray(state && state.seenTutorials) ? state.seenTutorials : [];
+        const alreadySeen = seenList.includes('adoption_starter') || CuyAdoptionPopup._shownThisSession;
+        if (state && state.adoptionOfferAvailable && !state.adoptionOfferAccepted && !state.adoptionGateOpen && !alreadySeen) {
           if (!CuyAdoptionPopup.isVisible()) {
             CuyAdoptionPopup.show();
           }

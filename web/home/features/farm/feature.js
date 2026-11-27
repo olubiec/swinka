@@ -136,8 +136,15 @@
   }
 
   function renderCropRows(st, f, clovers, compact) {
-    const crops = f.crops || [];
-    return crops.map(c => {
+    const rawCrops = (f.crops || []).slice();
+    rawCrops.sort((a, b) => {
+      if (!!a.unlocked !== !!b.unlocked) return a.unlocked ? -1 : 1;
+      const sa = a.seedOwned != null ? a.seedOwned : getOwnedCount(st, a.seedItem);
+      const sb = b.seedOwned != null ? b.seedOwned : getOwnedCount(st, b.seedItem);
+      if ((sa > 0) !== (sb > 0)) return sa > 0 ? -1 : 1;
+      return (a.unlockHarvests || 0) - (b.unlockHarvests || 0);
+    });
+    return rawCrops.map(c => {
       if (!c.unlocked) {
         const more = Math.max(0, c.unlockHarvests - (f.harvests || 0));
         const suffix = compact ? 'more' : ('more harvest' + (more === 1 ? '' : 's'));
@@ -145,16 +152,19 @@
       }
       const seeds = c.seedOwned != null ? Math.max(0, Number(c.seedOwned) || 0) : getOwnedCount(st, c.seedItem);
       const inBag = getOwnedCount(st, c.id);
-      const cost = c.cost != null ? c.cost : c.seedCost;
-      const canAfford = cost == null || cost <= 0 || clovers >= cost;
-      const canPlant = seeds > 0 && canAfford;
-      const priceMeta = cost > 0 ? ` &middot; ${cost} clovers` : (c.sellPrice > 0 ? ` &middot; Sell ${c.sellPrice}` : '');
+      const seedPrice = c.seedPrice != null ? c.seedPrice : (c.cost != null ? c.cost : c.seedCost);
+      const canBuyAndPlant = seeds === 0 && seedPrice > 0 && clovers >= seedPrice;
+      const btnHtml = seeds > 0
+        ? `<button type="button" class="farm-btn farm-seed-btn" data-plant="${esc(c.id)}">Plant (${seeds})</button>`
+        : (seedPrice > 0
+            ? `<button type="button" class="farm-btn farm-seed-btn" data-buy-plant="${esc(c.id)}" ${canBuyAndPlant ? '' : 'disabled'}>Buy &amp; Plant (${seedPrice})</button>`
+            : `<button type="button" class="farm-btn farm-seed-btn" data-plant="${esc(c.id)}" disabled>No seeds</button>`);
       return `<li class="farm-crop${seeds === 0 ? ' is-no-seeds' : ''}">
         <div class="farm-crop-info">
           <div class="farm-crop-top"><span class="farm-crop-name">${esc(c.name)}</span> <span class="farm-crop-time">${c.growMinutes}m</span></div>
-          <div class="farm-crop-meta"><span class="farm-crop-seeds${seeds === 0 ? ' is-empty' : ''}">Seeds: ${seeds}</span> &middot; <span class="farm-crop-bag farm-seed-owned">In bag: ${inBag}</span>${priceMeta}</div>
+          <div class="farm-crop-meta"><span class="farm-crop-seeds${seeds === 0 ? ' is-empty' : ''}">Seeds: ${seeds}</span> &middot; <span class="farm-crop-bag farm-seed-owned">In bag: ${inBag}</span>${c.sellPrice > 0 ? ` &middot; Sell ${c.sellPrice}` : ''}</div>
         </div>
-        <button type="button" class="farm-btn farm-seed-btn" data-plant="${esc(c.id)}" ${canPlant ? '' : 'disabled'}>Plant</button>
+        ${btnHtml}
       </li>`;
     }).join('');
   }
@@ -340,8 +350,9 @@
     }
 
     const upgrade = (label, cost, what, disabledWhen) => {
-      const can = cost !== null && cost !== undefined && clovers >= cost && !disabledWhen;
-      const price = cost === null || cost === undefined ? 'Max' : cost + ' clovers';
+      const validCost = typeof cost === 'number' && cost > 0 ? cost : null;
+      const can = validCost !== null && clovers >= validCost && !disabledWhen;
+      const price = validCost === null ? 'Max' : validCost + ' clovers';
       return `<button type="button" class="farm-btn farm-upgrade" data-buy="${what}" ${can ? '' : 'disabled'}>${esc(label)} · ${esc(price)}</button>`;
     };
     const upgrades = [
@@ -404,6 +415,13 @@
       btn.addEventListener('click', () => {
         if (S.menuPlot === null) return;
         send({ type: 'farm_plant', plot: S.menuPlot, cropId: btn.dataset.plant });
+        S.menuPlot = null;
+      });
+    });
+    container.querySelectorAll('[data-buy-plant]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (S.menuPlot === null) return;
+        send({ type: 'farm_buy_and_plant', plot: S.menuPlot, cropId: btn.dataset.buyPlant });
         S.menuPlot = null;
       });
     });
@@ -682,6 +700,12 @@
     S.overlayEl.querySelectorAll('[data-plant]').forEach(btn => {
       btn.addEventListener('click', () => {
         send({ type: 'farm_plant', plot: spec.plot, cropId: btn.dataset.plant });
+        closePopover();
+      });
+    });
+    S.overlayEl.querySelectorAll('[data-buy-plant]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        send({ type: 'farm_buy_and_plant', plot: spec.plot, cropId: btn.dataset.buyPlant });
         closePopover();
       });
     });

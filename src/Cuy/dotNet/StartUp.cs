@@ -15,7 +15,7 @@ namespace Cuy
         /// <summary>
         /// Maximal pets (too much pets will cover too much the screen and would not be nice to see).
         /// </summary>
-        public const int MaxPets = 1;
+        public const int MaxPets = 2;
 
         /// <summary>
         /// DEBUG TYPE. If you press "SHIFT" by starting the application, a debug Window will appear.
@@ -183,6 +183,7 @@ namespace Cuy
             if (petCount < MaxPets)
             {
                 var newSheep = new FormPet(animations, xml);
+                if (petCount > 0) newSheep.IsAmbientCompanion = true;
                 foreach (var sprite in xml.sprites)
                 {
                     newSheep.AddImage(sprite);

@@ -18,6 +18,8 @@ namespace Cuy
         private static Timer _walkTimer;
         private static EdgeSide _targetSide;
 
+        public static bool IsPeeking => _walkPhase != 0;
+
         public static void EnsureStarted()
         {
             if (_started) return;
@@ -103,6 +105,7 @@ namespace Cuy
             _lastPeekTime = DateTime.UtcNow;
             _nextPeekMinutes = _random.Next(60, 181);
 
+            pet.ScriptBegin(pet.PositionX, _targetSide);
             BrainController.Instance.ScriptAnimation = "walk";
             pet.PlayAnimationByName("walk");
 
@@ -118,6 +121,9 @@ namespace Cuy
             if (pet == null || pet.IsDisposed || _walkPhase == 0)
             {
                 _walkTimer?.Stop();
+                _walkPhase = 0;
+                if (BrainController.Instance != null) BrainController.Instance.ScriptAnimation = null;
+                if (pet != null && !pet.IsDisposed) pet.ScriptEnd();
                 return;
             }
 

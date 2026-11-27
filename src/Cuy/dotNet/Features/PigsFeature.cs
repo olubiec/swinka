@@ -445,16 +445,28 @@ namespace Cuy.Features
             else // toggle_pig_active
             {
                 string id = message?.Value<string>("pigId");
-                if (string.IsNullOrEmpty(id) || !gs.Roster.Any(p => p.Id == id)) return true;
+                var profile = !string.IsNullOrEmpty(id) ? gs.Roster.FirstOrDefault(p => p.Id == id) : null;
+                if (profile == null) return true;
                 var act = gs.ActivePigIds;
                 if (act.Contains(id))
                 {
-                    if (act.Count > 1) act.Remove(id);
+                    if (act.Count > 1)
+                    {
+                        act.Remove(id);
+                        brain.SetDesktopPet(profile, false);
+                    }
                 }
                 else
                 {
-                    if (act.Count >= 2) act.RemoveAt(0);
+                    if (act.Count >= 2)
+                    {
+                        string evictedId = act[0];
+                        act.RemoveAt(0);
+                        var evicted = gs.Roster.FirstOrDefault(p => p.Id == evictedId);
+                        if (evicted != null) brain.SetDesktopPet(evicted, false);
+                    }
                     act.Add(id);
+                    brain.SetDesktopPet(profile, true);
                 }
             }
 

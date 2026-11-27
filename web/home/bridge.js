@@ -853,8 +853,20 @@
           const name = String(action.name || '').trim().replace(/\s+/g, ' ');
           if (!name || name.length > 16 || !/^[\p{L}\p{N} ]+$/u.test(name)) break;
           s.name = name;
+          s.needsNaming = false;
           this.saveMockState();
           this.broadcastState();
+          break;
+        }
+
+        case 'mark_tutorial_seen': {
+          if (action.key) {
+            if (!Array.isArray(s.seenTutorials)) s.seenTutorials = [];
+            if (!s.seenTutorials.includes(action.key)) {
+              s.seenTutorials.push(action.key);
+              this.saveMockState();
+            }
+          }
           break;
         }
 

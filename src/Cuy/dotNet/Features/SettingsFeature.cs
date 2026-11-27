@@ -16,7 +16,75 @@ namespace Cuy.Features
         private static string _updateVersion = "1.0.0";
         private static string _updateStatus = "idle";
         private static string _updateNotes = "";
+        private static string _updateDownloadUrl = "";
+        private static int _updateProgress = 0;
         private static bool _updateDownloading = false;
+        private static bool _updatePopupDismissed = false;
+        private static System.Threading.Timer _bgUpdateTimer;
+
+        public static bool IsUpdateAvailable => _updateAvailable;
+        public static string AvailableVersion => _updateVersion;
+
+        public static void StartBackgroundCheck()
+        {
+            if (_bgUpdateTimer != null) return;
+            _bgUpdateTimer = new System.Threading.Timer(_ =>
+            {
+                _ = RunUpdateCheckAsync(clearCache: false, notifyToastIfAvailable: true);
+            }, null, TimeSpan.FromSeconds(15), TimeSpan.FromHours(4));
+        }
+
+        private static async Task RunUpdateCheckAsync(bool clearCache, bool notifyToastIfAvailable)
+        {
+            try
+            {
+                if (clearCache)
+                {
+                    Cuy.Core.Platform.UpdateChecker.ClearCache();
+                }
+
+                var info = await Cuy.Core.Platform.UpdateChecker
+                    .CheckForUpdateAsync(CurrentVersion, "olubiec/swinka")
+                    .ConfigureAwait(false);
+
+                if (info != null)
+                {
+                    _updateAvailable = info.IsNewer;
+                    _updateVersion = string.IsNullOrEmpty(info.Version) ? CurrentVersion : info.Version;
+                    _updateDownloadUrl = info.DownloadUrl ?? "";
+                    _updateNotes = info.ReleaseNotes ?? "";
+                    _updateStatus = info.IsNewer ? "available" : "up_to_date";
+                    if (info.IsNewer && notifyToastIfAvailable)
+                    {
+                        _updatePopupDismissed = false;
+                    }
+                    HomeWindow.NotifyStateChanged();
+                    if (info.IsNewer && notifyToastIfAvailable)
+                    {
+                        HomeWindow.PostToPage(new
+                        {
+                            type = "update_available",
+                            version = _updateVersion,
+                            notes = _updateNotes
+                        });
+                    }
+                    return;
+                }
+
+                _updateAvailable = false;
+                _updateStatus = "up_to_date";
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[Settings] Check update error: " + ex.Message);
+                _updateAvailable = false;
+                _updateStatus = "idle";
+            }
+            finally
+            {
+                HomeWindow.NotifyStateChanged();
+            }
+        }
 
         private static string CurrentVersion =>
             System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
@@ -71,7 +139,10 @@ namespace Cuy.Features
                 { "currentVersion", CurrentVersion },
                 { "status", _updateStatus },
                 { "notes", _updateNotes },
-                { "downloading", _updateDownloading }
+                { "downloadUrl", _updateDownloadUrl },
+                { "progress", _updateProgress },
+                { "downloading", _updateDownloading },
+                { "popupDismissed", _updatePopupDismissed }
             };
             state["update"] = update;
         }
@@ -165,6 +236,12 @@ namespace Cuy.Features
                 }
                 return true;
             }
+            if (type == "dismiss_update_popup")
+            {
+                _updatePopupDismissed = true;
+                HomeWindow.NotifyStateChanged();
+                return true;
+            }
             if (type == "check_update" || type == "settings_check_update")
             {
                 if (message != null && (message["mock"]?.ToObject<bool>() == true || message["force_available"]?.ToObject<bool>() == true))
@@ -173,114 +250,21 @@ namespace Cuy.Features
                     _updateVersion = "1.1.0";
                     _updateNotes = "Performance improvements and bug fixes.";
                     _updateStatus = "available";
+                    _updatePopupDismissed = false;
                     HomeWindow.NotifyStateChanged();
                     return true;
                 }
 
                 _updateStatus = "checking";
                 HomeWindow.NotifyStateChanged();
-
-                Task.Run(async () =>
-                {
-                    try
-                    {
-                        Type checkerType = null;
-                        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-                        {
-                            checkerType = asm.GetType("Cuy.Core.Platform.UpdateChecker") ?? asm.GetType("Cuy.Platform.UpdateChecker");
-                            if (checkerType != null) break;
-                        }
-
-                        if (checkerType != null)
-                        {
-                            var method = checkerType.GetMethod("CheckForUpdateAsync", new[] { typeof(string) })
-                                      ?? checkerType.GetMethod("CheckForUpdateAsync", new[] { typeof(string), typeof(string) });
-                            if (method != null)
-                            {
-                                object taskObj = method.GetParameters().Length == 1
-                                    ? method.Invoke(null, new object[] { CurrentVersion })
-                                    : method.Invoke(null, new object[] { CurrentVersion, "olubiec/swinka" });
-
-                                if (taskObj is Task task)
-                                {
-                                    await task.ConfigureAwait(false);
-                                    var propResult = task.GetType().GetProperty("Result");
-                                    object info = propResult?.GetValue(task);
-                                    if (info != null)
-                                    {
-                                        bool isNewer = (bool)(info.GetType().GetProperty("IsNewer")?.GetValue(info) ?? false);
-                                        string ver = (string)(info.GetType().GetProperty("Version")?.GetValue(info) ?? "1.0.0");
-                                        string notes = (string)(info.GetType().GetProperty("ReleaseNotes")?.GetValue(info) ?? "");
-                                        _updateAvailable = isNewer;
-                                        _updateVersion = ver;
-                                        _updateNotes = notes;
-                                        _updateStatus = isNewer ? "available" : "up_to_date";
-                                        HomeWindow.NotifyStateChanged();
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-
-                        // Fallback check:
-                        try
-                        {
-                            using (var client = new HttpClient())
-                            {
-                                client.DefaultRequestHeaders.Add("User-Agent", "Cuy-Pet");
-                                client.Timeout = TimeSpan.FromSeconds(5);
-                                var resp = await client.GetAsync("https://api.github.com/repos/olubiec/swinka/releases/latest").ConfigureAwait(false);
-                                if (resp.IsSuccessStatusCode)
-                                {
-                                    string content = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
-                                    var json = JObject.Parse(content);
-                                    string tag = json["tag_name"]?.ToString() ?? "1.0.0";
-                                    string cleanTag = tag.TrimStart('v');
-                                    if (cleanTag != CurrentVersion)
-                                    {
-                                        _updateAvailable = true;
-                                        _updateVersion = tag;
-                                        _updateNotes = json["body"]?.ToString() ?? "";
-                                        _updateStatus = "available";
-                                    }
-                                    else
-                                    {
-                                        _updateAvailable = false;
-                                        _updateVersion = CurrentVersion;
-                                        _updateStatus = "up_to_date";
-                                    }
-                                }
-                                else
-                                {
-                                    _updateAvailable = false;
-                                    _updateStatus = "up_to_date";
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            BrainController.Log("[Settings] Check update fallback: " + ex.Message);
-                            _updateAvailable = false;
-                            _updateStatus = "up_to_date";
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        BrainController.Log("[Settings] Check update error: " + ex.Message);
-                        _updateAvailable = false;
-                        _updateStatus = "idle";
-                    }
-                    finally
-                    {
-                        HomeWindow.NotifyStateChanged();
-                    }
-                });
-
+                Task.Run(() => RunUpdateCheckAsync(clearCache: true, notifyToastIfAvailable: false));
                 return true;
             }
             if (type == "apply_update" || type == "settings_apply_update")
             {
+                if (_updateDownloading) return true;
                 _updateDownloading = true;
+                _updateProgress = 0;
                 _updateStatus = "downloading";
                 HomeWindow.NotifyStateChanged();
 
@@ -288,31 +272,50 @@ namespace Cuy.Features
                 {
                     try
                     {
-                        Type applierType = null;
-                        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                        if (string.IsNullOrEmpty(_updateDownloadUrl))
                         {
-                            applierType = asm.GetType("Cuy.Platform.UpdateApplier") ?? asm.GetType("Cuy.dotNet.Platform.UpdateApplier");
-                            if (applierType != null) break;
-                        }
-
-                        if (applierType != null)
-                        {
-                            var applyMethod = applierType.GetMethod("ApplyAndRestart");
-                            if (applyMethod != null)
+                            var info = await Cuy.Core.Platform.UpdateChecker
+                                .CheckForUpdateAsync(CurrentVersion, "olubiec/swinka")
+                                .ConfigureAwait(false);
+                            if (info != null && !string.IsNullOrEmpty(info.DownloadUrl))
                             {
-                                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-                                applyMethod.Invoke(null, new object[] { baseDir });
+                                _updateDownloadUrl = info.DownloadUrl;
                             }
                         }
-                        else
+
+                        if (string.IsNullOrEmpty(_updateDownloadUrl))
                         {
-                            await Task.Delay(1000).ConfigureAwait(false);
+                            _updateDownloading = false;
+                            _updateStatus = "available";
+                            HomeWindow.NotifyStateChanged();
+                            HomeWindow.PostToPage(new { type = "toast", text = "No update package found in release." });
+                            return;
                         }
 
-                        _updateDownloading = false;
-                        _updateStatus = "ready";
+                        var progress = new Progress<int>(pct =>
+                        {
+                            if (pct != _updateProgress)
+                            {
+                                _updateProgress = pct;
+                                HomeWindow.NotifyStateChanged();
+                            }
+                        });
+
+                        string zipPath = await Cuy.Platform.UpdateApplier
+                            .DownloadUpdateAsync(_updateDownloadUrl, progress)
+                            .ConfigureAwait(false);
+
+                        _updateStatus = "applying";
                         HomeWindow.NotifyStateChanged();
-                        HomeWindow.PostToPage(new { type = "toast", text = "Update downloaded! Ready to restart." });
+
+                        bool started = Cuy.Platform.UpdateApplier.ApplyAndRestart(zipPath, AppDomain.CurrentDomain.BaseDirectory);
+                        if (!started)
+                        {
+                            _updateDownloading = false;
+                            _updateStatus = "available";
+                            HomeWindow.NotifyStateChanged();
+                            HomeWindow.PostToPage(new { type = "toast", text = "Could not launch updater script." });
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -320,6 +323,7 @@ namespace Cuy.Features
                         _updateDownloading = false;
                         _updateStatus = "available";
                         HomeWindow.NotifyStateChanged();
+                        HomeWindow.PostToPage(new { type = "toast", text = "Update failed: " + ex.Message });
                     }
                 });
 

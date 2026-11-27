@@ -8,6 +8,7 @@
     constructor(api) {
       this.api = api;
       this.saveTimeout = null;
+      this.localProgress = {};
       this.isMock = !api.getState().coloring;
     }
 
@@ -17,7 +18,11 @@
         if (!c.progress || typeof c.progress !== 'object') c.progress = {};
         if (!Array.isArray(c.completed)) c.completed = [];
         if (!Array.isArray(c.unlockedPacks)) c.unlockedPacks = [];
-        return c;
+        return {
+          progress: Object.assign({}, c.progress, this.localProgress),
+          completed: c.completed,
+          unlockedPacks: c.unlockedPacks
+        };
       }
       try {
         const str = localStorage.getItem('cuy_coloring_v1');
@@ -66,10 +71,12 @@
     }
 
     savePictureProgress(pictureId, painted) {
+      this.localProgress[pictureId] = painted;
       if (this.saveTimeout) {
         clearTimeout(this.saveTimeout);
       }
       this.saveTimeout = setTimeout(() => {
+        this.saveTimeout = null;
         if (!this.isMock) {
           this.api.send({ type: 'coloring_save', pictureId, painted });
         } else {
@@ -80,13 +87,29 @@
       }, 1500);
     }
 
-    markCompleted(pictureId, cellsCount) {
+    flushPictureProgress(pictureId, painted) {
+      if (!pictureId || typeof painted !== 'string') return;
+      this.localProgress[pictureId] = painted;
       if (this.saveTimeout) {
         clearTimeout(this.saveTimeout);
         this.saveTimeout = null;
       }
       if (!this.isMock) {
-        this.api.send({ type: 'coloring_done', pictureId, cells: cellsCount });
+        this.api.send({ type: 'coloring_save', pictureId, painted });
+      } else {
+        const state = this.getState();
+        state.progress[pictureId] = painted;
+        this._saveMock(state);
+      }
+    }
+
+    markCompleted(pictureId, cellsCount, painted) {
+      if (this.saveTimeout) {
+        clearTimeout(this.saveTimeout);
+        this.saveTimeout = null;
+      }
+      if (!this.isMock) {
+        this.api.send({ type: 'coloring_done', pictureId, cells: cellsCount, painted: painted || '' });
       } else {
         const state = this.getState();
         if (!state.completed.includes(pictureId)) {
@@ -164,8 +187,10 @@
 
       const imgData = ctx.createImageData(w, h);
       const cells = picture.cells;
-      const progress = (state && state.progress && state.progress[picture.id]) || '';
-      const isCompleted = !!(state && Array.isArray(state.completed) && state.completed.includes(picture.id));
+      const progressMap = (state && state.progress) || {};
+      const completedArr = Array.isArray(state && state.completed) ? state.completed : [];
+      const progress = progressMap[picture.id] || '';
+      const isCompleted = completedArr.includes(picture.id);
 
       for (let i = 0; i < cells.length; i++) {
         let r, g, b;
@@ -185,7 +210,7 @@
           let origB = parseInt(hex.substring(4, 6), 16);
 
           if (isGallery) {
-             if (isCompleted) {
+             if (isCompleted || isPainted) {
                 r = origR; g = origG; b = origB;
              } else {
                 let lum = 0.299*origR + 0.587*origG + 0.114*origB;
@@ -274,20 +299,20 @@
               currentState.unlockedPacks.forEach(p => { if (!allPacks.includes(p)) allPacks.push(p); });
             }
 
-            let completedCount = Array.isArray(currentState.completed) ? currentState.completed.length : 0;
-            let targetLevel = completedCount + 1;
-
+            let targetLevel = 0;
             let played = 0;
             let targetPic = null;
             let targetPack = null;
+            const completedSet = new Set(Array.isArray(currentState.completed) ? currentState.completed : []);
             for (const packId of allPacks) {
               const pData = await this.loadPack(packId);
               if (!pData || !Array.isArray(pData.pictures)) continue;
               for (const pic of pData.pictures) {
                 played++;
-                if (played === targetLevel) {
+                if (!completedSet.has(pic.id)) {
                   targetPic = pic;
                   targetPack = pData;
+                  targetLevel = played;
                   break;
                 }
               }
@@ -299,6 +324,7 @@
               if (pData && pData.pictures && pData.pictures[0]) {
                 targetPic = pData.pictures[0];
                 targetPack = pData;
+                targetLevel = 1;
               }
             }
 
@@ -375,10 +401,15 @@
           <div class="coloring-pics-grid">
        `;
 
-       packData.pictures.forEach(pic => {
+       const completedArr = Array.isArray(state.completed) ? state.completed : [];
+       packData.pictures.forEach((pic, idx) => {
+          const isDone = completedArr.includes(pic.id);
+          const prevDone = idx === 0 || completedArr.includes(packData.pictures[idx - 1].id);
+          const isUnlocked = isDone || prevDone;
           html += `
-          <div class="coloring-pic-card" data-id="${pic.id}">
+          <div class="coloring-pic-card${isDone ? ' is-completed' : ''}${isUnlocked ? '' : ' is-locked'}" data-id="${pic.id}" data-unlocked="${isUnlocked}">
              <canvas class="pic-thumb" id="thumb_pic_${pic.id}"></canvas>
+             ${isDone ? '<span class="coloring-badge-done">Done</span>' : (!isUnlocked ? '<span class="coloring-badge-lock"><span class="pixel-icon icon-padlock"></span></span>' : '')}
           </div>
           `;
        });
@@ -392,6 +423,12 @@
 
        this.container.querySelectorAll('.coloring-pic-card').forEach(el => {
           el.addEventListener('click', () => {
+             if (el.dataset.unlocked !== 'true') {
+                if (this.api && typeof this.api.showToast === 'function') {
+                  this.api.showToast('Finish the previous picture first!');
+                }
+                return;
+             }
              const picId = el.dataset.id;
              const pic = packData.pictures.find(p => p.id === picId);
              if (this.onOpenEditor) this.onOpenEditor(packData, pic);
@@ -662,7 +699,7 @@
 
     completePicture(totalCells) {
        this.isCompleted = true;
-       this.store.markCompleted(this.pic.id, totalCells);
+       this.store.markCompleted(this.pic.id, totalCells, this.painted);
 
        if (this.api.sound && typeof this.api.sound.fanfare === 'function') {
           this.api.sound.fanfare();
@@ -928,6 +965,9 @@
     }
 
     destroy() {
+       if (this.pic && this.painted && !this.isCompleted) {
+          this.store.flushPictureProgress(this.pic.id, this.painted);
+       }
        window.removeEventListener('resize', this.onResize);
        if (this.cleanupInput) this.cleanupInput();
        if (this.rafId) cancelAnimationFrame(this.rafId);
@@ -1002,7 +1042,8 @@
     try {
       return JSON.stringify({
         completed: state.coloring.completed || [],
-        unlockedPacks: state.coloring.unlockedPacks || []
+        unlockedPacks: state.coloring.unlockedPacks || [],
+        progress: state.coloring.progress || {}
       });
     } catch (e) {
       return '';
@@ -1065,12 +1106,16 @@
       lastColoringSig = null;
     },
     onState(state) {
-       // Re-render only if completed or unlockedPacks actually changed and editor is not open
-       if (galleryInstance && !galleryInstance.currentPack && !editorInstance) {
+       // Re-render only if completed, unlockedPacks, or progress changed and editor is not open
+       if (galleryInstance && !editorInstance) {
            const sig = computeColoringSig(state);
            if (sig !== lastColoringSig) {
                lastColoringSig = sig;
-               galleryInstance.renderPacks();
+               if (galleryInstance.currentPack) {
+                   galleryInstance.renderPack(galleryInstance.currentPack);
+               } else {
+                   galleryInstance.renderPacks();
+               }
            }
        }
     }

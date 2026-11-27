@@ -529,7 +529,10 @@
       if (elStatus) {
         elStatus.style.display = 'block';
         if (update.status === 'downloading' || update.downloading) {
-          elStatus.textContent = 'Downloading update...';
+          const pct = typeof update.progress === 'number' ? ` (${update.progress}%)` : '';
+          elStatus.textContent = `Downloading update${pct}...`;
+        } else if (update.status === 'applying') {
+          elStatus.textContent = 'Applying update and restarting...';
         } else if (update.status === 'ready') {
           elStatus.textContent = 'Update downloaded! Ready to restart.';
         } else {

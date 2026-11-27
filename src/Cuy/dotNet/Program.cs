@@ -326,6 +326,17 @@ namespace Cuy
                             BrainController.Log("[Program] ERROR HomeWindow: " + ex.ToString());
                         }
                     }
+                    else
+                    {
+                        var prewarmTimer = new System.Windows.Forms.Timer { Interval = 350 };
+                        prewarmTimer.Tick += (sender, e) =>
+                        {
+                            prewarmTimer.Stop();
+                            prewarmTimer.Dispose();
+                            HomeWindow.Prewarm();
+                        };
+                        prewarmTimer.Start();
+                    }
 
 #if DEBUG
                     foreach (string s in args)

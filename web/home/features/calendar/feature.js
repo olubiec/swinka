@@ -332,7 +332,11 @@
       if (!task.due && task.nextDue) {
         const d = new Date(task.nextDue);
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        timeText = `Next: ${days[d.getDay()]} ${task.time}`;
+        if (task.schedule === 'every_n_days' && (task.everyDays || 0) >= 7) {
+          timeText = `Next: ${d.toLocaleDateString()} ${task.time}`;
+        } else {
+          timeText = `Next: ${days[d.getDay()]} ${task.time}`;
+        }
       } else if (!task.due) {
         timeText = 'Later';
       }
@@ -658,7 +662,7 @@
         });
         html += `</select>`;
       } else if (t.schedule === 'every_n_days') {
-        html += `<label>Every <input type="number" class="fc-input fc-task-every" value="${t.everyDays || 1}" min="1" max="99" style="width: 50px;"> days</label>`;
+        html += `<label>Every <input type="number" class="fc-input fc-task-every" value="${t.everyDays || 1}" min="1" max="730" style="width: 58px;"> days</label>`;
       }
       html += `</div>`; // controls
       html += `</div>`; // row

@@ -341,6 +341,23 @@ namespace Cuy.Core.Save
                 MigrateStarterLook(state);
                 state.Version = 3;
             }
+            if (state.Version < 4)
+            {
+                if (state.SeenTutorials == null) state.SeenTutorials = new System.Collections.Generic.List<string>();
+                if (!state.NeedsNaming && !state.SeenTutorials.Contains("onboarding"))
+                {
+                    state.SeenTutorials.Add("onboarding");
+                }
+                if (state.GiftNoteShown && !state.SeenTutorials.Contains("letter"))
+                {
+                    state.SeenTutorials.Add("letter");
+                }
+                if (state.AdoptionOfferAccepted && !state.SeenTutorials.Contains("adoption_starter"))
+                {
+                    state.SeenTutorials.Add("adoption_starter");
+                }
+                state.Version = 4;
+            }
         }
 
         /// <summary>

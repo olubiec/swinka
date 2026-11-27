@@ -79,8 +79,8 @@ namespace Cuy.Features
             state[Id] = new Dictionary<string, object>
             {
                 { "progress", coloring.Progress ?? new Dictionary<string, string>() },
-                { "completed", coloring.Completed },
-                { "unlockedPacks", coloring.UnlockedPacks },
+                { "completed", coloring.Completed ?? new List<string>() },
+                { "unlockedPacks", coloring.UnlockedPacks ?? new List<string>() },
                 { "rewardedToday", economyState.ColoringRewardedToday },
                 { "maxRewardedPerDay", EconomyConfig.Current.Coloring.RewardedPicturesPerDay },
                 { "lastReward", lastReward }
@@ -102,6 +102,7 @@ namespace Cuy.Features
                 string painted = (string)message["painted"];
                 brain.Pet.SaveColoringProgress(pictureId, painted);
                 brain.Session.AutoSaver.SaveNow();
+                HomeWindow.NotifyStateChanged();
                 return true;
             }
             else if (type == "coloring_done")
@@ -111,7 +112,7 @@ namespace Cuy.Features
 
                 string savedProgress = brain.Pet.GetColoringProgress(pictureId);
                 string messagePainted = (string)message["painted"];
-                string progressToCheck = savedProgress ?? messagePainted;
+                string progressToCheck = !string.IsNullOrEmpty(messagePainted) ? messagePainted : savedProgress;
 
                 int paintedOnes = 0;
                 if (!string.IsNullOrEmpty(progressToCheck))

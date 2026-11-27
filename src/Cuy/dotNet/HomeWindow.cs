@@ -75,6 +75,58 @@ namespace Cuy
         /// <summary>True while the Home window is on screen.</summary>
         public static bool IsOpen => _instance != null && !_instance.IsDisposed && _instance.Visible;
 
+        public static bool ContainsScreenPoint(Point pt)
+        {
+            return _instance != null && !_instance.IsDisposed && _instance.Visible && _instance.Bounds.Contains(pt);
+        }
+
+        /// <summary>
+        /// Pre-creates the HomeWindow handle and starts WebView2 initialization silently in the background
+        /// so the first click on Home opens immediately.
+        /// </summary>
+        public static void Prewarm()
+        {
+            if (WebView2Missing) return;
+            try
+            {
+                if (_instance == null || _instance.IsDisposed)
+                {
+                    _instance = new HomeWindow();
+                    var _ = _instance.Handle;
+                }
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] HomeWindow.Prewarm: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Places a pig dropped from the desktop at the matching room canvas coordinates.
+        /// </summary>
+        public static void PlacePigAtScreenPoint(string pigId, Point screenPt)
+        {
+            if (_instance == null || _instance.IsDisposed || !_instance._isWebViewReady || _instance._webView?.CoreWebView2 == null)
+                return;
+            try
+            {
+                var clientPt = _instance._webView.PointToClient(screenPt);
+                double zoom = _instance._fitZoom > 0.1 ? _instance._fitZoom : 1.0;
+                int cx = (int)Math.Round(clientPt.X / zoom);
+                int cy = (int)Math.Round(clientPt.Y / zoom);
+                string idJson = JsonConvert.SerializeObject(pigId ?? "");
+                string js = string.Format(
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    "if(window.CanvasPig&&typeof window.CanvasPig.placePigAtClientPoint==='function')window.CanvasPig.placePigAtClientPoint({0},{1},{2});",
+                    idJson, cx, cy);
+                _instance._webView.CoreWebView2.ExecuteScriptAsync(js);
+            }
+            catch (Exception ex)
+            {
+                BrainController.Log("[WARN] HomeWindow.PlacePigAtScreenPoint: " + ex.Message);
+            }
+        }
+
         /// <summary>Closes Home (if open); the pig comes out onto the desktop.</summary>
         public static void CloseIfOpen()
         {
@@ -109,14 +161,14 @@ namespace Cuy
             try { BeginInvoke(new Action(Close)); } catch (Exception) { }
         }
 
-        // Where the pig appears when Home closes; set by "take_out" (drag the pig out), otherwise below the window.
+        // Where the pig appears when Home closes if no pig is currently on the desktop.
         private Point? _leavePoint;
 
         protected override void OnVisibleChanged(EventArgs e)
         {
             base.OnVisibleChanged(e);
-            var pet = FormPet.ActivePet;
-            if (pet == null || pet.IsDisposed) return;
+            var pets = FormPet.AllPets;
+            if (pets == null || pets.Count == 0) return;
             if (this.Visible)
             {
                 if (_initFailed)
@@ -125,13 +177,31 @@ namespace Cuy
                     try { BeginInvoke(new Action(() => { Hide(); })); } catch (Exception) { }
                     return;
                 }
-                pet.EnterHome();
+                // Keep desktop pigs on the desktop when Home opens; only pigs not on the desktop remain in Home.
             }
             else
             {
-                Point p = _leavePoint ?? new Point(this.Left + this.Width / 2, this.Bottom - 40);
+                Point basePoint = _leavePoint ?? new Point(this.Left + this.Width / 2, this.Bottom - 40);
                 _leavePoint = null;
-                pet.LeaveHome(p);
+
+                var alive = new List<FormPet>();
+                bool anyOnDesktop = false;
+                foreach (var p in pets)
+                {
+                    if (p != null && !p.IsDisposed)
+                    {
+                        alive.Add(p);
+                        if (!p.IsInHome && p.Visible) anyOnDesktop = true;
+                    }
+                }
+                if (!anyOnDesktop && alive.Count > 0)
+                {
+                    var target = FormPet.ActivePet ?? alive[0];
+                    if (target != null && !target.IsDisposed)
+                    {
+                        target.LeaveHome(basePoint);
+                    }
+                }
             }
         }
 
@@ -605,11 +675,22 @@ namespace Cuy
 
                 var highScores = state.HighScores ?? new Dictionary<string, int>();
 
+                var desktopPigIds = new List<string>();
+                foreach (var dp in FormPet.AllPets)
+                {
+                    if (dp != null && !dp.IsDisposed && !dp.IsInHome && dp.Visible && !string.IsNullOrEmpty(dp.Profile?.Id))
+                    {
+                        if (!desktopPigIds.Contains(dp.Profile.Id))
+                            desktopPigIds.Add(dp.Profile.Id);
+                    }
+                }
+
                 var payload = new Dictionary<string, object>
                 {
                     { "type", "state" },
                     { "name", string.IsNullOrWhiteSpace(state.Name) ? "Cuy" : state.Name },
                     { "needsNaming", state.NeedsNaming },
+                    { "seenTutorials", state.SeenTutorials ?? new List<string>() },
                     { "giftNote", ReadGiftNote(state) },
                     { "birthDateUtc", state.BirthDateUtc.ToString("o") },
                     { "pigDays", Math.Round(age.PigDays, 1) },
@@ -637,6 +718,7 @@ namespace Cuy
                     },
                     { "inventory", inventoryCopy },
                     { "album", state.Album != null ? new List<string>(state.Album.Keys) : new List<string>() },
+                    { "desktopPigIds", desktopPigIds },
                     { "poops", state.PoopCount },
                     { "minigames", new
                         {
@@ -707,7 +789,8 @@ namespace Cuy
                 if (string.IsNullOrWhiteSpace(json)) return;
 
                 var obj = JObject.Parse(json);
-                string type = obj.Value<string>("type")?.ToLowerInvariant();
+                string rawType = obj.Value<string>("type");
+                string type = rawType?.ToLowerInvariant();
 
                 switch (type)
                 {
@@ -724,6 +807,10 @@ namespace Cuy
                         HandleGiftNoteShown();
                         break;
 
+                    case "mark_tutorial_seen":
+                        HandleMarkTutorialSeen(obj.Value<string>("key"));
+                        break;
+
                     case "clean":
                         HandleClean();
                         break;
@@ -733,14 +820,13 @@ namespace Cuy
                         break;
 
                     case "take_out":
-                        // The pig was dragged out of the Home scene: close Home, the pig drops at the cursor.
+                        // The pig was dragged out of the Home scene: spawn/show it on desktop at cursor without closing Home.
                         string takeOutPigId = obj.Value<string>("pigId");
-                        if (!string.IsNullOrEmpty(takeOutPigId))
+                        Point dropPt = Cursor.Position;
+                        this.BeginInvoke(new Action(() =>
                         {
-                            BrainController.Instance?.SetDesktopPet(takeOutPigId, true, asPrimary: true);
-                        }
-                        _leavePoint = Cursor.Position;
-                        this.Hide();
+                            BrainController.Instance?.TakePigOutToDesktop(takeOutPigId, dropPt);
+                        }));
                         BrainController.Log("[HomeWindow] Pig taken out of Home: " + (takeOutPigId ?? "active"));
                         return;
 
@@ -779,7 +865,7 @@ namespace Cuy
                         break;
 
                     default:
-                        if (Cuy.Features.HomeFeatures.Dispatch(type, obj, BrainController.Instance))
+                        if (Cuy.Features.HomeFeatures.Dispatch(rawType, obj, BrainController.Instance))
                         {
                             // If a feature handled it, it might have modified state
                             SendStateToWebView();
@@ -925,7 +1011,22 @@ namespace Cuy
             var pet = BrainController.Instance?.Pet;
             if (pet == null) return;
             pet.State.GiftNoteShown = true;
+            if (pet.State.SeenTutorials == null) pet.State.SeenTutorials = new List<string>();
+            if (!pet.State.SeenTutorials.Contains("letter")) pet.State.SeenTutorials.Add("letter");
             BrainController.Instance.Session.AutoSaver.SaveNow();
+        }
+
+        private void HandleMarkTutorialSeen(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key)) return;
+            var pet = BrainController.Instance?.Pet;
+            if (pet == null) return;
+            if (pet.State.SeenTutorials == null) pet.State.SeenTutorials = new List<string>();
+            if (!pet.State.SeenTutorials.Contains(key))
+            {
+                pet.State.SeenTutorials.Add(key);
+                BrainController.Instance.Session.AutoSaver.SaveNow();
+            }
         }
 
         private void HandleClean()

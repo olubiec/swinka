@@ -168,10 +168,23 @@
     }
   }
 
+  function pickRandomTrackId(tracks, excludeId) {
+    if (!Array.isArray(tracks) || tracks.length === 0) return null;
+    const pool = (tracks.length > 1 && excludeId)
+      ? tracks.filter(t => t && t.id && t.id !== excludeId)
+      : tracks.filter(t => t && t.id);
+    if (pool.length === 0) return null;
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    return chosen ? chosen.id : null;
+  }
+
   // API
   window.CuyMusic = {
     get currentAudio() {
       return currentAudio;
+    },
+    get currentId() {
+      return currentId;
     },
     getCurrentAudio: function () {
       return currentAudio;
@@ -183,6 +196,12 @@
       const tracks = await loadTracks();
       if (!tracks) return;
       doPlay(id, loop, volume);
+    },
+    playRandom: async function ({ loop = true, volume } = {}) {
+      const tracks = await loadTracks();
+      if (!tracks) return;
+      const id = pickRandomTrackId(tracks, currentId);
+      if (id) doPlay(id, loop, volume);
     },
     stop: function (fadeMs = FADE_MS) {
       pendingPlay = null;

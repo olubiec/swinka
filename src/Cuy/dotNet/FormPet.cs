@@ -912,7 +912,6 @@ namespace Cuy
             IsLeaving = false;
             ResetMotion();
             SetNewAnimation(spawn.Next);                // Set next animation
-            if (HomeWindow.IsOpen) _inHome = true;      // Home is open: the pig stays inside
             Visible = !_inHome;                         // Now we can show the form
             Opacity = 0.0;                              // do not show first frame (as it is undefined)
             timer1.Enabled = true;                      // Enable the timer (interval is well known now)
@@ -1148,6 +1147,7 @@ namespace Cuy
             _lastVisibilityCheckTick = now;
 
             if (IsDragging || IsTossing) return;
+            if (ScriptHoldsPosition || IsHidingAnimation(CurrentAnimation.Name) || EdgePeekDirector.IsPeeking) return;
 
             bool onScreen = false;
             foreach (Screen screen in Screen.AllScreens)
@@ -1211,17 +1211,6 @@ namespace Cuy
 #if DEBUG
                 Cuy.Platform.MouseShakeMonitor.EnsureDebugStarted();
 #endif
-            }
-            if (HomeWindow.IsOpen && !_inHome)
-            {
-                EnterHome();
-                BrainController.Log("[Home] Bug corrected: forced pig into Home.");
-            }
-            else if (!HomeWindow.IsOpen && _inHome && !Visible)
-            {
-                var wa = Screen.PrimaryScreen.WorkingArea;
-                LeaveHome(new Point(wa.Left + wa.Width / 2, wa.Bottom));
-                BrainController.Log("[Home] Bug corrected: forced pig out of Home.");
             }
 
             if (!IsAmbientCompanion && !IsDragging && !IsTossing)
@@ -1548,11 +1537,11 @@ namespace Cuy
             {
                 if(hwndWindow == (IntPtr)0)
                 {
-                    if(PositionY + y < ScreenArea.Y + ScreenArea.Height - Height)
+                    if(PositionY + y + OffsetY < ScreenArea.Y + ScreenArea.Height - Height)
                     {
-                        if(PositionY + y + 3 >= ScreenArea.Y + ScreenArea.Height - Height) // allow 3 pixels to move without fall
+                        if(PositionY + y + OffsetY + 3 >= ScreenArea.Y + ScreenArea.Height - Height) // allow 3 pixels to move without fall
                         {
-                            y = ScreenArea.Y + ScreenArea.Height - (int)PositionY - Height;
+                            y = ScreenArea.Y + ScreenArea.Height - (int)PositionY - Height - (int)OffsetY;
                         }
                         else
                         {
@@ -1751,10 +1740,11 @@ namespace Cuy
             {
                 if (hWnd == Handle) return true;    // form itself, don't parse
 
-                    // Enumerate only visible windows
-                if (!NativeMethods.IsWindowVisible(hWnd)) return true;
+                    // Enumerate only visible, non-minimized, non-cloaked windows
+                if (!NativeMethods.IsWindowVisible(hWnd) || NativeMethods.IsIconic(hWnd) || NativeMethods.IsWindowCloaked(hWnd)) return true;
                 NativeMethods.RECT candidate;
                 if (!NativeMethods.GetWindowRect(new HandleRef(this, hWnd), out candidate)) return true;
+                if (candidate.Right <= candidate.Left || candidate.Bottom <= candidate.Top) return true;
 
                 StringBuilder sTitle = new StringBuilder(128);
                 NativeMethods.GetWindowText(hWnd, sTitle, 128);
@@ -1816,6 +1806,10 @@ namespace Cuy
         {
             if (hwndWindow != IntPtr.Zero)
             {
+                if (!NativeMethods.IsWindow(hwndWindow) || !NativeMethods.IsWindowVisible(hwndWindow) || NativeMethods.IsIconic(hwndWindow) || NativeMethods.IsWindowCloaked(hwndWindow))
+                {
+                    return false;
+                }
 				// Get window size and position of the current pet
 				if (!NativeMethods.GetWindowRect(new HandleRef(this, hwndWindow), out NativeMethods.RECT rctO)) return false;
 
@@ -1854,6 +1848,10 @@ namespace Cuy
                 // Check only if we have a valid window handler
             if (hwndWindow != IntPtr.Zero)
             {
+                if (!NativeMethods.IsWindow(hwndWindow) || !NativeMethods.IsWindowVisible(hwndWindow) || NativeMethods.IsIconic(hwndWindow) || NativeMethods.IsWindowCloaked(hwndWindow))
+                {
+                    return true;
+                }
 				// Get window size and position of the current pet
 				if (!NativeMethods.GetWindowRect(new HandleRef(this, hwndWindow), out NativeMethods.RECT rctO)) return true;
 
@@ -2061,6 +2059,9 @@ namespace Cuy
             if (wasClick)
             {
                 _brain?.ResumePhysics();
+                string nextAnim = _brain?.GetCurrentDesiredAnimation() ?? "idle";
+                int nextId = GetAnimationIdByName(nextAnim);
+                SetNewAnimation(nextId >= 0 ? nextId : 3);
                 bool irritated = InteractionManager.Instance != null && InteractionManager.Instance.RegisterClick();
                 if (!irritated)
                 {
@@ -2070,6 +2071,19 @@ namespace Cuy
             }
             else
             {
+                if (HomeWindow.ContainsScreenPoint(Cursor.Position))
+                {
+                    Point dropPt = Cursor.Position;
+                    IsDragging = false;
+                    pictureBox1.Capture = false;
+                    ResetMotion();
+                    EnterHome();
+                    HomeWindow.NotifyStateChanged();
+                    HomeWindow.PlacePigAtScreenPoint(Profile?.Id, dropPt);
+                    BrainController.Log("[Home] Desktop pig dropped into Home.");
+                    return;
+                }
+
                 // Always use ballistic gravity physics on release (even for gentle drops, never slow linear fall).
                 bool strongToss = TossForce.Length() > 5;
                 _brain?.InterruptPhysics(strongToss ? "toss" : "fall");
@@ -2219,6 +2233,24 @@ namespace Cuy
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool IsIconic(IntPtr hWnd);
+
+        private const int DWMWA_CLOAKED = 14;
+
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
+
+        internal static bool IsWindowCloaked(IntPtr hWnd)
+        {
+            try
+            {
+                int cloaked = 0;
+                return DwmGetWindowAttribute(hWnd, DWMWA_CLOAKED, out cloaked, sizeof(int)) == 0 && cloaked != 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
             /// <summary>
             /// Get the text present in the window title bar.

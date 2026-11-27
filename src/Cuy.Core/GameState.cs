@@ -10,7 +10,7 @@ namespace Cuy.Core
     public sealed partial class GameState
     {
         /// <summary>Current save format version. Bump it when the format changes and add a migration in SaveSystem.</summary>
-        public const int CurrentVersion = 3;
+        public const int CurrentVersion = 4;
 
         public int Version { get; set; } = CurrentVersion;
 
@@ -77,6 +77,12 @@ namespace Cuy.Core
         /// <summary>When growth started counting (first start, UTC).</summary>
         public DateTime? GrowthStartUtc { get; set; }
 
+        /// <summary>One-time tutorial/popup keys already shown to the player.</summary>
+        public List<string> SeenTutorials { get; set; } = new List<string>();
+
+        /// <summary>Last app version seen by the player.</summary>
+        public string LastSeenAppVersion { get; set; }
+
         public static GameState CreateNew(string name, DateTime nowUtc)
         {
             return new GameState
@@ -109,6 +115,7 @@ namespace Cuy.Core
             if (Stats == null) Stats = new Statistics();
             if (Stats.Counters == null) Stats.Counters = new Dictionary<string, int>();
             if (Poops == null) Poops = new List<PoopItem>();
+            if (SeenTutorials == null) SeenTutorials = new List<string>();
             if (PoopCount < 0) PoopCount = 0;
             if (PoopCount > 8) PoopCount = 8;
             if (PoopCount < Poops.Count) PoopCount = Poops.Count;

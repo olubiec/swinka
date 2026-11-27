@@ -88,13 +88,21 @@ namespace Cuy.Platform
 
             int pid = Process.GetCurrentProcess().Id;
 
+            string tempDir = Path.Combine(Path.GetTempPath(), "CuyUpdate");
+            if (!Directory.Exists(tempDir))
+            {
+                Directory.CreateDirectory(tempDir);
+            }
+            string tempScript = Path.Combine(tempDir, "apply-update.cmd");
+            File.Copy(scriptPath, tempScript, overwrite: true);
+
             var startInfo = new ProcessStartInfo
             {
-                FileName = scriptPath,
-                Arguments = $"{pid} \"{zipPath}\" \"{appDir}\"",
+                FileName = "cmd.exe",
+                Arguments = $"/c \"\"{tempScript}\" {pid} \"{zipPath}\" \"{appDir}\"\"",
                 CreateNoWindow = true,
                 UseShellExecute = false,
-                WorkingDirectory = appDir
+                WorkingDirectory = tempDir
             };
 
             try
@@ -104,6 +112,14 @@ namespace Cuy.Platform
             catch
             {
                 return false;
+            }
+
+            try
+            {
+                BrainController.Instance?.Close();
+            }
+            catch
+            {
             }
 
             try

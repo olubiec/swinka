@@ -196,8 +196,64 @@
     return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
+  const MARKET_ICON_FALLBACKS = {
+    plant_fern: 'plant',
+    plant_cactus: 'cucumber',
+    plant_flowers: 'dandelion',
+    picture_pig: 'pig',
+    picture_sunset: 'weather-clear',
+    picture_carrot: 'carrot',
+    lamp_star: 'star',
+    lamp_mushroom: 'lamp-mushroom'
+  };
+  const MARKET_SWATCH_COLORS = {
+    wallpaper_mint: '#bfe3c9',
+    wallpaper_peach: '#f9dcc4',
+    wallpaper_sky: '#a0d1f7',
+    wallpaper_lilac: '#d9c8ef',
+    wallpaper_night: '#2e3557',
+    floor_wood_light: '#d4ae7f',
+    floor_tiles_checker: '#444444',
+    floor_grass: '#6ab84b',
+    floor_carpet_red: '#c73a45',
+    rug_round_pink: '#f2a2c0',
+    rug_stripes: '#8ec5d6',
+    rug_heart: '#f75c7b'
+  };
+
   function iconClass(itemId) {
-    return 'icon-' + String(itemId).replace(/_/g, '-');
+    const id = String(itemId || '');
+    if (id.startsWith('seed_')) {
+      return 'icon-' + id.slice(5).replace(/_/g, '-');
+    }
+    if (id.startsWith('sapling_')) {
+      return 'icon-' + id.slice(8).replace(/_/g, '-');
+    }
+    if (MARKET_ICON_FALLBACKS[id]) {
+      return 'icon-' + MARKET_ICON_FALLBACKS[id];
+    }
+    return 'icon-' + id.replace(/_/g, '-');
+  }
+
+  function resolveMarketItemIconHtml(itemId, name, sizeClass) {
+    const api = getApi();
+    const id = String(itemId || '');
+    if (window.CuyWorldItems && typeof window.CuyWorldItems.find === 'function') {
+      const w = window.CuyWorldItems.find(id);
+      if (w && w.file && api && api.assetUrl) {
+        return `<img class="edit-card-icon" src="${esc(api.assetUrl('world/' + w.file))}" alt="${esc(name)}" draggable="false">`;
+      }
+    }
+    if (atlas && atlas.items && atlas.items[id] && atlas.items[id].file && api && api.assetUrl) {
+      return `<img class="edit-card-icon" src="${esc(api.assetUrl('world/' + atlas.items[id].file))}" alt="${esc(name)}" draggable="false">`;
+    }
+    if (MARKET_SWATCH_COLORS[id]) {
+      const sz = sizeClass === 'x2' ? 22 : 14;
+      return `<span class="item-icon-swatch" style="display:inline-block;width:${sz}px;height:${sz}px;background:${MARKET_SWATCH_COLORS[id]};border:2px solid #2b211a;border-radius:3px;vertical-align:middle;" aria-hidden="true"></span>`;
+    }
+    const cls = iconClass(id);
+    const szCls = sizeClass ? (' ' + sizeClass) : '';
+    return `<span class="pixel-icon ${cls}${szCls}" aria-hidden="true"></span>`;
   }
 
   function countOf(itemId) {
@@ -552,7 +608,7 @@
       const n = countOf(b.itemId);
       const inBag = ownedCount(st, b.itemId, b);
       return `<li class="market-row market-row-buy">
-        <span class="pixel-icon ${iconClass(b.itemId)}" aria-hidden="true"></span>
+        ${resolveMarketItemIconHtml(b.itemId, b.name, '')}
         <span class="market-name">${esc(b.name)} <span class="market-meta market-in-bag">In bag: ${inBag}</span></span>
         <span class="market-price">${b.price} ea</span>
         ${stepper('buy', b.itemId, n)}
@@ -816,17 +872,7 @@
   }
 
   function resolveDrawerCardIconHtml(itemId, name) {
-    const api = getApi();
-    if (window.CuyWorldItems && typeof window.CuyWorldItems.find === 'function') {
-      const w = window.CuyWorldItems.find(itemId);
-      if (w && w.file && api && api.assetUrl) {
-        return `<img class="edit-card-icon" src="${esc(api.assetUrl('world/' + w.file))}" alt="${esc(name)}" draggable="false">`;
-      }
-    }
-    if (atlas && atlas.items && atlas.items[itemId] && atlas.items[itemId].file && api && api.assetUrl) {
-      return `<img class="edit-card-icon" src="${esc(api.assetUrl('world/' + atlas.items[itemId].file))}" alt="${esc(name)}" draggable="false">`;
-    }
-    return `<span class="pixel-icon ${iconClass(itemId)} x2" aria-hidden="true"></span>`;
+    return resolveMarketItemIconHtml(itemId, name, 'x2');
   }
 
   function syncMarketBodyClasses(collapsed) {

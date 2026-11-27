@@ -90,9 +90,14 @@ window.CuyHome.registerFeature({
     const modal = document.getElementById('modalBackdrop');
     if (modal && modal.classList.contains('active')) return;
 
-    // 5. Track a session flag so we only auto-open once per session
-    if (!window._dailyAutoOpened) {
+    // 5. Track a persisted + session flag so we only auto-open once per day
+    const todayKey = 'daily_' + new Date().toISOString().slice(0, 10);
+    const seen = Array.isArray(state.seenTutorials) && state.seenTutorials.includes(todayKey);
+    if (!seen && !window._dailyAutoOpened) {
       window._dailyAutoOpened = true;
+      if (window.bridge && typeof window.bridge.send === 'function') {
+        window.bridge.send({ type: 'mark_tutorial_seen', key: todayKey });
+      }
       // Auto-open daily
       window.CuyHome.openFeature('daily');
     }

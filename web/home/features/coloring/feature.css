@@ -236,3 +236,30 @@
 .feature-coloring .back-gallery {
    display: none;
 }
+
+.feature-coloring .coloring-pic-card.is-locked {
+   opacity: 0.55;
+   cursor: not-allowed;
+}
+
+.feature-coloring .coloring-badge-done {
+   position: absolute;
+   top: 4px;
+   right: 4px;
+   background: #4e9a34;
+   color: #fff;
+   font-size: 10px;
+   font-weight: bold;
+   padding: 2px 5px;
+   border-radius: 3px;
+   border: 1px solid #2b1712;
+}
+
+.feature-coloring .coloring-badge-lock {
+   position: absolute;
+   top: 4px;
+   right: 4px;
+   background: rgba(43, 23, 18, 0.75);
+   padding: 2px 4px;
+   border-radius: 3px;
+}

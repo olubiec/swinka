@@ -614,6 +614,7 @@
 
     container.innerHTML = `
       <div class="garden-panel" data-place="${esc(S.place)}">
+        <div class="garden-tabs" role="tablist">${tabs}</div>
         ${body}
         <div class="garden-walk" aria-label="Walks"></div>
         <button type="button" class="garden-walk-btn" ${unlocked ? '' : 'disabled'}>Go for a walk</button>

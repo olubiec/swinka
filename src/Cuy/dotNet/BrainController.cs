@@ -100,6 +100,8 @@ namespace Cuy
                 Log("[WARN] BrainController initial CheckOffers: " + ex.Message);
             }
 
+            Cuy.Features.SettingsFeature.StartBackgroundCheck();
+
             _brain = Brain.CreateDefault(_session.Pet);
 
             // The brain's first decision
@@ -362,6 +364,10 @@ namespace Cuy
                 }
 
                 var newPet = new FormPet(animations, xml);
+                if (FormPet.AllPets.Any(x => x != newPet && !x.IsAmbientCompanion && !x.IsDisposed))
+                {
+                    newPet.IsAmbientCompanion = true;
+                }
                 newPet.Profile = pig;
                 PigLook.Apply(newPet, xml, PigLook.CurrentStageKey());
                 if (string.IsNullOrEmpty(newPet.AppliedLookKey))
@@ -532,18 +538,140 @@ namespace Cuy
                     for (int i = FormPet.AllPets.Count - 1; i >= 0; i--)
                     {
                         var p = FormPet.AllPets[i];
-                        if (p != null && !p.IsDisposed && p != FormPet.ActivePet && p.Profile?.Id == pig.Id)
+                        if (p == null || p.IsDisposed || p.Profile?.Id != pig.Id) continue;
+                        if (p == FormPet.ActivePet)
+                        {
+                            p.EnterHome();
+                            Log($"[Pets] Returned primary desktop pet to Home: {pig.Name} ({pig.Id})");
+                        }
+                        else
                         {
                             p.Close();
                             if (!p.IsDisposed) p.Dispose();
                             Log($"[Pets] Closed ambient desktop pet window: {pig.Name} ({pig.Id})");
                         }
                     }
+                    HomeWindow.NotifyStateChanged();
                 }
             }
             catch (Exception ex)
             {
                 Log("[ERROR] SetDesktopPet: " + ex);
+            }
+        }
+
+        public void TakePigOutToDesktop(string pigId, System.Drawing.Point screenPoint)
+        {
+            var gs = _session?.Pet?.State;
+            if (gs == null) return;
+            gs.EnsureRosterInitialized();
+
+            Cuy.Core.Pigs.PigProfile pig = null;
+            if (!string.IsNullOrWhiteSpace(pigId))
+            {
+                pig = gs.Roster?.FirstOrDefault(p => p != null && string.Equals(p.Id, pigId, StringComparison.OrdinalIgnoreCase))
+                   ?? gs.Roster?.FirstOrDefault(p => p != null && string.Equals(p.NamedId, pigId, StringComparison.OrdinalIgnoreCase));
+            }
+            if (pig == null && gs.ActivePigIds != null && gs.ActivePigIds.Count > 0)
+            {
+                pig = gs.Roster?.FirstOrDefault(p => p != null && string.Equals(p.Id, gs.ActivePigIds[0], StringComparison.OrdinalIgnoreCase));
+            }
+            if (pig == null) pig = gs.Roster?.FirstOrDefault(p => p != null);
+            if (pig == null) return;
+
+            try
+            {
+                var existing = FormPet.ActivePet ?? (FormPet.AllPets.Count > 0 ? FormPet.AllPets[0] : null);
+                if (existing == null || existing.IsDisposed)
+                {
+                    Log("[Pets] TakePigOutToDesktop: No existing FormPet available.");
+                    return;
+                }
+
+                if (existing.InvokeRequired)
+                {
+                    existing.BeginInvoke(new Action(() => TakePigOutToDesktop(pigId, screenPoint)));
+                    return;
+                }
+
+                // 1) If a FormPet for this pig already exists, just bring it out of Home (zero sprite reload!).
+                foreach (var p in FormPet.AllPets)
+                {
+                    if (p != null && !p.IsDisposed && string.Equals(p.Profile?.Id, pig.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (p.IsInHome)
+                        {
+                            p.LeaveHome(screenPoint);
+                        }
+                        HomeWindow.NotifyStateChanged();
+                        return;
+                    }
+                }
+
+                // 2) Enforce max 2 pigs on desktop at once.
+                int onDesktopCount = FormPet.AllPets.Count(p => p != null && !p.IsDisposed && !p.IsInHome && p.Visible);
+                if (onDesktopCount >= 2)
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Max 2 pigs on desktop" });
+                    return;
+                }
+
+                if (gs.ActivePigIds == null) gs.ActivePigIds = new List<string>();
+                if (!gs.ActivePigIds.Any(id => string.Equals(id, pig.Id, StringComparison.OrdinalIgnoreCase)))
+                {
+                    gs.ActivePigIds.Add(pig.Id);
+                    while (gs.ActivePigIds.Count > 2) gs.ActivePigIds.RemoveAt(0);
+                }
+
+                // 3) Reuse a hidden (_inHome) FormPet if one is available (avoids extra window creation).
+                var hiddenPet = FormPet.AllPets.FirstOrDefault(p => p != null && !p.IsDisposed && p.IsInHome);
+                if (hiddenPet != null)
+                {
+                    hiddenPet.Profile = pig;
+                    if (!string.IsNullOrWhiteSpace(pig.Name)) hiddenPet.Text = pig.Name;
+                    if (hiddenPet.Xml != null) PigLook.Apply(hiddenPet, hiddenPet.Xml, PigLook.CurrentStageKey());
+                    hiddenPet.LeaveHome(screenPoint);
+                    HomeWindow.NotifyStateChanged();
+                    Log($"[Pets] Reused FormPet for desktop: {pig.Name} ({pig.Id})");
+                    return;
+                }
+
+                // 4) Otherwise spawn a 2nd FormPet window on the desktop.
+                var xml = existing.Xml;
+                var animField = typeof(FormPet).GetField("Animations", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var animations = animField?.GetValue(existing) as Animations;
+                if (animations == null && xml != null)
+                {
+                    animations = new Animations(xml);
+                    xml.LoadAnimations(animations);
+                }
+                if (xml == null || animations == null)
+                {
+                    Log("[Pets] TakePigOutToDesktop: Xml or Animations missing.");
+                    return;
+                }
+
+                var newPet = new FormPet(animations, xml);
+                newPet.IsAmbientCompanion = true;
+                newPet.Profile = pig;
+                if (!string.IsNullOrWhiteSpace(pig.Name)) newPet.Text = pig.Name;
+                PigLook.Apply(newPet, xml, PigLook.CurrentStageKey());
+                if (string.IsNullOrEmpty(newPet.AppliedLookKey))
+                {
+                    foreach (var sprite in xml.sprites)
+                    {
+                        newPet.AddImage(sprite);
+                    }
+                }
+                newPet.Show(xml.spriteWidth, xml.spriteHeight);
+                newPet.EnterHome();
+                newPet.LeaveHome(screenPoint);
+                HomeWindow.NotifyStateChanged();
+                Log($"[Pets] Spawned 2nd desktop pig: {pig.Name} ({pig.Id})");
+            }
+            catch (Exception ex)
+            {
+                Log("[ERROR] TakePigOutToDesktop: " + ex);
             }
         }
 

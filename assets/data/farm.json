@@ -124,7 +124,7 @@
    "grow_minutes": 120,
    "yield": 2,
    "sell_price": 3,
-   "unlock_harvests": 8
+   "unlock_harvests": 0
   },
   {
    "id": "romaine_lettuce",
@@ -135,7 +135,7 @@
    "grow_minutes": 180,
    "yield": 3,
    "sell_price": 3,
-   "unlock_harvests": 12
+   "unlock_harvests": 0
   },
   {
    "id": "cucumber",
@@ -146,7 +146,7 @@
    "grow_minutes": 240,
    "yield": 3,
    "sell_price": 2,
-   "unlock_harvests": 16
+   "unlock_harvests": 0
   },
   {
    "id": "kale",
@@ -157,7 +157,7 @@
    "grow_minutes": 240,
    "yield": 2,
    "sell_price": 5,
-   "unlock_harvests": 20
+   "unlock_harvests": 0
   },
   {
    "id": "zucchini",
@@ -168,7 +168,7 @@
    "grow_minutes": 300,
    "yield": 3,
    "sell_price": 3,
-   "unlock_harvests": 30
+   "unlock_harvests": 4
   },
   {
    "id": "bell_pepper",
@@ -179,7 +179,7 @@
    "grow_minutes": 360,
    "yield": 2,
    "sell_price": 6,
-   "unlock_harvests": 40
+   "unlock_harvests": 6
   },
   {
    "id": "carrot",
@@ -190,7 +190,7 @@
    "grow_minutes": 480,
    "yield": 2,
    "sell_price": 4,
-   "unlock_harvests": 50
+   "unlock_harvests": 8
   },
   {
    "id": "cherry_tomato",
@@ -201,7 +201,7 @@
    "grow_minutes": 420,
    "yield": 3,
    "sell_price": 4,
-   "unlock_harvests": 60
+   "unlock_harvests": 10
   },
   {
    "id": "strawberry",
@@ -212,7 +212,7 @@
    "grow_minutes": 480,
    "yield": 2,
    "sell_price": 7,
-   "unlock_harvests": 25,
+   "unlock_harvests": 0,
    "max_stock": 4
   },
   {
@@ -224,7 +224,7 @@
    "grow_minutes": 720,
    "yield": 3,
    "sell_price": 4,
-   "unlock_harvests": 45,
+   "unlock_harvests": 6,
    "max_stock": 6
   },
   {
@@ -236,7 +236,7 @@
    "grow_minutes": 600,
    "yield": 3,
    "sell_price": 6,
-   "unlock_harvests": 70,
+   "unlock_harvests": 10,
    "max_stock": 6
   },
   {
@@ -248,7 +248,7 @@
    "grow_minutes": 900,
    "yield": 3,
    "sell_price": 5,
-   "unlock_harvests": 100,
+   "unlock_harvests": 14,
    "max_stock": 6
   }
  ]

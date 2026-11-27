@@ -426,8 +426,9 @@
       this.iconsImg = null;
       this.isLoaded = false;
 
-      // Poop counter
+      // Poop counter and fixed floor coordinates per scene
       this.poopCount = 0;
+      this.poopSpotsByScene = {};
 
       // Random idle behaviours
       this.idleBehaviorTimer = 4000;
@@ -2919,7 +2920,7 @@
         if (this.drag) {
           const moveDist = Math.hypot(e.clientX - this._pointerDownX, e.clientY - this._pointerDownY);
           const holdMs = Date.now() - (this._pointerDownTime || 0);
-          if (!this._dragMoved && moveDist > 10 && holdMs >= 160) {
+          if (!this._dragMoved && (moveDist > 14 || (moveDist > 7 && holdMs >= 90))) {
             this._dragMoved = true;
             this.drag.moved = true;
             if (this._dragIsPrimary !== false) {
@@ -2949,9 +2950,9 @@
           const hasLeft = !this.edgeNeighbours || this.edgeNeighbours.left !== false;
           const hasRight = !this.edgeNeighbours || this.edgeNeighbours.right !== false;
 
-          const outY = e.clientY < rect.top - 12 || e.clientY > rect.bottom + 12;
-          const outLeft = !hasLeft && (e.clientX < rect.left - 40);
-          const outRight = !hasRight && (e.clientX > rect.right + 40);
+          const outY = e.clientY < rect.top - 18 || e.clientY > rect.bottom + 18;
+          const outLeft = (!hasLeft && e.clientX < rect.left - 16) || e.clientX < -10;
+          const outRight = (!hasRight && e.clientX > rect.right + 16) || e.clientX > window.innerWidth + 10;
 
           if (outY || outLeft || outRight) {
             const takenPigId = this._draggedPigId || this._primaryPigId || (this.activePig && this.activePig.id) || null;
@@ -3223,26 +3224,16 @@
         this._dragGroundY = null;
         this._dragSamples = [];
 
-        if (hadMoved && (Math.hypot(vx, vy) > 1.5 || (this.pigAirY || 0) > 1)) {
-          this._toss = { vx, vy, groundY: this.pigY, bounces: 0 };
-          this._landTimer = 0;
-          this.currentAnim = 'fall';
-          this.currentFrame = 0;
-          this.frameAcc = 0;
-          this.animTimer = 0;
-          this._overridePrimaryPos = true;
-          if (Math.abs(vx) > 0.5) this.facing = vx >= 0 ? 1 : -1;
-        } else {
-          this.pigAirY = 0;
-          this._toss = null;
-          this._landTimer = 0;
-          this.currentAnim = 'idle';
-          this.currentFrame = 0;
-          this.frameAcc = 0;
-          this.animTimer = 0;
-          this.syncPrimaryToScenePigs();
-          this._overridePrimaryPos = false;
-        }
+        // Drop the pig at the exact spot where it was released in the room (no horizontal slide/bounce).
+        this.pigAirY = 0;
+        this._toss = null;
+        this._landTimer = hadMoved ? 260 : 0;
+        this.currentAnim = hadMoved ? 'land' : 'idle';
+        this.currentFrame = 0;
+        this.frameAcc = 0;
+        this.animTimer = 0;
+        this.syncPrimaryToScenePigs();
+        this._overridePrimaryPos = hadMoved;
 
         if (hadMoved) {
           const dropEv = { x: this.pigX, y: this.pigY, pigId: draggedId };
@@ -3266,12 +3257,16 @@
       const y = p.y;
 
       // If a poop was clicked, clean it up!
-      if (y >= 105 && this.poopCount > 0 && Math.abs(x - (this.pigX - 25)) < 20) {
-        if (root.bridge) root.bridge.send({ type: 'clean' });
-        if (root.Sound) root.Sound.sweep();
-        this.showBubble('Clean!', 2000);
-        this.spawnHeart(x, y);
-        return;
+      if (this.poopCount > 0) {
+        const spots = this.getPoopSpots();
+        const hitPoop = spots.some(s => Math.hypot(x - (s.x + 6), y - (s.y + 6)) < 14);
+        if (hitPoop) {
+          if (root.bridge) root.bridge.send({ type: 'clean' });
+          if (root.Sound) root.Sound.sweep();
+          this.showBubble('Clean!', 2000);
+          this.spawnHeart(x, y);
+          return;
+        }
       }
 
       // Clicking the pig = petting (or select in edit mode)!
@@ -3943,6 +3938,7 @@
       }
       if (typeof state.poops === 'number') {
         this.poopCount = state.poops;
+        this.syncPoopSpots(this.poopCount);
       }
 
       // React to an action from the state (only when PigBehavior is not active)
@@ -4845,17 +4841,82 @@
       ctx.fillRect(bx - 2, 44, 18, 3);
     }
 
+    getPoopSceneKey() {
+      return (this.scene && this.scene.id) || this.currentSceneId || 'salon';
+    }
+
+    getPoopSpots() {
+      if (!this.poopSpotsByScene) this.poopSpotsByScene = {};
+      const key = this.getPoopSceneKey();
+      if (!Array.isArray(this.poopSpotsByScene[key])) {
+        this.poopSpotsByScene[key] = [];
+      }
+      return this.poopSpotsByScene[key];
+    }
+
+    syncPoopSpots(count) {
+      const target = Math.min(8, Math.max(0, Number(count) || 0));
+      const spots = this.getPoopSpots();
+      if (target === 0) {
+        spots.length = 0;
+        return;
+      }
+      if (spots.length > target) {
+        spots.length = target;
+      }
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      const minX = Math.max(40, x0);
+      const maxX = Math.max(minX, x1 - 14);
+      const minY = Math.max(96, y0);
+      const maxY = Math.max(minY, y1 - 8);
+      while (spots.length < target) {
+        const idx = spots.length;
+        const anchorX = (typeof this.pigX === 'number' && Number.isFinite(this.pigX)) ? this.pigX : 120;
+        const anchorY = (typeof this.pigY === 'number' && Number.isFinite(this.pigY)) ? this.pigY : 110;
+        const offsetX = ((idx % 4) - 1.5) * 12;
+        const offsetY = (idx % 2) * 5;
+        const px = Math.round(Math.max(minX, Math.min(maxX, anchorX - 18 + offsetX)));
+        const py = Math.round(Math.max(minY, Math.min(maxY, anchorY + offsetY)));
+        spots.push({ x: px, y: py });
+      }
+    }
+
+    placePigAtClientPoint(pigId, clientX, clientY) {
+      if (!this.canvas || typeof this.canvas.getBoundingClientRect !== 'function') return false;
+      const rect = this.canvas.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return false;
+      const clampedClientX = Math.max(rect.left, Math.min(rect.right, clientX));
+      const clampedClientY = Math.max(rect.top, Math.min(rect.bottom, clientY));
+      const p = this.toScene({ clientX: clampedClientX, clientY: clampedClientY });
+      const [x0, y0, x1, y1] = this.walk || [10, 96, 230, 126];
+      const tx = Math.max(x0, Math.min(x1, p.x));
+      const ty = Math.max(y0, Math.min(y1, p.y));
+      const targetId = pigId ? String(pigId) : this._primaryPigId;
+      const free = this.findFreeSpotAvoidingPigs(tx, ty, targetId);
+      if (!targetId || (this._primaryPigId && String(targetId) === String(this._primaryPigId))) {
+        this.pigX = free.x;
+        this.pigY = free.y;
+        this.pigAirY = 0;
+        this._toss = null;
+        this._landTimer = 260;
+        this.currentAnim = 'land';
+        this.currentFrame = 0;
+        this.frameAcc = 0;
+        this._overridePrimaryPos = true;
+        this.syncPrimaryToScenePigs();
+      } else if (this.scenePigs && typeof this.scenePigs.movePig === 'function') {
+        this.scenePigs.movePig(targetId, free.x, free.y, 1, 'land', 0);
+      }
+      return true;
+    }
+
     drawPoops(ctx) {
       if (this.poopCount <= 0 || !this.iconsImg || !this.iconsImg.naturalWidth) return;
-      // Draw small poops from the poop icon (#10) on the floor
-      const count = Math.min(8, this.poopCount);
-      const startX = this.pigX - 35;
-      for (let i = 0; i < count; i++) {
-        const px = startX - (i * 10);
-        const py = 108 + ((i % 2) * 5);
-        if (px > 40) {
-          ctx.drawImage(this.iconsImg, 10 * 16, 0, 16, 16, px, py, 12, 12);
-        }
+      this.syncPoopSpots(this.poopCount);
+      const spots = this.getPoopSpots();
+      for (let i = 0; i < spots.length; i++) {
+        const s = spots[i];
+        ctx.drawImage(this.iconsImg, 10 * 16, 0, 16, 16, s.x, s.y, 12, 12);
       }
     }
 
@@ -5995,6 +6056,11 @@
     setWeatherKind(kind) {
       const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
       if (inst && typeof inst.setWeatherKind === 'function') return inst.setWeatherKind(kind);
+    },
+    placePigAtClientPoint(pigId, clientX, clientY) {
+      const inst = (typeof window !== 'undefined' && window.CuyPig && window.CuyPig.mainInstance) || CanvasPig.instance || PigCanvas.instance;
+      if (inst && typeof inst.placePigAtClientPoint === 'function') return inst.placePigAtClientPoint(pigId, clientX, clientY);
+      return false;
     }
   };
 
@@ -6039,6 +6105,7 @@
   PigCanvas.setMusicBpmData = (d) => CanvasPig.setMusicBpmData(d);
   PigCanvas.setBeat = (c) => CanvasPig.setBeat(c);
   PigCanvas.setWeatherKind = (k) => CanvasPig.setWeatherKind(k);
+  PigCanvas.placePigAtClientPoint = (id, x, y) => CanvasPig.placePigAtClientPoint(id, x, y);
   Object.defineProperty(PigCanvas, 'onEdgeHold', {
     get: () => CanvasPig.onEdgeHold,
     set: (fn) => { CanvasPig.onEdgeHold = fn; }

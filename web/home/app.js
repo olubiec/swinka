@@ -260,6 +260,13 @@
   }
 
   function updateOnboarding(state) {
+    const seen = Array.isArray(state && state.seenTutorials) ? state.seenTutorials : [];
+    if (seen.includes('onboarding') && !state.needsNaming) {
+      onboard.introActive = false;
+    }
+    if (seen.includes('letter')) {
+      onboard.letterClosed = true;
+    }
     if (onboard.renaming) {
       showOnly('welcome');
     } else if (state.needsNaming && !onboard.nameSent) {
@@ -276,6 +283,66 @@
     } else {
       showOnly(null);
     }
+    checkUpdatePopup(state);
+  }
+
+  let _updatePopupOpen = false;
+  function checkUpdatePopup(state) {
+    const u = state && state.update;
+    if (!u || !u.available || u.popupDismissed) {
+      if (_updatePopupOpen) {
+        _updatePopupOpen = false;
+        closeModal();
+      }
+      return;
+    }
+    if (state.needsNaming || onboard.introActive || onboard.renaming || (state.giftNote && !onboard.letterClosed)) return;
+
+    if (_updatePopupOpen) {
+      const bar = document.getElementById('updatePopupProgress');
+      const statusEl = document.getElementById('updatePopupStatus');
+      const btnNow = document.getElementById('btnUpdateNow');
+      if (bar) {
+        bar.style.display = u.downloading ? 'block' : 'none';
+        const fill = bar.querySelector('.update-progress-fill');
+        if (fill) fill.style.width = `${u.progress || 0}%`;
+      }
+      if (statusEl) {
+        if (u.status === 'applying') statusEl.textContent = 'Applying update and restarting...';
+        else if (u.downloading) statusEl.textContent = `Downloading update... ${u.progress || 0}%`;
+        else statusEl.textContent = '';
+      }
+      if (btnNow) btnNow.disabled = !!u.downloading;
+      return;
+    }
+
+    if (elements.modalBackdrop && elements.modalBackdrop.classList.contains('active')) return;
+    _updatePopupOpen = true;
+    const ver = u.version ? (String(u.version).startsWith('v') ? u.version : 'v' + u.version) : '';
+    const notes = (u.notes || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').slice(0, 400);
+    const html = `
+      <div style="padding: 8px 4px; text-align: center;">
+        <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">New version ${ver} is available!</div>
+        ${notes ? `<div style="font-size: 11px; text-align: left; max-height: 110px; overflow-y: auto; padding: 6px 8px; background: rgba(0,0,0,0.06); border: 1px solid var(--ui-wood-0, #6d4c3d); margin-bottom: 10px; white-space: pre-wrap;">${notes}</div>` : ''}
+        <div id="updatePopupProgress" style="display:${u.downloading ? 'block' : 'none'}; height: 10px; background: #d9cbb8; border: 1px solid #6d4c3d; margin-bottom: 6px;">
+          <div class="update-progress-fill" style="height: 100%; width: ${u.progress || 0}%; background: #5ea844; transition: width 0.2s;"></div>
+        </div>
+        <div id="updatePopupStatus" style="font-size: 11px; min-height: 16px; margin-bottom: 8px;"></div>
+        <div style="display:flex; gap: 8px; justify-content: center;">
+          <button type="button" class="game-btn" id="btnUpdateNow" ${u.downloading ? 'disabled' : ''}>Update &amp; Restart</button>
+          <button type="button" class="ui-btn" id="btnUpdateLater">Later</button>
+        </div>
+      </div>
+    `;
+    openModal('Update Available', html);
+    document.getElementById('btnUpdateNow')?.addEventListener('click', () => {
+      if (window.bridge) window.bridge.send({ type: 'settings_apply_update' });
+    });
+    document.getElementById('btnUpdateLater')?.addEventListener('click', () => {
+      _updatePopupOpen = false;
+      closeModal();
+      if (window.bridge) window.bridge.send({ type: 'dismiss_update_popup' });
+    });
   }
 
   // Admin console: Ctrl+Shift+A -> "unlockall" or "clovers 5000"
@@ -364,8 +431,9 @@
     onboard.introActive = false;
     onboard.replaying = false;
     setWelcomeMode(false);
-    if (window.bridge) {
+    if (window.bridge && typeof window.bridge.send === 'function') {
       window.bridge.send({ type: 'tutorial.completeTour', mode: 'fresh' });
+      window.bridge.send({ type: 'mark_tutorial_seen', key: 'onboarding' });
     }
     const state = window.bridge.currentState;
     if (state) updateOnboarding(state); else showOnly(null);
@@ -1105,7 +1173,7 @@
 
     // Then registered features
     window.CuyHome.listFeatures().forEach(feat => {
-      if (!feat || feat.id === 'rooms' || feat.id === 'garden' || feat.id === 'farm' || feat.id === 'market') return;
+      if (!feat || feat.id === 'rooms' || feat.id === 'garden' || feat.id === 'farm' || feat.id === 'market' || feat.id === 'coloring') return;
       let iconHtml = '';
       if (feat.icon) {
         if (feat.icon.startsWith('icon-')) {

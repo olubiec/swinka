@@ -261,7 +261,7 @@ namespace Cuy.Features
                 }
                 else if (res == FarmResult.NoSeed)
                 {
-                    HomeWindow.PostToPage(new { type = "toast", text = "Not ready yet" });
+                    HomeWindow.PostToPage(new { type = "toast", text = "No seeds! Use Buy & Plant or visit Market." });
                 }
                 else if (res == FarmResult.Occupied)
                 {
@@ -269,7 +269,55 @@ namespace Cuy.Features
                 }
                 else if (res == FarmResult.Locked || res == FarmResult.NotAnnual || res == FarmResult.Disabled)
                 {
-                    HomeWindow.PostToPage(new { type = "toast", text = "Not ready yet" });
+                    HomeWindow.PostToPage(new { type = "toast", text = "Crop is still locked" });
+                }
+            }
+            else if (type == "farm_buy_and_plant")
+            {
+                int plot = message?.Value<int?>("plot") ?? -1;
+                string cropId = message?.Value<string>("cropId");
+                if (string.IsNullOrEmpty(cropId) || plot < 0) return true;
+
+                var crop = pet.FarmConfig?.Find(cropId);
+                if (crop == null) return true;
+
+                int owned = 0;
+                if (!string.IsNullOrEmpty(crop.SeedItemId))
+                {
+                    pet.State.Inventory?.TryGetValue(crop.SeedItemId, out owned);
+                }
+                int boughtPrice = 0;
+                if (owned <= 0)
+                {
+                    int price = crop.SeedPrice;
+                    if (price <= 0 || pet.State.Clovers < price)
+                    {
+                        HomeWindow.PostToPage(new { type = "toast", text = "Not enough clovers" });
+                        return true;
+                    }
+                    pet.State.Clovers -= price;
+                    boughtPrice = price;
+                    if (pet.State.Inventory == null) pet.State.Inventory = new Dictionary<string, int>();
+                    pet.State.Inventory[crop.SeedItemId] = 1;
+                }
+
+                var res = pet.Plant(plot, cropId);
+                if (res == FarmResult.Ok)
+                {
+                    HomeWindow.PostToPage(new { type = "toast", text = "Planted!" });
+                }
+                else
+                {
+                    if (boughtPrice > 0)
+                    {
+                        pet.State.Clovers += boughtPrice;
+                        if (pet.State.Inventory != null && !string.IsNullOrEmpty(crop.SeedItemId) && pet.State.Inventory.TryGetValue(crop.SeedItemId, out int cur) && cur > 0)
+                        {
+                            if (cur <= 1) pet.State.Inventory.Remove(crop.SeedItemId);
+                            else pet.State.Inventory[crop.SeedItemId] = cur - 1;
+                        }
+                    }
+                    HomeWindow.PostToPage(new { type = "toast", text = res == FarmResult.Locked ? "Crop is still locked" : "Cannot plant here" });
                 }
             }
             else if (type == "farm_water")

@@ -723,7 +723,23 @@
         `;
       });
 
+      const coloringState = state?.coloring || {};
+      const coloringDone = Array.isArray(coloringState.completed) ? coloringState.completed.length : 0;
+
       html += `
+            <div class="minigames-card">
+              <div class="minigames-card-icon"><span class="pixel-icon icon-palette x2"></span></div>
+              <div class="minigames-card-content">
+                <div class="minigames-card-title">Colouring Book</div>
+                <div class="minigames-card-desc">Paint guinea pigs and earn clovers!</div>
+                <div class="minigames-card-meta">
+                  <span class="minigames-record-badge">Completed: ${coloringDone}</span>
+                </div>
+              </div>
+              <div>
+                <button class="minigames-btn-play" data-open-coloring="1">Play</button>
+              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -758,6 +774,14 @@
         });
       }
 
+      const coloringBtn = container.querySelector('button[data-open-coloring]');
+      if (coloringBtn) {
+        coloringBtn.addEventListener('click', () => {
+          if (root.Sound) root.Sound.click();
+          if (root.CuyHome) root.CuyHome.openFeature('coloring');
+        });
+      }
+
       // Hook up the start buttons
       container.querySelectorAll('button[data-start-game]').forEach((btn) => {
         btn.addEventListener('click', () => {
@@ -765,12 +789,16 @@
           if (root.Sound) root.Sound.click();
 
           const gameDef = this.games.get(gameId);
-          let seen = false;
+          const seenList = Array.isArray(state?.seenTutorials) ? state.seenTutorials : [];
+          let seen = seenList.includes('minigame_' + gameId);
           try {
-            seen = localStorage.getItem('cuy_minigame_seen_' + gameId) === 'true';
+            if (!seen) seen = localStorage.getItem('cuy_minigame_seen_' + gameId) === 'true';
           } catch (e) {}
 
           if (!seen && gameDef) {
+            if (root.bridge && typeof root.bridge.send === 'function') {
+              root.bridge.send({ type: 'mark_tutorial_seen', key: 'minigame_' + gameId });
+            }
             const rootEl = container.querySelector('.minigames-root') || container;
             const hint = document.createElement('div');
             hint.className = 'minigames-hint-overlay';
