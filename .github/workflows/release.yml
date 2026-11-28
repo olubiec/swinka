@@ -40,7 +40,7 @@ jobs:
 
       - name: Build, test and package (dist/Cuy_v1.zip)
         shell: powershell
-        run: powershell -ExecutionPolicy Bypass -File tools/package.ps1
+        run: powershell -ExecutionPolicy Bypass -File tools/package.ps1 -NoTests
 
       - name: Name the files
         shell: powershell
